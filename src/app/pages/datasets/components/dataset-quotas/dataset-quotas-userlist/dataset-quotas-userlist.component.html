@@ -127,6 +127,7 @@
           *ngIf="row.quota > 0 || row.obj_quota > 0"
           mat-icon-button
           matTooltipPosition="below"
+          [ixTest]="['delete-quota', row.name]"
           [matTooltip]="'Delete' | translate"
           (click)="$event.stopPropagation(); doDelete(row)"
         >

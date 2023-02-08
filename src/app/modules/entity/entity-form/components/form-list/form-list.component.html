@@ -69,6 +69,7 @@
             class="top-right"
             ix-auto
             ix-auto-type="icon-button"
+            [ixTest]="[config.name, 'delete']"
             [ix-auto-identifier]="'delete-box_' + (config.name + i)"
             (click)="delete(i)"
           >

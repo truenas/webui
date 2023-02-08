@@ -20,6 +20,7 @@
         mat-button
         color="default"
         class="table-action-button"
+        [ixTest]="['table', _tableConf.name, action.label]"
         (click)="$event.stopPropagation(); action.onClick()"
       >
         {{ action.label | translate }}
@@ -129,6 +130,7 @@
                     ix-auto
                     ix-auto-type="button"
                     mat-stroked-button
+                    [ixTest]="[element[column.prop], 'state']"
                     [ix-auto-identifier]="element[column.prop] + '-task-state'"
                     [ngClass]="getButtonClass(element[column.prop])"
                     (click)="$event.stopPropagation(); onButtonClick(element)"
@@ -220,6 +222,7 @@
                   <ng-template #actionButtons>
                     <button
                       mat-icon-button
+                      [ixTest]="['row-action', _tableConf.name, rowAction.name]"
                       [disabled]="rowAction.disabled"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
@@ -236,6 +239,7 @@
               <button
                 *ngIf="_tableConf.deleteCall"
                 mat-icon-button
+                [ixTest]="['table', _tableConf.name, 'delete']"
                 [disabled]="_tableConf.deleteActionDisabled"
                 (click)="$event.stopPropagation(); deleteRow(element)"
               >
@@ -288,6 +292,7 @@
         *ngFor="let action of _tableConf.tableFooterActions let last=last"
         mat-button
         color="default"
+        [ixTest]="['table', _tableConf.name, 'footer-action', action.label]"
         [ngClass]="{ 'table-action-button': !last }"
         (click)="$event.stopPropagation(); action.onClick()"
       >

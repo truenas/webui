@@ -50,7 +50,7 @@
         treeNodeToggle
         [treeNodeDefDataSource]="dataSource"
       >
-        <button mat-icon-button disabled></button>
+        <span class="spacer"></span>
         <ix-bootenv-node-item
           [node]="topologyItem"
           [poolInstance]="poolInstance"
@@ -67,6 +67,7 @@
           <button
             mat-icon-button
             treeNodeToggle
+            [ixTest]="['toggle-row', topologyItem.guid]"
             [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
             (click)="$event.preventDefault()"
           >

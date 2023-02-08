@@ -7,6 +7,7 @@
       *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
       mat-button
       ix-auto-type="button"
+      [ixTest]="actions[0].actions[0].label"
       [id]="'action_' + singleAction.name + '__' + singleAction.id"
       [ix-auto-identifier]="row.name + '_' + singleAction.id + '_' + singleAction.name"
       [disabled]="singleAction.disabled"
@@ -25,6 +26,7 @@
     <button
       *ngIf="iconName.startsWith('mdi-')"
       class="transparent-btn"
+      [ixTest]="[entity?.conf?.title, 'options']"
       [attr.aria-label]="'Actionable Options' | translate"
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
@@ -42,6 +44,7 @@
     <button
       *ngIf="!iconName.startsWith('mdi-')"
       class="transparent-btn"
+      [ixTest]="[entity?.conf?.title, 'options']"
       [attr.aria-label]="'Actionable Options' | translate"
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
@@ -66,6 +69,7 @@
             *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
             ix-auto-type="action"
             mat-menu-item
+            [ixTest]="[entity?.conf?.title, 'options', action.label]"
             [id]="'action_button_' + action?.name + '__' + action.id"
             [ix-auto-identifier]="action.id + '_' + action.label"
             [disabled]="action.disabled"
@@ -97,6 +101,7 @@
               *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
               mat-menu-item
               ix-auto-type="action"
+              [ixTest]="[entity?.conf?.title, 'options', action.label]"
               [id]="'action_button_' + action?.name + '__' + action.id"
               [ix-auto-identifier]="action.id + '_' + action.label"
               [disabled]="action.disabled"
@@ -117,6 +122,7 @@
         *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
         mat-icon-button
         ix-auto-type="action"
+        [ixTest]="[entity?.conf?.title, 'options', action.name]"
         [id]="'action_button_' + action?.name + '__' + action.id"
         [ix-auto-identifier]="action.id + '_' + action.name | uppercase"
         [disabled]="action.disabled"

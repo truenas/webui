@@ -38,6 +38,7 @@
             class="action-icon action-button"
             ix-auto
             ix-auto-type="button"
+            [ixTest]="['configure', tableConf.name]"
             [ix-auto-identifier]="tableConf.name + '-configure'"
             (click)="tableConf.configure()"
           >
@@ -51,6 +52,7 @@
             class="action-icon action-button"
             ix-auto
             ix-auto-type="button"
+            [ixTest]="['add', tableConf.name]"
             [ix-auto-identifier]="tableConf.name + '-add'"
             [disabled]="tableConf.addActionDisabled"
             (click)="tableConf.add()"
