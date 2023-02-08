@@ -51,6 +51,7 @@
         id="cust_button_deregister"
         ix-auto-type="button"
         ix-auto
+        ixTest="deregister"
         [ix-auto-identifier]="helptext.tcDeregisterBtn | uppercase"
         [name]="helptext.tcDeregisterBtn + '_button'"
         (click)="onDeregister()"
@@ -65,6 +66,7 @@
       class="mat-mdc-button mat-button mat-primary"
       ix-auto-type="button"
       ix-auto
+      ixTest="save"
       [ix-auto-identifier]="saveButtonText | uppercase"
       [name]="saveButtonText + '_button'"
       [disabled]="form.invalid"

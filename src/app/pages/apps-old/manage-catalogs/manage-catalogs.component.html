@@ -2,11 +2,11 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button (click)="onRefreshAll()">
+    <button mat-button ixTest="refresh-all" (click)="onRefreshAll()">
       {{ 'Refresh All' | translate }}
     </button>
 
-    <button mat-button (click)="doAdd()">
+    <button mat-button ixTest="add-catalog" (click)="doAdd()">
       {{ 'Add Catalog' | translate }}
     </button>
 

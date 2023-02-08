@@ -87,6 +87,7 @@
           mat-menu-item
           ix-auto
           ix-auto-type="option"
+          [ixTest]="[config.name, option.label]"
           [class]="option.sticky ? 'sticky-' + option.sticky : ''"
           [ix-auto-identifier]="option.label"
           [class.text-wrap]="config.enableTextWrapForOptions"

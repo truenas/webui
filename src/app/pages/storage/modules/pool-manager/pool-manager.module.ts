@@ -12,6 +12,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/disk-icon/disk-icon.component';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/disk-info/disk-info.component';
@@ -43,6 +44,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
     RouterModule.forChild(routes),
     TranslateModule,
     CommonModule,
+    TestIdModule,
   ],
   declarations: [
     PoolManagerComponent,

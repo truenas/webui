@@ -86,6 +86,7 @@
       class="toggle_pw"
       ix-auto
       ix-auto-type="button"
+      [ixTest]="[config.name, 'toggle-password']"
       [ix-auto-identifier]="config.name + '_toggle-pw'"
       (click)="togglePassword()"
     >

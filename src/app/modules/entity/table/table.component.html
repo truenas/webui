@@ -31,6 +31,7 @@
         class="action-icon"
         ix-auto
         ix-auto-type="button"
+        [ixTest]="['table', _tableConf.name, 'add']"
         [ix-auto-identifier]="_tableConf.name + '-add'"
         (click)="_tableConf.add()"
       >

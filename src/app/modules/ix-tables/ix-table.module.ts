@@ -25,6 +25,7 @@ import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail
 import { IxRowDefDirective } from 'app/modules/ix-tables/directives/ix-row-def.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-tables/directives/ix-table-empty.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
     MatTableModule,
     MatTooltipModule,
     TranslateModule,
+    TestIdModule,
   ],
   exports: [
     IxCellDefDirective,

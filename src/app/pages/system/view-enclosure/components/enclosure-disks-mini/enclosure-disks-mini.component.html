@@ -116,7 +116,7 @@
       <ng-container *ngIf="selectedDisk && currentView === 'details'" #details>
         <!-- DISK SELECTED -->
         <div #disksdetails class="header-container" id="details">
-          <button class="back-btn" mat-button (click)="clearDisk()">
+          <button class="back-btn" mat-button ixTest="close" (click)="clearDisk()">
             <mat-icon>close</mat-icon>
           </button>
           <h3 class="header">

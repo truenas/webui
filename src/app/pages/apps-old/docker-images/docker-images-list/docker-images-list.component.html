@@ -94,6 +94,7 @@
     <td *matCellDef="let image; dataSource: dataSource" mat-cell>
       <button
         mat-icon-button
+        [ixTest]="['image-actions', image.repo_tags.join(', ')]"
         [title]="'Settings' | translate"
         [matMenuTriggerFor]="actionsMenu"
       >
