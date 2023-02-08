@@ -1,4 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 
 describe('IxFormatterService', () => {
@@ -6,6 +7,14 @@ describe('IxFormatterService', () => {
 
   const createService = createServiceFactory({
     service: IxFormatterService,
+    providers: [
+      mockWindow({
+        open: jest.fn(),
+        location: {
+          protocol: 'https:',
+        },
+      }),
+    ],
   });
 
   beforeEach(() => {
@@ -44,6 +53,18 @@ describe('IxFormatterService', () => {
     converted value in bytes`, () => {
       const parsed = spectator.service.memorySizeParsing('2');
       expect(parsed).toBe(2097152);
+    });
+  });
+
+  describe('stringAsUrlFormatting', () => {
+    it('should return formatted string when raw string is passed', () => {
+      const formatted = spectator.service.stringAsUrlFormatting('10.20.20.10');
+      expect(formatted).toBe('https://10.20.20.10/');
+    });
+
+    it('should return preserved scheme when valid url is passed', () => {
+      const formatted = spectator.service.stringAsUrlFormatting('http://localhost:4200');
+      expect(formatted).toBe('http://localhost:4200/');
     });
   });
 });

@@ -1,8 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable()
 export class IxFormatterService {
   readonly iecUnits: readonly string[] = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+
+  constructor(@Inject(WINDOW) private window: Window) {}
 
   /**
    * Formats any memory size in bytes to human readable string, e.g., '2147483648' to '2 GiB'
@@ -192,5 +195,12 @@ export class IxFormatterService {
       return 1;
     }
     return (1024 ** (this.iecUnits.indexOf(unitStr)));
+  };
+
+  stringAsUrlFormatting = (value: string): string => {
+    const protocol = this.window?.location?.protocol || 'http:';
+    const intermediateValue = value.startsWith('http') ? value : `${protocol}//${value}`;
+
+    return new URL(intermediateValue).href;
   };
 }
