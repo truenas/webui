@@ -24,6 +24,7 @@ import helptext from 'app/helptext/topbar';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
+import { UpdateService } from 'app/services/update.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -86,6 +87,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: UntypedFormBuilder,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
+    private updateService: UpdateService,
     @Inject(WINDOW) private window: Window,
   ) {
     const haStatus = this.window.sessionStorage.getItem('ha_status');
@@ -97,6 +99,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       untilDestroyed(this),
     ).subscribe((productType: ProductType) => {
       this.productType = productType;
+      this.updateService.hardRefreshIfNeeded();
       this.isLogoReady = true;
       if ([ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType)) {
         if (this.haInterval) {
