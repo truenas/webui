@@ -416,9 +416,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
               validation: [Validators.required],
             },
           ],
+          addInitialList: true,
           listFields: [],
           isHidden: true,
           disabled: true,
+          required: true,
         },
 
       ],
@@ -711,7 +713,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               if (name === 'disk' || name === 'usefor' || name === 'portal' || name === 'target') {
                 const field = _.find(this.wizardConfig[step].fieldConfig, { name }) as FormSelectConfig;
                 if (field) {
-                  this.summaryObj[name] = _.find(field.options, { value }).label;
+                  this.summaryObj[name] = _.find(field.options, { value })?.label;
                 }
               }
             }
