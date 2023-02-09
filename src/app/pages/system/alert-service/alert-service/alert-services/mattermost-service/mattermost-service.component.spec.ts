@@ -43,8 +43,8 @@ describe('MattermostServiceComponent', () => {
   it('returns alert service form values when getSubmitAttributes is called', async () => {
     await form.fillForm({
       Channel: 'random',
-      'Icon URL': 'http://truenas.com/icon.png',
-      'Webhook URL': 'http://truenas.com/webhook',
+      'Icon URL': 'truenas.com/icon.png',
+      'Webhook URL': 'truenas.com/webhook',
       Username: 'eve',
     });
 
