@@ -13,11 +13,17 @@
   ></ix-input>
 
   <ix-form-actions>
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="clone"
+      [disabled]="form.invalid"
+    >
       {{ 'Clone' | translate }}
     </button>
 
-    <button mat-button type="button" matDialogClose>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
   </ix-form-actions>
@@ -36,7 +42,7 @@
       {{ 'Go to Datasets' | translate }}
     </a>
 
-    <button mat-button type="button" matDialogClose>
+    <button mat-button type="button" ixTest="close" matDialogClose>
       {{ 'Close' | translate }}
     </button>
   </ix-form-actions>

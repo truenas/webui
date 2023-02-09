@@ -28,7 +28,7 @@
 
     <!-- ENCLOSURE RENAME -->
     <div class="enclosure-label-actions">
-      <button mat-button color="default" (click)="labelForm()">
+      <button mat-button color="default" ixTest="edit-label" (click)="labelForm()">
         {{ 'EDIT LABEL' | translate }}
       </button>
     </div>
@@ -198,15 +198,15 @@
           *ngIf="chassis && (chassis.rear || chassis.internal) && currentView !== 'expanders'"
           class="caption dom-overlay front-rear-toggle"
         >
-          <button mat-button (click)="enclosureOverride(EnclosureLocation.Front)">
+          <button mat-button ixTest="front" (click)="enclosureOverride(EnclosureLocation.Front)">
             {{ 'FRONT' | translate }}
           </button>
 
-          <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride(EnclosureLocation.Rear)">
+          <button *ngIf="chassis.rear" mat-button ixTest="rear" (click)="enclosureOverride(EnclosureLocation.Rear)">
             {{ 'REAR' | translate }}
           </button>
 
-          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">
+          <button *ngIf="chassis.internal" mat-button ixTest="internal" (click)="enclosureOverride('rear')">
             {{ 'Internal' | translate }}
           </button>
         </div>
@@ -294,6 +294,7 @@
             <button
               mat-button
               color="default"
+              ixTest="show-pools"
               (click)="setCurrentView('pools')"
             >
               {{ 'SHOW POOLS' | translate }}
@@ -333,6 +334,7 @@
             <button
               mat-button
               color="default"
+              ixTest="show-status"
               (click)="setCurrentView('status')"
             >
               {{ 'SHOW STATUS' | translate }}
@@ -353,6 +355,7 @@
             <button
               mat-button
               color="default"
+              ixTest="show-expander-status"
               (click)="setCurrentView('expanders')"
             >
               {{ 'SHOW EXPANDER STATUS' | translate }}
@@ -389,6 +392,7 @@
                 id="identify-btn"
                 mat-button
                 color="primary"
+                ixTest="identify-drive"
                 (click)="toggleSlotStatus()"
               >
                 {{ 'Identify Drive' | translate }}

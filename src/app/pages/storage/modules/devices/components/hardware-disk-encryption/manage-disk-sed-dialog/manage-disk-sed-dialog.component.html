@@ -12,6 +12,7 @@
       mat-button
       type="submit"
       color="primary"
+      ixTest="save"
       [disabled]="passwordControl.invalid"
     >
       {{ 'Save' | translate }}
@@ -20,11 +21,12 @@
       *ngIf="disk?.passwd"
       mat-button
       type="button"
+      ixTest="clear-sed-password"
       (click)="onClearPassword()"
     >
       {{ 'Clear SED Password' | translate }}
     </button>
-    <button mat-button type="button" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
   </ix-form-actions>

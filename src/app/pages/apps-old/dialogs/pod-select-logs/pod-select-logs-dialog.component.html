@@ -38,11 +38,18 @@
       mat-button
       type="submit"
       color="primary"
+      ixTest="choose"
       [disabled]="form.invalid"
     >
       {{ 'Choose' | translate }}
     </button>
-    <button mat-button type="button" color="secondary" (click)="dialogRef.close()">
+    <button
+      mat-button
+      type="button"
+      color="secondary"
+      ixTest="cancel"
+      (click)="dialogRef.close()"
+    >
       {{ 'Cancel' | translate }}
     </button>
   </div>

@@ -59,7 +59,12 @@
           ></ix-acl-editor-list>
 
           <div class="add-item">
-            <button mat-button class="action" (click)="onAddItemPressed()">
+            <button
+              mat-button
+              class="action"
+              ixTest="add-acl-item"
+              (click)="onAddItemPressed()"
+            >
               <mat-icon>add</mat-icon>
               {{ 'Add Item' | translate }}
             </button>
@@ -88,6 +93,7 @@
                   mat-button
                   color="primary"
                   class="action"
+                  ixTest="save-acl"
                   [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
                   (click)="onSavePressed()"
                 >
@@ -109,6 +115,7 @@
                     mat-button
                     color="warn"
                     class="action"
+                    ixTest="strip-acl"
                     (click)="onStripAclPressed()"
                   >
                     {{ 'Strip ACL' | translate }}
@@ -121,6 +128,7 @@
                 <button
                   mat-button
                   class="action"
+                  ixTest="use-preset"
                   (click)="onUsePresetPressed()"
                 >
                   {{ 'Use Preset' | translate }}
@@ -128,6 +136,7 @@
                 <button
                   mat-button
                   class="action"
+                  ixTest="save-as-preset"
                   (click)="onSavePreset()"
                 >
                   {{ 'Save As Preset' | translate }}

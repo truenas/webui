@@ -15,6 +15,7 @@ export const localizationFormSubmitted = createAction('[Preferences] Localizatio
   dateFormat: string;
   timeFormat: string;
 }>());
+export const lifetimeTokenUpdated = createAction('[Preferences] Lifetime Token Updated', props<{ lifetime: number }>());
 
 export const autoRefreshReportsToggled = createAction('[Preferences] Auto Refresh Reports Toggled');
 export const builtinUsersToggled = createAction('[Preferences] Builtin Users Toggled');

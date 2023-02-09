@@ -21,6 +21,7 @@
     *ngIf="!conf.hideCancel"
     mat-button
     class="mat-mdc-button mat-button mat-accent"
+    ixTest="cancel"
     (click)="dialogRef.close(false)"
   >
     {{ conf.cancelBtnMsg || 'Cancel' | translate }}
@@ -28,6 +29,7 @@
   <button
     mat-button
     class="mat-mdc-button mat-button mat-primary"
+    ixTest="close"
     (click)="dialogRef.close(true)"
   >
     {{ conf.confirmBtnMsg || 'Close' | translate }}

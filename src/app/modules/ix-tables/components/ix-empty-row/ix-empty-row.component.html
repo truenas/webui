@@ -37,6 +37,7 @@
         *ngIf="conf.button && !conf.compact"
         class="empty-action"
         mat-button
+        [ixTest]="[conf.button.label]"
         (click)="doAction()"
       >
         {{ conf.button.label | translate }}

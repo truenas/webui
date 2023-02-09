@@ -2,6 +2,7 @@ import {
   Directive, ElementRef, HostBinding, Input,
 } from '@angular/core';
 import { snakeCase } from 'lodash';
+import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 
 /**
  * Adds test attribute to the element for the benefit of Release Engineering.
@@ -55,15 +56,17 @@ export class TestDirective {
       case 'mat-select':
       case 'mat-radio-group':
       case 'mat-radio-button':
+      case 'mat-icon':
         return tagName.replace('mat-', '');
       case 'input':
       case 'button':
       case 'select':
       case 'textarea':
         return tagName;
+      case 'a':
+        return 'link';
       default:
-        console.error('Unsupported element type in [ixTest]', tagName);
-        return '';
+        assertUnreachable(tagName as never);
     }
   }
 }

@@ -16,6 +16,7 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 import { TreeNodePaddingDirective } from 'app/modules/ix-tree/directives/tree-node-padding-def.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/direct
     MatTreeModule,
     ScrollingModule,
     TranslateModule,
+    TestIdModule,
   ],
   declarations: [
     NestedTreeNodeComponent,

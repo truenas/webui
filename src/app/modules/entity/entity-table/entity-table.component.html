@@ -55,6 +55,7 @@
             <ng-container>
               <button
                 mat-button
+                ixTest="delete-selected"
                 (click)="doMultiDelete(this.selection.selected)"
               >
                 <mat-icon>delete</mat-icon>
@@ -70,6 +71,7 @@
               <button
                 mat-button
                 matTooltipPosition="below"
+                ixTest="delete-selected"
                 [matTooltip]="'Delete selections' | translate"
                 (click)="doMultiDelete(this.selection.selected)"
               >

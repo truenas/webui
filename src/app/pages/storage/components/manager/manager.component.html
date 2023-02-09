@@ -93,6 +93,7 @@
                 id="pool-manager__reset-layout-button"
                 mat-button
                 class="btn btn-accent mat-accent"
+                ixTest="reset-layout"
                 [disabled]="!dirty"
                 (click)="resetLayout()"
               >
@@ -105,6 +106,7 @@
                 id="pool-manager__suggest-layout-button"
                 mat-button
                 class="btn btn-accent mat-accent"
+                ixTest="suggest-layout"
                 [disabled]="dirty"
                 (click)="suggestLayout()"
               >
@@ -127,6 +129,7 @@
                 ix-auto
                 ix-auto-type="button"
                 ix-auto-identifier="add_vdev_type"
+                ixTest="add-vdev"
                 [disabled]="disks.length === 0"
                 [matMenuTriggerFor]="menu"
               >
@@ -139,6 +142,7 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-data-button"
+                ixTest="add-data-vdev"
                 [disabled]="!canAddData()"
                 (click)="addVdev('data')"
               >
@@ -164,6 +168,7 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-cache-button"
+                ixTest="add-cache-vdev"
                 [disabled]="vdevs.cache.length > 0"
                 (click)="addVdev('cache')"
               >
@@ -187,6 +192,7 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-log-button"
+                ixTest="add-log-vdev"
                 [disabled]="vdevs.log.length > 0"
                 (click)="addVdev('log')"
               >
@@ -210,6 +216,7 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-spare-button"
+                ixTest="add-spares-vdev"
                 [disabled]="vdevs.spares.length > 0"
                 (click)="addVdev('spares')"
               >
@@ -230,6 +237,7 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-special-button"
+                ixTest="add-special-vdev"
                 [disabled]="vdevs.special.length > 0"
                 (click)="addVdev('special')"
               >
@@ -250,6 +258,7 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-dedup-button"
+                ixTest="add-dedup-vdev"
                 [disabled]="vdevs.dedup.length > 0"
                 (click)="addVdev('dedup')"
               >
@@ -292,6 +301,7 @@
                     id="pool-manager__reset-layout-button"
                     mat-button
                     class="btn btn-accent mat-accent"
+                    ixTest="reset-layout"
                     [disabled]="!dirty"
                     (click)="resetLayout()"
                   >
@@ -321,6 +331,7 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-data-button"
+                  ixTest="add-data-vdev"
                   [disabled]="!canAddData()"
                   (click)="addVdev('data')"
                 >
@@ -346,6 +357,7 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-cache-button"
+                  ixTest="add-cache-vdev"
                   [disabled]="vdevs.cache.length > 0"
                   (click)="addVdev('cache')"
                 >
@@ -369,6 +381,7 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-log-button"
+                  ixTest="add-log-vdev"
                   [disabled]="vdevs.log.length > 0"
                   (click)="addVdev('log')"
                 >
@@ -392,6 +405,7 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-spare-button"
+                  ixTest="add-spares-vdev"
                   [disabled]="vdevs.spares.length > 0"
                   (click)="addVdev('spares')"
                 >
@@ -412,6 +426,7 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-special-button"
+                  ixTest="add-special-vdev"
                   [disabled]="vdevs.special.length > 0"
                   (click)="addVdev('special')"
                 >
@@ -432,6 +447,7 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-dedup-button"
+                  ixTest="add-dedup-vdev"
                   [disabled]="vdevs.dedup.length > 0"
                   (click)="addVdev('dedup')"
                 >
@@ -661,6 +677,7 @@
                   id="pool-manager__create-data-vdevs-button"
                   mat-button
                   class="btn btn-accent mat-accent"
+                  ixTest="repeat-first-vdev"
                   [disabled]="!canDuplicate"
                   (click)="showRepeatDialog()"
                 >
@@ -669,7 +686,7 @@
               </div>
             </div>
             <ix-vdev
-              *ngFor="let vdev of shownDataVdevs; let i = index; trackBy: vdevsTracker"
+              *ngFor="let vdev of shownDataVdevs; let i = index"
               class="vdev"
               [group]="'data'"
               [manager]="this"
@@ -794,6 +811,7 @@
           name="create-button"
           class="btn btn-primary"
           color="primary"
+          ixTest="create"
           [disabled]="!canSave()"
           (click)="checkSubmit()"
         >
@@ -805,6 +823,7 @@
           class="btn btn-block btn-lg btn-primary"
           type="button"
           color="accent"
+          ixTest="cancel"
           (click)="goBack()"
         >
           {{ 'Cancel' | translate }}

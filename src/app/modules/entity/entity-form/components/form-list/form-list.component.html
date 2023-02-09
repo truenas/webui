@@ -25,6 +25,7 @@
       type="button"
       ix-auto
       ix-auto-type="button"
+      [ixTest]="[config.name, 'add']"
       [ix-auto-identifier]="'add-box_' + config.name"
       (click)="add()"
     >

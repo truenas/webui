@@ -18,11 +18,17 @@
   ></ix-explorer>
 
   <ix-form-actions>
-    <button mat-button type="button" matDialogClose>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
 
-    <button mat-button color="primary" type="submit" [disabled]="form.invalid">
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      ixTest="restore"
+      [disabled]="form.invalid"
+    >
       {{ 'Restore' | translate }}
     </button>
   </ix-form-actions>

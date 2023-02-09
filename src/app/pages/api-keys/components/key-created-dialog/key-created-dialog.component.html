@@ -15,9 +15,9 @@
 </mat-dialog-content>
 
 <ix-form-actions matDialogActions>
-  <button mat-button matDialogClose>{{ 'Close' | translate }}</button>
+  <button mat-button ixTest="close" matDialogClose>{{ 'Close' | translate }}</button>
 
-  <button mat-button color="primary" (click)="onCopyPressed()">
+  <button mat-button color="primary" ixTest="copy-to-clipboard" (click)="onCopyPressed()">
     {{ 'Copy to Clipboard' | translate }}
   </button>
 </ix-form-actions>

@@ -8,7 +8,11 @@
         {{ 'Zvol Space Management' | translate }}
       </ng-container>
     </h3>
-    <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+    <button
+      mat-button
+      ixTest="edit-quotas"
+      (click)="editDataset()"
+    >{{ 'Edit' | translate }}</button>
   </mat-card-header>
   <mat-card-content>
     <ix-space-management-chart [dataset]="dataset"></ix-space-management-chart>

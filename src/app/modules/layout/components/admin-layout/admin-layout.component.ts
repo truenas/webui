@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -26,6 +27,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -38,7 +40,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })
-export class AdminLayoutComponent implements OnInit, AfterViewInit {
+export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
@@ -74,6 +76,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
     private languageService: LanguageService,
+    private tokenLifetimeService: TokenLifetimeService,
     @Inject(WINDOW) private window: Window,
   ) {
     // Close sidenav after route change in mobile
@@ -137,6 +140,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     });
 
     this.store$.dispatch(adminUiInitialized());
+
+    this.tokenLifetimeService.start();
+  }
+
+  ngOnDestroy(): void {
+    this.tokenLifetimeService.stop();
   }
 
   ngAfterViewInit(): void {

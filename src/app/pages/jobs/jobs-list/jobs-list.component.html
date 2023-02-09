@@ -121,6 +121,7 @@
               *ngIf="job.state === JobState.Running && job.abortable"
               mat-icon-button
               type="button"
+              [ixTest]="['abort-job', job.description]"
               [matTooltip]="'Abort' | translate"
               (click)="onAborted(job)"
             ><ix-icon name="mdi-close-circle"></ix-icon></button>
@@ -201,6 +202,7 @@
             *ngIf="job.logs_path && job.logs_excerpt"
             mat-button
             type="button"
+            [ixTest]="['download-logs', job.description]"
             (click)="$event.stopPropagation(); downloadLogs(job)"
           >{{ 'Download Logs' | translate }}</button>
         </td>

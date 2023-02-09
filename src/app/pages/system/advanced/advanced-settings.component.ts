@@ -33,6 +33,7 @@ import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdow
 import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { StorageSettingsComponent } from 'app/pages/system/advanced/storage-settings/storage-settings.component';
+import { TokenSettingsComponent } from 'app/pages/system/advanced/token-settings/token-settings.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
@@ -44,6 +45,8 @@ import {
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
@@ -84,6 +87,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   systemDatasetPool: string;
   isFirstTime = true;
   sedPassword = '';
+  lifetimeToken = '';
 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
@@ -210,7 +214,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   };
 
   sessionsTableConf: AppTableConfig = {
-    title: helptextSystemAdvanced.fieldset_sessions,
+    title: helptextSystemAdvanced.fieldset_sessions_table,
     queryCall: 'auth.sessions',
     queryCallOption: [[['internal', '=', false]]],
     parent: this,
@@ -250,7 +254,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         },
       ];
     },
-    tableActions: [
+    tableFooterActions: [
       {
         label: this.translate.instant('Terminate Other Sessions'),
         onClick: () => {
@@ -285,6 +289,12 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.getDatasetData();
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe(() => {
+      this.getDatasetData();
+    });
+
+    this.store$.select(selectPreferences).pipe(filter(Boolean), untilDestroyed(this)).subscribe((preferences) => {
+      this.lifetimeToken = preferences.lifetime
+        ? preferences.lifetime.toString() : defaultPreferences.lifetime.toString();
       this.getDatasetData();
     });
 
@@ -445,6 +455,12 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
           id: AdvancedCardId.Sessions,
           title: helptextSystemAdvanced.fieldset_sessions,
           tableConf: this.sessionsTableConf,
+          items: [
+            {
+              label: this.translate.instant('Token Lifetime'),
+              value: this.lifetimeToken,
+            },
+          ],
         },
       ];
 
@@ -508,6 +524,9 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         break;
       case AdvancedCardId.Replication:
         this.slideInService.open(ReplicationSettingsComponent);
+        break;
+      case AdvancedCardId.Sessions:
+        this.slideInService.open(TokenSettingsComponent);
         break;
       case AdvancedCardId.Syslog:
         this.slideInService.open(SyslogFormComponent);

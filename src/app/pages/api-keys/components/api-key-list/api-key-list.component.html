@@ -72,6 +72,7 @@
     <tr
       *matRowDef="let apiKey; columns: displayedColumns; dataSource: dataSource"
       mat-row
+      [ixTest]="apiKey.name"
     ></tr>
   </table>
 
