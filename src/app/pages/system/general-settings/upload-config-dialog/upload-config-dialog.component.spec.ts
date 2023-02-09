@@ -4,13 +4,15 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockProvider } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { UploadConfigDialogComponent } from './upload-config-dialog.component';
 
@@ -35,12 +37,16 @@ describe('UploadConfigDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(Router),
       mockProvider(DialogService),
+      MockProvider(AppLoaderService),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockProvider(WebSocketService, {
         token: 'token',
       }),
+      mockWebsocket([
+        mockCall('auth.generate_token', 'AUTH_TOKEN'),
+      ]),
     ],
   });
 
@@ -65,7 +71,8 @@ describe('UploadConfigDialogComponent', () => {
       params: [],
     }));
     formData.append('file', file);
-    expect(mockEntityJobComponentRef.componentInstance.wspost).toHaveBeenCalledWith('/_upload?auth_token=token', formData);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.generate_token');
+    expect(mockEntityJobComponentRef.componentInstance.wspost).toHaveBeenCalledWith('/_upload?auth_token=AUTH_TOKEN', formData);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot']);
   });
 });

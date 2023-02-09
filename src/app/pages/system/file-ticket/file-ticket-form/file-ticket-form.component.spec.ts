@@ -69,6 +69,8 @@ describe('FileTicketFormComponent', () => {
                 API: '11008',
                 WebUI: '10004',
               });
+            case 'auth.generate_token':
+              return of('AUTH_TOKEN');
           }
         }),
       }),

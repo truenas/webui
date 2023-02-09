@@ -61,6 +61,7 @@ describe('FileTicketLicensedFormComponent', () => {
         }),
         mockJob('support.new_ticket', fakeSuccessfulJob(mockNewTicketResponse as NewTicketResponse)),
         mockJob('support.attach_ticket', fakeSuccessfulJob()),
+        mockCall('auth.generate_token', 'AUTH_TOKEN'),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),

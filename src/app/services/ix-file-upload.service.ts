@@ -23,10 +23,6 @@ export class IxFileUploadService {
   private fileUploadProgress$ = new Subject<HttpProgressEvent>();
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
-  get defaultUploadEndpoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
-  }
-
   constructor(
     protected http: HttpClient,
     private translate: TranslateService,
@@ -37,7 +33,7 @@ export class IxFileUploadService {
     file: File,
     method: ApiMethod,
     params: unknown[] = [],
-    apiEndPoint = this.defaultUploadEndpoint,
+    apiEndPoint: string,
   ): void {
     const formData: FormData = new FormData();
     formData.append('data', JSON.stringify({
