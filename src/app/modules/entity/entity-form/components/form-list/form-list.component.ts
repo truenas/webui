@@ -39,6 +39,10 @@ export class FormListComponent implements Field, OnInit {
   }
 
   delete(id: number): void {
+    if (this.config.required && this.listsFromArray.length === 1) {
+      return;
+    }
+
     this.listsFromArray.removeAt(id);
     this.config.listFields.splice(id, 1);
   }
