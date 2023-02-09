@@ -190,7 +190,7 @@
   overflow: auto;
 }
 
-.slide .mat-list-item.clickable {
+.slide .mat-mdc-list-item.clickable {
   cursor: pointer;
 }
 
@@ -199,7 +199,7 @@
   right: 0;
 }
 
-.mat-list-base .mat-list-item {
+.mat-mdc-list-base .mat-mdc-list-item {
   border-bottom: solid 1px var(--lines);
 
   strong {
