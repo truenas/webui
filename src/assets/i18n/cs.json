@@ -1251,7 +1251,6 @@
   "Error detected reading App": "",
   "Error exporting the Private Key": "",
   "Error exporting the certificate": "",
-  "Error generating token, please try again.": "",
   "Error getting chart data": "",
   "Error importing pool": "",
   "Error starting service OpenVPN {serviceLabel}": "",

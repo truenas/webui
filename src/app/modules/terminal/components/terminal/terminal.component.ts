@@ -109,11 +109,9 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initShell(): void {
-    this.authService.generateTokenWithDefaultLifetime().pipe(untilDestroyed(this)).subscribe((token) => {
-      this.initializeWebShell(token);
-      this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
-      this.initializeTerminal();
-    });
+    this.initializeWebShell(this.authService.token2);
+    this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
+    this.initializeTerminal();
   }
 
   ngAfterViewInit(): void {

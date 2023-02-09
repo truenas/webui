@@ -111,7 +111,6 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
-    switchMap(() => this.authenticateWithTokenWs2()),
     tapResponse(
       () => {
         if (this.statusSubscription && !this.statusSubscription.closed) {
@@ -175,18 +174,6 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.handleSuccessfulLogin();
       }),
     );
-  }
-
-  private authenticateWithTokenWs2(): Observable<unknown> {
-    return this.authService.generateTokenWithDefaultLifetime()
-      .pipe(
-        tap((token: string) => {
-          if (!token) {
-            throw new Error(this.translate.instant('Error generating token, please try again.'));
-          }
-          this.authService.token2 = token;
-        }),
-      );
   }
 
   getRedirectUrl(): string {

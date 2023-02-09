@@ -91,7 +91,6 @@
   "Enter a threshold temperature in Celsius. S.M.A.R.T. will message with a log level of LOG_INFO if the temperature is higher than the threshold.": "",
   "Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field's value and the length of the parent path field value. The length of 'Parent Path' and 'Name' added together cannot exceed 200 characters. Which is why, length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can't create a dataset that's at the 51st level in the directory heirarchy after you account for the nested levels in the parent path.": "",
   "Enter vm name to continue.": "",
-  "Error generating token, please try again.": "",
   "Existing presets": "",
   "Export All Keys": "",
   "Exported": "",

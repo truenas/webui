@@ -66,8 +66,6 @@ describe('SigninStore', () => {
       writable: true,
     });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(true));
-    jest.spyOn(authService, 'generateToken').mockReturnValue(of('AUTH_TOKEN'));
-    jest.spyOn(authService, 'generateTokenWithDefaultLifetime').mockReturnValue(of('AUTH_TOKEN'));
   });
 
   describe('selectors', () => {
@@ -103,10 +101,8 @@ describe('SigninStore', () => {
   });
 
   describe('handleSuccessfulLogin', () => {
-    it('generates auth token and redirects user inside', () => {
+    it('redirects user inside', () => {
       spectator.service.handleSuccessfulLogin();
-      expect(authService.generateTokenWithDefaultLifetime).toHaveBeenCalledWith();
-      expect(authService.token2).toBe('AUTH_TOKEN');
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
   });

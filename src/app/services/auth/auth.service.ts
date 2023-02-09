@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
 import {
-  BehaviorSubject, filter, map, Observable, switchMap, take, tap,
+  BehaviorSubject, filter, map, Observable, Subscription, switchMap, take, tap, timer,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
@@ -21,6 +21,8 @@ export class AuthService {
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
+  private generateTokenSubscription: Subscription;
+
   get isAuthenticated$(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
   }
@@ -35,6 +37,7 @@ export class AuthService {
     this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isLoggedIn) => {
       if (isLoggedIn) {
         this.getLoggedInUserInformation();
+        this.setupPeriodicTokenGeneration();
       }
     });
   }
@@ -65,6 +68,17 @@ export class AuthService {
     }));
   }
 
+  setupPeriodicTokenGeneration(): void {
+    if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
+      this.generateTokenSubscription.unsubscribe();
+      this.generateTokenSubscription = timer(0, 290 * 1000).pipe(
+        switchMap(() => this.generateToken()),
+        tap((token) => this.token2 = token),
+        untilDestroyed(this),
+      ).subscribe();
+    }
+  }
+
   getFilteredWebsocketResponse<T>(uuid: string): Observable<T> {
     return this.wsManager.websocket$.pipe(
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
@@ -73,24 +87,7 @@ export class AuthService {
     );
   }
 
-  generateToken(tokenLifetime: number): Observable<string> {
-    const uuid = UUID.UUID();
-    const payload: {
-      id: string;
-      msg: IncomingApiMessageType;
-      method: string;
-      params?: [number];
-    } = {
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.generate_token',
-      params: [tokenLifetime],
-    };
-    this.wsManager.send(payload);
-    return this.getFilteredWebsocketResponse<string>(uuid);
-  }
-
-  generateTokenWithDefaultLifetime(): Observable<string> {
+  private generateToken(): Observable<string> {
     const uuid = UUID.UUID();
     const payload = {
       id: uuid,

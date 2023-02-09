@@ -1464,7 +1464,6 @@
   "Error exporting the Private Key": "导出私钥时出错",
   "Error exporting the certificate": "导出证书时出错",
   "Error exporting/disconnecting pool.": "导出/断开池时出错。",
-  "Error generating token, please try again.": "令牌生成失败，请重试。",
   "Error getting chart data": "获取图表数据时出错",
   "Error importing pool": "导入存储池时发生错误",
   "Error restarting web service": "重启网络服务时出错",

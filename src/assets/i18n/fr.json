@@ -1845,7 +1845,6 @@
   "Error exporting the Private Key": "Erreur lors de l'exportation de la clé privée",
   "Error exporting the certificate": "Erreur lors de l'exportation du certificat",
   "Error exporting/disconnecting pool.": "Erreur lors de l'exportation/déconnexion du volume.",
-  "Error generating token, please try again.": "Erreur de génération du jeton, veuillez réessayer.",
   "Error getting chart data": "Erreur lors de l'obtention des données du graphique",
   "Error importing pool": "Erreur lors de l'importation du volume",
   "Error restarting web service": "Erreur de redémarrage du service Web",

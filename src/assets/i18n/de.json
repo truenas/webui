@@ -877,7 +877,6 @@
   "Error creating CA.": "",
   "Error deleting dataset {datasetName}.": "",
   "Error detected reading App": "",
-  "Error generating token, please try again.": "",
   "Error getting chart data": "",
   "Error importing pool": "",
   "Error starting service OpenVPN {serviceLabel}": "",
