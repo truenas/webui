@@ -70,7 +70,6 @@ export class AuthService {
 
   setupPeriodicTokenGeneration(): void {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
-      this.generateTokenSubscription.unsubscribe();
       this.generateTokenSubscription = timer(0, 290 * 1000).pipe(
         switchMap(() => this.generateToken()),
         tap((token) => this.token2 = token),
