@@ -3,6 +3,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable()
 export class IxFormatterService {
+  readonly protocol = this.window?.location?.protocol || 'http:';
   readonly iecUnits: readonly string[] = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(@Inject(WINDOW) private window: Window) {}
@@ -198,9 +199,14 @@ export class IxFormatterService {
   };
 
   stringAsUrlFormatting = (value: string): string => {
-    const protocol = this.window?.location?.protocol || 'http:';
-    const intermediateValue = value.startsWith('http') ? value : `${protocol}//${value}`;
+    return value.startsWith('http') ? value : `${this.protocol}//${value}`;
+  };
 
-    return new URL(intermediateValue).href;
+  stringAsUrlParsing = (value: string): string => {
+    if (value.startsWith('http')) {
+      return value;
+    }
+
+    return this.stringAsUrlFormatting(value);
   };
 }

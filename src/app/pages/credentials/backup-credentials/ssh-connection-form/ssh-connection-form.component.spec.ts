@@ -161,7 +161,7 @@ describe('SshConnectionFormComponent', () => {
       Name: 'Update',
       'Setup Method': 'Semi-automatic (TrueNAS only)',
 
-      'TrueNAS URL': 'https://truenas.com',
+      'TrueNAS URL': '10.11.12.13',
       Username: 'john',
       'Admin Username': 'admin',
       'Admin Password': '12345678',
@@ -189,7 +189,7 @@ describe('SshConnectionFormComponent', () => {
         connect_timeout: 10,
         password: '12345678',
         otp_token: '1234',
-        url: 'https://truenas.com',
+        url: 'http://10.11.12.13',
         username: 'john',
         admin_username: 'admin',
         sudo: true,
@@ -224,7 +224,7 @@ describe('SshConnectionFormComponent', () => {
   it('allows new primary key to be generated when creating a new connection', async () => {
     await form.fillForm({
       Name: 'Test',
-      'TrueNAS URL': 'https://truenas.com',
+      'TrueNAS URL': 'truenas.com',
       'Admin Password': '123456',
       'Private Key': 'Generate New',
     });
@@ -244,7 +244,7 @@ describe('SshConnectionFormComponent', () => {
         connect_timeout: 10,
         otp_token: '',
         password: '123456',
-        url: 'https://truenas.com',
+        url: 'http://truenas.com',
         username: 'root',
         admin_username: 'root',
         sudo: false,

@@ -9,7 +9,6 @@ describe('IxFormatterService', () => {
     service: IxFormatterService,
     providers: [
       mockWindow({
-        open: jest.fn(),
         location: {
           protocol: 'https:',
         },
@@ -59,12 +58,24 @@ describe('IxFormatterService', () => {
   describe('stringAsUrlFormatting', () => {
     it('should return formatted string when raw string is passed', () => {
       const formatted = spectator.service.stringAsUrlFormatting('10.20.20.10');
-      expect(formatted).toBe('https://10.20.20.10/');
+      expect(formatted).toBe('https://10.20.20.10');
     });
 
-    it('should return preserved scheme when valid url is passed', () => {
+    it('should return raw value when valid url is passed', () => {
       const formatted = spectator.service.stringAsUrlFormatting('http://localhost:4200');
-      expect(formatted).toBe('http://localhost:4200/');
+      expect(formatted).toBe('http://localhost:4200');
+    });
+  });
+
+  describe('stringAsUrlParsing', () => {
+    it('should append protocol scheme when raw IP address is passed', () => {
+      const parsed = spectator.service.stringAsUrlParsing('10.20.20.10');
+      expect(parsed).toBe('https://10.20.20.10');
+    });
+
+    it('should return raw value when valid url is passed', () => {
+      const parsed = spectator.service.stringAsUrlParsing('http://localhost:4200');
+      expect(parsed).toBe('http://localhost:4200');
     });
   });
 });
