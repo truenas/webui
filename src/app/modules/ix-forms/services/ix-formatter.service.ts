@@ -198,15 +198,11 @@ export class IxFormatterService {
     return (1024 ** (this.iecUnits.indexOf(unitStr)));
   };
 
-  stringAsUrlFormatting = (value: string): string => {
-    return value.startsWith('http') ? value : `${this.protocol}//${value}`;
-  };
-
   stringAsUrlParsing = (value: string): string => {
     if (value.startsWith('http')) {
       return value;
     }
 
-    return this.stringAsUrlFormatting(value);
+    return `${this.protocol}//${value}`;
   };
 }

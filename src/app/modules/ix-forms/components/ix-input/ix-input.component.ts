@@ -85,8 +85,9 @@ export class IxInputComponent implements ControlValueAccessor {
     const value = ixInput.value;
     this.value = value;
     this.formatted = value;
-    if (this.parse && !!value) {
+    if (value && this.parse) {
       this.value = this.parse(value);
+      this.formatted = this.value;
     }
     this.onChange(this.value);
   }
