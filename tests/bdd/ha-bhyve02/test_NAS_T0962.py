@@ -249,9 +249,9 @@ def after_click_dataset_on_the_left_sidebar(driver):
 def on_the_dataset_page_click_on_the_dozer_tree_and_click_add_dataset(driver):
     """on the Dataset page, click on the dozer tree and click Add Dataset."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
-    assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
-    driver.find_element_by_xpath('//ix-dataset-node[contains(.,"dozer")]/div').click()
-    assert wait_on_element(driver, 7, '//span[text()="dozer" and contains(@class,"own-name")]')
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_Tree_Name('dozer'))
+    driver.find_element_by_xpath(xpaths.dataset.pool_Tree('dozer')).click()
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_Selected('dozer'))
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
 

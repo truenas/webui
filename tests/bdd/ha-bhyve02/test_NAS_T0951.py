@@ -96,16 +96,16 @@ def the_user_edit_page_should_open(driver):
     assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
 
 
-@then('Add user to additional groups, like wheel and save change')
-def add_user_to_additional_groups_like_wheel_and_save_change(driver):
-    """Add user to additional groups, like wheel and save change."""
+@then('Add user to additional groups, like games and save change')
+def add_user_to_additional_groups_like_games_and_save_change(driver):
+    """Add user to additional groups, like games and save change."""
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
 
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
-    assert wait_on_element(driver, 7, xpaths.add_User.root_Group_Option, 'clickable')
-    driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).click()
-    driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
+    assert wait_on_element(driver, 7, xpaths.add_User.games_Group_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.games_Group_Option).click()
+    driver.find_element_by_xpath(xpaths.add_User.games_Group_Option).send_keys(Keys.TAB)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

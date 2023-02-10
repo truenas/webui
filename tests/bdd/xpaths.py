@@ -61,6 +61,7 @@ class add_User:
     root_Group_Option = '//mat-option[contains(.,"root")]'
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
     qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
+    games_Group_Option = '//mat-option[contains(.,"games")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     password_Disabled_Slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
     home_Mode_Owner_Write_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
@@ -279,6 +280,8 @@ class edit_Acl:
     builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
     recursive_Checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
     traverse_Checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
+    permission_Select = '//ix-select[@formcontrolname="basicPermission"]//mat-select'
+    permission_Read_Option = '//mat-option[contains(.,"Read")]'
 
     def combobox_Option(option):
         return f'//mat-option[contains(.,"{option}")]'
