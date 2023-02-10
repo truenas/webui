@@ -41,6 +41,7 @@ export class KubernetesSettingsComponent implements OnInit {
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
+    force: [false],
   });
 
   readonly tooltips = {

@@ -71,6 +71,11 @@
           [tooltip]="tooltips.cluster_dns_ip"
           [required]="true"
         ></ix-input>
+
+        <ix-checkbox
+          formControlName="force"
+          [label]="'Force' | translate"
+        ></ix-checkbox>
       </ix-fieldset>
 
       <div class="form-actions">

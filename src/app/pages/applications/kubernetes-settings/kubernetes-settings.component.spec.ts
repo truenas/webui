@@ -87,6 +87,7 @@ describe('KubernetesSettingsComponent', () => {
       'Cluster CIDR': '172.16.0.0/16',
       'Service CIDR': '172.17.0.0/16',
       'Cluster DNS IP': '172.17.0.1',
+      Force: false,
     });
   });
 
@@ -99,6 +100,7 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': false,
       'Enable GPU support': false,
       'Enable Integrated Loadbalancer': false,
+      Force: true,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -115,6 +117,7 @@ describe('KubernetesSettingsComponent', () => {
       cluster_cidr: '172.16.0.0/16',
       service_cidr: '172.17.0.0/16',
       cluster_dns_ip: '172.17.0.1',
+      force: true,
     }]);
     expect(spectator.inject(ApplicationsService).updateContainerConfig).toHaveBeenCalledWith(false);
   });
@@ -146,6 +149,7 @@ describe('KubernetesSettingsComponent', () => {
       cluster_dns_ip: '172.17.1.1',
       servicelb: true,
       validate_host_path: true,
+      force: false,
     }]);
   });
 
