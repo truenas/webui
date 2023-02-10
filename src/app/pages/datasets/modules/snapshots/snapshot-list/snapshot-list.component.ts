@@ -167,11 +167,11 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
         case 'dataset':
           return item.dataset;
         case 'used':
-          return item.properties ? item.properties.used.parsed.toString() : '';
+          return item.properties ? +item.properties.used.parsed : '';
         case 'created':
           return item.properties ? item.properties.creation.parsed.$date.toString() : '';
         case 'referenced':
-          return item.properties ? item.properties.referenced.parsed.toString() : '';
+          return item.properties ? +item.properties.referenced.parsed : '';
       }
     };
     setTimeout(() => {
