@@ -2,6 +2,7 @@
 
 import pytest
 import reusableSeleniumCode as rsc
+import time
 import xpaths
 from function import (
     wait_on_element,
@@ -39,7 +40,7 @@ def test_verify_host_sharing_permissions_on_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    # depends(request, ["Setup_HA"], scope='session')
+    depends(request, ["Setup_HA"], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -229,8 +230,10 @@ def create_a_file_with_root_in_mntdozersmb2_get_the_file_from_the_smbtest2_share
     results = run_cmd(f'smbclient //{nas_Hostname}/{share_name} -U ericbsd%testing1 -c "get testfile.txt testfile.txt"')
     assert results['result'], results['output']
 
+    print('past smbclient')
     results = post(nas_Hostname, '/filesystem/stat/', (admin_User, admin_Password), f'{share_Dataset_Data[share_name]}/testfile.txt')
     assert results.status_code == 200, results.text
+    time.sleep(5)
 
 
 @then('on the Dashboard, click Initiate Failover on the standby controller')
