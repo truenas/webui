@@ -109,10 +109,7 @@
       <ng-container
         *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable"
       >
-        {{
-          +snapshot.properties.referenced.parsed
-            | filesize: { standard: 'iec' }
-        }}
+        {{ +snapshot.properties.referenced.parsed | filesize: { standard: 'iec' } }}
       </ng-container>
     </td>
   </ng-container>
