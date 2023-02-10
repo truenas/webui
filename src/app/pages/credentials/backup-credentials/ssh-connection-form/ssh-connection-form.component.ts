@@ -143,11 +143,7 @@ export class SshConnectionFormComponent {
     public formatter: IxFormatterService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
-  ) {
-    this.form.controls.url.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      console.info('url value', value);
-    });
-  }
+  ) {}
 
   get isManualAuthFormValid(): boolean {
     return this.form.controls.host.valid
