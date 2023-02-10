@@ -77,7 +77,7 @@
       (toggle)="onToggle($event)"
     ></ix-expand-toggle-column>
 
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
     <tr
       *matRowDef="
         let user;
@@ -85,6 +85,7 @@
         dataSource: dataSource
       "
       mat-row
+      [ixTest]="user.username"
       [ixDetailRow]="user"
       [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
       [ixDetailRowTemplate]="expandedRowTemplate"

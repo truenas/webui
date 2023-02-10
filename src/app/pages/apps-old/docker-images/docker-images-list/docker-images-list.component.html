@@ -115,10 +115,11 @@
     </td>
   </ng-container>
 
-  <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
   <tr
-    *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"
+    *matRowDef="let image; columns: displayedColumns; dataSource: dataSource"
     mat-row
+    [ixTest]="image.repo_tags.join(', ')"
   ></tr>
 
 </table>
