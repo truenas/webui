@@ -96,6 +96,13 @@
           [parse]="formatter.memorySizeParsing"
         ></ix-input>
         <ix-input
+          formControlName="min_memory"
+          [label]="'Minimum Memory Size' | translate"
+          [tooltip]="helptext.min_memory_tooltip | translate"
+          [format]="formatter.memorySizeFormatting"
+          [parse]="formatter.memorySizeParsing"
+        ></ix-input>
+        <ix-input
           formControlName="nodeset"
           [label]="'Optional: NUMA nodeset (Example: 0-1)' | translate"
           [tooltip]="helptext.nodeset.tooltip | translate"

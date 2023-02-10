@@ -54,6 +54,7 @@ export class VmEditFormComponent {
       Validators.min(256 * mbs),
       this.translate.instant(helptext.memory_size_err),
     )],
+    min_memory: [null as number],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
     hide_from_msr: [false],
     ensure_display_device: [false],
@@ -92,6 +93,7 @@ export class VmEditFormComponent {
     this.form.patchValue({
       ...vm,
       memory: vm.memory * mbs,
+      min_memory: vm.min_memory ? vm.min_memory * mbs : null,
     });
 
     this.setupGpuControl(vm);
@@ -104,6 +106,9 @@ export class VmEditFormComponent {
     const vmPayload = {
       ...this.form.value,
       memory: Math.round(this.form.value.memory / mbs),
+      min_memory: this.form.value.min_memory
+        ? Math.round(this.form.value.min_memory / mbs)
+        : null,
     };
     delete vmPayload.gpus;
 

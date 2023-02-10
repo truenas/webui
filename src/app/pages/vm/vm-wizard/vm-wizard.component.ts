@@ -313,9 +313,38 @@ export class VmWizardComponent implements WizardConfiguration {
           value: '',
           required: true,
           blurStatus: true,
-          blurEvent: () => this.blurEventForMemory(),
-          parent: this,
+          blurEvent: () => this.blurEventForMemory('memory'),
           tooltip: helptext.memory_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'min_memory',
+          placeholder: this.translate.instant('Minimum Memory Size'),
+          inputType: 'text',
+          validation: [
+            (control: UntypedFormControl): ValidationErrors => {
+              const memoryConfig = this.wizardConfig.find((wizardConfig) => wizardConfig.label === helptext.vcpus_label)
+                .fieldConfig.find((fieldConfig) => fieldConfig.name === 'min_memory');
+              const isMemoryNan = Number.isNaN(this.storageService.convertHumanStringToNum(control.value as string));
+              const errors = control.value && isMemoryNan
+                ? { invalid_byte_string: true }
+                : null;
+
+              if (errors) {
+                memoryConfig.hasErrors = true;
+                memoryConfig.errors = globalHelptext.human_readable.input_error;
+              } else {
+                memoryConfig.hasErrors = false;
+                memoryConfig.errors = '';
+              }
+
+              return errors;
+            },
+          ],
+          value: '',
+          blurStatus: true,
+          blurEvent: () => this.blurEventForMemory('min_memory'),
+          tooltip: helptext.min_memory_tooltip,
         },
         {
           type: 'input',
@@ -684,6 +713,12 @@ export class VmWizardComponent implements WizardConfiguration {
           : this.storageService.humanReadable;
       });
 
+      this.getFormControlFromFieldName('min_memory').valueChanges.pipe(untilDestroyed(this)).subscribe((minMemory: string) => {
+        this.summary[this.translate.instant('Minimum Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(minMemory))
+          ? '0 MiB'
+          : this.storageService.humanReadable;
+      });
+
       this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
         this.summary[this.translate.instant('Disk Size')] = volsize;
       });
@@ -891,18 +926,18 @@ export class VmWizardComponent implements WizardConfiguration {
     };
   }
 
-  blurEventForMemory(): void {
-    const enteredVal = this.entityWizard.formGroup.value.formArray[1].memory as string;
+  blurEventForMemory(fieldName: string): void {
+    const enteredVal = this.entityWizard.formGroup.value.formArray[1][fieldName] as string;
     const vmMemoryRequested = this.storageService.convertHumanStringToNum(enteredVal);
     if (Number.isNaN(vmMemoryRequested)) {
       console.error(vmMemoryRequested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
-      this.entityWizard.formArray.get([1]).get('memory')
+      this.entityWizard.formArray.get([1]).get(fieldName)
         .setValue(this.storageService.convertBytesToHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
-      this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
-      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;
-      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['errors'] = '';
+      this.entityWizard.formArray.get([1]).get(fieldName).setValue(this.storageService.humanReadable);
+      _.find(this.wizardConfig[1].fieldConfig, { name: fieldName })['hasErrors'] = false;
+      _.find(this.wizardConfig[1].fieldConfig, { name: fieldName })['errors'] = '';
     }
   }
 
@@ -952,7 +987,6 @@ export class VmWizardComponent implements WizardConfiguration {
       vmPayload['cpu_model'] = (value.cpu_model === '' || value.cpu_mode !== VmCpuMode.Custom) ? null : value.cpu_model;
     }
 
-    vmPayload['memory'] = value.memory;
     vmPayload['name'] = value.name;
     vmPayload['description'] = value.description;
     vmPayload['time'] = value.time;
@@ -963,6 +997,9 @@ export class VmWizardComponent implements WizardConfiguration {
     vmPayload['nodeset'] = value.nodeset;
     vmPayload['pin_vcpus'] = value.pin_vcpus;
     vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
+    vmPayload['min_memory'] = value.min_memory
+      ? Math.ceil(this.storageService.convertHumanStringToNum(value.min_memory) / 1024 ** 2)
+      : null;
     vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;

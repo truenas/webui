@@ -41,6 +41,7 @@ describe('VmEditFormComponent', () => {
     cpu_mode: VmCpuMode.Custom,
     cpu_model: 'EPYC',
     memory: 257,
+    min_memory: 256,
     nodeset: '0-1',
     hide_from_msr: false,
     ensure_display_device: true,
@@ -151,6 +152,7 @@ describe('VmEditFormComponent', () => {
       'CPU Mode': 'Custom',
       'CPU Model': 'EPYC',
       'Memory Size': '257 MiB',
+      'Minimum Memory Size': '256 MiB',
       'Optional: NUMA nodeset (Example: 0-1)': '0-1',
 
       'Hide from MSR': false,
@@ -163,6 +165,8 @@ describe('VmEditFormComponent', () => {
     await form.fillForm({
       Name: 'Edited',
       Description: 'New description',
+      'Memory Size': '258 mb',
+      'Minimum Memory Size': '257 mb',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -179,7 +183,8 @@ describe('VmEditFormComponent', () => {
       ensure_display_device: true,
       hide_from_msr: false,
       hyperv_enlightenments: false,
-      memory: 257,
+      memory: 258,
+      min_memory: 257,
       name: 'Edited',
       nodeset: '0-1',
       pin_vcpus: false,
