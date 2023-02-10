@@ -149,6 +149,7 @@ export class DatasetFormComponent implements FormConfiguration {
           required: true,
           validation: [
             Validators.required,
+            Validators.pattern(this.nameRegax.bootenvNameRegex),
             forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive),
           ],
         },
@@ -883,6 +884,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
+    private nameRegax: BootEnvService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -1070,7 +1072,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.pk = this.parent;
       this.isNew = true;
       entityForm.formGroup.controls.parent.setValue(this.parent);
-      entityForm.formGroup.controls.name.setValidators(datasetNameTooLong(this.parent));
+      entityForm.formGroup.controls.name.addValidators(datasetNameTooLong(this.parent));
 
       if (this.parent.length >= 200) {
         this.dialogService.warn(
