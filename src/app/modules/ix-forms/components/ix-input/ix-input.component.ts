@@ -87,7 +87,6 @@ export class IxInputComponent implements ControlValueAccessor {
     this.formatted = value;
     if (value && this.parse) {
       this.value = this.parse(value);
-      this.formatted = this.value;
     }
     this.onChange(this.value);
   }
@@ -154,6 +153,7 @@ export class IxInputComponent implements ControlValueAccessor {
     if (this.formatted) {
       if (this.parse) {
         this.value = this.parse(this.formatted);
+        this.formatted = this.value;
       }
       if (this.format) {
         this.formatted = this.format(this.value);
