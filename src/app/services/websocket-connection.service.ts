@@ -96,13 +96,17 @@ export class WebsocketConnectionService {
   /** TODO: Extract disconnection logic somewhere else */
   private onClose(): void {
     this.isConnectionReady$.next(false);
+    this.resetUi();
+    timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
+      next: () => this.initializeWebsocket(),
+    });
+  }
+
+  resetUi(): void {
     this.closeAllDialogs();
     if (!this.shutDownInProgress) {
       this.router.navigate(['/sessions/signin']);
     }
-    timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-      next: () => this.initializeWebsocket(),
-    });
   }
 
   private hasAuthError(data: IncomingWebsocketMessage): boolean {
