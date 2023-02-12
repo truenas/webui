@@ -20,6 +20,7 @@
     ix-auto
     ix-auto-type="radio-group"
     [id]="config.name + '_radiogroup'"
+    [ixTest]="config.name"
     [ix-auto-identifier]="config.name"
     [formControlName]="config.name"
     [fxLayout]="radioLayout"
@@ -35,6 +36,7 @@
         *ngIf="!option.hiddenFromDisplay"
         ix-auto
         ix-auto-type="radio"
+        [ixTest]="[config.name, option.label]"
         [id]="config.name + '_' + option.value + '_radiobutton'"
         [ix-auto-identifier]="config.name + '_' + option.label"
         [checked]="option.value === radioValue"

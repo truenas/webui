@@ -4,6 +4,7 @@
     mat-flat-button
     name="vdev_add-button"
     class="vdev-action-btn"
+    [ixTest]="['add-to-vdev', title]"
     [disabled]="!manager.selected.length"
     (click)="addSelectedDisks()"
   >
@@ -14,6 +15,7 @@
     mat-flat-button
     name="vdev_remove-button"
     class="vdev-action-btn"
+    [ixTest]="['remove-from-vdev', title]"
     [disabled]="!selected.length"
     (click)="removeSelectedDisks()"
   >
@@ -29,6 +31,7 @@
         id="vdev__close-button"
         mat-flat-button
         class="vdev-action-btn close"
+        [ixTest]="['remove-vdev', title]"
         [disabled]="group === 'data' && manager.vdevs['data'].length < 2"
         (click)="remove()"
       >
@@ -49,22 +52,24 @@
                 matSelect
                 id="vdev__option-menu"
                 class="form-control"
+                [ixTest]="[title, 'vdev-type']"
                 [formControl]="typeControl"
               >
-                <mat-option value="stripe">{{ 'Stripe' | translate }}</mat-option>
+                <mat-option value="stripe" ixTest="stripe">{{ 'Stripe' | translate }}</mat-option>
                 <mat-option
                   *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log' || group === 'special' ||group === 'dedup')"
                   value="mirror"
+                  ixTest="mirror"
                 >
                   {{ 'Mirror' | translate }}
                 </mat-option>
-                <mat-option *ngIf="getDisks().length >= 3 && group === 'data'" value="raidz">
+                <mat-option *ngIf="getDisks().length >= 3 && group === 'data'" value="raidz" ixTest="raidz">
                   {{ 'Raid-z' | translate }}
                 </mat-option>
-                <mat-option *ngIf="getDisks().length >= 4 && group === 'data'" value="raidz2">
+                <mat-option *ngIf="getDisks().length >= 4 && group === 'data'" value="raidz2" ixTest="raidz2">
                   {{ 'Raid-z2' | translate }}
                 </mat-option>
-                <mat-option *ngIf="getDisks().length >= 5 && group === 'data'" value="raidz3">
+                <mat-option *ngIf="getDisks().length >= 5 && group === 'data'" value="raidz3" ixTest="raidz3">
                   {{ 'Raid-z3' | translate }}
                 </mat-option>
               </mat-select>

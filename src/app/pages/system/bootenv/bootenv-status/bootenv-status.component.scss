@@ -53,6 +53,12 @@ $columns: 7;
   z-index: 10;
 }
 
+.spacer {
+  display: block;
+  flex-grow: 0;
+  width: 40px;
+}
+
 .tree-header {
   @include grid-row($columns);
   align-items: center;

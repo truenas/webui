@@ -38,6 +38,7 @@
             <button
               *ngIf="maction.enable"
               mat-button
+              [ixTest]="['multi-action', maction?.id]"
               [id]="maction?.id"
               (click)="maction.onClick(this.selection.selected)"
             >
@@ -171,6 +172,7 @@
                 <ng-container *ngIf="getRowIdentifier(element) === getRowIdentifier(expandedElement)">
                   <button
                     class="transparent-btn"
+                    [ixTest]="['collapse-row', getRowIdentifier(element)]"
                     [attr.aria-label]="'Close expanded row' | translate"
                   >
                     <mat-icon
@@ -184,6 +186,7 @@
                 <ng-container *ngIf="getRowIdentifier(element) !== getRowIdentifier(expandedElement)">
                   <button
                     class="transparent-btn"
+                    [ixTest]="['expand-row', getRowIdentifier(element)]"
                     [attr.aria-label]="'Expand row' | translate"
                   >
                     <mat-icon
@@ -328,6 +331,7 @@
                   mat-stroked-button
                   ix-auto
                   ix-auto-type="slider"
+                  [ixTest]="[column, getRowIdentifier(element)]"
                   [id]="'interactive-button_' + column + '_' + getRowIdentifier(element)"
                   [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [ngClass]="getButtonClass(element[column])"

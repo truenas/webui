@@ -7,6 +7,7 @@
       ix-auto
       ix-auto-type="button"
       class="menu-toggle"
+      [ixTest]="['toolbar-menu', config.label]"
       [matMenuTriggerFor]="menu"
       [ix-auto-identifier]="id + '_' + config.label"
     >
@@ -20,6 +21,7 @@
           ix-auto
           ix-auto-type="option"
           [ix-auto-identifier]="id + '_SELECT_ALL'"
+          [ixTest]="['toolbar-menu', config.label, 'select-all']"
           (click)="checkAll()"
         >
           <span>
@@ -38,6 +40,7 @@
           ix-auto
           ix-auto-type="option"
           [ix-auto-identifier]="id + '_' + option.label"
+          [ixTest]="['toolbar-menu', config.label, option.label]"
           (click)="onClick(option, i)"
         >
           <span>

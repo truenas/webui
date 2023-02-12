@@ -55,7 +55,7 @@
             (click)="viewDetails(poolId, topologyItem.guid)"
             (keydown.enter)="viewDetails(poolId, topologyItem.guid)"
           >
-            <button mat-icon-button disabled></button>
+            <span class="spacer"></span>
             <ix-topology-item-node
               [topologyItem]="topologyItem | cast"
               [disk]="getDisk(topologyItem)"
@@ -79,6 +79,7 @@
                   mat-icon-button
                   treeNodeToggle
                   class="vdev-group-toggle"
+                  [ixTest]="['toggle-vdev-group', group.guid]"
                   [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
                   (click)="$event.preventDefault()"
                 >
@@ -110,6 +111,7 @@
               <button
                 mat-icon-button
                 treeNodeToggle
+                [ixTest]="['toggle', vdev.guid]"
                 [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
                 (click)="$event.preventDefault()"
                 (keydown.enter)="$event.stopPropagation()"

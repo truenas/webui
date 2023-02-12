@@ -158,6 +158,7 @@
                     mat-button
                     ix-auto
                     ix-auto-type="button"
+                    [ixTest]="['widget-sysinfo', 'update']"
                     [ix-auto-identifier]="updateBtnLabel"
                     [color]="updateBtnStatus"
                     (click)="router.navigate(['system', 'update'])"
@@ -259,6 +260,7 @@
                     <button
                       class="btn-sync"
                       mat-icon-button
+                      [ixTest]="['widget-sysinfo', 'synchronize-time']"
                       [matTooltip]="'Synchronize Time' | translate"
                       (click)="onSynchronizeTime()"
                     >
@@ -278,6 +280,7 @@
                     color="primary"
                     ix-auto
                     ix-auto-type="button"
+                    [ixTest]="['widget-sysinfo', 'update']"
                     [ix-auto-identifier]="updateBtnLabel"
                     (click)="router.navigate(['system', 'update'])"
                   >
@@ -312,6 +315,7 @@
           ix-auto
           ix-auto-type="button"
           ix-auto-identifier="FLIP"
+          [ixTest]="['widget-sysinfo', 'flip']"
           (click)="toggleConfig()"
         >
           {{ 'Flip' | translate }}

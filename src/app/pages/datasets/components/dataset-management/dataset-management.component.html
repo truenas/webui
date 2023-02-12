@@ -85,7 +85,7 @@
               (click)="viewDetails(dataset)"
               (keydown.enter)="viewDetails(dataset)"
             >
-              <button mat-icon-button disabled></button>
+              <span class="spacer"></span>
               <ix-dataset-node
                 [dataset]="dataset"
                 [isSystemDataset]="isSystemDataset(dataset)"
@@ -106,6 +106,7 @@
               <button
                 mat-icon-button
                 treeNodeToggle
+                [ixTest]="['toggle-row', dataset.name]"
                 [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
                 (keydown.enter)="$event.stopPropagation()"
               >

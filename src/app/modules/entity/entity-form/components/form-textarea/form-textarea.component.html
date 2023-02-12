@@ -28,6 +28,7 @@
       [ngClass]="config.class"
       [required]="config.required"
       [readonly]="config.readonly"
+      [ixTest]="config.name"
       [class.no-rows]="!config.textAreaRows"
       (blur)="blurEvent()"
       (paste)="onPaste($event)"
