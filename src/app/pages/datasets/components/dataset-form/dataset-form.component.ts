@@ -692,6 +692,7 @@ export class DatasetFormComponent implements FormConfiguration {
           options: [
             { label: 'Generic', value: DatasetShareType.Generic },
             { label: 'SMB', value: DatasetShareType.Smb },
+            { label: 'Apps', value: DatasetShareType.Apps },
           ],
           value: DatasetShareType.Generic,
           disabled: true,

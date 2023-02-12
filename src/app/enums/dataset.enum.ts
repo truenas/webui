@@ -76,6 +76,7 @@ export enum DatasetCaseSensitivity {
 export enum DatasetShareType {
   Generic = 'GENERIC',
   Smb = 'SMB',
+  Apps = 'APPS',
 }
 
 export enum DatasetXattr {

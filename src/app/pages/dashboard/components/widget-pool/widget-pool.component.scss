@@ -231,7 +231,7 @@ span.safe {
 }
 
 .slide div.clickable,
-.slide .mat-list-item.clickable {
+.slide .mat-mdc-list-item.clickable {
   cursor: pointer;
 }
 
@@ -240,7 +240,7 @@ span.safe {
   right: 0;
 }
 
-.mat-list-base .mat-list-item {
+.mat-mdc-list-base .mat-mdc-list-item {
   border-bottom: solid 1px var(--lines);
 }
 
@@ -280,15 +280,15 @@ span.capitalize {
   color: var(--red);
 }
 
-.mat-list-item {
+.mat-mdc-list-item {
   strong {
     margin-right: 6px;
   }
 }
 
-.mat-list-item .error,
-.mat-list-item .warning,
-.mat-list-item .healthy {
+.mat-mdc-list-item .error,
+.mat-mdc-list-item .warning,
+.mat-mdc-list-item .healthy {
   align-items: center;
   display: inline-flex;
   justify-content: center;

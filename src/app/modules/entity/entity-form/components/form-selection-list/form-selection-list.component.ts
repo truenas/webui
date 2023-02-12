@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { MatLegacySelectionListChange as MatSelectionListChange } from '@angular/material/legacy-list';
+import { MatSelectionListChange } from '@angular/material/list';
 import { FormSelectionListConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 

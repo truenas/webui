@@ -1,8 +1,8 @@
 import { ElementRef } from '@angular/core';
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatLegacySelectionListChange as MatSelectionListChange } from '@angular/material/legacy-list';
 import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
+import { MatSelectionListChange } from '@angular/material/list';
 import { MatRadioChange } from '@angular/material/radio';
 import { ITreeOptions } from '@circlon/angular-tree-component';
 import { DatasetType } from 'app/enums/dataset.enum';

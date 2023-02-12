@@ -842,8 +842,8 @@ ul.nested-list li {
   display: flex;
 }
 
-.form-selection-list.mat-mdc-list-base .mat-mdc-list-item .mat-mdc-list-item-content,
-.form-selection-list.mat-mdc-list-base .mat-mdc-list-option .mat-mdc-list-item-content {
+.form-selection-list.mat-mdc-list-base .mat-mdc-list-item .mat-mdc-list-item-unscoped-content,
+.form-selection-list.mat-mdc-list-base .mat-mdc-list-option .mat-mdc-list-item-unscoped-content {
   padding: 0;
 }
 
@@ -914,12 +914,14 @@ ix-root {
   }
 
   .cdk-focused,
-  .cdk-keyboard-focused {
+  .cdk-keyboard-focused,
+  .cdk-mouse-focused {
     @extend %focused-shared;
     background-color: var(--focus-bg) !important;
   }
 
   .ix-tree-node:focus-visible,
+  .ix-tree-node:focus,
   .ix-nested-tree-node > div:focus-visible {
     @extend %focused-shared;
   }

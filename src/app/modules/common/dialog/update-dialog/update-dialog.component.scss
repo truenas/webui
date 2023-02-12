@@ -1,9 +1,13 @@
 .dialog-content {
-  margin-left: -24px;
+  padding-bottom: 5px;
 }
 
 .dialog-message,
 .dialog-title {
   margin-bottom: 5px;
-  padding-left: 24px;
+  padding: 0;
+}
+
+.jobs {
+  padding: 0 12px 8px;
 }
