@@ -96,9 +96,9 @@ def the_user_edit_page_should_open(driver):
     assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
 
 
-@then('Add user to additional groups, like games and save change')
-def add_user_to_additional_groups_like_games_and_save_change(driver):
-    """Add user to additional groups, like games and save change."""
+@then('Add user to additional groups, like wheel and save change')
+def add_user_to_additional_groups_like_wheel_and_save_change(driver):
+    """Add user to additional groups, like wheel and save change."""
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
 
