@@ -295,8 +295,8 @@ export class ChassisView {
     }
     const dt = this.driveTrayObjects[driveIndex];
 
-    dt.color = options.color.toLowerCase();
-    if (this.initialized) {
+    if (dt?.color) dt.color = options.color.toLowerCase();
+    if (dt && this.initialized) {
       dt.handle.alpha = options.color === 'none' ? this.disabledOpacity : 1;
     }
   }
