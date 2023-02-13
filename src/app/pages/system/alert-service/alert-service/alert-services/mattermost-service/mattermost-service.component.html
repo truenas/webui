@@ -4,6 +4,7 @@
     [label]="'Webhook URL' | translate"
     [required]="true"
     [tooltip]="helptext.Mattermost_url_tooltip | translate"
+    [parse]="formatter.stringAsUrlParsing"
   ></ix-input>
 
   <ix-input
@@ -23,5 +24,6 @@
     formControlName="icon_url"
     [label]="'Icon URL' | translate"
     [tooltip]="helptext.Mattermost_icon_url_tooltip | translate"
+    [parse]="formatter.stringAsUrlParsing"
   ></ix-input>
 </ng-container>

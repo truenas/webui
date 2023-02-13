@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -29,6 +30,7 @@ export class HttpProviderFormComponent extends BaseProviderFormComponent impleme
   }
   constructor(
     private formBuilder: FormBuilder,
+    public formatter: IxFormatterService,
   ) {
     super();
   }

@@ -19,6 +19,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, KeychainCredentialService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -139,6 +140,7 @@ export class SshConnectionFormComponent {
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private slideIn: IxSlideInService,
+    public formatter: IxFormatterService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
   ) {}
