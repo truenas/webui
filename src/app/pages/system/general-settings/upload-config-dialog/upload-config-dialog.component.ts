@@ -5,8 +5,9 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -26,6 +27,8 @@ export class UploadConfigDialogComponent {
     private router: Router,
     private mdDialog: MatDialog,
     private ws: WebSocketService,
+    private appLoader: AppLoaderService,
+    private dialogService: DialogService,
   ) {}
 
   onSubmit(): void {
@@ -45,6 +48,16 @@ export class UploadConfigDialogComponent {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
-    dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.ws.token, formData);
+    this.appLoader.open();
+    this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe({
+      next: (token) => {
+        this.appLoader.close();
+        dialogRef.componentInstance.wspost('/_upload?auth_token=' + token, formData);
+      },
+      error: (error: WebsocketError) => {
+        this.appLoader.close();
+        this.dialogService.errorReportMiddleware(error);
+      },
+    });
   }
 }

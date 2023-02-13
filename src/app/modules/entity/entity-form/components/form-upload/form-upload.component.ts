@@ -5,7 +5,9 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import {
+  catchError, EMPTY, Subscription, switchMap, tap,
+} from 'rxjs';
 import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,7 +26,6 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  apiEndPoint = '/_upload?auth_token=' + this.ws.token;
   fileList: FileList;
   fbrowser: HTMLInputElement;
 
@@ -54,18 +55,21 @@ export class FormUploadComponent {
     const fileBrowser = this.fileInput.nativeElement;
 
     if (fileBrowser.files && fileBrowser.files[0]) {
-      const formData: FormData = new FormData();
-      formData.append('data', JSON.stringify({
-        method: 'filesystem.put',
-        params: [location + '/' + fileBrowser.files[0].name, { mode: '493' }],
-      }));
-      formData.append('file', fileBrowser.files[0]);
-      const req = new HttpRequest('POST', this.apiEndPoint, formData, {
-        reportProgress: true,
-      });
       this.loader.open();
-      this.http.request(req).pipe(untilDestroyed(this)).subscribe({
-        next: (event) => {
+      this.ws.call('auth.generate_token').pipe(
+        switchMap((token) => {
+          const formData: FormData = new FormData();
+          formData.append('data', JSON.stringify({
+            method: 'filesystem.put',
+            params: [location + '/' + fileBrowser.files[0].name, { mode: '493' }],
+          }));
+          formData.append('file', fileBrowser.files[0]);
+          const req = new HttpRequest('POST', '/_upload?auth_token=' + token, formData, {
+            reportProgress: true,
+          });
+          return this.http.request(req);
+        }),
+        tap((event) => {
           if (event.type === HttpEventType.UploadProgress) {
             const percentDone = Math.round(100 * event.loaded / event.total);
             this.loader.dialogRef.componentInstance.title = `${percentDone}% Uploaded`;
@@ -76,12 +80,14 @@ export class FormUploadComponent {
               this.snackbar.success(this.translate.instant('File upload complete'));
             }
           }
-        },
-        error: (error) => {
+        }),
+        catchError((error) => {
           this.loader.close();
           this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
-        },
-      });
+          return EMPTY;
+        }),
+        untilDestroyed(this),
+      ).subscribe();
     } else {
       this.dialog.warn(this.translate.instant('Please make sure to select a file'), '');
     }

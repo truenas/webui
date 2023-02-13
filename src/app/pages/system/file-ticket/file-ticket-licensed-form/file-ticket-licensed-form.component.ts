@@ -165,12 +165,17 @@ export class FileTicketLicensedFormComponent implements OnInit {
               this.openSuccessDialog(job.result);
             },
           });
-          this.screenshots.forEach((file) => {
-            this.fileUpload.upload(file, 'support.attach_ticket', [{
-              ticket: job.result.ticket,
-              filename: file.name,
-            }]);
-          });
+          this.ws.call('auth.generate_token').pipe(
+            tap((token) => {
+              this.screenshots.forEach((file) => {
+                this.fileUpload.upload(file, 'support.attach_ticket', [{
+                  ticket: job.result.ticket,
+                  filename: file.name,
+                }], '/_upload?auth_token=' + token);
+              });
+            }),
+            untilDestroyed(this),
+          ).subscribe();
         } else {
           this.isFormLoading = false;
           this.openSuccessDialog(job.result);

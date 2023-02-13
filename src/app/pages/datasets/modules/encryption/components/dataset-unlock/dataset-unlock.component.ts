@@ -17,7 +17,6 @@ import {
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { Subs } from 'app/interfaces/subs.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
@@ -34,7 +33,7 @@ import {
   DatasetUnlockFormValues,
 } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock-form-values.interface';
 import { UnlockDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
-import { DialogService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +56,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected keyFileControl: UntypedFormControl;
   protected unlockChildrenControl: UntypedFormControl;
 
-  subs: Subs;
+  file: File;
 
   fieldSetDisplay = 'default';// default | carousel | stepper
   fieldConfig: FieldConfig[] = [];
@@ -196,6 +195,8 @@ export class DatasetUnlockComponent implements FormConfiguration {
     protected dialog: MatDialog,
     protected entityFormService: EntityFormService,
     private translate: TranslateService,
+    private ws: WebSocketService,
+    private appLoaderService: AppLoaderService,
   ) {}
 
   preInit(): void {
@@ -378,14 +379,24 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.setDescription(
       this.translate.instant(helptext.fetching_encryption_summary_message) + this.pk,
     );
-    if (body.key_file && this.subs) {
+    if (body.key_file && this.file) {
       const formData: FormData = new FormData();
       formData.append('data', JSON.stringify({
         method: this.queryCall,
         params: [this.pk, payload],
       }));
-      formData.append('file', this.subs.file);
-      dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
+      formData.append('file', this.file);
+      this.appLoaderService.open();
+      this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe({
+        next: (token) => {
+          this.appLoaderService.close();
+          dialogRef.componentInstance.wspost('/_upload?auth_token=' + token, formData);
+        },
+        error: (error) => {
+          this.appLoaderService.close();
+          this.dialogService.errorReportMiddleware(error);
+        },
+      });
     } else {
       payload['key_file'] = false; // if subs is undefined the user never tried to upload a file
       dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
@@ -432,14 +443,24 @@ export class DatasetUnlockComponent implements FormConfiguration {
       data: { title: helptext.unlocking_datasets_title },
       disableClose: true,
     });
-    if (payload.key_file && this.subs) {
+    if (payload.key_file && this.file) {
       const formData: FormData = new FormData();
       formData.append('data', JSON.stringify({
         method: this.updateCall,
         params: [this.pk, payload],
       }));
-      formData.append('file', this.subs.file);
-      dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
+      formData.append('file', this.file);
+      this.appLoaderService.open();
+      this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe({
+        next: (token) => {
+          this.appLoaderService.close();
+          dialogRef.componentInstance.wspost('/_upload?auth_token=' + token, formData);
+        },
+        error: (error) => {
+          this.appLoaderService.close();
+          this.dialogService.errorReportMiddleware(error);
+        },
+      });
     } else {
       dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
@@ -493,7 +514,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
   keyFileUpdater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.file = fileBrowser.files[0];
     }
   }
 }

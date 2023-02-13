@@ -18,10 +18,13 @@ import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import {
+  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { UpdateService } from 'app/services/update.service';
 import { AppState } from 'app/store';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
@@ -42,9 +45,6 @@ export class ManualUpdateFormComponent implements OnInit {
     updateFile: [null as FileList],
     rebootAfterManualUpdate: [false],
   });
-  private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
-  }
 
   readonly helptext = helptext;
   currentVersion = '';
@@ -63,6 +63,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private updateService: UpdateService,
+    private appLoader: AppLoaderService,
   ) { }
 
   ngOnInit(): void {
@@ -174,7 +175,6 @@ export class ManualUpdateFormComponent implements OnInit {
 
     const formData: FormData = this.generateFormData(files, fileLocation);
 
-    dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
       this.updateService.setForHardRefresh();
@@ -200,7 +200,18 @@ export class ManualUpdateFormComponent implements OnInit {
       this.isFormLoading$.next(false);
       this.cdr.markForCheck();
     });
-    this.cdr.markForCheck();
+    this.appLoader.open();
+    this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe({
+      next: (token) => {
+        this.appLoader.close();
+        dialogRef.componentInstance.wspostWithProgressUpdates('/_upload?auth_token=' + token, formData);
+        this.cdr.markForCheck();
+      },
+      error: (error: WebsocketError) => {
+        this.appLoader.close();
+        this.dialogService.errorReportMiddleware(error);
+      },
+    });
   }
 
   generateFormData(files: FileList, fileLocation: string): FormData {
