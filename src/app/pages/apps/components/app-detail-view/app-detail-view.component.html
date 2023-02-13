@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle"></ix-page-title-header>
+  <ix-page-title-header [pageTitle]="pageTitle | titlecase"></ix-page-title-header>
 </ng-template>
 
 <div fxLayout="row nowrap">
@@ -94,20 +94,28 @@
 
     <section>
       <h2>{{ 'Similar Apps' | translate }}</h2>
-      <div *ngIf="isLoading$ | async; else emptySimilarApps" fxLayout="row wrap" fxLayoutGap="16px">
+
+      <div *ngIf="similarAppsLoading$ | async; else similarAppsTemplate" fxLayout="row wrap" fxLayoutGap="16px">
         <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
         <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
       </div>
+
+      <ng-template #similarAppsTemplate>
+        <div *ngIf="similarApps.length; else emptySimilarApps" class="similar-apps">
+          <ix-app-card *ngFor="let app of similarApps" [app]="app"></ix-app-card>
+        </div>
+      </ng-template>
 
       <ng-template #emptySimilarApps>
         <h4>{{ 'No apps are found.' | translate }}</h4>
       </ng-template>
     </section>
   </div>
+
   <div fxFlex fxLayoutAlign="end">
 
     <section class="app-info-cards">
-      <div class="app-info-card">
+      <ix-app-info-card>
         <h3>{{ 'Available Resources' | translate }}</h3>
 
         <div class="app-list-item">
@@ -126,9 +134,9 @@
           {{ 'Available Space' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
         </div>
-      </div>
+      </ix-app-info-card>
 
-      <div class="app-info-card">
+      <ix-app-info-card>
         <h3>{{ 'Helm Chart Info' | translate }}</h3>
 
         <div class="app-list-item">
@@ -147,9 +155,9 @@
           {{ 'Maintainer' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
         </div>
-      </div>
+      </ix-app-info-card>
 
-      <div class="app-info-card">
+      <ix-app-info-card>
         <h3>{{ 'Application Info' | translate }}</h3>
 
         <div class="app-list-item">
@@ -164,7 +172,7 @@
           {{ 'Last App Updated' }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
         </div>
-      </div>
+      </ix-app-info-card>
     </section>
 
   </div>

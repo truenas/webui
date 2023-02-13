@@ -5,6 +5,7 @@
     color="primary"
     class="btn btn-link"
     type="button"
+    ixTest="setup-configuration"
     (click)="goConf()"
   >
     Click here
@@ -78,6 +79,7 @@
             mat-button
             ix-auto-type="button"
             color="primary"
+            ixTest="save"
             [ix-auto-identifier]="saveSubmitText | uppercase"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
             [ix-auto]=""
@@ -93,6 +95,7 @@
             color="default"
             ix-auto-type="button"
             ix-auto-identifier="CANCEL"
+            ixTest="cancel"
             [ix-auto]=""
             (click)="goBack()"
           >
@@ -105,6 +108,7 @@
               class="mat-basic"
               ix-auto-type="button"
               [id]="'cust_button_' + custBtn.name"
+              [ixTest]="['custom-button', custBtn.name]"
               [ix-auto-identifier]="custBtn.name | uppercase"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
@@ -123,6 +127,7 @@
               ix-auto-type="button"
               ix-auto-identifier="keymenu"
               type="button"
+              [ixTest]="['compact-custom-actions']"
               [matMenuTriggerFor]="keymenu"
             >
               <mat-icon>more_vert</mat-icon>
@@ -136,6 +141,7 @@
                   ix-auto
                   ix-auto-type="option"
                   ix-auto-identifier="action.name"
+                  [ixTest]="['compact-custom-actions', action.name]"
                   [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(action.id) : action.disabled"
                   (click)="action['function']()"
                 >
@@ -151,6 +157,7 @@
             type="button"
             ix-auto-type="button"
             ix-auto-identifier="DELETE"
+            ixTest="delete"
             [ix-auto]=""
           >
             {{ 'Delete' | translate }}

@@ -46,6 +46,7 @@
         ix-auto-type="button"
         type="button"
         color="default"
+        [ixTest]="[conf.title, custBtn.name]"
         [id]="'cust_button_' + custBtn.name"
         [ix-auto-identifier]="custBtn.name"
         (click)="custBtn['function']()"
@@ -63,6 +64,7 @@
       class="menu-toggle"
       ix-auto
       ix-auto-type="button"
+      [ixTest]="[conf.title, 'columns-menu']"
       [ix-auto-identifier]="conf.title + '_COLUMNS'"
       [matMenuTriggerFor]="menu"
     >
@@ -78,6 +80,7 @@
           ix-auto
           ix-auto-type="action"
           ix-auto-identifier="COLUMNS_SELECT"
+          [ixTest]="[conf.title, 'select-all-columns']"
           (click)="entity.checkAll()"
         >
           <span>
@@ -100,6 +103,7 @@
           mat-menu-item
           ix-auto
           ix-auto-type="action"
+          [ixTest]="[conf.title, 'select-column', col.name]"
           [id]="'menu_option-' + col.name"
           [ix-auto-identifier]="'COLUMNS_' + col.name"
           (click)="entity.toggle(col)"
@@ -119,6 +123,7 @@
           ix-auto
           ix-auto-type="action"
           ix-auto-identifier="COLUMNS_Reset to Defaults"
+          [ixTest]="[conf.title, 'reset-columns-to-defaults']"
           (click)="entity.resetColViewToDefaults()"
         >
           <span>
@@ -140,6 +145,7 @@
       class="menu-toggle"
       ix-auto
       ix-auto-type="button"
+      [ixTest]="[conf.title, 'actions']"
       [matTooltip]="menuTriggerMessage | translate"
       [ix-auto-identifier]="entity.conf.title + '_ACTIONS'"
       [matMenuTriggerFor]="menu"
@@ -154,6 +160,7 @@
         id="add_action_button"
         ix-auto
         ix-auto-type="button"
+        [ixTest]="[conf.title, 'add']"
         [ix-auto-identifier]="entity.conf.title + '_ADD'"
         (click)="this.entity.doAdd()"
       >
@@ -164,6 +171,7 @@
         mat-menu-item
         ix-auto
         ix-auto-type="button"
+        [ixTest]="[conf.title, 'action', action.label]"
         [id]="'add_action_button_' + action?.label"
         [ix-auto-identifier]="entity.conf.title + '_' + action.label"
         (click)="action.onClick()"
@@ -181,6 +189,7 @@
         id="add_action_button"
         ix-auto
         ix-auto-type="button"
+        [ixTest]="[conf.title, 'add']"
         [matTooltip]="entity.conf.routeAddTooltip | translate"
         [ix-auto-identifier]="entity.conf.title + '_ADD'"
         [disabled]="entity.conf.addBtnDisabled"
@@ -194,6 +203,7 @@
         color="primary"
         ix-auto
         ix-auto-type="button"
+        [ixTest]="[conf.title, 'actions', actions[0].label]"
         [id]="'add_action_button_' + actions[0]?.label"
         [matTooltip]="actions[0].label | translate"
         [ix-auto-identifier]="entity.conf.title + '_' + this.actions[0].label"
@@ -210,6 +220,7 @@
       mat-icon-button
       ix-auto
       ix-auto-type="settings"
+      [ixTest]="[conf.title, conf.globalConfig.id]"
       [id]="conf.globalConfig.id"
       [ix-auto-identifier]="entity.title"
       [matTooltip]="conf.globalConfig.tooltip"

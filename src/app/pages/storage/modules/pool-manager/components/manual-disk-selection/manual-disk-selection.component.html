@@ -1,9 +1,7 @@
 <mat-card class="container">
   <mat-card-content class="content">
     <form [formGroup]="form">
-      <div
-        class="inner-container" 
-      >
+      <div class="inner-container">
 
         <div class="left-pane">
           <div class="header header-top"><h3>{{ 'Manual Selection' | translate }}</h3></div>
@@ -24,7 +22,7 @@
               ></ix-select>
             </div>
           </div>
-          
+
           <div class="tree-container">
             <ix-tree-view
               [ixDataSource]="dataSource"
@@ -37,13 +35,13 @@
               >
                 <div class="info-wrapper">
                   <div class="icon-wrapper">
-                    <ix-disk-icon 
+                    <ix-disk-icon
                       class="disk-icon"
                       [identifier]="disk.identifier"
                       [size]="getDiskSizeStr(disk)"
                     ></ix-disk-icon>
                   </div>
-                  
+
                   <div class="details-wrapper">
                     <ix-disk-info
                       class="disk-info"
@@ -53,7 +51,7 @@
                       [serial]="getDiskSerial(disk)"
                     ></ix-disk-info>
                   </div>
-                  
+
                 </div>
               </ix-tree-node>
 
@@ -87,6 +85,7 @@
               <button
                 mat-button
                 class="mat-button"
+                ixTest="add"
               >{{ 'Add' | translate }}</button>
             </div>
           </div>
@@ -103,13 +102,15 @@
             <button
               mat-button
               color="primary"
+              ixTest="save-selection"
             >{{ 'Save Selection' | translate }}</button>
             <button
               mat-button
+              ixTest="cancel"
             >{{ 'Cancel' | translate }}</button>
           </div>
         </div>
-        
+
       </div>
     </form>
   </mat-card-content>

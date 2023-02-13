@@ -13,6 +13,7 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
@@ -37,6 +38,7 @@ describe('SigninStore', () => {
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
+      mockProvider(UpdateService),
       mockProvider(SystemGeneralService, {
         loadProductType: () => of(undefined),
       }),
@@ -103,7 +105,7 @@ describe('SigninStore', () => {
   describe('handleSuccessfulLogin', () => {
     it('generates auth token and redirects user inside', () => {
       spectator.service.handleSuccessfulLogin();
-      expect(authService.generateToken).toHaveBeenCalledWith(300);
+      expect(authService.generateTokenWithDefaultLifetime).toHaveBeenCalledWith();
       expect(authService.token2).toBe('AUTH_TOKEN');
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });

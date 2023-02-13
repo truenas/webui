@@ -192,7 +192,7 @@ span.passive {
 }
 
 img.clickable,
-.slide .mat-list-item.clickable {
+.slide .mat-mdc-list-item.clickable {
   cursor: pointer;
 }
 
@@ -201,11 +201,11 @@ img.clickable,
   right: 0;
 }
 
-.mat-list-base .mat-list-item {
+.mat-mdc-list-base .mat-mdc-list-item {
   border-bottom: solid 1px var(--lines);
 }
 
-.mat-list-item strong {
+.mat-mdc-list-item strong {
   margin-right: 6px;
 }
 
@@ -219,6 +219,7 @@ img.clickable,
   .copy-version-text {
     display: inline-flex;
     flex: 1;
+    max-width: 80%;
     min-width: 0;
 
     span {

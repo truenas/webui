@@ -3,6 +3,7 @@
   <td *matCellDef="let row" mat-cell>
     <button
       mat-icon-button
+      ixTest="toggle-row"
       [matTooltip]="expandedRow === row ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
       [attr.aria-label]="expandedRow === row ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
       (click)="$event.stopPropagation(); onClick(row)"

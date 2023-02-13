@@ -79,6 +79,17 @@ $app-image-size: 144px;
   }
 }
 
+.similar-apps {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+
+  ix-app-card {
+    box-sizing: border-box;
+    flex-basis: calc(50% - 4px);
+  }
+}
+
 .similar-app-loader {
   ::ng-deep span {
     height: 100px;
@@ -88,18 +99,6 @@ $app-image-size: 144px;
 .screenshot-loader {
   ::ng-deep span {
     height: 160px;
-  }
-}
-
-.app-info-card {
-  background-color: var(--bg2);
-  margin-bottom: 1rem;
-  max-width: 420px;
-  padding: 1rem;
-  width: 100%;
-
-  h3 {
-    margin-bottom: 1rem;
   }
 }
 

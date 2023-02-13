@@ -59,6 +59,7 @@
     class="job-button-abort"
     mat-icon-button
     type="button"
+    [ixTest]="['abort', job.description, job.method]"
     (click)="abort()"
   >
     <mat-icon
@@ -72,6 +73,7 @@
     *ngIf="job.state === JobState.Waiting"
     mat-icon-button
     type="button"
+    [ixTest]="['waiting', job.description, job.method]"
     [disabled]="true"
   >
     <mat-icon class="job-icon-waiting">schedule</mat-icon>
@@ -81,6 +83,7 @@
     *ngIf="job.state === JobState.Failed"
     mat-icon-button
     type="button"
+    [ixTest]="['failed', job.description, job.method]"
     [disabled]="true"
   >
     <mat-icon matTooltipPosition="left" class="job-icon-failed" [matTooltip]="job.error">cancel</mat-icon>
@@ -90,6 +93,7 @@
     *ngIf="job.state === JobState.Success"
     mat-icon-button
     type="button"
+    [ixTest]="['success', job.description, job.method]"
     [disabled]="true"
   >
     <mat-icon class="job-icon-success">check_circle</mat-icon>

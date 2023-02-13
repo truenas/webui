@@ -1,6 +1,6 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <button mat-button [matMenuTriggerFor]="elementsMenu">
+    <button mat-button ixTest="elements-menu" [matMenuTriggerFor]="elementsMenu">
       {{ 'Elements' | translate }}
       <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
@@ -8,6 +8,7 @@
       <button
         *ngFor="let view of views"
         mat-menu-item
+        [ixTest]="view.alias"
         (click)="changeView(view.id)"
       >
         <span>{{ view.alias | translate }}</span>
@@ -109,6 +110,7 @@
       <button
         mat-button
         color="primary"
+        ixTest="contact-support"
         (click)="router.navigate(['/system/support'])"
       >
         {{ 'CONTACT SUPPORT' | translate }}

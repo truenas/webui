@@ -27,6 +27,7 @@ import {
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService2 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { UpdateService } from 'app/services/update.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -103,6 +104,7 @@ export class UpdateComponent implements OnInit {
     private store$: Store<AppState>,
     private fb: FormBuilder,
     private snackbar: SnackbarService,
+    private updateService: UpdateService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -409,6 +411,7 @@ export class UpdateComponent implements OnInit {
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateService.setForHardRefresh();
       this.router.navigate(['/others/reboot']);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

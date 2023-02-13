@@ -21,11 +21,19 @@
       </mat-select-trigger>
 
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
-        <mat-option *ngIf="opts.length === 0" [value]="null" [disabled]="true">
+        <mat-option
+          *ngIf="opts.length === 0"
+          [value]="null"
+          [disabled]="true"
+          [ixTest]="[controlDirective.name, 'no-options']"
+        >
           {{ 'No options' | translate }}
         </mat-option>
 
-        <mat-option *ngIf="opts.length > 0 && !multiple && !required && !hideEmpty" [value]="emptyValue">
+        <mat-option
+          *ngIf="opts.length > 0 && !multiple && !required && !hideEmpty" [value]="emptyValue"
+          [ixTest]="[controlDirective.name, 'select']"
+        >
           --
         </mat-option>
 
@@ -55,7 +63,7 @@
 
       <ng-template #loadingOrError>
         <ng-container *ngIf="hasErrorInOptions">
-          <mat-option [disabled]="true">
+          <mat-option [disabled]="true" [ixTest]="[controlDirective.name, 'options-not-loaded']">
             {{ 'Options cannot be loaded' | translate }}
           </mat-option>
         </ng-container>

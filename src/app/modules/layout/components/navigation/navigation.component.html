@@ -4,7 +4,7 @@
       <!-- links and submenus -->
       <mat-list-item
         *ngIf="item.type !== MenuItemType.Separator"
-        class="sidebar-list-item"
+        class="sidebar-list-item sidenav-link"
         role="listitem"
         routerLinkActive="highlighted"
         ix-auto
@@ -17,33 +17,24 @@
       >
         <a
           *ngIf="item.type === MenuItemType.Link"
-          class="sidenav-link"
+          matTooltipPosition="right"
           [routerLink]="['/', item.state]"
           [name]="getItemName(item)"
+          [matTooltip]="isSidenavCollapsed ? (item.tooltip | translate) : null"
           (click)="closeMenu()"
         >
-          <span
-            class="menu-item-tooltip"
-            matTooltipPosition="right"
-            [matTooltip]="item.tooltip | translate"
-            [id]="item.name"
-          ></span>
           <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
         </a>
         <a
           *ngIf="item.type === MenuItemType.SlideOut"
-          class="sidenav-link"
           tabindex="0"
+          matTooltipPosition="right"
           [name]="getItemName(item)"
+          [matTooltip]="isSidenavCollapsed ? (item.tooltip | translate) : null"
           (click)="toggleMenu(item.state, item.sub)"
           (keyup.enter)="toggleMenu(item.state, item.sub)"
         >
-          <span
-            class="menu-item-tooltip"
-            matTooltipPosition="right"
-            [matTooltip]="item.tooltip | translate"
-          ></span>
           <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
           <span fxFlex></span>
@@ -53,15 +44,11 @@
         <a
           *ngIf="item.type === MenuItemType.ExternalLink"
           target="_blank"
-          class="sidenav-link"
+          matTooltipPosition="right"
           [href]="item.state"
           [name]="getItemName(item)"
+          [matTooltip]="isSidenavCollapsed ? (item.tooltip | translate) : null"
         >
-          <span
-            class="menu-item-tooltip"
-            matTooltipPosition="right"
-            [matTooltip]="item.tooltip | translate"
-          ></span>
           <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
         </a>

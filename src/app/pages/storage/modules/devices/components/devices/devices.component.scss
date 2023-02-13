@@ -23,6 +23,12 @@ $scrollbar-offset: 20px;
   min-height: 100%;
 }
 
+.spacer {
+  display: block;
+  flex-grow: 0;
+  width: 40px;
+}
+
 .table-container {
   box-sizing: border-box;
   display: flex;

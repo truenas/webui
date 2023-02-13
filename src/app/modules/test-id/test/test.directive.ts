@@ -1,7 +1,7 @@
 import {
   Directive, ElementRef, HostBinding, Input,
 } from '@angular/core';
-import { snakeCase } from 'lodash';
+import { kebabCase } from 'lodash';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 
 /**
@@ -30,7 +30,7 @@ export class TestDirective {
   get normalizedDescription(): string[] {
     const description = Array.isArray(this.description) ? this.description : [this.description];
 
-    return description.map((part) => snakeCase(String(part)));
+    return description.map((part) => kebabCase(String(part)));
   }
 
   @HostBinding('attr.data-test')

@@ -17,6 +17,7 @@
   >
     <label class="list-label">
       {{ config.label ? config.label : 'Add ' + config.name }}
+      <span *ngIf="config.required">*</span>
     </label>
     <button
       *ngIf="!config.hideButton"
@@ -25,6 +26,7 @@
       type="button"
       ix-auto
       ix-auto-type="button"
+      [ixTest]="[config.name, 'add']"
       [ix-auto-identifier]="'add-box_' + config.name"
       (click)="add()"
     >
@@ -64,10 +66,12 @@
       >
         <div>
           <button
+            *ngIf="!config.required || (config.required && i >= 1)"
             mat-icon-button
             class="top-right"
             ix-auto
             ix-auto-type="icon-button"
+            [ixTest]="[config.name, 'delete']"
             [ix-auto-identifier]="'delete-box_' + (config.name + i)"
             (click)="delete(i)"
           >

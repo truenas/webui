@@ -7,6 +7,7 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -68,24 +69,10 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   private loadTestData(): void {
     // TODO: Temporary
     this.loader.open();
-    this.appService.getAllCatalogs().pipe(untilDestroyed(this)).subscribe((catalogs) => {
-      const apps: CatalogApp[] = [];
-
-      catalogs.forEach((catalog) => {
-        Object.entries(catalog.trains).forEach(([train, trainCatalog]) => {
-          Object.values(trainCatalog).forEach((item) => {
-            apps.push({
-              ...item,
-              catalog: {
-                id: catalog.id,
-                train,
-                label: catalog.label,
-              },
-            });
-          });
-        });
-      });
-
+    this.appService.getAllCatalogs().pipe(
+      catalogToAppsTransform(),
+      untilDestroyed(this),
+    ).subscribe((apps) => {
       this.apps = apps;
       this.loader.close();
       this.cdr.markForCheck();

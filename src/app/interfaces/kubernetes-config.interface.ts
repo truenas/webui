@@ -26,4 +26,5 @@ export interface KubernetesConfigUpdate {
   migrate_applications?: boolean;
   configure_gpus?: boolean;
   validate_host_path?: boolean;
+  force?: boolean;
 }

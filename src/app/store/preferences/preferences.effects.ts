@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, throwError } from 'rxjs';
@@ -6,13 +6,14 @@ import {
   catchError, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { rootUserId } from 'app/constants/root-user-id.constant';
+import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService2 } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
-  builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
+  builtinUsersToggled, guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
   updateRebootAfterManualUpdate,
@@ -63,6 +64,7 @@ export class PreferencesEffects {
       snapshotExtraColumnsToggled,
       builtinGroupsToggled,
       localizationFormSubmitted,
+      lifetimeTokenUpdated,
       guiFormSubmitted,
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,
@@ -81,5 +83,6 @@ export class PreferencesEffects {
     private actions$: Actions,
     private ws: WebSocketService2,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {}
 }

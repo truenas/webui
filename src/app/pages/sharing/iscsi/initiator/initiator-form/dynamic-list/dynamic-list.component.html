@@ -11,6 +11,7 @@
       color="primary"
       class="move-to-btn"
       type="button"
+      [ixTest]="[inputConfig.name, 'move-to']"
       [ix-auto-identifier]="inputConfig.name + '_move_to'"
       [disabled]="this.listControl.disabled"
       (click)="drop()"
@@ -36,6 +37,7 @@
           mat-flat-button
           color="primary"
           type="button"
+          [ixTest]="[inputConfig.name, 'add']"
           [ix-auto-identifier]="inputConfig.name + '_add'"
           [disabled]="this.listControl.disabled || !this.inputControl.valid"
           (click)="add()"
@@ -58,6 +60,7 @@
               mat-flat-button
               type="button"
               color="accent"
+              [ixTest]="[inputConfig.name, 'remove']"
               [ix-auto-identifier]="inputConfig.name + '_remove'"
               [disabled]="this.listControl.disabled"
               (click)="remove(item)"

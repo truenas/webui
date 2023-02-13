@@ -8,8 +8,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -48,6 +48,7 @@ import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-b
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { StorageSettingsComponent } from 'app/pages/system/advanced/storage-settings/storage-settings.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
+import { TokenSettingsComponent } from 'app/pages/system/advanced/token-settings/token-settings.component';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -177,6 +178,7 @@ import { routing } from './system.routing';
     ProactiveComponent,
     QrDialogComponent,
     ReplicationSettingsComponent,
+    TokenSettingsComponent,
     SupportComponent,
     SysInfoComponent,
     SyslogFormComponent,

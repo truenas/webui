@@ -32,6 +32,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="refresh"
+        ixTest="refresh"
         (click)="check()"
       >
         <mat-icon>refresh</mat-icon>
@@ -51,6 +52,7 @@
           ix-auto
           ix-auto-type="button"
           ix-auto-identifier="refresh"
+          ixTest="refresh"
           [disabled]="!checkable || isUpdateRunning"
           (click)="check()"
         >
@@ -195,6 +197,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="DOWNLOAD UPDATES"
+        ixTest="download-updates"
         [disabled]="status === SystemUpdateStatus.RebootRequired"
         (click)="downloadUpdate()"
       >
@@ -207,6 +210,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="APPLY PENDING UPDATE"
+        ixTest="apply-pending-update"
         (click)="applyPendingUpdate()"
       >
         {{ 'Apply Pending update' | translate }}
@@ -217,6 +221,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="INSTALL MANUAL UPDATE FILE"
+        ixTest="install-manual-update"
         (click)="manualUpdate()"
       >
         {{ 'Install Manual Update File' | translate }}

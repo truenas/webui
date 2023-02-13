@@ -71,6 +71,7 @@
             ix-auto
             ix-auto-type="option"
             [ix-auto-identifier]="option.label"
+            [ixTest]="[config.name, option.label]"
             [value]="option.value"
           >
             <span>{{ option.label | translate }}</span>

@@ -23,6 +23,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { UpdateService } from 'app/services/update.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -65,6 +66,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private updateService: UpdateService,
   ) { }
 
   ngOnInit(): void {
@@ -179,6 +181,7 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
+      this.updateService.setForHardRefresh();
       if (this.isHaLicensed) {
         this.finishHaUpdate();
       } else {

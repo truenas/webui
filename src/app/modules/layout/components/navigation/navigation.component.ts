@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Output,
+  Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -12,11 +12,13 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
   styleUrls: ['./navigation.component.scss'],
 })
 export class NavigationComponent {
-  menuItems = this.navService.menuItems;
-  isHighlighted: string;
+  @Input() isSidenavCollapsed = false;
 
   @Output() menuToggled = new EventEmitter<[string, SubMenuItem[]]>();
   @Output() menuClosed = new EventEmitter<void>();
+
+  menuItems = this.navService.menuItems;
+  isHighlighted: string;
 
   readonly MenuItemType = MenuItemType;
 
