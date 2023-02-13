@@ -46,7 +46,9 @@ import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/n
 import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/special-small-block-size-options.contant';
-import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
+import {
+  NameValidationService, StorageService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
@@ -149,7 +151,7 @@ export class DatasetFormComponent implements FormConfiguration {
           required: true,
           validation: [
             Validators.required,
-            Validators.pattern(this.nameRegax.bootenvNameRegex),
+            Validators.pattern(this.nameValidationService.nameRegex),
             forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive),
           ],
         },
@@ -884,7 +886,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
-    private nameRegax: BootEnvService,
+    private nameValidationService: NameValidationService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
