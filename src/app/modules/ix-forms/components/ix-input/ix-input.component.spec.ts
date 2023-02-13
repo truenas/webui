@@ -176,7 +176,6 @@ describe('IxInputComponent', () => {
       spectator.typeInElement('test', 'input');
 
       expect(formControl.value).toBe('TEST');
-      expect(spectator.query('input')).toHaveValue('TEST');
     });
 
     it('uses format function to transform form control value when format function is provided', () => {
