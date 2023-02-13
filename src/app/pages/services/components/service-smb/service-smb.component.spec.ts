@@ -33,7 +33,6 @@ describe('ServiceSmbComponent', () => {
         mockCall('smb.config', {
           id: 1,
           netbiosname: 'truenas',
-          netbiosname_b: 'truenas-b',
           netbiosalias: [],
           workgroup: 'WORKGROUP',
           description: 'TrueNAS Server',
