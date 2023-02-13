@@ -124,6 +124,7 @@ export class AuthService {
     };
     this.wsManager.send(payload);
     this.getFilteredWebsocketResponse(uuid).pipe(
+      filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid),
       switchMap((loggedInUser: DsUncachedUser) => {
         authenticatedUser = loggedInUser;
         const userQueryPayload = {
