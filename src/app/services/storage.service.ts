@@ -475,13 +475,6 @@ export class StorageService {
     return allDiskCapacities;
   }
 
-  // Check to see if any individual VDEVs have non-uniform disk sizes.
-  // Every disk in a VDEV should ideally be the same size
-  isMixedVdevDiskCapacity(allVdevDiskCapacities: Set<number>[]): boolean {
-    const isMixed = allVdevDiskCapacities.filter((vdev) => vdev.size > 1);
-    return isMixed.length > 0;
-  }
-
   getVdevTypes(vdevs: TopologyItem[]): Set<string> {
     const vdevTypes = new Set<string>();
     vdevs.forEach((vdev) => {
@@ -512,23 +505,20 @@ export class StorageService {
     }
   }
 
-  validateVdevs(category: PoolTopologyCategory,
+  validateVdevs(
+    category: PoolTopologyCategory,
     vdevs: TopologyItem[],
     disks: StorageDashboardDisk[],
-    dataVdevs?: TopologyItem[]): string[] {
+    dataVdevs?: TopologyItem[],
+  ): string[] {
     const warnings: string[] = [];
     let isMixedVdevCapacity = false;
-    let isMixedDiskCapacity = false;
     let isMixedWidth = false;
     let isMixedLayout = false;
 
     // Check for non-uniform VDEV Capacities
     const allVdevCapacities: Set<number> = this.getVdevCapacities(vdevs); // There should only be one value
     isMixedVdevCapacity = this.isMixedVdevCapacity(allVdevCapacities);
-
-    // Check for non-uniform Disk Capacities within each VDEV
-    const allVdevDiskCapacities: Set<number>[] = this.getVdevDiskCapacities(vdevs, disks);
-    isMixedDiskCapacity = this.isMixedVdevDiskCapacity(allVdevDiskCapacities);
 
     // Check VDEV Widths
     const allVdevWidths: Set<number> = this.getVdevWidths(vdevs); // There should only be one value
@@ -543,10 +533,6 @@ export class StorageService {
     if (vdevs.length) {
       if (isMixedLayout) {
         warnings.push(TopologyWarning.MixedVdevLayout);
-      }
-
-      if (isMixedDiskCapacity) {
-        warnings.push(TopologyWarning.MixedDiskCapacity);
       }
 
       if (isMixedVdevCapacity) {

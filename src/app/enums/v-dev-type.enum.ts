@@ -27,7 +27,6 @@ export enum CreateVdevLayout {
 export enum TopologyWarning {
   MixedVdevLayout = 'Mixed VDEV types',
   MixedVdevCapacity = 'Mixed VDEV Capacities',
-  MixedDiskCapacity = 'Mixed Disk Capacities',
   MixedVdevWidth = 'Mixed VDEV Widths',
   NoRedundancy = 'No Redundancy',
   RedundancyMismatch = 'Redundancy Mismatch',

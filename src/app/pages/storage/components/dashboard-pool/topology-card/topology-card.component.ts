@@ -100,9 +100,11 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     );
   }
 
-  private parseDevs(vdevs: TopologyItem[],
+  private parseDevs(
+    vdevs: TopologyItem[],
     category: PoolTopologyCategory,
-    dataVdevs?: TopologyItem[]): string {
+    dataVdevs?: TopologyItem[],
+  ): string {
     const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataVdevs);
     let outputString = vdevs.length ? '' : notAssignedDev;
 
@@ -178,7 +180,6 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       case TopologyWarning.RedundancyMismatch:
       case TopologyWarning.MixedVdevLayout:
       case TopologyWarning.MixedVdevCapacity:
-      case TopologyWarning.MixedDiskCapacity:
       case TopologyWarning.MixedVdevWidth:
         return true;
       default:
