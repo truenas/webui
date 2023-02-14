@@ -1,0 +1,39 @@
+<div class="row-grid">
+  <div class="cell cell-name">
+    <div class="name">
+      <mat-checkbox
+        color="primary"
+        ix-auto
+        ix-auto-type="checkbox"
+        [checked]="application.selected"
+        (change)="toggleAppChecked($event.checked)"
+      ></mat-checkbox>
+      <span>{{ application.name }}</span>
+    </div>
+  </div>
+  <div class="cell cell-status">
+    <span>{{ application.status }}</span>
+  </div>
+  <div class="cell cell-cpu">
+    <span> 2% </span>
+  </div>
+  <div class="cell cell-ram">
+    <span> 4GB </span>
+  </div>
+  <div class="cell cell-disk">
+    <span> 12GB </span>
+  </div>
+  <div class="cell cell-update">
+    <span> Up to date </span>
+  </div>
+  <div class="cell cell-action">
+    <button
+      mat-icon-button
+      ixTest="app-action"
+      (click)="$event.preventDefault()"
+    >
+      <ix-icon *ngIf="isAppStopped" name="mdi-play"></ix-icon>
+      <ix-icon *ngIf="!isAppStopped" name="mdi-stop"></ix-icon>
+    </button>
+  </div>
+</div>
