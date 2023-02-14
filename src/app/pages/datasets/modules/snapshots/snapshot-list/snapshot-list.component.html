@@ -129,18 +129,10 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="referenced">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Referenced' | translate }}
-      </th>
-      <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-        <ng-container
-          *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable"
-        >
-          {{ +snapshot.properties.referenced.parsed | filesize: { standard: 'iec' } }}
-        </ng-container>
-      </td>
-    </ng-container>
+    <ix-expand-toggle-column
+      [expandedRow]="expandedRow"
+      (toggle)="onToggle($event)"
+    ></ix-expand-toggle-column>
 
     <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
     <tr
