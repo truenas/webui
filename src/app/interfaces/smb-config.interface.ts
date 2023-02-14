@@ -15,7 +15,6 @@ export interface SmbConfig {
   loglevel: LogLevel;
   netbiosalias: string[];
   netbiosname: string;
-  netbiosname_b: string;
   netbiosname_local: string;
   next_rid: number;
   ntlmv1_auth: boolean;

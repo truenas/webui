@@ -8,9 +8,8 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { LogLevel } from 'app/enums/log-level.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
@@ -21,7 +20,6 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { DialogService, SystemGeneralService } from 'app/services';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -38,7 +36,6 @@ export class ServiceSmbComponent implements OnInit {
 
   form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
-    netbiosname_b: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
         (control: AbstractControl<string[]>) => {
@@ -67,7 +64,6 @@ export class ServiceSmbComponent implements OnInit {
   readonly helptext = helptext;
   readonly tooltips = {
     netbiosname: helptext.cifs_srv_netbiosname_tooltip,
-    netbiosname_b: helptext.cifs_srv_netbiosname_b_tooltip,
     netbiosalias: helptext.cifs_srv_netbiosalias_tooltip,
     workgroup: helptext.cifs_srv_workgroup_tooltip,
     description: helptext.cifs_srv_description_tooltip,
@@ -116,22 +112,10 @@ export class ServiceSmbComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
-  ) {
-    this.form.controls.netbiosname_b.disable();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.isFormLoading = true;
-    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.subscriptions.push(
-        this.form.controls.netbiosname_b.disabledWhile(
-          this.store$.select(selectIsHaLicensed).pipe(
-            tap((isHaLicensed) => this.hasSecondController = isHaLicensed),
-            map((isHaLicensed) => !isHaLicensed),
-          ),
-        ),
-      );
-    }
 
     this.ws.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {

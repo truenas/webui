@@ -2275,7 +2275,6 @@
   "NetBIOS": "NetBIOS",
   "NetBIOS Alias": "NetBIOS alias",
   "NetBIOS Name": "NetBIOS naam",
-  "NetBIOS Name (TrueNAS Controller 2)": "NetBIOS naam (TrueNAS controller 2)",
   "Netbios Name": "Netbiosnaam",
   "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "Netbios Naam van deze NAS. Deze naam moet verschillen van de <i>Werkgroep</i>-naam en mag niet langer zijn dan 15 tekens.",
   "Netcat Active Side": "Netcat actieve kant",
