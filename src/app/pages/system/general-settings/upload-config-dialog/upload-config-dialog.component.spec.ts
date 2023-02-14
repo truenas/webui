@@ -40,7 +40,7 @@ describe('UploadConfigDialogComponent', () => {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockProvider(AuthService, {
-        token2: 'token',
+        authToken$: of('token'),
       }),
     ],
   });
