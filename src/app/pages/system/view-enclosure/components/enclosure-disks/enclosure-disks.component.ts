@@ -301,7 +301,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     };
 
     const domChanges = new MutationObserver(callback);
-    domChanges.observe(this.overview.nativeElement, observerOptions);
+    domChanges.observe(this.overview?.nativeElement, observerOptions);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -825,9 +825,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       extractedEnclosure.chassis.alpha = opacity;
     } else {
       opacity = hsl[2] < 60 ? 0.25 : 0.75;
-      this.chassis.front.setChassisOpacity(opacity);
+      this.chassis?.front.setChassisOpacity(opacity);
 
-      if (this.chassis.rear) {
+      if (this.chassis?.rear) {
         this.chassis.rear.setChassisOpacity(opacity);
       }
     }
@@ -1195,8 +1195,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   resizeView(): void {
     // Layout helper code goes in here...
-    const visualizer = this.overview.nativeElement.querySelector('#visualizer');
-    visualizer.classList.add('resized');
+    const visualizer = this.overview?.nativeElement.querySelector('#visualizer');
+    visualizer?.classList.add('resized');
   }
 
   enclosureOverride(view: string): void {

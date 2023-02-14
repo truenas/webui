@@ -216,8 +216,8 @@ export class ChassisView {
 
   onEnter(): void {
     const opacity = this.disabledOpacity;
-    const delay = 50;
-    const duration = 50;
+    const delay = 60;
+    const duration = 60;
 
     setTimeout((): void => {
       const fade = (alpha: number): number => this.chassis.alpha = alpha;
@@ -288,6 +288,8 @@ export class ChassisView {
   }
 
   colorDriveTray(options: ChangeDriveTrayOptions): void {
+    if (!options.slot) return; // TODO: find out why we get undefined options.slot
+
     const driveIndex = options.slot - this.slotRange.start;
     if (driveIndex < 0 || driveIndex >= this.totalDriveTrays) {
       console.warn(`IGNORING DRIVE AT INDEX ${driveIndex} SLOT ${options.slot} IS OUT OF RANGE`);
@@ -296,7 +298,7 @@ export class ChassisView {
     const dt = this.driveTrayObjects[driveIndex];
 
     dt.color = options.color.toLowerCase();
-    if (this.initialized) {
+    if (dt && this.initialized) {
       dt.handle.alpha = options.color === 'none' ? this.disabledOpacity : 1;
     }
   }
