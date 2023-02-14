@@ -4,9 +4,6 @@ export default {
   cifs_srv_netbiosname_tooltip: T('Automatically populated with the original hostname\
  of the system. This name is limited to 15 characters and\
  cannot be the <b>Workgroup</b> name.'),
-  cifs_srv_netbiosname_b_tooltip: T('Automatically populated with the original hostname\
- of the system. This name is limited to 15 characters and\
- cannot be the <b>Workgroup</b> name.'),
   cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
  Each alias can be up to 15 characters long.'),
   cifs_srv_workgroup_tooltip: T('Must match Windows workgroup name. \

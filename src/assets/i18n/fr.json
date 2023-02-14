@@ -2590,7 +2590,6 @@
   "Naming Schema": "Schéma de nommage",
   "NetBIOS Alias": "Alias NetBIOS",
   "NetBIOS Name": "Nom NetBIOS",
-  "NetBIOS Name (TrueNAS Controller 2)": "Nom NetBIOS (Contrôleur TrueNAS 2)",
   "Netbios Name": "Nom Netbios",
   "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "Nom Netbios du NAS. Ce nom doit être différent du nom du <i>groupe de travail</i> et ne doit pas comporter plus de 15 caractères.",
   "Netcat Active Side": "Netcat côté actif",
