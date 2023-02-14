@@ -166,7 +166,7 @@
     "eslint": "^8.28.0",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-plugin-angular-file-naming": "~1.0.2",
-    "eslint-plugin-angular-test-ids": "~1.0.5",
+    "eslint-plugin-angular-test-ids": "~1.0.6",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^7.0.4",

@@ -85,11 +85,12 @@
       </td>
     </ng-container>
 
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
     <tr
       *matRowDef="let server; columns: displayedColumns; dataSource: dataSource"
       mat-row
       class="clickable-row"
+      [ixTest]="server.address"
       (click)="doEdit(server)"
     ></tr>
   </table>

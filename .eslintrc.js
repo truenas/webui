@@ -326,10 +326,6 @@ module.exports = {
         "@angular-eslint/template/no-interpolation-in-attributes": ['error'],
         "angular-test-ids/require-test-id": ["error", {
           "attribute": "ixTest",
-          "overrideElements": [
-            "button", "input", "select", "textarea", "option", "mat-radio-group",
-            "mat-radio-button", "mat-chip-list", "mat-chip"
-          ],
         }],
 
         // TODO: To be enabled later

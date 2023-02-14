@@ -3,6 +3,7 @@
     <tr
       *ngFor="let item of section; let i = index"
       class="summary-line"
+      [ixTest]="['summary', item.label]"
       [class.section-start]="i === 0"
     >
       <td class="summary-line-label">{{ item.label }}:</td>

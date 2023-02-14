@@ -122,7 +122,7 @@
     (toggle)="onToggle($event)"
   ></ix-expand-toggle-column>
 
-  <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
   <tr
     *matRowDef="
       let snapshot;
@@ -130,6 +130,7 @@
       dataSource: dataSource
     "
     mat-row
+    [ixTest]="snapshot.snapshot_name"
     [ixDetailRow]="snapshot"
     [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
     [ixDetailRowTemplate]="expandedRowTemplate"

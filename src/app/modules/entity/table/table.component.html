@@ -107,6 +107,7 @@
                     ix-auto-type="checkbox"
                     color="primary"
                     [ix-auto-identifier]="element[column.prop] + '-checkbox'"
+                    [ixTest]="element[column.prop]"
                     [disabled]="!column.onChange"
                     [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"
@@ -257,11 +258,13 @@
         <tr
           *matHeaderRowDef="displayedColumns"
           mat-header-row
+          ixTest="table-header"
           [attr.hidden]="hideHeader || _tableConf.complex"
         ></tr>
         <tr
           *matRowDef="let row; columns: displayedColumns"
           mat-row
+          [ixTest]="[_tableConf.name, row[idProp]]"
           (click)="editRow(row)"
         ></tr>
       </table>

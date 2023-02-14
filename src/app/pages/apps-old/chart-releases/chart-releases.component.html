@@ -96,6 +96,7 @@
         <mat-checkbox
           color="primary"
           class="bulk-checkbox"
+          [ixTest]="['select', item.name]"
           [(ngModel)]="item.selected"
         ></mat-checkbox>
       </div>

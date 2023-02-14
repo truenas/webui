@@ -8,6 +8,7 @@
       ix-auto
       color="primary"
       ix-auto-type="checkbox"
+      ixTest="secondary-confirmation"
       [ix-auto-identifier]="secondaryCheckBoxMsg | uppercase"
       (change)="secondaryCheckBoxEvent()"
     >
@@ -32,6 +33,7 @@
     ix-auto
     ix-auto-type="checkbox"
     ix-auto-identifier="CONFIRM"
+    ixTest="confirm"
     (change)="toggleSubmit($event)"
   >
     {{ 'Confirm' | translate }}

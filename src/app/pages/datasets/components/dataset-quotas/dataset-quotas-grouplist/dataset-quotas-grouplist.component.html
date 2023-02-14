@@ -135,10 +135,11 @@
           </button>
         </td>
       </ng-container>
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
       <tr
         *matRowDef="let row; columns: displayedColumns"
         mat-row
+        [ixTest]="row.name"
         (click)="doEdit(row)"
       ></tr>
     </table>

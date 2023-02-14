@@ -47,6 +47,7 @@
       #selectTrigger
       ix-auto
       ix-auto-type="select"
+      [ixTest]="config.name"
       [ix-auto-identifier]="config.placeholder"
       [value]="formValue"
       [formControlName]="config.name"
@@ -69,6 +70,7 @@
             ix-auto
             ix-auto-type="option"
             [ix-auto-identifier]="config.placeholder + '_' + option.label"
+            [ixTest]="config.name"
             [value]="option.value"
           >
             <span *ngIf="config.multiple">
@@ -88,6 +90,7 @@
             ix-auto
             ix-auto-type="option"
             [ix-auto-identifier]="config.placeholder + '_' + option.label"
+            [ixTest]="config.name"
             [value]="option.value"
             [class.text-wrap]="config.enableTextWrapForOptions"
             (click)="onToggleSelect(option)"
@@ -118,6 +121,7 @@
             ix-auto
             ix-auto-type="option"
             [ix-auto-identifier]="config.placeholder + '_zeroState'"
+            [ixTest]="config.name"
             [class.text-wrap]="config.enableTextWrapForOptions"
           >
             {{ config.zeroStateMessage ? config.zeroStateMessage : '--' }}

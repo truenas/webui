@@ -44,6 +44,7 @@
       <mat-option
         *ngFor="let suggestion of suggestions$ | async"
         [value]="suggestion"
+        [ixTest]="[controlDirective.name, suggestion]"
       >
         {{ suggestion }}
       </mat-option>
