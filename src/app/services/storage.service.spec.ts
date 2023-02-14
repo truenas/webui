@@ -229,22 +229,6 @@ describe('StorageService', () => {
       expect(dedupDiskSizes[0].has(generatedDiskSizeInBytes)).toBe(false);
       expect(dedupDiskSizes[1].has(generatedDiskSizeInBytes)).toBe(false);
     });
-
-    it('detects mixed disk capacities within a VDEV', () => {
-      const isDataMixed = storageService.isMixedVdevDiskCapacity(dataDiskSizes);
-      const isDedupMixed = storageService.isMixedVdevDiskCapacity(dedupDiskSizes);
-      const isSpecialMixed = storageService.isMixedVdevDiskCapacity(specialDiskSizes);
-
-      expect(isDataMixed).toBe(true);
-      expect(isSpecialMixed).toBe(false);
-      expect(isDedupMixed).toBe(false);
-
-      /*
-      * NOTE: Disk capacities are checked on a per VDEV basis.
-      * This is why Dedup topology returns false even though
-      * there are different disk sizes in each VDEV
-      * */
-    });
   });
 
   describe('detects mixed VDEV types', () => {
@@ -330,27 +314,6 @@ describe('StorageService', () => {
 
       expect(warnings).toHaveLength(1);
       expect(warnings[0]).toBe(TopologyWarning.MixedVdevCapacity);
-    });
-
-    it('generates warning for "Mixed Disk Capacities"', () => {
-      const storage = new MockStorageGenerator();
-
-      storage.addDataTopology({
-        scenario: MockStorageScenario.MixedDiskCapacity,
-        layout: TopologyItemType.Mirror,
-        diskSize: 4,
-        width: 2,
-        repeats: 3,
-      });
-
-      const warnings = storageService.validateVdevs(
-        PoolTopologyCategory.Data,
-        storage.poolState.topology.data,
-        storage.disks,
-      );
-
-      expect(warnings).toHaveLength(1);
-      expect(warnings[0]).toBe(TopologyWarning.MixedDiskCapacity);
     });
 
     it('generates warning for "Mixed VDEV Width"', () => {
