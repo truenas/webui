@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
 import {
-  BehaviorSubject, filter, map, Observable, Subscription, switchMap, take, tap, timer,
+  BehaviorSubject, combineLatest, filter, map, Observable, of, Subscription, switchMap, take, tap, timer,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
@@ -19,13 +19,22 @@ export class AuthService {
   @LocalStorage() token2: string;
   private loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
+  /**
+   * This is 10 seconds less than 300 seconds which is the default life
+   * time of a token generated with auth.generate_token. The 10 seconds
+   * difference is to allow for delays in request send/receive
+   */
+  readonly tokenRegenerationTimeMillis = 290 * 1000;
+
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
   private generateTokenSubscription: Subscription;
 
-  get isAuthenticated$(): Observable<boolean> {
-    return this.isLoggedIn$.asObservable();
-  }
+  readonly isAuthenticated$ = combineLatest([this.wsManager.isConnected$, this.isLoggedIn$.asObservable()]).pipe(
+    switchMap(([isConnected, isLoggedIn]) => {
+      return of(isConnected && isLoggedIn);
+    }),
+  );
 
   get user$(): Observable<LoggedInUser> {
     return this.loggedInUser$.asObservable();
@@ -34,11 +43,16 @@ export class AuthService {
   constructor(
     private wsManager: WebsocketConnectionService,
   ) {
-    this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isLoggedIn) => {
-      if (isLoggedIn) {
-        this.getLoggedInUserInformation();
-        this.setupPeriodicTokenGeneration();
-      }
+    this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe({
+      next: (isAuthenticated) => {
+        if (isAuthenticated) {
+          this.getLoggedInUserInformation();
+          this.setupPeriodicTokenGeneration();
+        } else if (this.generateTokenSubscription) {
+          this.generateTokenSubscription.unsubscribe();
+          this.generateTokenSubscription = null;
+        }
+      },
     });
   }
 
@@ -70,7 +84,9 @@ export class AuthService {
 
   setupPeriodicTokenGeneration(): void {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
-      this.generateTokenSubscription = timer(0, 290 * 1000).pipe(
+      this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
+        switchMap(() => this.isAuthenticated$),
+        filter((isAuthenticated) => isAuthenticated),
         switchMap(() => this.generateToken()),
         tap((token) => this.token2 = token),
         untilDestroyed(this),
