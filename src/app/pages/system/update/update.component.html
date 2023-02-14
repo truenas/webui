@@ -96,17 +96,17 @@
   <mat-card-content id="upgrades-card-scrollbox">
     <table class="table table-striped table-sm">
       <thead>
-        <tr>
+        <tr ixTest="table-header">
           <th>{{ 'Operation' | translate }}</th>
           <th>{{ 'Name' | translate }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let p of packages">
-          <td>{{ p.operation }}</td>
-          <td>{{ p.name }}</td>
+        <tr *ngFor="let package of packages" [ixTest]="package.name">
+          <td>{{ package.operation }}</td>
+          <td>{{ package.name }}</td>
         </tr>
-        <tr *ngIf="packages.length === 0">
+        <tr *ngIf="packages.length === 0" ixTest="no-update-found">
           <td>{{ 'No update found.' | translate }}</td>
         </tr>
       </tbody>

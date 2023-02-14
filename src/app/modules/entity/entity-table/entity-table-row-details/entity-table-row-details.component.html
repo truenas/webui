@@ -49,6 +49,7 @@
         *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
         mat-button
         ix-auto-type="button"
+        [ixTest]="[config.name | cast, action.label]"
         [ix-auto-identifier]="(action?.name | uppercase) + '_' + action.id"
         [id]="'action_button_' + action?.name + '__' + action.id"
         [disabled]="action.disabled"

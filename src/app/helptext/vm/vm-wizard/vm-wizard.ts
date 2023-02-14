@@ -127,6 +127,8 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
   memory_size_err: T('Allocate at least 256 MiB.'),
   memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
+  min_memory_tooltip: T('When not specified, guest system is given fixed amount of memory specified above.\n'
+    + 'When minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.'),
   vm_mem_title: T('Available Memory:'),
 
   disks_label: T('Disks'),

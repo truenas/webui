@@ -23,10 +23,15 @@
         ix-auto
         ix-auto-type="select"
         ix-auto-identifier="status-select"
+        ixTest="versions"
         [(ngModel)]="selectedVersionKey"
         (ngModelChange)="onVersionOptionChanged()"
       >
-        <mat-option *ngFor="let option of versionOptions | keyvalue: originalOrder" [value]="option.key">
+        <mat-option
+          *ngFor="let option of versionOptions | keyvalue: originalOrder"
+          [value]="option.key"
+          [ixTest]="['versions', option.value.latest_human_version]"
+        >
           {{ option.value.latest_human_version }}
         </mat-option>
       </mat-select>

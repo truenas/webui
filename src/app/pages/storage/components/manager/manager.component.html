@@ -39,6 +39,7 @@
                 color="primary"
                 id="pool-manager__encryption-checkbox"
                 class="form-control"
+                ixTest="encryption"
                 [formControl]="isEncryptedControl"
                 (change)="isEncryptedChecked()"
               >
@@ -65,6 +66,7 @@
                 <mat-select
                   id="pool-manager__encryption_algorithm-select"
                   class="form-control"
+                  ixTest="encryption-algorithm"
                   [formControl]="encryptionAlgorithmControl"
                   [placeholder]="'Encryption Algorithm' | translate"
                 >
@@ -72,6 +74,7 @@
                     *ngFor="let option of encryptionAlgorithmOptions"
                     [id]="'encryption_algorithm_option_' + option.label"
                     [value]="option.value"
+                    [ixTest]="['encryption', option.label]"
                   >
                     {{ option.label | translate }}
                   </mat-option>
@@ -316,6 +319,7 @@
                     ix-auto
                     ix-auto-type="button"
                     ix-auto-identifier="add_vdev_type"
+                    ixTest="add-vdev"
                     [matMenuTriggerFor]="menu"
                     [disabled]="this.disks.length === 0"
                   >
@@ -516,6 +520,7 @@
                   <mat-checkbox
                     color="primary"
                     id="pool-manager__disks-table-checkall"
+                    ixTest="select-all-disks"
                     [checked]="allRowsSelected"
                     (change)="handleSelectAll(selectFn, !allRowsSelected)"
                   ></mat-checkbox>
@@ -534,6 +539,7 @@
                     *ngIf="disks[rowIndex]"
                     color="primary"
                     [id]="'pool-manager__disks-' + disks[rowIndex].devname"
+                    [ixTest]="['select-disk', disks[rowIndex].devname]"
                     [name]="'disk_' + rowIndex + '_checkbox'"
                     [checked]="isSelected"
                     (change)="onCheckboxChangeFn($event)"
@@ -604,6 +610,7 @@
                     <mat-checkbox
                       color="primary"
                       class="non-unique-serial-disks-checkbox"
+                      ixTest="show-disks-with-non-unique-serial-numbers"
                       [checked]="includeNonUniqueSerialDisks"
                       (change)="toggleNonUniqueSerialDisks()"
                     >
@@ -798,6 +805,7 @@
         <mat-checkbox
           color="primary"
           id="pool-manager__force-submit-checkbox"
+          ixTest="force"
           [formControl]="forceControl"
           (click)="forceCheckboxChecked()"
         >

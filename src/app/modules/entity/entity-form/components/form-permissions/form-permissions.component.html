@@ -37,13 +37,13 @@
     </mat-form-field>
   </div>
   <table>
-    <tr>
+    <tr [ixTest]="[config.name, 'permissions-header']">
       <td></td>
       <td>{{ 'Read' | translate }}</td>
       <td>{{ 'Write' | translate }}</td>
       <td>{{ 'Execute' | translate }}</td>
     </tr>
-    <tr>
+    <tr ixTest="[config.name, 'user-permissions']">
       <td>
         {{ 'User' | translate }}
       </td>
@@ -52,6 +52,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'user-read']"
           [ix-auto-identifier]="config.name + '_ownerRead'"
           [checked]="ownerRead"
           (change)="toggleOwnerRead()"
@@ -62,6 +63,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'user-write']"
           [ix-auto-identifier]="config.name + '_ownerWrite'"
           [checked]="ownerWrite"
           (change)="toggleOwnerWrite()"
@@ -72,13 +74,14 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'user-execute']"
           [ix-auto-identifier]="config.name + '_ownerExec'"
           [checked]="ownerExec"
           (change)="toggleOwnerExec()"
         ></mat-checkbox>
       </td>
     </tr>
-    <tr>
+    <tr [ixTest]="[config.name, 'group-permissions']">
       <td>
         {{ 'Group' | translate }}
       </td>
@@ -87,6 +90,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'group-read']"
           [ix-auto-identifier]="config.name + '_groupRead'"
           [checked]="groupRead"
           (change)="toggleGroupRead()"
@@ -97,6 +101,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'group-write']"
           [ix-auto-identifier]="config.name + '_groupWrite'"
           [checked]="groupWrite"
           (change)="toggleGroupWrite()"
@@ -107,13 +112,14 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'group-execute']"
           [ix-auto-identifier]="config.name + '_groupExec'"
           [checked]="groupExec"
           (change)="toggleGroupExec()"
         ></mat-checkbox>
       </td>
     </tr>
-    <tr *ngIf="!config.hideOthersPermissions">
+    <tr *ngIf="!config.hideOthersPermissions" [ixTest]="[config.name, 'other-permissions']">
       <td>
         {{ 'Other' | translate }}
       </td>
@@ -122,6 +128,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'other-read']"
           [ix-auto-identifier]="config.name + '_otherRead'"
           [checked]="otherRead"
           (change)="toggleOtherRead()"
@@ -133,6 +140,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'other-write']"
           [ix-auto-identifier]="config.name + '_otherWrite'"
           [checked]="otherWrite"
           (change)="toggleOtherWrite()"
@@ -144,6 +152,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
+          [ixTest]="[config.name, 'other-execute']"
           [ix-auto-identifier]="config.name + '_otherExec'"
           [checked]="otherExec"
           (change)="toggleOtherExec()"

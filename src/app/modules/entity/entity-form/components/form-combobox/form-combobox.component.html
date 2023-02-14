@@ -63,6 +63,7 @@
           ix-auto
           ix-auto-type="option"
           [ix-auto-identifier]="option.label"
+          [ixTest]="[config.name, option.label]"
           [class]="option.sticky ? 'sticky-' + option.sticky : ''"
           [value]="option.value"
           [class.text-wrap]="config.enableTextWrapForOptions"

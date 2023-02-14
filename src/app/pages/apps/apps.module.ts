@@ -30,6 +30,7 @@ import {
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
+import { AppInfoCardComponent } from './components/app-info-card/app-info-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
@@ -50,6 +51,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppDetailViewComponent,
     AppCardLogoComponent,
     AppRouterOutletComponent,
+    AppInfoCardComponent,
   ],
   imports: [
     CommonModule,

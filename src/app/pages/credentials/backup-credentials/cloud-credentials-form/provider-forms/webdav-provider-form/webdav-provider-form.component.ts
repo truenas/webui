@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -54,6 +55,7 @@ export class WebdavProviderFormComponent extends BaseProviderFormComponent imple
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
+    public formatter: IxFormatterService,
   ) {
     super();
   }

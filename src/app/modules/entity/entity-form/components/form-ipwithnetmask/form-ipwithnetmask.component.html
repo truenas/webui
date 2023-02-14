@@ -57,6 +57,7 @@
           ix-auto-type="input"
           disableOptionCentering
           [ix-auto-identifier]="config.placeholder"
+          [ixTest]="[config.name, 'netmask']"
           [value]="netmask"
           [placeholder]="'Netmask' | translate"
           (selectionChange)="setNetmask($event)"
@@ -66,6 +67,7 @@
             ix-auto
             ix-auto-type="option"
             [ix-auto-identifier]="option.label"
+            [ixTest]="[config.name, 'netmask', option.label]"
             [value]="option.value"
           >
             {{ option.label | translate }}
@@ -81,9 +83,13 @@
           ix-auto
           ix-auto-type="select"
           [ix-auto-identifier]="config.placeholder"
+          [ixTest]="[config.name, 'netmask']"
           [value]="config.netmaskPreset"
         >
-          <mat-option [value]="config.netmaskPreset">
+          <mat-option
+            [value]="config.netmaskPreset"
+            [ixTest]="[config.name, 'netmask', config.netmaskPreset]"
+          >
             {{ config.netmaskPreset }}
           </mat-option>
         </mat-select>

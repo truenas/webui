@@ -42,7 +42,7 @@ describe('WebdavProviderFormComponent', () => {
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
     await form.fillForm({
-      URL: 'http://10.10.10.1/webdav',
+      URL: '10.10.10.1/webdav',
       'WebDAV Service': 'OTHER',
       Username: 'eve',
       Password: 'apple',

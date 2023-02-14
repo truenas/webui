@@ -4,5 +4,6 @@
     [label]="'Webhook URL' | translate"
     [required]="true"
     [tooltip]="helptext.Slack_url_tooltip | translate"
+    [parse]="formatter.stringAsUrlParsing"
   ></ix-input>
 </ng-container>

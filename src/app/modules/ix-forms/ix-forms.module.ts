@@ -121,7 +121,6 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxCheckboxListComponent,
-
     IxLabelComponent,
     FormActionsComponent,
   ],

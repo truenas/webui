@@ -54,7 +54,7 @@
 
       <ng-template #loadingOrError>
         <ng-container *ngIf="hasErrorInOptions">
-          <mat-option [disabled]="true">
+          <mat-option ixTest="options-cannot-be-loaded" [disabled]="true">
             {{ 'Options cannot be loaded' | translate }}
           </mat-option>
         </ng-container>

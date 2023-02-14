@@ -75,6 +75,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ZfsSnapshot>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
+  loadingExtraColumns = false;
   dataSource = new MatTableDataSource<ZfsSnapshot>([]);
   defaultSort: Sort = { active: 'snapshot_name', direction: 'desc' };
   emptyConfig: EmptyConfig = {
@@ -181,11 +182,11 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
         case 'dataset':
           return item.dataset;
         case 'used':
-          return item.properties ? item.properties.used.parsed.toString() : '';
+          return item.properties ? +item.properties.used.parsed : '';
         case 'created':
           return item.properties ? item.properties.creation.parsed.$date.toString() : '';
         case 'referenced':
-          return item.properties ? item.properties.referenced.parsed.toString() : '';
+          return item.properties ? +item.properties.referenced.parsed : '';
       }
     };
     setTimeout(() => {
@@ -199,8 +200,20 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   toggleExtraColumns(event: MouseEvent): void {
     event.preventDefault();
     this.dialogService.confirm(this.getConfirmOptions())
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.store$.dispatch(snapshotExtraColumnsToggled()));
+      .pipe(untilDestroyed(this))
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.showExtraColumns = !this.showExtraColumns;
+          this.store$.dispatch(snapshotExtraColumnsToggled());
+        }
+
+        this.loadingExtraColumns = true;
+
+        setTimeout(() => {
+          this.loadingExtraColumns = false;
+          this.cdr.markForCheck();
+        });
+      });
   }
 
   doAdd(): void {

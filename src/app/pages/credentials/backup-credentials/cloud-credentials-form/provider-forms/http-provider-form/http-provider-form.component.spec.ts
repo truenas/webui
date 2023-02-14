@@ -36,7 +36,7 @@ describe('HttpProviderFormComponent', () => {
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
     await form.fillForm({
-      URL: 'http://truenas.com/sync',
+      URL: 'truenas.com/sync',
     });
 
     const values = spectator.component.getSubmitAttributes();

@@ -46,7 +46,9 @@ import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/n
 import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/special-small-block-size-options.contant';
-import { StorageService, SystemGeneralService, WebSocketService2 } from 'app/services';
+import {
+  NameValidationService, StorageService, SystemGeneralService, WebSocketService2,
+} from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
@@ -149,6 +151,7 @@ export class DatasetFormComponent implements FormConfiguration {
           required: true,
           validation: [
             Validators.required,
+            Validators.pattern(this.nameValidationService.nameRegex),
             forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive),
           ],
         },
@@ -692,6 +695,7 @@ export class DatasetFormComponent implements FormConfiguration {
           options: [
             { label: 'Generic', value: DatasetShareType.Generic },
             { label: 'SMB', value: DatasetShareType.Smb },
+            { label: 'Apps', value: DatasetShareType.Apps },
           ],
           value: DatasetShareType.Generic,
           disabled: true,
@@ -883,6 +887,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
+    private nameValidationService: NameValidationService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -1071,7 +1076,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.pk = this.parent;
       this.isNew = true;
       entityForm.formGroup.controls.parent.setValue(this.parent);
-      entityForm.formGroup.controls.name.setValidators(datasetNameTooLong(this.parent));
+      entityForm.formGroup.controls.name.addValidators(datasetNameTooLong(this.parent));
 
       if (this.parent.length >= 200) {
         this.dialogService.warn(

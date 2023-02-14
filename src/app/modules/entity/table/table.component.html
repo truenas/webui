@@ -20,6 +20,7 @@
         mat-button
         color="default"
         class="table-action-button"
+        [ixTest]="['table', _tableConf.name, action.label]"
         (click)="$event.stopPropagation(); action.onClick()"
       >
         {{ action.label | translate }}
@@ -106,6 +107,7 @@
                     ix-auto-type="checkbox"
                     color="primary"
                     [ix-auto-identifier]="element[column.prop] + '-checkbox'"
+                    [ixTest]="element[column.prop]"
                     [disabled]="!column.onChange"
                     [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"
@@ -129,6 +131,7 @@
                     ix-auto
                     ix-auto-type="button"
                     mat-stroked-button
+                    [ixTest]="[element[column.prop], 'state']"
                     [ix-auto-identifier]="element[column.prop] + '-task-state'"
                     [ngClass]="getButtonClass(element[column.prop])"
                     (click)="$event.stopPropagation(); onButtonClick(element)"
@@ -220,6 +223,7 @@
                   <ng-template #actionButtons>
                     <button
                       mat-icon-button
+                      [ixTest]="['row-action', _tableConf.name, rowAction.name]"
                       [disabled]="rowAction.disabled"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
@@ -236,6 +240,7 @@
               <button
                 *ngIf="_tableConf.deleteCall"
                 mat-icon-button
+                [ixTest]="['table', _tableConf.name, 'delete']"
                 [disabled]="_tableConf.deleteActionDisabled"
                 (click)="$event.stopPropagation(); deleteRow(element)"
               >
@@ -253,11 +258,13 @@
         <tr
           *matHeaderRowDef="displayedColumns"
           mat-header-row
+          ixTest="table-header"
           [attr.hidden]="hideHeader || _tableConf.complex"
         ></tr>
         <tr
           *matRowDef="let row; columns: displayedColumns"
           mat-row
+          [ixTest]="[_tableConf.name, row[idProp]]"
           (click)="editRow(row)"
         ></tr>
       </table>
@@ -288,6 +295,7 @@
         *ngFor="let action of _tableConf.tableFooterActions let last=last"
         mat-button
         color="default"
+        [ixTest]="['table', _tableConf.name, 'footer-action', action.label]"
         [ngClass]="{ 'table-action-button': !last }"
         (click)="$event.stopPropagation(); action.onClick()"
       >

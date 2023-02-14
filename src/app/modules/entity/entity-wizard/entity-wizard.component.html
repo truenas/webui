@@ -75,6 +75,7 @@
               type="button"
               ix-auto
               ix-auto-type="button"
+              ixTest="wizard-cancel"
               [id]="'cancel_button_' + i"
               [ix-auto-identifier]="'CANCEL_' + step.label"
               (click)="goBack()"
@@ -90,6 +91,7 @@
               type="button"
               ix-auto
               ix-auto-type="button"
+              ixTest="wizard-back"
               [id]="'goback_button_' + i"
               [ix-auto-identifier]="'BACK_' + step.label"
             >
@@ -104,6 +106,7 @@
               type="button"
               ix-auto
               ix-auto-type="button"
+              ixTest="wizard-next"
               [id]="'goforward_button_' + i"
               [ix-auto-identifier]="'NEXT_' + step.label"
               [disabled]="showSpinner"
@@ -119,6 +122,7 @@
               type="button"
               ix-auto
               ix-auto-type="button"
+              [ixTest]="['wizard-next', customNextText]"
               [id]="'custom_button_' + i"
               [ix-auto-identifier]="customNextText | uppercase"
               (click)="handleNext(matStepInstance)"
@@ -134,6 +138,7 @@
                 type="button"
                 ix-auto
                 ix-auto-type="button"
+                [ixTest]="['wizard-action', custBtn.name]"
                 [id]="'cust_button_' + custBtn.name"
                 [ix-auto-identifier]="custBtn.name | uppercase"
                 (click)="custBtn['function']()"
@@ -154,6 +159,7 @@
                 ix-auto
                 ix-auto-type="button"
                 ix-auto-identifier="CANCEL_secondary"
+                [ixTest]="['wizard-cancel']"
                 (click)="goBack()"
               >
                 {{ 'Cancel' | translate }}
@@ -167,6 +173,7 @@
                 ix-auto
                 ix-auto-type="button"
                 ix-auto-identifier="BACK_noconfirm"
+                [ixTest]="['wizard-back']"
               >
                 {{ 'Back' | translate }}
               </button>
@@ -177,6 +184,7 @@
                 color="primary"
                 ix-auto
                 ix-auto-type="button"
+                [ixTest]="['wizard-save', saveSubmitText]"
                 [ix-auto-identifier]="saveSubmitText | uppercase"
                 [disabled]="!entityForm.form.valid"
                 (click)="onSubmit()"
@@ -214,6 +222,7 @@
             ix-auto
             ix-auto-type="button"
             ix-auto-identifier="CANCEL_secondary"
+            [ixTest]="['wizard-cancel']"
             (click)="goBack()"
           >
             {{ 'Cancel' | translate }}
@@ -227,6 +236,7 @@
             ix-auto
             ix-auto-type="button"
             ix-auto-identifier="BACK_noconfirm"
+            [ixTest]="['wizard-back']"
           >
             {{ 'Back' | translate }}
           </button>
@@ -237,6 +247,7 @@
             color="primary"
             ix-auto
             ix-auto-type="button"
+            [ixTest]="['wizard-save', saveSubmitText]"
             [ix-auto-identifier]="saveSubmitText | uppercase"
             [disabled]="!entityForm.form.valid"
             (click)="onSubmit()"
