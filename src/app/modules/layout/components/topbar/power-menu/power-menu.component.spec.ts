@@ -16,7 +16,7 @@ describe('PowerMenuComponent', () => {
     component: PowerMenuComponent,
     providers: [
       mockProvider(AuthService, {
-        logout: jest.fn(),
+        logout: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
