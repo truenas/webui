@@ -4044,7 +4044,6 @@
   "Timezone": "Zeitzone",
   "Title": "Titel",
   "Token created with  <a href=\"https://developers.google.com/drive/api/v3/about-auth\" target=\"_blank\">Google Drive</a>. Access Tokens expire periodically and  must be refreshed.": "Token erstellt mit <a href=\"https://developers.google.com/drive/api/v3/about-auth\" target=\"_blank\">Google Drive</a>. Zugriffs-Token laufen periodisch ab und müssen aktualisiert werden.",
-  "Token expired, please log back in.": "Token abgelaufen, bitte loggen Sie sich wieder ein.",
   "Topology": "Topologie",
   "Transfer": "Übertragen",
   "Transfers": "Übertragungen",

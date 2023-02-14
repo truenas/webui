@@ -5,7 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { from, of, switchMap } from 'rxjs';
+import {
+  from, of, switchMap, tap,
+} from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
@@ -66,9 +68,7 @@ export class DatasetUnlockComponent implements OnInit {
     return this.form.controls.use_file.value;
   }
 
-  private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.authService.token2;
-  }
+  private apiEndPoint: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -78,7 +78,14 @@ export class DatasetUnlockComponent implements OnInit {
     private dialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
-  ) { }
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   ngOnInit(): void {
     this.pk = this.aroute.snapshot.params['datasetId'];

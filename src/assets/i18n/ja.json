@@ -3100,7 +3100,6 @@
   "Token created with  <a href=\"https://developers.google.com/drive/api/v3/about-auth\" target=\"_blank\">Google Drive</a>.": "",
   "Token created with  <a href=\"https://developers.google.com/drive/api/v3/about-auth\" target=\"_blank\">Google Drive</a>. Access Tokens expire periodically and  must be refreshed.": "",
   "Token expired": "",
-  "Token expired, please log back in.": "",
   "Token is required. Please login to get one!": "",
   "Topology": "",
   "Total": "",

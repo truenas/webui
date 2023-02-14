@@ -82,27 +82,28 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.loadFailoverStatus(),
         // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
         this.systemGeneralService.loadProductType(),
-      ])
-        .pipe(
-          switchMap(() => {
-            this.updateService.hardRefreshIfNeeded();
-            this.updateFailoverStatusOnDisconnect();
-
-            // TODO: ws.token implicitly stores token in localStorage.
-            if (!this.authService.token2) {
-              return of(null);
-            }
-
-            return this.reLoginWithToken();
-          }),
-          tapResponse(
-            () => this.setLoadingState(false),
-            (error: WebsocketError) => {
-              this.setLoadingState(false);
-              new EntityUtils().handleWsError(this, error, this.dialogService);
-            },
-          ),
-        );
+      ]).pipe(
+        tap(() => {
+          this.updateService.hardRefreshIfNeeded();
+          this.updateFailoverStatusOnDisconnect();
+        }),
+        switchMap(() => this.authService.loginWithToken()),
+        tap((wasLoggedIn) => {
+          if (!wasLoggedIn) {
+            this.authService.clearAuthToken();
+            this.setLoadingState(false);
+            return;
+          }
+          this.handleSuccessfulLogin();
+        }),
+        tapResponse(
+          () => this.setLoadingState(false),
+          (error: WebsocketError) => {
+            this.setLoadingState(false);
+            new EntityUtils().handleWsError(this, error, this.dialogService);
+          },
+        ),
+      );
     }),
   ));
 
@@ -161,20 +162,6 @@ export class SigninStore extends ComponentStore<SigninState> {
       ips,
     },
   }));
-
-  private reLoginWithToken(): Observable<unknown> {
-    return this.authService.loginWithToken().pipe(
-      tap((wasLoggedIn) => {
-        if (!wasLoggedIn) {
-          this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
-          this.authService.token2 = null;
-          this.setLoadingState(false);
-          return;
-        }
-        this.handleSuccessfulLogin();
-      }),
-    );
-  }
 
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
