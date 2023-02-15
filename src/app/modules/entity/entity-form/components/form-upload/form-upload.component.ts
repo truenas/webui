@@ -26,7 +26,7 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  apiEndPoint: string;
+  private apiEndPoint: string;
   fileList: FileList;
   fbrowser: HTMLInputElement;
 

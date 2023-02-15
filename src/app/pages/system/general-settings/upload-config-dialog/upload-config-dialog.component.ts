@@ -21,7 +21,7 @@ export class UploadConfigDialogComponent {
   });
 
   readonly helptext = helptext;
-  apiEndPoint: string;
+  private apiEndPoint: string;
 
   constructor(
     private formBuilder: FormBuilder,
