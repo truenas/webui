@@ -205,8 +205,7 @@ export class AppSchemaService {
   }
 
   checkIsValidCronTab(crontab: string): boolean {
-    // invalid cron type example --> { minute: 5, hour: undefined }
-    return !Object.values(crontabToSchedule(crontab)).includes(undefined);
+    return !!crontab.match(/^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[a-z]{3}(,[a-z]{3}){0,10}) ?){5})$/);
   }
 
   checkIsValidSchedule(schedule: Schedule): boolean {
