@@ -1,4 +1,8 @@
 
+def mat_Option(option):
+    return f'//mat-option[contains(.,"{option}")]'
+
+
 class active_Directory:
     title = '//h3[@class="ix-formtitle" and text()="Active Directory"]'
     enable_Checkbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
@@ -61,6 +65,7 @@ class add_User:
     root_Group_Option = '//mat-option[contains(.,"root")]'
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
     qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
+    games_Group_Option = '//mat-option[contains(.,"games")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     password_Disabled_Slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
     home_Mode_Owner_Write_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
@@ -88,6 +93,13 @@ class advanced:
 
     def system_Dataset_Pool_Pool(pool_name):
         return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
+
+
+class alert():
+    title = '//h3[text()="Alerts"]'
+    degraded_Critical_Level = '//ix-alert[contains(.,"DEGRADED")]//h3[contains(.,"Critical")]'
+    degraded_Pool_Text = '//h4[contains(.,"Pool tank state is DEGRADED")]'
+    close_Button = '//button[contains(.,"clear")]'
 
 
 class applications:
@@ -272,6 +284,8 @@ class edit_Acl:
     builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
     recursive_Checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
     traverse_Checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
+    permission_Select = '//ix-select[@formcontrolname="basicPermission"]//mat-select'
+    permission_Read_Option = '//mat-option[contains(.,"Read")]'
 
     def combobox_Option(option):
         return f'//mat-option[contains(.,"{option}")]'
@@ -343,6 +357,45 @@ class interface:
     netmask_Option = '//mat-option[contains(.,"24")]'
 
 
+class iscsi:
+    title = '//h1[text()="iSCSI"]'
+    protals_Tab = '//a[normalize-space(text())="Portals"]'
+    targets_Tab = '//a[normalize-space(text())="Targets"]'
+    extents_Tab = '//a[normalize-space(text())="Extents"]'
+    iscsitest1_Text = '//div[normalize-space(text())="iscsitest1"]'
+
+
+class iscsi_Wizard:
+    """iscsi_Wizard contains xpaths for the iSCSI Wizard"""
+    title = '//h1[text()="Wizard"]'
+    block_Device_Title = '//mat-step-header[contains(.,"Create or Choose Block Device") and @tabindex="0"]'
+    device_Name_Input = '//input[@ix-auto="input__Name"]'
+    extent_Type_Select = '//mat-select[@ix-auto="select__Extent Type"]'
+    extent_Type_Device_Option = mat_Option('Device')
+    device_Dropdown = '//span[@id="disk-select"]'
+    create_New_Button = '//button[contains(.,"Create New")]'
+    pool_Dataset_Input = '//input[@data-placeholder="Pool/Dataset"]'
+    size_Input = '//input[@ix-auto="input__Size"]'
+    size_Select_Contain_GiB = '//mat-select[contains(.,"GiB")]'
+    block_Device_Next_Button = '//button[@id="goforward_button_0"]'
+    portal_Title = '//mat-step-header[contains(.,"Portal") and @tabindex="0"]'
+    portal_Select = '//mat-select[@ix-auto="select__Portal"]'
+    create_New_Option = '//mat-option[contains(.,"Create New")]'
+    discovery_Authentication_Method_Select = '//mat-select[@ix-auto="select__Discovery Authentication Method"]'
+    none_Option = mat_Option('NONE')
+    ip_Address_Select = '//mat-select[@ix-auto="select__IP Address"]'
+    zero_Ip_Option = mat_Option('0.0.0.0')
+    portal_Next_Button = '//button[@id="goforward_button_1"]'
+    initiator_Title = '//mat-step-header[contains(.,"Initiator") and @tabindex="0"]'
+    initiator_Input = '//input[@placeholder="Initiators"]'
+    initiator_Next_Button = '//button[@id="goforward_button_2"]'
+    confirm_Options_Title = '//mat-step-header[contains(.,"Confirm Options") and @tabindex="0"]'
+    iscsi_Summary = '//div[contains(text(),"iSCSI Summary")]'
+    summary_Name = '//div[contains(text(),"Name: iscsitest1")]'
+    extent_new_Device = '//div[contains(text(),"New Device: tank/iscsitest1(1 G)")]'
+    portal_listen = '//div[contains(text(),"Listen: 0.0.0.0")]'
+
+
 class ldap():
     title = '//h3[@class="ix-formtitle" and text()="LDAP"]'
     hostname_Input = '//ix-chips[@formcontrolname="hostname"]//input'
@@ -408,6 +461,10 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
+    iscsi_Service_Checkbox = '//tr[contains(.,"iSCSI")]//mat-checkbox'
+    iscsi_Service_Toggle = '//tr[contains(.,"iSCSI")]//mat-slide-toggle'
+    iscsi_Service_Button = '//tr[contains(.,"iSCSI")]//button'
+    iscsi_Service_Name = '//td[contains(text(),"iSCSI")]'
     nfs_Service_Checkbox = '//tr[contains(.,"NFS")]//mat-checkbox'
     nfs_Service_Toggle = '//tr[contains(.,"NFS")]//mat-slide-toggle'
     nfs_Service_Button = '//tr[contains(.,"NFS")]//button'
@@ -429,6 +486,11 @@ class sharing:
     nfs_Panel_Title = '//a[contains(text(),"UNIX (NFS) Shares")]'
     nfs_Add_Button = '//span[contains(.,"UNIX (NFS) Shares")]//button[contains(.,"Add")]'
     nfs_Service_Status = '//span[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
+
+    iscsi_Wizard_Button = '//button[contains(.,"Wizard")]'
+    iscsi_Burger_Button = '//span[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
+    iscsi_Service_Status = '//span[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
+    turn_On_Service_Button = '//button[contains(.,"Turn On Service")]'
 
     def smb_Share_Name(share_name):
         return f'//div[contains(text(),"{share_name}")]'
@@ -486,6 +548,12 @@ class system_Dataset:
 class toolbar:
     ha_Disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
     ha_Enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
+    notification = '//mat-icon[normalize-space(text())="notifications"]'
+    notification_Button = '//button[contains(.,"notifications")]'
+    notification_Text = '//button[contains(.,"notifications")]//mat-icon/span'
+
+    def notification_Count(text):
+        return f'//span[contains(.,"notifications")]//span[contains(text(),"{text}")]'
 
 
 class unlock_Dataset:
