@@ -5,7 +5,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -26,7 +26,7 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  apiEndPoint = '/_upload?auth_token=' + this.authService.token2;
+  private apiEndPoint: string;
   fileList: FileList;
   fbrowser: HTMLInputElement;
 
@@ -38,7 +38,14 @@ export class FormUploadComponent {
     public translate: TranslateService,
     private snackbar: SnackbarService,
     private authService: AuthService,
-  ) {}
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   fileBtnClick(): void {
     this.fileInput.nativeElement.click();

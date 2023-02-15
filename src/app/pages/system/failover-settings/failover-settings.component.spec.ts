@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -12,6 +13,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { DialogService } from 'app/services';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('FailoverComponent', () => {
@@ -41,6 +43,9 @@ describe('FailoverComponent', () => {
         }),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(WebsocketConnectionService, {
+        isConnected$: of(true),
+      }),
     ],
   });
 

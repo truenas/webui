@@ -82,7 +82,7 @@ export class FailoverSettingsComponent implements OnInit {
           if (values.disabled && !values.master) {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
-                this.authService.token2 = null;
+                this.authService.clearAuthToken();
                 this.wsManager.closeWebsocketConnection();
               },
             });

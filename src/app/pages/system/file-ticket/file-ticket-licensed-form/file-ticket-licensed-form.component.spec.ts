@@ -21,6 +21,7 @@ import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('FileTicketLicensedFormComponent', () => {
@@ -67,6 +68,9 @@ describe('FileTicketLicensedFormComponent', () => {
       mockProvider(FormErrorHandlerService),
       mockWindow({
         open: jest.fn(),
+      }),
+      mockProvider(WebsocketConnectionService, {
+        isConnected$: of(true),
       }),
     ],
   });

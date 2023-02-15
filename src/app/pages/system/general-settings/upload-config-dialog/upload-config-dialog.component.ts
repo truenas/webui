@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { tap } from 'rxjs';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -20,13 +21,21 @@ export class UploadConfigDialogComponent {
   });
 
   readonly helptext = helptext;
+  private apiEndPoint: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private mdDialog: MatDialog,
     private authService: AuthService,
-  ) {}
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   onSubmit(): void {
     const formData: FormData = new FormData();
@@ -45,6 +54,6 @@ export class UploadConfigDialogComponent {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
       dialogRef.componentInstance.setDescription(job.error);
     });
-    dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.authService.token2, formData);
+    dialogRef.componentInstance.wspost(this.apiEndPoint, formData);
   }
 }
