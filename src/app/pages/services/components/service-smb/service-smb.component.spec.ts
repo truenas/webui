@@ -95,7 +95,6 @@ describe('ServiceSmbComponent', () => {
     expect(values).toEqual({
       'NetBIOS Name': 'truenas',
       'NetBIOS Alias': [],
-      'NetBIOS Name (TrueNAS Controller 2)': 'truenas-b',
       Workgroup: 'WORKGROUP',
       Description: 'TrueNAS Server',
       'Enable SMB1 support': false,
@@ -125,7 +124,6 @@ describe('ServiceSmbComponent', () => {
       'NTLMv1 Auth': false,
       'NetBIOS Alias': [],
       'NetBIOS Name': 'truenas',
-      'NetBIOS Name (TrueNAS Controller 2)': 'truenas-b',
       'UNIX Charset': 'UTF-8',
       'Use Syslog Only': false,
       Workgroup: 'WORKGROUP',
