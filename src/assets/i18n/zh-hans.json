@@ -2263,7 +2263,6 @@
   "NetBIOS": "NetBIOS",
   "NetBIOS Alias": "NetBIOS 别名",
   "NetBIOS Name": "NetBIOS 名称",
-  "NetBIOS Name (TrueNAS Controller 2)": "NetBIOS 名称（TrueNAS 控制器 2）",
   "Netbios Name": "NetBIOS 名称",
   "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "这个NAS的Netbios名称。该名称必须与<i> Workgroup </i>名称不同，并且不得超过15个字符。",
   "Netcat Active Side": "Netcat活动侧",

@@ -14,14 +14,6 @@
           [required]="true"
         ></ix-input>
 
-        <ix-input
-          formControlName="netbiosname_b"
-          [label]="'NetBIOS Name (TrueNAS Controller 2)' | translate"
-          [tooltip]="tooltips.netbiosname_b | translate"
-          [required]="true"
-          [hidden]="!hasSecondController"
-        ></ix-input>
-
         <ix-chips
           formControlName="netbiosalias"
           [label]="'NetBIOS Alias' | translate"
