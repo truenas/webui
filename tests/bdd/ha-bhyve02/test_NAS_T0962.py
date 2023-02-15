@@ -204,10 +204,8 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+    rsc.Trigger_Failover(driver)
+
     rsc.Confirm_Failover(driver)
 
 
@@ -215,8 +213,7 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 180, xpaths.login.user_Input)
-    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+    rsc.HA_Login_Status_Enable(driver)
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
@@ -252,9 +249,9 @@ def after_click_dataset_on_the_left_sidebar(driver):
 def on_the_dataset_page_click_on_the_dozer_tree_and_click_add_dataset(driver):
     """on the Dataset page, click on the dozer tree and click Add Dataset."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
-    assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
-    driver.find_element_by_xpath('//ix-dataset-node[contains(.,"dozer")]/div').click()
-    assert wait_on_element(driver, 7, '//span[text()="dozer" and contains(@class,"own-name")]')
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_Tree_Name('dozer'))
+    driver.find_element_by_xpath(xpaths.dataset.pool_Tree('dozer')).click()
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_Selected('dozer'))
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
 

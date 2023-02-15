@@ -304,10 +304,8 @@ def go_to_the_dashboard_and_click_initiate_failover_on_the_standby_controller(dr
     """go to the Dashboard and click Initiate Failover on the standby controller."""
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+
+    rsc.Trigger_Failover(driver)
 
 
 @then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
@@ -319,8 +317,7 @@ def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(
 @then(parsers.parse('wait for the login to appear and HA to be enabled, login with {user} and {password}'))
 def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_password(driver, user, password):
     """wait for the login to appear and HA to be enabled, login with <user> and <password>."""
-    assert wait_on_element(driver, 180, xpaths.login.user_Input)
-    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+    rsc.HA_Login_Status_Enable(driver)
 
     rsc.Login(driver, user, password)
 

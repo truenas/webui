@@ -61,6 +61,7 @@ class add_User:
     root_Group_Option = '//mat-option[contains(.,"root")]'
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
     qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
+    games_Group_Option = '//mat-option[contains(.,"games")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     password_Disabled_Slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
     home_Mode_Owner_Write_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
@@ -88,6 +89,13 @@ class advanced:
 
     def system_Dataset_Pool_Pool(pool_name):
         return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
+
+
+class alert():
+    title = '//h3[text()="Alerts"]'
+    degraded_Critical_Level = '//ix-alert[contains(.,"DEGRADED")]//h3[contains(.,"Critical")]'
+    degraded_Pool_Text = '//h4[contains(.,"Pool tank state is DEGRADED")]'
+    close_Button = '//button[contains(.,"clear")]'
 
 
 class applications:
@@ -272,6 +280,8 @@ class edit_Acl:
     builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
     recursive_Checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
     traverse_Checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
+    permission_Select = '//ix-select[@formcontrolname="basicPermission"]//mat-select'
+    permission_Read_Option = '//mat-option[contains(.,"Read")]'
 
     def combobox_Option(option):
         return f'//mat-option[contains(.,"{option}")]'
@@ -486,6 +496,12 @@ class systemDataset:
 class toolbar:
     ha_Disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
     ha_Enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
+    notification = '//mat-icon[normalize-space(text())="notifications"]'
+    notification_Button = '//button[contains(.,"notifications")]'
+    notification_Text = '//button[contains(.,"notifications")]//mat-icon/span'
+
+    def notification_Count(text):
+        return f'//span[contains(.,"notifications")]//span[contains(text(),"{text}")]'
 
 
 class unlock_Dataset:
