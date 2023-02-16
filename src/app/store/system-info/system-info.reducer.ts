@@ -4,7 +4,12 @@ import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
-  haStatusLoaded, systemFeaturesLoaded, systemInfoLoaded, systemInfoDatetimeUpdated, upgradePendingStateLoaded,
+  haStatusLoaded,
+  systemFeaturesLoaded,
+  systemInfoLoaded,
+  systemInfoDatetimeUpdated,
+  upgradePendingStateLoaded,
+  failoverLicensedStatusLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 export interface SystemInfoState {
@@ -13,6 +18,7 @@ export interface SystemInfoState {
   systemFeatures: SystemFeatures;
   isUpgradePending: boolean;
   hasOnlyMissmatchVersionsReason: boolean;
+  isHaLicensed: boolean;
 }
 
 const initialState: SystemInfoState = {
@@ -21,6 +27,7 @@ const initialState: SystemInfoState = {
   systemFeatures: null,
   isUpgradePending: false,
   hasOnlyMissmatchVersionsReason: false,
+  isHaLicensed: false,
 };
 
 export const systemInfoReducer = createReducer(
@@ -28,6 +35,7 @@ export const systemInfoReducer = createReducer(
   on(systemInfoLoaded, (state, { systemInfo }) => ({ ...state, systemInfo })),
   on(systemFeaturesLoaded, (state, { systemFeatures }) => ({ ...state, systemFeatures })),
   on(systemInfoDatetimeUpdated, (state, { datetime }) => ({ ...state, systemInfo: { ...state.systemInfo, datetime } })),
+  on(failoverLicensedStatusLoaded, (state, { isHaLicensed }) => ({ ...state, isHaLicensed })),
   on(haStatusLoaded, (state, { haStatus }) => ({
     ...state,
     haStatus,

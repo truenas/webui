@@ -1,15 +1,18 @@
 import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { EMPTY, of } from 'rxjs';
 import {
-  catchError, map, mergeMap, switchMap,
+  catchError, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
+  failoverLicensedStatusLoaded,
   haSettingsUpdated,
   haStatusLoaded,
   loadHaStatus,
@@ -18,6 +21,7 @@ import {
   systemInfoLoaded,
   upgradePendingStateLoaded,
 } from 'app/store/system-info/system-info.actions';
+import { selectIsHaLicensed } from 'app/store/system-info/system-info.selectors';
 
 @Injectable()
 export class SystemInfoEffects {
@@ -97,23 +101,34 @@ export class SystemInfoEffects {
 
   loadUpgradePendingState = createEffect(() => this.actions$.pipe(
     ofType(haStatusLoaded),
-    mergeMap(({ haStatus }) => {
-      if (
-        (haStatus.hasHa && haStatus.reasons.length === 0)
-        || (haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions)
-      ) {
+    withLatestFrom(this.store$.select(selectIsHaLicensed)),
+    mergeMap(([{ haStatus }, isHa]) => {
+      const shouldCheckForPendingUpgrade = (haStatus.hasHa && haStatus.reasons.length === 0)
+        || (haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions);
+
+      if (isHa && shouldCheckForPendingUpgrade) {
         return this.ws.call('failover.upgrade_pending').pipe(
-          map((isUpgradePending) => {
-            return upgradePendingStateLoaded({ isUpgradePending });
-          }),
+          map((isUpgradePending) => upgradePendingStateLoaded({ isUpgradePending })),
         );
       }
+    }),
+  ));
+
+  loadFailoverLicensedStatus = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('failover.licensed').pipe(
+        map((isHaLicensed) => {
+          return failoverLicensedStatusLoaded({ isHaLicensed });
+        }),
+      );
     }),
   ));
 
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
+    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) { }
 }

@@ -2523,7 +2523,6 @@
   "Filter disks by name": "Filtrar discos por nombre",
   "Finding Pools": "Encontrando Grupos (Pools)",
   "Finding pools to import...": "Encontrar grupos para importar...",
-  "Finish Upgrade?": "¿Terminar actualización?",
   "Finished": "Finalizado",
   "First vdev has {n} disks, new vdev has {m}": "El primer vdev tiene {n} discos, nuevo vdev tiene {m}",
   "First vdev is a {vdevType}, new vdev is {newVdevType}": "El primer vdev es un {vdevType}, nuevo vdev es {newVdevType}",

@@ -34,3 +34,8 @@ export const selectHasOnlyMissmatchVersionsReason = createSelector(
   selectSystemInfoState,
   (state) => state.hasOnlyMissmatchVersionsReason,
 );
+
+export const selectIsHaLicensed = createSelector(
+  selectSystemInfoState,
+  (state) => state.isHaLicensed,
+);

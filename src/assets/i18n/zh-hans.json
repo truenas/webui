@@ -1596,7 +1596,6 @@
   "Filter disks by name": "按名称筛选磁盘",
   "Finding Pools": "查找池",
   "Finding pools to import...": "正在查找要导入的池...",
-  "Finish Upgrade?": "完成升级吗？",
   "Finished": "已完成",
   "Finished Resilver on {date}": "{date}完成重新同步",
   "Finished Scrub on {date}": "{date}完成擦除",

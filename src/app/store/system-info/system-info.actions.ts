@@ -4,6 +4,11 @@ import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 
+export const failoverLicensedStatusLoaded = createAction(
+  '[System Info API] Failover Licensed Status Loaded',
+  props<{ isHaLicensed: boolean }>(),
+);
+
 export const systemInfoLoaded = createAction(
   '[System Info API] Info Loaded',
   props<{ systemInfo: SystemInfo }>(),
