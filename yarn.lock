@@ -7496,10 +7496,10 @@ eslint-plugin-angular-file-naming@~1.0.2:
   resolved "https://registry.npmjs.org/eslint-plugin-angular-file-naming/-/eslint-plugin-angular-file-naming-1.0.3.tgz"
   integrity sha512-F5MmiJC9IETBkTuJv31GGUcgI2WqNIutJdhOP7DmL9ML/2xFhYbuHvmhfIErsTYnDGzT32Ua+Uik40iAl37bSQ==
 
-eslint-plugin-angular-test-ids@~1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-angular-test-ids/-/eslint-plugin-angular-test-ids-1.0.5.tgz#5b0667496ba1d51fb8216083bfcfc00674457541"
-  integrity sha512-GnVe2aQYTBz81CcWEh8yNNqN1q10lDGOJCnFad3MzghgGikekF/QNk1lglN0njtvtJREX0eGfetFJ0bhBJ8f3g==
+eslint-plugin-angular-test-ids@~1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-angular-test-ids/-/eslint-plugin-angular-test-ids-1.0.6.tgz#0aad90b5343d3e2c0a26ff1adde29f8a5288d98e"
+  integrity sha512-5udlxq1zP83CTamO1k8Gik6yrIcdeJYjmNWiHqGK/OFlBbCvvKhbQjC1qpJsyK86SfJPMomkMddil/VcfKg4Bw==
 
 eslint-plugin-es@^3.0.0:
   version "3.0.1"

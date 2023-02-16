@@ -81,7 +81,7 @@
       (toggle)="onToggle($event)"
     ></ix-expand-toggle-column>
 
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
     <tr
       *matRowDef="
         let group;
@@ -89,6 +89,7 @@
         dataSource: dataSource
       "
       mat-row
+      [ixTest]="group.group"
       [ixDetailRow]="group"
       [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
       [ixDetailRowTemplate]="expandedRowTemplate"

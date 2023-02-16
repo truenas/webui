@@ -2,6 +2,7 @@
   <th *matHeaderCellDef mat-header-cell [style.width.px]="40">
     <mat-checkbox
       color="primary"
+      ixTest="column-select-all"
       [checked]="isChecked$ | async"
       [indeterminate]="isIndeterminate$ | async"
       [aria-label]="checkboxLabel()"
@@ -11,6 +12,7 @@
   <td *matCellDef="let item; dataSource: getDataSource()" mat-cell [style.width.px]="40">
     <mat-checkbox
       color="primary"
+      ixTest="column-select"
       [checked]="selection.isSelected(item)"
       [aria-label]="checkboxLabel(item)"
       (click)="$event.stopPropagation()"

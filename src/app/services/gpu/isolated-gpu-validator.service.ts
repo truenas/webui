@@ -48,7 +48,7 @@ export class IsolatedGpuValidatorService {
   private makeErrorMessage(): Observable<ValidationErrors> {
     return this.gpuService.getIsolatedGpus().pipe(
       map((isolatedGpus) => {
-        let errorMessage = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
+        let errorMessage = this.translate.instant('At least 1 GPU is required by the host for its functions.');
 
         if (isolatedGpus.length) {
           const gpuListItems = isolatedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);

@@ -128,6 +128,7 @@
               <mat-checkbox
                 color="primary"
                 [id]="'vdev__disk-table-checkall-' + group + '-' + uuid"
+                [ixTest]="['check-all', group, uuid]"
                 [checked]="allRowsSelected"
                 (change)="selectFn(!allRowsSelected)"
               ></mat-checkbox>
@@ -145,6 +146,7 @@
               <mat-checkbox
                 color="primary"
                 [id]="'vdev__disks-' + (disks[rowIndex] ? disks[rowIndex].devname : rowIndex)"
+                [ixTest]="[disks[rowIndex] ? disks[rowIndex].devname : rowIndex]"
                 [checked]="isSelected"
                 (change)="onCheckboxChangeFn($event)"
                 >&nbsp;</mat-checkbox

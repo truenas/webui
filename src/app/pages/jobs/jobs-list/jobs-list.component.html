@@ -213,11 +213,12 @@
         (toggle)="onToggle($event)"
       ></ix-expand-toggle-column>
 
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
 
       <tr
         *matRowDef="let job; columns: displayedColumns"
         mat-row
+        [ixTest]="job.description || job.method"
         [ixDetailRow]="job"
         [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
         [ixDetailRowTemplate]="expandedRowTemplate"

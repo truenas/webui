@@ -42,6 +42,7 @@
         <div *ngIf="hasLicense">
           <mat-checkbox
             color="primary"
+            ixTest="production-system"
             [(ngModel)]="isProduction"
             (change)="updateProductionStatus($event)"
           >

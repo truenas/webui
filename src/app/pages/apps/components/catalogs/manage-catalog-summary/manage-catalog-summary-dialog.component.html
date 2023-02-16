@@ -21,10 +21,15 @@
           ix-auto
           ix-auto-type="select"
           ix-auto-identifier="train-select"
+          ixTest="train"
           [(ngModel)]="selectedTrain"
           (ngModelChange)="onOptionChanged()"
         >
-          <mat-option *ngFor="let option of trainOptions" [value]="option">
+          <mat-option
+            *ngFor="let option of trainOptions"
+            [value]="option"
+            [ixTest]="['train', option]"
+          >
             {{ option }}
           </mat-option>
         </mat-select>
@@ -37,10 +42,15 @@
           ix-auto
           ix-auto-type="select"
           ix-auto-identifier="status-select"
+          ixTest="status"
           [(ngModel)]="selectedStatus"
           (ngModelChange)="onOptionChanged()"
         >
-          <mat-option *ngFor="let option of statusOptions" [value]="option">
+          <mat-option
+            *ngFor="let option of statusOptions"
+            [value]="option"
+            [ixTest]="['status', option]"
+          >
             {{ option }}
           </mat-option>
         </mat-select>

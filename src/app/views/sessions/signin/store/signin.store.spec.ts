@@ -61,13 +61,14 @@ describe('SigninStore', () => {
     websocket2 = spectator.inject(MockWebsocketService2);
     authService = spectator.inject(AuthService);
     // This strips @LocalStorage() decorator from token.
-    Object.defineProperty(authService, 'token2', {
-      value: '',
-      writable: true,
+    // Object.defineProperty(authService, 'token2', {
+    //   value: '',
+    //   writable: true,
+    // });
+    Object.defineProperty(authService, 'authToken$', {
+      value: of('EXISTING_TOKEN'),
     });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(true));
-    jest.spyOn(authService, 'generateToken').mockReturnValue(of('AUTH_TOKEN'));
-    jest.spyOn(authService, 'generateTokenWithDefaultLifetime').mockReturnValue(of('AUTH_TOKEN'));
   });
 
   describe('selectors', () => {
@@ -103,10 +104,8 @@ describe('SigninStore', () => {
   });
 
   describe('handleSuccessfulLogin', () => {
-    it('generates auth token and redirects user inside', () => {
+    it('redirects user inside', () => {
       spectator.service.handleSuccessfulLogin();
-      expect(authService.generateTokenWithDefaultLifetime).toHaveBeenCalledWith();
-      expect(authService.token2).toBe('AUTH_TOKEN');
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
   });
@@ -146,7 +145,7 @@ describe('SigninStore', () => {
     });
 
     it('logs in with token if it is present in local storage (via AuthService.token2)', () => {
-      authService.token2 = 'EXISTING_TOKEN';
+      // authService.token2 = 'EXISTING_TOKEN';
       spectator.service.init();
 
       expect(authService.loginWithToken).toHaveBeenCalled();

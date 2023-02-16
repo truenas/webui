@@ -243,6 +243,7 @@
                 ix-auto
                 ix-auto-type="checkbox"
                 ix-auto-identifier="title"
+                [ixTest]="[conf.title, 'multiselect']"
                 [indeterminate]="selection.hasValue() && !isAllSelected"
                 [checked]="selection.hasValue() && isAllSelected"
                 (change)="masterToggle($event)"
@@ -262,6 +263,7 @@
                 ix-auto-type="checkbox"
                 [checked]="selection.isSelected(element)"
                 [ix-auto-identifier]="element[conf.rowIdentifier || 'name']"
+                [ixTest]="element[conf.rowIdentifier || 'name']"
                 (click)="$event.stopPropagation()"
                 (change)="$event ? toggleSelection(element) : null"
               >
@@ -382,6 +384,7 @@
                 ix-auto
                 ix-auto-type="checkbox"
                 [id]="'checkbox__' + getRowIdentifier(element)"
+                [ixTest]="getRowIdentifier(element)"
                 [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                 [disabled]="getDisabled(column)"
                 [(ngModel)]="element[column]"
@@ -443,7 +446,7 @@
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="columnsProps" mat-header-row></tr>
+        <tr *matHeaderRowDef="columnsProps" mat-header-row ixTest="table-header"></tr>
         <tr
           *matRowDef="let element; columns: columnsProps; let i = dataIndex"
           mat-row
@@ -452,6 +455,7 @@
           ix-auto-type="expander"
           [id]="element[getFirstKey()]"
           [ix-auto-identifier]="element[getFirstKey()]"
+          [ixTest]="element[getFirstKey()]"
           [ngClass]="{ 'expanded-row': getRowIdentifier(expandedElement) === getRowIdentifier(element) }"
           (click)="doRowClick(element)"
         ></tr>
@@ -461,6 +465,7 @@
             *matRowDef="let row; columns: ['expandedDetail']"
             mat-row
             class="details-row"
+            [ixTest]="[row[getFirstKey()], 'details']"
           ></tr>
         </ng-container>
       </table>

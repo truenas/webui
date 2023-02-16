@@ -54,10 +54,11 @@
           ix-auto
           ix-auto-type="select"
           ix-auto-identifier="status-select"
+          ixTest="status-select"
           [(ngModel)]="selectedStatus"
           (ngModelChange)="onStatusOptionChanged()"
         >
-          <mat-option *ngFor="let option of statusOptions" [value]="option">
+          <mat-option *ngFor="let option of statusOptions" [value]="option" [ixTest]="['status', option]">
             {{ option }}
           </mat-option>
         </mat-select>

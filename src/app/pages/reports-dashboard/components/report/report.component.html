@@ -125,7 +125,7 @@
           <div *ngIf="report && data?.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)">
             <table class="legend-table">
               <!-- Table Header-->
-              <tr class="legend-group header">
+              <tr class="legend-group header" ixTest="table-header">
                 <th class="legend-label">
                   <strong>{{ 'Key' | translate }}</strong>
                 </th>
@@ -137,7 +137,7 @@
               </tr>
 
               <!-- Table Rows -->
-              <tr *ngFor="let legendItem of data.legend; let i = index" class="legend-group">
+              <tr *ngFor="let legendItem of data.legend; let i = index" class="legend-group" [ixTest]="legendItem">
                 <td class="legend-label">
                   <!--Legend Label-->
                   <div

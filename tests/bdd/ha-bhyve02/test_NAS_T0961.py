@@ -213,18 +213,15 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_initiate_failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 20, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+    rsc.Trigger_Failover(driver)
+
     rsc.Confirm_Failover(driver)
 
 
 @then('wait for the login and the HA enabled status and login')
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
-    assert wait_on_element(driver, 180, xpaths.login.user_Input)
-    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+    rsc.HA_Login_Status_Enable(driver)
 
     rsc.Login(driver, admin_User, root_Password)
 

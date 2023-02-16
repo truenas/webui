@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
@@ -109,11 +109,14 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initShell(): void {
-    this.authService.generateTokenWithDefaultLifetime().pipe(untilDestroyed(this)).subscribe((token) => {
-      this.initializeWebShell(token);
-      this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
-      this.initializeTerminal();
-    });
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.initializeWebShell(token);
+        this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
+        this.initializeTerminal();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   ngAfterViewInit(): void {

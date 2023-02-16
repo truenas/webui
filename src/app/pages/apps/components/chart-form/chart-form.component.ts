@@ -42,6 +42,7 @@ export class ChartFormComponent implements OnDestroy {
   dynamicSection: DynamicFormSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
   subscription = new Subscription();
+  chartSchema: ChartSchema['schema'];
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -142,6 +143,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   buildDynamicForm(schema: ChartSchema['schema']): void {
+    this.chartSchema = schema;
     try {
       schema.groups.forEach((group) => {
         this.dynamicSection.push({ ...group, schema: [] });
@@ -227,7 +229,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   onSubmit(): void {
-    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
+    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
     const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
       next: (fieldToBeDeleted) => {

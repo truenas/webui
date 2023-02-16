@@ -50,6 +50,7 @@
       *ngIf="!isLoading"
       color="primary"
       [checked]="isHold"
+      [ixTest]="['hold', snapshot.snapshot_name]"
       (change)="doHold()"
     >
       {{ 'Hold' | translate }}

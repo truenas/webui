@@ -20,10 +20,11 @@
   <div class="slash">/</div>
   <mat-select
     class="select"
+    ixTest="netmasks"
     [value]="netmask"
     (selectionChange)="onNetmaskChange($event)"
   >
-    <mat-option *ngFor="let option of netmaskOptions" [value]="option.value">
+    <mat-option *ngFor="let option of netmaskOptions" [value]="option.value" [ixTest]="['netmask', option.label]">
       {{ option.label | translate }}
     </mat-option>
   </mat-select>

@@ -72,7 +72,7 @@ describe('FileTicketFormComponent', () => {
         }),
       }),
       mockProvider(AuthService, {
-        token2: 'token.is.mocked',
+        authToken$: of('token.is.mocked'),
       }),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
