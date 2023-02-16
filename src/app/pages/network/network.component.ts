@@ -165,7 +165,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     },
     afterGetData: () => {
-      const state = this.navigation.extras.state as { configureOpenVPN: string };
+      const state = this.navigation?.extras?.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         if (state.configureOpenVPN === 'client') {
           this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
@@ -699,7 +699,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private openInterfaceForEditFromRoute(): void {
-    const state = this.navigation.extras.state as { editInterface: string };
+    const state = this.navigation?.extras?.state as { editInterface: string };
     if (!state?.editInterface) {
       return;
     }
