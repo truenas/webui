@@ -164,20 +164,20 @@ export class SmbFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getUnusableNamesForShare();
+    this.setupPurposeControl();
+
     this.setupAndApplyPurposePresets()
       .pipe(
         tap(() => {
           this.setupAfpWarning();
           this.setupMangleWarning();
+          this.setupPathControl();
+          this.setupAclControl();
         }),
         untilDestroyed(this),
       )
       .subscribe(noop);
-
-    this.getUnusableNamesForShare();
-    this.setupPurposeControl();
-    this.setupPathControl();
-    this.setupAclControl();
   }
 
   setupAclControl(): void {
