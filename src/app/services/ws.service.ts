@@ -5,11 +5,11 @@ import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
-  BehaviorSubject,
+  BehaviorSubject, merge,
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
 import {
-  filter, share, switchMap, tap,
+  filter, map, share, switchMap, tap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -271,12 +271,22 @@ export class WebSocketService {
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
     return new Observable((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
       this.call(method, params).pipe(
-        switchMap((jobId) => this.subscribe('core.get_jobs').pipe(filter((event) => event.id === jobId))),
+        switchMap((jobId) => {
+          return merge(
+            this.call('core.get_jobs', [[['id', '=', jobId]]]).pipe(
+              map((jobs) => jobs[0]),
+            ),
+            this.subscribe('core.get_jobs').pipe(
+              filter((event) => event.id === jobId),
+              map((event) => event.fields),
+            ),
+          );
+        }),
         untilDestroyed(this),
-      ).subscribe((event) => {
-        observer.next(event.fields);
-        if (event.fields.state === JobState.Success) observer.complete();
-        if (event.fields.state === JobState.Failed) observer.error(event.fields);
+      ).subscribe((job) => {
+        observer.next(job);
+        if (job.state === JobState.Success) observer.complete();
+        if (job.state === JobState.Failed) observer.error(job);
       });
     });
   }
