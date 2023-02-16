@@ -380,18 +380,18 @@ mat-list mat-list-item .mat-mdc-list-item-unscoped-content,
 mat-nav-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
 mat-nav-list mat-list-item .mat-mdc-list-item-unscoped-content,
 [mat-menu-item],
-.mat-option,
-body .mat-select-trigger {
+.mat-mdc-option,
+body .mat-mdc-select-trigger {
   font-size: 0.875rem !important;
   overflow: visible;
 }
 
-.mat-option {
+.mat-mdc-option {
   height: inherit !important;
   white-space: pre-line !important;
 }
 
-.mat-option-text {
+.mat-mdc-option-text {
   word-break: break-all;
 }
 
@@ -509,7 +509,7 @@ body .mat-select-trigger {
   min-height: 48px;
 }
 
-.topbar .mat-select-value {
+.topbar .mat-mdc-select-value {
   color: #fff;
   font-weight: 400;
 }
@@ -890,14 +890,3 @@ body.safari-platform {
   color: var(--orange) !important;
 }
 
-body .mdc-tooltip {
-  word-break: break-word;
-
-  .mdc-tooltip__surface {
-    background-color: #666;
-    color: #fff;
-    font-size: 10px;
-    line-height: 16px;
-    padding: 6px 8px;
-  }
-}

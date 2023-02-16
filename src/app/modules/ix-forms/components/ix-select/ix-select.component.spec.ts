@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   FormControl, FormsModule, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
+import { MatSelectHarness } from '@angular/material/select/testing';
 import {
   createHostFactory,
   Spectator,

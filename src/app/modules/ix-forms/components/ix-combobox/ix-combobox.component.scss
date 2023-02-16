@@ -19,7 +19,6 @@
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  padding: 3px 8px;
   position: relative;
 
   input {
@@ -31,7 +30,7 @@
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
 
     input {
       cursor: not-allowed;

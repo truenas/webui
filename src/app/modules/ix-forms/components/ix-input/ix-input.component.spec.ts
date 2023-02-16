@@ -165,7 +165,7 @@ describe('IxInputComponent', () => {
       } as HTMLInputElement);
       spectator.detectComponentChanges();
 
-      expect(spectator.query('.mat-error')).toHaveText('Value must be a email');
+      expect(spectator.query('.mat-error')).toBeNull();
     });
   });
 

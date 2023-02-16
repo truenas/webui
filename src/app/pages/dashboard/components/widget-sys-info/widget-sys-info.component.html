@@ -77,7 +77,7 @@
 
               <div
                 fxFlex="20"
-                [class]="['platform-logo-wrapper', productType.toLowerCase()]"
+                [class]="['platform-logo-wrapper', productType?.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <mat-icon
