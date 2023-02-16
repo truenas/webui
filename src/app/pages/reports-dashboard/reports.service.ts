@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { addSeconds, differenceInDays, differenceInSeconds } from 'date-fns';
+import { addSeconds } from 'date-fns';
 import {
   map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
@@ -37,7 +37,6 @@ export enum ReportingDatabaseError {
 })
 export class ReportsService implements OnDestroy {
   serverTime: Date;
-  showTimeDiffWarning = false;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private reportsUtils: Worker;
@@ -109,11 +108,7 @@ export class ReportsService implements OnDestroy {
         waitForSystemInfo,
         map((systemInfo) => systemInfo.datetime.$date),
         switchMap((timestamp) => {
-          const now = Date.now();
           this.serverTime = new Date(timestamp);
-          if (differenceInSeconds(timestamp, now) > 300 || differenceInDays(timestamp, now) > 0) {
-            this.showTimeDiffWarning = true;
-          }
           return interval(1000);
         }),
       )
