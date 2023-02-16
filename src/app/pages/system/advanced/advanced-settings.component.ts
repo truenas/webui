@@ -40,7 +40,7 @@ import {
   AppLoaderService,
   DialogService,
   UserService,
-  WebSocketService2,
+  WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -276,7 +276,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   };
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: DialogService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

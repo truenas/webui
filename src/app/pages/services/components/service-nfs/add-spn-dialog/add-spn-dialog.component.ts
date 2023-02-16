@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +23,7 @@ export class AddSpnDialogComponent {
   });
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<CloudsyncRestoreDialogComponent>,

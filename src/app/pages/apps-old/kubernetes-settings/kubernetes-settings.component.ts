@@ -20,7 +20,7 @@ import {
   AppLoaderService, DialogService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +61,7 @@ export class KubernetesSettingsComponent implements OnInit {
   private oldConfig: KubernetesConfig;
 
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,

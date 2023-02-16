@@ -5,9 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -18,7 +18,7 @@ import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, SystemGeneralService, WebSocketService2 } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailComponent } from './email.component';
 
@@ -26,7 +26,7 @@ describe('EmailComponent', () => {
   let spectator: Spectator<EmailComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: EmailComponent,
@@ -40,7 +40,7 @@ describe('EmailComponent', () => {
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
         ],
       }),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('mail.local_administrator_email', 'authuser@ixsystems.com'),
         mockCall('mail.config', {
           id: 1,
@@ -94,16 +94,16 @@ describe('EmailComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-    spectator.inject(MockWebsocketService2).mockCall('mail.local_administrator_email', null);
+    spectator.inject(MockWebsocketService).mockCall('mail.local_administrator_email', null);
 
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
     await button.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('mail.local_administrator_email');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('mail.local_administrator_email');
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       'Email',
       'No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.',
@@ -187,7 +187,7 @@ describe('EmailComponent', () => {
 
   describe('Gmail OAuth', () => {
     it('shows current Gmail config when Gmail is set', async () => {
-      const websocketMock = spectator.inject(MockWebsocketService2);
+      const websocketMock = spectator.inject(MockWebsocketService);
       websocketMock.mockCall('mail.config', {
         oauth: {
           client_id: 'client_id',

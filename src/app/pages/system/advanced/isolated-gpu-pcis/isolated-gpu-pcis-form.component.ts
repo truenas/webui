@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -29,7 +29,7 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
   options$ = this.gpuService.getGpuOptions();
 
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private modal: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,

@@ -12,7 +12,7 @@ import {
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import { AppLoaderService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +35,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ApiKeyFormDialogComponent>,
     private matDialog: MatDialog,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
     private store: ApiKeyComponentStore,

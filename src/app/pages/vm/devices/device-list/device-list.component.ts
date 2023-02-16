@@ -13,7 +13,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -48,7 +48,7 @@ export class DeviceListComponent implements EntityTableConfig {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public dialogService: DialogService,
     private matDialog: MatDialog,

@@ -12,7 +12,7 @@ import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ export class DownloadClientConfigModalComponent {
   serverCertificates$ = this.services.getCerts().pipe(idNameArrayToOptions());
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<DownloadClientConfigModalComponent>,

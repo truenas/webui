@@ -13,7 +13,7 @@ import { SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -43,7 +43,7 @@ export class ProactiveComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,

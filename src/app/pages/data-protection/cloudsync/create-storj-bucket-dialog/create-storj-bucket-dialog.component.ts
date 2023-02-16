@@ -7,7 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -22,7 +22,7 @@ export class CreateStorjBucketDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<CreateStorjBucketDialogComponent>,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private appLoader: AppLoaderService,
     private dialogService: DialogService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },

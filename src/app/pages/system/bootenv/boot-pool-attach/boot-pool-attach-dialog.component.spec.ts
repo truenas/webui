@@ -4,19 +4,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { BootPoolAttachDialogComponent } from './boot-pool-attach-dialog.component';
 
 describe('BootPoolAttachDialogComponent', () => {
   let spectator: Spectator<BootPoolAttachDialogComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: BootPoolAttachDialogComponent,
@@ -25,7 +25,7 @@ describe('BootPoolAttachDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('disk.get_unused', [
           {
             name: 'sdb',
@@ -43,7 +43,7 @@ describe('BootPoolAttachDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('sends an update payload to websocket when save is pressed', async () => {

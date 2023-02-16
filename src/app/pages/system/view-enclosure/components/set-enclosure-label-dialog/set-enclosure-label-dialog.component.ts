@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 export interface SetEnclosureLabelDialogData {
   enclosureId: string;
@@ -36,7 +36,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<SetEnclosureLabelDialogComponent, string>,
     private dialogService: DialogService,

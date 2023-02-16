@@ -14,7 +14,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class RsyncModuleFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,

@@ -8,10 +8,10 @@ import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface'
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable()
-export class MockWebsocketService2 extends WebSocketService2 {
+export class MockWebsocketService extends WebSocketService {
   private subscribeStream$ = new Subject<ApiEvent<unknown>>();
   private jobIdCounter = 1;
 
@@ -26,10 +26,10 @@ export class MockWebsocketService2 extends WebSocketService2 {
     this.subscribe = jest.fn(() => this.subscribeStream$.asObservable() as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
 
     when(this.call).mockImplementation((method: ApiMethod, args: unknown) => {
-      throw Error(`2 Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiMethod, args: unknown) => {
-      throw Error(`2 Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
     });
   }
 

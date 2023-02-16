@@ -21,7 +21,7 @@ import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { AppLoaderService, KeychainCredentialService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, KeychainCredentialService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
@@ -133,7 +133,7 @@ export class SshConnectionFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private keychainCredentialService: KeychainCredentialService,

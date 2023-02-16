@@ -32,7 +32,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -81,7 +81,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   constructor(
     public themeService: ThemeService,
     private router: Router,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private wsManager: WebsocketConnectionService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,

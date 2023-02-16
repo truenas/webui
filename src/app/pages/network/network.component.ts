@@ -44,7 +44,7 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
@@ -195,7 +195,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasConsoleFooter = false;
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private router: Router,
     private dialog: DialogService,
     private storageService: StorageService,

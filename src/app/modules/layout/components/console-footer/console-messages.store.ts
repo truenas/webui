@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import { map } from 'rxjs';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 export interface ConsoleMessagesState {
   lines: string[];
@@ -34,7 +34,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
   });
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
   ) {
     super(initialConsoleMessagesState);
   }

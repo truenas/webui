@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -23,7 +23,7 @@ import {
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { DialogService, ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit.component';
 
 describe('CertificateEditComponent', () => {
@@ -42,7 +42,7 @@ describe('CertificateEditComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('certificate.update'),
       ]),
       mockProvider(MatDialog),
@@ -84,7 +84,7 @@ describe('CertificateEditComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 

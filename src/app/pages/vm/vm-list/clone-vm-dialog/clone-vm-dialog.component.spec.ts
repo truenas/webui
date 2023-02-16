@@ -4,12 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 describe('CloneVmDialogComponent', () => {
   let spectator: Spectator<CloneVmDialogComponent>;
@@ -21,7 +21,7 @@ describe('CloneVmDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('vm.clone'),
       ]),
       mockProvider(MatDialogRef),
@@ -47,7 +47,7 @@ describe('CloneVmDialogComponent', () => {
     const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone' }));
     await cloneButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });

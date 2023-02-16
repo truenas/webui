@@ -14,7 +14,7 @@ import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface DnsAuthenticatorList {
   key: string;
@@ -67,7 +67,7 @@ export class AcmednsFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 

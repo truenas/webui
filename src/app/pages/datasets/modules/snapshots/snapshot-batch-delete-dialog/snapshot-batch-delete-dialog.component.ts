@@ -10,7 +10,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private websocket: WebSocketService2,
+    private websocket: WebSocketService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
     private dialogService: DialogService,

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -27,7 +27,7 @@ describe('CertificateConstraintsComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('certificate.extended_key_usage_choices', {
           CLIENT_AUTH: 'CLIENT_AUTH',
           CODE_SIGNING: 'CODE_SIGNING',

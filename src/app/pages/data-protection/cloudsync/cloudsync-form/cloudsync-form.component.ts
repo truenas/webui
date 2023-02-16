@@ -31,7 +31,7 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const newStorjBucket = 'new_storj_bucket';
 
@@ -155,7 +155,7 @@ export class CloudsyncFormComponent {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     protected router: Router,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,

@@ -10,7 +10,7 @@ import {
   createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
@@ -20,7 +20,7 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { DialogService, IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const hiddenServices = [ServiceName.Gluster, ServiceName.Afp];
 const fakeDataSource: ServiceRow[] = [...serviceNames.entries()]
@@ -38,7 +38,7 @@ const fakeDataSource: ServiceRow[] = [...serviceNames.entries()]
 describe('ServicesComponent', () => {
   let spectator: SpectatorRouting<ServicesComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const createComponent = createRoutingFactory({
     component: ServicesComponent,
@@ -49,7 +49,7 @@ describe('ServicesComponent', () => {
       FormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('service.query', fakeDataSource),
         mockCall('service.update'),
         mockCall('service.start'),
@@ -64,7 +64,7 @@ describe('ServicesComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
     spectator.fixture.detectChanges();
   });
 

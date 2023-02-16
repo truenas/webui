@@ -13,7 +13,7 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/account/users/user-details-row/user-details-row.component';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 
@@ -78,7 +78,7 @@ describe('UserListComponent', () => {
       UserDetailsRowComponent,
     ],
     providers: [
-      mockProvider(WebSocketService2),
+      mockProvider(WebSocketService),
       mockProvider(DialogService),
       provideMockStore({
         selectors: [

@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -15,12 +15,12 @@ import {
   DialogService, SystemGeneralService, UserService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: ServiceSmbComponent,
@@ -29,7 +29,7 @@ describe('ServiceSmbComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('smb.config', {
           id: 1,
           netbiosname: 'truenas',
@@ -85,7 +85,7 @@ describe('ServiceSmbComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('loads and shows current settings for Smb service when form is opened', async () => {

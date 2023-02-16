@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -372,7 +372,7 @@ export class LanguageService {
 
   constructor(
     protected translate: TranslateService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {

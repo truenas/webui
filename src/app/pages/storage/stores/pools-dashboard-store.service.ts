@@ -13,7 +13,7 @@ import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, StorageService, WebSocketService2 } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 
 export interface PoolsDashboardState {
   arePoolsLoading: boolean;
@@ -45,7 +45,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialogService: DialogService,
     private sorter: StorageService,
   ) {

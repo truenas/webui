@@ -7,7 +7,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -15,7 +15,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
-import { DialogService, StorageService, WebSocketService2 } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('SaveConfigDialogComponent', () => {
@@ -29,7 +29,7 @@ describe('SaveConfigDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('core.download', [123, 'http://localhost/download/config']),
       ]),
       provideMockStore({
@@ -63,7 +63,7 @@ describe('SaveConfigDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
       'config.save',
       [{ secretseed: false }],
       'truenas-TrueNAS-SCALE-22.12-20220524160228.db',
@@ -83,7 +83,7 @@ describe('SaveConfigDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
       'config.save',
       [{ secretseed: true }],
       'truenas-TrueNAS-SCALE-22.12-20220524160228.tar',

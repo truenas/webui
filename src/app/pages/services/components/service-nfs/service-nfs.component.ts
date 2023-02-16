@@ -16,7 +16,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +60,7 @@ export class ServiceNfsComponent implements OnInit {
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

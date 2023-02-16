@@ -16,7 +16,7 @@ import {
 import { DialogService, ShellService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface PodLogEvent {
   data: string;
@@ -50,7 +50,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
   podLogs: PodLogEvent[];
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialogService: DialogService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,

@@ -22,7 +22,7 @@ import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.i
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService, LanguageService, WebSocketService2 } from 'app/services';
+import { SystemGeneralService, LanguageService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -68,7 +68,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     private media: MediaObserver,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
     private layoutService: LayoutService,
@@ -134,10 +134,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
-
-    this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.core.emit({ name: 'Authenticated', data: evt, sender: this });
-    });
 
     this.store$.dispatch(adminUiInitialized());
 

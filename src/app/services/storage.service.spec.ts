@@ -8,11 +8,11 @@ import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('StorageService', () => {
   const storageService = new StorageService(
-    {} as WebSocketService2,
+    {} as WebSocketService,
     {} as HttpClient,
   );
 

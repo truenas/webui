@@ -18,7 +18,7 @@ import { CatalogEditFormComponent } from 'app/pages/apps-old/forms/catalog-edit-
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   constructor(
     private mdDialog: MatDialog,
     private dialogService: DialogService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
   ) {}

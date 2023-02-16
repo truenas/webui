@@ -7,7 +7,7 @@ import { MockPipe } from 'ng-mocks';
 import { FileSizePipe } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -42,7 +42,7 @@ describe('SnapshotListComponent', () => {
       MockPipe(FileSizePipe, jest.fn(() => '1.49 TiB')),
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('zfs.snapshot.query', []),
         mockCall('zfs.snapshot.delete'),
       ]),

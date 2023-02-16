@@ -6,8 +6,8 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -26,7 +26,7 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CloudCredentialsFormComponent } from './cloud-credentials-form.component';
 
 jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => {
@@ -88,7 +88,7 @@ describe('CloudCredentialsFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('cloudsync.credentials.create'),
         mockCall('cloudsync.credentials.update'),
         mockCall('cloudsync.credentials.verify', {
@@ -107,7 +107,7 @@ describe('CloudCredentialsFormComponent', () => {
 
   describe('rendering', () => {
     it('loads a list of providers and shows them in Provider select', async () => {
-      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cloudsync.providers');
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.providers');
 
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
       expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box']);
@@ -142,7 +142,7 @@ describe('CloudCredentialsFormComponent', () => {
       const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
       await verifyButton.click();
 
-      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
         provider: 'S3',
         attributes: {
           s3attribute: 's3 value',
@@ -164,7 +164,7 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('shows an error when verification fails', async () => {
-      const websocketMock = spectator.inject(MockWebsocketService2);
+      const websocketMock = spectator.inject(MockWebsocketService);
       websocketMock.mockCall('cloudsync.credentials.verify', {
         valid: false,
         excerpt: 'Missing some important field',
@@ -233,7 +233,7 @@ describe('CloudCredentialsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
         name: 'New sync',
         provider: CloudsyncProviderName.AmazonS3,
         attributes: {
@@ -261,7 +261,7 @@ describe('CloudCredentialsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
         233,
         {
           name: 'My updated server',

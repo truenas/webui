@@ -13,7 +13,7 @@ import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -90,7 +90,7 @@ export class DatasetQuotaEditFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,

@@ -15,7 +15,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   CertificateStep,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +41,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider, Cert
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) {}

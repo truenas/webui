@@ -28,7 +28,7 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
   providedIn: 'root',
 })
 export class AuthService {
-  @LocalStorage() private token2: string;
+  @LocalStorage() private token: string;
   private loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
   /**
@@ -73,7 +73,7 @@ export class AuthService {
     });
 
     this.authToken$.pipe(untilDestroyed(this)).subscribe((token) => {
-      this.token2 = token;
+      this.token = token;
     });
   }
 
@@ -112,7 +112,7 @@ export class AuthService {
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login_with_token',
-      params: [this.token2 || ''],
+      params: [this.token || ''],
     });
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
       this.isLoggedIn$.next(response);

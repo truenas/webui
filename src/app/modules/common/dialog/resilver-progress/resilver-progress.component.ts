@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class ResilverProgressDialogComponent implements OnInit {
 
   constructor(
     protected translate: TranslateService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {

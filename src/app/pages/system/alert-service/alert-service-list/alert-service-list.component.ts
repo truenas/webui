@@ -8,7 +8,7 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
-import { WebSocketService2, DialogService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -55,7 +55,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected dialogService: DialogService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

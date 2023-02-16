@@ -25,7 +25,7 @@ import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-fo
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -72,7 +72,7 @@ export class CatalogComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     private appLoaderService: AppLoaderService,
     private mdDialog: MatDialog,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,

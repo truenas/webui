@@ -34,7 +34,7 @@ import {
   ReplicationService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -86,7 +86,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private dialog: DialogService,
     protected modalService: ModalService,
     protected loader: AppLoaderService,

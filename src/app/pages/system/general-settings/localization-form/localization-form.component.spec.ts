@@ -6,14 +6,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
-import { LanguageService, SystemGeneralService, WebSocketService2 } from 'app/services';
+import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
@@ -22,7 +22,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
   const createComponent = createComponentFactory({
     component: LocalizationFormComponent,
     imports: [
@@ -30,7 +30,7 @@ describe('LocalizationFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('system.general.update'),
       ]),
       mockProvider(SystemGeneralService, {
@@ -90,7 +90,7 @@ describe('LocalizationFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   describe('saving localization settings', () => {

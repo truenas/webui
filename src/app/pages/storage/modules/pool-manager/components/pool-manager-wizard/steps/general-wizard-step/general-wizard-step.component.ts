@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ export class GeneralWizardStepComponent implements OnInit {
   );
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: DialogService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

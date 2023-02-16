@@ -9,7 +9,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import {
   AppLoaderService, SystemGeneralService,
 } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +32,7 @@ export class SignCsrDialogComponent {
     private systemGeneralService: SystemGeneralService,
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private caId: number,
   ) {}

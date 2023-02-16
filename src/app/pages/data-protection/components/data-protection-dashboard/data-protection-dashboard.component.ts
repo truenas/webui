@@ -48,7 +48,7 @@ import {
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -86,7 +86,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   jobStates = new Map<number, string>();
 
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
     private dialog: DialogService,

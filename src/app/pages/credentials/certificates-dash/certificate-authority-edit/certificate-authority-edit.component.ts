@@ -13,7 +13,7 @@ import {
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +33,7 @@ export class CertificateAuthorityEditComponent {
   readonly helptext = helptextSystemCertificates;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
     private matDialog: MatDialog,

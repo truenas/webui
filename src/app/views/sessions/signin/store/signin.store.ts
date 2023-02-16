@@ -19,7 +19,7 @@ import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface SigninState {
   isLoading: boolean;
@@ -58,7 +58,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private disabledReasonsSubscription: Subscription;
 
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,

@@ -11,7 +11,7 @@ import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   private statusSubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) { }

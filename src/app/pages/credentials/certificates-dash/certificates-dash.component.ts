@@ -27,7 +27,7 @@ import {
   CertificateAddComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
-import { WebSocketService2, DialogService, StorageService } from 'app/services';
+import { WebSocketService, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
@@ -47,7 +47,7 @@ export class CertificatesDashComponent implements OnInit {
   constructor(
     private modalService: ModalService,
     private slideInService: IxSlideInService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: MatDialog,
     private dialogService: DialogService,
     private storage: StorageService,

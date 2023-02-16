@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -16,7 +16,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { DialogService, KeychainCredentialService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { RsyncTaskFormComponent } from './rsync-task-form.component';
 
@@ -59,7 +59,7 @@ describe('RsyncTaskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('rsynctask.create'),
         mockCall('rsynctask.update'),
       ]),
@@ -124,7 +124,7 @@ describe('RsyncTaskFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsynctask.create', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.create', [{
       archive: false,
       compress: true,
       delayupdates: false,
@@ -194,7 +194,7 @@ describe('RsyncTaskFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsynctask.update', [
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,
       {
         ...existingTask,
@@ -226,7 +226,7 @@ describe('RsyncTaskFormComponent', () => {
     const existingTaskWithoutModule = { ...existingTask };
     delete existingTaskWithoutModule.remotemodule;
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsynctask.update', [
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,
       {
         ...existingTaskWithoutModule,
@@ -260,7 +260,7 @@ describe('RsyncTaskFormComponent', () => {
     const existingTaskWithoutModule = { ...existingTask };
     delete existingTaskWithoutModule.remotemodule;
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsynctask.update', [
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,
       {
         ...existingTaskWithoutModule,
