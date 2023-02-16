@@ -240,7 +240,7 @@ export class AppSchemaService {
     Object.keys(groupValue).forEach((key) => {
       result[key] = this.serializeFormValue(groupValue[key], schema) as HierarchicalObjectMap<ChartFormValue>;
       if (result[key] === null) {
-        const fieldSchema = _.find(schema.questions, { variable: key });
+        const fieldSchema = _.find(schema?.questions, { variable: key });
 
         if (fieldSchema?.schema?.null) {
           return null;
