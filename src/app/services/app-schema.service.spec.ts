@@ -1,5 +1,6 @@
 import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
+import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   DynamicFormSchemaCheckbox,
@@ -535,21 +536,43 @@ describe('AppSchemaService', () => {
   });
   describe('serializeFormValue()', () => {
     it('serialization validation', () => {
-      expect(service.serializeFormValue(undefined)).toBeUndefined();
-      expect(service.serializeFormValue(true)).toBe(true);
-      expect(service.serializeFormValue(1)).toBe(1);
-      expect(service.serializeFormValue('1')).toBe('1');
-      expect(service.serializeFormValue('')).toBe('');
-      expect(service.serializeFormValue('test')).toBe('test');
-      expect(service.serializeFormValue(12)).toBe(12);
-      expect(service.serializeFormValue({})).toEqual({});
-      expect(service.serializeFormValue([])).toEqual([]);
-      expect(service.serializeFormValue([{ a: 1 }, { a: 2 }, { a: 3 }])).toEqual([1, 2, 3]);
-      expect(service.serializeFormValue({ a: 1 })).toEqual({ a: 1 });
-      expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
-      expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
-      expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null })).toEqual({ a: { d: 'test' } });
-      expect(service.serializeFormValue('* * * * *')).toEqual({
+      expect(service.serializeFormValue(undefined, null)).toBeUndefined();
+      expect(service.serializeFormValue(true, null)).toBe(true);
+      expect(service.serializeFormValue(1, null)).toBe(1);
+      expect(service.serializeFormValue('1', null)).toBe('1');
+      expect(service.serializeFormValue('', null)).toBe('');
+      expect(service.serializeFormValue('test', null)).toBe('test');
+      expect(service.serializeFormValue(12, null)).toBe(12);
+      expect(service.serializeFormValue({}, null)).toEqual({});
+      expect(service.serializeFormValue([], null)).toEqual([]);
+      expect(service.serializeFormValue([{ a: 1 }, { a: 2 }, { a: 3 }], null)).toEqual([1, 2, 3]);
+      expect(service.serializeFormValue({ a: 1 }, null)).toEqual({ a: 1 });
+      expect(service.serializeFormValue({ a: { b: 1 } }, null)).toEqual({ a: { b: 1 } });
+      expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } }, null)).toEqual({ a: { b: ['test'] } });
+      expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null }, null)).toEqual({ a: { d: 'test' } });
+      expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null }, {
+        questions: [
+          {
+            schema: {
+              type: ChartSchemaType.Int,
+              null: true,
+            },
+            label: 'c',
+            variable: 'c',
+          },
+          {
+            schema: {
+              type: ChartSchemaType.Int,
+              null: false,
+            },
+            label: 'b',
+            variable: 'b',
+          },
+        ],
+        groups: [],
+        portals: {},
+      })).toEqual({ a: { c: null, d: 'test' } });
+      expect(service.serializeFormValue('* * * * *', null)).toEqual({
         hour: '*',
         minute: '*',
         month: '*',
