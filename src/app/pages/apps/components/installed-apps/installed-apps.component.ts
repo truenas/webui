@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 @UntilDestroy()
 @Component({
