@@ -5,6 +5,7 @@
         color="primary"
         ix-auto
         ix-auto-type="checkbox"
+        [ixTest]="application.name"
         [checked]="application.selected"
         (change)="toggleAppChecked($event.checked)"
       ></mat-checkbox>
