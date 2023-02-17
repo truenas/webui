@@ -7,7 +7,7 @@
       role="listitem"
       (click)="toggleMenu.emit()"
     >
-      <a class="slidein-nav-link" [routerLink]="['/', menuName, subItem.state]">
+      <a class="slidein-nav-link" [ixTest]="subItem.name" [routerLink]="['/', menuName, subItem.state]">
         {{ subItem.name | translate }}
       </a>
     </mat-list-item>

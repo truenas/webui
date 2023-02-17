@@ -16,6 +16,7 @@
       #rla="routerLinkActive"
       mat-tab-link
       routerLinkActive
+      [ixTest]="link.label"
       [routerLink]="link.path"
       [active]="rla.isActive"
     >

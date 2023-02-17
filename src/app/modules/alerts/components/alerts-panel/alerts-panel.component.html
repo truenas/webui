@@ -11,13 +11,13 @@
       <mat-icon>settings</mat-icon>
     </button>
     <mat-menu #alertSettingsMenu="matMenu">
-      <a mat-menu-item (click)="navigateTo(['/system', 'alertsettings'])">
+      <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alertsettings'])">
         {{ 'Alert Settings' | translate }}
       </a>
-      <a mat-menu-item (click)="navigateTo(['/system', 'alertservice'])">
+      <a mat-menu-item ixTest="alert-services" (click)="navigateTo(['/system', 'alertservice'])">
         {{ 'Alert Services' | translate }}
       </a>
-      <a mat-menu-item (click)="navigateTo(['/system', 'email'])">
+      <a mat-menu-item ixTest="email-settings" (click)="navigateTo(['/system', 'email'])">
         {{ 'Email' | translate }}
       </a>
     </mat-menu>

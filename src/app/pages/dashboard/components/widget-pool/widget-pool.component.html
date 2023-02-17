@@ -51,6 +51,7 @@
           <div class="controls">
             <a
               mat-icon-button
+              [ixTest]="poolState.name"
               [routerLink]="['/storage']"
             >
               <mat-icon
@@ -64,6 +65,7 @@
 
             <a
               mat-icon-button
+              [ixTest]="[poolState.name, 'disk-reports']"
               [routerLink]="['/reportsdashboard', 'disk']"
               [queryParams]="{ disks: poolDisks }"
             >

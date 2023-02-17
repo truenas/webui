@@ -19,7 +19,12 @@
       [message]="config.tooltip"
     ></ix-tooltip>
 
-    <a *ngIf="config.linkText" class="link" (click)="linkClicked()">
+    <a
+      *ngIf="config.linkText"
+      class="link"
+      [ixTest]="[config.linkText, 'open-in-new']"
+      (click)="linkClicked()"
+    >
       {{ config.linkText | translate }}
       <mat-icon style="font-size: x-small">open_in_new</mat-icon>
     </a>

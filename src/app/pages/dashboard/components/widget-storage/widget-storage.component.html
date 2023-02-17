@@ -36,6 +36,7 @@
           <div class="controls">
             <a
               mat-icon-button
+              ixTest="storage-reports"
               [routerLink]="['/reportsdashboard/disk']"
             >
               <ix-icon
@@ -78,6 +79,7 @@
                     <div class="tile-header-button">
                       <a
                         mat-icon-button
+                        ixTest="pool-status"
                         [routerLink]="['/storage']"
                       >
                         <ix-icon
@@ -218,6 +220,7 @@
                   fxFlex="100"
                   fxLayout="column"
                   fxLayoutAlign="center center"
+                  ixTest="create-pool"
                   [routerLink]="['/storage', 'create']"
                 >
                   <ix-icon name="mdi-database"></ix-icon>

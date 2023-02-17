@@ -18,7 +18,7 @@
           Error
         </ng-container>
       </ng-container>
-      <a (click)="onManageSedPassword()">
+      <a ixTest="manage-sed-password" (click)="onManageSedPassword()">
         {{ 'Manage SED Password' | translate }}
       </a>
     </div>
@@ -37,7 +37,7 @@
           Error
         </ng-container>
       </ng-container>
-      <a [routerLink]="['/system/advanced']">
+      <a ixTest="manage-global-sed-password" [routerLink]="['/system/advanced']">
         {{ 'Manage Global SED Password' | translate }}
       </a>
     </div>

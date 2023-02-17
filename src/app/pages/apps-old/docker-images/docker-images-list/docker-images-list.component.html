@@ -103,12 +103,17 @@
       <mat-menu #actionsMenu="matMenu">
         <a
           mat-menu-item
+          [ixTest]="['update', image.repo_tags.join(', ')]"
           [disabled]="!image.update_available"
           (click)="doUpdate([image])"
         >
           {{ image.update_available ? ('Update available' | translate) : ('Up to date' | translate) }}
         </a>
-        <a mat-menu-item (click)="doDelete([image])">
+        <a
+          mat-menu-item
+          [ixTest]="['delete', image.repo_tags.join(', ')]"
+          (click)="doDelete([image])"
+        >
           {{ 'Delete' | translate }}
         </a>
       </mat-menu>

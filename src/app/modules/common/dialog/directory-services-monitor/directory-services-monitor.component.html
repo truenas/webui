@@ -61,6 +61,7 @@
     <mat-row
       *matRowDef="let row; columns: displayedColumns"
       class="table-row clickable"
+      [ixTest]="row.name"
       (click)="goTo(row.id)"
     ></mat-row>
   </mat-table>

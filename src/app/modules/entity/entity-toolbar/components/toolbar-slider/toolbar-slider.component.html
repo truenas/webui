@@ -1,6 +1,7 @@
 <div class="toolbar-slider">
   {{ label | translate }}:
   <mat-slider
+    [ixTest]="label"
     [min]="min"
     [max]="max"
     [step]="step"

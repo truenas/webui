@@ -106,6 +106,7 @@
                   *ngIf="acl.trivial; else stripButton"
                   mat-button
                   class="action"
+                  ixTest="edit-permissions"
                   [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
                 >
                   {{ 'Permissions Editor' | translate }}
