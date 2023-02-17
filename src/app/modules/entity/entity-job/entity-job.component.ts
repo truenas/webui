@@ -142,7 +142,8 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
           }
         },
         error: (job) => {
-          this.failure.emit(job || this.job);
+          this.job = job;
+          this.failure.emit(this.job);
         },
         complete: () => {
           if (this.job.state === JobState.Success) {

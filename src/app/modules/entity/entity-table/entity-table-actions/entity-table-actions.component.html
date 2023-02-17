@@ -6,12 +6,9 @@
     <button
       *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
       mat-button
-      ix-auto-type="button"
       [ixTest]="actions[0].actions[0].label"
       [id]="'action_' + singleAction.name + '__' + singleAction.id"
-      [ix-auto-identifier]="row.name + '_' + singleAction.id + '_' + singleAction.name"
       [disabled]="singleAction.disabled"
-      [ix-auto]=""
       [color]="actions[0].actions[0].color ? actions[0].actions[0].color : 'default'"
       (click)="singleAction.onClick(this.row)"
     >
@@ -67,13 +64,10 @@
         >
           <button
             *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
-            ix-auto-type="action"
             mat-menu-item
             [ixTest]="[entity?.conf?.title, 'options', action.label]"
             [id]="'action_button_' + action?.name + '__' + action.id"
-            [ix-auto-identifier]="action.id + '_' + action.label"
             [disabled]="action.disabled"
-            [ix-auto]=""
             (click)="action.onClick(this.row)"
           >
             <span>{{ action?.label | translate }}</span>
@@ -100,12 +94,9 @@
             <button
               *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
               mat-menu-item
-              ix-auto-type="action"
               [ixTest]="[entity?.conf?.title, 'options', action.label]"
               [id]="'action_button_' + action?.name + '__' + action.id"
-              [ix-auto-identifier]="action.id + '_' + action.label"
               [disabled]="action.disabled"
-              [ix-auto]=""
               (click)="action.onClick(this.row)"
             >
               <span>{{ action?.label | translate }}</span>
@@ -121,12 +112,9 @@
       <button
         *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
         mat-icon-button
-        ix-auto-type="action"
         [ixTest]="[entity?.conf?.title, 'options', action.name]"
         [id]="'action_button_' + action?.name + '__' + action.id"
-        [ix-auto-identifier]="action.id + '_' + action.name | uppercase"
         [disabled]="action.disabled"
-        [ix-auto]=""
         [matTooltip]="action.label | translate"
         [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
         (click)="action.onClick(this.row)"

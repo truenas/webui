@@ -77,12 +77,9 @@
             class="btn btn-block btn-warning mat-primary"
             type="submit"
             mat-button
-            ix-auto-type="button"
             color="primary"
             ixTest="save"
-            [ix-auto-identifier]="saveSubmitText | uppercase"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
-            [ix-auto]=""
           >
             {{ saveSubmitText | translate }}
           </button>
@@ -93,10 +90,7 @@
             type="button"
             mat-button
             color="default"
-            ix-auto-type="button"
-            ix-auto-identifier="CANCEL"
             ixTest="cancel"
-            [ix-auto]=""
             (click)="goBack()"
           >
             {{ 'Cancel' | translate }}
@@ -106,14 +100,11 @@
               *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
               mat-button
               class="mat-basic"
-              ix-auto-type="button"
               [id]="'cust_button_' + custBtn.name"
               [ixTest]="['custom-button', custBtn.name]"
-              [ix-auto-identifier]="custBtn.name | uppercase"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
               [type]="custBtn.buttonType ? custBtn.buttonType : 'button'"
-              [ix-auto]=""
               (click)="custBtn['function'] ? custBtn['function']() : null"
             >
               {{ custBtn.name | translate }}
@@ -123,9 +114,6 @@
             <button
               name="compactCustomActions"
               mat-icon-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="keymenu"
               type="button"
               [ixTest]="['compact-custom-actions']"
               [matMenuTriggerFor]="keymenu"
@@ -138,9 +126,6 @@
                   *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(action.id)"
                   name="action.id"
                   mat-menu-item
-                  ix-auto
-                  ix-auto-type="option"
-                  ix-auto-identifier="action.name"
                   [ixTest]="['compact-custom-actions', action.name]"
                   [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(action.id) : action.disabled"
                   (click)="action['function']()"
@@ -155,14 +140,10 @@
             mat-button
             class="btn btn-block btn-danger"
             type="button"
-            ix-auto-type="button"
-            ix-auto-identifier="DELETE"
             ixTest="delete"
-            [ix-auto]=""
           >
             {{ 'Delete' | translate }}
           </button>
-          <!-- </div> -->
           <div id="success-msg-wrapper">
             <div
               *ngIf="success && entityForm.form.dirty === false"

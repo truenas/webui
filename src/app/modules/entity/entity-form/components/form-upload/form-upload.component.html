@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="dynamic-field form-input form-element"
-  ix-auto
-  ix-auto-type="file-uploader"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -85,9 +82,6 @@
         mat-button
         type="button"
         color="primary"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="UPLOAD"
         [ixTest]="[config.name, 'upload']"
         (click)="upload(config.fileLocation)"
       >
