@@ -77,7 +77,7 @@
 
               <div
                 fxFlex="20"
-                [class]="['platform-logo-wrapper', productType.toLowerCase()]"
+                [class]="['platform-logo-wrapper', productType?.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <mat-icon
@@ -167,7 +167,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!hasHa && !(hasOnlyMissmatchVersionsReason$ | async)"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -254,19 +254,6 @@
                       {{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}
                     </span>
                   </mat-list-item>
-                  <mat-list-item *ngIf="showTimeDiffWarning" class="time-warning">
-                    <mat-icon class="icon-warning" [matTooltip]="timeDiffWarning">error</mat-icon>
-                    <span>{{ timeDiffWarning }}</span>
-                    <button
-                      class="btn-sync"
-                      mat-icon-button
-                      [ixTest]="['widget-sysinfo', 'synchronize-time']"
-                      [matTooltip]="'Synchronize Time' | translate"
-                      (click)="onSynchronizeTime()"
-                    >
-                      <ix-icon class="icon-sync">sync</ix-icon>
-                    </button>
-                  </mat-list-item>
                 </mat-list>
 
                 <div
@@ -289,7 +276,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!hasHa && !(hasOnlyMissmatchVersionsReason$ | async)"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </div>

@@ -36,6 +36,7 @@ export class ChartFormComponent implements OnDestroy {
   title: string;
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
+  chartSchema: ChartSchema['schema'];
 
   isLoading = false;
   isNew = true;
@@ -142,6 +143,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   buildDynamicForm(schema: ChartSchema['schema']): void {
+    this.chartSchema = schema;
     try {
       schema.groups.forEach((group) => {
         this.dynamicSection.push({ ...group, schema: [] });
@@ -227,7 +229,8 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   onSubmit(): void {
-    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
+    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
+
     const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
       next: (fieldToBeDeleted) => {

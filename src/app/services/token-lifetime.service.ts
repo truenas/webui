@@ -61,7 +61,7 @@ export class TokenLifetimeService {
         this.terminateCancelTimeout = setTimeout(() => {
           this.authService.logout().pipe(untilDestroyed(this)).subscribe({
             next: () => {
-              this.authService.token2 = null;
+              this.authService.clearAuthToken();
               this.router.navigate(['/sessions/signin']);
               this.dialogService.closeAllDialogs();
               this.snackbar.open(

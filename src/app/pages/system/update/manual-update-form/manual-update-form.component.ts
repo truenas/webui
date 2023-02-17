@@ -45,9 +45,8 @@ export class ManualUpdateFormComponent implements OnInit {
     updateFile: [null as FileList],
     rebootAfterManualUpdate: [false],
   });
-  private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.authService.token2;
-  }
+
+  private apiEndPoint: string;
 
   readonly helptext = helptext;
   currentVersion = '';
@@ -67,7 +66,14 @@ export class ManualUpdateFormComponent implements OnInit {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private updateService: UpdateService,
-  ) { }
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();
