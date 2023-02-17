@@ -12,7 +12,7 @@
       <mat-panel-title>
         <h5 *ngIf="title" class="title">
           <ng-container *ngIf="titleHref; else plainTitle">
-            <a [routerLink]="titleHref">
+            <a [ixTest]="[title, 'open-in-new']" [routerLink]="titleHref">
               {{ title }}
               <mat-icon class="title-icon">open_in_new</mat-icon>
             </a>
@@ -72,7 +72,7 @@
     [ngClass]="{ 'actions-row': isExpanded && tableConf.detailsHref }"
   >
     <div>
-      <a [routerLink]="tableConf.detailsHref.split('/')">
+      <a [ixTest]="[tableConf.name, 'view-all']" [routerLink]="tableConf.detailsHref.split('/')">
         {{ 'View All' | translate }}
       </a>
     </div>

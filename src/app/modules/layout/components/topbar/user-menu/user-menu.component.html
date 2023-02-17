@@ -23,7 +23,7 @@
     {{ 'Change Password' | translate }}
   </button>
 
-  <a name="settings-api" mat-menu-item [routerLink]="['/apikeys']">
+  <a name="settings-api" ixTest="api-keys" mat-menu-item [routerLink]="['/apikeys']">
     <mat-icon>laptop</mat-icon>
     {{ 'API Keys' | translate }}
   </a>
@@ -33,6 +33,7 @@
     mat-menu-item
     href="https://www.truenas.com/docs/"
     target="_blank"
+    ixTest="guide"
   >
     <mat-icon>library_books</mat-icon>
     {{ 'Guide' | translate }}

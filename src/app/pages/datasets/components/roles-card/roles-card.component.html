@@ -12,7 +12,7 @@
       <div *ngIf="isApplications" class="apps value">
         {{ 'This dataset is used to store Kubernetes config and other container related data' | translate }}
       </div>
-      <a class="action" [routerLink]="['/apps']">
+      <a class="action" ixTest="manage-apps-settings" [routerLink]="['/apps']">
         {{ 'Manage Apps Settings' | translate }}
       </a>
     </div>
@@ -22,7 +22,7 @@
       <div class="system-dataset value">
         {{ 'This dataset is used by the system' | translate }}
       </div>
-      <a class="action" [routerLink]="['/system', 'advanced']">
+      <a class="action" ixTest="manage-advanced-settings" [routerLink]="['/system', 'advanced']">
         {{ 'Manage Advanced Settings' | translate }}
       </a>
     </div>
@@ -39,7 +39,7 @@
       <div class="vms value">
         {{ 'This dataset is used by: {vms}' | translate: { vms: vmsNames } }}
       </div>
-      <a class="action" [routerLink]="['/vm']">
+      <a class="action" ixTest="manage-vm-settings" [routerLink]="['/vm']">
         {{ 'Manage VM Settings' | translate }}
       </a>
     </div>
@@ -49,7 +49,7 @@
       <div class="smb-shares value">
         {{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbSharesNames } }}
       </div>
-      <a class="action" [routerLink]="['/sharing/smb']">
+      <a class="action" ixTest="manage-smb-shares" [routerLink]="['/sharing/smb']">
         {{ 'Manage SMB Shares' | translate }}
       </a>
     </div>
@@ -59,7 +59,7 @@
       <div class="nfs-shares value">
         {{ 'Dataset is shared via NFS' | translate }}
       </div>
-      <a class="action" [routerLink]="['/sharing/nfs']">
+      <a class="action" ixTest="manage-nfs-shares" [routerLink]="['/sharing/nfs']">
         {{ 'Manage NFS Shares' | translate }}
       </a>
     </div>
@@ -69,7 +69,7 @@
       <div class="iscsi-shares value">
         {{ 'Dataset is shared via iSCSI' | translate }}
       </div>
-      <a class="action" [routerLink]="['/sharing/iscsi']">
+      <a class="action" ixTest="manage-iscsi-shares" [routerLink]="['/sharing/iscsi']">
         {{ 'Manage iSCSI Shares' | translate }}
       </a>
     </div>

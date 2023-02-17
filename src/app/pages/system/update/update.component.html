@@ -121,7 +121,7 @@
     </div>
   </mat-card-title>
   <mat-card-content>
-    <a mat-button target="_blank" [href]="releaseNotes">
+    <a mat-button target="_blank" ixTest="check-release-notes" [href]="releaseNotes">
       {{ 'Check Release Notes' | translate }}
     </a>
   </mat-card-content>
@@ -145,6 +145,7 @@
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
+      ixTest="release-notes"
     >
       {{ 'Before updating, please read the release notes.' | translate }}
     </a>
@@ -160,6 +161,7 @@
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
+      ixTest="release-notes"
     >
       {{ 'Before updating, please read the release notes.' | translate }}
     </a>

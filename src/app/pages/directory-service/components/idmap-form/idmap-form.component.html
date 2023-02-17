@@ -52,7 +52,7 @@
 
         <div *ngIf="hasCertificateField$ | async" class="linked-select">
           <div class="link-wrapper">
-            <a class="link" (click)="certificatesLinkClicked()">
+            <a class="link" ixTest="manage-certificates" (click)="certificatesLinkClicked()">
               {{ 'Manage Certificates' | translate }}
             </a>
           </div>

@@ -43,6 +43,7 @@
               ix-auto-identifier="networkReports"
               matTooltipPosition="above"
               aria-label="Network Reports"
+              ixTest="network-reports"
               [routerLink]="['/reportsdashboard/network']"
               [matTooltip]="'Network Reports' | translate"
             >
@@ -53,7 +54,7 @@
         <ng-container *ngIf="!availableNics.length">
           <div class="empty-state">
             <h3>{{ 'No active interfaces are found' | translate }}</h3>
-            <a mat-button color="primary" routerLink="/network">
+            <a mat-button color="primary" routerLink="/network" ixTest="open-network">
               {{ 'Open Network' | translate }}
             </a>
           </div>

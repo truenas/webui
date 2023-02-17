@@ -57,6 +57,8 @@ export class TestDirective {
       case 'mat-radio-group':
       case 'mat-radio-button':
       case 'mat-icon':
+      case 'mat-row':
+      case 'mat-slider':
         return tagName.replace('mat-', '');
       case 'input':
       case 'button':

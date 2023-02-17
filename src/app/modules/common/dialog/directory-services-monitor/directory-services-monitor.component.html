@@ -69,6 +69,7 @@
       class="table-row clickable"
       ix-auto
       ix-auto-type="action"
+      [ixTest]="row.name"
       [ix-auto-identifier]="row.name"
       (click)="goTo(row.id)"
     ></mat-row>

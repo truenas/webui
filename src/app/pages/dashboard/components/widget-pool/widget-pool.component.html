@@ -59,6 +59,7 @@
               mat-icon-button
               ix-auto-type="button"
               ix-auto-identifier="poolStatus"
+              [ixTest]="poolState.name"
               [routerLink]="['/storage']"
               [ix-auto]="poolState.name"
             >
@@ -76,6 +77,7 @@
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="diskReports"
+              [ixTest]="[poolState.name, 'disk-reports']"
               [routerLink]="['/reportsdashboard', 'disk']"
               [queryParams]="{ disks: poolDisks }"
             >
