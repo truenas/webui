@@ -29,12 +29,7 @@
           fxLayout="row wrap"
           fxLayoutGap="16px"
         >
-          <span
-            *ngFor="let maction of conf.multiActions"
-            ix-auto
-            ix-auto-type="button"
-            [ix-auto-identifier]="maction?.id"
-          >
+          <span *ngFor="let maction of conf.multiActions">
             <button
               *ngIf="maction.enable"
               mat-button
@@ -51,7 +46,7 @@
         </div>
 
         <div *ngIf="!conf.multiActions || conf.multiActions.length === 0">
-          <span ix-auto ix-auto-type="button" ix-auto-identifier="mdelete">
+          <span>
             <!-- With Labels -->
             <ng-container>
               <button
@@ -240,9 +235,6 @@
             <th *matHeaderCellDef class="multiselect-column" mat-header-cell>
               <mat-checkbox
                 color="primary"
-                ix-auto
-                ix-auto-type="checkbox"
-                ix-auto-identifier="title"
                 [ixTest]="[conf.title, 'multiselect']"
                 [indeterminate]="selection.hasValue() && !isAllSelected"
                 [checked]="selection.hasValue() && isAllSelected"
@@ -259,10 +251,7 @@
             >
               <mat-checkbox
                 color="primary"
-                ix-auto
-                ix-auto-type="checkbox"
                 [checked]="selection.isSelected(element)"
-                [ix-auto-identifier]="element[conf.rowIdentifier || 'name']"
                 [ixTest]="element[conf.rowIdentifier || 'name']"
                 (click)="$event.stopPropagation()"
                 (change)="$event ? toggleSelection(element) : null"
@@ -307,22 +296,16 @@
                 <div
                   *ngIf="currentColumns[i].toggle"
                   class="clickable"
-                  ix-auto
-                  ix-auto-type="overlay"
                   matTooltipPosition="right"
                   [id]="'overlay__' + getRowIdentifier(element) + '_Running'"
                   [matTooltip]="element.state"
-                  [ix-auto-identifier]="column + getRowIdentifier(element)"
                   (click)="$event.stopPropagation(); this.conf.onSliderChange(element)"
                 ></div>
 
                 <mat-slide-toggle
                   *ngIf="currentColumns[i].toggle"
-                  ix-auto
-                  ix-auto-type="slider"
                   color="primary"
                   [id]="'slide-toggle__' + column + '_' + getRowIdentifier(element)"
-                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [checked]="element[column] === EntityJobState.Running"
                 >
                 </mat-slide-toggle>
@@ -331,11 +314,8 @@
                 <button
                   *ngIf="currentColumns[i].button"
                   mat-stroked-button
-                  ix-auto
-                  ix-auto-type="slider"
                   [ixTest]="[column, getRowIdentifier(element)]"
                   [id]="'interactive-button_' + column + '_' + getRowIdentifier(element)"
-                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [ngClass]="getButtonClass(element[column])"
                   (click)="
                     $event.stopPropagation(); this.conf.onButtonClick(element)
@@ -381,11 +361,8 @@
                 *ngIf="!(checkboxLoaders.get(getRowIdentifier(element)) | async)"
                 color="primary"
                 class="checkbox"
-                ix-auto
-                ix-auto-type="checkbox"
                 [id]="'checkbox__' + getRowIdentifier(element)"
                 [ixTest]="getRowIdentifier(element)"
-                [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                 [disabled]="getDisabled(column)"
                 [(ngModel)]="element[column]"
                 (change)="checkboxChanged(element)"
@@ -451,10 +428,7 @@
           *matRowDef="let element; columns: columnsProps; let i = dataIndex"
           mat-row
           class="element-row"
-          ix-auto
-          ix-auto-type="expander"
           [id]="element[getFirstKey()]"
-          [ix-auto-identifier]="element[getFirstKey()]"
           [ixTest]="element[getFirstKey()]"
           [ngClass]="{ 'expanded-row': getRowIdentifier(expandedElement) === getRowIdentifier(element) }"
           (click)="doRowClick(element)"

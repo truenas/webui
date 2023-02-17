@@ -18,12 +18,7 @@
     (closedStart)="onMenuClosed()"
   >
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
-      <div
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="logo"
-        [class]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]"
-      >
+      <div [class]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
         <a routerLink="/dashboard" class="logo">
           <mat-icon
             alt="TrueNAS SCALE"
