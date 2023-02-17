@@ -31,5 +31,5 @@ export class SimpleAsyncComboboxProvider implements IxComboboxProvider {
   }
 
   private options: Option[];
-  constructor(private options$: Observable<Option[]>) {}
+  constructor(private options$: Observable<Option[]>) { }
 }
