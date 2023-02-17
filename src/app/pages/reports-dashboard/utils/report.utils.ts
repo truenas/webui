@@ -4,7 +4,7 @@ import { ReportingData, ReportingAggregationKeys } from 'app/interfaces/reportin
 
 export function formatInterfaceUnit(value: string): string {
   if (value && value.split(' ', 2)[0] !== '0') {
-    value += '/s';
+    value += value.split(' ', 2)[1] ? '/s' : 'b/s';
   }
   return value;
 }
