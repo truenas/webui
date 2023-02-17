@@ -20,7 +20,7 @@ import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -83,7 +83,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
   subscriptions: Subscription[] = [];
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,

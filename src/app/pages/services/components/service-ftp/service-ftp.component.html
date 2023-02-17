@@ -123,7 +123,7 @@
             <ng-container *ngIf="isTlsEnabled$ | async">
               <div class="linked-select">
                 <div class="link-wrapper">
-                  <a class="link" (click)="onLinkClicked()">
+                  <a class="link" ixTest="manage-certificates" (click)="onLinkClicked()">
                     {{ 'Manage Certificates' | translate }}
                   </a>
                 </div>

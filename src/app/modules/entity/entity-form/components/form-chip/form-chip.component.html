@@ -24,9 +24,6 @@
     <mat-chip-grid
       #chipList
       class="form-chip"
-      ix-auto
-      ix-auto-type="input"
-      [ix-auto-identifier]="config.placeholder"
       [required]="config.required"
       [formControl]="group.controls[config.name] | cast"
     >
@@ -68,9 +65,6 @@
         >
           <mat-option
             *ngFor="let option of config.searchOptions"
-            ix-auto
-            ix-auto-type="option"
-            [ix-auto-identifier]="option.label"
             [ixTest]="[config.name, option.label]"
             [value]="option.value"
           >

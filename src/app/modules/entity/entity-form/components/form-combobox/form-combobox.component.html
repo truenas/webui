@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
-  ix-auto
-  ix-auto-type="combobox"
   class="dynamic-field form-select form-element form-combobox"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -60,9 +57,6 @@
       >
         <mat-option
           *ngFor="let option of config.searchOptions"
-          ix-auto
-          ix-auto-type="option"
-          [ix-auto-identifier]="option.label"
           [ixTest]="[config.name, option.label]"
           [class]="option.sticky ? 'sticky-' + option.sticky : ''"
           [value]="option.value"
@@ -73,10 +67,7 @@
       </mat-autocomplete>
     </mat-form-field>
     <span
-      ix-auto
-      ix-auto-type="button"
       [id]="config.name + '-select'"
-      [ix-auto-identifier]="config.name"
       [matMenuTriggerFor]="options"
       (menuOpened)="onOpenMenu()"
     >
@@ -86,11 +77,8 @@
       <ng-container *ngFor="let option of config.options">
         <button
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
           [ixTest]="[config.name, option.label]"
           [class]="option.sticky ? 'sticky-' + option.sticky : ''"
-          [ix-auto-identifier]="option.label"
           [class.text-wrap]="config.enableTextWrapForOptions"
           (click)="onChangeOption(option.value)"
         >

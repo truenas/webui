@@ -14,7 +14,7 @@ import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -102,7 +102,7 @@ export class ServiceUpsComponent implements OnInit {
   readonly shutdownOptions$ = of(helptext.ups_shutdown_options);
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

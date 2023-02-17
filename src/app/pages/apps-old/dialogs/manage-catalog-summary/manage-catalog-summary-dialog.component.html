@@ -18,9 +18,6 @@
       <span>{{ 'Train' | translate }}:</span>
       <mat-form-field class="form-element">
         <mat-select
-          ix-auto
-          ix-auto-type="select"
-          ix-auto-identifier="train-select"
           ixTest="train"
           [(ngModel)]="selectedTrain"
           (ngModelChange)="onOptionChanged()"
@@ -39,9 +36,6 @@
       <span>{{ 'Status' | translate }}:</span>
       <mat-form-field class="form-element">
         <mat-select
-          ix-auto
-          ix-auto-type="select"
-          ix-auto-identifier="status-select"
           ixTest="status"
           [(ngModel)]="selectedStatus"
           (ngModelChange)="onOptionChanged()"
@@ -102,9 +96,6 @@
   <button
     mat-button
     class="mat-mdc-button mat-button mat-secondary"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="CLOSE"
     ixTest="close"
     (click)="dialogRef.close(false)"
   >

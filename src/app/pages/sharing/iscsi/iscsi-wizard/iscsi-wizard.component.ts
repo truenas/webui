@@ -42,7 +42,7 @@ import {
   IscsiService, NetworkService, StorageService, DialogService,
 } from 'app/services';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface CreatedItems {
   zvol: string;
@@ -539,7 +539,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   constructor(
     private iscsiService: IscsiService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cloudcredentialService: CloudCredentialService,
     private dialogService: DialogService,
     private loader: AppLoaderService,

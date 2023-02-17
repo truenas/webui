@@ -24,7 +24,7 @@ import {
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -77,7 +77,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   constructor(
     public router: Router,
     public translate: TranslateService,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     public sysGenService: SystemGeneralService,
     public mediaObserver: MediaObserver,
     private locale: LocaleService,

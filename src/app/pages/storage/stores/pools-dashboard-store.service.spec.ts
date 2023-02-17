@@ -10,7 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { DialogService, StorageService, WebSocketService2 } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 
 const temperatureAgg = {
   sda: { min: 10, max: 30, avg: 20 },
@@ -71,7 +71,7 @@ describe('PoolsDashboardStore', () => {
     service: PoolsDashboardStore,
     providers: [
       StorageService,
-      mockProvider(WebSocketService2),
+      mockProvider(WebSocketService),
       mockProvider(DialogService),
     ],
   });
@@ -83,7 +83,7 @@ describe('PoolsDashboardStore', () => {
 
   it('loads pool topology and root datasets and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebsocket = spectator.inject(WebSocketService2);
+      const mockWebsocket = spectator.inject(WebSocketService);
       const pools = [
         { name: 'pool1' },
         { name: 'pool2' },

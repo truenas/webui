@@ -6,17 +6,17 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeviceDeleteModalComponent, DeviceDeleteModalState } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 describe('DeviceDeleteModalComponent', () => {
   let spectator: Spectator<DeviceDeleteModalComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   function createComponentWithData(data: DeviceDeleteModalState): SpectatorFactory<DeviceDeleteModalComponent> {
     return createComponentFactory({
@@ -26,7 +26,7 @@ describe('DeviceDeleteModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebsocket2([
+        mockWebsocket([
           mockJob('vm.device.delete'),
         ]),
         mockProvider(AppLoaderService),
@@ -53,7 +53,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService2);
+      ws = spectator.inject(WebSocketService);
     });
 
     afterEach(() => {
@@ -114,7 +114,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService2);
+      ws = spectator.inject(WebSocketService);
     });
 
     afterEach(() => {
@@ -189,7 +189,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService2);
+      ws = spectator.inject(WebSocketService);
     });
 
     afterEach(() => {

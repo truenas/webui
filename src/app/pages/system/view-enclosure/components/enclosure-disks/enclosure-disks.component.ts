@@ -56,7 +56,7 @@ import {
   SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
 } from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
@@ -175,7 +175,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected store$: Store<AppState>,
     protected themeService: ThemeService,
     protected diskTemperatureService: DiskTemperatureService,
@@ -301,7 +301,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     };
 
     const domChanges = new MutationObserver(callback);
-    domChanges.observe(this.overview.nativeElement, observerOptions);
+    domChanges.observe(this.overview?.nativeElement, observerOptions);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -822,7 +822,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     } else {
       opacity = hsl[2] < 60 ? 0.25 : 0.75;
       if (this.chassis?.front) {
-        this.chassis.front.setChassisOpacity(opacity);
+        this.chassis?.front.setChassisOpacity(opacity);
       }
 
       if (this.chassis?.rear) {
@@ -1192,8 +1192,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   resizeView(): void {
     // Layout helper code goes in here...
     if (this.overview?.nativeElement) {
-      const visualizer = this.overview.nativeElement.querySelector('#visualizer');
-      visualizer.classList.add('resized');
+      const visualizer = this.overview?.nativeElement.querySelector('#visualizer');
+      visualizer?.classList.add('resized');
     }
   }
 

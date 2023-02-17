@@ -22,10 +22,7 @@
     <button
       mat-button
       color="primary"
-      ix-auto
-      ix-auto-type="button"
       [ixTest]="[config.name, config.customEventActionLabel]"
-      [ix-auto-identifier]="config.customEventActionLabel | uppercase"
       (click)="customEventMethod($event)"
     >
       {{ config.customEventActionLabel }}

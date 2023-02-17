@@ -16,9 +16,6 @@
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="goBack"
             ixTest="network-back"
             (click)="goBack()"
           >
@@ -38,11 +35,9 @@
           <div class="controls">
             <a
               mat-icon-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="networkReports"
               matTooltipPosition="above"
               aria-label="Network Reports"
+              ixTest="network-reports"
               [routerLink]="['/reportsdashboard/network']"
               [matTooltip]="'Network Reports' | translate"
             >
@@ -53,7 +48,7 @@
         <ng-container *ngIf="!availableNics.length">
           <div class="empty-state">
             <h3>{{ 'No active interfaces are found' | translate }}</h3>
-            <a mat-button color="primary" routerLink="/network">
+            <a mat-button color="primary" routerLink="/network" ixTest="open-network">
               {{ 'Open Network' | translate }}
             </a>
           </div>

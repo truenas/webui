@@ -4,7 +4,7 @@
       [disabled]="isLoading$ | async"
       (search)="onSearch($event)"
     ></ix-search-input>
-    <a mat-button href="/api/docs" target="_blank">
+    <a mat-button href="/api/docs" target="_blank" ixTest="api-docs">
       {{ 'API Docs' | translate }}
     </a>
     <button mat-button color="primary" ixTest="add" (click)="openApiKeyForm()">

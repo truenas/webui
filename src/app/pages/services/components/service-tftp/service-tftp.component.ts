@@ -12,7 +12,7 @@ import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +48,7 @@ export class ServiceTftpComponent implements OnInit {
   readonly hosts$ = this.ws.call('tftp.host_choices').pipe(choicesToOptions());
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private formBuilder: FormBuilder,

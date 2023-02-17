@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -19,7 +19,7 @@ import {
   DialogService, RedirectService, SystemGeneralService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
@@ -27,7 +27,7 @@ describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
   let productType: ProductType;
   const createComponent = createComponentFactory({
     component: IpmiFormComponent,
@@ -60,7 +60,7 @@ describe('IpmiFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('failover.licensed', true),
         mockCall('failover.call_remote', [{
           channel: 1,
@@ -90,7 +90,7 @@ describe('IpmiFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService2);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
@@ -172,7 +172,7 @@ describe('IpmiFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService2);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('loads data in the form if the product type is SCALE', async () => {

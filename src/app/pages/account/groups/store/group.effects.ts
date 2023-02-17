@@ -12,7 +12,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   groupPageEntered, groupsLoaded, groupsNotLoaded, groupRemoved,
 } from 'app/pages/account/groups/store/group.actions';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -54,7 +54,7 @@ export class GroupEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}

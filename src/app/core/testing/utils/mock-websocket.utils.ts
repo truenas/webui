@@ -2,7 +2,7 @@ import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
@@ -10,7 +10,7 @@ import {
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.
@@ -38,14 +38,14 @@ import { WebSocketService2 } from 'app/services/ws2.service';
  * ]
  */
 
-export function mockWebsocket2(
+export function mockWebsocket(
   mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
 ): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
-      provide: WebSocketService2,
+      provide: WebSocketService,
       useFactory: (router: Router, wsManager: WebsocketConnectionService) => {
-        const mockWebsocketService = new MockWebsocketService2(router, wsManager);
+        const mockWebsocketService = new MockWebsocketService(router, wsManager);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
@@ -58,8 +58,8 @@ export function mockWebsocket2(
       deps: [Router, WebsocketConnectionService],
     },
     {
-      provide: MockWebsocketService2,
-      useExisting: forwardRef(() => WebSocketService2),
+      provide: MockWebsocketService,
+      useExisting: forwardRef(() => WebSocketService),
     },
     {
       provide: WebsocketConnectionService,

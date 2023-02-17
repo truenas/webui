@@ -13,10 +13,7 @@
   <mat-checkbox
     *ngIf="!config.updater && !config.customEventMethod"
     color="primary"
-    ix-auto
-    ix-auto-type="checkbox"
     class="{ 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
-    [ix-auto-identifier]="config.placeholder"
     [ixTest]="config.name"
     [formControlName]="config.name"
     [required]="config.required"

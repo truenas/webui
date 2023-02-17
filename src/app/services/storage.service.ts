@@ -9,7 +9,7 @@ import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk, StorageDashboardDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 function isStringArray(items: unknown[]): items is string[] {
   return typeof items[0] === 'string';
@@ -23,7 +23,7 @@ export class StorageService {
   iecUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private http: HttpClient,
   ) {
   }

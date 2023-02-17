@@ -5,14 +5,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DualListboxComponent } from 'app/modules/common/dual-list/dual-list.component';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { GroupMembersComponent } from 'app/pages/account/groups/group-members/group-members.component';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const fakeGroupDataSource = [{
   id: 1,
@@ -26,7 +26,7 @@ const fakeGroupDataSource = [{
 describe('GroupMembersComponent', () => {
   let spectator: SpectatorRouting<GroupMembersComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
   const createComponent = createRoutingFactory({
     component: GroupMembersComponent,
     imports: [
@@ -35,7 +35,7 @@ describe('GroupMembersComponent', () => {
     ],
     declarations: [DualListboxComponent],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('group.query', fakeGroupDataSource),
         mockCall('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as User[]),
         mockCall('group.update'),
@@ -50,7 +50,7 @@ describe('GroupMembersComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('shows current group values when form is being edited', async () => {

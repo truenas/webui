@@ -59,7 +59,7 @@ import {
   TaskService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface CreatedPayloads {
   periodic_snapshot_tasks?: PeriodicSnapshotTask[];
@@ -668,7 +668,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private replicationService: ReplicationService,
     private datePipe: DatePipe,
     private entityFormService: EntityFormService,

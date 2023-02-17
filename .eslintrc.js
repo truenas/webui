@@ -326,6 +326,7 @@ module.exports = {
         "@angular-eslint/template/no-interpolation-in-attributes": ['error'],
         "angular-test-ids/require-test-id": ["error", {
           "attribute": "ixTest",
+          "addElements": ["a", "mat-row", "mat-slider"]
         }],
 
         // TODO: To be enabled later

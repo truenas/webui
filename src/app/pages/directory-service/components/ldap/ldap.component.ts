@@ -16,7 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService2,
+  DialogService, ModalService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -69,7 +69,7 @@ export class LdapComponent implements OnInit {
   readonly isEnabled$ = this.form.select((values) => values.enable);
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,

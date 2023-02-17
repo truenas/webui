@@ -6,8 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -27,14 +27,14 @@ import { InterfaceFormComponent } from 'app/pages/network/components/interface-f
 import { DialogService, NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
   let form: IxFormHarness;
   let aliasesList: IxListHarness;
   const existingInterface = {
@@ -75,7 +75,7 @@ describe('InterfaceFormComponent', () => {
       DefaultGatewayDialogComponent,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
           [XmitHashPolicy.Layer2Plus3]: XmitHashPolicy.Layer2Plus3,
@@ -126,7 +126,7 @@ describe('InterfaceFormComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   describe('creation', () => {
@@ -334,7 +334,7 @@ describe('InterfaceFormComponent', () => {
 
   describe('failover fields', () => {
     beforeEach(() => {
-      const websocketMock = spectator.inject(MockWebsocketService2);
+      const websocketMock = spectator.inject(MockWebsocketService);
       websocketMock.mockCall('failover.licensed', true);
       spectator.component.ngOnInit();
     });

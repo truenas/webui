@@ -12,7 +12,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
@@ -40,7 +40,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,

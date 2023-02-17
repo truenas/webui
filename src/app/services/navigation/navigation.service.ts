@@ -8,7 +8,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -147,7 +147,7 @@ export class NavigationService {
   ];
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
   ) {

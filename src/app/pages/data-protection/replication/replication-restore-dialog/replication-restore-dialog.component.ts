@@ -9,7 +9,7 @@ import helptext_replication from 'app/helptext/data-protection/replication/repli
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class ReplicationRestoreDialogComponent {
   readonly helptext = helptext_replication;
 
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private loader: AppLoaderService,
     private formBuilder: FormBuilder,
     private datasetService: DatasetService,

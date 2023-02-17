@@ -1,14 +1,14 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 describe('ConsoleMessagesStore', () => {
   let spectator: SpectatorService<ConsoleMessagesStore>;
   const createService = createServiceFactory({
     service: ConsoleMessagesStore,
     providers: [
-      mockProvider(WebSocketService2, {
+      mockProvider(WebSocketService, {
         subscribeToLogs: jest.fn(() => of({
           fields: {
             data: '[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.',
@@ -25,7 +25,7 @@ describe('ConsoleMessagesStore', () => {
   it('subscribeToMessageUpdates - subscribes to log updates and calls addMessage when new message is received', async () => {
     spectator.service.subscribeToMessageUpdates();
 
-    expect(spectator.inject(WebSocketService2).subscribeToLogs)
+    expect(spectator.inject(WebSocketService).subscribeToLogs)
       .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500');
     const state = await firstValueFrom(spectator.service.state$);
     expect(state).toEqual({

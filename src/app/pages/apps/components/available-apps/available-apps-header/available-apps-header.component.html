@@ -8,7 +8,7 @@
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
     <h2>584</h2>
-    <a class="header-link">
+    <a class="header-link" ixTest="refresh-charts">
       {{ 'Refresh Charts' | translate }}
     </a>
   </div>
@@ -16,7 +16,7 @@
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
     <h2>24</h2>
-    <a class="header-link" [routerLink]="['/apps/installed']">
+    <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
       {{ 'Manage Installed Apps' | translate }}
     </a>
   </div>
@@ -24,7 +24,7 @@
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Catalogs' | translate }}</div>
     <h2>2</h2>
-    <a class="header-link" [routerLink]="['/apps/catalogs']">
+    <a class="header-link" ixTest="manage-catalogs" [routerLink]="['/apps/catalogs']">
       {{ 'Manage Catalogs' | translate }}
     </a>
   </div>

@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -15,7 +15,7 @@ import { WebSocketService2 } from 'app/services/ws2.service';
 })
 export class RebootComponent implements OnInit {
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,

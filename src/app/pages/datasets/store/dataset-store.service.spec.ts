@@ -5,7 +5,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeState, DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 describe('DatasetTreeStore', () => {
   let spectator: SpectatorService<DatasetTreeStore>;
@@ -17,7 +17,7 @@ describe('DatasetTreeStore', () => {
   const createService = createServiceFactory({
     service: DatasetTreeStore,
     providers: [
-      mockProvider(WebSocketService2),
+      mockProvider(WebSocketService),
     ],
   });
 
@@ -28,7 +28,7 @@ describe('DatasetTreeStore', () => {
 
   it('loads datasets and sets loading indicators when loadDatasets is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebsocket = spectator.inject(WebSocketService2);
+      const mockWebsocket = spectator.inject(WebSocketService);
       jest.spyOn(mockWebsocket, 'call').mockReturnValue(cold('-b|', { b: datasets }));
 
       spectator.service.loadDatasets();

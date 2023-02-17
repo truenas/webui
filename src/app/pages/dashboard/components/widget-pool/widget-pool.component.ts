@@ -25,7 +25,7 @@ import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interfa
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface Slide {
   name: string;
@@ -146,7 +146,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     public router: Router,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
   ) {
     super(translate);
     this.configurable = false;

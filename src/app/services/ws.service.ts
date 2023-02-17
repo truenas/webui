@@ -22,7 +22,7 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 @Injectable({
   providedIn: 'root',
 })
-export class WebSocketService2 {
+export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,

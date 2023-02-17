@@ -8,7 +8,7 @@ import { IpmiIdentify } from 'app/interfaces/ipmi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const indefinitelyOption = 'indefinitely' as const;
 
@@ -37,7 +37,7 @@ export class IpmiIdentifyDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private dialogService: DialogService,

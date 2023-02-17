@@ -13,7 +13,7 @@ import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface ExtendDialogParams {
   poolId: number;
@@ -47,7 +47,7 @@ export class ExtendDialogComponent implements OnInit {
   private disksWithDuplicateSerials: UnusedDisk[] = [];
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,

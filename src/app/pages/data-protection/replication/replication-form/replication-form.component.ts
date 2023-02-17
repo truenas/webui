@@ -41,7 +41,7 @@ import {
   StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -997,7 +997,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   ]);
 
   constructor(
-    protected ws2: WebSocketService2,
+    protected ws2: WebSocketService,
     protected taskService: TaskService,
     protected storageService: StorageService,
     protected keychainCredentialService: KeychainCredentialService,

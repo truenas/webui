@@ -29,7 +29,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService2,
+  AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -62,7 +62,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected storageService: StorageService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,

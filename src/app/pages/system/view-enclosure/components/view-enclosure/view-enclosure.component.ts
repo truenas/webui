@@ -13,7 +13,7 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -79,7 +79,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   constructor(
     private core: CoreService,
     public router: Router,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
     private disksUpdateService: DisksUpdateService,

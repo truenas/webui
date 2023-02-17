@@ -39,7 +39,7 @@ import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
@@ -125,7 +125,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AuthGuardService,
     NavigationService,
     AuthService,
-    WebSocketService2,
+    WebSocketService,
     AppLoaderService,
     EntityTableService,
     IxSlideInService,

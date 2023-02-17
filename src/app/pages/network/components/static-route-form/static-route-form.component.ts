@@ -8,7 +8,7 @@ import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.inte
 import { ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,7 @@ export class StaticRouteFormComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,

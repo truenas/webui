@@ -9,7 +9,7 @@ import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ export class AssociatedTargetFormComponent {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

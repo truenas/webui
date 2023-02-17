@@ -27,7 +27,7 @@ import {
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ZfsHealthCardComponent', () => {
   let spectator: Spectator<ZfsHealthCardComponent>;
@@ -60,7 +60,7 @@ describe('ZfsHealthCardComponent', () => {
     percentage: 17.43,
     total_secs_left: 574,
   } as PoolScanUpdate;
-  let websocket: WebSocketService2;
+  let websocket: WebSocketService;
   const websocketSubscription$ = new Subject<ApiEvent<PoolScan>>();
 
   const createComponent = createComponentFactory({
@@ -78,7 +78,7 @@ describe('ZfsHealthCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(WebSocketService2, {
+      mockProvider(WebSocketService, {
         subscribe: jest.fn(() => websocketSubscription$),
         call: jest.fn((method: string) => {
           if (method === 'pool.scrub.query') {
@@ -102,7 +102,7 @@ describe('ZfsHealthCardComponent', () => {
       props: { pool },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(WebSocketService2);
+    websocket = spectator.inject(WebSocketService);
   });
 
   describe('health indication', () => {

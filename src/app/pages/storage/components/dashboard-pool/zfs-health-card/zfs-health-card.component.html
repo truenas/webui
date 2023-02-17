@@ -55,7 +55,7 @@
           Error
         </ng-container>
       </div>
-      <a [routerLink]="['/data-protection/scrub']">
+      <a ixTest="view-all-scrub-tasks" [routerLink]="['/data-protection/scrub']">
         {{ 'View All Scrub Tasks' | translate }}
       </a>
     </div>
@@ -65,7 +65,7 @@
       <div class="value">
         {{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
       </div>
-      <a class="action" (click)="onEditAutotrim()">
+      <a class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
         {{ 'Edit Auto TRIM' | translate }}
       </a>
     </div>

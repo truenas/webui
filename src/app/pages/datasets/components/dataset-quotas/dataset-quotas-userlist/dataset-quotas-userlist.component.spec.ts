@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   BehaviorSubject, of, Subject,
 } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -16,7 +16,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService2,
+  AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -45,7 +45,7 @@ const fakeUserQuotas: DatasetQuota[] = [{
 describe('DatasetQuotasUserlistComponent', () => {
   let spectator: Spectator<DatasetQuotasUserlistComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotasUserlistComponent,
@@ -56,7 +56,7 @@ describe('DatasetQuotasUserlistComponent', () => {
     providers: [
       mockProvider(AppLoaderService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(WebSocketService2),
+      mockProvider(WebSocketService),
       mockProvider(StorageService, {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
@@ -73,7 +73,7 @@ describe('DatasetQuotasUserlistComponent', () => {
         onClose$: new Subject<unknown>(),
         open: jest.fn(),
       }),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('pool.dataset.get_quota', fakeUserQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
@@ -83,7 +83,7 @@ describe('DatasetQuotasUserlistComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('should show table rows', async () => {

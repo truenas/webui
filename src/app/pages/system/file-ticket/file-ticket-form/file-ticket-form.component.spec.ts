@@ -16,13 +16,13 @@ import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticke
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { JiraOauthComponent } from './components/jira-oauth/jira-oauth.component';
 
 describe('FileTicketFormComponent', () => {
   let spectator: Spectator<FileTicketFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const mockNewTicketResponse = {
     ticket: 123456789,
@@ -42,7 +42,7 @@ describe('FileTicketFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockProvider(WebSocketService2, {
+      mockProvider(WebSocketService, {
         job: jest.fn((method) => {
           switch (method) {
             case 'support.new_ticket':
@@ -86,7 +86,7 @@ describe('FileTicketFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   afterEach(() => {

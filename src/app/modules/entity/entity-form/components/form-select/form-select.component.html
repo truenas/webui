@@ -19,7 +19,12 @@
       [message]="config.tooltip"
     ></ix-tooltip>
 
-    <a *ngIf="config.linkText" class="link" (click)="linkClicked()">
+    <a
+      *ngIf="config.linkText"
+      class="link"
+      [ixTest]="[config.linkText, 'open-in-new']"
+      (click)="linkClicked()"
+    >
       {{ config.linkText | translate }}
       <mat-icon style="font-size: x-small">open_in_new</mat-icon>
     </a>
@@ -45,10 +50,7 @@
     </mat-spinner>
     <mat-select
       #selectTrigger
-      ix-auto
-      ix-auto-type="select"
       [ixTest]="config.name"
-      [ix-auto-identifier]="config.placeholder"
       [value]="formValue"
       [formControlName]="config.name"
       [multiple]="config.multiple"
@@ -67,9 +69,6 @@
           <mat-option
             *ngIf="option.disable && !option.hiddenFromDisplay"
             disabled
-            ix-auto
-            ix-auto-type="option"
-            [ix-auto-identifier]="config.placeholder + '_' + option.label"
             [ixTest]="config.name"
             [value]="option.value"
           >
@@ -87,9 +86,6 @@
           <!-- else -->
           <mat-option
             *ngIf="!option?.disable"
-            ix-auto
-            ix-auto-type="option"
-            [ix-auto-identifier]="config.placeholder + '_' + option.label"
             [ixTest]="config.name"
             [value]="option.value"
             [class.text-wrap]="config.enableTextWrapForOptions"
@@ -118,9 +114,6 @@
         <ng-container>
           <mat-option
             disabled
-            ix-auto
-            ix-auto-type="option"
-            [ix-auto-identifier]="config.placeholder + '_zeroState'"
             [ixTest]="config.name"
             [class.text-wrap]="config.enableTextWrapForOptions"
           >

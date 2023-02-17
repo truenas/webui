@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -42,7 +42,7 @@ export class KerberosKeytabsFormComponent {
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
   ) {}
 
   setKerberosKeytabsForEdit(kerberosKeytab: KerberosKeytab): void {

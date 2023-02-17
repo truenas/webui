@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import {
-  mockCall, mockJob, mockWebsocket2,
+  mockCall, mockJob, mockWebsocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -16,14 +16,14 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   DialogService, StorageService, UserService,
 } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
 
 describe('DatasetTrivialPermissionsComponent', () => {
   let spectator: Spectator<DatasetTrivialPermissionsComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService2;
+  let websocket: WebSocketService;
   let saveButton: MatButtonHarness;
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
@@ -36,7 +36,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('pool.dataset.query', [{
           acltype: {
             value: AclType.Posix1e,
@@ -71,7 +71,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    websocket = spectator.inject(WebSocketService2);
+    websocket = spectator.inject(WebSocketService);
     saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
   });
 

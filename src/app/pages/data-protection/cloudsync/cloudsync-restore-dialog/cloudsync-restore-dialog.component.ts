@@ -13,7 +13,7 @@ import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interf
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ export class CloudsyncRestoreDialogComponent {
   ]);
 
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private formBuilder: FormBuilder,
     private filesystem: FilesystemService,
     private translate: TranslateService,

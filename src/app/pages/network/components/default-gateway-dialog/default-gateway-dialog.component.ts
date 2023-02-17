@@ -11,7 +11,7 @@ import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-vali
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ export class DefaultGatewayDialogComponent {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private fb: FormBuilder,
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,

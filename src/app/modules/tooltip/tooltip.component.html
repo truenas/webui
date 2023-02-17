@@ -14,18 +14,12 @@
           class="close-icon"
           fontSet="mdi-set"
           fontIcon="mdi-close"
-          ix-auto
-          ix-auto-type="tooltip-close"
-          [ix-auto-identifier]="header"
           (click)="popperTooltip.hide()"
         ></mat-icon>
       </div>
     </div>
     <div
       class="tooltip-message"
-      ix-auto
-      ix-auto-type="tooltip-message"
-      [ix-auto-identifier]="header"
       [innerHTML]="message | translate"
     ></div>
   </popper-content>
@@ -33,9 +27,6 @@
   <i
     class="material-icons tooltip-icon"
     popperAppendTo="body"
-    ix-auto
-    ix-auto-type="tooltip-icon"
-    [ix-auto-identifier]="header"
     [popperTrigger]="'click' | cast"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"

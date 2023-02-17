@@ -15,7 +15,7 @@ import {
 } from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/modules/entity/entity-job/entity-job-config.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
 
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent, MatDialogConfig>,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     @Inject(MAT_DIALOG_DATA) public data: EntityJobConfig,
     protected http: HttpClient,
   ) {}
@@ -142,7 +142,8 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
           }
         },
         error: (job) => {
-          this.failure.emit(job || this.job);
+          this.job = job;
+          this.failure.emit(this.job);
         },
         complete: () => {
           if (this.job.state === JobState.Success) {

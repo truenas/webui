@@ -22,7 +22,7 @@ import {
   DialogService, TaskService, UserService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -79,7 +79,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   };
 
   constructor(
-    protected ws2: WebSocketService2,
+    protected ws2: WebSocketService,
     protected taskService: TaskService,
     protected dialog: DialogService,
     private matDialog: MatDialog,

@@ -28,7 +28,7 @@ import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
@@ -125,7 +125,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   initialLoading = true;
 
   constructor(
-    protected ws2: WebSocketService2,
+    protected ws2: WebSocketService,
     private el: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

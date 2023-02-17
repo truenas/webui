@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConnectionState } from 'app/interfaces/true-command-config.interface';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +19,7 @@ export class TrueCommandStatusComponent implements OnInit {
   connectionState: TrueCommandConnectionState;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,

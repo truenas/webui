@@ -7,7 +7,7 @@ import {
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 export interface DatasetTreeState {
   isLoading: boolean;
@@ -111,7 +111,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   });
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
   ) {
     super(initialState);
   }

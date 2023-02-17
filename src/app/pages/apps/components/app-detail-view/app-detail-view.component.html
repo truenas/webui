@@ -12,6 +12,7 @@
         <a
           mat-button
           color="primary"
+          [ixTest]="[app.name, 'install']"
           [disabled]="!app" (click)="onInstallButtonPressed()"
         >{{ 'Install' | translate }}</a>
       </div>

@@ -136,27 +136,41 @@
         <a
           *ngIf="!bootenv.active.includes('R')"
           mat-menu-item
+          [ixTest]="[bootenv.name, 'activate']"
           (click)="doActivate(bootenv)"
         >
           <ix-icon name="mdi-check-decagram"></ix-icon>
           {{ 'Activate' | translate }}
         </a>
-        <a mat-menu-item (click)="doClone(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'clone']"
+          (click)="doClone(bootenv)"
+        >
           <ix-icon name="mdi-content-copy"></ix-icon>
           {{ 'Clone' | translate }}
         </a>
-        <a mat-menu-item (click)="doRename(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'rename']"
+          (click)="doRename(bootenv)"
+        >
           <ix-icon name="mdi-rename-box"></ix-icon>
           {{ 'Rename' | translate }}
         </a>
         <a
           *ngIf="bootenv.active === '-' || bootenv.active === ''"
           mat-menu-item
+          [ixTest]="[bootenv.name, 'delete']"
           (click)="doDelete([bootenv])"
           ><ix-icon name="mdi-delete"></ix-icon>
           {{ 'Delete' | translate }}
         </a>
-        <a mat-menu-item (click)="toggleKeep(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'toggle-keep']"
+          (click)="toggleKeep(bootenv)"
+        >
           <ix-icon
             [name]="bootenv.keep ? 'bookmark_border' : 'bookmark'"
           ></ix-icon>

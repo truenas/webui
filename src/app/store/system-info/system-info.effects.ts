@@ -6,7 +6,7 @@ import {
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { systemFeaturesLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
 
@@ -55,7 +55,7 @@ export class SystemInfoEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) { }
 }

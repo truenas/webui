@@ -29,9 +29,6 @@
         color="primary"
         id="refresh-button"
         matTooltip="Refresh"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="refresh"
         ixTest="refresh"
         (click)="check()"
       >
@@ -49,9 +46,6 @@
           color="primary"
           id="single-train-refresh-button"
           matTooltip="Refresh"
-          ix-auto
-          ix-auto-type="button"
-          ix-auto-identifier="refresh"
           ixTest="refresh"
           [disabled]="!checkable || isUpdateRunning"
           (click)="check()"
@@ -121,7 +115,7 @@
     </div>
   </mat-card-title>
   <mat-card-content>
-    <a mat-button target="_blank" [href]="releaseNotes">
+    <a mat-button target="_blank" ixTest="check-release-notes" [href]="releaseNotes">
       {{ 'Check Release Notes' | translate }}
     </a>
   </mat-card-content>
@@ -145,6 +139,7 @@
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
+      ixTest="release-notes"
     >
       {{ 'Before updating, please read the release notes.' | translate }}
     </a>
@@ -160,6 +155,7 @@
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
+      ixTest="release-notes"
     >
       {{ 'Before updating, please read the release notes.' | translate }}
     </a>
@@ -194,9 +190,6 @@
         *ngIf="updatesAvailable"
         mat-button
         class="btn btn-success update-button mat-basic"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="DOWNLOAD UPDATES"
         ixTest="download-updates"
         [disabled]="status === SystemUpdateStatus.RebootRequired"
         (click)="downloadUpdate()"
@@ -207,9 +200,6 @@
         *ngIf="updateDownloaded && status !== SystemUpdateStatus.Unavailable"
         mat-button
         class="btn btn-success update-button mat-basic"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="APPLY PENDING UPDATE"
         ixTest="apply-pending-update"
         (click)="applyPendingUpdate()"
       >
@@ -218,9 +208,6 @@
       <button
         mat-button
         class="btn btn-success update-button mat-basic"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="INSTALL MANUAL UPDATE FILE"
         ixTest="install-manual-update"
         (click)="manualUpdate()"
       >
