@@ -12,12 +12,12 @@
             <div class="select-container">
               <ix-select
                 formControlName="diskType"
-                [label]="'Filter by Disk Type'"
+                [label]="'Filter by Disk Type' | translate"
                 [options]="typeOptions$"
               ></ix-select>
               <ix-select
                 formControlName="diskSize"
-                [label]="'Filter by Disk Size'"
+                [label]="'Filter by Disk Size' | translate"
                 [options]="sizeOptions$"
               ></ix-select>
             </div>
@@ -37,21 +37,14 @@
                   <div class="icon-wrapper">
                     <ix-disk-icon
                       class="disk-icon"
-                      [identifier]="disk.identifier"
-                      [size]="getDiskSizeStr(disk)"
                     ></ix-disk-icon>
                   </div>
 
                   <div class="details-wrapper">
                     <ix-disk-info
                       class="disk-info"
-                      [slot]="getDiskSlot(disk)"
-                      [type]="getDiskType(disk)"
-                      [model]="getDiskModel(disk)"
-                      [serial]="getDiskSerial(disk)"
                     ></ix-disk-info>
                   </div>
-
                 </div>
               </ix-tree-node>
 
@@ -103,10 +96,12 @@
               mat-button
               color="primary"
               ixTest="save-selection"
+              (click)="onSaveSelection()"
             >{{ 'Save Selection' | translate }}</button>
             <button
               mat-button
               ixTest="cancel"
+              [matDialogClose]="undefined"
             >{{ 'Cancel' | translate }}</button>
           </div>
         </div>

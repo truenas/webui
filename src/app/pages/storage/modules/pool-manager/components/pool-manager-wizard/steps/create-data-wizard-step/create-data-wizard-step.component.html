@@ -1,4 +1,3 @@
-
 <ng-container [formGroup]="form">
   <ix-select
     formControlName="type"
@@ -11,7 +10,7 @@
     <div class="automated-disk-selection-container">
       <h3>{{'Automated Disk Selection' | translate}}</h3>
       <ix-select
-        formControlName="size_and_type"
+        formControlName="sizeAndType"
         [label]="'Disk Size' | translate"
         [tooltip]="'Select a disk size from inventory' | translate"
         [options]="diskSizeOptions$"
@@ -25,7 +24,7 @@
         [required]="true"
       ></ix-select>
       <ix-select
-        formControlName="number"
+        formControlName="vdevsNumber"
         [label]="'Number of VDEVs' | translate"
         [tooltip]="'Number of VDEVs to create' | translate"
         [options]="numberOptions$"
@@ -34,6 +33,26 @@
     </div>
     <div class="advanced-options-container">
       <h3>{{'Advanced Options' | translate}}</h3>
+
+      <ix-radio-group
+        formControlName="minimizeEnclosureDispersal"
+        [options]="dispersalOptions$"
+        [required]="true"
+      ></ix-radio-group>
+
+      <ix-checkbox
+        formControlName="treatDiskSizeAsMinimum"
+        [label]="'Treat Disk Size as Minimum' | translate"
+      ></ix-checkbox>
+
+      <button
+        mat-button
+        type="button"
+        ixTest="manual"
+        (click)="openManualDiskSelection()"
+      >
+        {{ 'Manual Disk Selection' | translate }}
+      </button>
     </div>
   </div>
 </ng-container>

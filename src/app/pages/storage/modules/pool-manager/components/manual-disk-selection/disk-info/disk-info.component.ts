@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Disk } from 'app/interfaces/storage.interface';
 
 @Component({
   selector: 'ix-disk-info',
@@ -7,8 +8,10 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskInfoComponent {
-  @Input() slot: number;
-  @Input() type: string;
-  @Input() model: string;
-  @Input() serial: string;
+  @Input() disk: Disk;
+
+  get slot(): string {
+    // TODO:
+    return '';
+  }
 }

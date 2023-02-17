@@ -8,17 +8,18 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
-import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/disk-icon/disk-icon.component';
-import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/disk-info/disk-info.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
+import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/disk-icon/disk-icon.component';
+import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/disk-info/disk-info.component';
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
-import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-selection-vdev/manual-selection-vdev.component';
+import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-selection-vdev/manual-selection-vdev.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { CreateDataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/create-data-wizard-step/create-data-wizard-step.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/general-wizard-step/general-wizard-step.component';
@@ -45,6 +46,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
     TranslateModule,
     CommonModule,
     TestIdModule,
+    NgxFilesizeModule,
   ],
   declarations: [
     PoolManagerComponent,
