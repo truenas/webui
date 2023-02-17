@@ -5,7 +5,7 @@ import { MatOptionHarness } from '@angular/material/core/testing';
  * This overrides this behavior.
  */
 export class OptionHarness extends MatOptionHarness {
-  private text = this.locatorFor('.mat-mdc-option-text');
+  private text = this.locatorFor('.mdc-list-item__primary-text');
 
   async getText(): Promise<string> {
     return (await this.text()).text({ exclude: 'ix-tooltip' });

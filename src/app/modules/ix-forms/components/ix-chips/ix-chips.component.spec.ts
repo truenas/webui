@@ -122,7 +122,7 @@ describe('IxChipsComponent', () => {
     rootRemoveBtn.click();
     await matChipList.getRows();
 
-    expect(spectator.query('.mat-error')).toHaveText('Apply To Users is required');
+    expect(spectator.query('.mat-mdc-form-field-error')).toHaveText('Apply To Users is required');
   });
 
   it('disables input when form control is disabled', async () => {
