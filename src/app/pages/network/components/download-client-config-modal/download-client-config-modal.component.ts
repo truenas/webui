@@ -58,10 +58,4 @@ export class DownloadClientConfigModalComponent {
         },
       });
   }
-
-  certificatesLinkClicked(): void {
-    this.dialogRef.close();
-    this.slideInService.close();
-    this.router.navigate(['/', 'credentials', 'certificates']);
-  }
 }

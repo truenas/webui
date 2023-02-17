@@ -28,19 +28,14 @@
           [tooltip]="tcpportssl.tooltip | translate"
         ></ix-input>
 
-        <div *ngIf="!certssl.hidden" class="linked-select">
-          <div class="link-wrapper">
-            <a class="link" ixTest="manage-certificates" (click)="certificatesLinkClicked()">
-              {{ 'Manage Certificates' | translate }}
-            </a>
-          </div>
+        <ix-with-manage-certificates-link *ngIf="!certssl.hidden">
           <ix-select
             [formControlName]="certssl.fcName"
             [label]="certssl.label | translate"
             [tooltip]="certssl.tooltip | translate"
             [options]="certssl.options"
           ></ix-select>
-        </div>
+        </ix-with-manage-certificates-link>
 
         <ix-select
           [formControlName]="htauth.fcName"

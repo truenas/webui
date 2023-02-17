@@ -9,27 +9,16 @@
       <ix-fieldset>
         <div class="columns">
           <div class="column">
-            <div class="linked-select">
-              <div class="link-wrapper">
-                <a class="link" ixTest="manage-certificates" (click)="certificatesLinkClicked()">
-                  {{ 'Manage Certificates' | translate }}
-                </a>
-              </div>
-
+            <ix-with-manage-certificates-link>
               <ix-select
                 formControlName="server_certificate"
                 [label]="'Server Certificate' | translate"
                 [required]="true"
                 [options]="serverCertificates$"
               ></ix-select>
-            </div>
+            </ix-with-manage-certificates-link>
 
-            <div class="linked-select">
-              <div class="link-wrapper">
-                <a class="link" ixTest="manage-certificates" (click)="certificatesLinkClicked()">
-                  {{ 'Manage Certificates' | translate }}
-                </a>
-              </div>
+            <ix-with-manage-certificates-link>
               <ix-select
                 formControlName="root_ca"
                 [label]="'Root CA' | translate"
@@ -37,7 +26,7 @@
                 [options]="rootAuthorities$"
                 [tooltip]="tooltips.root_ca | translate"
               ></ix-select>
-            </div>
+            </ix-with-manage-certificates-link>
 
             <ix-ip-input-with-netmask
               formControlName="server"

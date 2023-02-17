@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -47,6 +48,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
+import { WithManageCertificatesLinkComponent } from './components/with-manage-certificates-link/with-manage-certificates-link.component';
 
 @NgModule({
   imports: [
@@ -75,6 +77,7 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     MatListModule,
     CastModule,
     TestIdModule,
+    RouterLink,
   ],
   declarations: [
     IxInputComponent,
@@ -99,6 +102,7 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     IxCheckboxListComponent,
     IxLabelComponent,
     FormActionsComponent,
+    WithManageCertificatesLinkComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -123,6 +127,7 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     IxCheckboxListComponent,
     IxLabelComponent,
     FormActionsComponent,
+    WithManageCertificatesLinkComponent,
   ],
   providers: [
     IxFormatterService,

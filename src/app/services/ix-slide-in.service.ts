@@ -1,6 +1,9 @@
-import { PlatformLocation } from '@angular/common';
+import { Location } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
-import { Subject } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { bindCallback, merge, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 
 export interface ResponseOnClose {
@@ -9,6 +12,7 @@ export interface ResponseOnClose {
   modalType: Type<unknown>;
 }
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -17,8 +21,11 @@ export class IxSlideInService {
   private slideInClosed$ = new Subject<ResponseOnClose>();
   modalType: Type<unknown>;
 
-  constructor(private location: PlatformLocation) {
-    this.location.onPopState(() => this.close());
+  constructor(
+    private location: Location,
+    private router: Router,
+  ) {
+    this.closeOnNavigation();
   }
 
   setModal(modal: IxSlideInComponent): void {
@@ -31,6 +38,10 @@ export class IxSlideInService {
   }
 
   close(error?: Error, response?: unknown): void {
+    if (!this.slideInComponent?.isSlideInOpen) {
+      return;
+    }
+
     if (error) {
       this.slideInClosed$.error({
         error,
@@ -48,5 +59,16 @@ export class IxSlideInService {
 
   get onClose$(): Subject<ResponseOnClose> {
     return this.slideInClosed$;
+  }
+
+  private closeOnNavigation(): void {
+    merge(
+      bindCallback(this.location.subscribe.bind(this.location))(),
+      this.router.events.pipe(filter((event) => event instanceof NavigationEnd)),
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.close();
+      });
   }
 }

@@ -121,12 +121,7 @@
             ></ix-checkbox>
 
             <ng-container *ngIf="isTlsEnabled$ | async">
-              <div class="linked-select">
-                <div class="link-wrapper">
-                  <a class="link" ixTest="manage-certificates" (click)="onLinkClicked()">
-                    {{ 'Manage Certificates' | translate }}
-                  </a>
-                </div>
+              <ix-with-manage-certificates-link>
                 <ix-select
                   formControlName="ssltls_certificate"
                   [label]="'Certificate' | translate"
@@ -134,7 +129,7 @@
                   [required]="true"
                   [options]="certificates$"
                 ></ix-select>
-              </div>
+              </ix-with-manage-certificates-link>
 
               <ix-select
                 formControlName="tls_policy"

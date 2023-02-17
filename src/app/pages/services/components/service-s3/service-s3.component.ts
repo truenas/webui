@@ -145,10 +145,6 @@ export class ServiceS3Component implements OnInit {
     });
   }
 
-  certificatesLinkClicked(): void {
-    this.router.navigate(['/', 'credentials', 'certificates']);
-  }
-
   onSubmit(): void {
     const values = this.form.value;
 
