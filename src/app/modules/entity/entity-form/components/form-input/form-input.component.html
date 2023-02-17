@@ -51,10 +51,7 @@
       </span>
       <input
         autocomplete="new-password"
-        ix-auto
-        ix-auto-type="input"
         [ixTest]="config.name"
-        [ix-auto-identifier]="config.placeholder"
         [ngStyle]="{
           'padding-left': config.searchable ? '2rem' : '',
           'padding-right': shouldShowResetInput() ? '2rem' : ''
@@ -84,10 +81,7 @@
       mat-icon-button
       type="button"
       class="toggle_pw"
-      ix-auto
-      ix-auto-type="button"
       [ixTest]="[config.name, 'toggle-password']"
-      [ix-auto-identifier]="config.name + '_toggle-pw'"
       (click)="togglePassword()"
     >
       <i *ngIf="showPassword"  class="material-icons" matTooltip="Hide">

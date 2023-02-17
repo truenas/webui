@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="dynamic-field form-explorer form-element"
-  ix-auto
-  ix-auto-type="explorer"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -43,9 +40,6 @@
             <input
               matInput
               type="text"
-              ix-auto
-              ix-auto-type="input"
-              [ix-auto-identifier]="config.name"
               [ixTest]="config.name"
               [placeholder]="config.placeholder | translate"
               [formControlName]="config.name"

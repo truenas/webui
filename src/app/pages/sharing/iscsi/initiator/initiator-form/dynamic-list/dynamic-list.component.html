@@ -5,14 +5,11 @@
 >
   <div fxFlexAlign="center" class="move-to-action">
     <button
-      ix-auto
-      ix-auto-type="button"
       mat-flat-button
       color="primary"
       class="move-to-btn"
       type="button"
       [ixTest]="[inputConfig.name, 'move-to']"
-      [ix-auto-identifier]="inputConfig.name + '_move_to'"
       [disabled]="this.listControl.disabled"
       (click)="drop()"
     >
@@ -32,13 +29,10 @@
       </div>
       <div>
         <button
-          ix-auto
-          ix-auto-type="button"
           mat-flat-button
           color="primary"
           type="button"
           [ixTest]="[inputConfig.name, 'add']"
-          [ix-auto-identifier]="inputConfig.name + '_add'"
           [disabled]="this.listControl.disabled || !this.inputControl.valid"
           (click)="add()"
         >
@@ -55,13 +49,10 @@
           >
             <label mat-line class="dynamic-list-item">{{ item }}</label>
             <button
-              ix-auto
-              ix-auto-type="button"
               mat-flat-button
               type="button"
               color="accent"
               [ixTest]="[inputConfig.name, 'remove']"
-              [ix-auto-identifier]="inputConfig.name + '_remove'"
               [disabled]="this.listControl.disabled"
               (click)="remove(item)"
             >

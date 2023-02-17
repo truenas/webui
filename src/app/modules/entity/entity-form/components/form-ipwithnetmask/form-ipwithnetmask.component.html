@@ -3,9 +3,6 @@
   class="dynamic-field form-input form-element form-ip-netmask"
   fxLayout="row wrap"
   fxLayoutAlign="start center"
-  ix-auto
-  ix-auto-type="array"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-pwtoggle]="config.togglePw"
@@ -36,9 +33,6 @@
     <mat-form-field fxFlex="calc(100% - 72px - 16px)">
       <input
         matInput
-        ix-auto
-        ix-auto-type="input"
-        [ix-auto-identifier]="config.placeholder"
         [ixTest]="config.name"
         [placeholder]="config.placeholder | translate"
         [ngModelOptions]="{ standalone: true }"
@@ -53,10 +47,7 @@
       <div fxFlex class="divider">/</div>
       <mat-form-field *ngIf="!config.netmaskPreset" fxFlex="64px">
         <mat-select
-          ix-auto
-          ix-auto-type="input"
           disableOptionCentering
-          [ix-auto-identifier]="config.placeholder"
           [ixTest]="[config.name, 'netmask']"
           [value]="netmask"
           [placeholder]="'Netmask' | translate"
@@ -64,9 +55,6 @@
         >
           <mat-option
             *ngFor="let option of netmaskOptions"
-            ix-auto
-            ix-auto-type="option"
-            [ix-auto-identifier]="option.label"
             [ixTest]="[config.name, 'netmask', option.label]"
             [value]="option.value"
           >
@@ -80,9 +68,6 @@
           disableOptionCentering
           class="disabled-select"
           disabled
-          ix-auto
-          ix-auto-type="select"
-          [ix-auto-identifier]="config.placeholder"
           [ixTest]="[config.name, 'netmask']"
           [value]="config.netmaskPreset"
         >

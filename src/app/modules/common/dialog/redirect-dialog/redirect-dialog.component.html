@@ -11,10 +11,7 @@
   <button
     mat-button
     color="accent"
-    ix-auto
-    ix-auto-type="button"
     ixTest="cancel"
-    [ix-auto-identifier]="'Cancel' | uppercase"
     (click)="dialogRef.close(false)"
   >
     {{ 'Cancel' | translate }}
@@ -22,10 +19,7 @@
   <button
     mat-button
     color="accent"
-    ix-auto
-    ix-auto-type="button"
     ixTest="copy-url"
-    [ix-auto-identifier]="'Copy_URL' | uppercase"
     (click)="copyToClipboard()"
   >
     {{ 'Copy URL' | translate }}
@@ -33,10 +27,7 @@
   <button
     mat-button
     color="primary"
-    ix-auto
-    ix-auto-type="button"
     ixTest="continue"
-    [ix-auto-identifier]="'Continue' | uppercase"
     (click)="dialogRef.close(true)"
   >
     {{ 'Continue' | translate }}

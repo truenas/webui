@@ -15,12 +15,9 @@
       <input
         #filter
         matInput
-        ix-auto
-        ix-auto-type="input"
         autocomplete="off"
         ixTest="table-filter"
         [placeholder]="'Filter {item}' | translate: { item: entity.title | translate }"
-        [ix-auto-identifier]="'Filter ' + conf.title"
         [value]="filterValue"
       />
       <span
@@ -42,13 +39,10 @@
       <button
         *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
         mat-button
-        ix-auto
-        ix-auto-type="button"
         type="button"
         color="default"
         [ixTest]="[conf.title, custBtn.name]"
         [id]="'cust_button_' + custBtn.name"
-        [ix-auto-identifier]="custBtn.name"
         (click)="custBtn['function']()"
       >
         {{ custBtn.name | translate }}
@@ -62,10 +56,7 @@
       mat-button
       color="default"
       class="menu-toggle"
-      ix-auto
-      ix-auto-type="button"
       [ixTest]="[conf.title, 'columns-menu']"
-      [ix-auto-identifier]="conf.title + '_COLUMNS'"
       [matMenuTriggerFor]="menu"
     >
       {{ 'Columns' | translate }}
@@ -77,9 +68,6 @@
         <button
           mat-menu-item
           id="check-all"
-          ix-auto
-          ix-auto-type="action"
-          ix-auto-identifier="COLUMNS_SELECT"
           [ixTest]="[conf.title, 'select-all-columns']"
           (click)="entity.checkAll()"
         >
@@ -101,11 +89,8 @@
         <button
           *ngFor="let col of entity.allColumns"
           mat-menu-item
-          ix-auto
-          ix-auto-type="action"
           [ixTest]="[conf.title, 'select-column', col.name]"
           [id]="'menu_option-' + col.name"
-          [ix-auto-identifier]="'COLUMNS_' + col.name"
           (click)="entity.toggle(col)"
         >
           <span>
@@ -120,9 +105,6 @@
         <button
           mat-menu-item
           id="reset_col_view"
-          ix-auto
-          ix-auto-type="action"
-          ix-auto-identifier="COLUMNS_Reset to Defaults"
           [ixTest]="[conf.title, 'reset-columns-to-defaults']"
           (click)="entity.resetColViewToDefaults()"
         >
@@ -143,11 +125,8 @@
       mat-button
       color="primary"
       class="menu-toggle"
-      ix-auto
-      ix-auto-type="button"
       [ixTest]="[conf.title, 'actions']"
       [matTooltip]="menuTriggerMessage | translate"
-      [ix-auto-identifier]="entity.conf.title + '_ACTIONS'"
       [matMenuTriggerFor]="menu"
     >
       {{ 'Actions' | translate }}
@@ -158,10 +137,7 @@
         *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
         mat-menu-item
         id="add_action_button"
-        ix-auto
-        ix-auto-type="button"
         [ixTest]="[conf.title, 'add']"
-        [ix-auto-identifier]="entity.conf.title + '_ADD'"
         (click)="this.entity.doAdd()"
       >
         <span>{{ 'Add' | translate }}</span>
@@ -169,11 +145,8 @@
       <button
         *ngFor="let action of actions"
         mat-menu-item
-        ix-auto
-        ix-auto-type="button"
         [ixTest]="[conf.title, 'action', action.label]"
         [id]="'add_action_button_' + action?.label"
-        [ix-auto-identifier]="entity.conf.title + '_' + action.label"
         (click)="action.onClick()"
       >
         <span>{{ action.label | translate }}</span>
@@ -187,11 +160,8 @@
         mat-button
         color="primary"
         id="add_action_button"
-        ix-auto
-        ix-auto-type="button"
         [ixTest]="[conf.title, 'add']"
         [matTooltip]="entity.conf.routeAddTooltip | translate"
-        [ix-auto-identifier]="entity.conf.title + '_ADD'"
         [disabled]="entity.conf.addBtnDisabled"
         (click)="this.entity.doAdd()"
       >
@@ -201,12 +171,9 @@
         *ngIf="!(this.entity.conf.routeAdd || this.entity.conf.doAdd) && this.totalActions === 1"
         mat-button
         color="primary"
-        ix-auto
-        ix-auto-type="button"
         [ixTest]="[conf.title, 'actions', actions[0].label]"
         [id]="'add_action_button_' + actions[0]?.label"
         [matTooltip]="actions[0].label | translate"
-        [ix-auto-identifier]="entity.conf.title + '_' + this.actions[0].label"
         (click)="this.actions[0].onClick()"
       >
         {{ this.actions[0].label | translate }}
@@ -218,11 +185,8 @@
   <div *ngIf="conf.globalConfig" id="config">
     <button
       mat-icon-button
-      ix-auto
-      ix-auto-type="settings"
       [ixTest]="[conf.title, conf.globalConfig.id]"
       [id]="conf.globalConfig.id"
-      [ix-auto-identifier]="entity.title"
       [matTooltip]="conf.globalConfig.tooltip"
       (click)="conf.globalConfig.onClick()"
     >

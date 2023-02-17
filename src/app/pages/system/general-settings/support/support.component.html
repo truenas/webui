@@ -73,9 +73,6 @@
               mat-button
               color="default"
               class="menu-toggle"
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="SUPPORT"
               ixTest="get-support"
               [matMenuTriggerFor]="menu"
             >
@@ -88,10 +85,7 @@
               <button
                 id="fileTicket"
                 mat-menu-item
-                ix-auto
-                ix-auto-type="button"
                 ixTest="file-ticket"
-                [ix-auto-identifier]="ticketText"
                 (click)="fileTicket()"
               >
                 <span>{{ ticketText | translate }}</span>
@@ -99,10 +93,7 @@
               <button
                 id="proactiveSupport"
                 mat-menu-item
-                ix-auto
-                ix-auto-type="button"
                 ixTest="proactive-support"
-                [ix-auto-identifier]="proactiveText"
                 (click)="openProactive()"
               >
                 <span>{{ proactiveText | translate }}</span>
@@ -114,10 +105,7 @@
               id="file-ticket-btn"
               mat-button
               color="default"
-              ix-auto
-              ix-auto-type="button"
               ixTest="file-ticket"
-              [ix-auto-identifier]="ticketText"
               (click)="fileTicket()"
             >
               {{ ticketText | translate }}
@@ -127,10 +115,7 @@
               id="proactive-btn"
               mat-button
               color="default"
-              ix-auto
-              ix-auto-type="button"
               ixTest="proactive-support"
-              [ix-auto-identifier]="proactiveText"
               (click)="openProactive()"
             >
               {{ proactiveText | translate }}

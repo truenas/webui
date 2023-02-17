@@ -150,9 +150,6 @@
             <div *ngFor="let portal of item.portals | keyvalue">
               <button
                 mat-button
-                ix-auto
-                ix-auto-type="button"
-                [ix-auto-identifier]="item.name + '-portal'"
                 [ixTest]="['portal', item.name, portal.key]"
                 (click)="portalLink(item, portal.key)"
               >
@@ -163,10 +160,7 @@
           <button
             *ngIf="item.status !== ChartReleaseStatus.Stopped"
             mat-button
-            ix-auto
-            ix-auto-type="button"
             [ixTest]="['stop', item.name]"
-            [ix-auto-identifier]="item.name + '-stop'"
             (click)="stop(item.name)"
           >
             {{ 'Stop' | translate }}
@@ -174,10 +168,7 @@
           <button
             *ngIf="item.status === ChartReleaseStatus.Stopped"
             mat-button
-            ix-auto
-            ix-auto-type="button"
             [ixTest]="['start', item.name]"
-            [ix-auto-identifier]="item.name + '-start'"
             (click)="start(item.name)"
           >
             {{ 'Start' | translate }}
@@ -199,9 +190,6 @@
       <button
         name="chart-actions"
         mat-icon-button
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="chart-actions"
         [ixTest]="['actions', item.name]"
         [matMenuTriggerFor]="actionsMenu"
       >
@@ -211,9 +199,6 @@
         <button
           name="update"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          ix-auto-identifier="update"
           [ixTest]="['upgrade', item.name]"
           [disabled]="!item.update_available && !item.container_images_update_available"
           (click)="update(item.name)"
@@ -224,9 +209,6 @@
         <button
           name="roll-back"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          ix-auto-identifier="rollback"
           [ixTest]="['rollback', item.name]"
           [disabled]="!item.history || isEmpty(item.history)"
           (click)="onRollback(item.name)"
@@ -237,9 +219,6 @@
         <button
           name="edit"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          ix-auto-identifier="edit"
           [ixTest]="['edit', item.name]"
           (click)="edit(item.name)"
         >
@@ -249,9 +228,6 @@
         <button
           name="shell"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          ix-auto-identifier="shell"
           [ixTest]="['shell', item.name]"
           (click)="openShell(item.name)"
         >
@@ -265,9 +241,6 @@
         <button
           name="logs"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          ix-auto-identifier="shell"
           [ixTest]="['logs', item.name]"
           (click)="openLogs(item.name)"
         >
@@ -277,9 +250,6 @@
         <button
           name="delete"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          ix-auto-identifier="delete"
           [ixTest]="['delete', item.name]"
           (click)="delete(item.name)"
         >

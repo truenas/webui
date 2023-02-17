@@ -4,12 +4,9 @@
     <button
       mat-button
       color="default"
-      ix-auto
-      ix-auto-type="button"
       class="menu-toggle"
       [ixTest]="['toolbar-menu', config.label]"
       [matMenuTriggerFor]="menu"
-      [ix-auto-identifier]="id + '_' + config.label"
     >
       {{ config.label }} <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
@@ -18,9 +15,6 @@
       <div (click)="$event.stopPropagation()">
         <button
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          [ix-auto-identifier]="id + '_SELECT_ALL'"
           [ixTest]="['toolbar-menu', config.label, 'select-all']"
           (click)="checkAll()"
         >
@@ -37,9 +31,6 @@
         <button
           *ngFor="let option of config.options; let i = index"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          [ix-auto-identifier]="id + '_' + option.label"
           [ixTest]="['toolbar-menu', config.label, option.label]"
           (click)="onClick(option, i)"
         >
