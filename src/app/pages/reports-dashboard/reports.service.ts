@@ -12,7 +12,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -45,7 +45,7 @@ export class ReportsService implements OnDestroy {
   private hasTarget = false;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private core: CoreService,
     private store$: Store<AppState>,
   ) {

@@ -22,7 +22,7 @@ import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-re
 import { Option } from 'app/interfaces/option.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -46,7 +46,7 @@ export class ChartBulkUpgradeComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ChartBulkUpgradeComponent>,
     private appService: ApplicationsService,

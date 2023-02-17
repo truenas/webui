@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { IscsiService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -52,7 +52,7 @@ export class IscsiComponent implements OnInit {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected translate: TranslateService,
     private store$: Store<AppState>,
   ) {}

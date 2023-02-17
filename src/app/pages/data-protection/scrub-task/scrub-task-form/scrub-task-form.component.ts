@@ -12,7 +12,7 @@ import {
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +59,7 @@ export class ScrubTaskFormComponent {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,

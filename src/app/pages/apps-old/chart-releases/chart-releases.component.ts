@@ -39,7 +39,7 @@ import { RedirectService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -82,7 +82,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     public appService: ApplicationsService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private redirect: RedirectService,
     private layoutService: LayoutService,
     private snackbar: SnackbarService,

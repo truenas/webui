@@ -11,7 +11,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const oneGb = 1024 * 1024 * 1024;
@@ -69,7 +69,7 @@ export class DatasetCapacitySettingsComponent {
   } as const;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,

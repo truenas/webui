@@ -13,7 +13,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ export class DiskBulkEditComponent {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private snackbarService: SnackbarService,

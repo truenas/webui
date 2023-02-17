@@ -13,7 +13,7 @@ import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<BootPoolAttachDialogComponent>,
     private translate: TranslateService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
   ) {}

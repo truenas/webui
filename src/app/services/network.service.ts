@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
@@ -22,7 +22,7 @@ export class NetworkService {
 
   hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
 
-  constructor(protected ws: WebSocketService2) {}
+  constructor(protected ws: WebSocketService) {}
 
   getVlanParentInterfaceChoices(): Observable<Choices> {
     return this.ws.call('interface.vlan_parent_interface_choices');

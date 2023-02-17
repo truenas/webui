@@ -2,9 +2,9 @@ import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -19,14 +19,14 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let websocket2: MockWebsocketService2;
+  let websocket2: MockWebsocketService;
   let authService: AuthService;
   const testScheduler = getTestScheduler();
 
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
@@ -58,7 +58,7 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket2 = spectator.inject(MockWebsocketService2);
+    websocket2 = spectator.inject(MockWebsocketService);
     authService = spectator.inject(AuthService);
     // This strips @LocalStorage() decorator from token.
     // Object.defineProperty(authService, 'token2', {

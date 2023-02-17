@@ -24,7 +24,7 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
-  DialogService, IdmapService, ValidationService, WebSocketService2,
+  DialogService, IdmapService, ValidationService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -144,7 +144,7 @@ export class IdmapFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private validationHelpers: IxValidatorsService,
     private validators: ValidationService,
     private idmapService: IdmapService,

@@ -4,14 +4,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/views/sessions/signin/set-admin-password-form/set-admin-password-form.component';
@@ -29,7 +29,7 @@ describe('SetAdminPasswordFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('user.setup_local_administrator'),
         mockCall('system.environment', SystemEnvironment.Default),
       ]),
@@ -65,7 +65,7 @@ describe('SetAdminPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
     await submitButton.click();
 
-    const websocket = spectator.inject(WebSocketService2);
+    const websocket = spectator.inject(WebSocketService);
     const authService = spectator.inject(AuthService);
     expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['root', '12345678']);
     expect(authService.login).toHaveBeenCalledWith('root', '12345678');
@@ -84,7 +84,7 @@ describe('SetAdminPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
     await submitButton.click();
 
-    const websocket = spectator.inject(WebSocketService2);
+    const websocket = spectator.inject(WebSocketService);
     expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['admin', '12345678']);
     const authService = spectator.inject(AuthService);
     expect(authService.login).toHaveBeenCalledWith('admin', '12345678');
@@ -95,7 +95,7 @@ describe('SetAdminPasswordFormComponent', () => {
   });
 
   it('checks environment status and shows EC2 Instance ID when environment is EC2', async () => {
-    const websocket = spectator.inject(MockWebsocketService2);
+    const websocket = spectator.inject(MockWebsocketService);
     websocket.mockCall('system.environment', SystemEnvironment.Ec2);
 
     spectator.component.ngOnInit();
@@ -109,7 +109,7 @@ describe('SetAdminPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
     await submitButton.click();
 
-    expect(spectator.inject(WebSocketService2).call)
+    expect(spectator.inject(WebSocketService).call)
       .toHaveBeenCalledWith('user.setup_local_administrator', ['admin', '12345678', { instance_id: 'i-12345678' }]);
   });
 });

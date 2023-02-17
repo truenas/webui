@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -18,7 +18,7 @@ import {
   DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('OpenVpnClientConfigComponent', () => {
   let spectator: Spectator<OpenVpnClientConfigComponent>;
@@ -32,7 +32,7 @@ describe('OpenVpnClientConfigComponent', () => {
     ],
     providers: [
       DialogService,
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('openvpn.client.update'),
         mockCall('openvpn.client.config', {
           client_certificate: 1,
@@ -93,7 +93,7 @@ describe('OpenVpnClientConfigComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('openvpn.client.config');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('openvpn.client.config');
     expect(values).toEqual({
       'Client Certificate': 'Certificate 1',
       'Root CA': 'Main CA',
@@ -131,7 +131,7 @@ describe('OpenVpnClientConfigComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('openvpn.client.update', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('openvpn.client.update', [{
       client_certificate: 2,
       root_ca: 2,
       remote: '198.51.100.1',

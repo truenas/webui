@@ -4,18 +4,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
-import { DialogService, UserService, WebSocketService2 } from 'app/services';
+import { DialogService, UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotaAddFormComponent,
@@ -24,7 +24,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(UserService, {
@@ -38,7 +38,7 @@ describe('DatasetQuotaAddFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

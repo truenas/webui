@@ -18,7 +18,7 @@ import {
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -74,7 +74,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   constructor(
     private dialogService: DialogService,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private taskService: TaskService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

@@ -16,7 +16,7 @@ import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-valida
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -90,7 +90,7 @@ export class PortalFormComponent {
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

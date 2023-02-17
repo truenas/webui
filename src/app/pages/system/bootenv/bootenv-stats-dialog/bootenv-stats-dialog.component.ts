@@ -11,7 +11,7 @@ import { PoolInstance } from 'app/interfaces/pool.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -32,7 +32,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   readonly poolStatusLabels = getPoolStatusLabels(this.translate);
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private store$: Store<AppState>,
     private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,

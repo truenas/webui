@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -15,7 +15,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const mockJobSuccessResponse = [{
   result: true,
@@ -45,7 +45,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket2([
+      mockWebsocket([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
         mockCall('zfs.snapshot.delete'),
       ]),
@@ -70,7 +70,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('core.bulk', [
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', [
       'zfs.snapshot.delete',
       [
         ['test-dataset@first-snapshot'],

@@ -10,7 +10,7 @@ import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-i
 import { ContainerImage, DeleteContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +37,7 @@ export class DockerImageDeleteDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DockerImageDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public images: ContainerImage[],

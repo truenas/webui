@@ -6,7 +6,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -22,7 +22,7 @@ export class GroupMembersComponent implements OnInit {
   group: Group;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,

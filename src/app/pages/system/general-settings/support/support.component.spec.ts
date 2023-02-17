@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
 import {
@@ -18,7 +18,7 @@ import {
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {
@@ -40,7 +40,7 @@ describe('SupportComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
       mockProvider(AppLoaderService),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('truenas.is_production', true),
         mockCall('truenas.set_production'),
       ]),
@@ -101,13 +101,13 @@ describe('SupportComponent', () => {
         await isProductionSystemCheckbox.check();
 
         expect(matDialog.open).toHaveBeenCalledWith(SetProductionStatusDialogComponent);
-        expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('truenas.set_production', [true, true]);
+        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.set_production', [true, true]);
       });
 
       it('sets production status to false when checkbox is unticked', async () => {
         await isProductionSystemCheckbox.uncheck();
 
-        expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('truenas.set_production', [false, false]);
+        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.set_production', [false, false]);
       });
     });
   });

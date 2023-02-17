@@ -21,7 +21,7 @@ import {
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { AppState } from 'app/store';
@@ -53,7 +53,7 @@ export class SupportComponent implements OnInit {
   }
 
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private loader: AppLoaderService,
     private dialog: DialogService,
     private matDialog: MatDialog,

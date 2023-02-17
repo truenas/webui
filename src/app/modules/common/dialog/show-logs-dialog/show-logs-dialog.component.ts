@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap, catchError, EMPTY } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService2, DialogService, StorageService } from 'app/services';
+import { WebSocketService, DialogService, StorageService } from 'app/services';
 
 @Component({
   templateUrl: './show-logs-dialog.component.html',
@@ -15,7 +15,7 @@ import { WebSocketService2, DialogService, StorageService } from 'app/services';
 })
 export class ShowLogsDialogComponent {
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private storage: StorageService,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public job: Job,

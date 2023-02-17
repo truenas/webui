@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -14,7 +14,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { DialogService } from 'app/services';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverSettingsComponent>;
@@ -31,7 +31,7 @@ describe('FailoverComponent', () => {
       ConfirmDialogComponent,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('failover.update'),
         mockCall('failover.sync_to_peer'),
         mockCall('failover.sync_from_peer'),
@@ -58,7 +58,7 @@ describe('FailoverComponent', () => {
   });
 
   it('loads and shows current failover settings', async () => {
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('failover.config');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.config');
     expect(await form.getValues()).toEqual({
       'Disable Failover': false,
       'Default TrueNAS controller': true,
@@ -74,7 +74,7 @@ describe('FailoverComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('failover.update', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.update', [{
       disabled: false,
       master: true,
       timeout: 20,
@@ -93,7 +93,7 @@ describe('FailoverComponent', () => {
     const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
     await proceedButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_to_message,
     );
@@ -109,7 +109,7 @@ describe('FailoverComponent', () => {
     const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
     await proceedButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('failover.sync_from_peer');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_from_peer');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_from_message,
     );

@@ -16,7 +16,7 @@ import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,7 @@ export class SmartInfoCardComponent implements OnChanges {
   private readonly maxResultCategories = 4;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private matDialog: MatDialog,
     private translate: TranslateService,
   ) { }

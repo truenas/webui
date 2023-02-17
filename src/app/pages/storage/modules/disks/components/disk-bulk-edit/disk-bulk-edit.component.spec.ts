@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -16,7 +16,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
 
 const mockJobSuccessResponse = [{
@@ -31,7 +31,7 @@ describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
   const dataDisk1 = {
     name: 'sda',
     identifier: '{serial}VB76b9dd9d-4e5d8cf2',
@@ -59,7 +59,7 @@ describe('DiskBulkEditComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockWebsocket2([
+      mockWebsocket([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
       ]),
     ],
@@ -69,7 +69,7 @@ describe('DiskBulkEditComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('sets disks settings when form is opened', async () => {

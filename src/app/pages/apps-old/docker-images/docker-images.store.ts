@@ -9,7 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface DockerImagesState {
   isLoading: boolean;
@@ -26,7 +26,7 @@ const initialState: DockerImagesState = {
 @Injectable({ providedIn: 'root' })
 export class DockerImagesComponentStore extends ComponentStore<DockerImagesState> {
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: DialogService,
   ) {
     super(initialState);

@@ -10,7 +10,7 @@ import { User } from 'app/interfaces/user.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ export class DeleteUserDialogComponent implements OnInit {
   readonly deleteMessage = T('Are you sure you want to delete user <b>"{user}"</b>?');
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public user: User,

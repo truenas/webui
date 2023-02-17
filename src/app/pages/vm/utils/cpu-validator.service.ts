@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 /**
  * An async validator.
@@ -22,7 +22,7 @@ export class CpuValidatorService {
   constructor(
     private validators: IxValidatorsService,
     private translate: TranslateService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
   ) {}
 
   createValidator(): (control: AbstractControl) => Observable<ValidationErrors | null> {

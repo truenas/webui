@@ -19,7 +19,7 @@ import {
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  DialogService, NetworkService, VmService, WebSocketService2,
+  DialogService, NetworkService, VmService, WebSocketService,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -216,7 +216,7 @@ export class DeviceFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private networkService: NetworkService,
     private filesystemService: FilesystemService,

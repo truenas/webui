@@ -10,7 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import {
-  mockCall, mockJob, mockWebsocket2,
+  mockCall, mockJob, mockWebsocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
@@ -38,7 +38,7 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { SystemGeneralService, WebSocketService2 } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('CertificateAddComponent', () => {
@@ -76,7 +76,7 @@ describe('CertificateAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('certificate.profiles', {
           'HTTPS RSA Certificate': profile,
         }),
@@ -162,7 +162,7 @@ describe('CertificateAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('certificate.create', [
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [
       {
         name: 'new',
         create_type: CertificateCreateType.CreateInternal,
@@ -225,7 +225,7 @@ describe('CertificateAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('certificate.create', [{
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
       create_type: CertificateCreateType.CreateImported,
       certificate: '-----BEGIN CERTIFICATE-----',

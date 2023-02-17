@@ -20,7 +20,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
-  CloudCredentialService, DialogService, StorageService, WebSocketService2,
+  CloudCredentialService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -176,7 +176,7 @@ export class ZvolFormComponent {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,

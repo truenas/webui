@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { MatchDatastoresWithDatasets, VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -12,7 +12,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot-form.component';
 
 describe('VmwareSnapshotFormComponent', () => {
@@ -35,7 +35,7 @@ describe('VmwareSnapshotFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('vmware.match_datastores_with_datasets', {
           filesystems: [
             {
@@ -89,7 +89,7 @@ describe('VmwareSnapshotFormComponent', () => {
     const fetchDatastoresButton = await loader.getHarness(MatButtonHarness.with({ text: 'Fetch DataStores' }));
     await fetchDatastoresButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('vmware.match_datastores_with_datasets', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vmware.match_datastores_with_datasets', [{
       hostname: '192.168.30.4',
       username: 'root',
       password: 'pleasechange',
@@ -104,7 +104,7 @@ describe('VmwareSnapshotFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('vmware.create', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vmware.create', [{
       hostname: '192.168.30.4',
       username: 'root',
       password: 'pleasechange',
@@ -146,7 +146,7 @@ describe('VmwareSnapshotFormComponent', () => {
       }),
     );
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('vmware.update', [
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vmware.update', [
       1,
       {
         hostname: '192.168.30.4',

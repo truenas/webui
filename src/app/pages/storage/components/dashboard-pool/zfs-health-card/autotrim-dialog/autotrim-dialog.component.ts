@@ -10,7 +10,7 @@ import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ export class AutotrimDialogComponent implements OnInit {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialogRef: MatDialogRef<AutotrimDialogComponent>,
     private dialogService: DialogService,
     private snackbar: SnackbarService,

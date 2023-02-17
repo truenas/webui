@@ -1,19 +1,19 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplicationService', () => {
   let spectator: SpectatorService<ReplicationService>;
   const createService = createServiceFactory({
     service: ReplicationService,
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('replication.list_datasets', [
           'parent',
           'parent/child1',
@@ -45,7 +45,7 @@ describe('ReplicationService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith(
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
         'replication.list_datasets',
         [TransportMode.Ssh, 2],
       );
@@ -116,7 +116,7 @@ describe('ReplicationService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -7,7 +7,7 @@ import { CatalogCreate } from 'app/interfaces/catalog.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ export class CatalogAddFormComponent {
   };
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

@@ -18,7 +18,7 @@ import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summ
 import {
   CertificateStep,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
-import { SystemGeneralService, WebSocketService2 } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +53,7 @@ export class CertificateOptionsComponent implements OnInit, SummaryProvider, Cer
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private systemGeneralService: SystemGeneralService,
     private cdr: ChangeDetectorRef,
   ) { }

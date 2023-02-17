@@ -6,9 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { DialogService, StorageService, WebSocketService2 } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { SaveDebugButtonComponent } from './save-debug-button.component';
 
@@ -17,7 +17,7 @@ describe('SaveDebugButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: SaveDebugButtonComponent,
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('core.download', [45, 'http://localhost/download/url']),
       ]),
       mockProvider(DialogService, {
@@ -57,7 +57,7 @@ describe('SaveDebugButtonComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService2).call)
+    expect(spectator.inject(WebSocketService).call)
       .toHaveBeenCalledWith('core.download', ['system.debug', [], 'debug-truenas-20220524160228.tgz', true]);
     expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith(
       'http://localhost/download/url',

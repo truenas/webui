@@ -20,7 +20,7 @@ import {
   DynamicListComponent,
 } from 'app/pages/sharing/iscsi/initiator/initiator-form/dynamic-list/dynamic-list.component';
 import { DialogService, NetworkService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class InitiatorFormComponent implements OnInit {
     protected router: Router,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected dialog: DialogService,

@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -11,7 +11,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SftpProviderFormComponent', () => {
   let spectator: Spectator<SftpProviderFormComponent>;
@@ -23,7 +23,7 @@ describe('SftpProviderFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('keychaincredential.query', [
           { id: 1, name: 'Key 1' },
           { id: 2, name: 'Key 2' },
@@ -94,7 +94,7 @@ describe('SftpProviderFormComponent', () => {
 
     await lastValueFrom(spectator.component.beforeSubmit());
 
-    const websocket = spectator.inject(WebSocketService2);
+    const websocket = spectator.inject(WebSocketService);
     expect(websocket.call).toHaveBeenCalledWith('keychaincredential.generate_ssh_key_pair');
     expect(websocket.call).toHaveBeenCalledWith('keychaincredential.create', [{
       attributes: {

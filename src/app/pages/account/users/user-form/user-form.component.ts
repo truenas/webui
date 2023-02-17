@@ -28,7 +28,7 @@ import { UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -118,7 +118,7 @@ export class UserFormComponent {
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

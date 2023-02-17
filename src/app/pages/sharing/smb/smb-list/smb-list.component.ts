@@ -14,7 +14,7 @@ import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
   };
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private router: Router,
     private slideInService: IxSlideInService,
     private dialog: DialogService,

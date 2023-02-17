@@ -17,7 +17,7 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import {
   DialogService, StorageService, UserService,
 } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +69,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private storageService: StorageService,
     private translate: TranslateService,
     private dialog: DialogService,

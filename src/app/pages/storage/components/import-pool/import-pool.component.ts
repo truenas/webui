@@ -17,7 +17,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService, ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ export class ImportPoolComponent implements OnInit {
     private fb: FormBuilder,
     private slideInService: IxSlideInService,
     private modalService: ModalService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: MatDialog,
     private dialogService: DialogService,
     private translate: TranslateService,

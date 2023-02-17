@@ -6,14 +6,14 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { SmartInfoCardComponent } from './smart-info-card.component';
 
 describe('SmartInfoCardComponent', () => {
@@ -27,7 +27,7 @@ describe('SmartInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SmartInfoCardComponent,
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('smart.test.results', [
           {
             disk: 'sdc',
@@ -92,7 +92,7 @@ describe('SmartInfoCardComponent', () => {
       text: '4',
     });
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('smart.test.results', [[['disk', '=', 'sdc']]]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.results', [[['disk', '=', 'sdc']]]);
   });
 
   it('shows a link to view all smart tests for a disk', () => {
@@ -140,7 +140,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('loads and shows a number of SMART tasks associated with the disk', () => {
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('smart.test.query_for_disk', ['sdc']);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query_for_disk', ['sdc']);
 
     const detailsItem = spectator.query(byText('S.M.A.R.T. Tasks:')).parentElement;
     expect(detailsItem).toHaveDescendantWithText({

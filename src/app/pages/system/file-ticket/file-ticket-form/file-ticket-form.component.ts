@@ -29,7 +29,7 @@ import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -70,7 +70,7 @@ export class FileTicketFormComponent implements OnInit {
   );
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,

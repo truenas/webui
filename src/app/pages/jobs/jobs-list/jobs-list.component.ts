@@ -31,7 +31,7 @@ import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
-import { DialogService, StorageService, WebSocketService2 } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { JobTab } from './job-tab.enum';
 
@@ -86,7 +86,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private storage: StorageService,
     private translate: TranslateService,
     private dialogService: DialogService,

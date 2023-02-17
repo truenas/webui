@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -21,7 +21,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 describe('InitShutdownFormComponent', () => {
   let spectator: Spectator<InitShutdownFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebsocketService2;
+  let ws: MockWebsocketService;
   const createComponent = createComponentFactory({
     component: InitShutdownFormComponent,
     imports: [
@@ -30,7 +30,7 @@ describe('InitShutdownFormComponent', () => {
       TreeModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),
@@ -50,7 +50,7 @@ describe('InitShutdownFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebsocketService2);
+    ws = spectator.inject(MockWebsocketService);
   });
 
   describe('adding new init/shutdown script', () => {

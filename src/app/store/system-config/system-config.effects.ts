@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   advancedConfigUpdated,
@@ -35,7 +35,7 @@ export class SystemConfigEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) {}
 }

@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +21,7 @@ export class UnusedResourcesComponent implements OnInit {
   diskQuerySubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
   ) { }

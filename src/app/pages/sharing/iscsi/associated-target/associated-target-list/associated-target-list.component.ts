@@ -15,7 +15,7 @@ import {
   AppLoaderService, DialogService, IscsiService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +63,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     private iscsiService: IscsiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}

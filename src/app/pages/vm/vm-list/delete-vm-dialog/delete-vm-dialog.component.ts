@@ -9,7 +9,7 @@ import helptext from 'app/helptext/vm/vm-list';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class DeleteVmDialogComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<DeleteVmDialogComponent>,
     private validators: IxValidatorsService,

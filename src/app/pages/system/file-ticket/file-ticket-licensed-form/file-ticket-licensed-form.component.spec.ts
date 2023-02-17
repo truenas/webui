@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { TicketCategory, TicketCriticality, TicketEnvironment } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -22,12 +22,12 @@ import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/fi
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('FileTicketLicensedFormComponent', () => {
   let spectator: Spectator<FileTicketLicensedFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
 
   const mockNewTicketResponse = {
     ticket: 123456789,
@@ -47,7 +47,7 @@ describe('FileTicketLicensedFormComponent', () => {
       mockProvider(DialogService, {
         generalDialog: jest.fn(() => of()),
       }),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('core.get_jobs', [{
           id: 1,
           method: 'support.new_ticket',
@@ -78,7 +78,7 @@ describe('FileTicketLicensedFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('sends a create payload to websocket', async () => {

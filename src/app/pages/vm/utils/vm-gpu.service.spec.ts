@@ -1,17 +1,17 @@
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { lastValueFrom, of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
 describe('VmGpuService', () => {
   let spectator: SpectatorService<VmGpuService>;
-  let websocket: SpyObject<WebSocketService2>;
+  let websocket: SpyObject<WebSocketService>;
 
   const radeon = {
     addr: {
@@ -61,7 +61,7 @@ describe('VmGpuService', () => {
           arc,
         ] as Device[]),
       }),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('vm.device.create'),
         mockCall('vm.device.delete'),
       ]),
@@ -84,7 +84,7 @@ describe('VmGpuService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(WebSocketService2);
+    websocket = spectator.inject(WebSocketService);
   });
 
   describe('updateVmGpus', () => {
