@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 
@@ -31,7 +31,5 @@ export class SimpleAsyncComboboxProvider implements IxComboboxProvider {
   }
 
   private options: Option[];
-  constructor(private options$: Observable<Option[]>) {
-    options$.pipe(take(1)).subscribe((value) => this.options = value);
-  }
+  constructor(private options$: Observable<Option[]>) {}
 }
