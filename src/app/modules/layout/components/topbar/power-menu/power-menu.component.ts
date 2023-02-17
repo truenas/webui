@@ -27,7 +27,7 @@ export class PowerMenuComponent {
 
   onSignOut(): void {
     this.authService.logout().pipe(untilDestroyed(this)).subscribe();
-    this.authService.token2 = null;
+    this.authService.clearAuthToken();
     this.wsManager.resetUi();
   }
 
