@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import {
@@ -14,8 +15,12 @@ import helptext from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import {
   DialogService, IdmapService,
@@ -48,6 +53,9 @@ describe('IdmapFormComponent', () => {
       ReactiveFormsModule,
       IxFormsModule,
       EntityModule,
+    ],
+    declarations: [
+      MockComponent(WithManageCertificatesLinkComponent),
     ],
     providers: [
       mockWebsocket([
@@ -88,6 +96,7 @@ describe('IdmapFormComponent', () => {
       }),
       mockProvider(IxSlideInService),
       mockProvider(Router),
+      mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(false)),
       }),
