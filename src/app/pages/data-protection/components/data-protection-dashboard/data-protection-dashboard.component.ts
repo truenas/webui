@@ -512,12 +512,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         : this.translate.instant(helptext.no_snapshot_sent_yet);
 
       if (task.job !== null) {
-        task.state.state = task.job.state;
         this.store$.select(selectJob(task.job.id)).pipe(
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
-          task.state.state = job.state;
           task.job = job;
           if (this.jobStates.get(job.id) !== job.state) {
             this.refreshTable(TaskCardId.Replication);
