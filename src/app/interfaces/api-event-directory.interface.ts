@@ -6,6 +6,7 @@ import { DirectoryServicesState } from 'app/interfaces/directory-services-state.
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -31,6 +32,7 @@ export type ApiEventDirectory = {
   'user.query': { response: User };
   'container.image.pull': { response: Job<PullContainerImageResponse, PullContainerImageParams> };
   'disk.query': { response: Disk };
+  'pool.query': { response: Pool };
   'group.query': { response: Group };
   'container.image.query': { response: ContainerImage };
   'reporting.realtime': { response: ReportingRealtimeUpdate };

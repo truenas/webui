@@ -8,6 +8,7 @@ import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { Styler } from 'stylefire';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -255,6 +256,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   startListeners(): void {
     this.getDisksData();
     this.getNetworkInterfaces();
+    this.getPoolsUpdate();
 
     this.ws2.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
@@ -674,5 +676,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const startX = viewport.get('x') as number;
 
     return { carousel, vpw, startX };
+  }
+
+  private getPoolsUpdate(): void {
+    this.ws2.subscribe('pool.query').pipe(
+      filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loadPoolData();
+    });
   }
 }

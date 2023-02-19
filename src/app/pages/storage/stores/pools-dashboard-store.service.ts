@@ -50,6 +50,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     private sorter: StorageService,
   ) {
     super(initialState);
+    this.subscribeToPoolsUpdate();
   }
 
   readonly loadDashboard = this.effect((triggers$: Observable<void>) => {
@@ -106,6 +107,12 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
 
   getPools(): Observable<Pool[]> {
     return this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]);
+  }
+
+  subscribeToPoolsUpdate(): void {
+    this.ws.subscribe('pool.query').subscribe(() => {
+      this.loadDashboard();
+    });
   }
 
   getRootDatasets(): Observable<Dataset[]> {
