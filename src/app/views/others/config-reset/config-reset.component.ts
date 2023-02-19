@@ -8,7 +8,6 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -17,7 +16,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ConfigResetComponent implements OnInit {
   constructor(
-    protected ws2: WebSocketService,
     private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,

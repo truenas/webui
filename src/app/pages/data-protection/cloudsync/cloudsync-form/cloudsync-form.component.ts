@@ -155,7 +155,7 @@ export class CloudsyncFormComponent {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     protected router: Router,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -452,7 +452,7 @@ export class CloudsyncFormComponent {
   }
 
   getBuckets(credentialId: number): Observable<CloudsyncBucket[]> {
-    return this.ws2.call('cloudsync.list_buckets', [credentialId]);
+    return this.ws.call('cloudsync.list_buckets', [credentialId]);
   }
 
   getBucketsNodeProvider(): TreeNodeProvider {
@@ -481,7 +481,7 @@ export class CloudsyncFormComponent {
         delete data.attributes.bucket;
       }
 
-      return this.ws2.call('cloudsync.list_directory', [data]).pipe(
+      return this.ws.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
           listing.forEach((file) => {
@@ -695,9 +695,9 @@ export class CloudsyncFormComponent {
     let request$: Observable<unknown>;
 
     if (this.isNew) {
-      request$ = this.ws2.call('cloudsync.create', [payload]);
+      request$ = this.ws.call('cloudsync.create', [payload]);
     } else {
-      request$ = this.ws2.call('cloudsync.update', [this.editingTask.id, payload]);
+      request$ = this.ws.call('cloudsync.update', [this.editingTask.id, payload]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

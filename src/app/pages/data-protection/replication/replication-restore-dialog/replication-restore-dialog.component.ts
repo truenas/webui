@@ -27,7 +27,7 @@ export class ReplicationRestoreDialogComponent {
   readonly helptext = helptext_replication;
 
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private formBuilder: FormBuilder,
     private datasetService: DatasetService,
@@ -39,7 +39,7 @@ export class ReplicationRestoreDialogComponent {
   onSubmit(): void {
     this.loader.open();
 
-    this.ws2.call('replication.restore', [this.parentTaskId, this.form.value])
+    this.ws.call('replication.restore', [this.parentTaskId, this.form.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
