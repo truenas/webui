@@ -7,10 +7,7 @@
         class="sidebar-list-item sidenav-link"
         role="listitem"
         routerLinkActive="highlighted"
-        ix-auto
-        ix-auto-type="option"
         [id]="'nav-' + i"
-        [ix-auto-identifier]="item.name"
         [class.has-submenu]="item.type === MenuItemType.SlideOut"
         [class.highlighted]="isHighlighted === item.state"
         (click)="updateHighlightedClass(item.state)"
@@ -18,6 +15,7 @@
         <a
           *ngIf="item.type === MenuItemType.Link"
           matTooltipPosition="right"
+          [ixTest]="getItemName(item)"
           [routerLink]="['/', item.state]"
           [name]="getItemName(item)"
           [matTooltip]="isSidenavCollapsed ? (item.tooltip | translate) : null"
@@ -30,6 +28,7 @@
           *ngIf="item.type === MenuItemType.SlideOut"
           tabindex="0"
           matTooltipPosition="right"
+          [ixTest]="getItemName(item)"
           [name]="getItemName(item)"
           [matTooltip]="isSidenavCollapsed ? (item.tooltip | translate) : null"
           (click)="toggleMenu(item.state, item.sub)"
@@ -45,6 +44,7 @@
           *ngIf="item.type === MenuItemType.ExternalLink"
           target="_blank"
           matTooltipPosition="right"
+          [ixTest]="getItemName(item)"
           [href]="item.state"
           [name]="getItemName(item)"
           [matTooltip]="isSidenavCollapsed ? (item.tooltip | translate) : null"
@@ -61,7 +61,7 @@
         </span>
       </div>
 
-      <a mat-button class="absorbs-focus" [tabIndex]="-1">
+      <a mat-button class="absorbs-focus" ixTest="focus-trap" [tabIndex]="-1">
         <!-- 'absorbs' the focus behavior -->
       </a>
     </ng-container>

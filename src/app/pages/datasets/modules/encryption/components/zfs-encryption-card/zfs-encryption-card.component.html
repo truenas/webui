@@ -2,13 +2,19 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'ZFS Encryption' | translate }}</h3>
 
-    <a *ngIf="canEdit" mat-button (click)="onEditPressed()">
+    <a
+      *ngIf="canEdit"
+      mat-button
+      ixTest="edit"
+      (click)="onEditPressed()"
+    >
       {{ 'Edit' | translate }}
     </a>
     <a
       *ngIf="canUnlock"
       mat-button
       color="primary"
+      ixTest="unlock"
       [routerLink]="['/datasets', dataset.id, 'unlock']"
     >
       {{ 'Unlock' | translate }}
@@ -30,6 +36,7 @@
           <div class="value">/{{ dataset.encryption_root }}</div>
           <a
             class="action"
+            ixTest="go-to-encryption-root"
             [routerLink]="['/datasets', dataset.encryption_root]"
           >
             {{ 'Go To Encryption Root' | translate }}

@@ -5,9 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -21,7 +21,7 @@ import { StorageSettingsComponent } from './storage-settings.component';
 describe('SystemDatasetPoolComponent', () => {
   let spectator: Spectator<StorageSettingsComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebsocketService2;
+  let ws: MockWebsocketService;
   const createComponent = createComponentFactory({
     component: StorageSettingsComponent,
     imports: [
@@ -29,7 +29,7 @@ describe('SystemDatasetPoolComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('service.query', [
           {
             service: ServiceName.Cifs,
@@ -55,7 +55,7 @@ describe('SystemDatasetPoolComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebsocketService2);
+    ws = spectator.inject(MockWebsocketService);
   });
 
   it('loads and shows current system dataset pool', async () => {

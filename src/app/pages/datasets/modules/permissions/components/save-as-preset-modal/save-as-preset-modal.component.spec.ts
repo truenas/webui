@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -13,7 +13,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 describe('SaveAsPresetModalComponent', () => {
   let spectator: Spectator<SaveAsPresetModalComponent>;
@@ -30,7 +30,7 @@ describe('SaveAsPresetModalComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('filesystem.acltemplate.by_path', [
           {
             id: 1, name: 'e', acltype: AclType.Nfs4, acl: [],
@@ -77,7 +77,7 @@ describe('SaveAsPresetModalComponent', () => {
   });
 
   it('loads acl presets and shows them', () => {
-    const ws = spectator.inject(WebSocketService2);
+    const ws = spectator.inject(WebSocketService);
 
     expect(ws.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
       'format-options': {
@@ -112,7 +112,7 @@ describe('SaveAsPresetModalComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenLastCalledWith('filesystem.acltemplate.create', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.create', [{
       name: 'New Preset',
       acltype: 'POSIX1E',
       acl: [],
@@ -125,7 +125,7 @@ describe('SaveAsPresetModalComponent', () => {
     const preset = spectator.queryAll('.preset');
     spectator.click(preset[2].querySelector('.preset-remove'));
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('filesystem.acltemplate.delete', [4]);
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenLastCalledWith('filesystem.acltemplate.by_path', expect.anything());
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acltemplate.delete', [4]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.by_path', expect.anything());
   });
 });

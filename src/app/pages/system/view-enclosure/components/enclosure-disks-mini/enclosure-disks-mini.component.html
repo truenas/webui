@@ -58,7 +58,7 @@
       </div>
 
       <!-- VISUALIZER -->
-      <div fxLayout="row" id="disks-overview" [class]="currentView">
+      <div #disksoverview fxLayout="row" id="disks-overview" [class]="currentView">
         <!-- DISK NAMES -->
         <div
           *ngIf="enclosure && enclosure.driveTrayObjects"

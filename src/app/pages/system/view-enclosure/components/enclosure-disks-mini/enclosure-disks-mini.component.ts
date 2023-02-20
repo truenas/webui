@@ -11,7 +11,7 @@ import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
 import { MiniXlPlus } from 'app/pages/system/view-enclosure/classes/hardware/mini-xl-plus';
 import { EnclosureMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
@@ -33,7 +33,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected store$: Store<AppState>,
     protected themeService: ThemeService,
     protected diskTemperatureService: DiskTemperatureService,

@@ -16,7 +16,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -49,7 +49,7 @@ export class FailoverSettingsComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private authService: AuthService,

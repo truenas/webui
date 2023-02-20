@@ -10,7 +10,7 @@ import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-i
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ export class BootPoolDeleteDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public bootenvs: Bootenv[],

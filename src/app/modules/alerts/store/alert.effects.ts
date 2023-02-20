@@ -18,7 +18,7 @@ import {
   alertsNotLoaded,
 } from 'app/modules/alerts/store/alert.actions';
 import { AlertSlice, selectDismissedAlerts, selectUnreadAlerts } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @Injectable()
@@ -101,7 +101,7 @@ export class AlertEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private store$: Store<AlertSlice>,
     private translate: TranslateService,
   ) {}

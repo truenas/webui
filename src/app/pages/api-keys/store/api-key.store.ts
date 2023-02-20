@@ -6,7 +6,7 @@ import {
 } from 'rxjs/operators';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 export interface ApiKeysState {
   isLoading: boolean;
@@ -23,7 +23,7 @@ const initialState: ApiKeysState = {
 @Injectable()
 export class ApiKeyComponentStore extends ComponentStore<ApiKeysState> {
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: DialogService,
   ) {
     super(initialState);

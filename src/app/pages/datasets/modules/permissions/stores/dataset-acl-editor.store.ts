@@ -25,7 +25,7 @@ import {
 } from 'app/pages/datasets/modules/permissions/interfaces/dataset-acl-editor-state.interface';
 import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
 import {
-  DialogService, StorageService, UserService, WebSocketService2,
+  DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
 
 const initialState: DatasetAclEditorState = {
@@ -41,7 +41,7 @@ const initialState: DatasetAclEditorState = {
 @Injectable()
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: DialogService,
     private matDialog: MatDialog,
     private router: Router,

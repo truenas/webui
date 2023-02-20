@@ -9,7 +9,7 @@ import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
-import { AppLoaderService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -44,7 +44,7 @@ export class PoolManagerWizardComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private store$: Store<AppState>,
     private appLoader: AppLoaderService,
     private poolManagerStore: PoolManagerStore,

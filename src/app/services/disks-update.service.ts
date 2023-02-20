@@ -5,7 +5,7 @@ import { Subject, Subscription, switchMap } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Injectable({
@@ -19,7 +19,7 @@ export class DisksUpdateService {
   } = { };
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
   ) { }
 
   addSubscriber(newSubscriber$: Subject<ApiEvent<Disk> | Disk[]>, getUpdatedDisks = false): string {

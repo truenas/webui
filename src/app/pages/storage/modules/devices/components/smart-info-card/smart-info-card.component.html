@@ -27,6 +27,7 @@
         <a
           *ngIf="totalResults.value"
           class="action"
+          ixTest="view-all-test-results"
           [routerLink]="[
             '/storage',
             'disks',
@@ -71,7 +72,7 @@
           <!-- TODO: Add error handler -->
           Error
         </ng-container>
-        <a class="action" [routerLink]="['/data-protection', 'smart']">
+        <a class="action" ixTest="manage-smart-tasks" [routerLink]="['/data-protection', 'smart']">
           {{ 'Manage S.M.A.R.T. Tasks' | translate }}
         </a>
       </ng-container>

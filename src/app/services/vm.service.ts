@@ -3,11 +3,11 @@ import { Observable } from 'rxjs';
 import { VmNicType } from 'app/enums/vm.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { VirtualizationDetails } from 'app/interfaces/virtual-machine.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class VmService {
-  constructor(protected ws: WebSocketService2) {}
+  constructor(protected ws: WebSocketService) {}
 
   getBootloaderOptions(): Observable<Choices> {
     return this.ws.call('vm.bootloader_options');

@@ -11,7 +11,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +31,7 @@ export class FormUploadComponent {
   fbrowser: HTMLInputElement;
 
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected http: HttpClient,
     private loader: AppLoaderService,
     public dialog: DialogService,

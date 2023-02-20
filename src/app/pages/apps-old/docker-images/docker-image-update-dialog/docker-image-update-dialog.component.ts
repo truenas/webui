@@ -20,7 +20,7 @@ import {
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class DockerImageUpdateDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<DockerImageUpdateDialogComponent>,

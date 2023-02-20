@@ -5,11 +5,7 @@
       *ngIf="secondaryCheckBox"
       id="confirm-dialog__secondary-checkbox"
       class="confirm-checkbox"
-      ix-auto
-      color="primary"
-      ix-auto-type="checkbox"
       ixTest="secondary-confirmation"
-      [ix-auto-identifier]="secondaryCheckBoxMsg | uppercase"
       (change)="secondaryCheckBoxEvent()"
     >
       <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span>
@@ -30,9 +26,6 @@
     id="confirm-dialog__confirm-checkbox"
     name="confirm_checkbox"
     class="confirm-checkbox"
-    ix-auto
-    ix-auto-type="checkbox"
-    ix-auto-identifier="CONFIRM"
     ixTest="confirm"
     (change)="toggleSubmit($event)"
   >
@@ -45,10 +38,7 @@
     mat-button
     name="cancel_button"
     class="mat-mdc-button mat-button mat-accent"
-    ix-auto
-    ix-auto-type="button"
     ixTest="dialog-cancel"
-    [ix-auto-identifier]="cancelMsg | uppercase"
     (click)="dialogRef.close(false)"
   >
     {{ cancelMsg | translate }}
@@ -58,10 +48,7 @@
     mat-button
     name="ok_button"
     class="mat-mdc-button mat-button mat-primary"
-    ix-auto
-    ix-auto-type="button"
     ixTest="dialog-confirm"
-    [ix-auto-identifier]="buttonMsg | uppercase"
     [disabled]="isDisabled()"
     (click)="customSubmit ? customSubmit() : dialogRef.close(true)"
   >

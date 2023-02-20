@@ -15,7 +15,7 @@ import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService2, DialogService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +73,7 @@ export class ZfsInfoCardComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,

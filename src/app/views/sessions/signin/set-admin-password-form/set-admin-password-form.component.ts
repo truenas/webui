@@ -11,7 +11,7 @@ import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/p
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 const adminUsername = 'admin';
@@ -48,7 +48,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

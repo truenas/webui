@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
-import { Observable, of, throwError } from 'rxjs';
+import {
+  merge, Observable, of, throwError,
+} from 'rxjs';
 import {
   filter, map, share, switchMap, take, takeWhile,
 } from 'rxjs/operators';
@@ -20,7 +22,7 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 @Injectable({
   providedIn: 'root',
 })
-export class WebSocketService2 {
+export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,
@@ -55,20 +57,21 @@ export class WebSocketService2 {
     params?: ApiDirectory[K]['params'],
   ): Observable<Job<ApiDirectory[K]['response']>> {
     return this.call(method, params).pipe(
-      switchMap((jobId) => {
-        return this.subscribe('core.get_jobs').pipe(
-          filter((apiEvent) => apiEvent.id === jobId),
-          takeWhile((apiEvent) => {
-            return apiEvent.fields.state !== JobState.Success;
-          }, true),
-          switchMap((apiEvent) => {
-            if (apiEvent.fields.state === JobState.Failed) {
-              return throwError(() => apiEvent.fields);
-            }
-            return of(apiEvent);
-          }),
-          map((apiEvent) => apiEvent.fields),
-        );
+      switchMap((jobId: number) => {
+        return merge(
+          this.subscribeToJobUpdates(jobId),
+          // Get job status here for jobs that complete too fast.
+          this.call('core.get_jobs', [[['id', '=', jobId]]]).pipe(map((jobs) => jobs[0])),
+        )
+          .pipe(
+            takeWhile((job) => job.state !== JobState.Success, true),
+            switchMap((job) => {
+              if (job.state === JobState.Failed) {
+                return throwError(() => job);
+              }
+              return of(job);
+            }),
+          );
       }),
     );
   }
@@ -97,5 +100,12 @@ export class WebSocketService2 {
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
+  }
+
+  private subscribeToJobUpdates(jobId: number): Observable<Job> {
+    return this.subscribe('core.get_jobs').pipe(
+      filter((apiEvent) => apiEvent.id === jobId),
+      map((apiEvent) => apiEvent.fields),
+    );
   }
 }

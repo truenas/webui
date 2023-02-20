@@ -23,7 +23,7 @@ import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/compon
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
-  DialogService, IdmapService, WebSocketService2,
+  DialogService, IdmapService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
@@ -168,7 +168,7 @@ export class DirectoryServicesComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private idmapService: IdmapService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,

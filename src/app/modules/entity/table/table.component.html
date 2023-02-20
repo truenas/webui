@@ -7,7 +7,7 @@
   <mat-toolbar-row *ngIf="!_tableConf.expandable">
     <h3 *ngIf="title" class="title">
       <ng-container *ngIf="titleHref; else plainTitle">
-        <a [routerLink]="titleHref">
+        <a [ixTest]="[title, 'open-in-new']" [routerLink]="titleHref">
           {{ title }}
           <mat-icon class="title-icon">open_in_new</mat-icon>
         </a>
@@ -30,10 +30,7 @@
         mat-button
         color="default"
         class="action-icon"
-        ix-auto
-        ix-auto-type="button"
         [ixTest]="['table', _tableConf.name, 'add']"
-        [ix-auto-identifier]="_tableConf.name + '-add'"
         (click)="_tableConf.add()"
       >
         {{ 'Add' | translate }}
@@ -103,10 +100,7 @@
 
                   <mat-checkbox
                     *ngSwitchCase="'checkbox'"
-                    ix-auto
-                    ix-auto-type="checkbox"
                     color="primary"
-                    [ix-auto-identifier]="element[column.prop] + '-checkbox'"
                     [ixTest]="element[column.prop]"
                     [disabled]="!column.onChange"
                     [(ngModel)]="element[column.prop]"
@@ -116,10 +110,7 @@
 
                   <mat-slide-toggle
                     *ngSwitchCase="'slide-toggle'"
-                    ix-auto
-                    ix-auto-type="slide-toggle"
                     color="primary"
-                    [ix-auto-identifier]="element[column.prop] + '-slide-toggle'"
                     [disabled]="!column.onChange || column.disabled"
                     [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"
@@ -128,11 +119,8 @@
 
                   <button
                     *ngSwitchCase="'state-button'"
-                    ix-auto
-                    ix-auto-type="button"
                     mat-stroked-button
                     [ixTest]="[element[column.prop], 'state']"
-                    [ix-auto-identifier]="element[column.prop] + '-task-state'"
                     [ngClass]="getButtonClass(element[column.prop])"
                     (click)="$event.stopPropagation(); onButtonClick(element)"
                   >

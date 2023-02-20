@@ -10,7 +10,7 @@ import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService2, DialogService } from 'app/services';
+import { AppLoaderService, WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
   };
 
   constructor(
-    private websocket: WebSocketService2,
+    private websocket: WebSocketService,
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,

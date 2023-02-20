@@ -7,7 +7,7 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 export interface DeviceDeleteModalState {
   row: VmDevice;
@@ -38,7 +38,7 @@ export class DeviceDeleteModalComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
   ) {
     if (this.data.row.dtype !== VmDeviceType.Disk) {
       return;

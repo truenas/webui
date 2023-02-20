@@ -11,7 +11,7 @@ import { switchMap } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService2,
+  AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -44,7 +44,7 @@ export class SaveConfigDialogComponent {
   };
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private store$: Store<AppState>,
     private storage: StorageService,
     private loader: AppLoaderService,

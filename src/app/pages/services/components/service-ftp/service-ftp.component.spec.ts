@@ -4,14 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceFtpComponent', () => {
   let spectator: Spectator<ServiceFtpComponent>;
@@ -68,7 +68,7 @@ describe('ServiceFtpComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('ftp.config', {
           ...existingFtpConfig,
           id: 1,
@@ -100,7 +100,7 @@ describe('ServiceFtpComponent', () => {
   it('loads and shows current settings for FTP service', async () => {
     const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('ftp.config');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ftp.config');
     expect(values).toEqual({
       Port: '21',
       Clients: '5',
@@ -178,7 +178,7 @@ describe('ServiceFtpComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('ftp.update', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
       tls_opt_ip_address_required: true,
       anonuserdlbw: 5242880,

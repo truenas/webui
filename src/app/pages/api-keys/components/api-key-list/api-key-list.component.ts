@@ -18,7 +18,7 @@ import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import { DialogService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -74,7 +74,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private matDialog: MatDialog,
     private dialog: DialogService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private emptyService: EmptyService,
   ) { }
 

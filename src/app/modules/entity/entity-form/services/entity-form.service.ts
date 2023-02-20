@@ -27,7 +27,7 @@ import {
   InputUnitConfig,
   UnitType,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable()
 export class EntityFormService {
@@ -50,7 +50,7 @@ export class EntityFormService {
   constructor(
     // eslint-disable-next-line @typescript-eslint/ban-types
     @Inject(UntypedFormBuilder) private formBuilder: UntypedFormBuilder,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
   ) {}
 
   createFormGroup(controls: FieldConfig[]): UntypedFormGroup {

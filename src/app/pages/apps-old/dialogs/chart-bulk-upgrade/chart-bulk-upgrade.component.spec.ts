@@ -8,7 +8,7 @@ import { MockPipe } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
@@ -16,7 +16,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 const fakeAppOne = {
   name: 'test-app-one',
@@ -118,7 +118,7 @@ describe('ChartBulkUpgradeComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockWebsocket2([
+      mockWebsocket([
         mockJob('core.bulk'),
         mockCall('chart.release.upgrade', fakeAppOne),
         mockCall('chart.release.upgrade_summary', fakeUpgradeSummary),
@@ -146,7 +146,7 @@ describe('ChartBulkUpgradeComponent', () => {
     const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
     await updatedButton.click();
 
-    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Upgrading Apps. Please check on the progress in Task Manager.');
   });
 });

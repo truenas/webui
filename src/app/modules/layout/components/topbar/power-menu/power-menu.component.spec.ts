@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { PowerMenuComponent } from 'app/modules/layout/components/topbar/power-menu/power-menu.component';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('PowerMenuComponent', () => {
   let spectator: Spectator<PowerMenuComponent>;
@@ -16,12 +17,13 @@ describe('PowerMenuComponent', () => {
     component: PowerMenuComponent,
     providers: [
       mockProvider(AuthService, {
-        logout: jest.fn(),
+        logout: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(Router),
+      mockProvider(WebsocketConnectionService),
     ],
   });
 

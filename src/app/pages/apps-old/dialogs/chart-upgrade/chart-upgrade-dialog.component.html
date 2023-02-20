@@ -20,9 +20,6 @@
     <span>{{ 'Version to be upgraded to' | translate }}:</span>
     <mat-form-field class="form-element">
       <mat-select
-        ix-auto
-        ix-auto-type="select"
-        ix-auto-identifier="status-select"
         ixTest="versions"
         [(ngModel)]="selectedVersionKey"
         (ngModelChange)="onVersionOptionChanged()"
@@ -99,9 +96,6 @@
   <button
     mat-button
     class="mat-mdc-button mat-button mat-secondary"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="CLOSE"
     ixTest="close"
     (click)="dialogRef.close(false)"
   >
@@ -111,9 +105,6 @@
     mat-button
     class="mat-mdc-button mat-button"
     color="primary"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="UPGRADE"
     ixTest="upgrade"
     (click)="dialogRef.close(selectedVersionKey)"
   >

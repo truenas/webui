@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import { RsyncModule } from 'app/interfaces/rsync-module.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -12,7 +12,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { RsyncModuleFormComponent } from './rsync-module-form.component';
 
 describe('RsyncModuleFormComponent', () => {
@@ -42,7 +42,7 @@ describe('RsyncModuleFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('rsyncmod.create'),
         mockCall('rsyncmod.update'),
       ]),
@@ -94,7 +94,7 @@ describe('RsyncModuleFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsyncmod.create', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsyncmod.create', [{
       name: 'new',
       path: '/mnt/new',
       comment: 'New module',
@@ -146,7 +146,7 @@ describe('RsyncModuleFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsyncmod.update', [
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsyncmod.update', [
       1,
       {
         name: 'test',

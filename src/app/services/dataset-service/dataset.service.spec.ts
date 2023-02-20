@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
@@ -10,7 +10,7 @@ describe('DatasetService', () => {
   const createService = createServiceFactory({
     service: DatasetService,
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('pool.filesystem_choices', [
           'pool',
           'pool/subpool',

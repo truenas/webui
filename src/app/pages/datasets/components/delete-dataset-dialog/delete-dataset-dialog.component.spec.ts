@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -14,12 +14,12 @@ import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/i
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { DeleteDatasetDialogComponent } from './delete-dataset-dialog.component';
 
 describe('DeleteDatasetDialogComponent', () => {
   let spectator: Spectator<DeleteDatasetDialogComponent>;
-  let websocket: WebSocketService2;
+  let websocket: WebSocketService;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DeleteDatasetDialogComponent,
@@ -37,7 +37,7 @@ describe('DeleteDatasetDialogComponent', () => {
         } as VolumesListDataset,
       },
       mockProvider(MatDialogRef),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('pool.dataset.delete'),
         mockCall('pool.dataset.attachments', [
           {
@@ -66,7 +66,7 @@ describe('DeleteDatasetDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService2);
+    websocket = spectator.inject(WebSocketService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -138,7 +138,7 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService2);
+    const websocketMock = spectator.inject(MockWebsocketService);
     jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => ({
       reason: 'Device busy',
     })));

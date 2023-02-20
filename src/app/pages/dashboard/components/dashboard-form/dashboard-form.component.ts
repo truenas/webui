@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { rootUserId } from 'app/constants/root-user-id.constant';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +31,7 @@ export class DashboardFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private slideInService: IxSlideInService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}

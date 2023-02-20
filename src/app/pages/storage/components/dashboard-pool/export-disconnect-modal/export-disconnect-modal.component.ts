@@ -16,7 +16,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -78,7 +78,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private loader: AppLoaderService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private datasetStore: DatasetTreeStore,
     @Inject(MAT_DIALOG_DATA) public pool: Pool,
   ) {}

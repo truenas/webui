@@ -66,9 +66,6 @@
                 class="mat-card-title-text primary-nav"
                 mat-icon-button
                 color="default"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="goBack"
                 [ixTest]="['sysinfo-widget', 'back']"
                 (click)="goBack()"
               >
@@ -77,7 +74,7 @@
 
               <div
                 fxFlex="20"
-                [class]="['platform-logo-wrapper', productType.toLowerCase()]"
+                [class]="['platform-logo-wrapper', productType?.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <mat-icon
@@ -156,10 +153,7 @@
                   <button
                     *ngIf="!isPassive"
                     mat-button
-                    ix-auto
-                    ix-auto-type="button"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    [ix-auto-identifier]="updateBtnLabel"
                     [color]="updateBtnStatus"
                     (click)="router.navigate(['system', 'update'])"
                   >
@@ -167,7 +161,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!hasHa && !(hasOnlyMissmatchVersionsReason$ | async)"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -254,19 +248,6 @@
                       {{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}
                     </span>
                   </mat-list-item>
-                  <mat-list-item *ngIf="showTimeDiffWarning" class="time-warning">
-                    <mat-icon class="icon-warning" [matTooltip]="timeDiffWarning">error</mat-icon>
-                    <span>{{ timeDiffWarning }}</span>
-                    <button
-                      class="btn-sync"
-                      mat-icon-button
-                      [ixTest]="['widget-sysinfo', 'synchronize-time']"
-                      [matTooltip]="'Synchronize Time' | translate"
-                      (click)="onSynchronizeTime()"
-                    >
-                      <ix-icon class="icon-sync">sync</ix-icon>
-                    </button>
-                  </mat-list-item>
                 </mat-list>
 
                 <div
@@ -278,10 +259,7 @@
                     *ngIf="!isPassive"
                     mat-button
                     color="primary"
-                    ix-auto
-                    ix-auto-type="button"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    [ix-auto-identifier]="updateBtnLabel"
                     (click)="router.navigate(['system', 'update'])"
                   >
                     {{ updateBtnLabel | translate }}
@@ -289,7 +267,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!hasHa && !(hasOnlyMissmatchVersionsReason$ | async)"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </div>
@@ -312,9 +290,6 @@
         <button
           mat-button
           color="primary"
-          ix-auto
-          ix-auto-type="button"
-          ix-auto-identifier="FLIP"
           [ixTest]="['widget-sysinfo', 'flip']"
           (click)="toggleConfig()"
         >

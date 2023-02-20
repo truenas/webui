@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { RedirectDialogData } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog-data.interface';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -17,7 +17,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 })
 export class RedirectService {
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private store$: Store<AppState>,

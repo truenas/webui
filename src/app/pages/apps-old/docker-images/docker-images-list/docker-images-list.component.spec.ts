@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -16,13 +16,13 @@ import {
 import { fakeDockerImagesDataSource } from 'app/pages/apps-old/docker-images/test/fake-docker-images';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { DockerImagesListComponent } from './docker-images-list.component';
 
 describe('DockerImagesListComponent', () => {
   let spectator: Spectator<DockerImagesListComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService2;
+  let ws: WebSocketService;
   let store: DockerImagesComponentStore;
 
   const createComponent = createComponentFactory({
@@ -36,7 +36,7 @@ describe('DockerImagesListComponent', () => {
     ],
     providers: [
       DockerImagesComponentStore,
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('container.image.query', fakeDockerImagesDataSource),
         mockCall('container.image.delete'),
       ]),
@@ -53,7 +53,7 @@ describe('DockerImagesListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService2);
+    ws = spectator.inject(WebSocketService);
     store = spectator.inject(DockerImagesComponentStore);
   });
 

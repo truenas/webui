@@ -10,7 +10,7 @@ import { Acl, AclTemplateByPath, AclTemplateCreateParams } from 'app/interfaces/
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService2, AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ export class SaveAsPresetModalComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,

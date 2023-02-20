@@ -12,7 +12,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, TaskService } from 'app/services';
 import { CalendarService } from 'app/services/calendar.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class ResilverConfigComponent implements OnInit {
   timeOptions$ = of(this.taskService.getTimeOptions());
 
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

@@ -11,7 +11,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ServicesService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +63,7 @@ export class ServiceLldpComponent implements OnInit {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected services: ServicesService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

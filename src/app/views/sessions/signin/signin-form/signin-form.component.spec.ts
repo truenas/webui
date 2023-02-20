@@ -5,8 +5,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -24,11 +24,11 @@ describe('SigninFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket2(),
+      mockWebsocket(),
       mockProvider(AuthService, {
         login: jest.fn(() => of(true)),
       }),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('auth.two_factor_auth', false),
       ]),
       mockProvider(SigninStore, {
@@ -66,7 +66,7 @@ describe('SigninFormComponent', () => {
   });
 
   it('logs user in with OTP code when two factor auth is set up', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService2);
+    const websocketMock = spectator.inject(MockWebsocketService);
     websocketMock.mockCall('auth.two_factor_auth', true);
     spectator.component.ngOnInit();
 

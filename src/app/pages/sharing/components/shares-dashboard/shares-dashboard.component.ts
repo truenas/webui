@@ -35,7 +35,7 @@ import {
   IscsiService,
 } from 'app/services';
 import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 enum ShareType {
   Smb = 'smb',
@@ -86,7 +86,7 @@ export class SharesDashboardComponent implements AfterViewInit {
   isClustered = false;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private dialog: DialogService,
     private router: Router,
     private translate: TranslateService,

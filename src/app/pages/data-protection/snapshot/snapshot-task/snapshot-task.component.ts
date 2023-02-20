@@ -18,7 +18,7 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { StorageService, TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +89,7 @@ export class SnapshotTaskComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

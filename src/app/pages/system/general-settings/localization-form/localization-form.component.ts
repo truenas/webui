@@ -16,7 +16,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { LanguageService, SystemGeneralService, WebSocketService2 } from 'app/services';
+import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
@@ -108,7 +108,7 @@ export class LocalizationFormComponent {
     private sysGeneralService: SystemGeneralService,
     private fb: FormBuilder,
     public localeService: LocaleService,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected langService: LanguageService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

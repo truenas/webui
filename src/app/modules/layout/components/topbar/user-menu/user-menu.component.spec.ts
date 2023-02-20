@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
@@ -34,7 +34,7 @@ describe('UserMenuComponent', () => {
       mockProvider(AuthService, {
         user$: of(loggedInUser),
       }),
-      mockWebsocket2(),
+      mockWebsocket(),
     ],
   });
 

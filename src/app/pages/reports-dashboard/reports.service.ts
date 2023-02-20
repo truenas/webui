@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { addSeconds, differenceInDays, differenceInSeconds } from 'date-fns';
+import { addSeconds } from 'date-fns';
 import {
   map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
@@ -12,7 +12,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -37,7 +37,6 @@ export enum ReportingDatabaseError {
 })
 export class ReportsService implements OnDestroy {
   serverTime: Date;
-  showTimeDiffWarning = false;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private reportsUtils: Worker;
@@ -46,7 +45,7 @@ export class ReportsService implements OnDestroy {
   private hasTarget = false;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private core: CoreService,
     private store$: Store<AppState>,
   ) {
@@ -109,11 +108,7 @@ export class ReportsService implements OnDestroy {
         waitForSystemInfo,
         map((systemInfo) => systemInfo.datetime.$date),
         switchMap((timestamp) => {
-          const now = Date.now();
           this.serverTime = new Date(timestamp);
-          if (differenceInSeconds(timestamp, now) > 300 || differenceInDays(timestamp, now) > 0) {
-            this.showTimeDiffWarning = true;
-          }
           return interval(1000);
         }),
       )

@@ -51,9 +51,6 @@
       <span>{{ 'Status' | translate }}:</span>
       <mat-form-field class="form-element">
         <mat-select
-          ix-auto
-          ix-auto-type="select"
-          ix-auto-identifier="status-select"
           ixTest="status-select"
           [(ngModel)]="selectedStatus"
           (ngModelChange)="onStatusOptionChanged()"
@@ -114,9 +111,6 @@
   <button
     mat-button
     class="mat-mdc-button mat-button mat-secondary"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="CLOSE"
     ixTest="close-summary"
     (click)="dialogRef.close(false)"
   >

@@ -27,7 +27,7 @@ import { StorageService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface NicInfo {
   ip: string;
@@ -156,7 +156,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   };
 
   constructor(
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     private reportsService: ReportsService,
     private tableService: TableService,
     public translate: TranslateService,

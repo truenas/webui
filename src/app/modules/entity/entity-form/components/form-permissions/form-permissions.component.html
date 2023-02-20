@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="dynamic-field form-permissions form-element"
-  ix-auto
-  ix-auto-type="permissions"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [class.has-tooltip]="config.tooltip"
   [ngClass]="fieldShow"
@@ -25,10 +22,7 @@
     <mat-form-field class="full-width display-none">
       <input
         matInput
-        ix-auto
-        ix-auto-type="input"
         [ixTest]="config.name"
-        [ix-auto-identifier]="config.placeholder"
         [type]="config.inputType ? config.inputType : 'text'"
         [placeholder]="config.placeholder | translate"
         [attr.value]="config.value"
@@ -50,10 +44,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'user-read']"
-          [ix-auto-identifier]="config.name + '_ownerRead'"
           [checked]="ownerRead"
           (change)="toggleOwnerRead()"
         ></mat-checkbox>
@@ -61,10 +52,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'user-write']"
-          [ix-auto-identifier]="config.name + '_ownerWrite'"
           [checked]="ownerWrite"
           (change)="toggleOwnerWrite()"
         ></mat-checkbox>
@@ -72,10 +60,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'user-execute']"
-          [ix-auto-identifier]="config.name + '_ownerExec'"
           [checked]="ownerExec"
           (change)="toggleOwnerExec()"
         ></mat-checkbox>
@@ -88,10 +73,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'group-read']"
-          [ix-auto-identifier]="config.name + '_groupRead'"
           [checked]="groupRead"
           (change)="toggleGroupRead()"
         ></mat-checkbox>
@@ -99,10 +81,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'group-write']"
-          [ix-auto-identifier]="config.name + '_groupWrite'"
           [checked]="groupWrite"
           (change)="toggleGroupWrite()"
         ></mat-checkbox>
@@ -110,10 +89,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'group-execute']"
-          [ix-auto-identifier]="config.name + '_groupExec'"
           [checked]="groupExec"
           (change)="toggleGroupExec()"
         ></mat-checkbox>
@@ -126,10 +102,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'other-read']"
-          [ix-auto-identifier]="config.name + '_otherRead'"
           [checked]="otherRead"
           (change)="toggleOtherRead()"
         ></mat-checkbox
@@ -138,10 +111,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'other-write']"
-          [ix-auto-identifier]="config.name + '_otherWrite'"
           [checked]="otherWrite"
           (change)="toggleOtherWrite()"
         ></mat-checkbox
@@ -150,10 +120,7 @@
       <td>
         <mat-checkbox
           color="primary"
-          ix-auto
-          ix-auto-type="checkbox"
           [ixTest]="[config.name, 'other-execute']"
-          [ix-auto-identifier]="config.name + '_otherExec'"
           [checked]="otherExec"
           (change)="toggleOtherExec()"
         ></mat-checkbox>

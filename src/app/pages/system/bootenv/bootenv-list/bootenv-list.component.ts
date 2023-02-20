@@ -27,7 +27,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
-import { DialogService, WebSocketService2, AppLoaderService } from 'app/services';
+import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -82,7 +82,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     public formatter: IxFormatterService,
     private loader: AppLoaderService,
     private dialog: DialogService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,

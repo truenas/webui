@@ -29,7 +29,7 @@ import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { SystemGeneralService, WebSocketService2 } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -647,7 +647,7 @@ export class OldCertificateAddComponent implements WizardConfiguration {
   private currentProfile: CertificateProfile;
 
   constructor(
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService,
     private modalService: ModalService,

@@ -19,7 +19,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { DialogService, AppLoaderService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class WebdavFormComponent {
 
   constructor(
     private fb: FormBuilder,
-    protected ws: WebSocketService2,
+    protected ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,

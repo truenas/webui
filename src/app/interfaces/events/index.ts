@@ -1,4 +1,3 @@
-import { AuthenticatedEvent } from 'app/interfaces/events/authenticated-event.interface';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
@@ -22,7 +21,6 @@ export type CoreEvent =
   | TreeTableGlobalFilterEvent
   | MediaChangeEvent
   | NetworkInterfacesChangedEvent
-  | AuthenticatedEvent
   | LabelDrivesEvent
   | MemoryStatsEvent
   | EnclosureLabelChangedEvent

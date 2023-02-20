@@ -20,9 +20,6 @@
             mat-icon-button
             color="default"
             class="mat-card-title-text primary-nav"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="goBack"
             ixTest="nic-back"
             (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
           >
@@ -35,9 +32,6 @@
             mat-icon-button
             color="default"
             class="mat-card-title-text primary-nav"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="previousSlide"
             [ixTest]="['nic-widget', 'back']"
             (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
           >
@@ -57,10 +51,7 @@
           <div class="controls">
             <button
               mat-icon-button
-              ix-auto-type="button"
-              ix-auto-identifier="configure"
               [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
-              [ix-auto]="nicState.name"
               (click)="manageInterface(nicState)"
             >
               <mat-icon
@@ -74,10 +65,7 @@
 
             <button
               mat-icon-button
-              ix-auto-type="button"
-              ix-auto-identifier="networkReports"
               [ixTest]="['nic-widget', 'network-reports', nicState.name]"
-              [ix-auto]="nicState.name"
               (click)="router.navigate(['reportsdashboard/network'])"
             >
               <mat-icon
@@ -205,9 +193,6 @@
                     <mat-icon
                       *ngIf="ipAddresses.length > 1"
                       class="next-slide"
-                      ix-auto
-                      ix-auto-type="button"
-                      ix-auto-identifier="nextSlide"
                     >
                       chevron_right
                     </mat-icon>
@@ -222,9 +207,6 @@
                     <mat-icon
                       *ngIf="nicState.vlans.length > 0"
                       class="next-slide"
-                      ix-auto
-                      ix-auto-type="button"
-                      ix-auto-identifier="nextSlide"
                     >
                       chevron_right
                     </mat-icon>
@@ -239,9 +221,6 @@
                     <mat-icon
                       *ngIf="nicState.lagg_ports.length > 0"
                       class="next-slide"
-                      ix-auto
-                      ix-auto-type="button"
-                      ix-auto-identifier="nextSlide"
                     >
                       chevron_right
                     </mat-icon>
@@ -287,9 +266,6 @@
                 <mat-icon
                   *ngIf="vlan.aliases.length"
                   class="next-slide"
-                  ix-auto-type="button"
-                  ix-auto-identifier="nextSlide"
-                  [ix-auto]="vlan.name"
                 >
                   chevron_right
                 </mat-icon>

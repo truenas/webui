@@ -9,7 +9,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import {
   AppLoaderService, DialogService, StorageService,
 } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +21,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
   key: string;
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
     private dialogService: DialogService,

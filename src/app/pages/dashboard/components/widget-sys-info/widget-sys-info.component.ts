@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  differenceInSeconds, differenceInDays, addSeconds, format,
+  addSeconds, format,
 } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
@@ -17,19 +17,16 @@ import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
   AppLoaderService, DialogService, SystemGeneralService,
 } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
-import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -49,12 +46,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   @Input() showReorderHandle = false;
   @Input() systemInfo: SystemInfo;
 
-  hasOnlyMissmatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
+  hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
 
-  showTimeDiffWarning = false;
   timeInterval: Timeout;
-  timeDiffInSeconds: number;
-  timeDiffInDays: number;
   nasDateTime: Date;
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
@@ -83,14 +77,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   constructor(
     public router: Router,
     public translate: TranslateService,
-    private ws2: WebSocketService2,
+    private ws2: WebSocketService,
     public sysGenService: SystemGeneralService,
     public mediaObserver: MediaObserver,
     private locale: LocaleService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private productImgServ: ProductImageService,
-    private serverTimeService: ServerTimeService,
     public loader: AppLoaderService,
     public dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
@@ -199,19 +192,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
-    const now = Date.now();
     const datetime = this.addTimeDiff(this.data.datetime.$date);
     this.nasDateTime = new Date(datetime);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
-
-    this.timeDiffInSeconds = Math.abs(differenceInSeconds(datetime, now));
-    this.timeDiffInDays = Math.abs(differenceInDays(datetime, now));
-
-    if (this.timeDiffInSeconds > 300 || this.timeDiffInDays > 0) {
-      this.showTimeDiffWarning = true;
-    } else {
-      this.showTimeDiffWarning = false;
-    }
 
     if (this.timeInterval) {
       clearInterval(this.timeInterval);
@@ -309,26 +292,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       return;
     }
     this.productImage = this.productImgServ.getMiniImagePath(sysProduct) || '';
-  }
-
-  onSynchronizeTime(): void {
-    this.serverTimeService.confirmSetSystemTime().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.loader.open();
-      const currentTime = Date.now();
-      this.serverTimeService.setSystemTime(currentTime).pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.loader.close();
-          this.store$.dispatch(
-            systemInfoDatetimeUpdated({ datetime: { $date: currentTime } }),
-          );
-          this.processSysInfo({ ...this.data, datetime: { $date: currentTime } });
-        },
-        error: (err) => {
-          this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
-      });
-    });
   }
 
   goToEnclosure(): void {

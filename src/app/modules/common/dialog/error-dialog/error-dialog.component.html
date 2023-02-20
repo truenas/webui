@@ -7,9 +7,6 @@
   <div
     *ngIf="backtrace"
     class="more-info"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="backtrace-toggle"
     (click)="toggleOpen()"
   >
     <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
@@ -32,9 +29,6 @@
   <button
     mat-button
     class="mat-mdc-button mat-button mat-accent"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="CLOSE"
     ixTest="close-error-dialog"
     (click)="dialogRef.close(true)"
   >
@@ -44,9 +38,6 @@
     *ngIf="logs"
     mat-button
     class="mat-mdc-button mat-button mat-primary"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="DOWNLOAD LOGS"
     ixTest="download-logs"
     (click)="downloadLogs()"
   >

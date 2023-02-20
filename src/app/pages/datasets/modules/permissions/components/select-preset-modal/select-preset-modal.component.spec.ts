@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
@@ -17,7 +17,7 @@ import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { SelectPresetModalComponent } from './select-preset-modal.component';
 
 describe('SelectPresetModalComponent', () => {
@@ -60,7 +60,7 @@ describe('SelectPresetModalComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('filesystem.acltemplate.by_path', presets),
         mockCall('system.advanced.config', {} as AdvancedConfig),
       ]),
@@ -87,7 +87,7 @@ describe('SelectPresetModalComponent', () => {
   });
 
   it('loads acl presets for given path and shows them in the select', async () => {
-    const ws = spectator.inject(WebSocketService2);
+    const ws = spectator.inject(WebSocketService);
     const presetSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Preset' }));
 
     expect(ws.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{

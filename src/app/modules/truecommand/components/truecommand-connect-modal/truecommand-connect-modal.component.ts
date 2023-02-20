@@ -8,7 +8,7 @@ import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService, DialogService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface TruecommandSignupModalState {
   isConnected: boolean;
@@ -40,7 +40,7 @@ export class TruecommandConnectModalComponent implements OnInit {
     private dialogRef: MatDialogRef<TruecommandConnectModalComponent>,
     private fb: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {

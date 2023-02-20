@@ -5,14 +5,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { DialogService, UserService, WebSocketService2 } from 'app/services';
+import { DialogService, UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -45,7 +45,7 @@ describe('CronFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('cronjob.create'),
         mockCall('cronjob.update'),
       ]),
@@ -103,7 +103,7 @@ describe('CronFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cronjob.create', [{
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.create', [{
       command: 'rm -rf /',
       description: 'Final cron job',
       enabled: true,
@@ -133,7 +133,7 @@ describe('CronFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cronjob.update', [234, {
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.update', [234, {
       command: 'ls -la',
       description: 'Updated cron job',
       enabled: false,
