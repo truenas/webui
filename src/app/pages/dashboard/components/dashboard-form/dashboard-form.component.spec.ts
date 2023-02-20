@@ -15,7 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('DashboardFormComponent', () => {
   let spectator: Spectator<DashboardFormComponent>;
   let loader: HarnessLoader;
-  let ws2: WebSocketService;
+  let ws: WebSocketService;
   let dashState: DashConfigItem[];
 
   const createComponent = createComponentFactory({
@@ -35,7 +35,7 @@ describe('DashboardFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    ws2 = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService);
     dashState = [
       {
         name: 'CPU',
@@ -66,7 +66,7 @@ describe('DashboardFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws2.call).toHaveBeenCalledWith('user.set_attribute', [1, 'dashState', clone]);
+      expect(ws.call).toHaveBeenCalledWith('user.set_attribute', [1, 'dashState', clone]);
     });
   });
 });

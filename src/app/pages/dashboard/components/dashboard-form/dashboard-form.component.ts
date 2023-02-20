@@ -31,7 +31,7 @@ export class DashboardFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
@@ -93,7 +93,7 @@ export class DashboardFormComponent {
     this.dashState = clone;
 
     // Save to backend
-    this.ws2.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
+    this.ws.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (wasSet) => {

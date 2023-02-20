@@ -15,14 +15,14 @@ export class CloudCredentialService {
     B: 1024 ** 0,
   };
 
-  constructor(protected ws2: WebSocketService) {}
+  constructor(protected ws: WebSocketService) {}
 
   getProviders(): Observable<CloudsyncProvider[]> {
-    return this.ws2.call(this.credentialProviders);
+    return this.ws.call(this.credentialProviders);
   }
 
   getCloudsyncCredentials(): Observable<CloudsyncCredential[]> {
-    return this.ws2.call('cloudsync.credentials.query');
+    return this.ws.call('cloudsync.credentials.query');
   }
 
   getByte(data: string): number {

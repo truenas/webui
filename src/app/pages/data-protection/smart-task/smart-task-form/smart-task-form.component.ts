@@ -51,14 +51,14 @@ export class SmartTaskFormComponent {
     schedule: helptext.smarttest_picker_tooltip,
   };
 
-  readonly diskOptions$ = this.ws2.call('smart.test.disk_choices').pipe(choicesToOptions());
+  readonly diskOptions$ = this.ws.call('smart.test.disk_choices').pipe(choicesToOptions());
   readonly typeOptions$ = of(mapToOptions(smartTestTypeLabels, this.translate));
 
   private editingTest: SmartTestTask;
 
   constructor(
     private fb: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
@@ -83,9 +83,9 @@ export class SmartTaskFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws2.call('smart.test.create', [values]);
+      request$ = this.ws.call('smart.test.create', [values]);
     } else {
-      request$ = this.ws2.call('smart.test.update', [
+      request$ = this.ws.call('smart.test.update', [
         this.editingTest.id,
         values,
       ]);

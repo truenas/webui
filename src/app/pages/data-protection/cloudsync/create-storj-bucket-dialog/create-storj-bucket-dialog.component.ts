@@ -22,7 +22,7 @@ export class CreateStorjBucketDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<CreateStorjBucketDialogComponent>,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private appLoader: AppLoaderService,
     private dialogService: DialogService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },
@@ -31,7 +31,7 @@ export class CreateStorjBucketDialogComponent {
 
   onSubmit(): void {
     this.appLoader.open();
-    this.ws2.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.appLoader.close();
         this.dialogRef.close(this.form.controls.bucket.value);
