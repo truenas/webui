@@ -3,25 +3,20 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { combineLatest, of } from 'rxjs';
+import { of } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
-  ManualDiskSelectionComponent,
+  ManualDiskSelectionComponent, ManualDiskSelectionLayout,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/pool-manager.utils';
-import { SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
-import { AppLoaderService, WebSocketService2 } from 'app/services';
-import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -55,21 +50,15 @@ export class CreateDataWizardStepComponent implements OnInit {
     },
   ]);
 
-  private system: SystemProfiler;
-
   constructor(
-    private poolManagerStore: PoolManagerStore,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private ws: WebSocketService2,
-    private appLoader: AppLoaderService,
-    private store$: Store<AppState>,
+    public store: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
-    this.loadSystemData();
-    this.poolManagerStore.unusedDisks$.pipe(untilDestroyed(this)).subscribe((disks) => {
+    this.store.unusedDisks$.pipe(untilDestroyed(this)).subscribe((disks) => {
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();
@@ -149,21 +138,13 @@ export class CreateDataWizardStepComponent implements OnInit {
   }
 
   openManualDiskSelection(): void {
-    this.dialog.open(ManualDiskSelectionComponent, { data: this.system, panelClass: 'manual-selection-dialog' });
-  }
+    // TODO: Take current form settings, convert to layout and pass into a dialog.
+    // TODO: Extract logic somewhere, plan for multiple layout types (Stripe, Mirror, etc), and different options
+    // TODO: such as different enclosure dispersal and treat disk size as minimum.
+    // TODO: Also keep in mind that user set custom layout in dialog, save and then press this button again.
 
-  private loadSystemData(): void {
-    combineLatest([
-      this.ws.call('enclosure.query'),
-      this.ws.call('disk.query'),
-      this.store$.pipe(waitForSystemInfo),
-    ])
-      .pipe(untilDestroyed(this))
-      .subscribe(([enclosures, disks, sysInfo]) => {
-        this.appLoader.close();
-        const systemProduct = sysInfo.system_product;
-        this.system = new SystemProfiler(systemProduct, enclosures);
-        this.system.diskData = disks;
-      });
+    this.dialog.open(ManualDiskSelectionComponent, {
+      data: {} as ManualDiskSelectionLayout,
+    });
   }
 }

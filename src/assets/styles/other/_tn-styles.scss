@@ -438,7 +438,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-mdc-dialog-container {
     border-radius: var(--mdc-dialog-container-shape);
-    max-width: 800px;
 
     :not(.mat-mdc-dialog-content) {
       > form {
@@ -1388,29 +1387,6 @@ ix-tree-node[aria-level='2'],
 ix-nested-tree-node[aria-level='2'] {
   ix-bootenv-node-item {
     padding-left: 33px;
-  }
-}
-
-.manual-selection-dialog {
-  .mat-mdc-card {
-    border: none;
-    border-radius: 0;
-    margin: 0;
-  }
-
-  .mat-mdc-dialog-container {
-    max-width: 80vw;
-  }
-
-  mat-card {
-    border-radius: 0;
-  }
-
-  .mat-mdc-card-content,
-  form {
-    height: 100%;
-    overflow: auto;
-    padding: 0 !important;
   }
 }
 

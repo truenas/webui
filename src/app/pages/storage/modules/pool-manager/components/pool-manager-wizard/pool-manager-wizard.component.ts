@@ -4,7 +4,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
-import { AppLoaderService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -37,16 +36,15 @@ export class PoolManagerWizardComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private appLoader: AppLoaderService,
-    private poolManagerStore: PoolManagerStore,
+    private store: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
-    this.appLoader.open();
-    this.poolManagerStore.initialize();
+    // TODO: Add loading indicator
+    this.store.initialize();
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((formValue) => {
-      this.poolManagerStore.updateFormValue(formValue);
+      this.store.updateFormValue(formValue);
     });
   }
 }

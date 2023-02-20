@@ -9,9 +9,4 @@ import { Disk } from 'app/interfaces/storage.interface';
 })
 export class DiskInfoComponent {
   @Input() disk: Disk;
-
-  get slot(): string {
-    // TODO:
-    return '';
-  }
 }

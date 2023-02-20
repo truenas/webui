@@ -35,6 +35,7 @@
       <h3>{{'Advanced Options' | translate}}</h3>
 
       <ix-radio-group
+        *ngIf="store.hasMultipleEnclosures$ | async"
         formControlName="minimizeEnclosureDispersal"
         [options]="dispersalOptions$"
         [required]="true"
@@ -48,6 +49,7 @@
       <button
         mat-button
         type="button"
+        class="manual-disk-selection"
         ixTest="manual"
         (click)="openManualDiskSelection()"
       >
