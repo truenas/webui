@@ -74,7 +74,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   constructor(
     private dialogService: DialogService,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private taskService: TaskService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
@@ -126,7 +126,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   onCheckboxChange(row: PeriodicSnapshotTaskUi): void {
     row.enabled = !row.enabled;
-    this.ws2.call(this.updateCall, [row.id, { enabled: row.enabled } as PeriodicSnapshotTaskUpdate])
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled } as PeriodicSnapshotTaskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (task) => {

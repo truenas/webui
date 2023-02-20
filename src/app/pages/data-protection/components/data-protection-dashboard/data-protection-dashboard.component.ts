@@ -86,7 +86,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   jobStates = new Map<number, string>();
 
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
     private dialog: DialogService,
@@ -616,7 +616,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state.state = JobState.Running),
-            switchMap(() => this.ws2.call('replication.run', [row.id])),
+            switchMap(() => this.ws.call('replication.run', [row.id])),
             tap(() => {
               this.snackbar.success(
                 this.translate.instant('Replication «{name}» has started.', { name: row.name }),
@@ -669,7 +669,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws2.call('cloudsync.sync', [row.id])),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -702,7 +702,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             })
             .pipe(
               filter(Boolean),
-              switchMap(() => this.ws2.call('cloudsync.abort', [row.id])),
+              switchMap(() => this.ws.call('cloudsync.abort', [row.id])),
               untilDestroyed(this),
             )
             .subscribe({
@@ -730,7 +730,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             hideCheckBox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws2.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -781,7 +781,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws2.call('rsynctask.run', [row.id])),
+            switchMap(() => this.ws.call('rsynctask.run', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Rsync task «{name}» has started.', {
                 name: `${row.remotehost} – ${row.remotemodule}`,
@@ -893,7 +893,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         return;
     }
 
-    this.ws2
+    this.ws
       .call(updateCall, [row.id, { [param]: row[param] }])
       .pipe(untilDestroyed(this))
       .subscribe({

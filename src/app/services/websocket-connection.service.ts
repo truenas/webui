@@ -65,7 +65,7 @@ export class WebsocketConnectionService {
         return of(data);
       }),
     );
-    // Atleast one explicit subscription required to keep the connection open
+    // At least one explicit subscription required to keep the connection open
     this.ws$.pipe(
       tap((response: IncomingWebsocketMessage) => {
         if (response.msg === IncomingApiMessageType.Connected) {

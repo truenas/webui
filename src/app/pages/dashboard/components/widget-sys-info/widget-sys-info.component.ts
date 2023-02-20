@@ -77,7 +77,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   constructor(
     public router: Router,
     public translate: TranslateService,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     public sysGenService: SystemGeneralService,
     public mediaObserver: MediaObserver,
     private locale: LocaleService,
@@ -111,7 +111,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         if (haStatus.hasHa) {
           this.data = null;
 
-          this.ws2.call('failover.call_remote', ['system.info'])
+          this.ws.call('failover.call_remote', ['system.info'])
             .pipe(untilDestroyed(this))
             .subscribe((systemInfo: SystemInfo) => {
               this.processSysInfo(systemInfo);
@@ -145,7 +145,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   checkForRunningUpdate(): void {
-    this.ws2.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
       next: (jobs) => {
         if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
@@ -313,7 +313,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     sessionStorage.updateLastChecked = Date.now();
     sessionStorage.updateAvailable = 'false';
 
-    this.ws2.call('update.check_available').pipe(
+    this.ws.call('update.check_available').pipe(
       take(1),
       untilDestroyed(this),
     ).subscribe((update) => {
