@@ -1054,6 +1054,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         return this.createSnapshots(data) as Promise<CreatedPayloads[T]>;
       case 'replication':
         return this.createReplicationTask(data) as Promise<CreatedPayloads[T]>;
+      default:
+        throw new Error(`Unknown item: ${item}`);
     }
   }
 

@@ -209,6 +209,7 @@ export class DeviceFormComponent implements OnInit {
         return this.displayForm;
       default:
         assertUnreachable(this.typeControl.value);
+        return undefined;
     }
   }
 

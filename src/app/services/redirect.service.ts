@@ -24,13 +24,15 @@ export class RedirectService {
     @Inject(WINDOW) private window: Window,
   ) {}
 
-  openWindow(url: string, target?: string): Window {
+  openWindow(url: string, target?: string): void {
     if (!url.includes('http://')) {
-      return this.window.open(url, target);
+      this.window.open(url, target);
+      return;
     }
     this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
       if (!config.ui_httpsredirect) {
-        return this.window.open(url, target);
+        this.window.open(url, target);
+        return;
       }
       this.matDialog.open(RedirectDialogComponent, {
         data: {
@@ -45,7 +47,7 @@ Alternatively you can disable redirect in Settings, clear browser cache and try 
           url,
         } as RedirectDialogData,
       }).afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        return this.window.open(url, target);
+        this.window.open(url, target);
       });
     });
   }

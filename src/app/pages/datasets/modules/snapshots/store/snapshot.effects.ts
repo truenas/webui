@@ -54,6 +54,8 @@ export class SnapshotEffects {
               return snapshotAdded({ snapshot: event.fields });
             case IncomingApiMessageType.Changed:
               return snapshotChanged({ snapshot: event.fields });
+            default:
+              return undefined;
           }
         }),
       );

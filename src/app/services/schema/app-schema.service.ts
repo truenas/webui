@@ -239,7 +239,7 @@ export class AppSchemaService {
         const fieldSchema = _.find(schema?.questions, { variable: key });
 
         if (fieldSchema?.schema?.null) {
-          return null;
+          return;
         }
 
         delete result[key];

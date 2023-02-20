@@ -87,6 +87,8 @@ export class ZfsHealthCardComponent implements OnChanges {
         return this.isScanScrub
           ? T('Canceled Scrub on {date}')
           : T('Canceled Resilver on {date}');
+      default:
+        return '';
     }
   }
 

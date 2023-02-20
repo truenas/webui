@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { helptextSharingWebdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -454,6 +455,9 @@ export class SharesDashboardComponent implements AfterViewInit {
           },
         };
       }
+      default:
+        assertUnreachable(shareType);
+        throw new Error('Unsupported share type');
     }
   }
 
@@ -526,6 +530,8 @@ export class SharesDashboardComponent implements AfterViewInit {
         return 'third';
       case 3:
         return 'fourth';
+      default:
+        throw new Error('Unsupported index');
     }
   }
 
