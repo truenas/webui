@@ -1,7 +1,6 @@
 const { pathsToModuleNameMapper } = require('ts-jest');
 const { compilerOptions } = require('./tsconfig');
 
-
 // Deliberately set to not UTC.
 process.env.TZ = 'Europe/Kiev';
 

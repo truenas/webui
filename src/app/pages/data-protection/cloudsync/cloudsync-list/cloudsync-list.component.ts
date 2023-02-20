@@ -89,7 +89,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   };
 
   constructor(
-    protected ws2: WebSocketService,
+    protected ws: WebSocketService,
     protected translate: TranslateService,
     protected dialog: DialogService,
     protected slideInService: IxSlideInService,
@@ -155,7 +155,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws2.call('cloudsync.sync', [row.id])),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -185,7 +185,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.ws2.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe({
+              this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe({
                 next: () => {
                   this.dialog.info(
                     this.translate.instant('Task Stopped'),
@@ -213,7 +213,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             hideCheckBox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws2.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),

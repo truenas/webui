@@ -86,7 +86,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private dialog: DialogService,
     protected modalService: ModalService,
     protected loader: AppLoaderService,
@@ -132,7 +132,7 @@ export class ReplicationListComponent implements EntityTableConfig {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws2.call('replication.run', [row.id])),
+            switchMap(() => this.ws.call('replication.run', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Replication «{name}» has started.', { name: row.name }),
             )),
@@ -233,7 +233,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   onCheckboxChange(row: ReplicationTaskUi): void {
-    this.ws2.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
       next: (task) => {
         row.enabled = task.enabled;
         if (!task) {

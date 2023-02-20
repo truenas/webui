@@ -1,11 +1,13 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
+import { Subject } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
@@ -65,13 +67,16 @@ const dashboardDisks: StorageDashboardDisk[] = [
 ];
 
 describe('PoolsDashboardStore', () => {
+  const websocketSubscription$ = new Subject<ApiEvent<Pool>>();
   let spectator: SpectatorService<PoolsDashboardStore>;
   let testScheduler: TestScheduler;
   const createService = createServiceFactory({
     service: PoolsDashboardStore,
     providers: [
       StorageService,
-      mockProvider(WebSocketService),
+      mockProvider(WebSocketService, {
+        subscribe: jest.fn(() => websocketSubscription$),
+      }),
       mockProvider(DialogService),
     ],
   });

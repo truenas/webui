@@ -195,7 +195,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasConsoleFooter = false;
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private router: Router,
     private dialog: DialogService,
     private storageService: StorageService,
@@ -214,7 +214,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.ws2
+    this.ws
       .call('system.advanced.config')
       .pipe(untilDestroyed(this))
       .subscribe((advancedConfig) => {
@@ -253,7 +253,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.ws2.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
+    this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
     });
   }
@@ -286,19 +286,19 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getCheckinWaitingSeconds(): Promise<number> {
     return lastValueFrom(
-      this.ws2.call('interface.checkin_waiting'),
+      this.ws.call('interface.checkin_waiting'),
     );
   }
 
   private getPendingChanges(): Promise<boolean> {
     return lastValueFrom(
-      this.ws2.call('interface.has_pending_changes'),
+      this.ws.call('interface.has_pending_changes'),
     );
   }
 
   private async cancelCommit(): Promise<void> {
     await lastValueFrom(
-      this.ws2.call('interface.cancel_rollback'),
+      this.ws.call('interface.cancel_rollback'),
     );
   }
 
@@ -328,7 +328,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   commitPendingChanges(): void {
-    this.ws2
+    this.ws
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
       .subscribe((services) => {
@@ -365,7 +365,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe((confirm: boolean) => {
             if (confirm) {
               this.loader.open();
-              this.ws2
+              this.ws
                 .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
                 .pipe(untilDestroyed(this))
                 .subscribe({
@@ -422,7 +422,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   finishCheckin(): void {
     this.loader.open();
-    this.ws2
+    this.ws
       .call('interface.checkin')
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -456,7 +456,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((confirm: boolean) => {
         if (confirm) {
           this.loader.open();
-          this.ws2
+          this.ws
             .call('interface.rollback')
             .pipe(untilDestroyed(this))
             .subscribe({
@@ -496,7 +496,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getInterfaceInOutInfo(tableSource: NetworkInterfaceUi[]): void {
-    this.ws2
+    this.ws
       .subscribe('reporting.realtime')
       .pipe(
         map((event) => event.fields),
@@ -609,7 +609,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       onChanging: false,
       onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
         row.onChanging = true;
-        this.ws2
+        this.ws
           .call('service.stop', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe({
@@ -647,7 +647,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       matTooltip: this.translate.instant('Start'),
       onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
         row.onChanging = true;
-        this.ws2
+        this.ws
           .call('service.start', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe({
@@ -705,7 +705,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.loader.open();
-    this.ws2.call('interface.query', [[['id', '=', state.editInterface]]])
+    this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (interfaces) => {

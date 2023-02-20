@@ -156,7 +156,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   };
 
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private reportsService: ReportsService,
     private tableService: TableService,
     public translate: TranslateService,
@@ -356,7 +356,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         identifier: networkInterfaceName,
         name: 'interface',
       } as ReportingParams;
-      this.ws2.call('reporting.get_data', [[params], timeFrame]).pipe(
+      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(
         map((response) => response[0]),
         untilDestroyed(this),
       ).subscribe({
@@ -411,7 +411,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
               buttonMsg: this.translate.instant('Clear'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.nicInfoMap[nic.state.name].emptyConfig = this.loadingEmptyConfig;
-              this.ws2.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
+              this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
             });
           },
         },
