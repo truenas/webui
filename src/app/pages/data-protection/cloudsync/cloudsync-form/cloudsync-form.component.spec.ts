@@ -172,7 +172,7 @@ describe('CloudsyncFormComponent', () => {
 
     expect(spectator.component.form.value).toEqual({
       acknowledge_abuse: false,
-      bwlimit: ['13:00, 1 KB', '15:00, off'],
+      bwlimit: ['13:00, 1 KiB', '15:00, off'],
       cloudsync_picker: '0 0 * * 0',
       create_empty_src_dirs: true,
       credentials: 2,

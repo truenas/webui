@@ -510,7 +510,7 @@ export class CloudsyncFormComponent {
       encryption: task.encryption,
       bwlimit: task.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth)}`
+          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth, { standard: 'iec' })}`
           : `${bwlimit.time}, off`;
       }),
     });
