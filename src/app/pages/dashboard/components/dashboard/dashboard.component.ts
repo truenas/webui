@@ -679,7 +679,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private listenForPoolUpdates(): void {
-    this.ws2.subscribe('pool.query').pipe(
+    this.ws.subscribe('pool.query').pipe(
       filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
       untilDestroyed(this),
     ).subscribe(() => {
