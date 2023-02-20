@@ -256,7 +256,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   startListeners(): void {
     this.getDisksData();
     this.getNetworkInterfaces();
-    this.getPoolsUpdate();
+    this.listenForPoolUpdates();
 
     this.ws2.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
@@ -678,7 +678,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return { carousel, vpw, startX };
   }
 
-  private getPoolsUpdate(): void {
+  private listenForPoolUpdates(): void {
     this.ws2.subscribe('pool.query').pipe(
       filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
       untilDestroyed(this),

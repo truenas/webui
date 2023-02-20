@@ -7,6 +7,7 @@ import {
 import { catchError, switchMap } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
@@ -50,7 +51,6 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     private sorter: StorageService,
   ) {
     super(initialState);
-    this.subscribeToPoolsUpdate();
   }
 
   readonly loadDashboard = this.effect((triggers$: Observable<void>) => {
@@ -109,10 +109,8 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     return this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]);
   }
 
-  subscribeToPoolsUpdate(): void {
-    this.ws.subscribe('pool.query').subscribe(() => {
-      this.loadDashboard();
-    });
+  listenForPoolUpdates(): Observable<ApiEvent<Pool>> {
+    return this.ws.subscribe('pool.query');
   }
 
   getRootDatasets(): Observable<Dataset[]> {
