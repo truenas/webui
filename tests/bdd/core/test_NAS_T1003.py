@@ -127,8 +127,8 @@ def input_domain_name_account_name_password(driver, ad_domain, ad_user, ad_passw
 @then(parsers.parse('click Advanced, and input "{ca_ou}" to Computer Account OU'))
 def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_ou):
     """click Advanced, and input "TRUENAS_SERVERS" to Computer Account OU."""
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Computer Account OU"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').send_keys(ca_ou)

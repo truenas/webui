@@ -96,7 +96,7 @@ def input_password_for_bind_password(driver, password):
 @then('click Advanced Options')
 def click_advanced_options(driver):
     """click Advanced Options."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
 
 
 @then('click Enable checkbox, then Samba Schema and select ON for Encryption Mode')

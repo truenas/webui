@@ -139,8 +139,8 @@ def input_guest_share_for_the_name_input_the_guest_path_for_the_smb_dataset(driv
 @then('click ADVANCED OPTIONS and check the Allow Guest Access box')
 def click_advanced_options_and_check_the_allow_guest_access_box(driver):
     """click ADVANCED OPTIONS and check the Allow Guest Access box."""
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Allow Guest Access"]')
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Allow Guest Access"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:

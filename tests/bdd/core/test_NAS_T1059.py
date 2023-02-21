@@ -30,8 +30,8 @@ def test_verify_anonymous_ftp_login_access(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__FTP_Actions"]').click()
     """on the FTP edit page, enable the "Allow Anonymous Login" checkbox."""
     assert wait_on_element(driver, 7, '//li[contains(.,"FTP")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Access")]')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__anonpath"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__anonpath"]').clear()
@@ -163,8 +163,8 @@ def on_the_service_page_click_on_the_ftp_pencil(driver):
 def on_the_ftp_edit_page_enable_the_allow_anonymous_login_checkbox(driver):
     """on the FTP edit page, enable the "Allow Anonymous Login" checkbox."""
     assert wait_on_element(driver, 7, '//li[contains(.,"FTP")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Access")]')
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Allow Anonymous Login"]', 'clickable')
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Allow Anonymous Login"]', 'class', 'mat-checkbox-checked')

@@ -169,8 +169,8 @@ def input_the_nfs2_dataset_path_in_paths_click_advanced_options(driver):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__path"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys('/mnt/tank/nfs2')
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
 
 
 @then('click on Read Only checkbox to enable read-only')

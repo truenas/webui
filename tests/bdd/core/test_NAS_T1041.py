@@ -146,8 +146,8 @@ def select_no_preset_for_purpose_click_advanced_options(driver):
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Purpose_No presets"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Purpose_No presets"]').click()
     # ix-auto="button__ADVANCED OPTIONS"
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Use as Home Share"]')
 
 

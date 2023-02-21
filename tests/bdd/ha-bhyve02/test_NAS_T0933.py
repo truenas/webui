@@ -140,8 +140,8 @@ def input_domain_name_ad_domain_account_name_ad_user_password_ad_pasword(driver,
 @then(parsers.parse('Click advanced, and input "{ca_ou}" to Computer Account OU'))
 def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_ou):
     """Click advanced, and input "{ca_ou}" to Computer Account OU."""
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').send_keys(ca_ou)
 

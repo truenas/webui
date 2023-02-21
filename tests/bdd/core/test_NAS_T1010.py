@@ -181,6 +181,8 @@ def click_the_enable_checkbox_and_click_save(driver, ad_user, ad_password):
     """click the Enable checkbox and click SAVE."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__LEAVE DOMAIN"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__LEAVE DOMAIN"]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Leave Domain"]')
