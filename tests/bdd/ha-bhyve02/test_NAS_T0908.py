@@ -48,8 +48,8 @@ def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     if wait_on_element(driver, 3, xpaths.popupTitle.help):
-        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
 
 
@@ -79,8 +79,8 @@ def click_on_users(driver):
 def the_users_page_should_open(driver):
     """The Users page should open."""
     if wait_on_element(driver, 5, '//h1[contains(.,"Display Note")]'):
-        assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
 
 

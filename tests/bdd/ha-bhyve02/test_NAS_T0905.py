@@ -127,8 +127,8 @@ def click_agree(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     if wait_on_element(driver, 2, xpaths.popupTitle.help):
-        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        assert wait_on_element(driver, 10, xpaths.button.close)
+        driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('we should be returned to license information')
@@ -222,7 +222,7 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """after settings are applied you should see "Settings applied"."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Settings saved")]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('navigate to Network then Interfaces, click next to vtnet0, click edit')
@@ -319,8 +319,8 @@ def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(dr
     assert wait_on_element(driver, 7, '//h1[text()="Save Changes"]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
     assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
     assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 

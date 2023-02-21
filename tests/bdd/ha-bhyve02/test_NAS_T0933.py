@@ -282,8 +282,8 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
     assert wait_on_element(driver, 60, xpaths.dashboard.system_information)
     if wait_on_element(driver, 5, xpaths.popupTitle.help):
-        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
     assert refresh_if_element_missing(driver, 25, xpaths.topToolbar.ha_enable)
 

@@ -56,8 +56,8 @@ def you_see_the_dashboard_go_to_directory_services_and_select_nis(driver):
     if wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     if wait_on_element(driver, 2, xpaths.popupTitle.help):
-        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        assert wait_on_element(driver, 10, xpaths.button.close)
+        driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 5, xpaths.sideMenu.directory_services, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
     assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services_nis)
