@@ -463,8 +463,10 @@ export class StorageService {
       const vdevDiskCapacities = new Set<number>(); // There should only be one value
       if (vdev.children.length) {
         vdev.children.forEach((child) => {
-          const diskSize = disks?.find((disk) => disk.name === child.disk)?.size;
-          vdevDiskCapacities.add(diskSize);
+          const disk2 = disks?.find((disk) => disk.name === child.disk);
+          if (disk2 && disk2.size) {
+            vdevDiskCapacities.add(disk2.size);
+          }
         });
       } else {
         // Topology items of type DISK will not have children
