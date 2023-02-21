@@ -482,7 +482,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   private openStopDialog(vm: VirtualMachineRow): void {
     this.dialog.open(StopVmDialogComponent, {
-      data: vm,
+      data: { vm, parent: this },
     })
       .afterClosed()
       .pipe(untilDestroyed(this))
