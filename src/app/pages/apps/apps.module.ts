@@ -11,6 +11,7 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -75,6 +76,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FlexLayoutModule,
     LazyLoadImageModule,
     TestIdModule,
+    AppCommonModule,
   ],
 })
 export class AppsModule { }

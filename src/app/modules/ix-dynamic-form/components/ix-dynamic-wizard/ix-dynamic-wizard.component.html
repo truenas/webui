@@ -1,6 +1,7 @@
 <ng-container *ngFor="let section of dynamicSection">
   <ix-fieldset
     *ngIf="section.schema.length"
+    [id]="section.name"
     [title]="section.name | translate"
     [tooltip]="section.description | translate"
   >

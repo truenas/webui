@@ -22,3 +22,14 @@
     </button>
   </div>
 </form>
+<div class="search-container">
+  <div class="search-card">
+    <ix-search-input (search)="onFieldSearch($event)"></ix-search-input>
+    <ng-container *ngFor="let section of dynamicSection">
+      <div class="section" (click)="onSectionClick(section.name)">
+        {{ section.name }}
+        <ix-icon *ngIf="checkSectionInvalid(section)" name="warning"></ix-icon>
+      </div>
+    </ng-container>
+  </div>
+</div>

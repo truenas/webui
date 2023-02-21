@@ -96,6 +96,18 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  onFieldSearch(query: string): void {
+    console.warn(query); // TODO: Implement search
+  }
+
+  onSectionClick(sectionName: string): void {
+    document.getElementById(sectionName).scrollIntoView();
+  }
+
+  checkSectionInvalid(section: DynamicWizardSchema): boolean {
+    return !section.schema.every((item) => !this.form.controls[item.controlName].invalid);
+  }
+
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
@@ -140,7 +152,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setChartCreate(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
-    console.warn(this.catalogApp);
     let hideVersion = false;
     if (this.catalogApp.name === ixChartApp) {
       hideVersion = true;
@@ -326,10 +337,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       const version = data.version;
       delete data.version;
       this.dialogRef.componentInstance.setCall('chart.release.create', [{
-        catalog: this.catalogApp.catalog.id,
+        catalog: officialCatalog,
         item: this.catalogApp.name,
         release_name: data.release_name,
-        train: this.catalogApp.catalog.train,
+        train: chartsTrain,
         version,
         values: data,
       } as ChartReleaseCreate]);
