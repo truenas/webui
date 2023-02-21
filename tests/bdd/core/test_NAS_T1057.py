@@ -70,8 +70,7 @@ def on_the_support_page_click_on_login_to_jira_button(driver, button_text):
 def verify_that_the_login_popup_appears(driver):
     """verify that the Login popup appears."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 7, '(//span[@aria-label="Jira"])[2]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Jira")]')
+    assert wait_on_element(driver, 7, '//span[@aria-label="Jira"]')
     assert wait_on_element(driver, 5, '//input[@id="username"]')
     assert wait_on_element(driver, 5, '//button[@id="login-submit"]', 'clickable')
     assert wait_on_element(driver, 5, '//button[contains(.,"Continue with Google")]', 'clickable')
