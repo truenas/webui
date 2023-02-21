@@ -158,8 +158,8 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
     this.dialogService.confirm({
       title: helptext.thirdPartyRepoWarning.title,
       message: helptext.thirdPartyRepoWarning.message,
-      buttonMsg: helptext.thirdPartyRepoWarning.btnMsg,
-      hideCheckBox: true,
+      buttonText: helptext.thirdPartyRepoWarning.btnMsg,
+      hideCheckbox: true,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
       () => this.slideInService.open(CatalogAddFormComponent),
     );

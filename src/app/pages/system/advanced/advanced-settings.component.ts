@@ -108,7 +108,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
           matTooltip: this.translate.instant('Run job'),
           onClick: (row: CronjobRow): void => {
             this.dialog
-              .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this job now?'), hideCheckBox: true })
+              .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this job now?'), hideCheckbox: true })
               .pipe(
                 filter((run) => !!run),
                 switchMap(() => this.ws.call('cronjob.run', [row.id])),

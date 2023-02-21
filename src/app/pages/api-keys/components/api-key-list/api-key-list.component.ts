@@ -114,8 +114,8 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     this.dialog.confirm({
       title: this.translate.instant('Delete API Key'),
       message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> API Key?', { name: apiKey.name }),
-      buttonMsg: this.translate.instant('Delete'),
-      cancelMsg: this.translate.instant('Cancel'),
+      buttonText: this.translate.instant('Delete'),
+      cancelText: this.translate.instant('Cancel'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('api_key.delete', [String(apiKey.id)])),

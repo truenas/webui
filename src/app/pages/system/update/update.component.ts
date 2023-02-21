@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -17,7 +17,6 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -63,7 +62,6 @@ export class UpdateComponent implements OnInit {
   updateMethod: ApiMethod = 'update.update';
   isHa = false;
   productType: ProductType;
-  ds: MatDialogRef<ConfirmDialogComponent, boolean>;
   failoverUpgradePending = false;
   showSpinner = false;
   singleDescription: string;
@@ -500,21 +498,21 @@ export class UpdateComponent implements OnInit {
       confirmMsg = helptext.ha_confirm_msg;
     }
 
-    this.ds = this.dialogService.confirm({
+    this.dialogService.confirm({
       title: this.translate.instant('Download Update'),
       message: this.translate.instant(downloadMsg),
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Download'),
-      secondaryCheckBox: true,
-      secondaryCheckBoxMsg: this.translate.instant(confirmMsg),
-      method: this.updateMethod,
-      data: [{ reboot: false }],
-    }) as MatDialogRef<ConfirmDialogComponent, boolean>;
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Download'),
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant(confirmMsg),
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe((result) => {
+        if (!result.confirmed) {
+          return;
+        }
 
-    this.ds.componentInstance.isSubmitEnabled = true;
-    this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status) => {
-      if (status) {
-        if (!(this.ds.componentInstance.data as [{ reboot: boolean }])[0].reboot) {
+        if (!result.secondaryCheckbox) {
           const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
           dialogRef.componentInstance.setCall('update.download');
           dialogRef.componentInstance.submit();
@@ -529,8 +527,7 @@ export class UpdateComponent implements OnInit {
         } else {
           this.update();
         }
-      }
-    });
+      });
   }
 
   update(): void {
@@ -554,8 +551,8 @@ export class UpdateComponent implements OnInit {
           this.dialogService.confirm({
             title: helptext.ha_update.complete_title,
             message: helptext.ha_update.complete_msg,
-            hideCheckBox: true,
-            buttonMsg: helptext.ha_update.complete_action,
+            hideCheckbox: true,
+            buttonText: helptext.ha_update.complete_action,
             hideCancel: true,
           }).pipe(untilDestroyed(this)).subscribe();
         });

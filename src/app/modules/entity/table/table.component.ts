@@ -54,7 +54,7 @@ export interface AppTableColumn {
 
 export interface AppTableConfirmDeleteDialog {
   buildTitle?(args: unknown): string;
-  buttonMsg?(args: unknown): string;
+  buttonMessage?(args: unknown): string;
   title?: string;
   message?: string;
   button?: string;

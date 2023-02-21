@@ -300,7 +300,7 @@ export class IdmapFormComponent implements OnInit {
     return this.dialogService.confirm({
       title: helptext.idmap.clear_cache_dialog.title,
       message: helptext.idmap.clear_cache_dialog.message,
-      hideCheckBox: true,
+      hideCheckbox: true,
     }).pipe(
       switchMap((confirmed) => {
         if (!confirmed) {

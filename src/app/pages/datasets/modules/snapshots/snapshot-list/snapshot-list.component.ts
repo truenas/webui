@@ -160,16 +160,16 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       return {
         title: this.translate.instant(helptext.extra_cols.title_hide),
         message: this.translate.instant(helptext.extra_cols.message_hide),
-        buttonMsg: this.translate.instant(helptext.extra_cols.button_hide),
-        hideCheckBox: true,
+        buttonText: this.translate.instant(helptext.extra_cols.button_hide),
+        hideCheckbox: true,
       };
     }
 
     return {
       title: this.translate.instant(helptext.extra_cols.title_show),
       message: this.translate.instant(helptext.extra_cols.message_show),
-      buttonMsg: this.translate.instant(helptext.extra_cols.button_show),
-      hideCheckBox: true,
+      buttonText: this.translate.instant(helptext.extra_cols.button_show),
+      hideCheckbox: true,
     };
   }
 

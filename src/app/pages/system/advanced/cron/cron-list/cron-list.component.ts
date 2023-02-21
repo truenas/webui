@@ -105,7 +105,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
             .confirm({
               title: this.translate.instant('Run Now'),
               message: this.translate.instant('Run this job now?'),
-              hideCheckBox: true,
+              hideCheckbox: true,
             })
             .pipe(
               filter((run) => !!run),

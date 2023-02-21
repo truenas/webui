@@ -35,7 +35,7 @@ export class PowerMenuComponent {
     this.dialogService.confirm({
       title: this.translate.instant('Restart'),
       message: this.translate.instant('Restart the system?'),
-      buttonMsg: this.translate.instant('Restart'),
+      buttonText: this.translate.instant('Restart'),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -48,7 +48,7 @@ export class PowerMenuComponent {
     this.dialogService.confirm({
       title: this.translate.instant('Shut down'),
       message: this.translate.instant('Shut down the system?'),
-      buttonMsg: this.translate.instant('Shut Down'),
+      buttonText: this.translate.instant('Shut Down'),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),

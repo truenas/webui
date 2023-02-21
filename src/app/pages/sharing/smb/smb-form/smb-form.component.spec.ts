@@ -227,8 +227,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
       title: helptextSharingSmb.afpDialog_title,
       message: helptextSharingSmb.afpDialog_message,
-      hideCheckBox: false,
-      buttonMsg: helptextSharingSmb.afpDialog_button,
+      hideCheckbox: false,
+      buttonMessage: helptextSharingSmb.afpDialog_button,
       hideCancel: false,
     });
   });
@@ -273,8 +273,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
       title: helptextSharingSmb.manglingDialog.title,
       message: helptextSharingSmb.manglingDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.manglingDialog.action,
+      hideCheckbox: true,
+      buttonMessage: helptextSharingSmb.manglingDialog.action,
       hideCancel: true,
     });
   });
@@ -293,8 +293,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(3, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.stripACLDialog.button,
+      hideCheckbox: true,
+      buttonMessage: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -314,8 +314,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(4, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.stripACLDialog.button,
+      hideCheckbox: true,
+      buttonMessage: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -336,8 +336,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(5, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.stripACLDialog.button,
+      hideCheckbox: true,
+      buttonMessage: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -365,8 +365,8 @@ describe('SmbFormComponent', () => {
       .toHaveBeenNthCalledWith(6, {
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptextSharingSmb.stripACLDialog.button,
+        hideCheckbox: true,
+        buttonMessage: helptextSharingSmb.stripACLDialog.button,
         hideCancel: true,
       });
 

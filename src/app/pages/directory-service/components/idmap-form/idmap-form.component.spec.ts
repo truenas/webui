@@ -241,7 +241,7 @@ describe('IdmapFormComponent', () => {
     expect(confirm).toHaveBeenCalledWith({
       title: helptext.idmap.clear_cache_dialog.title,
       message: helptext.idmap.clear_cache_dialog.message,
-      hideCheckBox: true,
+      hideCheckbox: true,
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache', []);
   });

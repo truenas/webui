@@ -118,8 +118,8 @@ describe('SelectPoolDialogComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: helptext.noPool.title,
       message: helptext.noPool.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.noPool.action,
+      hideCheckbox: true,
+      buttonMessage: helptext.noPool.action,
     });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
   });

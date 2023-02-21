@@ -151,7 +151,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           this.dialog.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Run this cloud sync now?'),
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
@@ -182,7 +182,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             .confirm({
               title: this.translate.instant('Stop'),
               message: this.translate.instant('Stop this cloud sync?'),
-              hideCheckBox: true,
+              hideCheckbox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe({
@@ -210,7 +210,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           this.dialog.confirm({
             title: helptext.dry_run_title,
             message: helptext.dry_run_dialog,
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),

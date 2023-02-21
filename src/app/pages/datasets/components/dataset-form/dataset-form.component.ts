@@ -1682,9 +1682,9 @@ export class DatasetFormComponent implements FormConfiguration {
               this.dialogService.confirm({
                 title: helptext.afterSubmitDialog.title,
                 message: helptext.afterSubmitDialog.message,
-                hideCheckBox: true,
-                buttonMsg: helptext.afterSubmitDialog.actionBtn,
-                cancelMsg: helptext.afterSubmitDialog.cancelBtn,
+                hideCheckbox: true,
+                buttonText: helptext.afterSubmitDialog.actionBtn,
+                cancelText: helptext.afterSubmitDialog.cancelBtn,
               }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
                 if (confirmed) {
                   this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe({
@@ -1745,11 +1745,11 @@ export class DatasetFormComponent implements FormConfiguration {
     this.dialogService.confirm({
       hideCancel: true,
       title: this.translate.instant('Default Checksum Warning'),
-      hideCheckBox: true,
+      hideCheckbox: true,
       message: this.translate.instant(`The default "Checksum" value for datasets with deduplication used to be SHA256.
        Our testing has shown that SHA512 performs better for such datasets.
        We've changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".`),
-      buttonMsg: this.translate.instant('OK'),
+      buttonText: this.translate.instant('OK'),
     });
   }
 }

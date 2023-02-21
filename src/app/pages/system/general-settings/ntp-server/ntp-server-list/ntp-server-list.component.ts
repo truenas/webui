@@ -101,7 +101,7 @@ export class NtpServerListComponent implements OnInit {
       title: this.translate.instant('Delete NTP Server'),
       message: this.translate.instant('Are you sure you want to delete the <b>{address}</b> NTP Server?',
         { address: server.address }),
-      buttonMsg: this.translate.instant('Delete'),
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('system.ntpserver.delete', [server.id])),
