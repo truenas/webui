@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -149,11 +150,11 @@ def click_on_the_smb_start_automatically_checkbox(driver):
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]').click()
 
 
-@then(parsers.parse('send a file to the share with ip/"{smbname}" and "{user}"%"{password}"'))
-def send_a_file_to_the_share_with_ip_tanksmbshare_and_user_password(driver, nas_ip, smbname, user, password):
+@then(parsers.parse('send a file to the share with ip/"{smbname}" and "{ad_user}"%"{ad_password}"'))
+def send_a_file_to_the_share_with_ip_tanksmbshare_and_user_password(driver, nas_ip, smbname, ad_user, ad_password):
     """send a file to the share with ip/"tanksmbshare" and "user"%"password"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD02 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
@@ -176,11 +177,18 @@ def click_on_directory_services_then_active_directory(driver):
 
 
 @then('click the Enable checkbox and click SAVE')
-def click_the_enable_checkbox_and_click_save(driver):
+def click_the_enable_checkbox_and_click_save(driver, ad_user, ad_password):
     """click the Enable checkbox and click SAVE."""
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__LEAVE DOMAIN"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__LEAVE DOMAIN"]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Leave Domain"]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="Username"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(ad_user)
+    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(ad_password)
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element(driver, 7, '//span[text()="You have left the domain."]')
+    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()

@@ -4,6 +4,7 @@
 import os
 import pytest
 import time
+import xpaths
 from function import (
     wait_on_element,
     wait_on_element_disappear,

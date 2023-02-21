@@ -6,6 +6,7 @@ import string
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,

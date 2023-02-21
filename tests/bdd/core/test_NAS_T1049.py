@@ -3,6 +3,7 @@
 
 import time
 import datetime
+import xpaths
 from function import (
     wait_on_element,
     is_element_present
