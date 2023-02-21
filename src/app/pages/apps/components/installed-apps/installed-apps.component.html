@@ -18,6 +18,7 @@
           <div>
             <span class="app-name-header">
               <mat-checkbox
+                *ngIf="dataSource.length"
                 color="primary"
                 ix-auto
                 ix-auto-type="checkbox"
@@ -44,6 +45,9 @@
               (keydown.enter)="selectApp(app)"
             ></ix-app-row>
           </ng-container>
+          <div *ngIf="!dataSource.length" class="no-apps">
+            {{ 'Kubernetes is not running or does not have installed apps' | translate }}
+          </div>
         </div>
       </div>
     </div>

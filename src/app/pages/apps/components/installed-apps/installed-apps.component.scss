@@ -184,4 +184,11 @@ $scrollbar-offset: 20px;
       }
     }
   }
+
+  .no-apps {
+    color: var(--fg1);
+    display: flex;
+    justify-content: center;
+    margin: 15px;
+  }
 }
