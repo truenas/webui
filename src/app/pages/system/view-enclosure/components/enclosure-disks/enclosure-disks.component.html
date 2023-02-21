@@ -64,7 +64,7 @@
                 ></div>
                 {{ pool }}
                 <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <ix-icon name="mdi-alert"></ix-icon>
                 </span>
               </div>
 
@@ -242,7 +242,7 @@
         ixTest="back-enclosure"
         (click)="clearDisk()"
       >
-        <mat-icon>chevron_left</mat-icon>
+        <ix-icon name="chevron_left"></ix-icon>
       </a>
       {{ selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview' }}
     </div>

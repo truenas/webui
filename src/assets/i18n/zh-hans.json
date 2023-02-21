@@ -2,6 +2,7 @@
   "": "",
   "Add VDEV": "",
   "At least 1 GPU is required by the host for its functions.": "",
+  "CPU Reports": "",
   "Review": "",
   "Vdevs spans enclsoure": "",
   "When not specified, guest system is given fixed amount of memory specified above.\nWhen minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.": "",

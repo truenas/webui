@@ -9,7 +9,7 @@
       [matTooltip]="tooltips.toggle_collapse | translate"
       (click)="toggleCollapse()"
     >
-      <mat-icon>menu</mat-icon>
+      <ix-icon name="menu"></ix-icon>
     </button>
 
     <span fxFlex></span>
@@ -30,13 +30,12 @@
 
     <div class="topbar-mobile-footer">
       <div class="ix-systems-logo-icon">
-        <mat-icon
-          alt="iXsystems logo"
+        <ix-icon
           tabindex="0"
           [class]="['ix-logo', screenSize, getLogoIcon()]"
-          [svgIcon]="getLogoIcon()"
+          [name]="getLogoIcon()"
           (click)="openIx()"
-        ></mat-icon>
+        ></ix-icon>
       </div>
 
       <ix-truecommand-button></ix-truecommand-button>
@@ -51,7 +50,7 @@
         [matTooltip]="tooltips.upgrade_waiting | translate"
         (click)="upgradePendingDialog()"
       >
-        <mat-icon class="movement">update</mat-icon>
+        <ix-icon class="movement" name="update"></ix-icon>
       </button>
       <button
         *ngIf="updateIsRunning"
@@ -62,7 +61,7 @@
         [matTooltip]="tooltips.update | translate"
         (click)="showUpdateDialog()"
       >
-        <mat-icon class="movement">system_update_alt</mat-icon>
+        <ix-icon class="movement" name="system_update_alt"></ix-icon>
       </button>
       <button
         *ngIf="pendingNetworkChanges"
@@ -73,7 +72,7 @@
         [matTooltip]="tooltips.pending_network_changes | translate"
         (click)="showNetworkChangesPending()"
       >
-        <mat-icon class="movement">device_hub</mat-icon>
+        <ix-icon class="movement" name="device_hub"></ix-icon>
       </button>
       <button
         *ngIf="showResilvering"
@@ -84,7 +83,7 @@
         [matTooltip]="tooltips.resilvering | translate"
         (click)="showResilveringDetails()"
       >
-        <mat-icon class="fa-spin">autorenew</mat-icon>
+        <ix-icon class="fa-spin" name="autorenew"></ix-icon>
       </button>
       <!-- HA Status -->
       <span *ngIf="isFailoverLicensed && haStatusText">
@@ -97,7 +96,7 @@
           [matTooltip]="haStatusText | translate"
           (click)="showHaStatus()"
         >
-          <mat-icon svgIcon="ix:ha_enabled"></mat-icon>
+          <ix-icon name="ix:ha_enabled"></ix-icon>
         </button>
         <button
           *ngIf="haDisabledReasons.length > 0"
@@ -108,10 +107,13 @@
           [matTooltip]="haStatusText | translate"
           (click)="showHaStatus()"
         >
-          <mat-icon
-            [svgIcon]="haDisabledReasons[0] === FailoverDisabledReason.NoSystemReady ? 'ix:ha_reconnecting' : 'ix:ha_disabled'"
-          >
-          </mat-icon>
+          <ng-container *ngIf="haDisabledReasons[0] === FailoverDisabledReason.NoSystemReady; else haDisabledIcon">
+            <ix-icon name="ix:ha_reconnecting"></ix-icon>
+          </ng-container>
+
+          <ng-template #haDisabledIcon>
+            <ix-icon name="ix:ha_disabled"></ix-icon>
+          </ng-template>
         </button>
       </span>
 
@@ -126,15 +128,14 @@
         [matTooltip]="tooltips.alerts | translate"
         (click)="onAlertIndicatorPressed()"
       >
-        <mat-icon
+        <ix-icon
           *appLet="alertBadgeCount$ | async as alertBadgeCount"
+          name="notifications"
           matBadgeSize="small"
           matBadgeColor="warn"
           [matBadge]="alertBadgeCount"
           [matBadgeHidden]="alertBadgeCount === 0"
-        >
-          notifications
-        </mat-icon>
+        ></ix-icon>
       </button>
 
       <ix-user-menu></ix-user-menu>

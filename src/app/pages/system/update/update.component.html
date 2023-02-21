@@ -32,7 +32,7 @@
         ixTest="refresh"
         (click)="check()"
       >
-        <mat-icon>refresh</mat-icon>
+        <ix-icon name="refresh"></ix-icon>
       </button>
     </div>
     <ng-template #trainName>
@@ -45,12 +45,12 @@
           mat-mini-fab
           color="primary"
           id="single-train-refresh-button"
-          matTooltip="Refresh"
           ixTest="refresh"
+          [matTooltip]="Refresh | translate"
           [disabled]="!checkable || isUpdateRunning"
           (click)="check()"
         >
-          <mat-icon>refresh</mat-icon>
+          <ix-icon name="refresh"></ix-icon>
         </button>
       </div>
     </ng-template>

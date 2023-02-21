@@ -19,7 +19,7 @@
             ixTest="network-back"
             (click)="goBack()"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <h3 class="mat-card-title-text">
@@ -41,7 +41,7 @@
               [routerLink]="['/reportsdashboard/network']"
               [matTooltip]="'Network Reports' | translate"
             >
-              <mat-icon>insert_chart</mat-icon>
+              <ix-icon name="insert_chart"></ix-icon>
             </a>
           </div>
         </mat-toolbar-row>
@@ -89,31 +89,27 @@
                       <ul>
                         <li fxLayout="row" fxLayoutAlign="start center">
                           <span *ngIf="getLinkState(nic) === LinkState.Up" class="icon up">
-                            <mat-icon [matTooltip]="getLinkStateLabel(nic)">
-                              check_circle
-                            </mat-icon>
+                            <ix-icon name="check_circle" [matTooltip]="getLinkStateLabel(nic)"></ix-icon>
                           </span>
                           <span *ngIf="getLinkState(nic) !== LinkState.Up" class="icon down">
-                            <mat-icon [matTooltip]="getLinkStateLabel(nic)">
-                              cancel
-                            </mat-icon>
+                            <ix-icon name="cancel" [matTooltip]="getLinkStateLabel(nic)"></ix-icon>
                           </span>
                           <span>{{ getLinkStateLabel(nic) }}</span>
                         </li>
                         <li fxLayout="row" fxLayoutAlign="start center" class="line-state">
                           <span class="icon state">
-                            <mat-icon
+                            <ix-icon
                               *ngIf="getLinkState(nic) === LinkState.Up"
-                              svgIcon="ix:network_upload_download"
+                              name="ix:network_upload_download"
                               class="state-info-icon"
                               [matTooltip]="showInOutInfo(nic)"
                               [id]="nic.state.name"
-                            ></mat-icon>
-                            <mat-icon
+                            ></ix-icon>
+                            <ix-icon
                               *ngIf="getLinkState(nic) !== LinkState.Up"
-                              svgIcon="ix:network_upload_download_disabled"
+                              name="ix:network_upload_download_disabled"
                               class="state-info-icon"
-                            ></mat-icon>
+                            ></ix-icon>
                           </span>
                           <ul *ngIf="getLinkState(nic) === LinkState.Up">
                             <li>
@@ -131,9 +127,7 @@
                         </li>
                         <li *ngIf="availableNics.length > 1" fxLayout="row" fxLayoutAlign="start center">
                           <span class="icon address">
-                            <mat-icon [matTooltip]="getIpAddressTooltip(nic)">
-                              settings_ethernet
-                            </mat-icon>
+                            <ix-icon name="settings_ethernet" [matTooltip]="getIpAddressTooltip(nic)"></ix-icon>
                           </span>
                           <span>{{ nicInfoMap[nic.state.name]?.ip }}</span>
                         </li>

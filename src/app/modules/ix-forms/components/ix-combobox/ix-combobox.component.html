@@ -26,12 +26,11 @@
         [diameter]="15"
       ></mat-progress-spinner>
 
-      <mat-icon
+      <ix-icon
         *ngIf="shouldShowResetInput()"
-        fontSet="mdi-set"
-        fontIcon="mdi-close-circle"
+        name="mdi-close-circle"
         (click)="resetInput()"
-      ></mat-icon>
+      ></ix-icon>
     </span>
 
     <mat-autocomplete

@@ -9,7 +9,7 @@
       <ng-container *ngIf="titleHref; else plainTitle">
         <a [ixTest]="[title, 'open-in-new']" [routerLink]="titleHref">
           {{ title }}
-          <mat-icon class="title-icon">open_in_new</mat-icon>
+          <ix-icon name="open_in_new" class="title-icon"></ix-icon>
         </a>
       </ng-container>
       <ng-template #plainTitle>{{ title }}</ng-template>
@@ -79,24 +79,24 @@
                   </ul>
 
                   <div *ngSwitchCase="'state-info'" class="state-info">
-                    <mat-icon
+                    <ix-icon
                       *ngIf="element[column.state.prop] === LinkState.Up"
-                      svgIcon="ix:network_upload_download"
+                      name="ix:network_upload_download"
                       class="state-info-icon"
                       [matTooltip]="showInOutInfo(element)"
                       [id]="element[idProp]"
-                    ></mat-icon>
-                    <mat-icon
+                    ></ix-icon>
+                    <ix-icon
                       *ngIf="element[column.state.prop] !== LinkState.Up"
-                      svgIcon="ix:network_upload_download_disabled"
+                      name="ix:network_upload_download_disabled"
                       class="state-info-icon"
-                    ></mat-icon>
+                    ></ix-icon>
                     &nbsp;&nbsp;<span>{{ element[column.prop] }}</span>
                   </div>
 
-                  <mat-icon *ngSwitchCase="'state-icon'" class="state-icon">
-                    {{ column.state.icon }}
-                  </mat-icon>
+                  <ng-container *ngSwitchCase="'state-icon'">
+                    <ix-icon class="state-icon" [name]="column.state.icon"></ix-icon>
+                  </ng-container>
 
                   <mat-checkbox
                     *ngSwitchCase="'checkbox'"
@@ -126,10 +126,7 @@
                   >
                     {{ element[column.prop].state }}
                     <div *ngIf="element[column.prop].warnings?.length > 0" class="label-warning-icon">
-                      <mat-icon
-                        fontSet="mdi-set"
-                        fontIcon="mdi-alert"
-                      ></mat-icon>
+                      <ix-icon name="mdi-alert"></ix-icon>
                     </div>
                   </button>
 
@@ -137,13 +134,12 @@
                     <div class="text-overflow-ellipsis">
                       {{ element[column.prop] }}
                     </div>
-                    <mat-icon
+                    <ix-icon
                       *ngIf="element.locked"
+                      name="locked"
                       class="append"
                       [matTooltip]="'Dataset is currently locked' | translate"
-                    >
-                      locked
-                    </mat-icon>
+                    ></ix-icon>
                   </div>
 
                   <ng-container *ngSwitchDefault>
@@ -178,11 +174,11 @@
                     <li>{{ column.name }}: {{ element[column.prop1] }}</li>
                     <li>{{ column.name2 }}: {{ element[column.prop2] }}</li>
                   </ul>
-                  <mat-icon
+                  <ix-icon
                     *ngIf="column.getIcon && column.getIcon(element, column.prop1)"
-                    [innerHtml]="column.getIcon(element, column.prop1)"
+                    [name]="column.getIcon(element, column.prop1)"
                     [matTooltip]="column.iconTooltip"
-                  ></mat-icon>
+                  ></ix-icon>
                 </ng-container>
               </div>
             </td>
@@ -215,12 +211,11 @@
                       [disabled]="rowAction.disabled"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
-                      <mat-icon
+                      <ix-icon
                         class="table-action-button"
+                        [name]="rowAction.icon"
                         [matTooltip]="rowAction.matTooltip"
-                      >
-                        {{ rowAction.icon }}
-                      </mat-icon>
+                      ></ix-icon>
                     </button>
                   </ng-template>
                 </ng-container>
@@ -232,12 +227,11 @@
                 [disabled]="_tableConf.deleteActionDisabled"
                 (click)="$event.stopPropagation(); deleteRow(element)"
               >
-                <mat-icon
+                <ix-icon
                   class="table-action-button"
+                  name="delete"
                   [matTooltip]="'Delete' | translate"
-                >
-                  delete
-                </mat-icon>
+                ></ix-icon>
               </button>
             </div>
           </td>

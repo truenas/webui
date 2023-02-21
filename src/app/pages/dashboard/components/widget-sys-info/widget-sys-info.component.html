@@ -69,7 +69,7 @@
                 [ixTest]="['sysinfo-widget', 'back']"
                 (click)="goBack()"
               >
-                <mat-icon class="back-arrow">chevron_left</mat-icon>
+                <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
               </button>
 
               <div
@@ -77,17 +77,17 @@
                 [class]="['platform-logo-wrapper', productType?.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
-                  <mat-icon
-                    svgIcon="ix:truenas_scale_logo_full"
+                  <ix-icon
+                    name="ix:truenas_scale_logo_full"
                     [id]="productModel"
-                  ></mat-icon>
+                  ></ix-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <mat-icon
-                    svgIcon="ix:truenas_scale_logotype"
+                  <ix-icon
+                    name="ix:truenas_scale_logotype"
                     [id]="productModel"
-                  ></mat-icon>
+                  ></ix-icon>
                 </ng-template>
               </div>
 
@@ -116,19 +116,19 @@
                   />
 
                   <ng-template #generic>
-                    <mat-icon
+                    <ix-icon
                       *ngIf="!certified && !isHaLicensed"
                       class="generic"
-                      svgIcon="ix:truenas_scale_logomark"
-                    ></mat-icon>
-                    <mat-icon
+                      name="ix:truenas_scale_logomark"
+                    ></ix-icon>
+                    <ix-icon
                       *ngIf="certified && !isHaLicensed"
                       class="generic"
-                      svgIcon="ix:freenas_certified"
-                    ></mat-icon>
+                      name="ix:freenas_certified"
+                    ></ix-icon>
                   </ng-template>
                   <div *ngIf="!hasHa && isPassive" class="generic alert">
-                    <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    <ix-icon name="mdi-alert"></ix-icon>
                   </div>
                   <div *ngIf="productImage && isHaLicensed && !isPassive" class="ha-node-status">
                     ({{ 'Active' | translate }})

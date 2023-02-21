@@ -7,10 +7,10 @@
   [matTooltip]="tooltips.tc_connect | translate"
   (click)="stopTrueCommandConnecting()"
 >
-  <mat-icon
+  <ix-icon
     class="truecommand-button-connecting-animation"
-    svgIcon="ix:truecommand_logo_white"
-  ></mat-icon>
+    name="ix:truecommand_logo_white"
+  ></ix-icon>
 </button>
 
 <button
@@ -22,10 +22,10 @@
   [matTooltip]="tooltips.tc_status | translate"
   (click)="handleClick()"
 >
-  <mat-icon
-    svgIcon="ix:truecommand_logo_white"
+  <ix-icon
+    name="ix:truecommand_logo_white"
     matBadgeSize="small"
     [ngClass]="['truecommand-icon', tcStatus.status]"
     [matBadge]="tcsStatusMatBadge"
-  ></mat-icon>
+  ></ix-icon>
 </button>

@@ -62,11 +62,10 @@
     [ixTest]="['abort', job.description, job.method]"
     (click)="abort()"
   >
-    <mat-icon
-      fontSet="mdi-set"
-      fontIcon="mdi-close-circle"
+    <ix-icon
+      name="mdi-close-circle"
       class="job-icon-abort"
-    ></mat-icon>
+    ></ix-icon>
   </button>
 
   <button
@@ -76,7 +75,7 @@
     [ixTest]="['waiting', job.description, job.method]"
     [disabled]="true"
   >
-    <mat-icon class="job-icon-waiting">schedule</mat-icon>
+    <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
   </button>
 
   <button
@@ -86,7 +85,12 @@
     [ixTest]="['failed', job.description, job.method]"
     [disabled]="true"
   >
-    <mat-icon matTooltipPosition="left" class="job-icon-failed" [matTooltip]="job.error">cancel</mat-icon>
+    <ix-icon
+      name="cancel"
+      matTooltipPosition="left"
+      class="job-icon-failed"
+      [matTooltip]="job.error"
+    ></ix-icon>
   </button>
 
   <button
@@ -96,6 +100,6 @@
     [ixTest]="['success', job.description, job.method]"
     [disabled]="true"
   >
-    <mat-icon class="job-icon-success">check_circle</mat-icon>
+    <ix-icon name="check_circle" class="job-icon-success"></ix-icon>
   </button>
 </div>

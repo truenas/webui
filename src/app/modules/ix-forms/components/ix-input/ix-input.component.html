@@ -11,7 +11,7 @@
   [class.readonly]="readonly"
 >
   <span *ngIf="prefixIcon" class="prefix-icon">
-    <mat-icon>{{ prefixIcon }}</mat-icon>
+    <ix-icon [name]="prefixIcon"></ix-icon>
   </span>
   <input
     #ixInput
@@ -32,11 +32,10 @@
     (blur)="blurred()"
   />
   <span *ngIf="shouldShowResetInput()" class="reset-input">
-    <mat-icon
-      fontSet="mdi-set"
-      fontIcon="mdi-close-circle"
+    <ix-icon
+      name="mdi-close-circle"
       (click)="resetInput(ixInput)"
-    ></mat-icon>
+    ></ix-icon>
   </span>
   <button
     *ngIf="type === 'password'"

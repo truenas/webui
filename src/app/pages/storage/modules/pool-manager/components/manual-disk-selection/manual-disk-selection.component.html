@@ -62,9 +62,9 @@
                 <div class="group-row" treeNodeToggle>
                   <ix-icon name="ix:enclosure"></ix-icon>
                   <span class="group-name">{{ group.identifier }}</span>
-                  <mat-icon>
-                    {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
-                  </mat-icon>
+                  <ix-icon
+                    [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
+                  ></ix-icon>
                 </div>
 
                 <ng-container

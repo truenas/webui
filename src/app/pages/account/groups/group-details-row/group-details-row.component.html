@@ -1,7 +1,7 @@
 <td [attr.colspan]="colspan">
   <ix-table-expandable-row>
     <button mat-button [ixTest]="[group.group, 'members']" (click)="openGroupMembersForm()">
-      <mat-icon>people</mat-icon>
+      <ix-icon name="people"></ix-icon>
       <span>{{ 'Members' | translate }}</span>
     </button>
 
@@ -11,7 +11,7 @@
       [ixTest]="[group.group, 'edit']"
       (click)="doEdit(group)"
     >
-      <mat-icon>edit</mat-icon>
+      <ix-icon name="edit"></ix-icon>
       <span>{{ 'Edit' | translate }}</span>
     </button>
 
@@ -21,7 +21,7 @@
       [ixTest]="[group.group, 'delete']"
       (click)="doDelete(group)"
     >
-      <mat-icon>delete</mat-icon>
+      <ix-icon name="delete"></ix-icon>
       <span>{{ 'Delete' | translate }}</span>
     </button>
   </ix-table-expandable-row>

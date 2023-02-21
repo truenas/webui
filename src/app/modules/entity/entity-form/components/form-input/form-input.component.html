@@ -47,7 +47,7 @@
     </div>
     <div class="input-container">
       <span *ngIf="config.searchable" class="searchable">
-        <mat-icon>search</mat-icon>
+        <ix-icon name="search"></ix-icon>
       </span>
       <input
         autocomplete="new-password"
@@ -69,11 +69,10 @@
         (input)="onInput($event)"
       />
       <span *ngIf="shouldShowResetInput()" class="reset-input">
-        <mat-icon
-          fontSet="mdi-set"
-          fontIcon="mdi-close-circle"
+        <ix-icon
+          name="mdi-close-circle"
           (click)="resetInput()"
-        ></mat-icon>
+        ></ix-icon>
       </span>
     </div>
     <button
