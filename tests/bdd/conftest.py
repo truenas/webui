@@ -5,6 +5,7 @@ import pytest
 import random
 import string
 import time
+import xpaths
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
@@ -19,7 +20,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-xpaths = __import__('ha-bhyve02.xpaths').xpaths
 
 # random hostname
 hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
