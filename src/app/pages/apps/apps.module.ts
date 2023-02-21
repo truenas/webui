@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,9 +12,11 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
@@ -28,6 +31,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
+import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppInfoCardComponent } from './components/app-info-card/app-info-card.component';
@@ -52,6 +56,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppCardLogoComponent,
     AppRouterOutletComponent,
     AppInfoCardComponent,
+    AppRowComponent,
   ],
   imports: [
     CommonModule,
@@ -65,6 +70,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatCardModule,
     CoreComponents,
     MatSelectModule,
+    MatCheckboxModule,
     FormsModule,
     MatDialogModule,
     ImgFallbackModule,
@@ -73,6 +79,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FlexLayoutModule,
     LazyLoadImageModule,
     TestIdModule,
+    AppLoaderModule,
+    AppCommonModule,
   ],
 })
 export class AppsModule { }
