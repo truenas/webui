@@ -28,6 +28,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
+import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppInfoCardComponent } from './components/app-info-card/app-info-card.component';
@@ -44,6 +45,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AvailableAppsHeaderComponent,
     CatalogsComponent,
     ChartFormComponent,
+    ChartWizardComponent,
     ManageCatalogSummaryDialogComponent,
     CatalogEditFormComponent,
     CatalogAddFormComponent,

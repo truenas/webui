@@ -1,0 +1,27 @@
+:host {
+  color: var(--fg1);
+  margin: 15px;
+}
+
+.divider {
+  margin: -12px 0 12px !important;
+}
+
+.section {
+  display: flex;
+
+  .fieldset {
+    width: 50%;
+  }
+
+  .help {
+    padding: 0 20px;
+    width: 50%;
+
+    .title {
+      font-family: var(--font-family-body);
+      font-size: 15px;
+      font-weight: 600;
+    }
+  }
+}

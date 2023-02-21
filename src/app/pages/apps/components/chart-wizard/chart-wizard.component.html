@@ -1,0 +1,24 @@
+<ng-template #pageHeader>
+  <ix-page-title-header [pageTitle]="pageTitle | titlecase"></ix-page-title-header>
+</ng-template>
+
+<form class="wizard-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-dynamic-wizard
+    [dynamicSection]="dynamicSection"
+    [dynamicForm]="form"
+    (addListItem)="addItem($event)"
+    (deleteListItem)="deleteItem($event)"
+  ></ix-dynamic-wizard>
+
+  <div class="actions">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid || isLoading"
+    >
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</form>
