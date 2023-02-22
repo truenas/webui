@@ -106,7 +106,7 @@ def click_directory_services_on_the_side_menu_and_click_active_directory(driver)
 @then('the Domain Credentials page should open')
 def the_domain_credentials_page_should_open(driver):
     """the Domain Credentials page should open."""
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]')
+    assert wait_on_element(driver, 7, xpaths.domain_Credentials.title)
     time.sleep(0.5)
 
 
@@ -137,8 +137,8 @@ def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_o
 @then('click the Enable checkbox and click SAVE')
 def click_the_enable_checkbox_and_click_save(driver):
     """click the Enable checkbox and click SAVE."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.ad_enable, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.ad_enable).click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 

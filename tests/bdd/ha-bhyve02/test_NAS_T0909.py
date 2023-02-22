@@ -125,7 +125,7 @@ def change_the_users_shell_and_click_save(driver):
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
 

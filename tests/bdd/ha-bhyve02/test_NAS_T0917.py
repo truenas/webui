@@ -111,8 +111,8 @@ def the_user_edit_page_should_open(driver):
 @then('Change the password in both fields but make sure they are different and try to click save.')
 def change_the_password_in_both_fields_but_make_sure_they_are_different_and_try_to_click_save(driver):
     """Change the password in both fields but make sure they are different and try to click save.."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Password"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    assert wait_on_element(driver, 7, xpaths.input.password, 'clickable')
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('testing')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Confirm Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing2')

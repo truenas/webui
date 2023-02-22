@@ -47,7 +47,7 @@ def if_login_appear_enter_user_and_password(driver, user, password):
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    if wait_on_element(driver, 3, xpaths.popupTitle.help):
+    if wait_on_element(driver, 3, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
@@ -103,10 +103,10 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('Eric Turgeon')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('ericbsd')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    driver.find_element_by_xpath(xpaths.input.username).clear()
+    driver.find_element_by_xpath(xpaths.input.username).send_keys('ericbsd')
+    driver.find_element_by_xpath(xpaths.input.password).clear()
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
@@ -116,6 +116,6 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
 @then('User should be created and added to the user list')
 def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
-    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//div[@ix-auto="value__ericbsd_Username"]')

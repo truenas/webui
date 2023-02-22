@@ -87,7 +87,7 @@ def click_on_enable_twofactor_authentication_button_then_confirm(driver):
 @then('when Two-factor Authentication is enabled, logout')
 def when_twofactor_authentication_is_enabled_logout(driver):
     """when Two-factor Authentication is enabled, logout."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 5, '//p[contains(.,"Two-factor authentication IS currently enabled")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__power"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()
@@ -134,7 +134,7 @@ def on_the_dashboard_click_on_failover_initiate_failover(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
-    assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
+    assert wait_on_element(driver, 5, xpaths.popup.initiate_failover)
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 5, xpaths.button.failover)
     driver.find_element_by_xpath(xpaths.button.failover).click()

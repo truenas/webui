@@ -49,7 +49,7 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    if wait_on_element(driver, 5, xpaths.popupTitle.help):
+    if wait_on_element(driver, 5, xpaths.popup.help):
         assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 5, xpaths.dashboard.system_information)

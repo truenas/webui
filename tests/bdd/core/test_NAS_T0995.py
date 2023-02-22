@@ -61,8 +61,8 @@ def the_user_edit_page_should_open(driver):
 @then('change the password with mismatched passwords')
 def change_the_password_with_mismatched_passwords(driver):
     """change the password with mismatched passwords."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('abcd1234')
+    assert wait_on_element(driver, 7, xpaths.input.password, 'inputable')
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('abcd1234')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('4312dcba')
 

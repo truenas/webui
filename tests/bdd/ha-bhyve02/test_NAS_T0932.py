@@ -177,7 +177,7 @@ def click_save(driver):
 @then('Please wait should appear while settings are being applied')
 def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_wait)
 
 
 @then('Navigate to dashboard')

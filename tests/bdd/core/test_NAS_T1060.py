@@ -91,8 +91,8 @@ def on_the_users_add_page_input_ftp_user_in_full_name_entry(driver):
 @then('input ftpuser in Username entry, input ftptest path for Home Directory')
 def input_ftpuser_in_username_entry_input_ftptest_path_for_home_directory(driver):
     """input ftpuser in Username entry, input ftptest path for Home Directory."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('ftpuser')
+    driver.find_element_by_xpath(xpaths.input.username).clear()
+    driver.find_element_by_xpath(xpaths.input.username).send_keys('ftpuser')
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ftptest')
 
@@ -100,8 +100,8 @@ def input_ftpuser_in_username_entry_input_ftptest_path_for_home_directory(driver
 @then('input testing in Password and Confirm Password entries')
 def input_testing_in_password_and_confirm_password_entries(driver):
     """input testing in Password and Confirm Password entries."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    driver.find_element_by_xpath(xpaths.input.password).clear()
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
 

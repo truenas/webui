@@ -100,7 +100,7 @@ def input_dataset_name_my_ldap_dataset_and_click_save(driver, dataset_name):
 @then(parsers.parse('"{dataset_name}" should be created'))
 def my_ldap_dataset_should_be_created(driver, dataset_name):
     """"my_ldap_dataset" should be created."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 10, f'//span[contains(.,"{dataset_name}")]')
 
 
@@ -139,7 +139,7 @@ def click_the_save_button_should_be_return_to_pool_page(driver):
     """Click the Save button, should be return to pool page."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"dozer")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__dozer_name"]')
 
