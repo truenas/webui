@@ -228,7 +228,7 @@ describe('SmbFormComponent', () => {
       title: helptextSharingSmb.afpDialog_title,
       message: helptextSharingSmb.afpDialog_message,
       hideCheckbox: false,
-      buttonMessage: helptextSharingSmb.afpDialog_button,
+      buttonText: helptextSharingSmb.afpDialog_button,
       hideCancel: false,
     });
   });
@@ -274,7 +274,7 @@ describe('SmbFormComponent', () => {
       title: helptextSharingSmb.manglingDialog.title,
       message: helptextSharingSmb.manglingDialog.message,
       hideCheckbox: true,
-      buttonMessage: helptextSharingSmb.manglingDialog.action,
+      buttonText: helptextSharingSmb.manglingDialog.action,
       hideCancel: true,
     });
   });
@@ -294,7 +294,7 @@ describe('SmbFormComponent', () => {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
       hideCheckbox: true,
-      buttonMessage: helptextSharingSmb.stripACLDialog.button,
+      buttonText: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -315,7 +315,7 @@ describe('SmbFormComponent', () => {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
       hideCheckbox: true,
-      buttonMessage: helptextSharingSmb.stripACLDialog.button,
+      buttonText: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -337,7 +337,7 @@ describe('SmbFormComponent', () => {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
       hideCheckbox: true,
-      buttonMessage: helptextSharingSmb.stripACLDialog.button,
+      buttonText: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -366,7 +366,7 @@ describe('SmbFormComponent', () => {
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
         hideCheckbox: true,
-        buttonMessage: helptextSharingSmb.stripACLDialog.button,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
         hideCancel: true,
       });
 
