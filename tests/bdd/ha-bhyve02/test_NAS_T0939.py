@@ -207,11 +207,10 @@ def click_the_enable_checkbox_and_click_save(driver, nas_url, ad_user, ad_passwo
     assert wait_on_element(driver, 7, '//input[@placeholder="Username"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(ad_user)
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(ad_password)
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
-    assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
-    assert wait_on_element(driver, 7, '//span[text()="You have left the domain."]')
     assert wait_on_element(driver, 7, '//mat-dialog-container//button[@ix-auto="button__LEAVE DOMAIN"]', 'clickable')
     driver.find_element_by_xpath('//mat-dialog-container//button[@ix-auto="button__LEAVE DOMAIN"]').click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element(driver, 7, '//span[text()="You have left the domain."]')
     assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close).click()
     # Sleep 10 to give the VM time to handle changes
