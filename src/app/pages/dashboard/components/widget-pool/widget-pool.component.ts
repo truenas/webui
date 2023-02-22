@@ -189,7 +189,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return key;
   }
 
-  getAvailableSpace(): number {
+  getAvailableSpace(): void {
     if (!this.volumeData || typeof this.volumeData.avail === undefined) {
       this.displayValue = 'Unknown';
       return;
@@ -205,7 +205,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (usedValue === 'Locked') {
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
-      return 0;
+      return;
     }
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });

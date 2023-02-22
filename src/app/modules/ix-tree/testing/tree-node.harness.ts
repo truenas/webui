@@ -60,6 +60,8 @@ export class TreeNodeHarness extends ContentContainerComponentHarness<string> {
     if (toggle) {
       return toggle.click();
     }
+
+    return Promise.resolve();
   }
 
   /** Expands the node if it is collapsed. Only works when node is not disabled. */

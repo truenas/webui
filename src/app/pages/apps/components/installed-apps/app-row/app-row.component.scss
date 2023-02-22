@@ -1,0 +1,64 @@
+@import 'mixins/grid';
+@import 'scss-imports/splitview';
+
+:host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  font-weight: 500;
+  min-height: 48px;
+  padding: 0;
+}
+
+.row-grid {
+  @include grid-row();
+  align-items: center;
+
+
+  // Override default fraction based values to avoid misaligned columns
+  grid-template-columns: auto 125px 40px 40px 40px 125px 40px;
+
+  @media (max-width: $breakpoint-tablet) {
+    // Override default fraction based values to avoid misaligned columns
+    grid-template-columns: auto 0 0 0 0 0 0;
+    width: 100%;
+  }
+
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 15px;
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+    }
+  }
+
+  .cell-name {
+    align-items: stretch;
+    font-weight: bold;
+
+    .name {
+      align-items: center;
+      background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
+      display: inline-flex;
+      padding-right: 15px;
+    }
+  }
+}
+
+:host-context(ix-app-row:hover),
+:host-context(ix-app-row.selected) {
+  .row-grid .cell-name .name {
+    background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  }
+}

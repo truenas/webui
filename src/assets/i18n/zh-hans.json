@@ -1,6 +1,7 @@
 {
   "": "",
   "Add VDEV": "",
+  "Application": "",
   "At least 1 GPU is required by the host for its functions.": "",
   "Filter by Disk Size": "",
   "Filter by Disk Type": "",
@@ -8,8 +9,10 @@
   "Maximize Enclosure Dispersal": "",
   "Minimize Enclosure Dispersal": "",
   "No enclosure": "",
+  "RAM": "",
   "Review": "",
   "Treat Disk Size as Minimum": "",
+  "Updates": "",
   "Vdevs spans enclosure": "",
   "When not specified, guest system is given fixed amount of memory specified above.\nWhen minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "\n 似乎您的当前会话不活动时间已超过 {lifetime} 秒。\n 为保障您的数据安全，我们将会在 {time} 强制登出当前会话。\n",

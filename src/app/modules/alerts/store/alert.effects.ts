@@ -50,6 +50,8 @@ export class AlertEffects {
               return alertAdded({ alert: event.fields });
             case IncomingApiMessageType.Changed:
               return alertChanged({ alert: event.fields });
+            default:
+              return undefined;
           }
         }),
       );

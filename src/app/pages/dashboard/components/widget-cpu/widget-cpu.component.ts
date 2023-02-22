@@ -271,7 +271,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
               if (this.screenType === ScreenType.Mobile) {
                 this.legendData = null;
                 this.legendIndex = null;
-                return;
+                return '';
               }
 
               this.legendData = data.datasets;

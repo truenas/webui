@@ -39,12 +39,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   get multipleLabels(): string[] {
     const selectedLabels: string[] = [];
     this.opts.forEach((opt) => {
-      if (Array.isArray(this.value)) {
-        if (this.value.some((val) => val === opt.value)) {
-          selectedLabels.push(` ${opt.label}`);
-        }
-      } else {
-        return null;
+      if (Array.isArray(this.value) && this.value.some((val) => val === opt.value)) {
+        selectedLabels.push(` ${opt.label}`);
       }
     });
     return selectedLabels.length > 0 ? selectedLabels : null;

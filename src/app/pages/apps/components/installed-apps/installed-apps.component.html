@@ -1,1 +1,51 @@
-<router-outlet></router-outlet>
+<div class="container">
+  <div class="table-container">
+    <ix-fake-progress-bar
+      class="loader-bar"
+      [loading]="isLoading"
+    ></ix-fake-progress-bar>
+
+    <div class="app-search">
+      <ix-search-input
+        [disabled]="!dataSource.length"
+        (search)="onSearch($event)"
+      ></ix-search-input>
+    </div>
+
+    <div class="app-wrapper">
+      <div class="app-inner">
+        <div class="app-header">
+          <div>
+            <span class="app-name-header">
+              <mat-checkbox
+                color="primary"
+                ix-auto
+                ix-auto-type="checkbox"
+                ixTest="select-all-app"
+                [checked]="allAppsChecked"
+                (change)="toggleAppsChecked($event.checked)"
+              ></mat-checkbox>
+              {{ 'Application' | translate }}
+            </span>
+          </div>
+          <div>{{ 'Status' | translate }}</div>
+          <div>{{ 'CPU' | translate }}</div>
+          <div>{{ 'RAM' | translate }}</div>
+          <div>{{ 'Disk' | translate }}</div>
+          <div>{{ 'Updates' | translate }}</div>
+        </div>
+        <div class="apps-rows">
+          <ng-container *ngFor="let app of dataSource">
+            <ix-app-row
+              class="row"
+              [application]="app"
+              [class.selected]="selectedApp && app.name === selectedApp.name"
+              (click)="selectApp(app)"
+              (keydown.enter)="selectApp(app)"
+            ></ix-app-row>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

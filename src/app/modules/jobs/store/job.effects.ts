@@ -51,6 +51,8 @@ export class JobEffects {
               return jobAdded({ job: event.fields });
             case IncomingApiMessageType.Changed:
               return jobChanged({ job: event.fields });
+            default:
+              return undefined;
           }
         }),
       );

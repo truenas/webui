@@ -128,13 +128,12 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   private createDataSource(apiKeys: ApiKey[] = []): void {
     this.dataSource = new MatTableDataSource(apiKeys);
     this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      switch (property) {
-        case 'name':
-          return item.name;
-        case 'created_at':
-          return item.created_at.$date;
+    this.dataSource.sortingDataAccessor = (item, property: 'name' | 'created_at') => {
+      if (property === 'name') {
+        return item.name;
       }
+
+      return item.created_at.$date;
     };
     this.store.patchState({ isLoading: false });
     this.cdr.markForCheck();
