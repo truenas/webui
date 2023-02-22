@@ -144,7 +144,5 @@ def on_the_dashboard_click_on_failover_initiate_failover(driver):
 def wait_on_the_login_to_appear(driver):
     """wait on the login to appear."""
     assert wait_on_element(driver, 60, xpaths.login.user_input)
-    # wait for HA is enabled to avoid UI refreshing
-    driver.refresh()
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
     assert refresh_if_element_missing(driver, 120, xpaths.login.ha_status('HA is enabled'))
