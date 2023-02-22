@@ -126,7 +126,7 @@ def click_the_confirm_checkbox_then_click_the_exportdisconnect_button(driver):
 def verify_that_the_encrypted_pool_is_removed(driver):
     """verify that the encrypted pool is removed."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//textarea[contains(.,"Successfully exported/disconnected \'encrypted\'")]')
+    assert wait_on_element(driver, 15, '//textarea[contains(.,"Successfully exported/disconnected \'encrypted\'")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 20, '//td[@id="tbody__name_encrypted"]')

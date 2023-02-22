@@ -285,7 +285,7 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 25, xpaths.topToolbar.ha_enable)
+    assert refresh_if_element_missing(driver, 30, xpaths.topToolbar.ha_enable)
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))
