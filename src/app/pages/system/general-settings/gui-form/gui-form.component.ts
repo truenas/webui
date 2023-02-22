@@ -38,7 +38,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 @UntilDestroy()
 @Component({
   templateUrl: './gui-form.component.html',
-  styleUrls: ['./gui-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiFormComponent {
@@ -139,11 +138,6 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  certificatesLinkClicked(): void {
-    this.router.navigate(['/', 'credentials', 'certificates']);
-    this.slideInService.close(null, false);
   }
 
   getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {

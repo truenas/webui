@@ -4,11 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import helptext from 'app/helptext/services/components/service-s3';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3-config.interface';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -27,6 +31,9 @@ describe('ServiceS3Component', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+    ],
+    declarations: [
+      MockComponent(WithManageCertificatesLinkComponent),
     ],
     providers: [
       mockWebsocket([
