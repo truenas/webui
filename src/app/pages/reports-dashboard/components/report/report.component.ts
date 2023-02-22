@@ -407,7 +407,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
             this.dialog.confirm({
               title: this.translate.instant('The reporting database is broken'),
               message,
-              buttonMsg: this.translate.instant('Clear'),
+              buttonText: this.translate.instant('Clear'),
             }).pipe(
               filter(Boolean),
               switchMap(() => this.ws.call('reporting.clear')),

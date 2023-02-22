@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import {
+  ConfirmOptions,
+  ConfirmOptionsWithSecondaryCheckbox,
+  DialogWithSecondaryCheckboxResult,
+} from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -20,64 +24,15 @@ export class DialogService {
   constructor(private dialog: MatDialog) { }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
-  /**
-   * @deprecated Use dialogForm or build a separate dialog component
-   */
-  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>;
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): Observable<DialogWithSecondaryCheckboxResult>;
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
-  ): Observable<boolean> | MatDialogRef<ConfirmDialogComponent, unknown> {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: options.disableClose || false });
-
-    dialogRef.componentInstance.title = options.title;
-    dialogRef.componentInstance.message = options.message;
-
-    if (options.buttonMsg) {
-      dialogRef.componentInstance.buttonMsg = options.buttonMsg;
-    }
-
-    if (options.hideCheckBox) {
-      dialogRef.componentInstance.hideCheckBox = options.hideCheckBox;
-    }
-
-    if (options.tooltip) {
-      dialogRef.componentInstance.tooltip = options.tooltip;
-    }
-
-    if (options.hideCancel) {
-      dialogRef.componentInstance.hideCancel = options.hideCancel;
-      dialogRef.disableClose = options.hideCancel;
-    }
-    if (options.cancelMsg) {
-      dialogRef.componentInstance.cancelMsg = options.cancelMsg;
-    }
-
-    if ('secondaryCheckBox' in options && options.secondaryCheckBox) {
-      dialogRef.componentInstance.secondaryCheckBox = options.secondaryCheckBox;
-      dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
-      dialogRef.componentInstance.data = options.data;
-      dialogRef.componentInstance.method = options.method;
-      // eslint-disable-next-line consistent-return
-      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
-        const data = options.data;
-        // TODO: Does not belong to dialog.service in any form or shape.
-        if (selection && data && data[0]) {
-          if (data[0] && data[0].hasOwnProperty('reboot')) {
-            data[0].reboot = !data[0].reboot;
-          }
-          if (data[0] && data[0].hasOwnProperty('overcommit')) {
-            data[0].overcommit = !data[0].overcommit;
-          }
-          if (data[0] && data[0].hasOwnProperty('delete_unused_images')) {
-            data[0].delete_unused_images = !data[0].delete_unused_images;
-          }
-          dialogRef.componentInstance.data = data;
-          return dialogRef;
-        }
-      });
-      return dialogRef;
-    }
-    return dialogRef.afterClosed();
+  ): Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult> {
+    return this.dialog.open(ConfirmDialogComponent, {
+      disableClose: options.disableClose || false,
+      data: options,
+    })
+      .afterClosed();
   }
 
   errorReportMiddleware(error: WebsocketError | Job): void {

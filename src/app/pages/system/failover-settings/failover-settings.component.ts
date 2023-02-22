@@ -97,23 +97,19 @@ export class FailoverSettingsComponent implements OnInit {
   }
 
   onSyncToPeerPressed(): void {
-    const dialog = this.dialogService.confirm({
+    this.dialogService.confirm({
       title: helptextSystemFailover.dialog_sync_to_peer_title,
       message: helptextSystemFailover.dialog_sync_to_peer_message,
-      buttonMsg: helptextSystemFailover.dialog_button_ok,
-      secondaryCheckBox: true,
-      secondaryCheckBoxMsg: helptextSystemFailover.dialog_sync_to_peer_checkbox,
-      data: [{ reboot: false }],
-    });
-
-    dialog
-      .afterClosed()
+      buttonText: helptextSystemFailover.dialog_button_ok,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: helptextSystemFailover.dialog_sync_to_peer_checkbox,
+    })
       .pipe(
-        filter(Boolean),
-        switchMap(() => {
+        filter((result) => result.confirmed),
+        switchMap((result) => {
           this.isLoading = true;
           this.cdr.markForCheck();
-          return this.ws.call('failover.sync_to_peer', dialog.componentInstance.data as [{ reboot?: boolean }]);
+          return this.ws.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
         }),
         untilDestroyed(this),
       )
@@ -137,7 +133,7 @@ export class FailoverSettingsComponent implements OnInit {
     this.dialogService.confirm({
       title: helptextSystemFailover.dialog_sync_from_peer_title,
       message: helptextSystemFailover.dialog_sync_from_peer_message,
-      buttonMsg: helptextSystemFailover.dialog_button_ok,
+      buttonText: helptextSystemFailover.dialog_button_ok,
     })
       .pipe(
         filter(Boolean),
@@ -196,8 +192,8 @@ export class FailoverSettingsComponent implements OnInit {
           return this.dialogService.confirm({
             title: helptextSystemFailover.master_dialog_title,
             message: helptextSystemFailover.master_dialog_warning,
-            buttonMsg: this.translate.instant('Continue'),
-            cancelMsg: this.translate.instant('Cancel'),
+            buttonText: this.translate.instant('Continue'),
+            cancelText: this.translate.instant('Cancel'),
             disableClose: true,
           });
         }),

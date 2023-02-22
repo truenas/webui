@@ -54,8 +54,8 @@ export class LicenseComponent {
           this.dialogService.confirm({
             title: helptext.update_license.reload_dialog_title,
             message: helptext.update_license.reload_dialog_message,
-            hideCheckBox: true,
-            buttonMsg: helptext.update_license.reload_dialog_action,
+            hideCheckbox: true,
+            buttonText: helptext.update_license.reload_dialog_action,
             hideCancel: true,
             disableClose: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

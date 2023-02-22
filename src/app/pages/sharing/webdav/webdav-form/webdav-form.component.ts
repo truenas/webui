@@ -93,7 +93,7 @@ export class WebdavFormComponent {
       this.dialog.confirm({
         title: helptextSharingWebdav.warning_dialog_title,
         message: helptextSharingWebdav.warning_dialog_message,
-        hideCheckBox: false,
+        hideCheckbox: false,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.saveConfig();
       });
@@ -146,8 +146,8 @@ export class WebdavFormComponent {
         return this.dialog.confirm({
           title: shared.dialog_title,
           message: shared.dialog_message,
-          hideCheckBox: true,
-          buttonMsg: shared.dialog_button,
+          hideCheckbox: true,
+          buttonText: shared.dialog_button,
         }).pipe(
           filter(Boolean),
           tap(() => this.loader.open()),

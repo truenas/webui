@@ -138,8 +138,8 @@ export class ServicesComponent implements OnInit, AfterViewInit {
             return this.dialog.confirm({
               title: this.translate.instant('Alert'),
               message,
-              hideCheckBox: true,
-              buttonMsg: this.translate.instant('Stop'),
+              hideCheckbox: true,
+              buttonText: this.translate.instant('Stop'),
             });
           }),
           untilDestroyed(this),
@@ -154,8 +154,8 @@ export class ServicesComponent implements OnInit, AfterViewInit {
         this.dialog.confirm({
           title: this.translate.instant('Alert'),
           message: this.translate.instant('Stop {serviceName}?', { serviceName }),
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Stop'),
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Stop'),
         }).pipe(
           untilDestroyed(this),
         ).subscribe((confirmed) => {

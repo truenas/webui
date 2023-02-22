@@ -842,8 +842,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (dialog.buildTitle) {
       dialog.title = dialog.buildTitle(item);
     }
-    if (dialog.buttonMsg) {
-      dialog.button = dialog.buttonMsg(item);
+    if (dialog.buttonMessage) {
+      dialog.button = dialog.buttonMessage(item);
     }
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
@@ -860,8 +860,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.dialogService.confirm({
         title: dialog.hasOwnProperty('title') ? dialog.title : this.translate.instant('Delete'),
         message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
+        hideCheckbox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonText: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
       }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
         if (confirmed) {
           this.toDeleteRow = item;
@@ -909,8 +909,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       .confirm({
         title: dialog.hasOwnProperty('title') ? dialog.title : this.translate.instant('Delete'),
         message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
+        hideCheckbox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonText: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
       })
       .pipe(
         filter(Boolean),
@@ -993,8 +993,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     this.dialogService.confirm({
       title: 'Delete',
       message: multiDeleteMsg,
-      hideCheckBox: false,
-      buttonMsg: this.translate.instant('Delete'),
+      hideCheckbox: false,
+      buttonText: this.translate.instant('Delete'),
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (!confirmed) {
         return;

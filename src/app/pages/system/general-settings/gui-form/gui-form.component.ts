@@ -111,7 +111,7 @@ export class GuiFormComponent {
         ? this.dialog.confirm({
           title: this.translate.instant(helptext.redirect_confirm_title),
           message: this.translate.instant(helptext.redirect_confirm_message),
-          hideCheckBox: true,
+          hideCheckbox: true,
         })
         : of(true)
     ).pipe(

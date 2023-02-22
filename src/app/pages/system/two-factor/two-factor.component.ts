@@ -127,8 +127,8 @@ export class TwoFactorComponent implements OnInit {
       this.dialogService.confirm({
         title: helptext.two_factor.submitDialog.title,
         message: helptext.two_factor.submitDialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptext.two_factor.submitDialog.btn,
+        hideCheckbox: true,
+        buttonText: helptext.two_factor.submitDialog.btn,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.intervalOnLoad = params.interval;
         this.digitsOnLoad = params.otp_digits;
@@ -187,8 +187,8 @@ export class TwoFactorComponent implements OnInit {
       this.dialogService.confirm({
         title: helptext.two_factor.confirm_dialog.title,
         message: helptext.two_factor.confirm_dialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptext.two_factor.confirm_dialog.btn,
+        hideCheckbox: true,
+        buttonText: helptext.two_factor.confirm_dialog.btn,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.isFormLoading = true;
 
@@ -220,8 +220,8 @@ export class TwoFactorComponent implements OnInit {
     this.dialogService.confirm({
       title: helptext.two_factor.renewSecret.title,
       message: helptext.two_factor.renewSecret.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.two_factor.renewSecret.btn,
+      hideCheckbox: true,
+      buttonText: helptext.two_factor.renewSecret.btn,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = true;
 

@@ -167,8 +167,8 @@ export class ExportDisconnectModalComponent implements OnInit {
             this.dialogService.confirm({
               title: helptext.exportError,
               message: conditionalErrMessage,
-              hideCheckBox: true,
-              buttonMsg: helptext.exportMessages.onfail.continueAction,
+              hideCheckbox: true,
+              buttonText: helptext.exportMessages.onfail.continueAction,
             }).pipe(
               filter(Boolean),
               untilDestroyed(this),

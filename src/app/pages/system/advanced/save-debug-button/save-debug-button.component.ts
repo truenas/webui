@@ -45,8 +45,8 @@ export class SaveDebugButtonComponent {
           .confirm({
             title: helptextSystemAdvanced.dialog_generate_debug_title,
             message: helptextSystemAdvanced.dialog_generate_debug_message,
-            hideCheckBox: true,
-            buttonMsg: helptextSystemAdvanced.dialog_button_ok,
+            hideCheckbox: true,
+            buttonText: helptextSystemAdvanced.dialog_button_ok,
           })
           .pipe(
             filter(Boolean),

@@ -189,7 +189,7 @@ export class DatasetQuotaEditFormComponent {
       message: this.quotaType === DatasetQuotaType.User
         ? this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name })
         : this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name }),
-      buttonMsg: this.translate.instant('Delete'),
+      buttonText: this.translate.instant('Delete'),
     });
   }
 }

@@ -17,8 +17,8 @@ export class UnlockSummaryDialogComponent {
   title: string = helptext.unlock_dataset_dialog.title;
   errorsMessage: string = helptext.unlock_dataset_dialog.errors_message;
   unlockMessage: string = helptext.unlock_dataset_dialog.unlock_message;
-  buttonMsg: string = helptext.unlock_dataset_dialog.ok_button;
-  cancelMsg: string = helptext.unlock_dataset_dialog.cancel_button;
+  buttonMessage: string = helptext.unlock_dataset_dialog.ok_button;
+  cancelMessage: string = helptext.unlock_dataset_dialog.cancel_button;
   skippedMessage: string = helptext.unlock_result_dialog.skipped_message;
   unlockDatasets: { name: string }[] = [];
   errorDatasets: { name: string; unlock_error?: string }[] = [];

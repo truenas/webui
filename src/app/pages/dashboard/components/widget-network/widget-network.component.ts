@@ -408,7 +408,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             this.dialog.confirm({
               title: this.translate.instant('The reporting database is broken'),
               message: `${errorMessage}<br/>${helpMessage}`,
-              buttonMsg: this.translate.instant('Clear'),
+              buttonText: this.translate.instant('Clear'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.nicInfoMap[nic.state.name].emptyConfig = this.loadingEmptyConfig;
               this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();

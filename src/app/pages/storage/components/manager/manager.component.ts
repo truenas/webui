@@ -672,7 +672,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.dialog.confirm({
       title: this.translate.instant('Warning'),
       message: diskWarning,
-      buttonMsg: confirmButton,
+      buttonText: confirmButton,
     })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
@@ -783,7 +783,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.dialog.confirm({
         title: this.translate.instant('Warning'),
         message: this.encryptionMessage,
-        buttonMsg: this.translate.instant('I Understand'),
+        buttonText: this.translate.instant('I Understand'),
       }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
         if (confirmed) {
           this.isEncryptedControl.setValue(true);

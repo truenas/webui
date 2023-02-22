@@ -162,8 +162,8 @@ export class ServiceFtpComponent implements OnInit {
         return this.dialogService.confirm({
           title: helptext.rootlogin_dialog_title,
           message: helptext.rootlogin_dialog_message,
-          buttonMsg: this.translate.instant('Continue'),
-          cancelMsg: this.translate.instant('Cancel'),
+          buttonText: this.translate.instant('Continue'),
+          cancelText: this.translate.instant('Cancel'),
         });
       }),
       untilDestroyed(this),

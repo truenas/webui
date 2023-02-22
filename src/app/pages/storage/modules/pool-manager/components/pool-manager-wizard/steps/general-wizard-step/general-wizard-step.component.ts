@@ -36,7 +36,7 @@ export class GeneralWizardStepComponent implements OnInit {
         this.dialog.confirm({
           title: this.translate.instant('Warning'),
           message: helptext.manager_encryption_message,
-          buttonMsg: this.translate.instant('I Understand'),
+          buttonText: this.translate.instant('I Understand'),
         }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
           if (!confirmed) {
             this.form.controls.encryption.setValue(false);

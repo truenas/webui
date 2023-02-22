@@ -131,7 +131,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     this.dialogService.confirm({
       message,
       title: this.translate.instant('Scrub Pool'),
-      buttonMsg: this.translate.instant('Start Scrub'),
+      buttonText: this.translate.instant('Start Scrub'),
     })
       .pipe(
         filter(Boolean),
@@ -150,7 +150,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     this.dialogService.confirm({
       message,
       title: this.translate.instant('Scrub Pool'),
-      buttonMsg: this.translate.instant('Stop Scrub'),
+      buttonText: this.translate.instant('Stop Scrub'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),

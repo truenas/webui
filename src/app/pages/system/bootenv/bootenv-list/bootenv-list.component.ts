@@ -134,7 +134,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.dialog.confirm({
       title: this.translate.instant('Scrub'),
       message: this.translate.instant('Start the scrub now?'),
-      buttonMsg: this.translate.instant('Start Scrub'),
+      buttonText: this.translate.instant('Start Scrub'),
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
@@ -213,7 +213,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.dialog.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
-      buttonMsg: helptextSystemBootenv.list_dialog_activate_action,
+      buttonText: helptextSystemBootenv.list_dialog_activate_action,
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
@@ -237,7 +237,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       this.dialog.confirm({
         title: this.translate.instant('Keep'),
         message: this.translate.instant('Keep this Boot Environment?'),
-        buttonMsg: this.translate.instant('Set Keep Flag'),
+        buttonText: this.translate.instant('Set Keep Flag'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.loader.open();
         this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: true }]).pipe(
@@ -260,7 +260,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       this.dialog.confirm({
         title: this.translate.instant('Unkeep'),
         message: this.translate.instant('No longer keep this Boot Environment?'),
-        buttonMsg: this.translate.instant('Remove Keep Flag'),
+        buttonText: this.translate.instant('Remove Keep Flag'),
       }).pipe(
         filter(Boolean),
         tap(() => this.loader.open()),
