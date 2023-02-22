@@ -1463,7 +1463,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         fieldConfig.hasErrors = true;
         fieldConfig.errors = this.translate.instant('Please select a valid SSH Connection');
       }
-      return;
+      return new Promise((resolve) => resolve(Promise.resolve([])));
     }
 
     return new Promise((resolve) => {

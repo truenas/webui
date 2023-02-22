@@ -897,6 +897,8 @@ export class VmWizardComponent implements WizardConfiguration {
 
         return errors;
       }
+
+      return undefined;
     };
   }
 

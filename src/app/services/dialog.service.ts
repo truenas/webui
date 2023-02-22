@@ -57,6 +57,7 @@ export class DialogService {
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
       dialogRef.componentInstance.data = options.data;
       dialogRef.componentInstance.method = options.method;
+      // eslint-disable-next-line consistent-return
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
         // TODO: Does not belong to dialog.service in any form or shape.
