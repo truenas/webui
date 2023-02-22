@@ -220,7 +220,8 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
               untilDestroyed(this),
             ).subscribe((charts) => {
               if (!charts) {
-                return this.showLoadStatus(EmptyType.Errors);
+                this.showLoadStatus(EmptyType.Errors);
+                return;
               }
 
               this.chartItems.clear();

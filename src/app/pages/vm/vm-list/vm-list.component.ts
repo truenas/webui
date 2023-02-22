@@ -142,7 +142,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         (row: VirtualMachineRow) => row.id === event.id,
         (changedRow: VirtualMachineRow) => {
           if (!event.fields) {
-            return;
+            return undefined;
           }
 
           if (event.fields.status.state === ServiceStatus.Running) {
@@ -221,6 +221,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         return true;
       }
     }
+
+    return false;
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number {
@@ -236,6 +238,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         return (device.attributes).port;
       }
     }
+
+    return false;
   }
 
   onSliderChange(row: VirtualMachineRow): void {

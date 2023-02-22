@@ -187,6 +187,8 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
           return item.properties ? item.properties.creation.parsed.$date.toString() : '';
         case 'referenced':
           return item.properties ? +item.properties.referenced.parsed : '';
+        default:
+          return undefined;
       }
     };
     setTimeout(() => {

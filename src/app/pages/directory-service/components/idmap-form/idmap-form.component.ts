@@ -35,7 +35,6 @@ const customIdmapName = 'custom' as const;
 @UntilDestroy()
 @Component({
   templateUrl: './idmap-form.component.html',
-  styleUrls: ['./idmap-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdmapFormComponent implements OnInit {

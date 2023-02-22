@@ -101,7 +101,8 @@ export class DisplayVmDialogComponent {
           this.loader.close();
           const webUri = webUris[displayDeviceId];
           if (webUri.error) {
-            return this.dialogService.warn(this.translate.instant('Error'), webUri.error);
+            this.dialogService.warn(this.translate.instant('Error'), webUri.error);
+            return;
           }
           this.window.open(webUri.uri, '_blank');
           this.dialogRef.close(true);

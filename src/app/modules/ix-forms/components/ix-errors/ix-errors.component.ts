@@ -101,6 +101,8 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.forbidden(this.control.value);
       case DefaultValidationError.Number:
         return this.defaultErrMessages.number();
+      default:
+        return undefined;
     }
   }
 }

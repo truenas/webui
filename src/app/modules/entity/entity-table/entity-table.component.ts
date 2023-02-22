@@ -1115,6 +1115,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
+
+    return false;
   }
 
   getButtonClass(row: { warnings: unknown[]; state: JobState }): string {

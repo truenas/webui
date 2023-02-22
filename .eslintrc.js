@@ -140,7 +140,6 @@ module.exports = {
         "no-plusplus": "off",
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
-        "consistent-return": "off",
         "no-restricted-syntax": ["error",
           // TODO: Partially implemented. ForOfStatement is allowed for now.
           {

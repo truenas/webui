@@ -309,7 +309,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
 
   async showFirstTimeWarningIfNeeded(): Promise<unknown> {
     if (!this.isFirstTime) {
-      return;
+      return Promise.resolve();
     }
 
     return lastValueFrom(

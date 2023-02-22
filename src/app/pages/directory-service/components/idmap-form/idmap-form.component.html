@@ -50,20 +50,14 @@
           [tooltip]="helptext.idmap.range_tooltip | translate"
         ></ix-input>
 
-        <div *ngIf="hasCertificateField$ | async" class="linked-select">
-          <div class="link-wrapper">
-            <a class="link" ixTest="manage-certificates" (click)="certificatesLinkClicked()">
-              {{ 'Manage Certificates' | translate }}
-            </a>
-          </div>
-
+        <ix-with-manage-certificates-link *ngIf="hasCertificateField$ | async">
           <ix-select
             formControlName="certificate"
             [label]="'Certificate' | translate"
             [options]="certificates$"
             [tooltip]="helptext.idmap.certificate_id.tooltip | translate"
           ></ix-select>
-        </div>
+        </ix-with-manage-certificates-link>
       </ix-fieldset>
 
       <ix-fieldset [title]="'Options' | translate">

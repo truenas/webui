@@ -16,7 +16,7 @@
     z-index: 1;
   }
 
-  ix-select {
+  ::ng-deep ix-select {
     width: 100%;
   }
 }

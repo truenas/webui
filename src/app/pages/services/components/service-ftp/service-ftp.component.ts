@@ -132,10 +132,6 @@ export class ServiceFtpComponent implements OnInit {
     this.isAdvancedMode = !this.isAdvancedMode;
   }
 
-  onLinkClicked(): void {
-    this.router.navigate(['/', 'credentials', 'certificates']);
-  }
-
   private loadConfig(): void {
     this.isFormLoading = true;
     this.ws.call('ftp.config')
