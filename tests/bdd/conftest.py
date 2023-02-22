@@ -166,8 +166,8 @@ def pytest_runtest_makereport(item):
             disable_active_directory()
         elif 'T1013' in screenshot_name or 'T0940' in screenshot_name:
             disable_ldap()
-        elif 'T1117' in screenshot_name:
-            disable_nis()
+        # elif 'T1117' in screenshot_name:
+        #     disable_nis()
 
 
 def save_screenshot(name):
