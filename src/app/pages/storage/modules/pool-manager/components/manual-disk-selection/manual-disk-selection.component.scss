@@ -1,95 +1,42 @@
-.container {
-  height: 80vh;
-  width: 70vw;
-}
+:host .container {
 
-.inner-container {
-  display: flex;
-  flex-direction: row;
+  border: none;
+  border-radius: 0;
   height: 100%;
-}
+  margin: 0;
 
-.left-pane {
-  display: flex;
-  flex: 7;
-  flex-direction: column;
-}
-
-.filter-container {
-  padding: 0 24px;
-}
-
-.enclosure-container {
-  display: flex;
-  flex: 13;
-  flex-direction: column;
-}
-
-.select-container {
-  column-gap: 16px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  ix-select {
-    flex: 1;
-  }
-}
-
-.group-row {
-  align-items: center;
-  background: var(--bg1);
-  border: 1px solid var(--alt-bg1);
-  cursor: pointer;
-  display: flex;
-  height: 36px;
-  justify-content: space-between;
-  padding-left: 26px;
-  padding-right: 10px;
-}
-
-.group-name {
-  flex-grow: 1;
-  margin-left: 5px;
-}
-
-.disk-icon {
-  margin-bottom: 10px;
-  margin-top: 10px;
-}
-
-.content {
-  form {
+  .card-content {
     height: 100%;
   }
-}
 
-.disk-info {
-  width: 100%;
-}
+  .inner-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    padding: 0;
 
-.tree-container {
-  overflow-y: scroll;
-}
+    .left-pane {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      flex-shrink: 0;
+      max-width: 400px;
+    }
 
-.info-wrapper {
-  display: flex;
-  flex-direction: row;
-  height: 60%;
-  padding: 0 24px;
-
-  &:last-child {
-    flex-grow: 1;
+    .right-pane {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
   }
 }
 
 .header {
   height: 36px;
-  margin-top: 16px;
-  padding: 24px;
+  margin: 12px 23px 10px;
 }
 
-.header-vdevs {
+.vdevs-header {
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -109,9 +56,10 @@
   margin-bottom: 16px;
 }
 
-.header-top {
+.dialog-header {
   align-items: center;
   display: flex;
+  flex-shrink: 0;
 }
 
 .vdevs-container {
@@ -133,13 +81,4 @@
   display: flex;
   flex-direction: row-reverse;
   padding: 16px 24px;
-}
-
-.icon-wrapper {
-  align-items: center;
-  display: flex;
-}
-
-.details-wrapper {
-  flex-grow: 1;
 }
