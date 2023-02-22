@@ -42,7 +42,7 @@ export class CloudsyncRestoreDialogComponent {
   ]);
 
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private filesystem: FilesystemService,
     private translate: TranslateService,
@@ -55,7 +55,7 @@ export class CloudsyncRestoreDialogComponent {
   onSubmit(): void {
     this.loader.open();
 
-    this.ws2.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
+    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

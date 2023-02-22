@@ -48,7 +48,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -66,8 +66,8 @@ export class SetAdminPasswordFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
 
     const request$ = this.hasInstanceId
-      ? this.ws2.call('user.setup_local_administrator', [username, password, { instance_id: instanceId }])
-      : this.ws2.call('user.setup_local_administrator', [username, password]);
+      ? this.ws.call('user.setup_local_administrator', [username, password, { instance_id: instanceId }])
+      : this.ws.call('user.setup_local_administrator', [username, password]);
 
     request$.pipe(
       switchMap(() => this.authService.login(username, password)),
@@ -90,7 +90,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
   }
 
   private checkForEc2Environment(): void {
-    this.ws2.call('system.environment').pipe(untilDestroyed(this)).subscribe((env) => {
+    this.ws.call('system.environment').pipe(untilDestroyed(this)).subscribe((env) => {
       this.hasInstanceId = env === SystemEnvironment.Ec2;
       if (this.hasInstanceId) {
         this.form.controls.instanceId.enable();

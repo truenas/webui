@@ -69,7 +69,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
@@ -105,7 +105,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.ws2.call('vmware.match_datastores_with_datasets', [{
+    this.ws.call('vmware.match_datastores_with_datasets', [{
       hostname,
       username,
       password,
@@ -149,9 +149,9 @@ export class VmwareSnapshotFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws2.call('vmware.create', [values]);
+      request$ = this.ws.call('vmware.create', [values]);
     } else {
-      request$ = this.ws2.call('vmware.update', [
+      request$ = this.ws.call('vmware.update', [
         this.editingSnapshot.id,
         values,
       ]);
