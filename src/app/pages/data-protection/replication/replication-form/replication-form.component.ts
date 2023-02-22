@@ -1328,6 +1328,8 @@ export class ReplicationFormComponent implements FormConfiguration {
       data.properties = true;
       data.exclude = [];
     }
+    data['sudo'] = Boolean(data['sudo']);
+
     const propertiesExcludeObj: Record<string, string> = {};
     if (data.properties_override) {
       for (let item of data.properties_override) {
