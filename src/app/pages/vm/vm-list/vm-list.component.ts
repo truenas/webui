@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
@@ -485,14 +485,38 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       data: vm,
     })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data.wasStopped),
+        untilDestroyed(this),
+      )
       .subscribe((wasStopped) => {
-        if (!wasStopped) {
-          return;
-        }
-
+        this.stopVm(vm, wasStopped.forceAfterTimeout);
         this.updateRows([vm]);
         this.checkMemory();
       });
+  }
+
+  stopVm(vm: VirtualMachine, forceAfterTimeout: boolean): void {
+    const jobDialogRef = this.dialog.open(
+      EntityJobComponent,
+      {
+        data: {
+          title: this.translate.instant('Stopping {rowName}', { rowName: vm.name }),
+        },
+      },
+    );
+    jobDialogRef.componentInstance.setCall('vm.stop', [vm.id, {
+      force: false,
+      force_after_timeout: forceAfterTimeout,
+    }]);
+    jobDialogRef.componentInstance.submit();
+    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      jobDialogRef.close(false);
+      this.dialogService.info(
+        this.translate.instant('Finished'),
+        this.translate.instant(helptext.stop_dialog.successMessage, { vmName: vm.name }),
+        true,
+      );
+    });
   }
 }
