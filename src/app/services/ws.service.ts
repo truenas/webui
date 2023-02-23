@@ -6,7 +6,7 @@ import {
   merge, Observable, of, throwError,
 } from 'rxjs';
 import {
-  filter, map, share, switchMap, take, takeWhile,
+  filter, map, share, switchMap, take, takeWhile, tap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -35,10 +35,13 @@ export class WebSocketService {
 
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
-    this.wsManager.send({
-      id: uuid, msg: IncomingApiMessageType.Method, method, params,
-    });
-    return this.ws$.pipe(
+    return of(uuid).pipe(
+      tap(() => {
+        this.wsManager.send({
+          id: uuid, msg: IncomingApiMessageType.Method, method, params,
+        });
+      }),
+      switchMap(() => this.ws$),
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       switchMap((data: IncomingWebsocketMessage) => {
         if ('error' in data && data.error) {
