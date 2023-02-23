@@ -227,6 +227,8 @@ textarea.mat-input-element::placeholder {
 .form-element.form-ip-netmask .mat-mdc-form-field,
 .form-element.form-combobox .mat-mdc-menu-trigger,
 .form-element .mat-mdc-text-field-wrapper,
+.mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid,
+.mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid input,
 .form-element .form-button,
 .form-element input[type = 'password'],
 .form-element input[type = 'email'],
@@ -336,7 +338,10 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 /* Chips */
 .form-element .mat-mdc-chip {
   font-size: smaller !important;
-  padding: 1px 16px 0 !important;
+}
+
+.mat-mdc-chip-set .mdc-evolution-chip-set__chips {
+  max-width: 100%;
 }
 
 .form-element .mat-mdc-form-field-suffix {
@@ -946,6 +951,9 @@ body .mat-mdc-option {
 }
 
 mat-chip-grid {
+  align-items: center;
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
@@ -954,6 +962,10 @@ body .mat-mdc-checkbox label {
 }
 
 body .mdc-evolution-chip-set .mdc-evolution-chip {
-  margin-bottom: 2px;
-  margin-top: 2px;
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.mdc-checkbox__background {
+  transform: scale(0.9);
 }

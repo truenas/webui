@@ -1345,6 +1345,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .search-icon-wrapper {
     cursor: default;
     user-select: none;
+
+    .mat-icon {
+      align-items: center;
+      display: flex;
+      font-size: 150%;
+      justify-content: center;
+    }
   }
 
   .reset-icon-wrapper {
@@ -1353,7 +1360,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     user-select: none;
 
     .mat-icon {
+      align-items: center;
+      display: flex;
       font-size: 150%;
+      justify-content: center;
     }
 
     &.invisible {
