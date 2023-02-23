@@ -489,8 +489,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data.wasStopped),
         untilDestroyed(this),
       )
-      .subscribe((wasStopped) => {
-        this.stopVm(vm, wasStopped.forceAfterTimeout);
+      .subscribe((data) => {
+        this.stopVm(vm, data.forceAfterTimeout);
         this.updateRows([vm]);
         this.checkMemory();
       });

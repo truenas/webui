@@ -24,6 +24,6 @@ export class StopVmDialogComponent {
   ) { }
 
   onStop(): void {
-    this.dialogRef.close({ wasStopped: true, forceAfterTimeoutCheckbox: this.forceAfterTimeoutCheckbox.value });
+    this.dialogRef.close({ wasStopped: true, forceAfterTimeout: this.forceAfterTimeoutCheckbox.value });
   }
 }
