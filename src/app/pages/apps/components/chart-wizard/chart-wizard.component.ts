@@ -243,7 +243,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.chartSchema = schema;
     try {
       schema.groups.forEach((group) => {
-        this.dynamicSection.push({ ...group, help: '', schema: [] });
+        this.dynamicSection.push({ ...group, help: group.description, schema: [] });
       });
       schema.questions.forEach((question) => {
         if (this.dynamicSection.find((section) => section.name === question.group)) {
@@ -286,7 +286,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateSearchOption(): void {
-    this.searchOptions = this.appSchemaService.getSearchOptions(this.dynamicSection, this.form);
+    this.searchOptions = this.appSchemaService.getSearchOptions(this.dynamicSection, this.form.value);
   }
 
   addItem(event: AddListItemEvent): void {

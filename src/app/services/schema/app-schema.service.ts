@@ -297,17 +297,21 @@ export class AppSchemaService {
     return newConfig;
   }
 
-  getSearchOptions(dynamicSchema: DynamicWizardSchema[], formGroup: CustomUntypedFormGroup | FormGroup): Option[] {
+  getSearchOptions(dynamicSchema: DynamicWizardSchema[], formValue: HierarchicalObjectMap<ChartFormValue>): Option[] {
     let options: Option[] = [];
     dynamicSchema.forEach((section) => {
       section.schema.forEach((item) => {
         if (item.type !== DynamicFormSchemaType.Dict) {
-          if (item.title && formGroup.value[item.controlName] !== undefined) {
+          if (item.title && formValue[item.controlName] !== undefined) {
             options.push({ label: item.title, value: item.controlName });
           }
-        } else {
+        } else if (formValue[item.controlName] !== undefined) {
           options = options.concat(
-            this.getSearchOptionsFromDict(item, formGroup.value[item.controlName], item.controlName),
+            this.getSearchOptionsFromDict(
+              item,
+              formValue[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
+              item.controlName,
+            ),
           );
         }
       });
