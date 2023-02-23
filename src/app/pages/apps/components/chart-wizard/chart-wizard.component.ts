@@ -22,6 +22,7 @@ import {
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
@@ -55,6 +56,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     release_name: '',
   });
 
+  searchControl = this.formBuilder.control('');
+  searchOptions: Option[] = [];
+
   readonly helptext = helptext;
 
   get pageTitle(): string {
@@ -86,6 +90,22 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.listenForRouteChanges();
+
+    this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      const option = this.searchOptions.find((opt) => opt.value === value)
+        || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
+
+      if (option) {
+        const path = option.value.toString().split('.');
+        let nextElement: HTMLElement;
+        path.forEach((id, idx) => {
+          nextElement = document.getElementById(id);
+          if (idx === path.length - 1) {
+            nextElement?.scrollIntoView();
+          }
+        });
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -96,12 +116,8 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onFieldSearch(query: string): void {
-    console.warn(query); // TODO: Implement search
-  }
-
   onSectionClick(sectionName: string): void {
-    document.getElementById(sectionName).scrollIntoView();
+    document.getElementById(sectionName)?.scrollIntoView();
   }
 
   checkSectionInvalid(section: DynamicWizardSchema): boolean {
@@ -240,6 +256,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.config = this.appSchemaService.restoreKeysFromFormGroup(this.config, this.form);
         this.form.patchValue(this.config);
       }
+      this.updateSearchOption();
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
@@ -266,6 +283,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         );
       }
     });
+  }
+
+  updateSearchOption(): void {
+    this.searchOptions = this.appSchemaService.getSearchOptions(this.dynamicSection, this.form);
   }
 
   addItem(event: AddListItemEvent): void {

@@ -5,6 +5,7 @@
   "Edit App": "",
   "Install App": "",
   "Review": "",
+  "Search Input Fields": "",
   "Section Help": "",
   "Vdevs spans enclsoure": "",
   "When not specified, guest system is given fixed amount of memory specified above.\nWhen minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.": "",

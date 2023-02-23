@@ -10,6 +10,7 @@
       <div class="fieldset">
         <ng-container *ngFor="let schema of section.schema">
           <ix-dynamic-form-item
+            [id]="schema.controlName"
             [dynamicSchema]="schema"
             [dynamicForm]="dynamicForm"
             [isEditMode]="isEditMode"

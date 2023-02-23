@@ -24,7 +24,12 @@
 </form>
 <div class="search-container">
   <div class="search-card">
-    <ix-search-input (search)="onFieldSearch($event)"></ix-search-input>
+    <ix-input
+      prefixIcon="search"
+      [formControl]="searchControl"
+      [placeholder]="'Search Input Fields' | translate"
+      [autocompleteOptions]="searchOptions"
+    ></ix-input>
     <ng-container *ngFor="let section of dynamicSection">
       <div class="section" (click)="onSectionClick(section.name)">
         {{ section.name }}
