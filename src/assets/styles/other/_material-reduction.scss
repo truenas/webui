@@ -286,7 +286,7 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   top: -9px;
 }
 
-.form-element.form-combobox .mat-mdc-menu-trigger .mat-icon {
+.form-element.form-combobox .mat-mdc-menu-trigger .ix-icon {
   position: relative !important;
   top: 7px !important;
 }
@@ -527,7 +527,7 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
 
 /* Top bar fixes */
 .topbar .mat-icon-button,
-.topbar .mat-icon-button .mat-icon[alt='iXsystem logo'] {
+.topbar .mat-icon-button .ix-icon.logo {
   color: var(--topbar-txt) !important;
 }
 
@@ -669,11 +669,11 @@ td.mat-cell.tree-cell {
   max-width: 300px;
 }
 
-td.mat-cell .mat-icon {
+td.mat-cell .ix-icon {
   top: calc(50% - 12px);
 }
 
-td.mat-cell .mat-icon.expansion-trigger {
+td.mat-cell .ix-icon.expansion-trigger {
   font-size: 24px;
 }
 

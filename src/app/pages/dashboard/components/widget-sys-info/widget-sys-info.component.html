@@ -78,14 +78,14 @@
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <ix-icon
-                    name="ix:truenas_scale_logo_full"
+                    name="ix:logo_truenas_scale_full"
                     [id]="productModel"
                   ></ix-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
                   <ix-icon
-                    name="ix:truenas_scale_logotype"
+                    name="ix:logo_truenas_scale_type"
                     [id]="productModel"
                   ></ix-icon>
                 </ng-template>
@@ -119,12 +119,12 @@
                     <ix-icon
                       *ngIf="!certified && !isHaLicensed"
                       class="generic"
-                      name="ix:truenas_scale_logomark"
+                      name="ix:logo_truenas_scale_mark"
                     ></ix-icon>
                     <ix-icon
                       *ngIf="certified && !isHaLicensed"
                       class="generic"
-                      name="ix:freenas_certified"
+                      name="ix:logo_freenas_certified"
                     ></ix-icon>
                   </ng-template>
                   <div *ngIf="!hasHa && isPassive" class="generic alert">

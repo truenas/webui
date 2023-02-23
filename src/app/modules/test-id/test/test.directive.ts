@@ -67,6 +67,8 @@ export class TestDirective {
         return tagName;
       case 'a':
         return 'link';
+      case 'ix-icon':
+        return 'icon';
       default:
         assertUnreachable(tagName as never);
     }

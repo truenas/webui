@@ -499,7 +499,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       min-height: 40px;
     }
 
-    .more-info .mat-icon {
+    .more-info .ix-icon {
       margin: 0 4px;
     }
 
@@ -1070,7 +1070,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding-left: 3px;
   }
 
-  tree-node-content .mat-icon {
+  tree-node-content .ix-icon {
     vertical-align: top;
   }
 
@@ -1180,7 +1180,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--red) !important;
     color: white !important;
 
-    .mat-icon {
+    .ix-icon {
       color: white !important;
       opacity: 0.8 !important;
     }
@@ -1347,7 +1347,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.5;
     user-select: none;
 
-    .mat-icon {
+    .ix-icon {
       font-size: 150%;
     }
 

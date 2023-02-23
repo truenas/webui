@@ -94,9 +94,11 @@
                     &nbsp;&nbsp;<span>{{ element[column.prop] }}</span>
                   </div>
 
-                  <ng-container *ngSwitchCase="'state-icon'">
-                    <ix-icon class="state-icon" [name]="column.state.icon"></ix-icon>
-                  </ng-container>
+                  <ix-icon
+                    *ngSwitchCase="'state-icon'"
+                    class="state-icon"
+                    [name]="column.state.icon"
+                  ></ix-icon>
 
                   <mat-checkbox
                     *ngSwitchCase="'checkbox'"
