@@ -1,30 +1,25 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, UntypedFormControl, ValidatorFn } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
-  greaterThan(otherControlName: string, fieldPlaceholers: [string]): ValidatorFn {
-    let thisControl: AbstractControl;
-    let otherControl: UntypedFormControl;
-
-    return function greaterThanValidate(control: AbstractControl) {
+  greaterThan(otherControlName: string, fieldPlaceholers: [string]) {
+    return function greaterThanValidate(control: UntypedFormControl) {
       if (!control.parent) {
         return null;
       }
 
       // Initializing the validator.
-      if (!thisControl) {
-        thisControl = control;
-        otherControl = control.parent.get(otherControlName) as UntypedFormControl;
-        if (!otherControl) {
-          throw new Error(
-            'greaterThanValidator(): other control is not found in parent group',
-          );
-        }
-        otherControl.valueChanges.subscribe(
-          () => { thisControl.updateValueAndValidity(); },
+      const thisControl = control;
+      const otherControl = control.parent.get(otherControlName) as UntypedFormControl;
+      if (!otherControl) {
+        throw new Error(
+          'greaterThanValidator(): other control is not found in parent group',
         );
       }
+      otherControl.valueChanges.subscribe(
+        () => { thisControl.updateValueAndValidity(); },
+      );
 
       if (!otherControl) {
         return null;
@@ -40,10 +35,8 @@ export class ValidationService {
     };
   }
 
-  rangeValidator(min: number, max?: number): ValidatorFn {
-    let thisControl: AbstractControl;
-
-    return function rangeValidate(control: AbstractControl) {
+  rangeValidator(min: number, max?: number) {
+    return function rangeValidate(control: UntypedFormControl) {
       let regex;
       if (min === 0) {
         regex = /^(0|[1-9]\d*)$/;
@@ -56,9 +49,7 @@ export class ValidationService {
       }
 
       // Initializing the validator.
-      if (!thisControl) {
-        thisControl = control;
-      }
+      const thisControl = control;
 
       if (!thisControl.value) {
         return null;
@@ -81,28 +72,23 @@ export class ValidationService {
     };
   }
 
-  matchOtherValidator(otherControlName: string): ValidatorFn {
-    let thisControl: AbstractControl;
-    let otherControl: UntypedFormControl;
-
-    return function matchOtherValidate(control: AbstractControl) {
+  matchOtherValidator(otherControlName: string) {
+    return function matchOtherValidate(control: UntypedFormControl) {
       if (!control.parent) {
         return null;
       }
 
       // Initializing the validator.
-      if (!thisControl) {
-        thisControl = control;
-        otherControl = control.parent.get(otherControlName) as UntypedFormControl;
-        if (!otherControl) {
-          throw new Error(
-            'matchOtherValidator(): other control is not found in parent group',
-          );
-        }
-        otherControl.valueChanges.subscribe(
-          () => { thisControl.updateValueAndValidity(); },
+      const thisControl = control;
+      const otherControl = control.parent.get(otherControlName) as UntypedFormControl;
+      if (!otherControl) {
+        throw new Error(
+          'matchOtherValidator(): other control is not found in parent group',
         );
       }
+      otherControl.valueChanges.subscribe(
+        () => { thisControl.updateValueAndValidity(); },
+      );
 
       if (!otherControl) {
         return null;
