@@ -143,7 +143,7 @@ class button:
     CONTINUE = '//button[contains(*/text(),"CONTINUE")]'
     close = '//button[contains(.,"Close")]'
     CLOSE = '//button[contains(.,"CLOSE")]'
-    close_Icon = '//mat-icon[@id="ix-close-icon"]'
+    close_Icon = '//ix-icon[@id="ix-close-icon"]'
     advanced_Option = '//button[contains(*/text(),"Advanced Options")]'
     advanced_Settings = '//button[contains(.,"Advanced Settings")]'
     ok = '//button[@name="ok_button"]'
@@ -197,8 +197,8 @@ class dataset:
     zfs_Encryption_Edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
     lock_Button = '//button[contains(.,"Lock")]'
     unlock_Button = '//a[contains(.,"Unlock")]'
-    lock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock"]'
-    unlock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock-open-variant"]'
+    lock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//ix-icon[@fonticon="mdi-lock"]'
+    unlock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//ix-icon[@fonticon="mdi-lock-open-variant"]'
 
     def pool_Tree_Name(pool_name):
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
@@ -325,9 +325,9 @@ class global_Configuration:
     nameserver1_Input = '//ix-input[contains(.,"Nameserver 1")]//input'
     nameserver2_Input = '//ix-input[contains(.,"Nameserver 2")]//input'
     nameserver3_Input = '//ix-input[contains(.,"Nameserver 3")]//input'
-    nameserver1_Delete = '//ix-input[contains(.,"Nameserver 1")]//mat-icon[@fonticon="mdi-close-circle"]'
-    nameserver2_Delete = '//ix-input[contains(.,"Nameserver 2")]//mat-icon[@fonticon="mdi-close-circle"]'
-    nameserver3_Delete = '//ix-input[contains(.,"Nameserver 3")]//mat-icon[@fonticon="mdi-close-circle"]'
+    nameserver1_Delete = '//ix-input[contains(.,"Nameserver 1")]//ix-icon[@fonticon="mdi-close-circle"]'
+    nameserver2_Delete = '//ix-input[contains(.,"Nameserver 2")]//ix-icon[@fonticon="mdi-close-circle"]'
+    nameserver3_Delete = '//ix-input[contains(.,"Nameserver 3")]//ix-icon[@fonticon="mdi-close-circle"]'
     ipv4_Default_Gateway_Input = '//ix-input[contains(.,"IPv4 Default Gateway")]//input'
     hostname_Input = '//ix-input[contains(.,"Hostname")]//input'
 
@@ -380,7 +380,7 @@ class login:
 class network:
     title = '//h1[contains(.,"Network")]'
     global_Configuration_Title = '//h3[text()="Global Configuration"]'
-    interface = '//mat-icon[@id="enp0s8"]'
+    interface = '//ix-icon[@id="enp0s8"]'
 
 
 class pool_manager:
@@ -494,8 +494,8 @@ class systemDataset:
 
 
 class toolbar:
-    ha_Disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
-    ha_Enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
+    ha_Disabled = '//ix-icon[@data-mat-icon-name="ha_disabled"]'
+    ha_Enabled = '//ix-icon[@data-mat-icon-name="ha_enabled"]'
     notification = '//mat-icon[normalize-space(text())="notifications"]'
     notification_Button = '//button[contains(.,"notifications")]'
     notification_Text = '//button[contains(.,"notifications")]//mat-icon/span'
