@@ -1,4 +1,9 @@
 
+CHECKBOX = '//mat-checkbox'
+TOGGLE = '//mat-slide-toggle'
+BUTTON = '//button'
+
+
 def mat_Option(option):
     return f'//mat-option[contains(.,"{option}")]'
 
@@ -461,20 +466,26 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
-    iscsi_Service_Checkbox = '//tr[contains(.,"iSCSI")]//mat-checkbox'
-    iscsi_Service_Toggle = '//tr[contains(.,"iSCSI")]//mat-slide-toggle'
-    iscsi_Service_Button = '//tr[contains(.,"iSCSI")]//button'
-    iscsi_Service_Name = '//td[contains(text(),"iSCSI")]'
-    nfs_Service_Checkbox = '//tr[contains(.,"NFS")]//mat-checkbox'
-    nfs_Service_Toggle = '//tr[contains(.,"NFS")]//mat-slide-toggle'
-    nfs_Service_Button = '//tr[contains(.,"NFS")]//button'
-    nfs_Service_Name = '//td[contains(text(),"NFS")]'
-    smb_Service_Toggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
-    smb_Service_Name = '//td[contains(text(),"SMB")]'
-    smb_Service_Button = '//tr[contains(.,"SMB")]//button'
-    ssh_Service_Toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
-    ssh_Service_Button = '//tr[contains(.,"SSH")]//button'
-    ssh_Service_Name = '//td[contains(text(),"SSH")]'
+
+    def service_Tr(serivce):
+        return f'//tr[contains(.,"{serivce}")]'
+
+    iscsi_Service = service_Tr('iSCSI')
+    iscsi_Service_Button = iscsi_Service + BUTTON
+    iscsi_Service_Checkbox = iscsi_Service + CHECKBOX
+    iscsi_Service_Toggle = iscsi_Service + TOGGLE
+    nfs_Service = service_Tr('NFS')
+    nfs_Service_Button = nfs_Service + BUTTON
+    nfs_Service_Checkbox = nfs_Service + CHECKBOX
+    nfs_Service_Toggle = nfs_Service + TOGGLE
+    smb_Service = service_Tr('SMB')
+    smb_Service_Button = smb_Service + BUTTON
+    smb_Service_Checkbox = smb_Service + CHECKBOX
+    smb_Service_Toggle = smb_Service + TOGGLE
+    ssh_Service = service_Tr('SSH')
+    ssh_Service_Button = ssh_Service + BUTTON
+    ssh_Service_Checkbox = ssh_Service + CHECKBOX
+    ssh_Service_Toggle = ssh_Service + TOGGLE
 
 
 class sharing:
