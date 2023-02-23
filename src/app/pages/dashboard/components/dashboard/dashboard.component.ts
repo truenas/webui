@@ -8,6 +8,7 @@ import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { Styler } from 'stylefire';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -125,7 +126,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   initialLoading = true;
 
   constructor(
-    protected ws2: WebSocketService,
+    protected ws: WebSocketService,
     private el: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
@@ -255,8 +256,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   startListeners(): void {
     this.getDisksData();
     this.getNetworkInterfaces();
+    this.listenForPoolUpdates();
 
-    this.ws2.subscribe('reporting.realtime').pipe(
+    this.ws.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       untilDestroyed(this),
     ).subscribe((update) => {
@@ -397,7 +399,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
     if (!dashboardPool) {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-      return;
+      return undefined;
     }
     return this.volumeData && this.volumeData[dashboardPool.name];
   }
@@ -549,7 +551,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
-    this.ws2.call('user.set_attribute', [1, 'dashState', state])
+    this.ws.call('user.set_attribute', [1, 'dashState', state])
       .pipe(untilDestroyed(this))
       .subscribe((wasSet) => {
         if (!wasSet) {
@@ -559,7 +561,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadPoolData(): void {
-    this.ws2.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       this.pools = pools;
 
       if (this.pools.length > 0) {
@@ -572,7 +574,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadVolumeData(): void {
-    this.ws2
+    this.ws
       .call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])
       .pipe(untilDestroyed(this))
       .subscribe((dataset) => {
@@ -602,7 +604,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getNetworkInterfaces(): void {
-    this.ws2.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
+    this.ws.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
       const clone = [...interfaces] as DashboardNetworkInterface[];
       const removeNics: { [nic: string]: number | string } = {};
 
@@ -674,5 +676,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const startX = viewport.get('x') as number;
 
     return { carousel, vpw, startX };
+  }
+
+  private listenForPoolUpdates(): void {
+    this.ws.subscribe('pool.query').pipe(
+      filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loadPoolData();
+    });
   }
 }

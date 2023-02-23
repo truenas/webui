@@ -211,8 +211,8 @@ export class CertificatesDashComponent implements OnInit {
               this.dialogService.confirm({
                 title: helptextSystemCa.delete_error.title,
                 message: helptextSystemCa.delete_error.message,
-                hideCheckBox: true,
-                buttonMsg: helptextSystemCa.delete_error.button,
+                hideCheckbox: true,
+                buttonText: helptextSystemCa.delete_error.button,
                 hideCancel: true,
               });
             } else {
@@ -327,9 +327,9 @@ export class CertificatesDashComponent implements OnInit {
         this.dialogService.confirm({
           title: this.translate.instant('Revoke Certificate'),
           message: this.translate.instant('This is a one way action and cannot be reversed. Are you sure you want to revoke this Certificate?'),
-          buttonMsg: this.translate.instant('Revoke'),
-          cancelMsg: this.translate.instant('Cancel'),
-          hideCheckBox: true,
+          buttonText: this.translate.instant('Revoke'),
+          cancelText: this.translate.instant('Cancel'),
+          hideCheckbox: true,
         })
           .pipe(filter(Boolean), untilDestroyed(this))
           .subscribe(() => {
@@ -389,9 +389,9 @@ export class CertificatesDashComponent implements OnInit {
         this.dialogService.confirm({
           title: this.translate.instant('Revoke Certificate Authority'),
           message: this.translate.instant('Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?'),
-          buttonMsg: this.translate.instant('Revoke'),
-          cancelMsg: this.translate.instant('Cancel'),
-          hideCheckBox: true,
+          buttonText: this.translate.instant('Revoke'),
+          cancelText: this.translate.instant('Cancel'),
+          hideCheckbox: true,
         })
           .pipe(filter(Boolean), untilDestroyed(this))
           .subscribe(() => {

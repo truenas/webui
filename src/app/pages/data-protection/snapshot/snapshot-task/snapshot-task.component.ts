@@ -89,7 +89,7 @@ export class SnapshotTaskComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
@@ -131,9 +131,9 @@ export class SnapshotTaskComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws2.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
+      request$ = this.ws.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     } else {
-      request$ = this.ws2.call('pool.snapshottask.update', [
+      request$ = this.ws.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);

@@ -117,8 +117,8 @@ export class StorageSettingsComponent {
             message: this.translate.instant(
               'The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.',
             ),
-            hideCheckBox: false,
-            buttonMsg: this.translate.instant('Continue'),
+            hideCheckbox: false,
+            buttonText: this.translate.instant('Continue'),
           });
         }
 

@@ -1,4 +1,4 @@
-$component-header: 42px;
+$component-header: 50px;
 
 :host {
   .mat-mdc-dialog-actions {
@@ -21,7 +21,10 @@ $component-header: 42px;
   height: $component-header;
   margin-left: -24px;
   margin-right: -24px;
-  padding: 4px 24px 12px;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .job-badge {

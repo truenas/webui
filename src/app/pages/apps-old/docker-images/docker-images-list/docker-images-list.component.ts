@@ -145,6 +145,8 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
           return item.update_available ? 1 : 0;
         case 'created':
           return item.created?.$date ? item.created.$date.toString() : '';
+        default:
+          return undefined;
       }
     };
     this.store.patchState({ isLoading: false });

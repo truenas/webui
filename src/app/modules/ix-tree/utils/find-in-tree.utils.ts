@@ -3,7 +3,7 @@ export function findInTree<T extends { children?: T[] }>(
   predicate: (item: T) => boolean,
 ): T {
   if (!items?.length) {
-    return;
+    return undefined;
   }
 
   for (const item of items) {
@@ -15,5 +15,9 @@ export function findInTree<T extends { children?: T[] }>(
     if (child) {
       return child;
     }
+
+    return undefined;
   }
+
+  return undefined;
 }

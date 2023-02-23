@@ -146,7 +146,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     public router: Router,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
   ) {
     super(translate);
     this.configurable = false;
@@ -189,7 +189,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return key;
   }
 
-  getAvailableSpace(): number {
+  getAvailableSpace(): void {
     if (!this.volumeData || typeof this.volumeData.avail === undefined) {
       this.displayValue = 'Unknown';
       return;
@@ -205,7 +205,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (usedValue === 'Locked') {
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
-      return 0;
+      return;
     }
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
@@ -224,7 +224,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getDiskDetails(key: string, value: string): void {
-    this.ws2.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
+    this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
       const currentPath = this.path[this.currentSlideIndex];
       const currentName = (currentPath?.dataSource as TopologyDisk)?.disk || 'unknown';
 

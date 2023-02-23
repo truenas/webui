@@ -157,10 +157,6 @@ export class ServiceWebdavComponent implements OnInit {
     );
   }
 
-  certificatesLinkClicked(): void {
-    this.router.navigate(['/', 'credentials', 'certificates']);
-  }
-
   onSubmit(): void {
     this.isFormLoading = true;
 

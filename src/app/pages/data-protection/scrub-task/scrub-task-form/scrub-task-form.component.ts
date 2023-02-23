@@ -40,7 +40,7 @@ export class ScrubTaskFormComponent {
 
   isLoading = false;
 
-  poolOptions$ = this.ws2.call('pool.query').pipe(
+  poolOptions$ = this.ws.call('pool.query').pipe(
     map((pools) => {
       return pools.map((pool) => ({ label: pool.name, value: pool.id }));
     }),
@@ -59,7 +59,7 @@ export class ScrubTaskFormComponent {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -82,9 +82,9 @@ export class ScrubTaskFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws2.call('pool.scrub.create', [values as CreatePoolScrubTask]);
+      request$ = this.ws.call('pool.scrub.create', [values as CreatePoolScrubTask]);
     } else {
-      request$ = this.ws2.call('pool.scrub.update', [
+      request$ = this.ws.call('pool.scrub.update', [
         this.editingTask.id,
         values as CreatePoolScrubTask,
       ]);

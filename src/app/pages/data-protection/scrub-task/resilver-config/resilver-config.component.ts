@@ -49,7 +49,7 @@ export class ResilverConfigComponent implements OnInit {
   timeOptions$ = of(this.taskService.getTimeOptions());
 
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -62,7 +62,7 @@ export class ResilverConfigComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws2.call('pool.resilver.config')
+    this.ws.call('pool.resilver.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
@@ -82,7 +82,7 @@ export class ResilverConfigComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws2.call('pool.resilver.update', [values as ResilverConfigUpdate])
+    this.ws.call('pool.resilver.update', [values as ResilverConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

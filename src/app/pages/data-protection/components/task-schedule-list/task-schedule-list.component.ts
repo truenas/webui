@@ -54,6 +54,7 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
         .map((run) => run.toLocaleString());
     } catch (error: unknown) {
       console.error(error);
+      return [];
     }
   }
 }

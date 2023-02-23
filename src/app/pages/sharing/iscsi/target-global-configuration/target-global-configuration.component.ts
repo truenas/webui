@@ -109,8 +109,8 @@ export class TargetGlobalConfigurationComponent implements OnInit {
         return this.dialogService.confirm({
           title: shared.dialog_title,
           message: shared.dialog_message,
-          hideCheckBox: true,
-          buttonMsg: shared.dialog_button,
+          hideCheckbox: true,
+          buttonText: shared.dialog_button,
         }).pipe(
           filter(Boolean),
           switchMap(() => forkJoin([

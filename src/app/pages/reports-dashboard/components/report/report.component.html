@@ -135,7 +135,7 @@
                     <strong>{{ legendItem }}</strong>
                   </span>
 
-                  <span *ngIf="legendData?.series[i]?.yHTML" class="font-normal">:
+                  <span *ngIf="legendData?.series?.[i]?.yHTML" class="font-normal">:
                     {{ legendData.series[i].yHTML }}
                   </span>
                 </td>

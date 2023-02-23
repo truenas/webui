@@ -85,7 +85,7 @@ export class SnapshotDetailsRowComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
-      buttonMsg: this.translate.instant('Delete'),
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),

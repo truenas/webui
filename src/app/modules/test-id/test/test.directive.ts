@@ -71,6 +71,7 @@ export class TestDirective {
         return 'icon';
       default:
         assertUnreachable(tagName as never);
+        throw new Error(`Unknown element type: ${tagName}`);
     }
   }
 }

@@ -112,7 +112,7 @@ export class RsyncTaskFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -198,9 +198,9 @@ export class RsyncTaskFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws2.call('rsynctask.create', [values as RsyncTaskUpdate]);
+      request$ = this.ws.call('rsynctask.create', [values as RsyncTaskUpdate]);
     } else {
-      request$ = this.ws2.call('rsynctask.update', [
+      request$ = this.ws.call('rsynctask.update', [
         this.editingTask.id,
         values as RsyncTaskUpdate,
       ]);

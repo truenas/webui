@@ -37,7 +37,7 @@ export class ManageConfigurationMenuComponent {
     this.dialogService.confirm({
       title: helptext.reset_config_form.title,
       message: helptext.reset_config_form.message,
-      buttonMsg: helptext.reset_config_form.button_text,
+      buttonText: helptext.reset_config_form.button_text,
     })
       .pipe(
         filter(Boolean),

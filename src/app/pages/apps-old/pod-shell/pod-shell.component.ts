@@ -51,8 +51,8 @@ export class PodShellComponent implements TerminalConfiguration {
             this.dialogService.confirm({
               title: helptext.podConsole.nopod.title,
               message: helptext.podConsole.nopod.message,
-              hideCheckBox: true,
-              buttonMsg: this.translate.instant('Close'),
+              hideCheckbox: true,
+              buttonText: this.translate.instant('Close'),
               hideCancel: true,
             });
           } else {

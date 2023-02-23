@@ -43,5 +43,7 @@ export class DiskDetailsPanelComponent {
     if (isTopologyDisk(this.topologyItem)) {
       return this.topologyItem.disk !== null;
     }
+
+    return false;
   }
 }

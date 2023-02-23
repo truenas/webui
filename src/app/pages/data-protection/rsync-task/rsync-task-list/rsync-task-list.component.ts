@@ -79,7 +79,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   };
 
   constructor(
-    protected ws2: WebSocketService,
+    protected ws: WebSocketService,
     protected taskService: TaskService,
     protected dialog: DialogService,
     private matDialog: MatDialog,
@@ -110,11 +110,11 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
         this.dialog.confirm({
           title: this.translate.instant('Run Now'),
           message: this.translate.instant('Run this rsync now?'),
-          hideCheckBox: true,
+          hideCheckbox: true,
         }).pipe(
           filter(Boolean),
           tap(() => row.state = { state: JobState.Running }),
-          switchMap(() => this.ws2.call('rsynctask.run', [row.id])),
+          switchMap(() => this.ws.call('rsynctask.run', [row.id])),
           tap(() => this.snackbar.success(
             this.translate.instant('Rsync task «{name}» has started.', {
               name: `${row.remotehost} - ${row.remotemodule}`,

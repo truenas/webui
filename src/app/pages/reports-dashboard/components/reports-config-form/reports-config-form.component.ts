@@ -101,7 +101,7 @@ export class ReportsConfigFormComponent implements OnInit {
           return this.dialog.confirm({
             title: helptext.dialog.title,
             message: helptext.dialog.message,
-            buttonMsg: helptext.dialog.action,
+            buttonText: helptext.dialog.action,
           }).pipe(
             filter(Boolean),
             map(() => ({ confirm_rrd_destroy: true, ...body })),

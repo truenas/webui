@@ -168,9 +168,9 @@ export class ServiceNfsComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Add Kerberos SPN Entry'),
       message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Yes'),
-      cancelMsg: this.translate.instant('No'),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Yes'),
+      cancelText: this.translate.instant('No'),
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (!confirmed) {
         return;

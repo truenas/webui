@@ -5,7 +5,6 @@ import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
   combineLatest,
-  EMPTY,
   filter,
   map,
   Observable,
@@ -97,12 +96,12 @@ export class AuthService {
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(
       switchMap((loginResponse) => {
         this.isLoggedIn$.next(loginResponse);
-        if (loginResponse) {
-          return combineLatest([of(loginResponse), this.authToken$]);
+        if (!loginResponse) {
+          return of(false);
         }
-        return combineLatest([of(loginResponse), EMPTY]);
+
+        return this.authToken$.pipe(map(() => loginResponse));
       }),
-      map(([loginResponse]) => loginResponse),
     );
   }
 

@@ -157,7 +157,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
   initChart(): Chart {
     const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
     if (!el) {
-      return;
+      return undefined;
     }
 
     const ds = this.makeDatasets(this.memData.data);

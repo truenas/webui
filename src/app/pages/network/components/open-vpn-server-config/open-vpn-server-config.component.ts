@@ -125,11 +125,6 @@ export class OpenVpnServerConfigComponent implements OnInit {
       });
   }
 
-  certificatesLinkClicked(): void {
-    this.router.navigate(['/', 'credentials', 'certificates']);
-    this.slideInService.close(null, false);
-  }
-
   onRenewStaticKey(): void {
     this.loader.open();
 

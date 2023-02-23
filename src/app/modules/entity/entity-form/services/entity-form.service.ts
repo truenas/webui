@@ -258,6 +258,8 @@ export class EntityFormService {
     if (type === UnitType.Size) {
       return unit[0] + 'iB';
     }
+
+    return undefined;
   }
 
   /**

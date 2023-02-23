@@ -55,19 +55,14 @@
               [options]="sslOptions$"
             ></ix-select>
 
-            <div class="linked-select">
-              <div class="link-wrapper">
-                <a class="link" ixTest="manage-certificates" (click)="onManageCertificatesClicked()">
-                  {{ 'Manage Certificates' | translate }}
-                </a>
-              </div>
+            <ix-with-manage-certificates-link>
               <ix-select
                 formControlName="certificate"
                 [label]="'Certificate' | translate"
                 [tooltip]="helptext.ldap_certificate_tooltip | translate"
                 [options]="certificates$"
               ></ix-select>
-            </div>
+            </ix-with-manage-certificates-link>
             <ix-checkbox
               formControlName="validate_certificates"
               [label]="'Validate Certificates' | translate"

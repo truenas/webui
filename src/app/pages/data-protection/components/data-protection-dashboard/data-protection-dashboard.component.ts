@@ -86,7 +86,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   jobStates = new Map<number, string>();
 
   constructor(
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
     private dialog: DialogService,
@@ -612,11 +612,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           this.dialog.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state.state = JobState.Running),
-            switchMap(() => this.ws2.call('replication.run', [row.id])),
+            switchMap(() => this.ws.call('replication.run', [row.id])),
             tap(() => {
               this.snackbar.success(
                 this.translate.instant('Replication «{name}» has started.', { name: row.name }),
@@ -665,11 +665,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           this.dialog.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Run this cloud sync now?'),
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws2.call('cloudsync.sync', [row.id])),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -698,11 +698,11 @@ export class DataProtectionDashboardComponent implements OnInit {
             .confirm({
               title: this.translate.instant('Stop'),
               message: this.translate.instant('Stop this cloud sync?'),
-              hideCheckBox: true,
+              hideCheckbox: true,
             })
             .pipe(
               filter(Boolean),
-              switchMap(() => this.ws2.call('cloudsync.abort', [row.id])),
+              switchMap(() => this.ws.call('cloudsync.abort', [row.id])),
               untilDestroyed(this),
             )
             .subscribe({
@@ -727,10 +727,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           this.dialog.confirm({
             title: helptext_cloudsync.dry_run_title,
             message: helptext_cloudsync.dry_run_dialog,
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws2.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -777,11 +777,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           this.dialog.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Run this rsync now?'),
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws2.call('rsynctask.run', [row.id])),
+            switchMap(() => this.ws.call('rsynctask.run', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Rsync task «{name}» has started.', {
                 name: `${row.remotehost} – ${row.remotemodule}`,
@@ -893,7 +893,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         return;
     }
 
-    this.ws2
+    this.ws
       .call(updateCall, [row.id, { [param]: row[param] }])
       .pipe(untilDestroyed(this))
       .subscribe({

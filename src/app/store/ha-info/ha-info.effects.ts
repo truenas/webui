@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { EMPTY } from 'rxjs';
 import { map, mergeMap, withLatestFrom } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -50,11 +51,13 @@ export class HaInfoEffects {
       const shouldCheckForPendingUpgrade = (haStatus.hasHa && haStatus.reasons.length === 0)
         || (haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions);
 
-      if (isHa && shouldCheckForPendingUpgrade) {
-        return this.ws.call('failover.upgrade_pending').pipe(
-          map((isUpgradePending) => upgradePendingStateLoaded({ isUpgradePending })),
-        );
+      if (!isHa || !shouldCheckForPendingUpgrade) {
+        return EMPTY;
       }
+
+      return this.ws.call('failover.upgrade_pending').pipe(
+        map((isUpgradePending) => upgradePendingStateLoaded({ isUpgradePending })),
+      );
     }),
   ));
 

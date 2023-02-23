@@ -67,6 +67,8 @@ export class InterfaceNameValidatorService {
         return 'bond';
       case NetworkInterfaceType.Vlan:
         return 'vlan';
+      default:
+        return '';
     }
   }
 }

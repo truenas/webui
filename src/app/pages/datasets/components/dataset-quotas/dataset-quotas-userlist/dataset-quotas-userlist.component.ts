@@ -206,8 +206,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     return this.dialogService.confirm({
       title: helptext.users.filter_dialog.title_show,
       message: helptext.users.filter_dialog.message_show,
-      hideCheckBox: true,
-      buttonMsg: helptext.users.filter_dialog.button_show,
+      hideCheckbox: true,
+      buttonText: helptext.users.filter_dialog.button_show,
     });
   }
 
@@ -215,8 +215,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     return this.dialogService.confirm({
       title: helptext.users.filter_dialog.title_filter,
       message: helptext.users.filter_dialog.message_filter,
-      hideCheckBox: true,
-      buttonMsg: helptext.users.filter_dialog.button_filter,
+      hideCheckbox: true,
+      buttonText: helptext.users.filter_dialog.button_filter,
     });
   }
 
@@ -243,7 +243,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       title: this.translate.instant('Remove Invalid Quotas'),
       message: this.translate.instant('This action will set all dataset quotas for the removed or invalid users to 0,\
  virutally removing any dataset quota entires for such users. Are you sure you want to proceed?'),
-      buttonMsg: this.translate.instant('Remove'),
+      buttonText: this.translate.instant('Remove'),
     };
     return this.dialogService.confirm(confirmOptions);
   }
@@ -284,8 +284,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     return this.dialogService.confirm({
       title: this.translate.instant('Delete User Quota'),
       message: this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name }),
-      buttonMsg: this.translate.instant('Delete'),
-      hideCheckBox: true,
+      buttonText: this.translate.instant('Delete'),
+      hideCheckbox: true,
     });
   }
 

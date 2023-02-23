@@ -288,11 +288,13 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       if (Number.isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
         return this.getSizeString(volume.avail);
       }
-    } else if (!volume || typeof volume.avail === undefined) {
-      return this.translate.instant('Unknown');
-    } else {
-      return this.translate.instant('Gathering data...');
+      return '';
     }
+    if (!volume || typeof volume.avail === undefined) {
+      return this.translate.instant('Unknown');
+    }
+
+    return this.translate.instant('Gathering data...');
   }
 
   getSizeString(volumeSize: number): string {

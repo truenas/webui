@@ -80,8 +80,8 @@ export class TableService {
     if (dialog.buildTitle) {
       dialog.title = dialog.buildTitle(item);
     }
-    if (dialog.buttonMsg) {
-      dialog.button = dialog.buttonMsg(item);
+    if (dialog.buttonMessage) {
+      dialog.button = dialog.buttonMessage(item);
     }
 
     if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.doubleConfirm) {
@@ -95,8 +95,8 @@ export class TableService {
       this.dialog.confirm({
         title: dialog.hasOwnProperty('title') ? dialog.title : T('Delete'),
         message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : T('Delete'),
+        hideCheckbox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonText: dialog.hasOwnProperty('button') ? dialog.button : T('Delete'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doDelete(table, item);
       });

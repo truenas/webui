@@ -997,7 +997,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   ]);
 
   constructor(
-    protected ws2: WebSocketService,
+    protected ws: WebSocketService,
     protected taskService: TaskService,
     protected storageService: StorageService,
     protected keychainCredentialService: KeychainCredentialService,
@@ -1016,7 +1016,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }));
     });
     const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks') as FormSelectConfig;
-    this.ws2.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
+    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
       tasks.forEach((task) => {
         const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
           task.lifetime_unit
@@ -1066,7 +1066,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       payload.name_regex = nameRegex;
     }
 
-    this.ws2
+    this.ws
       .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe({
         next: (snapshotCount) => {
@@ -1463,7 +1463,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         fieldConfig.hasErrors = true;
         fieldConfig.errors = this.translate.instant('Please select a valid SSH Connection');
       }
-      return;
+      return new Promise((resolve) => resolve(Promise.resolve([])));
     }
 
     return new Promise((resolve) => {

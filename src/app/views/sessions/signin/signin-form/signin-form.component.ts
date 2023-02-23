@@ -33,7 +33,7 @@ export class SigninFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws2: WebSocketService,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private signinStore: SigninStore,
@@ -73,7 +73,7 @@ export class SigninFormComponent implements OnInit {
   }
 
   private checkForTwoFactor(): void {
-    this.ws2.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactor) => {
+    this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactor) => {
       this.hasTwoFactor = hasTwoFactor;
       if (hasTwoFactor) {
         this.form.controls.otp.enable();

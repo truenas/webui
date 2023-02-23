@@ -142,7 +142,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         (row: VirtualMachineRow) => row.id === event.id,
         (changedRow: VirtualMachineRow) => {
           if (!event.fields) {
-            return;
+            return undefined;
           }
 
           if (event.fields.status.state === ServiceStatus.Running) {
@@ -221,6 +221,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         return true;
       }
     }
+
+    return false;
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number {
@@ -236,6 +238,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         return (device.attributes).port;
       }
     }
+
+    return false;
   }
 
   onSliderChange(row: VirtualMachineRow): void {
@@ -247,26 +251,20 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   onMemoryError(row: VirtualMachineRow): void {
-    const memoryDialog = this.dialogService.confirm({
+    this.dialogService.confirm({
       title: helptext.memory_dialog.title,
       message: helptext.memory_dialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.memory_dialog.buttonMsg,
-      secondaryCheckBox: true,
-      secondaryCheckBoxMsg: helptext.memory_dialog.secondaryCheckBoxMsg,
-      data: [{ overcommit: false }],
-      tooltip: helptext.memory_dialog.tooltip,
-    });
+      confirmationCheckboxText: helptext.memory_dialog.secondaryCheckboxMessage,
+      buttonText: helptext.memory_dialog.buttonMessage,
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
 
-    memoryDialog.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe(() => {
-      memoryDialog.componentInstance.isSubmitEnabled = !memoryDialog.componentInstance.isSubmitEnabled;
-    });
-
-    memoryDialog.afterClosed().pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
-      if (dialogRes) {
         this.doRowAction(row, this.wsMethods.start, [row.id, { overcommit: true }]);
-      }
-    });
+      });
   }
 
   doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.restart' | 'vm.poweroff'>(
