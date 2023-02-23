@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>{{ 'Stop {vmName}?' | translate: { vmName: data.vm.name } }}</h1>
+<h1 mat-dialog-title>{{ 'Stop {vmName}?' | translate: { vmName: vm.name } }}</h1>
 <div mat-dialog-content>
   <ix-checkbox
     [formControl]="forceAfterTimeoutCheckbox"

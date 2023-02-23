@@ -479,22 +479,22 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   private openStopDialog(vm: VirtualMachineRow): void {
     this.dialog.open(StopVmDialogComponent, {
-      data: { vm, parent: this },
+      data: vm,
     })
       .afterClosed()
       .pipe(
-        filter((data: { wasStopped: boolean; force: boolean }) => data.wasStopped),
+        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data.wasStopped),
         untilDestroyed(this),
       )
-      .subscribe((data: { force: boolean }) => {
-        this.stopVm(vm, data.force);
+      .subscribe((data: { forceAfterTimeout: boolean }) => {
+        this.stopVm(vm, data.forceAfterTimeout);
 
         this.updateRows([vm]);
         this.checkMemory();
       });
   }
 
-  stopVm(vm: VirtualMachine, forceAfterTimeoutCheckbox: boolean): void {
+  stopVm(vm: VirtualMachine, forceAfterTimeout: boolean): void {
     const jobDialogRef = this.dialog.open(
       EntityJobComponent,
       {
@@ -505,7 +505,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     );
     jobDialogRef.componentInstance.setCall('vm.stop', [vm.id, {
       force: false,
-      force_after_timeout: forceAfterTimeoutCheckbox,
+      force_after_timeout: forceAfterTimeout,
     }]);
     jobDialogRef.componentInstance.submit();
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

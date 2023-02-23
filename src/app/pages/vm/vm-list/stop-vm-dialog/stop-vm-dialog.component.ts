@@ -6,7 +6,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmListComponent } from 'app/pages/vm/vm-list/vm-list.component';
 
 @UntilDestroy()
 @Component({
@@ -21,10 +20,10 @@ export class StopVmDialogComponent {
 
   constructor(
     private dialogRef: MatDialogRef<StopVmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { vm: VirtualMachine; parent: VmListComponent },
+    @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
   ) { }
 
   onStop(): void {
-    this.dialogRef.close({ wasStopped: true, force: this.forceAfterTimeoutCheckbox.value });
+    this.dialogRef.close({ wasStopped: true, forceAfterTimeout: this.forceAfterTimeoutCheckbox.value });
   }
 }
