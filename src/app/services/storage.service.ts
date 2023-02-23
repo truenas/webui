@@ -465,9 +465,9 @@ export class StorageService {
       const vdevDiskCapacities = new Set<number>(); // There should only be one value
       if (vdev.children.length) {
         vdev.children.forEach((child) => {
-          const disk2 = disks?.find((disk) => disk.name === child.disk);
-          if (disk2 && disk2.size) {
-            vdevDiskCapacities.add(disk2.size);
+          const diskIndex = disks?.findIndex((disk) => disk.name === child.disk);
+          if (diskIndex >= 0 && disks[diskIndex].size) {
+            vdevDiskCapacities.add(disks[diskIndex].size);
           }
         });
       } else {
