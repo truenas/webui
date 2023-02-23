@@ -135,7 +135,7 @@ describe('IxInputComponent', () => {
       formControl.setValue('test');
       spectator.setInput('type', 'password');
 
-      expect(spectator.query('input')).toHaveAttribute('type', 'search');
+      expect(spectator.query('input')).toHaveAttribute('type', 'text');
     });
 
     it('shows button that toggles password visibility when type is password', () => {
