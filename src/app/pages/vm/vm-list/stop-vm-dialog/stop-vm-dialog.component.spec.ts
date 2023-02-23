@@ -6,14 +6,23 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
+import { VmListComponent } from 'app/pages/vm/vm-list/vm-list.component';
 import { DialogService } from 'app/services';
 
 describe('StopVmDialogComponent', () => {
   let spectator: Spectator<StopVmDialogComponent>;
   let loader: HarnessLoader;
+
+  const createVmListComponent = createComponentFactory({
+    component: VmListComponent,
+    imports: [
+      EntityModule,
+    ],
+  });
   const createComponent = createComponentFactory({
     component: StopVmDialogComponent,
     imports: [
@@ -29,15 +38,22 @@ describe('StopVmDialogComponent', () => {
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
-          id: 1,
-          name: 'test',
-        } as VirtualMachine,
+          vm: {
+            id: 1,
+            name: 'test',
+          } as VirtualMachine,
+        },
       },
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
+    const mockedVmListComponent = createVmListComponent();
+
+    Object.defineProperty(spectator.component.data, 'parent', {
+      value: mockedVmListComponent.component,
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
