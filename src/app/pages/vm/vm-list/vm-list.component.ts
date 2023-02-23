@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -482,12 +482,11 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       data: { vm, parent: this },
     })
       .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((data: { wasStopped: boolean; force?: boolean }) => {
-        if (!data.wasStopped) {
-          return;
-        }
-
+      .pipe(
+        filter((data: { wasStopped: boolean; force: boolean }) => data.wasStopped),
+        untilDestroyed(this),
+      )
+      .subscribe((data: { force: boolean }) => {
         this.stopVm(vm, data.force);
 
         this.updateRows([vm]);
