@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getPoolStatusLabels, PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
@@ -39,7 +39,7 @@ export class BootenvStatsDialogComponent implements OnInit {
     private translate: TranslateService,
     private fb: FormBuilder,
     private dialog: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) {}

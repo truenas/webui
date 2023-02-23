@@ -12,7 +12,7 @@ import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -103,7 +103,7 @@ export class ServiceUpsComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,

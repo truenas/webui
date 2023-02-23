@@ -13,7 +13,7 @@ import { choicesToOptions, tagArrayToOptions } from 'app/helpers/options.helper'
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -93,7 +93,7 @@ export class PortalFormComponent {
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     protected iscsiService: IscsiService,
   ) {}
 

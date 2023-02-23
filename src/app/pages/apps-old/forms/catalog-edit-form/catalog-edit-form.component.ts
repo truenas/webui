@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -35,7 +35,7 @@ export class CatalogEditFormComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
   ) {}

@@ -9,7 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { Group } from 'app/interfaces/group.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -33,7 +33,7 @@ describe('GroupFormComponent', () => {
         mockCall('group.get_next_gid', 1234),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       provideMockStore(),
     ],
   });

@@ -12,7 +12,7 @@ import {
 } from 'app/interfaces/vmware.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -72,7 +72,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     protected dialogService: DialogService,
   ) {}

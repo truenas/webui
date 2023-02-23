@@ -9,7 +9,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService } from 'app/services';
@@ -56,7 +56,7 @@ describe('WebdavFormComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

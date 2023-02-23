@@ -12,7 +12,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
 import { UserService } from 'app/services';
@@ -58,7 +58,7 @@ export class GroupFormComponent {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private store$: Store<GroupSlice>,
   ) { }

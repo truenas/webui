@@ -10,7 +10,7 @@ import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.se
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SupportConfig } from 'app/interfaces/support.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import { DialogService, WebSocketService } from 'app/services';
@@ -45,7 +45,7 @@ describe('ProactiveComponent', () => {
         mockCall('support.is_available', true),
         mockCall('support.is_available_and_enabled', true),
       ]),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
     ],

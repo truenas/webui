@@ -9,7 +9,7 @@ import {
   doesNotEqualValidator,
   matchOtherValidator,
 } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -79,7 +79,7 @@ export class AuthorizedAccessFormComponent {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private validatorService: IxValidatorsService,

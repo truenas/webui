@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbSharesecAceUpdate } from 'app/interfaces/smb-share.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -68,7 +68,7 @@ export class SmbAclComponent {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private validatorService: IxValidatorsService,
     private slideIn: IxSlideInService,
     private translate: TranslateService,

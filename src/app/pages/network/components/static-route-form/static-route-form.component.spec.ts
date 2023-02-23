@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -28,7 +28,7 @@ describe('StaticRouteFormComponent', () => {
         mockCall('staticroute.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
     ],
   });
 

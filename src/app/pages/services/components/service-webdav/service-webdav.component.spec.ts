@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { WebdavConfig, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
 import {
@@ -41,7 +41,7 @@ describe('ServiceWebdavComponent', () => {
           1: 'freenas_default',
         }),
       ]),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(AppLoaderService),
       mockProvider(DialogService),
     ],

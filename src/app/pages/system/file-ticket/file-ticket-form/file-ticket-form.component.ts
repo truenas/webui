@@ -24,7 +24,7 @@ import {
 } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
@@ -76,7 +76,7 @@ export class FileTicketFormComponent implements OnInit {
     private translate: TranslateService,
     private sysGeneralService: SystemGeneralService,
     private slideIn: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
     @Inject(WINDOW) private window: Window,

@@ -11,7 +11,7 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -94,7 +94,7 @@ export class DatasetQuotaEditFormComponent {
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private slideIn: IxSlideInService,
     protected dialogService: DialogService,
   ) {}

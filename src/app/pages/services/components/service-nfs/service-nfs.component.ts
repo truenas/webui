@@ -13,7 +13,7 @@ import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { rangeValidator, portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
@@ -61,7 +61,7 @@ export class ServiceNfsComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,

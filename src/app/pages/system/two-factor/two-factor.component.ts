@@ -13,7 +13,7 @@ import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/2fa';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
 
@@ -72,7 +72,7 @@ export class TwoFactorComponent implements OnInit {
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     protected mdDialog: MatDialog,
   ) {}
 

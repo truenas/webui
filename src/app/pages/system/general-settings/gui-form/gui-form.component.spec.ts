@@ -11,7 +11,7 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
@@ -82,7 +82,7 @@ describe('GuiFormComponent', () => {
           'TLSv1.3': 'TLSv1.3',
         }),
       }),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       provideMockStore({
         selectors: [
           {

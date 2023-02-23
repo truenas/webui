@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,7 +34,7 @@ describe('BootPoolAttachDialogComponent', () => {
         ] as UnusedDisk[]),
         mockJob('boot.attach'),
       ]),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
     ],

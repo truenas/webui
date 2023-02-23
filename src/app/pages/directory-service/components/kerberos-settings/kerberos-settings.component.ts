@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/kerberos-settings';
 import { KerberosConfigUpdate } from 'app/interfaces/kerberos-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -31,7 +31,7 @@ export class KerberosSettingsComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,

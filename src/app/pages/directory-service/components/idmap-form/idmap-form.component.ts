@@ -19,7 +19,7 @@ import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
@@ -150,7 +150,7 @@ export class IdmapFormComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private router: Router,
     private snackbar: SnackbarService,

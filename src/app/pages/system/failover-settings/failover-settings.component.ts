@@ -11,7 +11,7 @@ import {
 } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -53,7 +53,7 @@ export class FailoverSettingsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private authService: AuthService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,

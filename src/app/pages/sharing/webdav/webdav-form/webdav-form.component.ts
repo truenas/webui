@@ -14,7 +14,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, AppLoaderService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -73,7 +73,7 @@ export class WebdavFormComponent {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,

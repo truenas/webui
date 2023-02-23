@@ -14,7 +14,7 @@ import {
 } from 'app/interfaces/network-configuration.interface';
 import { ipv4Validator, ipv6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -203,7 +203,7 @@ export class NetworkConfigurationComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,

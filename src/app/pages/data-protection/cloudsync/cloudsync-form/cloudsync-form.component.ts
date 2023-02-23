@@ -23,7 +23,7 @@ import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -158,7 +158,7 @@ export class CloudsyncFormComponent {
     private ws: WebSocketService,
     protected router: Router,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     protected dialog: DialogService,
     protected matDialog: MatDialog,
     protected slideInService: IxSlideInService,

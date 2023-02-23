@@ -13,7 +13,7 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { portRangeValidator, rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -85,7 +85,7 @@ export class ServiceFtpComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private dialogService: DialogService,

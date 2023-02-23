@@ -9,7 +9,7 @@ import { Weekday } from 'app/enums/weekday.enum';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { DialogService, TaskService } from 'app/services';
 import { CalendarService } from 'app/services/calendar.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -50,7 +50,7 @@ export class ResilverConfigComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private calendarService: CalendarService,

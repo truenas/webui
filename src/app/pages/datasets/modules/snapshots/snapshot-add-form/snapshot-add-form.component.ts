@@ -17,7 +17,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/entity/entity-form/validators/required-empty-validation';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -59,7 +59,7 @@ export class SnapshotAddFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private slideIn: IxSlideInService,
     private datasetStore: DatasetTreeStore,

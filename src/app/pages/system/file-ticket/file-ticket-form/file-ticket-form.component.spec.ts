@@ -11,7 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -66,7 +66,7 @@ describe('FileTicketFormComponent', () => {
         authToken$: of('token.is.mocked'),
       }),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(SystemGeneralService, {
         getTokenForJira: jest.fn(() => 'token.is.mocked'),
         setTokenForJira: jest.fn(),

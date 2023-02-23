@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { WebSocketService } from 'app/services';
@@ -28,7 +28,7 @@ describe('KerberosRealmsFormComponent', () => {
         mockCall('kerberos.realm.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
     ],
   });
 

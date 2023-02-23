@@ -11,7 +11,7 @@ import {
 import { helptext } from 'app/helptext/system/reporting';
 import { ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
 import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -51,7 +51,7 @@ export class ReportsConfigFormComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private slideIn: IxSlideInService,
   ) { }
 

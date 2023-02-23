@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -35,7 +35,7 @@ export class LicenseComponent {
     private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {}
 

@@ -10,7 +10,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
@@ -72,7 +72,7 @@ describe('LocalizationFormComponent', () => {
       }),
       mockProvider(IxSlideInService),
       mockProvider(LanguageService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       provideMockStore({
         selectors: [
           {

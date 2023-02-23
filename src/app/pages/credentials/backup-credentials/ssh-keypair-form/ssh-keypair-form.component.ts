@@ -9,7 +9,7 @@ import helptext from 'app/helptext/system/ssh-keypairs';
 import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import {
   AppLoaderService, DialogService, StorageService,
 } from 'app/services';
@@ -52,7 +52,7 @@ export class SshKeypairFormComponent {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private storage: StorageService,

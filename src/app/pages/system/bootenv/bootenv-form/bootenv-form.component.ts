@@ -14,7 +14,7 @@ import {
   CreateBootenvParams,
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { NameValidationService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -46,7 +46,7 @@ export class BootEnvironmentFormComponent {
     private ws: WebSocketService,
     private nameValidationService: NameValidationService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 

@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-webdav';
 import { WebdavConfig, WebdavConfigUpdate, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { ValidationService, DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -101,7 +101,7 @@ export class ServiceWebdavComponent implements OnInit {
     protected validationService: ValidationService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {

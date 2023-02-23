@@ -10,7 +10,7 @@ import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
@@ -61,7 +61,7 @@ describe('KubernetesSettingsComponent', () => {
       }),
       mockProvider(AppLoaderService),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
     ],
   });
 

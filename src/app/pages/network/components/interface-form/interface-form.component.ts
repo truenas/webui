@@ -27,7 +27,7 @@ import {
 } from 'app/interfaces/network-interface.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   DefaultGatewayDialogComponent,
@@ -133,7 +133,7 @@ export class InterfaceFormComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private networkService: NetworkService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private core: CoreService,
     private validatorsService: IxValidatorsService,

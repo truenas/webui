@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LldpConfig } from 'app/interfaces/lldp-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { DialogService, ServicesService } from 'app/services';
@@ -39,7 +39,7 @@ describe('ServiceLldpComponent', () => {
       mockProvider(Router),
       mockProvider(ActivatedRoute),
       mockProvider(DialogService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(ServicesService),
     ],
   });

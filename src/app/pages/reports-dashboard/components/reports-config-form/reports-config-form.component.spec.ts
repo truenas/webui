@@ -8,7 +8,7 @@ import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.se
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingConfig } from 'app/interfaces/reporting.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -47,7 +47,7 @@ describe('ReportsConfigFormComponent', () => {
         mockCall('reporting.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

@@ -4,7 +4,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
@@ -75,7 +75,7 @@ describe('AlertConfigFormComponent', () => {
       ]),
       mockProvider(AppLoaderService),
       mockProvider(DialogService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
     ],
   });
 

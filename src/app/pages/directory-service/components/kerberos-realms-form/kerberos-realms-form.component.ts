@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -45,7 +45,7 @@ export class KerberosRealmsFormComponent {
   constructor(
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,

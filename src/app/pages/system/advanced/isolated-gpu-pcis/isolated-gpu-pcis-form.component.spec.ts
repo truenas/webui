@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
@@ -36,7 +36,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: () => of([

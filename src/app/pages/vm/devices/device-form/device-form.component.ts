@@ -17,7 +17,7 @@ import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import {
   DialogService, NetworkService, VmService, WebSocketService,
 } from 'app/services';
@@ -222,7 +222,7 @@ export class DeviceFormComponent implements OnInit {
     private networkService: NetworkService,
     private filesystemService: FilesystemService,
     private vmService: VmService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private slideIn: IxSlideInService,
     private dialogService: DialogService,

@@ -11,7 +11,7 @@ import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
@@ -51,7 +51,7 @@ export class KmipComponent implements OnInit {
     private matDialog: MatDialog,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private snackbar: SnackbarService,
   ) {}

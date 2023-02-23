@@ -33,7 +33,7 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -161,7 +161,7 @@ export class SmbFormComponent implements OnInit {
     private translate: TranslateService,
     private router: Router,
     protected loader: AppLoaderService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
   ) {}

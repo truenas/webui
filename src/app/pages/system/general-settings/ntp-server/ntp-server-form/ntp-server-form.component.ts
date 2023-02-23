@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { ValidationService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -43,7 +43,7 @@ export class NtpServerFormComponent {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   /**

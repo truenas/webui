@@ -8,7 +8,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { DialogService } from 'app/services';
@@ -47,7 +47,7 @@ describe('ServiceSshComponent', () => {
         mockCall('ssh.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(Router),
       mockProvider(DialogService),
     ],
