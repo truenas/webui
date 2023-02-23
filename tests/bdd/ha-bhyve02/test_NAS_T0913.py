@@ -122,7 +122,7 @@ def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_wait)
     assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
 

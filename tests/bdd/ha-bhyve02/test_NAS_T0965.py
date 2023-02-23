@@ -208,5 +208,5 @@ def click_the_enable_checkbox_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.checkbox.enable).click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 5, '//div[contains(.,"Settings saved.")]')

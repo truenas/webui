@@ -197,11 +197,21 @@ def click_on_directory_services_then_active_directory(driver):
 @then('Click the Enable checkbox and click SAVE')
 def click_the_enable_checkbox_and_click_save(driver, nas_url, ad_user, ad_password, user, password):
     """Click the Enable checkbox and click SAVE."""
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
-    assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
-    # Sleep 10 to give HA time to handle changes
+    assert wait_on_element(driver, 7, xpaths.domain_Credentials.title, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.ad_enable).click()
+    assert wait_on_element(driver, 7, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
+    assert wait_on_element(driver, 7, xpaths.button.leave_Domain, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.leave_Domain).click()
+    assert wait_on_element(driver, 7, xpaths.popup.leave_Domain_Title)
+    assert wait_on_element(driver, 7, xpaths.input.username, 'inputable')
+    driver.find_element_by_xpath(xpaths.input.username).send_keys(ad_user)
+    driver.find_element_by_xpath(xpaths.input.password).send_keys(ad_password)
+    assert wait_on_element(driver, 7, xpaths.popup.leave_Domain_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.leave_Domain_Button).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
+    assert wait_on_element(driver, 7, xpaths.popup.left_Domain_Message)
+    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
+    # Sleep 10 to give the VM time to handle changes
     time.sleep(10)

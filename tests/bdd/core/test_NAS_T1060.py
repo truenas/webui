@@ -4,6 +4,7 @@
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -27,8 +28,8 @@ def test_verify_local_user_ftp_login_access(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__FTP_Actions"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__FTP_Actions"]').click()
     assert wait_on_element(driver, 7, '//li[contains(.,"FTP")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Access")]')
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Allow Local User Login"]', 'clickable')
     if attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Allow Local User Login"]', 'class', 'mat-checkbox-checked'):
@@ -90,8 +91,8 @@ def on_the_users_add_page_input_ftp_user_in_full_name_entry(driver):
 @then('input ftpuser in Username entry, input ftptest path for Home Directory')
 def input_ftpuser_in_username_entry_input_ftptest_path_for_home_directory(driver):
     """input ftpuser in Username entry, input ftptest path for Home Directory."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('ftpuser')
+    driver.find_element_by_xpath(xpaths.input.username).clear()
+    driver.find_element_by_xpath(xpaths.input.username).send_keys('ftpuser')
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ftptest')
 
@@ -99,8 +100,8 @@ def input_ftpuser_in_username_entry_input_ftptest_path_for_home_directory(driver
 @then('input testing in Password and Confirm Password entries')
 def input_testing_in_password_and_confirm_password_entries(driver):
     """input testing in Password and Confirm Password entries."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    driver.find_element_by_xpath(xpaths.input.password).clear()
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
 
@@ -179,8 +180,8 @@ def on_the_service_page_click_on_the_ftp_pencil(driver):
 def on_the_ftp_edit_page_enable_the_allow_local_user_login_checkbox(driver):
     """on the FTP edit page, enable the "Allow Local User Login" checkbox."""
     assert wait_on_element(driver, 7, '//li[contains(.,"FTP")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Access")]')
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Allow Local User Login"]', 'clickable')
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Allow Local User Login"]', 'class', 'mat-checkbox-checked')

@@ -101,10 +101,10 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
 
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('User Two')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('user2')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1')
+    driver.find_element_by_xpath(xpaths.input.username).clear()
+    driver.find_element_by_xpath(xpaths.input.username).send_keys('user2')
+    driver.find_element_by_xpath(xpaths.input.password).clear()
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('testing1')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
@@ -114,6 +114,6 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
 @then('User should be created and added to the user list')
 def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
-    assert wait_on_element_disappear(driver, 7, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 7, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//div[@ix-auto="value__user2_Username"]')

@@ -49,9 +49,9 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    if wait_on_element(driver, 5, xpaths.popupTitle.help):
-        assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    if wait_on_element(driver, 5, xpaths.popup.help):
+        assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 5, xpaths.dashboard.system_information)
 
 
@@ -124,6 +124,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
+    assert wait_on_element(driver, 7, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]')
     wait_for_value = wait_for_attribute_value(driver, 5, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]', 'class', 'mat-checked')
     assert wait_for_value
     # make sure to scroll back up the mat-list-item

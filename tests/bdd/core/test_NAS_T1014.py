@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -82,15 +83,15 @@ def input_in_the_following_fields_full_name_username(driver):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('Foo Test')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('foo')
+    driver.find_element_by_xpath(xpaths.input.username).clear()
+    driver.find_element_by_xpath(xpaths.input.username).send_keys('foo')
 
 
 @then('input Password Confirm Password and click Save')
 def input_password_confirm_password_and_click_save(driver):
     """input Password Confirm Password and click Save."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    driver.find_element_by_xpath(xpaths.input.password).clear()
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')

@@ -4,6 +4,7 @@
 import time
 import glob
 import os
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,

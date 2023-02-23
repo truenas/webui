@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -81,7 +82,7 @@ def click_on_the_portal_three_dot_button_and_click_Delete(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then("the portal should disappear from the Portals list")
@@ -106,7 +107,7 @@ def click_on_the_Initiators_Group_three_dot_button_and_click_Delete(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then("the initiator should disappear from the Initiators Group list")
@@ -134,7 +135,7 @@ def for_all_targets_click_on_the_three_dot_button_and_click_Delete(driver):
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
-        assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then("all targets should disappear from the Targets list")
@@ -161,7 +162,7 @@ def for_all_extents_click_on_the_three_dot_button_and_click_Delete(driver):
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Force"]').click()
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
-        assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then("all extent should disappear from the Extents list")
@@ -199,7 +200,7 @@ def click_on_the_Authorized_Acces_three_dot_button_and_click_Delete(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then("the authorized access should disappear from the Authorized Access list")

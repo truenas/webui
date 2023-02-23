@@ -28,7 +28,7 @@ MOUNT_POINT = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=3))}'
 def click_summit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 15, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_wait)
 
 
 @scenario('features/NAS-T977.feature', 'Verify that iSCSI connection on HA works')

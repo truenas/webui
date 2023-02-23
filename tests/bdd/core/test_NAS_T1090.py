@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -168,8 +169,8 @@ def click_on_the_afp_share_three_dots_button_then_edit(driver):
 def on_the_edit_page_click_on_the_advanced_options_button(driver):
     """on the Edit page, click on the ADVANCED OPTIONS button."""
     assert wait_on_element(driver, 5, '//li[contains(.,"Edit")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
 
 
 @then(parsers.parse('input "{value}" to the Auxiliary Parameters entry'))

@@ -11,6 +11,7 @@ aws_secret_access_key=ACCESS_KEY
 
 import boto3
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,

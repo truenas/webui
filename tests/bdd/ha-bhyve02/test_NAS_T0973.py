@@ -100,5 +100,5 @@ def input_ds1_for_zvol_name_and_1_gib_for_zvol_size(driver, zvol_name, zvol_size
 @then(parsers.parse('"{zvol_name}" should be created'))
 def ds1_should_be_created(driver, zvol_name):
     """"ds1" should be created."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 10, f'//span[contains(.,"{zvol_name}")]')

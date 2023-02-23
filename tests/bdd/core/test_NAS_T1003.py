@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -105,7 +106,7 @@ def click_directory_services_on_the_side_menu_and_click_active_directory(driver)
 @then('the Domain Credentials page should open')
 def the_domain_credentials_page_should_open(driver):
     """the Domain Credentials page should open."""
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]')
+    assert wait_on_element(driver, 7, xpaths.domain_Credentials.title)
     time.sleep(0.5)
 
 
@@ -126,8 +127,8 @@ def input_domain_name_account_name_password(driver, ad_domain, ad_user, ad_passw
 @then(parsers.parse('click Advanced, and input "{ca_ou}" to Computer Account OU'))
 def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_ou):
     """click Advanced, and input "TRUENAS_SERVERS" to Computer Account OU."""
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Computer Account OU"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').send_keys(ca_ou)
@@ -136,8 +137,8 @@ def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_o
 @then('click the Enable checkbox and click SAVE')
 def click_the_enable_checkbox_and_click_save(driver):
     """click the Enable checkbox and click SAVE."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.ad_enable, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.ad_enable).click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 

@@ -5,6 +5,7 @@ import pytest
 import random
 import string
 import time
+import xpaths
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
@@ -19,7 +20,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-xpaths = __import__('ha-bhyve02.xpaths').xpaths
 
 # random hostname
 hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
@@ -85,7 +85,7 @@ def browser():
     firefox_capabilities['binary'] = binary
     web_driver = webdriver.Firefox(capabilities=firefox_capabilities)
     web_driver.set_window_size(1920, 1080)
-    web_driver.implicitly_wait(2)
+    #web_driver.implicitly_wait(2)
     return web_driver
 
 
@@ -166,8 +166,8 @@ def pytest_runtest_makereport(item):
             disable_active_directory()
         elif 'T1013' in screenshot_name or 'T0940' in screenshot_name:
             disable_ldap()
-        elif 'T1117' in screenshot_name:
-            disable_nis()
+        # elif 'T1117' in screenshot_name:
+        #     disable_nis()
 
 
 def save_screenshot(name):

@@ -4,6 +4,7 @@
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -145,8 +146,8 @@ def select_no_preset_for_purpose_click_advanced_options(driver):
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Purpose_No presets"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Purpose_No presets"]').click()
     # ix-auto="button__ADVANCED OPTIONS"
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Use as Home Share"]')
 
 
@@ -225,10 +226,10 @@ def input_smbuser_for_the_user_name_and_input_password(driver):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('SMB User')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('smbuser')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    driver.find_element_by_xpath(xpaths.input.username).clear()
+    driver.find_element_by_xpath(xpaths.input.username).send_keys('smbuser')
+    driver.find_element_by_xpath(xpaths.input.password).clear()
+    driver.find_element_by_xpath(xpaths.input.password).send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
 

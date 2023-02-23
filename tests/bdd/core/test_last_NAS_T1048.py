@@ -2,6 +2,7 @@
 """Core feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,

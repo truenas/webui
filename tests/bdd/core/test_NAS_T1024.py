@@ -6,6 +6,7 @@ import os
 import re
 import random
 import string
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,

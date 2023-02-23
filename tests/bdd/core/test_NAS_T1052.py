@@ -4,6 +4,7 @@
 import random
 import string
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -76,8 +77,8 @@ def on_the_nfs_page_click_on_the_threedot_of_any_share_and_select_edit(driver):
 def on_the_edit_page_click_advanced_mode(driver):
     """on the Edit page, click Advanced Mode."""
     assert wait_on_element(driver, 7, '//li[contains(.,"Edit")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.advanced_options, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
 
 
 @then('make sure Authorized Network is empty')

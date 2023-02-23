@@ -9,15 +9,26 @@ class button:
     advanced_options = '//button[@ix-auto="button__ADVANCED OPTIONS"]'
     initiate_failover = '//button[@ix-auto="button__INITIATE FAILOVER"]'
     failover = '//button[span/text()="Failover"]'
+    leave_Domain = '//button[@ix-auto="button__LEAVE DOMAIN"]'
 
 
 class checkbox:
     confirm = '//mat-checkbox[contains(.,"Confirm")]'
     enable = '//mat-checkbox[@ix-auto="checkbox__Enable"]'
+    ad_enable = '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]'
 
 
 class dashboard:
     system_information = '//span[contains(.,"System Information")]'
+
+
+class domain_Credentials:
+    title = '//h4[contains(.,"Domain Credentials")]'
+
+
+class input:
+    username = '//input[@ix-auto="input__Username"]'
+    password = '//input[@ix-auto="input__Password"]'
 
 
 class login:
@@ -29,10 +40,13 @@ class login:
         return f'//p[contains(.,"{message}")]'
 
 
-class popupTitle:
+class popup:
     please_wait = '//h6[contains(.,"Please wait")]'
     initiate_failover = '//h1[text()="Initiate Failover"]'
     help = '//div[contains(.,"Looking for help?")]'
+    leave_Domain_Title = '//h1[text()="Leave Domain"]'
+    leave_Domain_Button = f'//mat-dialog-container{button.leave_Domain}'
+    left_Domain_Message = '//span[text()="You have left the domain."]'
 
 
 class sideMenu:

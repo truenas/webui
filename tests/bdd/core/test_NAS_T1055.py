@@ -4,6 +4,7 @@
 import random
 import string
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -128,8 +129,8 @@ def input_the_maproot_dataset_path_in_paths_click_advanced_options(driver):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__path"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys('/mnt/tank/maproot')
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, xpaths.button.advanced_options):
+        driver.find_element_by_xpath(xpaths.button.advanced_options).click()
 
 
 @then('input nobody in Maproot User input nogroup in Maproot Group')

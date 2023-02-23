@@ -104,7 +104,7 @@ def click_save_license(driver):
 @then('the following should appear "Reload the page for the license to take effect"')
 def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
     """the following should appear "Reload the page for the license to take effect"."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Reload the page")]')
 
 
@@ -126,9 +126,9 @@ def click_agree(driver):
     """click Agree."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    if wait_on_element(driver, 2, xpaths.popupTitle.help):
-        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    if wait_on_element(driver, 2, xpaths.popup.help):
+        assert wait_on_element(driver, 10, xpaths.button.close)
+        driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('we should be returned to license information')
@@ -190,7 +190,7 @@ def click_save_when_finished(driver):
 @then('"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_the_same_global_configuration_screen_and_settings_saved_should_appear_below_the_save_button_at_the_bottom(driver):
     """"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
@@ -215,14 +215,14 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Disable Failover")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
 
 
 @then('after settings are applied you should see "Settings applied"')
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """after settings are applied you should see "Settings applied"."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Settings saved")]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('navigate to Network then Interfaces, click next to vtnet0, click edit')
@@ -282,7 +282,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__APPLY"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
@@ -294,7 +294,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__TEST CHANGES"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
 
 
 @then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
@@ -319,8 +319,8 @@ def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(dr
     assert wait_on_element(driver, 7, '//h1[text()="Save Changes"]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
     assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
     assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
@@ -452,7 +452,7 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver, n
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
 
 
 @then('navigate to dashboard, wait for HA to be online')
@@ -497,7 +497,7 @@ def enter_hostname_and_hostname_truenas_controller_2(driver, host1, host2):
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
 def please_wait_should_appear_while_settings_are_being_applied_and_you_should_be_returned_to_network_page(driver):
     """"Please wait" should appear while settings are being applied and You should be returned to Network page."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
     time.sleep(2)
 

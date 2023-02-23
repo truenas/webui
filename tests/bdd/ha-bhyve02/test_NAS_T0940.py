@@ -99,7 +99,7 @@ def click_save_then_please_wait_should_appear_and_you_should_see_settings_saved(
     """click SAVE, then "Please wait" should appear, and you should see "Settings saved."."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
     # allow time for the NAS to settle down
     time.sleep(5)
@@ -135,7 +135,7 @@ def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
     time.sleep(5)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
-    assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
+    assert wait_on_element(driver, 5, xpaths.popup.initiate_failover)
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 5, xpaths.button.failover)
     driver.find_element_by_xpath(xpaths.button.failover).click()
@@ -161,7 +161,7 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
     """on the Dashboard, make sure HA is enabled."""
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
     assert wait_on_element(driver, 60, xpaths.dashboard.system_information)
-    if wait_on_element(driver, 5, xpaths.popupTitle.help):
+    if wait_on_element(driver, 5, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
