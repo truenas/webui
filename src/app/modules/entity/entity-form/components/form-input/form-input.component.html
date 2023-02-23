@@ -83,12 +83,16 @@
       [ixTest]="[config.name, 'toggle-password']"
       (click)="togglePassword()"
     >
-      <i *ngIf="showPassword"  class="material-icons" matTooltip="Hide">
-        visibility
-      </i>
-      <i *ngIf="!showPassword" class="material-icons" matTooltip="Show">
-        visibility_off
-      </i>
+      <ix-icon
+        *ngIf="showPassword"
+        name="visibility"
+        [matTooltip]="'Hide' | translate"
+      ></ix-icon>
+      <ix-icon
+        *ngIf="!showPassword"
+        name="visibility_off"
+        [matTooltip]="'Show' | translate"
+      ></ix-icon>
     </button>
   </div>
 
