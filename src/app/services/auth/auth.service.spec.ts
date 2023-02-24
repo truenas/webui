@@ -9,7 +9,7 @@ import {
   StorageStrategyStub,
   STORAGE_STRATEGIES,
 } from 'ngx-webstorage';
-import { EMPTY, of } from 'rxjs';
+import { of } from 'rxjs';
 import * as rxjs from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -47,7 +47,6 @@ describe('AuthService', () => {
         useValue: {
           send: jest.fn(),
           isConnected$: of(true),
-          websocket$: of(EMPTY),
         },
       },
       {
