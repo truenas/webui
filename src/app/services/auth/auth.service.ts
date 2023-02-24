@@ -46,7 +46,10 @@ export class AuthService {
 
   private generateTokenSubscription: Subscription;
 
-  readonly isAuthenticated$ = combineLatest([this.wsManager.isConnected$, this.isLoggedIn$.asObservable()]).pipe(
+  readonly isAuthenticated$ = combineLatest([
+    this.wsManager.isConnected$,
+    this.isLoggedIn$.asObservable(),
+  ]).pipe(
     switchMap(([isConnected, isLoggedIn]) => {
       return of(isConnected && isLoggedIn);
     }),
