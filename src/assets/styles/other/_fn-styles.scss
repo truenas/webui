@@ -346,7 +346,7 @@ samp {
   padding: 8px 12px;
 }
 
-.ix-form-container .mat-chip.mat-standard-chip.mat-chip-disabled {
+.ix-form-container .mat-chip.mat-standard-chip.mat-mdc-chip-disabled {
   opacity: 1;
 }
 
@@ -380,18 +380,18 @@ mat-list mat-list-item .mat-mdc-list-item-unscoped-content,
 mat-nav-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
 mat-nav-list mat-list-item .mat-mdc-list-item-unscoped-content,
 [mat-menu-item],
-.mat-option,
-body .mat-select-trigger {
+.mat-mdc-option,
+body .mat-mdc-select-trigger {
   font-size: 0.875rem !important;
   overflow: visible;
 }
 
-.mat-option {
+.mat-mdc-option {
   height: inherit !important;
   white-space: pre-line !important;
 }
 
-.mat-option-text {
+.mat-mdc-option-text {
   word-break: break-all;
 }
 
@@ -509,7 +509,7 @@ body .mat-select-trigger {
   min-height: 48px;
 }
 
-.topbar .mat-select-value {
+.topbar .mat-mdc-select-value {
   color: #fff;
   font-weight: 400;
 }

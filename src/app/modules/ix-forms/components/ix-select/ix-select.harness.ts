@@ -1,5 +1,5 @@
 import { ComponentHarness, HarnessPredicate, parallel } from '@angular/cdk/testing';
-import { LegacySelectHarnessFilters as SelectHarnessFilters } from '@angular/material/legacy-select/testing';
+import { SelectHarnessFilters } from '@angular/material/select/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { SelectHarness } from 'app/modules/ix-forms/components/ix-select/select.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
