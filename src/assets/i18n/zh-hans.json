@@ -1,8 +1,11 @@
 {
   "": "",
   "Add VDEV": "",
+  "Allowed IP Addresses": "",
   "Application": "",
+  "Are you sure you want to delete address {ip}?": "",
   "At least 1 GPU is required by the host for its functions.": "",
+  "Delete Allowed Address": "",
   "Filter by Disk Size": "",
   "Filter by Disk Type": "",
   "Manual Disk Selection": "",

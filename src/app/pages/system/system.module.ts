@@ -36,6 +36,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
+import { AllowedAddressesComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
@@ -179,6 +180,7 @@ import { routing } from './system.routing';
     QrDialogComponent,
     ReplicationSettingsComponent,
     TokenSettingsComponent,
+    AllowedAddressesComponent,
     SupportComponent,
     SysInfoComponent,
     SyslogFormComponent,

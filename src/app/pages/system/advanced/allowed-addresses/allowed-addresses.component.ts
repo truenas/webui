@@ -1,0 +1,76 @@
+import {
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
+} from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
+
+@UntilDestroy()
+@Component({
+  templateUrl: 'allowed-addresses.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AllowedAddressesComponent implements OnInit {
+  isFormLoading = false;
+  form = this.fb.group({
+    addresses: this.fb.array<string>([]),
+  });
+
+  constructor(
+    private fb: FormBuilder,
+    private slideInService: IxSlideInService,
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+    private store$: Store<AppState>,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe({
+      next: (config) => {
+        config.ui_allowlist.forEach(() => {
+          this.addAddress();
+        });
+        this.form.controls.addresses.patchValue(config.ui_allowlist);
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  addAddress(): void {
+    this.form.controls.addresses.push(this.fb.control('', [Validators.required]));
+  }
+
+  removeAddress(index: number): void {
+    this.form.controls.addresses.removeAt(index);
+  }
+
+  onSubmit(): void {
+    this.isFormLoading = true;
+    const addresses = this.form.value.addresses;
+    this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.store$.dispatch(generalConfigUpdated());
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+}

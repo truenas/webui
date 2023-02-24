@@ -17,6 +17,7 @@ export interface SystemGeneralConfig {
   ui_httpsredirect: boolean;
   ui_port: number;
   ui_v6address: string[];
+  ui_allowlist: string[];
   usage_collection: boolean;
   usage_collection_is_set: boolean;
   wizardshown: boolean;
@@ -35,6 +36,7 @@ export interface SystemGeneralConfigUpdate {
   ui_httpsredirect?: boolean;
   ui_port?: number;
   ui_v6address?: string[];
+  ui_allowlist?: string[];
   usage_collection?: boolean;
   sysloglevel?: string;
   syslogserver?: string;
