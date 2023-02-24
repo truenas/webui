@@ -73,7 +73,7 @@ describe('ServicesComponent', () => {
     const cells = await table.getCells(true);
     const expectedData = [...serviceNames.keys()]
       .filter((service) => !hiddenServices.includes(service))
-      .map((service) => [serviceNames.get(service), '', '', 'edit']);
+      .map((service) => [serviceNames.get(service), '', '', '']);
 
     expectedData.sort((a, b) => a[0].localeCompare(b[0]));
 

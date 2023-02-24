@@ -75,8 +75,8 @@ describe('ApiKeyListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'Created Date', ''],
-      ['first-api-key', 'Jan 10 2022 10:36', 'more_vert'],
-      ['second-api-key', 'Jan 10 2022 10:36', 'more_vert'],
+      ['first-api-key', 'Jan 10 2022 10:36', ''],
+      ['second-api-key', 'Jan 10 2022 10:36', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
