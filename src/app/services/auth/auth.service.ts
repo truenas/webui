@@ -178,14 +178,15 @@ export class AuthService {
       filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid),
       switchMap((loggedInUser: DsUncachedUser) => {
         authenticatedUser = loggedInUser;
+        const userQueryUuid = UUID.UUID();
         const userQueryPayload = {
-          id: uuid,
+          id: userQueryUuid,
           msg: IncomingApiMessageType.Method,
           method: 'user.query',
           params: [[['uid', '=', authenticatedUser.pw_uid]]],
         };
         this.wsManager.send(userQueryPayload);
-        return this.getFilteredWebsocketResponse(uuid);
+        return this.getFilteredWebsocketResponse(userQueryUuid);
       }),
       tap((users: User[]) => {
         if (users?.[0]?.id) {
