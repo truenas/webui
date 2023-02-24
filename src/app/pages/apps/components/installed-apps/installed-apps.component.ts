@@ -2,6 +2,8 @@ import {
   Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EmptyType } from 'app/enums/empty-type.enum';
+import helptext from 'app/helptext/apps/apps';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -16,6 +18,7 @@ export class InstalledAppsComponent implements OnInit {
   selectedApp: ChartRelease;
   isLoading = false;
   filterString = '';
+  title = '';
 
   constructor(
     private appService: ApplicationsService,
@@ -27,7 +30,7 @@ export class InstalledAppsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getReleases();
+    this.updateChartReleases();
   }
 
   onSearch(query: string): void {
@@ -42,12 +45,59 @@ export class InstalledAppsComponent implements OnInit {
     this.selectedApp = app;
   }
 
-  getReleases(): void {
+  showLoadStatus(type: EmptyType): void {
+    let title = '';
+
+    switch (type) {
+      case EmptyType.Loading:
+        title = helptext.message.loading;
+        break;
+      case EmptyType.FirstUse:
+        title = helptext.message.not_configured;
+        break;
+      case EmptyType.NoSearchResults:
+        title = helptext.message.no_search_result;
+        break;
+      case EmptyType.NoPageData:
+        title = helptext.message.no_installed;
+        break;
+      case EmptyType.Errors:
+        title = helptext.message.not_running;
+        break;
+    }
+
+    this.title = title;
+  }
+
+  updateChartReleases(): void {
     this.isLoading = true;
-    this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((releases) => {
-      this.dataSource = releases;
-      this.isLoading = false;
-      this.cdr.markForCheck();
+    this.showLoadStatus(EmptyType.Loading);
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
+      if (!config.pool) {
+        this.dataSource = [];
+        this.showLoadStatus(EmptyType.FirstUse);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      } else {
+        this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((kubernetesStarted) => {
+          if (!kubernetesStarted) {
+            this.dataSource = [];
+            this.showLoadStatus(EmptyType.Errors);
+            this.isLoading = false;
+            this.cdr.markForCheck();
+          } else {
+            this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
+              if (charts.length) {
+                this.dataSource = charts;
+              } else {
+                this.showLoadStatus(EmptyType.NoPageData);
+              }
+              this.isLoading = false;
+              this.cdr.markForCheck();
+            });
+          }
+        });
+      }
     });
   }
 }
