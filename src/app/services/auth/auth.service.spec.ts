@@ -34,7 +34,7 @@ const loggedInUser: LoggedInUser = {
 describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let testScheduler: TestScheduler;
-  let strategyStub: StorageStrategy<string>;
+  let strategyStub: StorageStrategy<unknown>;
   const createService = createServiceFactory({
     service: AuthService,
     imports: [
