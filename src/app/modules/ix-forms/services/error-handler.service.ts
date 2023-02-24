@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { ErrorReport, MultiFieldsErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -10,6 +12,7 @@ import { DialogService } from 'app/services';
 export class ErrorHandlerService {
   constructor(
     private dialog: DialogService,
+    private translate: TranslateService,
   ) {}
 
   /**
@@ -61,6 +64,53 @@ export class ErrorHandlerService {
       });
       control.markAsTouched();
     }
+  }
+
+  parseWsError(error: WebsocketError): string | ErrorReport | MultiFieldsErrorReport {
+    return this.parseErrorOrJob(error);
+  }
+
+  parseJobError(failedJob: Job): string | ErrorReport | MultiFieldsErrorReport {
+    if (failedJob.exc_info?.extra) {
+      failedJob.extra = failedJob.exc_info.extra as Record<string, unknown>;
+    }
+
+    if (failedJob.extra && Array.isArray(failedJob.extra)) {
+      const multiFieldsErrors: { [field: string]: string | ErrorReport } = {};
+      failedJob.extra.forEach((extraItem: [string, unknown]) => {
+        const field = extraItem[0].split('.')[1];
+        const error = extraItem[1] as string | WebsocketError | Job;
+        multiFieldsErrors[field] = this.parseErrorOrJob(error);
+      });
+      return multiFieldsErrors;
+    }
+
+    return {
+      title: failedJob.state,
+      message: failedJob.error,
+      backtrace: failedJob.exception,
+    };
+  }
+
+  parseErrorOrJob(errorOrJob: WebsocketError | Job | string): ErrorReport | string {
+    if (typeof errorOrJob === 'object') {
+      if ('trace' in errorOrJob && errorOrJob.trace?.formatted) {
+        return {
+          title: errorOrJob.trace.class,
+          message: errorOrJob.reason,
+          backtrace: errorOrJob.trace.formatted,
+        };
+      }
+
+      if ('state' in errorOrJob && errorOrJob.error && errorOrJob.exception) {
+        return {
+          title: errorOrJob.state,
+          message: errorOrJob.error,
+          backtrace: errorOrJob.exception,
+        };
+      }
+    }
+    return errorOrJob as string;
   }
 
   private getFormField(formGroup: UntypedFormGroup, field: string, fieldsMap: Record<string, string>): AbstractControl {
