@@ -81,7 +81,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
-      if (routeChange instanceof NavigationStart) {
+      if (routeChange instanceof NavigationStart && !this.router.url.startsWith(routeChange.url)) {
         this.headerPortalOutlet = null;
       }
       if (routeChange instanceof NavigationEnd && this.isMobile) {
