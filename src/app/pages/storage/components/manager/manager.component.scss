@@ -110,7 +110,7 @@ h4 {
 #pool-manager__reset-layout-button:disabled,
 #pool-manager__suggest-layout-button:disabled {
   color: var(--fg2);
-  opacity: 0.38;
+  opacity: var(--disabled-opacity);
 }
 
 .pool-manager-title {
@@ -200,7 +200,7 @@ button.vdev-option p {
 }
 
 .encryption-checkbox.inline {
-  padding-top: 50px;
+  padding-top: 40px;
 }
 
 .row-details {

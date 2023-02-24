@@ -8,7 +8,9 @@
   --contrast-lightest: hsl(0, 0%, 25.7%); // default theme fallback
   --light-theme-lines: var(--contrast-darkest);
   --dark-theme-lines: var(--contrast-lighter);
+  --disabled-opacity: 0.5;
   --lines: var(--dark-theme-lines);
+  --error: #f44336;
   --sidenav-width: 240px;
   --btn-default-bg: var(--alt-bg2);
   --hover-bg: var(--lines) !important;
@@ -72,4 +74,5 @@
   --mat-mdc-slider-focus-ripple-color: rgba(0, 149, 213, 0.2);
   --mat-mdc-button-persistent-ripple-color: rgba(0, 0, 0, 0.2);
   --mat-mdc-button-ripple-color: rgba(0, 0, 0, 0.2);
+  --mdc-checkbox-state-layer-size: 40px;
 }
