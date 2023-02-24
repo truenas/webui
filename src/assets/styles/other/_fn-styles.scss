@@ -889,15 +889,3 @@ body.safari-platform {
 .mat-icon.mat-warn {
   color: var(--orange) !important;
 }
-
-body .mdc-tooltip {
-  word-break: break-word;
-
-  .mdc-tooltip__surface {
-    background-color: #666;
-    color: #fff;
-    font-size: 10px;
-    line-height: 16px;
-    padding: 6px 8px;
-  }
-}

@@ -15,7 +15,7 @@ mat-card-content.table-container {
   padding: 0 !important;
 }
 
-.mat-row {
+.mat-mdc-row {
   cursor: pointer;
 }
 
@@ -54,7 +54,9 @@ div.table-container {
 }
 
 .table-cell .mat-icon.table-action-button {
-  display: inline-block;
+  align-items: center;
+  display: flex;
+  justify-content: center;
   margin: 0;
   text-align: center;
 }
@@ -67,7 +69,7 @@ div.table-row-action {
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  margin-right: -20px;
+  margin-right: -10px;
 }
 
 mat-icon.state-icon,
