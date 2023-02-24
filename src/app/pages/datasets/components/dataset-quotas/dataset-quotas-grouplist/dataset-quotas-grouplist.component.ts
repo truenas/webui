@@ -206,8 +206,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     return this.dialogService.confirm({
       title: helptext.groups.filter_dialog.title_show,
       message: helptext.groups.filter_dialog.message_show,
-      hideCheckBox: true,
-      buttonMsg: helptext.groups.filter_dialog.button_show,
+      hideCheckbox: true,
+      buttonText: helptext.groups.filter_dialog.button_show,
     });
   }
 
@@ -215,8 +215,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     return this.dialogService.confirm({
       title: helptext.groups.filter_dialog.title_filter,
       message: helptext.groups.filter_dialog.message_filter,
-      hideCheckBox: true,
-      buttonMsg: helptext.groups.filter_dialog.button_filter,
+      hideCheckbox: true,
+      buttonText: helptext.groups.filter_dialog.button_filter,
     });
   }
 
@@ -226,7 +226,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       message: this.translate.instant('This action will set all dataset quotas for the removed or invalid groups to 0, \
       virutally removing any dataset quota entires for such groups. \
       Are you sure you want to proceed?'),
-      buttonMsg: this.translate.instant('Remove'),
+      buttonText: this.translate.instant('Remove'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
       this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)])
@@ -276,8 +276,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     return this.dialogService.confirm({
       title: this.translate.instant('Delete Group Quota'),
       message: this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name: quota.name }),
-      buttonMsg: this.translate.instant('Delete'),
-      hideCheckBox: true,
+      buttonText: this.translate.instant('Delete'),
+      hideCheckbox: true,
     });
   }
 

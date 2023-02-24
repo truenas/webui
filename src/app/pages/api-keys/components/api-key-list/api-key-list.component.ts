@@ -114,8 +114,8 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     this.dialog.confirm({
       title: this.translate.instant('Delete API Key'),
       message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> API Key?', { name: apiKey.name }),
-      buttonMsg: this.translate.instant('Delete'),
-      cancelMsg: this.translate.instant('Cancel'),
+      buttonText: this.translate.instant('Delete'),
+      cancelText: this.translate.instant('Cancel'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('api_key.delete', [String(apiKey.id)])),
@@ -128,13 +128,12 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   private createDataSource(apiKeys: ApiKey[] = []): void {
     this.dataSource = new MatTableDataSource(apiKeys);
     this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      switch (property) {
-        case 'name':
-          return item.name;
-        case 'created_at':
-          return item.created_at.$date;
+    this.dataSource.sortingDataAccessor = (item, property: 'name' | 'created_at') => {
+      if (property === 'name') {
+        return item.name;
       }
+
+      return item.created_at.$date;
     };
     this.store.patchState({ isLoading: false });
     this.cdr.markForCheck();

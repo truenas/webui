@@ -111,6 +111,8 @@ describe('PoolsDashboardStore', () => {
             return cold('-a|', { a: [] });
           case 'disk.temperature_agg':
             return cold('-a|', { a: { ...temperatureAgg } });
+          default:
+            throw new Error(`Unexpected method: ${method}`);
         }
       });
 

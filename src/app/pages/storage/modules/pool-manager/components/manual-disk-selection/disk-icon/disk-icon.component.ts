@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Disk } from 'app/interfaces/storage.interface';
 
 @Component({
   selector: 'ix-disk-icon',
@@ -7,6 +8,5 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskIconComponent {
-  @Input() identifier: string;
-  @Input() size: string;
+  @Input() disk: Disk;
 }

@@ -10,7 +10,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { noop, Observable, of } from 'rxjs';
+import {
+  forkJoin, noop, Observable, of,
+} from 'rxjs';
 import {
   debounceTime,
   filter,
@@ -21,7 +23,7 @@ import {
 } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { helptextSharingSmb, shared } from 'app/helptext/sharing';
+import { helptextSharingSmb } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
 import { Service } from 'app/interfaces/service.interface';
 import {
@@ -34,6 +36,9 @@ import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbi
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  StartServiceDialogComponent, StartServiceDialogResult,
+} from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import {
   AppLoaderService,
@@ -195,8 +200,8 @@ export class SmbFormComponent implements OnInit {
       switchMap(() => this.dialog.confirm({
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptextSharingSmb.manglingDialog.action,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.manglingDialog.action,
         hideCancel: true,
       })),
       untilDestroyed(this),
@@ -315,8 +320,8 @@ export class SmbFormComponent implements OnInit {
       .confirm({
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptextSharingSmb.stripACLDialog.button,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
         hideCancel: true,
       })
       .pipe(untilDestroyed(this))
@@ -350,8 +355,8 @@ export class SmbFormComponent implements OnInit {
       .confirm({
         title: helptextSharingSmb.afpDialog_title,
         message: helptextSharingSmb.afpDialog_message,
-        hideCheckBox: false,
-        buttonMsg: helptextSharingSmb.afpDialog_button,
+        hideCheckbox: false,
+        buttonText: helptextSharingSmb.afpDialog_button,
         hideCancel: false,
       })
       .pipe(untilDestroyed(this))
@@ -400,8 +405,8 @@ export class SmbFormComponent implements OnInit {
               this.dialog.confirm({
                 title: this.translate.instant('Configure ACL'),
                 message: this.translate.instant('Do you want to сonfigure the ACL?'),
-                buttonMsg: this.translate.instant('Configure'),
-                hideCheckBox: true,
+                buttonText: this.translate.instant('Configure'),
+                hideCheckbox: true,
               }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
                 if (isConfigure) {
                   const homeShare = this.form.controls.home.value;
@@ -489,58 +494,46 @@ export class SmbFormComponent implements OnInit {
     );
   }
 
-  startAndEnableService = (cifsService: Service): Observable<boolean> => {
-    const dialog = this.dialog.confirm({
-      title: this.translate.instant('Start {service} Service', {
-        service: serviceNames.get(ServiceName.Cifs),
-      }),
-      message: this.translate.instant(
-        'SMB Service is not currently running. Start the service now?',
-      ),
-      hideCheckBox: true,
-      secondaryCheckBox: true,
-      secondaryCheckBoxMsg: shared.dialog_message,
-      buttonMsg: shared.dialog_button,
-    });
-    let restartAutomatically = false;
-    let startNow = false;
-    dialog.componentInstance.isSubmitEnabled = true;
-    dialog.componentInstance.switchSelectionEmitter
-      .pipe(untilDestroyed(this))
-      .subscribe((restart) => (restartAutomatically = restart));
-    dialog.componentInstance.customSubmit = () => {
-      startNow = true;
-      dialog.close();
-    };
-    return dialog.afterClosed().pipe(
-      switchMap(() => {
-        if (startNow && restartAutomatically) {
-          return this.ws.call('service.update', [
-            cifsService.id,
-            { enable: restartAutomatically },
-          ]);
-        }
-        return of({});
-      }),
-      switchMap(() => (startNow
-        ? this.ws.call('service.start', [
-          cifsService.service,
-          { silent: false },
-        ])
-        : of({}))),
-      tap(() => {
-        if (!startNow) {
-          return;
-        }
+  startAndEnableService = (cifsService: Service): Observable<unknown> => {
+    return this.mdDialog.open(StartServiceDialogComponent, {
+      data: serviceNames.get(ServiceName.Cifs),
+      disableClose: true,
+    })
+      .afterClosed()
+      .pipe(
+        switchMap((result: StartServiceDialogResult) => {
+          const requests: Observable<unknown>[] = [];
 
-        this.snackbar.success(
-          this.translate.instant('The {service} service has been started.', {
-            service: 'SMB',
-          }),
-        );
-      }),
-      switchMap(() => of(startNow)),
-    );
+          if (result.start && result.startAutomatically) {
+            requests.push(
+              this.ws.call('service.update', [
+                cifsService.id,
+                { enable: result.startAutomatically },
+              ]),
+            );
+          }
+
+          if (result.start) {
+            requests.push(
+              this.ws.call('service.start', [
+                cifsService.service,
+                { silent: false },
+              ])
+                .pipe(
+                  tap(() => {
+                    this.snackbar.success(
+                      this.translate.instant('The {service} service has started.', {
+                        service: 'SMB',
+                      }),
+                    );
+                  }),
+                ),
+            );
+          }
+
+          return forkJoin(requests);
+        }),
+      );
   };
 
   getCifsService = (): Observable<Service> => {

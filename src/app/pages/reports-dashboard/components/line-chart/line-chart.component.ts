@@ -218,6 +218,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
       return columns as unknown as dygraphs.DataArray;
     }
+
+    return undefined;
   }
 
   inferUnits(label: string): string {

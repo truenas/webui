@@ -45,8 +45,8 @@ export class InventoryComponent implements OnInit {
   }
 
   updateInventory(): void {
-    const isHdd = this.formValue.data.size_and_type[1] === DiskType.Hdd;
-    const selectedSize = this.formValue.data.size_and_type[0];
+    const isHdd = this.formValue.data.sizeAndType[1] === DiskType.Hdd;
+    const selectedSize = this.formValue.data.sizeAndType[0];
 
     this.inventory = {
       hdd: !isHdd ? this.sizeDisksMap.hdd : {},
@@ -55,9 +55,9 @@ export class InventoryComponent implements OnInit {
 
     Object.entries(isHdd ? this.sizeDisksMap.hdd : this.sizeDisksMap.ssd).forEach(([size, number]) => {
       if (isHdd) {
-        this.inventory.hdd[size] = size === selectedSize ? number - this.formValue.data.number : number;
+        this.inventory.hdd[size] = size === selectedSize ? number - this.formValue.data.vdevsNumber : number;
       } else {
-        this.inventory.ssd[size] = size === selectedSize ? number - this.formValue.data.number : number;
+        this.inventory.ssd[size] = size === selectedSize ? number - this.formValue.data.vdevsNumber : number;
       }
     });
   }

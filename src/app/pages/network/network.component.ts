@@ -111,7 +111,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         return this.translate.instant('Delete');
       },
-      buttonMsg: (intf: NetworkInterfaceUi): string => {
+      buttonMessage: (intf: NetworkInterfaceUi): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return this.translate.instant('Reset Configuration');
         }
@@ -358,8 +358,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           .confirm({
             title: helptext.commit_changes_title,
             message: helptext.commit_changes_warning,
-            hideCheckBox: false,
-            buttonMsg: helptext.commit_button,
+            hideCheckbox: false,
+            buttonText: helptext.commit_button,
           })
           .pipe(untilDestroyed(this))
           .subscribe((confirm: boolean) => {
@@ -398,8 +398,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             uniqueIPs: this.uniqueIps.join(', '),
             affectedServices: this.affectedServices.join(', '),
           }),
-          hideCheckBox: true,
-          buttonMsg: helptext.services_restarted.button,
+          hideCheckbox: true,
+          buttonText: helptext.services_restarted.button,
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -410,8 +410,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
         .confirm({
           title: helptext.checkin_title,
           message: helptext.checkin_message,
-          hideCheckBox: true,
-          buttonMsg: helptext.checkin_button,
+          hideCheckbox: true,
+          buttonText: helptext.checkin_button,
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -449,8 +449,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       .confirm({
         title: helptext.rollback_changes_title,
         message: helptext.rollback_changes_warning,
-        hideCheckBox: false,
-        buttonMsg: helptext.rollback_button,
+        hideCheckbox: false,
+        buttonText: helptext.rollback_button,
       })
       .pipe(untilDestroyed(this))
       .subscribe((confirm: boolean) => {

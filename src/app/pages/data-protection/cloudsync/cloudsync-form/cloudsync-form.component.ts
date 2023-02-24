@@ -440,8 +440,8 @@ export class CloudsyncFormComponent {
         this.dialog.confirm({
           title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
           message: err.reason,
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Fix Credential'),
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Fix Credential'),
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
           this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);

@@ -110,7 +110,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
         this.dialog.confirm({
           title: this.translate.instant('Run Now'),
           message: this.translate.instant('Run this rsync now?'),
-          hideCheckBox: true,
+          hideCheckbox: true,
         }).pipe(
           filter(Boolean),
           tap(() => row.state = { state: JobState.Running }),

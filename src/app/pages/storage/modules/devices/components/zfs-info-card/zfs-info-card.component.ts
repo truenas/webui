@@ -84,7 +84,7 @@ export class ZfsInfoCardComponent {
     this.dialogService.confirm({
       title: this.translate.instant('Offline Disk'),
       message: this.translate.instant('Offline disk {name}?', { name: this.disk?.devname || this.topologyItem.guid }),
-      buttonMsg: this.translate.instant('Offline'),
+      buttonText: this.translate.instant('Offline'),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -109,7 +109,7 @@ export class ZfsInfoCardComponent {
     this.dialogService.confirm({
       title: this.translate.instant('Online Disk'),
       message: this.translate.instant('Online disk {name}?', { name: this.disk?.devname || this.topologyItem.guid }),
-      buttonMsg: this.translate.instant('Online'),
+      buttonText: this.translate.instant('Online'),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -134,7 +134,7 @@ export class ZfsInfoCardComponent {
     this.dialogService.confirm({
       title: this.translate.instant('Detach Disk'),
       message: this.translate.instant('Detach disk {name}?', { name: this.disk?.devname || this.topologyItem.guid }),
-      buttonMsg: this.translate.instant('Detach'),
+      buttonText: this.translate.instant('Detach'),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -162,7 +162,7 @@ export class ZfsInfoCardComponent {
         'Remove device {name}?',
         { name: this.isDisk ? this.disk?.devname || this.topologyItem.guid : this.topologyItem.name },
       ),
-      buttonMsg: this.translate.instant('Remove'),
+      buttonText: this.translate.instant('Remove'),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),

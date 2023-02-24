@@ -116,8 +116,8 @@ export class IdmapListComponent implements EntityTableConfig {
             this.dialogService.confirm({
               title: helptext.idmap.enable_ad_dialog.title,
               message: helptext.idmap.enable_ad_dialog.message,
-              hideCheckBox: true,
-              buttonMsg: helptext.idmap.enable_ad_dialog.button,
+              hideCheckbox: true,
+              buttonText: helptext.idmap.enable_ad_dialog.button,
             })
               .pipe(filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.showActiveDirectoryForm());

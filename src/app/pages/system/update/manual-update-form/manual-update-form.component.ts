@@ -251,8 +251,8 @@ export class ManualUpdateFormComponent implements OnInit {
     this.dialogService.confirm({
       title: helptext.ha_update.complete_title,
       message: helptext.ha_update.complete_msg,
-      hideCheckBox: true,
-      buttonMsg: helptext.ha_update.complete_action,
+      hideCheckbox: true,
+      buttonText: helptext.ha_update.complete_action,
       hideCancel: true,
     }).pipe(untilDestroyed(this)).subscribe(() => {});
   }

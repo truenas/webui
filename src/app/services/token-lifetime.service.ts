@@ -78,9 +78,9 @@ export class TokenLifetimeService {
             It looks like your session has been inactive for more than {lifetime} seconds.<br>
             For security reasons we will log you out at {time}.
           `, { time: format(new Date(new Date().getTime() + showConfirmTime), 'HH:mm:ss'), lifetime }),
-          buttonMsg: this.translate.instant('Extend session'),
+          buttonText: this.translate.instant('Extend session'),
           hideCancel: true,
-          hideCheckBox: true,
+          hideCheckbox: true,
           disableClose: true,
         }).pipe(untilDestroyed(this)).subscribe((isExtend) => {
           clearTimeout(this.terminateCancelTimeout);

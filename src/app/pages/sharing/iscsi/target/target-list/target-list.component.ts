@@ -112,7 +112,7 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
             this.entityList.dialogService.confirm({
               title: this.translate.instant('Delete'),
               message: deleteMsg,
-              buttonMsg: this.translate.instant('Delete'),
+              buttonText: this.translate.instant('Delete'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.entityList.loader.open();
               this.entityList.loaderOpen = true;

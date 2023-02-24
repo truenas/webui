@@ -220,7 +220,8 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
               untilDestroyed(this),
             ).subscribe((charts) => {
               if (!charts) {
-                return this.showLoadStatus(EmptyType.Errors);
+                this.showLoadStatus(EmptyType.Errors);
+                return;
               }
 
               this.chartItems.clear();
@@ -366,25 +367,20 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
   }
 
   delete(name: string): void {
-    const dialogConfirmation = this.dialogService.confirm({
+    this.dialogService.confirm({
       title: helptext.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
-      secondaryCheckBox: true,
-      secondaryCheckBoxMsg: this.translate.instant('Delete docker images used by the app'),
-      data: [{ delete_unused_images: false }],
-    });
-    let deleteUnusedImages = false;
-    dialogConfirmation.componentInstance.switchSelectionEmitter.pipe(
-      untilDestroyed(this),
-    ).subscribe((checked: boolean) => {
-      deleteUnusedImages = checked;
-    });
-    dialogConfirmation.afterClosed().pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    )
-      .subscribe(() => {
-        if (deleteUnusedImages) {
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Delete docker images used by the app'),
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe((result) => {
+        if (!result.confirmed) {
+          return;
+        }
+
+        const deleteUnusedImages = result.secondaryCheckbox;
+        if (result.secondaryCheckbox) {
           this.appLoaderService.open();
           this.ws.call(
             'chart.release.get_chart_releases_using_chart_release_images',
@@ -401,7 +397,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
                 message: this.translate.instant('These images will not be removed as there are other apps which are consuming them')
               + imageMessage,
                 disableClose: true,
-                buttonMsg: this.translate.instant('OK'),
+                buttonText: this.translate.instant('OK'),
               }).pipe(filter(Boolean), untilDestroyed(this))
                 .subscribe(() => {
                   this.executeDelete(name, deleteUnusedImages);

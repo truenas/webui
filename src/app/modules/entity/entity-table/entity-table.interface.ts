@@ -182,5 +182,5 @@ export interface EntityTableConfirmDialog<Row = unknown> {
   button?: string;
   isMessageComplete?: boolean;
   buildTitle?: (row: Row) => string;
-  buttonMsg?: (row: Row) => string;
+  buttonMessage?: (row: Row) => string;
 }

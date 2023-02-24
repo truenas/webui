@@ -6,7 +6,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
+import { Job } from 'app/interfaces/job.interface';
+import { NewTicketResponse } from 'app/interfaces/support.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -42,35 +45,23 @@ describe('FileTicketFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockProvider(WebSocketService, {
-        job: jest.fn((method) => {
-          switch (method) {
-            case 'support.new_ticket':
-              return of(fakeSuccessfulJob(mockNewTicketResponse));
-            case 'support.attach_ticket':
-              return of(fakeSuccessfulJob());
-          }
+      mockWebsocket([
+        mockCall('core.get_jobs', [{
+          id: 1,
+          method: 'support.new_ticket',
+          progress: {
+            percent: 99,
+            description: 'progress description',
+          },
+          state: JobState.Running,
+        }] as Job[]),
+        mockCall('support.fetch_categories', {
+          API: '11008',
+          WebUI: '10004',
         }),
-        call: jest.fn((method) => {
-          switch (method) {
-            case 'core.get_jobs':
-              return of([{
-                id: 1,
-                method: 'support.new_ticket',
-                progress: {
-                  percent: 99,
-                  description: 'progress description',
-                },
-                state: JobState.Running,
-              }]);
-            case 'support.fetch_categories':
-              return of({
-                API: '11008',
-                WebUI: '10004',
-              });
-          }
-        }),
-      }),
+        mockJob('support.new_ticket', fakeSuccessfulJob(mockNewTicketResponse as NewTicketResponse)),
+        mockJob('support.attach_ticket', fakeSuccessfulJob()),
+      ]),
       mockProvider(AuthService, {
         authToken$: of('token.is.mocked'),
       }),

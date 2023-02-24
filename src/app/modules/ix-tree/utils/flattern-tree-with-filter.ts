@@ -4,7 +4,7 @@ export function flattenTreeWithFilter<T extends { children?: T[] }>(
   foundItems: T[] = [],
 ): T[] {
   if (!items?.length) {
-    return;
+    return undefined;
   }
 
   for (const item of items) {
