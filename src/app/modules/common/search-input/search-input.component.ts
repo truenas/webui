@@ -23,9 +23,6 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 })
 export class SearchInputComponent implements OnInit, OnChanges {
   @HostBinding('class.disabled')
-  get isDisabledParentClass(): boolean {
-    return this.disabled;
-  }
   @Input() disabled = false;
   @Input() value = '';
   @Output() search = new EventEmitter<string>();
