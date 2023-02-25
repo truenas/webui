@@ -121,7 +121,7 @@ export class AuthService {
     }));
   }
 
-  setupPeriodicTokenGeneration(): void {
+  private setupPeriodicTokenGeneration(): void {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
         switchMap(() => this.isAuthenticated$),
@@ -160,6 +160,7 @@ export class AuthService {
       method: 'auth.logout',
     };
     this.wsManager.send(payload);
+    this.clearAuthToken();
     return this.getFilteredWebsocketResponse<void>(uuid).pipe(tap(() => {
       this.isLoggedIn$.next(false);
     }));

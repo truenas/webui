@@ -60,24 +60,21 @@ describe('AuthService', () => {
   beforeEach(() => {
     strategyStub = new StorageStrategyStub(LocalStorageStrategy.strategyName);
     spectator = createService();
-    jest.spyOn(spectator.service, 'authToken$', 'get').mockReturnValue(of('DUMMY_TOKEN'));
 
     testScheduler = new TestScheduler((actual, expected) => {
       return expect(actual).toEqual(expected);
     });
   });
 
-  describe('Login', () => {
-    it('logs user in with credentials', () => {
-      jest.spyOn(spectator.service, 'authToken$', 'get').mockImplementation(jest.fn(() => of('DUMMY_TOKEN')));
-
-      jest.spyOn(rxjs, 'timer').mockReturnValue(of(0));
+  describe('Login with credentials', () => {
+    it('initalizes auth session with triggers and token', () => {
+      jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
 
       jest.spyOn(UUID, 'UUID')
         .mockReturnValueOnce('login_uuid')
         .mockReturnValueOnce('logged_in_user_uuid')
         .mockReturnValueOnce('user_query_uuid')
-        .mockReturnValue('generate_token_uuid');
+        .mockReturnValueOnce('generate_token_uuid');
 
       const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
       when(getFilteredWebsocketResponse).calledWith('login_uuid').mockReturnValue(of(true));
@@ -94,7 +91,7 @@ describe('AuthService', () => {
       });
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
-          '(a|)',
+          'a',
           { a: true },
         );
         expectObservable(spectator.service.isAuthenticated$).toBe(
@@ -102,7 +99,7 @@ describe('AuthService', () => {
           { c: true },
         );
         expectObservable(spectator.service.authToken$).toBe(
-          '(d|)',
+          'd',
           { d: 'DUMMY_TOKEN' },
         );
         expectObservable(spectator.service.user$).toBe(
@@ -125,6 +122,34 @@ describe('AuthService', () => {
         id: 'generate_token_uuid',
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
+      });
+    });
+  });
+
+  describe('Logout', () => {
+    it('calls auth.logout and clears token', () => {
+      jest.spyOn(UUID, 'UUID').mockReturnValueOnce('logout_uuid');
+      const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
+      when(getFilteredWebsocketResponse).calledWith('logout_uuid').mockReturnValue(of());
+      const obs$ = spectator.service.logout();
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'logout_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'auth.logout',
+      });
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(obs$).toBe(
+          '|',
+          {},
+        );
+        expectObservable(spectator.service.isAuthenticated$).toBe(
+          'c',
+          { c: false },
+        );
+        expectObservable(spectator.service.authToken$).toBe(
+          'd',
+          { d: null },
+        );
       });
     });
   });
