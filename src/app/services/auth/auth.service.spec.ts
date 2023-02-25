@@ -35,7 +35,6 @@ describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let testScheduler: TestScheduler;
   let strategyStub: StorageStrategy<unknown>;
-  const normalizedAuthTokenKey = 'ngx-webstorage|token';
   const createService = createServiceFactory({
     service: AuthService,
     imports: [
@@ -127,8 +126,6 @@ describe('AuthService', () => {
     });
     it('initalizes auth session with triggers and token with token login', () => {
       jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
-      const strategy: StorageStrategyStub = strategyStub as StorageStrategyStub;
-      strategy.store[normalizedAuthTokenKey] = 'DUMMY_TOKEN3';
 
       jest.spyOn(UUID, 'UUID')
         .mockReturnValueOnce('login_with_token_uuid')
@@ -148,7 +145,7 @@ describe('AuthService', () => {
         id: 'login_with_token_uuid',
         msg: IncomingApiMessageType.Method,
         method: 'auth.login_with_token',
-        params: ['DUMMY_TOKEN3'],
+        params: ['DUMMY_TOKEN'],
       });
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
