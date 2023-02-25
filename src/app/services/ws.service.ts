@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import {
-  merge, Observable, of, throwError,
+  combineLatest,
+  merge, Observable, of, Subscriber, throwError,
 } from 'rxjs';
 import {
-  filter, map, share, switchMap, take, takeWhile, tap,
+  filter, map, share, switchMap, take, takeWhile,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -35,13 +36,15 @@ export class WebSocketService {
 
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
-    return of(uuid).pipe(
-      tap(() => {
-        this.wsManager.send({
-          id: uuid, msg: IncomingApiMessageType.Method, method, params,
-        });
-      }),
-      switchMap(() => this.ws$),
+
+    const requestTrigger$ = new Observable((subscriber: Subscriber<unknown>) => {
+      this.wsManager.send({
+        id: uuid, msg: IncomingApiMessageType.Method, method, params,
+      });
+      subscriber.next();
+    }).pipe(take(1));
+
+    const uuidFilteredResponse$ = this.ws$.pipe(
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       switchMap((data: IncomingWebsocketMessage) => {
         if ('error' in data && data.error) {
@@ -53,6 +56,11 @@ export class WebSocketService {
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
     );
+
+    return combineLatest([
+      requestTrigger$,
+      uuidFilteredResponse$,
+    ]).pipe(map(([, data]) => data));
   }
 
   job<K extends ApiMethod>(
