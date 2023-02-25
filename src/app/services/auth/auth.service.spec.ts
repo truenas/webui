@@ -83,12 +83,7 @@ describe('AuthService', () => {
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN'));
 
       const obs$ = spectator.service.login('dummy', 'dummy');
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
-        id: 'login_uuid',
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.login',
-        params: ['dummy', 'dummy'],
-      });
+
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           'a',
@@ -106,6 +101,12 @@ describe('AuthService', () => {
           'e',
           { e: { ...loggedInUser } },
         );
+      });
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'login_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'auth.login',
+        params: ['dummy', 'dummy'],
       });
       expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
         id: 'logged_in_user_uuid',
@@ -141,12 +142,6 @@ describe('AuthService', () => {
 
       const obs$ = spectator.service.loginWithToken();
 
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
-        id: 'login_with_token_uuid',
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.login_with_token',
-        params: ['DUMMY_TOKEN'],
-      });
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           '(a|)',
@@ -164,6 +159,12 @@ describe('AuthService', () => {
           'e',
           { e: { ...loggedInUser } },
         );
+      });
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'login_with_token_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'auth.login_with_token',
+        params: ['DUMMY_TOKEN'],
       });
       expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
         id: 'logged_in_user_uuid',
@@ -190,11 +191,6 @@ describe('AuthService', () => {
       const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
       when(getFilteredWebsocketResponse).calledWith('logout_uuid').mockReturnValue(of());
       const obs$ = spectator.service.logout();
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
-        id: 'logout_uuid',
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.logout',
-      });
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
           '|',
@@ -208,6 +204,11 @@ describe('AuthService', () => {
           'd',
           { d: null },
         );
+      });
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'logout_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'auth.logout',
       });
     });
   });
