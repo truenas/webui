@@ -35,6 +35,7 @@ describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let testScheduler: TestScheduler;
   let strategyStub: StorageStrategy<unknown>;
+  const normalizedAuthTokenKey = 'ngx-webstorage|token';
   const createService = createServiceFactory({
     service: AuthService,
     imports: [
@@ -66,8 +67,8 @@ describe('AuthService', () => {
     });
   });
 
-  describe('Login with credentials', () => {
-    it('initalizes auth session with triggers and token', () => {
+  describe('Login', () => {
+    it('initalizes auth session with triggers and token with username/password login', () => {
       jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
 
       jest.spyOn(UUID, 'UUID')
@@ -101,6 +102,66 @@ describe('AuthService', () => {
         expectObservable(spectator.service.authToken$).toBe(
           'd',
           { d: 'DUMMY_TOKEN' },
+        );
+        expectObservable(spectator.service.user$).toBe(
+          'e',
+          { e: { ...loggedInUser } },
+        );
+      });
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'logged_in_user_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'auth.me',
+      });
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'user_query_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'user.query',
+        params: [[['uid', '=', 2]]],
+      });
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'generate_token_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'auth.generate_token',
+      });
+    });
+    it('initalizes auth session with triggers and token with token login', () => {
+      jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
+      const strategy: StorageStrategyStub = strategyStub as StorageStrategyStub;
+      strategy.store[normalizedAuthTokenKey] = 'DUMMY_TOKEN3';
+
+      jest.spyOn(UUID, 'UUID')
+        .mockReturnValueOnce('login_with_token_uuid')
+        .mockReturnValueOnce('logged_in_user_uuid')
+        .mockReturnValueOnce('user_query_uuid')
+        .mockReturnValueOnce('generate_token_uuid');
+
+      const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
+      when(getFilteredWebsocketResponse).calledWith('login_with_token_uuid').mockReturnValue(of(true));
+      when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(uncachedUser));
+      when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
+      when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN4'));
+
+      const obs$ = spectator.service.loginWithToken();
+
+      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
+        id: 'login_with_token_uuid',
+        msg: IncomingApiMessageType.Method,
+        method: 'auth.login_with_token',
+        params: ['DUMMY_TOKEN3'],
+      });
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(obs$).toBe(
+          '(a|)',
+          { a: true },
+        );
+        expectObservable(spectator.service.isAuthenticated$).toBe(
+          'c',
+          { c: true },
+        );
+        expectObservable(spectator.service.authToken$).toBe(
+          'd',
+          { d: 'DUMMY_TOKEN4' },
         );
         expectObservable(spectator.service.user$).toBe(
           'e',

@@ -89,12 +89,13 @@ export class AuthService {
 
   login(username: string, password: string, otp: string = null): Observable<boolean> {
     const uuid = UUID.UUID();
-    this.wsManager.send({
+    const payload = {
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login',
       params: otp ? [username, password, otp] : [username, password],
-    });
+    };
+    this.wsManager.send(payload);
 
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(
       switchMap((loginResponse) => {
@@ -110,12 +111,13 @@ export class AuthService {
 
   loginWithToken(): Observable<boolean> {
     const uuid = UUID.UUID();
-    this.wsManager.send({
+    const payload = {
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login_with_token',
       params: [this.token || ''],
-    });
+    };
+    this.wsManager.send(payload);
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
       this.isLoggedIn$.next(response);
     }));
