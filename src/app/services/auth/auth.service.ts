@@ -6,7 +6,6 @@ import {
   BehaviorSubject,
   combineLatest,
   filter,
-  first,
   map,
   Observable,
   of,
@@ -108,7 +107,7 @@ export class AuthService {
       requestTrigger$,
       uuidFilteredResponse$,
     ]).pipe(
-      first(),
+      take(1),
       map(([, data]) => data),
       switchMap((loginResponse) => {
         this.isLoggedIn$.next(loginResponse);
@@ -133,7 +132,7 @@ export class AuthService {
     const requestTrigger$ = new Observable((subscriber) => {
       this.wsManager.send(payload);
       subscriber.next();
-    }).pipe(first());
+    }).pipe(take(1));
 
     const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<boolean>(uuid);
 
@@ -164,7 +163,7 @@ export class AuthService {
     return this.wsManager.websocket$.pipe(
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       map((data: ResultMessage<T>) => data.result),
-      first(),
+      take(1),
     );
   }
 
@@ -179,7 +178,7 @@ export class AuthService {
     const requestTrigger$ = new Observable((subscriber) => {
       this.wsManager.send(payload);
       subscriber.next();
-    }).pipe(first());
+    }).pipe(take(1));
 
     const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<string>(uuid);
 
@@ -201,7 +200,7 @@ export class AuthService {
       this.wsManager.send(payload);
       this.clearAuthToken();
       subscriber.next();
-    }).pipe(first());
+    }).pipe(take(1));
 
     const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<void>(uuid);
 
@@ -228,7 +227,7 @@ export class AuthService {
     const requestTrigger$ = new Observable((subscriber) => {
       this.wsManager.send(payload);
       subscriber.next();
-    }).pipe(first());
+    }).pipe(take(1));
 
     combineLatest([
       requestTrigger$,
@@ -251,7 +250,7 @@ export class AuthService {
         const requestTriggerUserQuery$ = new Observable((subscriber) => {
           this.wsManager.send(userQueryPayload);
           subscriber.next();
-        }).pipe(first());
+        }).pipe(take(1));
 
         return combineLatest([
           requestTriggerUserQuery$,
