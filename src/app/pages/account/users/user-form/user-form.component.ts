@@ -219,7 +219,7 @@ export class UserFormComponent {
       group: values.group,
       groups: values.groups,
       home_mode: values.home_mode,
-      home_create: false,
+      home_create: values.home_create,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
       password_disabled: values.password_disabled,
