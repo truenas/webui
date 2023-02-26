@@ -46,7 +46,10 @@ export class AuthService {
 
   private generateTokenSubscription: Subscription;
 
-  readonly isAuthenticated$ = combineLatest([this.wsManager.isConnected$, this.isLoggedIn$.asObservable()]).pipe(
+  readonly isAuthenticated$ = combineLatest([
+    this.wsManager.isConnected$,
+    this.isLoggedIn$.asObservable(),
+  ]).pipe(
     switchMap(([isConnected, isLoggedIn]) => {
       return of(isConnected && isLoggedIn);
     }),
@@ -86,14 +89,26 @@ export class AuthService {
 
   login(username: string, password: string, otp: string = null): Observable<boolean> {
     const uuid = UUID.UUID();
-    this.wsManager.send({
+    const payload = {
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login',
       params: otp ? [username, password, otp] : [username, password],
-    });
+    };
 
-    return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(
+    const requestTrigger$ = new Observable((subscriber) => {
+      this.wsManager.send(payload);
+      subscriber.next();
+    }).pipe(take(1));
+
+    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<boolean>(uuid);
+
+    return combineLatest([
+      requestTrigger$,
+      uuidFilteredResponse$,
+    ]).pipe(
+      take(1),
+      map(([, data]) => data),
       switchMap((loginResponse) => {
         this.isLoggedIn$.next(loginResponse);
         if (!loginResponse) {
@@ -107,18 +122,32 @@ export class AuthService {
 
   loginWithToken(): Observable<boolean> {
     const uuid = UUID.UUID();
-    this.wsManager.send({
+    const payload = {
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login_with_token',
       params: [this.token || ''],
-    });
-    return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
-      this.isLoggedIn$.next(response);
-    }));
+    };
+
+    const requestTrigger$ = new Observable((subscriber) => {
+      this.wsManager.send(payload);
+      subscriber.next();
+    }).pipe(take(1));
+
+    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<boolean>(uuid);
+
+    return combineLatest([
+      requestTrigger$,
+      uuidFilteredResponse$,
+    ]).pipe(
+      map(([, data]) => data),
+      tap((response) => {
+        this.isLoggedIn$.next(response);
+      }),
+    );
   }
 
-  setupPeriodicTokenGeneration(): void {
+  private setupPeriodicTokenGeneration(): void {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
         switchMap(() => this.isAuthenticated$),
@@ -145,8 +174,18 @@ export class AuthService {
       msg: IncomingApiMessageType.Method,
       method: 'auth.generate_token',
     };
-    this.wsManager.send(payload);
-    return this.getFilteredWebsocketResponse<string>(uuid);
+
+    const requestTrigger$ = new Observable((subscriber) => {
+      this.wsManager.send(payload);
+      subscriber.next();
+    }).pipe(take(1));
+
+    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<string>(uuid);
+
+    return combineLatest([
+      requestTrigger$,
+      uuidFilteredResponse$,
+    ]).pipe(map(([, data]) => data));
   }
 
   logout(): Observable<void> {
@@ -156,10 +195,24 @@ export class AuthService {
       msg: IncomingApiMessageType.Method,
       method: 'auth.logout',
     };
-    this.wsManager.send(payload);
-    return this.getFilteredWebsocketResponse<void>(uuid).pipe(tap(() => {
-      this.isLoggedIn$.next(false);
-    }));
+
+    const requestTrigger$ = new Observable((subscriber) => {
+      this.wsManager.send(payload);
+      this.clearAuthToken();
+      subscriber.next();
+    }).pipe(take(1));
+
+    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<void>(uuid);
+
+    return combineLatest([
+      requestTrigger$,
+      uuidFilteredResponse$,
+    ]).pipe(
+      map(([, data]) => data),
+      tap(() => {
+        this.isLoggedIn$.next(false);
+      }),
+    );
   }
 
   private getLoggedInUserInformation(): void {
@@ -170,19 +223,39 @@ export class AuthService {
       msg: IncomingApiMessageType.Method,
       method: 'auth.me',
     };
-    this.wsManager.send(payload);
-    this.getFilteredWebsocketResponse(uuid).pipe(
+
+    const requestTrigger$ = new Observable((subscriber) => {
+      this.wsManager.send(payload);
+      subscriber.next();
+    }).pipe(take(1));
+
+    combineLatest([
+      requestTrigger$,
+      this.getFilteredWebsocketResponse(uuid),
+    ]).pipe(
+      map(([, data]) => data),
+    ).pipe(
       filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid),
       switchMap((loggedInUser: DsUncachedUser) => {
         authenticatedUser = loggedInUser;
+
+        const userQueryUuid = UUID.UUID();
         const userQueryPayload = {
-          id: uuid,
+          id: userQueryUuid,
           msg: IncomingApiMessageType.Method,
           method: 'user.query',
           params: [[['uid', '=', authenticatedUser.pw_uid]]],
         };
-        this.wsManager.send(userQueryPayload);
-        return this.getFilteredWebsocketResponse(uuid);
+
+        const requestTriggerUserQuery$ = new Observable((subscriber) => {
+          this.wsManager.send(userQueryPayload);
+          subscriber.next();
+        }).pipe(take(1));
+
+        return combineLatest([
+          requestTriggerUserQuery$,
+          this.getFilteredWebsocketResponse(userQueryUuid),
+        ]).pipe(map(([, data]) => data));
       }),
       tap((users: User[]) => {
         if (users?.[0]?.id) {

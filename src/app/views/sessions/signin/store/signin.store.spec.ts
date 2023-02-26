@@ -60,11 +60,7 @@ describe('SigninStore', () => {
     spectator = createService();
     websocket2 = spectator.inject(MockWebsocketService);
     authService = spectator.inject(AuthService);
-    // This strips @LocalStorage() decorator from token.
-    // Object.defineProperty(authService, 'token2', {
-    //   value: '',
-    //   writable: true,
-    // });
+
     Object.defineProperty(authService, 'authToken$', {
       value: of('EXISTING_TOKEN'),
     });
@@ -144,8 +140,7 @@ describe('SigninStore', () => {
       });
     });
 
-    it('logs in with token if it is present in local storage (via AuthService.token2)', () => {
-      // authService.token2 = 'EXISTING_TOKEN';
+    it('logs in with token if it is present in local storage (via AuthService.token)', () => {
       spectator.service.init();
 
       expect(authService.loginWithToken).toHaveBeenCalled();
