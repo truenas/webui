@@ -8,6 +8,17 @@
   padding: 2px 32px 2px 8px;
   position: relative;
 
+  &.disabled::before {
+    content: '';
+    cursor: not-allowed;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+  }
+
   .prefix-icon {
     display: inline-flex;
     margin-right: 4px;
