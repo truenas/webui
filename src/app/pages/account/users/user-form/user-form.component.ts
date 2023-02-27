@@ -127,7 +127,7 @@ export class UserFormComponent {
     if (this.isNewUser) {
       if (!homeCreate && home !== '/nonexistent') {
         return this.translate.instant(
-          'With this configuration, Home Directory under path {path} will not be created.',
+          'With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.',
           { path: '\'' + this.form.get('home').value + '\'' },
         );
       }
