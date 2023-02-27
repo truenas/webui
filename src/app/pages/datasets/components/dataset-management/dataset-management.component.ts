@@ -45,7 +45,7 @@ import { DialogService, SystemGeneralService, WebSocketService } from 'app/servi
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
-import { selectHaStatus } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -62,6 +62,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
+
+  isSystemHaCapable$ = this.store$.select(selectIsSystemHaCapable);
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;

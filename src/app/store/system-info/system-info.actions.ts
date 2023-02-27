@@ -45,3 +45,8 @@ export const upgradePendingStateLoaded = createAction(
   '[HA Info API] Upgrade pending state loaded',
   props<{ isUpgradePending: boolean }>(),
 );
+
+export const systemHaCapabilityLoaded = createAction(
+  '[System Info API] System is HA capable Loaded',
+  props<{ isSystemHaCapable: boolean }>(),
+);

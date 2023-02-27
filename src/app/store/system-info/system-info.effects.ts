@@ -18,6 +18,7 @@ import {
   loadHaStatus,
   passiveNodeReplaced,
   systemFeaturesLoaded,
+  systemHaCapabilityLoaded,
   systemInfoLoaded,
   upgradePendingStateLoaded,
 } from 'app/store/system-info/system-info.actions';
@@ -121,6 +122,15 @@ export class SystemInfoEffects {
         map((isHaLicensed) => {
           return failoverLicensedStatusLoaded({ isHaLicensed });
         }),
+      );
+    }),
+  ));
+
+  loadIsSystemHaCapable = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('system.is_ha_capable').pipe(
+        map((isSystemHaCapable: boolean) => systemHaCapabilityLoaded({ isSystemHaCapable })),
       );
     }),
   ));
