@@ -262,7 +262,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       map((event) => event.fields),
       untilDestroyed(this),
     ).subscribe((update) => {
-      if (update.cpu) {
+      if (update?.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
 
