@@ -87,7 +87,7 @@ describe('ServicesComponent', () => {
     const firstRow = await table.getFirstRow();
     const serviceKey = [...serviceNames.entries()].find(([, value]) => value === firstRow.name)[0];
 
-    const editButton = await table.getHarness(MatButtonHarness.with({ text: 'edit' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
     await editButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/services', serviceKey]);
