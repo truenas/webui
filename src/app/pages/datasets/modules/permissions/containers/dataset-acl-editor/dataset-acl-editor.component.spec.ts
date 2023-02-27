@@ -193,7 +193,7 @@ describe('DatasetAclEditorComponent', () => {
     });
 
     it('adds another ace when Add item is pressed', async () => {
-      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'add Add Item' }));
+      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
       await addAceButton.click();
 
       const items = spectator.queryAll('ix-permissions-item');
