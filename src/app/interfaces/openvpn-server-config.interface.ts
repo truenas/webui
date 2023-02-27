@@ -17,6 +17,7 @@ export interface OpenvpnServerConfig {
   tls_crypt_auth: string;
   tls_crypt_auth_enabled: boolean;
   topology: string;
+  remove_certificates?: boolean;
 }
 
 export type OpenvpnServerConfigUpdate = Omit<OpenvpnServerConfig, 'id' | 'interface'>;

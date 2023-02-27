@@ -14,7 +14,7 @@ import {
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
-import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
+import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
@@ -193,7 +193,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.appLoaderService.open();
-        return this.ws.call('openvpn.client.update', [{ remove_certificates: true } as OpenvpnClientConfigUpdate]);
+        return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
       }),
       tap(() => {
         this.appLoaderService.close();
