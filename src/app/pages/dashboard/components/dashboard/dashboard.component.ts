@@ -551,7 +551,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
-    this.ws.call('user.set_attribute', [1, 'dashState', state])
+    this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
       .subscribe((wasSet) => {
         if (!wasSet) {

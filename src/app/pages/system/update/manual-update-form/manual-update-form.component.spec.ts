@@ -10,9 +10,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
+import { DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { User } from 'app/interfaces/user.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
@@ -31,13 +31,13 @@ describe('ManualUpdateFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('user.query', [{
+        mockCall('auth.me', {
           attributes: {
             preferences: {
               rebootAfterManualUpdate: false,
             } as unknown as Preferences,
           },
-        } as unknown as User]),
+        } as unknown as DsUncachedUser),
         mockCall('pool.query', [
           {
             name: 'pool2',
@@ -45,7 +45,7 @@ describe('ManualUpdateFormComponent', () => {
         ]),
         mockCall('failover.licensed'),
         mockCall('core.get_jobs'),
-        mockCall('user.set_attribute'),
+        mockCall('auth.set_attribute'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

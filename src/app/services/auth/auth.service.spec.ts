@@ -14,6 +14,8 @@ import * as rxjs from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { Preferences } from 'app/interfaces/preferences.interface';
+import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
@@ -24,6 +26,10 @@ const uncachedUser: DsUncachedUser = {
   pw_name: 'name',
   pw_shell: 'shell',
   pw_uid: 2,
+  attributes: {
+    preferences: {} as unknown as Preferences,
+    dashState: [] as unknown as DashConfigItem[],
+  },
 };
 
 const loggedInUser: LoggedInUser = {
