@@ -128,6 +128,7 @@
           mat-icon-button
           matTooltipPosition="below"
           [ixTest]="['delete-quota', row.name]"
+          [attr.aria-label]="'Delete' | translate"
           [matTooltip]="'Delete' | translate"
           (click)="$event.stopPropagation(); doDelete(row)"
         >

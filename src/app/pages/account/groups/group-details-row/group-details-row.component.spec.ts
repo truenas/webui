@@ -82,7 +82,7 @@ describe('GroupDetailsRowComponent', () => {
   });
 
   it('should redirect to group members form', async () => {
-    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'peopleMembers' }));
+    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
     await membersButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);

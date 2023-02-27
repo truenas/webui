@@ -120,8 +120,8 @@ describe('UserListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Username', 'UID', 'Builtin', 'Full Name', ''],
-      ['root', '0', 'Yes', 'root', 'expand_more'],
-      ['test', '1004', 'No', 'test', 'expand_more'],
+      ['root', '0', 'Yes', 'root', ''],
+      ['test', '1004', 'No', 'test', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -158,7 +158,7 @@ describe('UserListComponent', () => {
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'expand_more' }));
+    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
     await firstExpandButton.click();
     await secondExpandButton.click();
 

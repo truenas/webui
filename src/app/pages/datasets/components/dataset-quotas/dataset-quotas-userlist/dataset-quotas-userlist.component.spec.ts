@@ -109,7 +109,7 @@ describe('DatasetQuotasUserlistComponent', () => {
   });
 
   it('should delete user quota when click delete button', async () => {
-    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="delete"]' }));
+    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await firstDeleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
