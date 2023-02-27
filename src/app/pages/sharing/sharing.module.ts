@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -30,6 +30,7 @@ import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/targ
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { UserService } from 'app/services/user.service';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
+import { StartServiceDialogComponent } from './components/start-service-dialog/start-service-dialog.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
@@ -108,6 +109,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     FibreChannelPortsComponent,
     FibreChannelPortComponent,
     DeleteExtentDialogComponent,
+    StartServiceDialogComponent,
   ],
   providers: [
     EntityFormService,

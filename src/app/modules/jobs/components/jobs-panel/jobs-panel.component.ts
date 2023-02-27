@@ -48,9 +48,9 @@ export class JobsPanelComponent {
       .confirm({
         title: this.translate.instant('Abort'),
         message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Abort'),
-        cancelMsg: this.translate.instant('Cancel'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Abort'),
+        cancelText: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))

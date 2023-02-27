@@ -8,6 +8,7 @@ const fakeJob: Job = {
   abortable: true,
   arguments: [1],
   description: null,
+  transient: false,
   error: '[EFAULT] Transferred:   \t          0 / 0 Byte, -, 0 Byte/s, ETA',
   exc_info: {
     extra: null,

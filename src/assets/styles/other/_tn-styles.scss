@@ -164,10 +164,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
   .mat-mdc-card,
   .mat-mdc-paginator,
-  .mat-select-content,
-  .mat-select-panel,
+  .mat-mdc-select-content,
   .mat-mdc-select-panel,
-  .mat-select-panel-done-animating,
+  .mat-mdc-select-panel,
+  .mat-mdc-select-panel-done-animating,
   .mat-expansion-panel,
   .mat-mdc-dialog-container,
   .mat-mdc-dialog-container .mat-mdc-dialog-surface,
@@ -200,22 +200,22 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-paginator-navigation-previous,
 
   .mat-nav-list .mat-mdc-list-item,
-  .mat-form-field-label,
-  .mat-selection-list .mat-mdc-list-item,
-  .mat-option,
-  .mat-select-arrow,
-  .mat-select-value {
+  .mat-mdc-form-field-label,
+  .mat-mdc-selection-list .mat-mdc-list-item,
+  .mat-mdc-option,
+  .mat-mdc-select-arrow,
+  .mat-mdc-select-value {
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
-  .mat-select-disabled .mat-select-value {
+  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled .mat-mdc-select-arrow,
+  .mat-mdc-select-disabled .mat-mdc-select-value {
     @include variable(color, --fg2, $fg2);
     cursor: not-allowed;
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
-  .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+  .mat-mdc-form-field.mat-focused.mat-primary .mat-mdc-select-arrow {
     @include variable(color, --primary, $primary, !important);
   }
 
@@ -231,27 +231,27 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-mdc-menu-panel,
-  .mat-option.mat-active,
+  .mat-mdc-option.mat-active,
   .mat-nav-list a {
     @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-option.mat-option-disabled {
+  .mat-mdc-option.mat-mdc-option-disabled {
     cursor: not-allowed;
     opacity: 0.5;
   }
 
-  .mat-form-field-underline {
+  .mat-mdc-form-field-underline {
     @include variable(background-color, --fg2, $fg2, !important);
     opacity: 0.35;
   }
 
-  .mat-warn .mat-form-field-underline {
+  .mat-warn .mat-mdc-form-field-underline {
     opacity: 0.85;
   }
 
-  .mat-form-field.mat-focused .mat-form-field-ripple {
+  .mat-mdc-form-field.mat-focused .mat-mdc-form-field-ripple {
     @include variable(background-color, --primary, $primary, !important);
   }
 
@@ -259,25 +259,25 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --fg2, $fg2);
   }
 
-  .mat-form-field.mat-focused.mat-primary {
+  .mat-mdc-form-field.mat-focused.mat-primary {
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-form-field-invalid .mat-form-field-label {
+  .mat-mdc-form-field-invalid .mat-mdc-form-field-label {
     color: #f44336 !important;
   }
 
-  .mat-form-field-disabled .mat-form-field-label {
-    opacity: 0.38;
+  .mat-mdc-form-field-disabled .mat-mdc-form-field-label {
+    opacity: var(--disabled-opacity);
   }
 
   .mat-mdc-button:disabled {
     cursor: not-allowed;
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
     pointer-events: all;
   }
 
-  .mat-form-field-ripple {
+  .mat-mdc-form-field-ripple {
     @include variable(background-color, --primary, $primary);
   }
 
@@ -287,7 +287,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-input-element:disabled {
     @include variable(color, --fg2, $fg2);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .mat-calendar-table-header,
@@ -316,7 +316,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mini-fab.mat-warn[disabled],
   .mat-mini-fab[disabled][disabled] {
     @include variable(background-color, #999, #999);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .egret-swatch,
@@ -338,7 +338,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-mdc-menu-item[disabled] {
     @include variable(color, --primary-txt, $primary-txt);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .spacer {
@@ -346,11 +346,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // System wide hover effects
-  .mat-select-panel .mat-option:focus,
   .mat-mdc-select-panel .mat-mdc-option:focus,
-  .mat-select-panel .mat-option:focus-visible,
+  .mat-mdc-select-panel .mat-mdc-option:focus,
   .mat-mdc-select-panel .mat-mdc-option:focus-visible,
-  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple),
+  .mat-mdc-select-panel .mat-mdc-option:focus-visible,
+  .mat-mdc-select-panel .mat-mdc-option.mat-mdc-selected:not(.mat-mdc-option-multiple),
   .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -438,7 +438,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-mdc-dialog-container {
     border-radius: var(--mdc-dialog-container-shape);
-    max-width: 800px;
 
     :not(.mat-mdc-dialog-content) {
       > form {
@@ -586,7 +585,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-step-header .mat-step-label {
     @include variable(color, --fg2, $fg2);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   // Style file trees to be highlighted with a theme color
@@ -615,7 +614,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .vdev-action-btn:disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   #vdev__close-button {
@@ -631,7 +630,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-decrement,
   .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   // style to make sure all radio buttons catch the theme color
@@ -845,7 +844,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // for multi-selection only
-  .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
+  .mat-mdc-option-pseudo-checkbox.mat-pseudo-checkbox {
     display: none;
   }
 
@@ -933,9 +932,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+    opacity: var(--disabled-opacity);
     position: absolute;
     right: 0;
-    top: -4px;
+    top: -5px;
 
     i {
       font-size: 17px;
@@ -966,12 +966,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--bg2) !important;
   }
 
-  .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover),
-  .mat-autocomplete-panel .mat-option:hover {
+  .mat-autocomplete-panel .mat-mdc-option.mat-mdc-selected:not(.mat-active):not(:hover),
+  .mat-autocomplete-panel .mat-mdc-option:hover {
     background-color: var(--primary) !important;
   }
 
-  .mat-autocomplete-panel .mat-option-text {
+  .mat-autocomplete-panel .mat-mdc-option-text {
     color: var(--fg2) !important;
   }
 
@@ -1009,8 +1009,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: auto;
   }
 
-  ix-select-dialog .mat-select-placeholder,
-  ix-ipmi .mat-select-placeholder {
+  ix-select-dialog .mat-mdc-select-placeholder,
+  ix-ipmi .mat-mdc-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
 
@@ -1107,8 +1107,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .fieldset-container {
-    .disabled-select .mat-select-arrow {
-      opacity: 0.38;
+    .disabled-select .mat-mdc-select-arrow {
+      opacity: var(--disabled-opacity);
     }
 
     ix-entity-form-list .form-list .form-list-item > div.form-line {
@@ -1139,11 +1139,15 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  mat-error a {
-    text-decoration: underline;
+  mat-error {
+    color: var(--error);
+
+    a {
+      text-decoration: underline;
+    }
   }
 
-  .mat-select-panel,
+  .mat-mdc-select-panel,
   .mat-mdc-select-panel {
     max-height: 50vh !important; // values over 50vh will push last visible element out the screen
   }
@@ -1322,22 +1326,29 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Disabled form fields
-  .form-element.form-combobox .mat-form-field[disabled],
+  .form-element.form-combobox .mat-mdc-form-field[disabled],
   .form-element.form-combobox .mat-mdc-menu-trigger[disabled]
-  .form-element.form-ip-netmask .mat-form-field[disabled],
-  .form-element .mat-form-field-wrapper[disabled],
+  .form-element.form-ip-netmask .mat-mdc-form-field[disabled],
+  .form-element .mat-mdc-text-field-wrapper[disabled],
   .form-element input[type=email][disabled],
   .form-element input[type=number][disabled],
   .form-element input[type=password][disabled],
   .form-element input[type=text][disabled],
   .form-element select[disabled],
   .form-element textarea[disabled] {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .search-icon-wrapper {
     cursor: default;
     user-select: none;
+
+    .mat-icon {
+      align-items: center;
+      display: flex;
+      font-size: 150%;
+      justify-content: center;
+    }
   }
 
   .reset-icon-wrapper {
@@ -1346,7 +1357,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     user-select: none;
 
     .mat-icon {
+      align-items: center;
+      display: flex;
       font-size: 150%;
+      justify-content: center;
     }
 
     &.invisible {
@@ -1357,7 +1371,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // focus state styles for mat-form-field
-  .mat-form-field.mat-focused:focus-within {
+  .mat-mdc-form-field.mat-focused:focus-within {
     outline: 1px solid var(--primary);
   }
 } // end of ix theme
@@ -1389,29 +1403,6 @@ ix-nested-tree-node[aria-level='2'] {
   }
 }
 
-.manual-selection-dialog {
-  .mat-mdc-card {
-    border: none;
-    border-radius: 0;
-    margin: 0;
-  }
-
-  .mat-mdc-dialog-container {
-    max-width: 80vw;
-  }
-
-  mat-card {
-    border-radius: 0;
-  }
-
-  .mat-mdc-card-content,
-  form {
-    height: 100%;
-    overflow: auto;
-    padding: 0 !important;
-  }
-}
-
 body .mdc-linear-progress__buffer-bar {
   background-color: var(--primary);
   opacity: 0.5;
@@ -1423,4 +1414,79 @@ body .mdc-linear-progress__bar-inner {
 
 .mat-mdc-slide-toggle {
   font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+body .mdc-tooltip {
+  word-break: break-word;
+
+  .mdc-tooltip__surface {
+    background-color: #666;
+    color: #fff;
+    font-size: 10px;
+    line-height: 16px;
+    padding: 6px 8px;
+  }
+}
+
+body .mat-mdc-input-element {
+  background-color: transparent;
+  border: 0;
+  color: var(--fg2);
+  font-size: 12px;
+  outline: none !important;
+  width: 100%;
+}
+
+.input-container {
+  font-size: 12px;
+}
+
+.mdc-menu-surface.mat-mdc-select-panel {
+  box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f;
+  margin-top: 5px !important;
+  padding: 0 !important;
+}
+
+.mat-mdc-select-arrow-wrapper {
+  width: 21px;
+}
+
+mat-select {
+  box-sizing: border-box;
+
+  .mat-mdc-select-value {
+    padding: 8px;
+  }
+}
+
+input {
+  padding: 8px;
+}
+
+textarea {
+  padding: 8px !important;
+}
+
+mat-autocomplete,
+ix-combobox {
+  box-sizing: border-box;
+
+  input {
+    padding: 3px 8px;
+  }
+}
+
+mat-option {
+  padding: 0 8px !important;
+}
+
+mat-form-field {
+  .mat-mdc-text-field-wrapper {
+    padding: 0;
+  }
+}
+
+.mdc-line-ripple::before,
+.mdc-line-ripple::after {
+  border: 0 !important;
 }

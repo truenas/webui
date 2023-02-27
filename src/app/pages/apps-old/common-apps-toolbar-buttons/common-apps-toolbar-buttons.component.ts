@@ -60,8 +60,8 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
     this.dialogService.confirm({
       title: helptext.choosePool.unsetPool.confirm.title,
       message: helptext.choosePool.unsetPool.confirm.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.choosePool.unsetPool.confirm.button,
+      hideCheckbox: true,
+      buttonText: helptext.choosePool.unsetPool.confirm.button,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (!confirmed) {
         return;

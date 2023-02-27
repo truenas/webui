@@ -50,6 +50,8 @@ describe('DevicesStore', () => {
         if (method === 'disk.query') {
           return cold('-b|', { b: [{ devname: 'sdr' }] as Disk[] });
         }
+
+        throw new Error(`Unexpected method: ${method}`);
       });
 
       spectator.service.loadNodes(4);

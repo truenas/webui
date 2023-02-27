@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -26,9 +26,7 @@ describe('FailoverComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
-    ],
-    declarations: [
-      ConfirmDialogComponent,
+      AppCommonModule,
     ],
     providers: [
       mockWebsocket([

@@ -39,12 +39,12 @@ export class ConfigurationPreviewComponent implements OnInit {
   }
 
   get data(): string {
-    if (!this.formValue.data?.size_and_type[0] || !this.formValue.data?.number || !this.formValue.data?.width) {
+    if (!this.formValue.data?.sizeAndType[0] || !this.formValue.data?.vdevsNumber || !this.formValue.data?.width) {
       return this.unknownProp;
     }
-    const part1 = `${this.formValue.data.number} x ${this.formValue.data.type} | `;
-    const part2 = `${this.formValue.data.width} x ${filesize(Number(this.formValue.data.size_and_type[0]), { standard: 'iec' })} | `;
-    const part3 = this.formValue.data.size_and_type[1];
+    const part1 = `${this.formValue.data.vdevsNumber} x ${this.formValue.data.type} | `;
+    const part2 = `${this.formValue.data.width} x ${filesize(Number(this.formValue.data.sizeAndType[0]), { standard: 'iec' })} | `;
+    const part3 = this.formValue.data.sizeAndType[1];
     return part1 + part2 + part3;
   }
 

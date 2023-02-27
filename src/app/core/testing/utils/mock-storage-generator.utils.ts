@@ -436,7 +436,7 @@ export class MockStorageGenerator {
         } as VDev;
       }
       default:
-        console.error('Invalid TopologyItemType. Please use STRIPE, MIRROR, RAIDZ etc');
+        throw new Error('Invalid TopologyItemType. Please use STRIPE, MIRROR, RAIDZ etc');
     }
   }
 
@@ -467,6 +467,8 @@ export class MockStorageGenerator {
         return smallestSize * (sizes.length - 2);
       case TopologyItemType.Raidz3:
         return smallestSize * (sizes.length - 3);
+      default:
+        return undefined;
     }
   }
 

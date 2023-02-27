@@ -21,7 +21,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   keyProp: string;
 
   get isSingleAction(): boolean {
-    if (!this.actions) return;
+    if (!this.actions) return false;
     const hasGroups = Boolean(this.actions && this.actions[0].actionName);
 
     if (hasGroups) {

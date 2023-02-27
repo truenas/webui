@@ -399,7 +399,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
     if (!dashboardPool) {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-      return;
+      return undefined;
     }
     return this.volumeData && this.volumeData[dashboardPool.name];
   }

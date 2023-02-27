@@ -1,19 +1,20 @@
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
-
 export interface ConfirmOptions {
   title: string;
   message: string;
-  hideCheckBox?: boolean;
-  buttonMsg?: string;
-  tooltip?: string;
+  hideCheckbox?: boolean;
+  buttonText?: string;
   hideCancel?: boolean;
-  cancelMsg?: string;
+  cancelText?: string;
   disableClose?: boolean;
+  confirmationCheckboxText?: string;
 }
 
 export interface ConfirmOptionsWithSecondaryCheckbox extends ConfirmOptions {
-  secondaryCheckBox: true;
-  secondaryCheckBoxMsg?: string;
-  method?: ApiMethod;
-  data?: Record<string, unknown>[];
+  secondaryCheckbox: true;
+  secondaryCheckboxText?: string;
+}
+
+export interface DialogWithSecondaryCheckboxResult {
+  confirmed: boolean;
+  secondaryCheckbox: boolean;
 }

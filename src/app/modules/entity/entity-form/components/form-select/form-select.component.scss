@@ -3,7 +3,7 @@
 }
 
 .inline-label div.label.half-width,
-.inline-label .mat-form-field {
+.inline-label .mat-mdc-form-field {
   display: inline-block;
 }
 
@@ -11,11 +11,11 @@
   width: calc(50% - 16px);
 }
 
-.inline-label .mat-form-field {
+.inline-label .mat-mdc-form-field {
   width: calc(40% - 16px);
 }
 
-.inline-label .mat-form-field {
+.inline-label .mat-mdc-form-field {
   padding: 8px;
 }
 
@@ -74,8 +74,9 @@ mat-option {
   }
 
   .option-tooltip {
-    margin-left: 3px;
-    vertical-align: -2px;
+    margin-bottom: 0;
+    margin-left: 8px;
+    vertical-align: middle;
   }
 }
 

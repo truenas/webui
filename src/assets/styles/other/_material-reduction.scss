@@ -59,7 +59,7 @@ span.code {
 }
 
 .mat-mdc-menu-item.sticky-bottom,
-.mat-option.sticky-bottom {
+.mat-mdc-option.sticky-bottom {
   background: var(--bg2);
   border-top: solid 1px var(--lines);
   bottom: 0;
@@ -67,7 +67,7 @@ span.code {
 }
 
 .mat-mdc-menu-item.sticky-top,
-.mat-option.sticky-top {
+.mat-mdc-option.sticky-top {
   background: var(--bg2);
   border-bottom: solid 1px var(--lines);
   position: sticky;
@@ -200,10 +200,10 @@ textarea.mat-input-element::placeholder {
   position: relative;
 }
 
-.form-element.form-combobox .mat-form-field,
-.form-element.form-ip-netmask .mat-form-field,
+.form-element.form-combobox .mat-mdc-form-field,
+.form-element.form-ip-netmask .mat-mdc-form-field,
 .form-element.form-combobox .mat-mdc-menu-trigger,
-.form-element .mat-form-field-wrapper,
+.form-element .mat-mdc-text-field-wrapper,
 .form-element input[type = 'password'],
 .form-element input[type = 'email'],
 .form-element input[type = 'text'],
@@ -214,27 +214,30 @@ textarea.mat-input-element::placeholder {
   border: solid 1px var(--lines);
   box-sizing: border-box;
   color: var(--fg1);
-  padding: 8px;
 
   &[disabled] {
     cursor: not-allowed;
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 }
 
 .form-element,
 #password,
-.form-element.form-combobox .mat-form-field,
-.form-element.form-ip-netmask .mat-form-field,
+.form-element.form-combobox .mat-mdc-form-field,
+.form-element.form-ip-netmask .mat-mdc-form-field,
 .form-element.form-combobox .mat-mdc-menu-trigger,
-.form-element .mat-form-field-wrapper,
+.form-element .mat-mdc-text-field-wrapper,
+.mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid,
+.mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid input,
 .form-element .form-button,
 .form-element input[type = 'password'],
 .form-element input[type = 'email'],
 .form-element input[type = 'text'],
 .form-element input[type = 'number'],
+.form-element input[type = 'search'],
 .form-element textarea,
 .form-element select {
+  border-radius: 0;
   line-height: normal !important;
   min-height: 33px;
   width: 100% !important;
@@ -242,10 +245,10 @@ textarea.mat-input-element::placeholder {
 
 ix-entity-form-list .list-action-block-wrapper .form-element,
 ix-entity-form-list .list-action-block-wrapper #password,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-form-field,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-form-field,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-mdc-form-field,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-mdc-form-field,
 ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-mdc-menu-trigger,
-ix-entity-form-list .list-action-block-wrapper .form-element .mat-form-field-wrapper,
+ix-entity-form-list .list-action-block-wrapper .form-element .mat-mdc-text-field-wrapper,
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'password'],
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'email'],
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'text'],
@@ -262,14 +265,14 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   padding-bottom: 3px;
 }
 
-.form-element.form-combobox .mat-form-field-wrapper input,
-.form-element.form-combobox .mat-form-field-wrapper {
+.form-element.form-combobox .mat-mdc-text-field-wrapper input,
+.form-element.form-combobox .mat-mdc-text-field-wrapper {
   background-color: unset;
   border: unset;
   padding: unset;
 }
 
-.form-element.form-combobox .mat-form-field {
+.form-element.form-combobox .mat-mdc-form-field {
   height: 33px;
   margin-right: 1px;
   max-width: calc(100% - 34px) !important;
@@ -291,24 +294,24 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   top: 7px !important;
 }
 
-.form-element.form-combobox .mat-form-field,
+.form-element.form-combobox .mat-mdc-form-field,
 .form-element.form-combobox .mat-mdc-menu-trigger {
   height: 33px;
 }
 
 /* IP w/Netmask*/
-.form-element.form-ip-netmask .mat-form-field {
+.form-element.form-ip-netmask .mat-mdc-form-field {
   max-height: 33px;
 }
 
-.form-element.form-ip-netmask .mat-form-field-wrapper input,
-.form-element.form-ip-netmask .mat-form-field-wrapper {
+.form-element.form-ip-netmask .mat-mdc-text-field-wrapper input,
+.form-element.form-ip-netmask .mat-mdc-text-field-wrapper {
   background-color: unset;
   border: unset;
   padding: unset;
 }
 
-.form-element.form-combobox .mat-select-trigger {
+.form-element.form-combobox .mat-mdc-select-trigger {
   padding: 9px 2px 8px;
   position: relative;
   top: 2px;
@@ -335,10 +338,13 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 /* Chips */
 .form-element .mat-mdc-chip {
   font-size: smaller !important;
-  padding: 1px 16px 0 !important;
 }
 
-.form-element .mat-form-field-suffix {
+.mat-mdc-chip-set .mdc-evolution-chip-set__chips {
+  max-width: 100%;
+}
+
+.form-element .mat-mdc-form-field-suffix {
   top: -2px;
 }
 
@@ -369,23 +375,18 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   opacity: 0.75;
 }
 
-.form-element .mat-form-field-type-mat-select .mat-form-field-wrapper {
-  min-height: 33px;
-  width: 100% !important;
-}
-
-.form-element.form-explorer .mat-form-field-wrapper {
+.form-element.form-explorer .mat-mdc-text-field-wrapper {
   padding-left: 0;
 }
 
-.form-element.form-explorer .mat-form-field-wrapper,
-.form-element.form-explorer .mat-form-field-flex,
-.form-element.form-explorer .mat-form-field-flex input {
+.form-element.form-explorer .mat-mdc-text-field-wrapper,
+.form-element.form-explorer .mat-mdc-form-field-flex,
+.form-element.form-explorer .mat-mdc-form-field-flex input {
   border: none;
 }
 
-.form-element.form-combobox .mat-form-field-flex,
-.form-element.form-combobox .mat-form-field-flex input {
+.form-element.form-combobox .mat-mdc-form-field-flex,
+.form-element.form-combobox .mat-mdc-form-field-flex input {
   border: none;
 }
 
@@ -412,13 +413,13 @@ ix-tooltip button i {
 }
 
 /* Normalize mat-select */
-.mat-form-field-label-wrapper,
-.mat-form-field-underline,
-.mat-form-field-subscript-wrapper {
+.mat-mdc-form-field-label-wrapper,
+.mat-mdc-form-field-underline,
+.mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
 
-.mat-form-field-appearance-legacy .mat-form-field-infix {
+.mat-mdc-form-field-appearance-legacy .mat-mdc-form-field-infix {
   border: 0;
   height: fit-content;
   overflow: hidden;
@@ -511,7 +512,7 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
   max-height: 36px;
 }
 
-.mat-option:hover:not(.mat-option-disabled),
+.mat-mdc-option:hover:not(.mat-mdc-option-disabled),
 .sidenav-link:hover,
 .slide-in-nav-item:hover,
 .mat-mdc-menu-item:hover,
@@ -747,12 +748,12 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
   }
 }
 
-#row-filter.form-element .mat-form-field-wrapper {
+#row-filter.form-element .mat-mdc-text-field-wrapper {
   max-height: 36px !important;
   width: inherit !important;
 }
 
-#row-filter.form-element .mat-form-field-wrapper .mat-input-element {
+#row-filter.form-element .mat-mdc-text-field-wrapper .mat-input-element {
   height: 16px;
   padding-left: 8px;
   position: relative;
@@ -950,6 +951,9 @@ body .mat-mdc-option {
 }
 
 mat-chip-grid {
+  align-items: center;
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
@@ -958,6 +962,10 @@ body .mat-mdc-checkbox label {
 }
 
 body .mdc-evolution-chip-set .mdc-evolution-chip {
-  margin-bottom: 2px;
-  margin-top: 2px;
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.mdc-checkbox__background {
+  transform: scale(0.9);
 }

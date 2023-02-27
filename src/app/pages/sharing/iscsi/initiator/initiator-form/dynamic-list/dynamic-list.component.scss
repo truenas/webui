@@ -19,5 +19,5 @@ div.move-to-action {
 
 div.dynamic-list-container.disabled label.dynamic-list-item {
   cursor: default;
-  opacity: 0.38;
+  opacity: var(--disabled-opacity);
 }

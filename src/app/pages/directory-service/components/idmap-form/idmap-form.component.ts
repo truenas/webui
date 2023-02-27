@@ -35,7 +35,6 @@ const customIdmapName = 'custom' as const;
 @UntilDestroy()
 @Component({
   templateUrl: './idmap-form.component.html',
-  styleUrls: ['./idmap-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdmapFormComponent implements OnInit {
@@ -300,7 +299,7 @@ export class IdmapFormComponent implements OnInit {
     return this.dialogService.confirm({
       title: helptext.idmap.clear_cache_dialog.title,
       message: helptext.idmap.clear_cache_dialog.message,
-      hideCheckBox: true,
+      hideCheckbox: true,
     }).pipe(
       switchMap((confirmed) => {
         if (!confirmed) {

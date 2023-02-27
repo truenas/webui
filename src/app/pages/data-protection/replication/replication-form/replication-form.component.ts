@@ -1328,6 +1328,8 @@ export class ReplicationFormComponent implements FormConfiguration {
       data.properties = true;
       data.exclude = [];
     }
+    data.sudo = Boolean(data.sudo);
+
     const propertiesExcludeObj: Record<string, string> = {};
     if (data.properties_override) {
       for (let item of data.properties_override) {
@@ -1463,7 +1465,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         fieldConfig.hasErrors = true;
         fieldConfig.errors = this.translate.instant('Please select a valid SSH Connection');
       }
-      return;
+      return new Promise((resolve) => resolve(Promise.resolve([])));
     }
 
     return new Promise((resolve) => {

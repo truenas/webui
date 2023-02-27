@@ -246,8 +246,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.dialogService.confirm({
             title: this.translate.instant('End User License Agreement - TrueNAS'),
             message: eula,
-            hideCheckBox: true,
-            buttonMsg: this.translate.instant('I Agree'),
+            hideCheckbox: true,
+            buttonText: this.translate.instant('I Agree'),
             hideCancel: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             this.window.localStorage.removeItem('upgrading_status');
@@ -303,8 +303,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.dialogService.confirm({
       title: network_interfaces_helptext.checkin_title,
       message: network_interfaces_helptext.pending_checkin_dialog_text,
-      hideCheckBox: true,
-      buttonMsg: network_interfaces_helptext.checkin_button,
+      hideCheckbox: true,
+      buttonText: network_interfaces_helptext.checkin_button,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.userCheckInPrompted = false;
       this.loader.open();
@@ -332,8 +332,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.dialogService.confirm({
         title: network_interfaces_helptext.pending_changes_title,
         message: network_interfaces_helptext.pending_changes_message,
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Continue'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Continue'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.router.navigate(['/network']);
       });
@@ -386,8 +386,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.dialogService.confirm({
       title: this.translate.instant('Pending Upgrade'),
       message: this.translate.instant('There is an upgrade waiting to finish.'),
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Continue'),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
       dialogRef.componentInstance.setCall('failover.upgrade_finish');

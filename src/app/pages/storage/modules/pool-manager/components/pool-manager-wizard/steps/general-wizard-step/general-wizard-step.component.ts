@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { DialogService, WebSocketService } from 'app/services';
@@ -19,9 +19,7 @@ export class GeneralWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['general'];
 
   readonly encryptionAlgorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(
-    map((algorithms) => {
-      return Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }));
-    }),
+    choicesToOptions(),
   );
 
   constructor(
@@ -38,7 +36,7 @@ export class GeneralWizardStepComponent implements OnInit {
         this.dialog.confirm({
           title: this.translate.instant('Warning'),
           message: helptext.manager_encryption_message,
-          buttonMsg: this.translate.instant('I Understand'),
+          buttonText: this.translate.instant('I Understand'),
         }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
           if (!confirmed) {
             this.form.controls.encryption.setValue(false);

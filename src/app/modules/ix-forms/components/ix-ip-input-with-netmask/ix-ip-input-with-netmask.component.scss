@@ -11,6 +11,16 @@
   align-items: center;
   display: flex;
 
+  ::ng-deep {
+    .mat-mdc-select-value {
+      padding: 0;
+    }
+
+    .mat-mdc-select-arrow-wrapper {
+      width: max-content;
+    }
+  }
+
   input,
   .select {
     background: var(--bg1);
@@ -18,7 +28,7 @@
     border-radius: 2px;
     flex-direction: row;
     font-size: 12px;
-    padding: 6px 8px;
+    padding: 8.5px 8px;
     position: relative;
 
     &:focus-within {
@@ -31,6 +41,7 @@
   }
 
   .select {
+    padding: 3.5px 8px;
     width: 64px;
   }
 
@@ -40,7 +51,7 @@
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
 
     input {
       cursor: not-allowed;

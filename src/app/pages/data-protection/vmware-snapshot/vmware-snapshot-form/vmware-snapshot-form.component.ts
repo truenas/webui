@@ -173,7 +173,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
               datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
             },
           ),
-          hideCheckBox: true,
+          hideCheckbox: true,
         })
         : of(true)
     ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

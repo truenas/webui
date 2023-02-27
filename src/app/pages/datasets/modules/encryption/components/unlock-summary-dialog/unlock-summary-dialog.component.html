@@ -44,7 +44,7 @@
     ixTest="close"
     (click)="cancel()"
   >
-    {{ cancelMsg | translate | uppercase }}
+    {{ cancelMessage | translate | uppercase }}
   </button>
   <button
     *ngIf="!final"
@@ -55,6 +55,6 @@
     ixTest="continue"
     (click)="submit()"
   >
-    {{ buttonMsg | translate | uppercase }}
+    {{ buttonMessage | translate | uppercase }}
   </button>
 </div>

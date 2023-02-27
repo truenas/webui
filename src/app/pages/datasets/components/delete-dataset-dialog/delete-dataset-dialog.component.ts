@@ -95,7 +95,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     return this.dialog.confirm({
       title: this.translate.instant('Device Busy'),
       message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName: this.dataset.name }),
-      buttonMsg: this.translate.instant('Force Delete'),
+      buttonText: this.translate.instant('Force Delete'),
     });
   }
 

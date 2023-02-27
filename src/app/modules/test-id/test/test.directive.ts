@@ -69,6 +69,7 @@ export class TestDirective {
         return 'link';
       default:
         assertUnreachable(tagName as never);
+        throw new Error(`Unknown element type: ${tagName}`);
     }
   }
 }

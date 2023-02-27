@@ -122,7 +122,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
             this.dialogService.confirm({
               title: this.translate.instant('Delete'),
               message: deleteMsg,
-              buttonMsg: this.translate.instant('Delete'),
+              buttonText: this.translate.instant('Delete'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.loader.open();
               this.entityList.loaderOpen = true;

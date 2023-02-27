@@ -373,6 +373,9 @@ export class StorageService {
   }
 
   // Converts a number from bytes to the most natural human-readable format
+  /**
+   * @deprecated Use Filesize pipe
+   */
   convertBytesToHumanReadable(
     rawBytes: number | string,
     decimalPlaces?: number,

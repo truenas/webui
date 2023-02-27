@@ -1,6 +1,15 @@
+:host {
+  display: block;
+  min-width: 350px;
+}
+
 .confirm-checkbox {
-  margin-left: 0;
+  margin-left: -10px;
   padding-right: 10px;
+}
+
+.secondary-checkbox {
+  margin-top: 5px;
 }
 
 #confirm-label:hover {

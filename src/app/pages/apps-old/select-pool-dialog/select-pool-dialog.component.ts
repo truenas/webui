@@ -113,8 +113,8 @@ export class SelectPoolDialogComponent implements OnInit {
     this.dialogService.confirm({
       title: helptext.noPool.title,
       message: helptext.noPool.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.noPool.action,
+      hideCheckbox: true,
+      buttonText: helptext.noPool.action,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       this.dialogRef.close(false);
       if (!confirmed) {

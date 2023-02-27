@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -142,7 +142,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         (row: VirtualMachineRow) => row.id === event.id,
         (changedRow: VirtualMachineRow) => {
           if (!event.fields) {
-            return;
+            return undefined;
           }
 
           if (event.fields.status.state === ServiceStatus.Running) {
@@ -221,6 +221,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         return true;
       }
     }
+
+    return false;
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number {
@@ -236,6 +238,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         return (device.attributes).port;
       }
     }
+
+    return false;
   }
 
   onSliderChange(row: VirtualMachineRow): void {
@@ -247,26 +251,20 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   onMemoryError(row: VirtualMachineRow): void {
-    const memoryDialog = this.dialogService.confirm({
+    this.dialogService.confirm({
       title: helptext.memory_dialog.title,
       message: helptext.memory_dialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.memory_dialog.buttonMsg,
-      secondaryCheckBox: true,
-      secondaryCheckBoxMsg: helptext.memory_dialog.secondaryCheckBoxMsg,
-      data: [{ overcommit: false }],
-      tooltip: helptext.memory_dialog.tooltip,
-    });
+      confirmationCheckboxText: helptext.memory_dialog.secondaryCheckboxMessage,
+      buttonText: helptext.memory_dialog.buttonMessage,
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
 
-    memoryDialog.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe(() => {
-      memoryDialog.componentInstance.isSubmitEnabled = !memoryDialog.componentInstance.isSubmitEnabled;
-    });
-
-    memoryDialog.afterClosed().pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
-      if (dialogRes) {
         this.doRowAction(row, this.wsMethods.start, [row.id, { overcommit: true }]);
-      }
-    });
+      });
   }
 
   doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.restart' | 'vm.poweroff'>(
@@ -484,14 +482,39 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       data: vm,
     })
       .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((wasStopped) => {
-        if (!wasStopped) {
-          return;
-        }
+      .pipe(
+        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data.wasStopped),
+        untilDestroyed(this),
+      )
+      .subscribe((data: { forceAfterTimeout: boolean }) => {
+        this.stopVm(vm, data.forceAfterTimeout);
 
         this.updateRows([vm]);
         this.checkMemory();
       });
+  }
+
+  stopVm(vm: VirtualMachine, forceAfterTimeout: boolean): void {
+    const jobDialogRef = this.dialog.open(
+      EntityJobComponent,
+      {
+        data: {
+          title: this.translate.instant('Stopping {rowName}', { rowName: vm.name }),
+        },
+      },
+    );
+    jobDialogRef.componentInstance.setCall('vm.stop', [vm.id, {
+      force: false,
+      force_after_timeout: forceAfterTimeout,
+    }]);
+    jobDialogRef.componentInstance.submit();
+    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      jobDialogRef.close(false);
+      this.dialogService.info(
+        this.translate.instant('Finished'),
+        this.translate.instant(helptext.stop_dialog.successMessage, { vmName: vm.name }),
+        true,
+      );
+    });
   }
 }
