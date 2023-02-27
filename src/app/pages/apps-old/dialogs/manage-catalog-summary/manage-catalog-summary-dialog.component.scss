@@ -24,11 +24,11 @@ ix-manage-catalog-summary-dialog {
     display: flex;
 
 
-    .mat-form-field {
+    .mat-mdc-form-field {
       margin: 0 0 0 10px;
       width: unset !important;
 
-      .mat-form-field-infix {
+      .mat-mdc-form-field-infix {
         width: 80px;
       }
     }

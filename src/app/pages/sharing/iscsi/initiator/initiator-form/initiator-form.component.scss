@@ -3,7 +3,7 @@ div.connected-initiators-container {
 }
 
 div.connected-initiators-container.disabled {
-  opacity: 0.38;
+  opacity: var(--disabled-opacity);
 }
 
 mat-selection-list.connected-initiators-list {

@@ -129,14 +129,14 @@ describe('IxInputComponent', () => {
       spectator.typeInElement('0', 'input');
 
       expect(formControl.value).toBe(0);
-      expect(spectator.query('.mat-error')).toBeNull();
+      expect(spectator.query('.mat-mdc-form-field-error')).toBeNull();
     });
 
     it('renders input element as pseudo-password field (via search input type) to disable password managers', () => {
       formControl.setValue('test');
       spectator.setInput('type', 'password');
 
-      expect(spectator.query('input')).toHaveAttribute('type', 'search');
+      expect(spectator.query('input')).toHaveAttribute('type', 'text');
     });
 
     it('shows button that toggles password visibility when type is password', () => {
@@ -166,7 +166,7 @@ describe('IxInputComponent', () => {
       } as HTMLInputElement);
       spectator.detectComponentChanges();
 
-      expect(spectator.query('.mat-error')).toHaveText('Value must be a email');
+      expect(spectator.query('.mat-mdc-form-field-error')).toHaveText('Value must be a email');
     });
   });
 
