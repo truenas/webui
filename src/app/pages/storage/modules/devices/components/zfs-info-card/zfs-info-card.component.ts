@@ -33,7 +33,7 @@ export class ZfsInfoCardComponent {
     return this.topologyItem.type === TopologyItemType.Mirror;
   }
 
-  get isRAIDZParent(): boolean {
+  get isRaidzParent(): boolean {
     return this.topologyParentItem.type === TopologyItemType.Raidz
       || this.topologyParentItem.type === TopologyItemType.Raidz1
       || this.topologyParentItem.type === TopologyItemType.Raidz2
