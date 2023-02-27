@@ -180,6 +180,10 @@ nav.view-nav-bar {
   margin: 0 auto;
   text-align: left;
   width: fit-content;
+
+  ix-icon {
+    font-size: 14px;
+  }
 }
 
 .view-card .dom-overlay.expanders .content {
