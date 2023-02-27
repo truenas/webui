@@ -16,7 +16,7 @@ export const selectSystemFeatures = createSelector(
   (state) => state.systemFeatures,
 );
 
-export const selectSystemIsHaCapable = createSelector(
+export const selectIsSystemHaCapable = createSelector(
   selectSystemInfoState,
   (state) => state.isHaCapable,
 );
