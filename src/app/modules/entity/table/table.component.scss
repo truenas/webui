@@ -53,20 +53,16 @@ div.table-container {
   table-layout: fixed;
 }
 
-.table-action-button {
-  margin-right: 5px;
-}
-
 div.table-row-action {
   align-items: center;
   display: flex;
+  gap: 8px;
   justify-content: flex-end;
   margin-right: -20px;
 }
 
 .mat-icon.state-icon,
-.mat-icon.state-info-icon,
-.mat-icon.table-action-button {
+.mat-icon.state-info-icon {
   position: inherit;
 }
 

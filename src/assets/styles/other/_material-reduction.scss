@@ -370,7 +370,7 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   right: 0;
 }
 
-.form-element button.toggle_pw i {
+.form-element button.toggle_pw ix-icon {
   font-size: 22px;
   opacity: 0.75;
 }
@@ -573,6 +573,10 @@ body .mdc-card__actions,
 }
 
 .mat-mdc-card .mat-toolbar-row .actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
   position: absolute;
   right: 16px;
 }

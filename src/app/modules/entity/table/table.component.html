@@ -19,7 +19,6 @@
         *ngFor="let action of _tableConf.tableActions"
         mat-button
         color="default"
-        class="table-action-button"
         [ixTest]="['table', _tableConf.name, action.label]"
         (click)="$event.stopPropagation(); action.onClick()"
       >
@@ -214,7 +213,6 @@
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
                       <ix-icon
-                        class="table-action-button"
                         [name]="rowAction.icon"
                         [matTooltip]="rowAction.matTooltip"
                       ></ix-icon>
@@ -230,7 +228,6 @@
                 (click)="$event.stopPropagation(); deleteRow(element)"
               >
                 <ix-icon
-                  class="table-action-button"
                   name="delete"
                   [matTooltip]="'Delete' | translate"
                 ></ix-icon>
@@ -280,7 +277,6 @@
         mat-button
         color="default"
         [ixTest]="['table', _tableConf.name, 'footer-action', action.label]"
-        [ngClass]="{ 'table-action-button': !last }"
         (click)="$event.stopPropagation(); action.onClick()"
       >
         {{ action.label | translate }}
