@@ -276,8 +276,8 @@ class edit_Acl:
     who_Select = '//ix-select[@formcontrolname="tag"]//mat-select'
     who_User_Option = '//mat-option[contains(.,"User")]'
     user_Combobox = '//ix-combobox[@formcontrolname="user"]//input'
-    builtin_Users_Cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
-    builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
+    builtin_Users_Cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//ix-icon[text()="cancel"]'
+    builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//ix-icon[text()="cancel"]'
     recursive_Checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
     traverse_Checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
     permission_Select = '//ix-select[@formcontrolname="basicPermission"]//mat-select'
@@ -496,9 +496,9 @@ class systemDataset:
 class toolbar:
     ha_Disabled = '//ix-icon[@data-mat-icon-name="ha_disabled"]'
     ha_Enabled = '//ix-icon[@data-mat-icon-name="ha_enabled"]'
-    notification = '//mat-icon[normalize-space(text())="notifications"]'
+    notification = '//ix-icon[normalize-space(text())="notifications"]'
     notification_Button = '//button[contains(.,"notifications")]'
-    notification_Text = '//button[contains(.,"notifications")]//mat-icon/span'
+    notification_Text = '//button[contains(.,"notifications")]//ix-icon/span'
 
     def notification_Count(text):
         return f'//span[contains(.,"notifications")]//span[contains(text(),"{text}")]'
