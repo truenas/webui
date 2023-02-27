@@ -16,6 +16,11 @@ export const selectSystemFeatures = createSelector(
   (state) => state.systemFeatures,
 );
 
+export const selectSystemIsHaCapable = createSelector(
+  selectSystemInfoState,
+  (state) => state.isHaCapable,
+);
+
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
 
 export const waitForSystemFeatures = selectNotNull(selectSystemFeatures);

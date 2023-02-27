@@ -7,6 +7,11 @@ export const systemInfoLoaded = createAction(
   props<{ systemInfo: SystemInfo }>(),
 );
 
+export const systemIsHaCapableLoaded = createAction(
+  '[System Info API] System is HA capable Loaded',
+  props<{ isHaCapable: boolean }>(),
+);
+
 export const systemFeaturesLoaded = createAction(
   '[System Info API] Features Loaded',
   props<{ systemFeatures: SystemFeatures }>(),
