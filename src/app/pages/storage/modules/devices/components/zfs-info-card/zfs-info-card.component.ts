@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,6 +31,13 @@ export class ZfsInfoCardComponent {
 
   get isMirror(): boolean {
     return this.topologyItem.type === TopologyItemType.Mirror;
+  }
+
+  get isRAIDZParent(): boolean {
+    return this.topologyParentItem.type === TopologyItemType.Raidz
+      || this.topologyParentItem.type === TopologyItemType.Raidz1
+      || this.topologyParentItem.type === TopologyItemType.Raidz2
+      || this.topologyParentItem.type === TopologyItemType.Raidz3;
   }
 
   get isDisk(): boolean {
