@@ -6,11 +6,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
+import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
@@ -93,6 +97,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private dialogService: DialogService,
     private storageService: StorageService,
     private matDialog: MatDialog,
+    private translate: TranslateService,
+    private appLoaderService: AppLoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -181,5 +187,22 @@ export class OpenVpnServerConfigComponent implements OnInit {
     );
 
     this.subscriptions.push(topologySubscription);
+  }
+
+  unsetCertificates(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning'),
+      message: this.translate.instant('This operation will unset any certificates assgined to OpenVPN Server configuration. Are you sure you want to proceed?'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.appLoaderService.open();
+        return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
+      }),
+      tap(() => {
+        this.appLoaderService.close();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

@@ -135,6 +135,13 @@
         <button mat-button type="button" (click)="onDownloadClientConfig()">
           {{ 'Download Client Config' | translate }}
         </button>
+        <button
+          mat-button
+          type="button"
+          (click)="unsetCertificates()"
+        >
+          {{ 'Unset Certificates' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>
