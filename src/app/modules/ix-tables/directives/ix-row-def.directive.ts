@@ -1,6 +1,6 @@
 import { CdkRowDef } from '@angular/cdk/table';
 import { Directive, Input } from '@angular/core';
-import { MatLegacyRowDef as MatRowDef, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatRowDef, MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
 
 @Directive({

@@ -438,6 +438,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-mdc-dialog-container {
     border-radius: var(--mdc-dialog-container-shape);
+    max-width: 700px;
 
     :not(.mat-mdc-dialog-content) {
       > form {
@@ -1388,54 +1389,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 }
 
-body .mat-mdc-menu-item {
-  height: inherit !important;
-  min-height: inherit;
-}
-
-.mat-mdc-list-item {
-  border-bottom: solid 1px var(--lines);
-}
-
 ix-tree-node[aria-level='2'],
 ix-nested-tree-node[aria-level='2'] {
   ix-bootenv-node-item {
     padding-left: 33px;
   }
-}
-
-body .mdc-linear-progress__buffer-bar {
-  background-color: var(--primary);
-  opacity: 0.5;
-}
-
-body .mdc-linear-progress__bar-inner {
-  border-color: var(--primary);
-}
-
-.mat-mdc-slide-toggle {
-  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
-}
-
-body .mdc-tooltip {
-  word-break: break-word;
-
-  .mdc-tooltip__surface {
-    background-color: #666;
-    color: #fff;
-    font-size: 10px;
-    line-height: 16px;
-    padding: 6px 8px;
-  }
-}
-
-body .mat-mdc-input-element {
-  background-color: transparent;
-  border: 0;
-  color: var(--fg2);
-  font-size: 12px;
-  outline: none !important;
-  width: 100%;
 }
 
 .input-container {

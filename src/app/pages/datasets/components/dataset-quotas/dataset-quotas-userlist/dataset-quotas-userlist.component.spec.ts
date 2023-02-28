@@ -133,7 +133,7 @@ describe('DatasetQuotasUserlistComponent', () => {
 
   it('should open slide to edit user quota when click a row', async () => {
     const element = await spectator.fixture.nativeElement as HTMLElement;
-    const [, secondRow] = element.querySelectorAll('.mat-row');
+    const [, secondRow] = element.querySelectorAll('.mat-mdc-row');
     (secondRow as HTMLElement).click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetQuotaEditFormComponent);

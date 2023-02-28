@@ -15,7 +15,7 @@ mat-card-content.table-container {
   padding: 0 !important;
 }
 
-.mat-row {
+.mat-mdc-row {
   cursor: pointer;
 }
 
@@ -58,7 +58,7 @@ div.table-row-action {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  margin-right: -20px;
+  margin-right: -10px;
 }
 
 .mat-icon.state-icon,
