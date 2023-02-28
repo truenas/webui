@@ -10,6 +10,7 @@ import {
   systemInfoDatetimeUpdated,
   upgradePendingStateLoaded,
   failoverLicensedStatusLoaded,
+  systemHaCapabilityLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 export interface SystemInfoState {
@@ -19,6 +20,7 @@ export interface SystemInfoState {
   isUpgradePending: boolean;
   hasOnlyMissmatchVersionsReason: boolean;
   isHaLicensed: boolean;
+  isSystemHaCapable: boolean;
 }
 
 const initialState: SystemInfoState = {
@@ -28,6 +30,7 @@ const initialState: SystemInfoState = {
   isUpgradePending: false,
   hasOnlyMissmatchVersionsReason: false,
   isHaLicensed: false,
+  isSystemHaCapable: false,
 };
 
 export const systemInfoReducer = createReducer(
@@ -43,4 +46,5 @@ export const systemInfoReducer = createReducer(
       haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions,
   })),
   on(upgradePendingStateLoaded, (state, { isUpgradePending }) => ({ ...state, isUpgradePending })),
+  on(systemHaCapabilityLoaded, (state, { isSystemHaCapable }) => ({ ...state, isSystemHaCapable })),
 );
