@@ -1400,3 +1400,8 @@ body .mdc-linear-progress__bar-inner {
 .mat-mdc-slide-toggle {
   font-family: 'Roboto', 'Helvetica Neue', sans-serif;
 }
+
+.multi-error-dialog.mat-mdc-dialog-container,
+.multi-error-dialog.mat-mdc-dialog-content {
+  overflow: auto !important;
+}

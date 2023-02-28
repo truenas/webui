@@ -31,6 +31,8 @@ import { DirectoryServicesMonitorComponent } from 'app/modules/common/dialog/dir
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { ErrorTemplateComponent } from 'app/modules/common/dialog/multi-error-dialog/error-template/error-template.component';
+import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
 import {
   ResilverProgressDialogComponent,
@@ -95,6 +97,8 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     ErrorDialogComponent,
     GeneralDialogComponent,
     InfoDialogComponent,
+    ErrorTemplateComponent,
+    MultiErrorDialogComponent,
     RedirectDialogComponent,
     SearchInputComponent,
     UpdateDialogComponent,

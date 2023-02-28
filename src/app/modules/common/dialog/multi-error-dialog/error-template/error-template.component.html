@@ -1,0 +1,27 @@
+<h3 #errorTitle id="err-title">
+  <mat-icon class="warning-icon">error</mat-icon>
+  {{ title | translate }}
+</h3>
+<div #errorMdContent id="err-md-content">
+  <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message"></span></div>
+  <div
+    *ngIf="backtrace"
+    class="more-info"
+    (click)="toggleOpen()"
+  >
+    <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
+    <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
+    <span>{{ 'More info...' | translate }}</span>
+  </div>
+  <div
+    *ngIf="backtrace"
+    #errorBtPanel
+    id="err-bt-panel"
+    class="backtrace-panel"
+    [class.open]="!isCloseMoreInfo"
+  >
+    <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
+      {{ 'Error' | translate }}: {{ backtrace }}
+    </div>
+  </div>
+</div>
