@@ -77,10 +77,8 @@ export function transformIntSchemaType(
 export function transformUriSchemaType(
   payload: CommonSchemaTransform,
 ): DynamicFormSchemaUri {
-  const { schema, chartSchemaNode } = payload;
-
   return {
-    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Uri,
     inputType: undefined,
   };
@@ -89,10 +87,8 @@ export function transformUriSchemaType(
 export function transformCronSchemaType(
   payload: CommonSchemaTransform,
 ): DynamicFormSchemaCron {
-  const { schema, chartSchemaNode } = payload;
-
   return {
-    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Cron,
   };
 }
@@ -100,12 +96,12 @@ export function transformCronSchemaType(
 export function transformStringSchemaType(
   payload: CommonSchemaTransform,
 ): DynamicFormSchemaInput | DynamicFormSchemaSelect {
-  const { schema, chartSchemaNode } = payload;
+  const { schema } = payload;
 
   if (schema.enum) { return transformEnumSchemaType(payload); }
 
   const inputSchema: DynamicFormSchemaInput = {
-    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Input,
     inputType: schema.private ? 'password' : undefined,
   };
