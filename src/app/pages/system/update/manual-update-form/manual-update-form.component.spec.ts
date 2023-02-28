@@ -35,13 +35,13 @@ describe('ManualUpdateFormComponent', () => {
           attributes: {
             preferences: {
               rebootAfterManualUpdate: false,
-            } as unknown as Preferences,
+            } as Preferences,
           },
-        } as unknown as DsUncachedUser),
+        } as DsUncachedUser),
         mockCall('pool.query', [
           {
             name: 'pool2',
-          } as unknown as Pool,
+          } as Pool,
         ]),
         mockCall('failover.licensed'),
         mockCall('core.get_jobs'),

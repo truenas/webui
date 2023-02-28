@@ -27,8 +27,8 @@ const uncachedUser: DsUncachedUser = {
   pw_shell: 'shell',
   pw_uid: 2,
   attributes: {
-    preferences: {} as unknown as Preferences,
-    dashState: [] as unknown as DashConfigItem[],
+    preferences: {} as Preferences,
+    dashState: [] as DashConfigItem[],
   },
 };
 
