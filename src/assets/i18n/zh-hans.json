@@ -254,7 +254,6 @@
   "Adding data vdevs of different types is not supported.": "不支持添加不同类型的数据 vdev。",
   "Adding large catalogs can take minutes. Please check on the progress in Task Manager.": "添加大型目录可能需要几分钟时间。请在任务管理器中查看进度。",
   "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "要包含的附加<a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>选项。通过按<code> Enter </code>分隔条目。<br>注意： \"*\"字符必须以反斜杠 (\\\\*.txt) 进行转义，或在单引号 ('*.txt') 内使用。",
-  "Additional  <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>  parameters.": "更多  <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>  参数。",
   "Additional <a href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in\" target=\"_blank\">smartctl(8)</a> options.": "附加的<a href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in\" target=\"_blank\">smartctl(8)</a>参数。",
   "Additional Data VDevs to Create": "要创建的附加数据 VDev",
   "Additional Domains": "附加域",
