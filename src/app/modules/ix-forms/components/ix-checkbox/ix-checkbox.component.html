@@ -16,6 +16,7 @@
   class="tooltip"
   [header]="label"
   [message]="tooltip"
+  [ixTestOverride]="controlDirective.name"
 ></ix-tooltip>
 
 <ix-warning *ngIf="warning" [message]="warning"></ix-warning>
