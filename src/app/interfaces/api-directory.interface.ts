@@ -321,6 +321,7 @@ export type ApiDirectory = {
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: DsUncachedUser };
+  'auth.set_attribute': { params: [key: string, value: unknown]; response: boolean };
 
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
@@ -981,7 +982,6 @@ export type ApiDirectory = {
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
   'user.shell_choices': { params: void; response: Choices };
-  'user.set_attribute': { params: [id: number, key: string, value: unknown]; response: boolean };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
 
