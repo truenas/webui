@@ -283,7 +283,7 @@ export class AppSchemaService {
         newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
       } else if (_.isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
-      } else if (_.isPlainObject(valueConfig) && keyConfig !== 'cron_test') {
+      } else if (_.isPlainObject(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromPlainObject(restoreKeysPayload);
       } else {
         newConfig[keyConfig] = valueConfig;

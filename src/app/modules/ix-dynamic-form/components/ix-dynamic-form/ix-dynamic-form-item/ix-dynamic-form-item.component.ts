@@ -64,7 +64,7 @@ export class IxDynamicFormItemComponent implements OnInit {
   }
 
   get isHidden$(): Subject<boolean> {
-    return (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$;
+    return (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$;
   }
 
   addControl(schema?: ChartSchemaNode[]): void {
