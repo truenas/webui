@@ -188,7 +188,6 @@
   "Added disks are erased, then the pool is extended onto the new disks with the chosen topology. Existing data on the pool is kept intact.": "",
   "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!": "",
   "Adding large catalogs can take minutes. Please check on the progress in Task Manager.": "",
-  "Additional  <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>  parameters.": "",
   "Additional <a href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in\" target=\"_blank\">smartctl(8)</a> options.": "",
   "Additional Domains:": "",
   "Additional Kerberos application settings. See the \"appdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",

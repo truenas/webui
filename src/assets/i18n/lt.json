@@ -226,7 +226,6 @@
   "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!": "",
   "Adding data vdevs of different types is not supported.": "",
   "Adding large catalogs can take minutes. Please check on the progress in Task Manager.": "",
-  "Additional  <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>  parameters.": "",
   "Additional <a href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in\" target=\"_blank\">smartctl(8)</a> options.": "",
   "Additional Data VDevs to Create": "",
   "Additional Domains": "",
