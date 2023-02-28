@@ -1,14 +1,23 @@
+@import 'scss-imports/splitview';
+
 :host {
   display: flex;
 }
 
 .wizard-container {
   width: 80%;
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+  }
 }
 
 .search-container {
   min-width: 250px;
   width: 20%;
+
+  @media (max-width: $breakpoint-sm) {
+    display: none;
+  }
 
   .search-card {
     background-color: var(--bg2);
@@ -36,5 +45,18 @@
       background-color: var(--contrast-lighter);
       cursor: pointer;
     }
+  }
+}
+
+.mini-search-card {
+  background-color: var(--bg2);
+  display: none;
+  padding: 2px 14px;
+  position: sticky;
+  top: -16px;
+  z-index: 99;
+
+  @media (max-width: $breakpoint-sm) {
+    display: block;
   }
 }

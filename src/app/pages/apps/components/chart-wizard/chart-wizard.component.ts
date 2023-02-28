@@ -101,7 +101,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         path.forEach((id, idx) => {
           nextElement = document.getElementById(id);
           if (idx === path.length - 1) {
-            nextElement?.scrollIntoView();
+            nextElement?.scrollIntoView({ block: 'center' });
           }
         });
       }
