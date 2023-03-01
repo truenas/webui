@@ -400,8 +400,11 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   opacity: 0.75;
 }
 
-ix-tooltip button i {
-  opacity: 0.5;
+ix-tooltip button {
+  i,
+  ix-icon {
+    opacity: 0.5;
+  }
 }
 
 .label-container ix-tooltip {
