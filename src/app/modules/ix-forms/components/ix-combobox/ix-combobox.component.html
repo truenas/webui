@@ -15,6 +15,7 @@
       [disabled]="isDisabled"
       [matAutocomplete]="auto"
       [ixTest]="controlDirective.name"
+      [class.has-value]="selectedOption?.label || textContent"
       (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
     />
