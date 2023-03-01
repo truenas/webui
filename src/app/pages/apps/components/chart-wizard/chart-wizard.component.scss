@@ -9,6 +9,12 @@
   @media (max-width: $breakpoint-sm) {
     width: 100%;
   }
+
+  .actions {
+    @media (max-width: $breakpoint-xs) {
+      margin: 0 9px;
+    }
+  }
 }
 
 .search-container {
@@ -58,5 +64,10 @@
 
   @media (max-width: $breakpoint-sm) {
     display: block;
+  }
+
+  @media (max-width: $breakpoint-xs) {
+    margin: 0 9px;
+    top: 0;
   }
 }
