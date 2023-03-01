@@ -31,6 +31,7 @@ import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/i
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { findSchemaNode } from 'app/services/schema/app-schema.helpers';
 import {
   isCommonSchemaType,
   transformBooleanSchemaType,
@@ -212,12 +213,16 @@ export class AppSchemaService {
     return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
   }
 
-  serializeFormValue(data: SerializeFormValue, schema: ChartSchema['schema']): SerializeFormValue {
+  serializeFormValue(
+    data: SerializeFormValue,
+    schema: ChartSchema['schema'],
+    fieldSchemaNode?: ChartSchemaNode,
+  ): SerializeFormValue {
     if (data == null) {
       return data;
     }
-    if (typeof data === 'string' && this.checkIsValidCronTab(data)) {
-      return crontabToSchedule(data) as SerializeFormValue;
+    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCronTab(data.toString())) {
+      return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
       return this.serializeFormList(data, schema);
@@ -234,11 +239,16 @@ export class AppSchemaService {
   ): HierarchicalObjectMap<ChartFormValue> {
     const result = {} as HierarchicalObjectMap<ChartFormValue>;
     Object.keys(groupValue).forEach((key) => {
-      result[key] = this.serializeFormValue(groupValue[key], schema) as HierarchicalObjectMap<ChartFormValue>;
-      if (result[key] === null) {
-        const fieldSchema = _.find(schema?.questions, { variable: key });
+      const fieldSchemaNode = findSchemaNode(schema?.questions, key);
 
-        if (fieldSchema?.schema?.null) {
+      result[key] = this.serializeFormValue(
+        groupValue[key],
+        schema,
+        fieldSchemaNode,
+      ) as HierarchicalObjectMap<ChartFormValue>;
+
+      if (result[key] === null) {
+        if (fieldSchemaNode?.schema?.null) {
           return;
         }
 
@@ -283,7 +293,7 @@ export class AppSchemaService {
         newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
       } else if (_.isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
-      } else if (_.isPlainObject(valueConfig) && keyConfig !== 'cron_test') {
+      } else if (_.isPlainObject(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromPlainObject(restoreKeysPayload);
       } else {
         newConfig[keyConfig] = valueConfig;
@@ -293,7 +303,9 @@ export class AppSchemaService {
     return newConfig;
   }
 
-  private createHierarchicalObjectFromArray(payload: KeysRestoredFromFormGroup): HierarchicalObjectMap<ChartFormValue> {
+  private createHierarchicalObjectFromArray(
+    payload: KeysRestoredFromFormGroup,
+  ): HierarchicalObjectMap<ChartFormValue> {
     const {
       newConfig, keyConfig, valueConfig, formConfig,
     } = payload;

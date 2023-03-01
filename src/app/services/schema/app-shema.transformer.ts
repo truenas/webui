@@ -182,8 +182,15 @@ export function transformListSchemaType(
   let items: DynamicFormSchemaNode[] = [];
   let itemsSchema: ChartSchemaNode[] = [];
   schema.items.forEach((item) => {
-    items = items.concat(transformNode(item, isNew, !!schema.immutable || isParentImmutable));
-    itemsSchema = itemsSchema.concat(item);
+    if (item.schema.attrs) {
+      item.schema.attrs.forEach((attr) => {
+        items = items.concat(transformNode(attr, isNew, !!schema.immutable || isParentImmutable));
+        itemsSchema = itemsSchema.concat(attr);
+      });
+    } else {
+      items = items.concat(transformNode(item, isNew, !!schema.immutable || isParentImmutable));
+      itemsSchema = itemsSchema.concat(item);
+    }
   });
   return {
     ...buildCommonSchemaBase(payload),
