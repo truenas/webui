@@ -12,7 +12,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { filter, take } from 'rxjs/operators';
@@ -81,7 +81,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
-      if (routeChange instanceof NavigationStart) {
+      if (routeChange instanceof NavigationEnd && this.router.url !== routeChange.urlAfterRedirects) {
         this.headerPortalOutlet = null;
       }
       if (routeChange instanceof NavigationEnd && this.isMobile) {

@@ -18,7 +18,6 @@ export interface SmbConfig {
   netbiosname_local: string;
   next_rid: number;
   ntlmv1_auth: boolean;
-  smb_options: string;
   syslog: boolean;
   unixcharset: string;
   workgroup: string;

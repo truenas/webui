@@ -1,3 +1,5 @@
+import { Preferences } from 'app/interfaces/preferences.interface';
+import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { User } from './user.interface';
 
 export interface DsUncachedUser {
@@ -7,6 +9,10 @@ export interface DsUncachedUser {
   pw_name: string;
   pw_shell: string;
   pw_uid: number;
+  attributes: {
+    preferences: Preferences;
+    dashState: DashConfigItem[];
+  };
 }
 
 export interface LoggedInUser extends Partial<DsUncachedUser>, Partial<User> {}

@@ -13,12 +13,14 @@
         <ix-icon
           class="close-icon"
           name="mdi-close"
+          ixTest="close-tooltip"
           (click)="popperTooltip.hide()"
         ></ix-icon>
       </div>
     </div>
     <div
       class="tooltip-message"
+      ixTest="tooltip-message"
       [innerHTML]="message | translate"
     ></div>
   </popper-content>
@@ -27,6 +29,7 @@
     class="tooltip-icon"
     name="help_outline"
     popperAppendTo="body"
+    [ixTest]="['tooltip', header]"
     [popperTrigger]="'click' | cast"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"
