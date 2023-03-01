@@ -41,4 +41,8 @@ export class NavigationComponent {
   getItemName(item: MenuItem): string {
     return `${item.name.replace(' ', '_')}-menu`;
   }
+
+  getRouterLink(url: string): string[] {
+    return ['/', ...url.split('/')];
+  }
 }
