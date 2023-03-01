@@ -216,12 +216,12 @@ export class AppSchemaService {
   serializeFormValue(
     data: SerializeFormValue,
     schema: ChartSchema['schema'],
-    fieldSchema?: ChartSchemaNode,
+    fieldSchemaNode?: ChartSchemaNode,
   ): SerializeFormValue {
     if (data == null) {
       return data;
     }
-    if (fieldSchema?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCronTab(data.toString())) {
+    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCronTab(data.toString())) {
       return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
@@ -239,16 +239,16 @@ export class AppSchemaService {
   ): HierarchicalObjectMap<ChartFormValue> {
     const result = {} as HierarchicalObjectMap<ChartFormValue>;
     Object.keys(groupValue).forEach((key) => {
-      const fieldSchema = findSchemaNode(schema?.questions, key);
+      const fieldSchemaNode = findSchemaNode(schema?.questions, key);
 
       result[key] = this.serializeFormValue(
         groupValue[key],
         schema,
-        fieldSchema,
+        fieldSchemaNode,
       ) as HierarchicalObjectMap<ChartFormValue>;
 
       if (result[key] === null) {
-        if (fieldSchema?.schema?.null) {
+        if (fieldSchemaNode?.schema?.null) {
           return;
         }
 
