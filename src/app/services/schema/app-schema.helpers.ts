@@ -1,6 +1,6 @@
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 
-export function findSchemaNodeByVariableName(object: unknown, variableName: string): ChartSchemaNode | undefined {
+export function findSchemaNode(object: unknown, variableName: string): ChartSchemaNode | undefined {
   const typedObject = object as { [key: string]: unknown };
   let value;
 
@@ -11,7 +11,7 @@ export function findSchemaNodeByVariableName(object: unknown, variableName: stri
         return true;
       }
       if (typedObject[objectKey] && typeof typedObject[objectKey] === 'object') {
-        value = findSchemaNodeByVariableName(typedObject[objectKey], variableName);
+        value = findSchemaNode(typedObject[objectKey], variableName);
         return value !== undefined;
       }
       return false;

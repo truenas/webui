@@ -31,7 +31,7 @@ import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/i
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { findSchemaNodeByVariableName } from 'app/services/schema/app-schema.helpers';
+import { findSchemaNode } from 'app/services/schema/app-schema.helpers';
 import {
   isCommonSchemaType,
   transformBooleanSchemaType,
@@ -239,7 +239,7 @@ export class AppSchemaService {
   ): HierarchicalObjectMap<ChartFormValue> {
     const result = {} as HierarchicalObjectMap<ChartFormValue>;
     Object.keys(groupValue).forEach((key) => {
-      const fieldSchema = findSchemaNodeByVariableName(schema?.questions, key);
+      const fieldSchema = findSchemaNode(schema?.questions, key);
 
       result[key] = this.serializeFormValue(
         groupValue[key],
