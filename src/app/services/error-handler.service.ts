@@ -20,6 +20,12 @@ export class ErrorHandlerService implements ErrorHandler {
     if (this.isTypeOfWebsocketError(error)) {
       const errors = this.parseWsError(error);
       this.dialog.error(errors);
+      return;
+    }
+    if (this.isTypeOfJobError(error)) {
+      const errors = this.parseJobError(error);
+      this.dialog.error(errors);
+      return;
     }
     console.error('Error', error);
   }
@@ -30,6 +36,14 @@ export class ErrorHandlerService implements ErrorHandler {
     && 'extra' in obj
     && 'reason' in obj
     && 'trace' in obj;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isTypeOfJobError(obj: any): boolean {
+    return 'state' in obj
+    || 'error' in obj
+    || 'exception' in obj
+    || 'exc_info' in obj;
   }
 
   /**
