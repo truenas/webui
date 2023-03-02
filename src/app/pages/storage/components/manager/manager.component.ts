@@ -29,7 +29,6 @@ import {
 } from 'app/interfaces/pool.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -38,6 +37,7 @@ import {
   RepeatVdevDialogComponent, RepeatVdevDialogData,
 } from 'app/pages/storage/components/manager/repeat-vdev-dialog/repeat-vdev-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -174,6 +174,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     private dialog: DialogService,
     private loader: AppLoaderService,
     protected route: ActivatedRoute,
+    private errorHandler: ErrorHandlerService,
     public mdDialog: MatDialog,
     public translate: TranslateService,
     public sorter: StorageService,
@@ -223,10 +224,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
     setTimeout(() => this.getCurrentLayout(), 100);
   }
-
-  handleError = (error: WebsocketError | Job): void => {
-    this.dialog.errorReportMiddleware(error);
-  };
 
   getDiskNumErrorMsg(disks: number): void {
     this.disknumError = `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {n} disks, new vdev has {m}', { n: this.firstDataVdevDisknum, m: disks })}`;
@@ -290,7 +287,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             }
             this.getDuplicableDisks();
           },
-          error: this.handleError,
+          error: (error) => this.errorHandler.reportWsError(error),
         });
         this.nameControl.setValue(searchedPools[0].name);
         this.volEncrypt = searchedPools[0].encrypt;
@@ -301,10 +298,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
               this.size = filesize(this.extendedAvailable, { standard: 'iec' });
             }
           },
-          error: this.handleError,
+          error: (error) => this.errorHandler.reportWsError(error),
         });
       },
-      error: this.handleError,
+      error: (error) => this.errorHandler.reportWsError(error),
     });
   }
 
@@ -315,13 +312,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
         });
       },
-      error: this.handleError,
+      error: (error) => this.errorHandler.reportWsError(error),
     });
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe({
       next: (config) => {
         this.swapondrive = config.swapondrive;
       },
-      error: this.handleError,
+      error: (error) => this.errorHandler.reportWsError(error),
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params.poolId) {
@@ -341,7 +338,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             this.existingPools = pools;
           }
         },
-        error: this.handleError,
+        error: (error) => this.errorHandler.reportWsError(error),
       });
     }
     this.nameFilter = new RegExp('');
@@ -400,7 +397,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       },
       error: (error) => {
         this.loader.close();
-        this.handleError(error);
+        this.errorHandler.reportWsError(error);
       },
     });
   }
@@ -756,7 +753,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           .pipe(untilDestroyed(this)).subscribe(
             {
               next: () => {},
-              error: this.handleError,
+              error: (error) => this.errorHandler.reportWsError(error),
               complete: () => {
                 dialogRef.close(false);
                 this.goBack();
@@ -766,9 +763,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
           next: (error) => {
             dialogRef.close(false);
-            this.handleError(error);
+            this.errorHandler.reportJobError(error);
           },
-          error: this.handleError,
+          error: (error) => this.errorHandler.reportWsError(error),
         });
         dialogRef.componentInstance.submit();
       });

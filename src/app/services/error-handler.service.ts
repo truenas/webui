@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -97,8 +98,16 @@ export class ErrorHandlerService implements ErrorHandler {
     }
   }
 
+  reportWsError(error: WebsocketError): Observable<boolean> {
+    return this.dialog.error(this.parseWsError(error));
+  }
+
   parseWsError(error: WebsocketError): ErrorReport | ErrorReport[] {
     return this.parseErrorOrJob(error);
+  }
+
+  reportJobError(failedJob: Job): Observable<boolean> {
+    return this.dialog.error(this.parseJobError(failedJob));
   }
 
   parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
