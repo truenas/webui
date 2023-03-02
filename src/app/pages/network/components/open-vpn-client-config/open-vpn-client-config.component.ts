@@ -4,16 +4,20 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, ServicesService } from 'app/services';
+import {
+  AppLoaderService, DialogService, ServicesService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -98,6 +102,8 @@ export class OpenVpnClientConfigComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private router: Router,
+    private appLoaderService: AppLoaderService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -140,5 +146,27 @@ export class OpenVpnClientConfigComponent implements OnInit {
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       });
+  }
+
+  certificatesLinkClicked(): void {
+    this.slideInService.close(null, false);
+    this.router.navigate(['/', 'credentials', 'certificates']);
+  }
+
+  unsetCertificates(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning'),
+      message: this.translate.instant('This operation will unset/unselect any certificates assgined to OpenVPN Client configuration. Are you sure you want to proceed?'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.appLoaderService.open();
+        return this.ws.call('openvpn.client.update', [{ remove_certificates: true } as OpenvpnClientConfigUpdate]);
+      }),
+      tap(() => {
+        this.appLoaderService.close();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }
