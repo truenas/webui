@@ -931,14 +931,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border-bottom: 1px solid var(--lines);
   }
 
-  .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
-    opacity: var(--disabled-opacity);
-    position: absolute;
-    right: 0;
-    top: -5px;
-  }
-
   datatable-selection > .empty-row {
     color: var(--alt-fg1);
   }
