@@ -3,7 +3,8 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -29,6 +30,8 @@ export class ErrorTemplateComponent {
   constructor(
     private ws: WebSocketService,
     public storage: StorageService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
   ) {}
 
   toggleOpen(): void {
@@ -62,12 +65,12 @@ export class ErrorTemplateComponent {
             this.storage.downloadBlob(file, `${this.logs.id}.log`);
           },
           error: (err) => {
-            new EntityUtils().handleWsError(this, err);
+            this.dialogService.error(this.errorHandler.parseWsError(err));
           },
         });
       },
       error: (err) => {
-        new EntityUtils().handleWsError(this, err);
+        this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });
   }

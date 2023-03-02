@@ -35,6 +35,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -131,6 +132,10 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     IxSlideInService,
     IxFileUploadService,
     DisksUpdateService,
+    {
+      provide: ErrorHandler,
+      useClass: ErrorHandlerService,
+    },
     ThemeService,
     {
       provide: ErrorHandler,
