@@ -61,7 +61,6 @@ export class SystemProfiler {
     this.parseSensorData(this._sensorData);
   }
 
-  private _isRackmount: boolean;
   get isRackmount() {
     switch (this.platform) {
       case 'FREENAS-MINI-3.0':
