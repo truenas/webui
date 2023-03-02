@@ -162,6 +162,7 @@ samp {
   font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace !important;
   padding: 2px;
 }
+
 /*---- Common -----*/
 .m-0 {
   margin: 0 !important;
@@ -257,7 +258,7 @@ samp {
   padding: 1rem;
 }
 
-.mat-mdc-card.default>:first-child {
+.mat-mdc-card.default > :first-child {
   border-radius: 2px 2px 0 0;
 }
 
@@ -283,7 +284,7 @@ samp {
   padding: 0.5rem;
 }
 
-.mat-mdc-card.default>:last-child {
+.mat-mdc-card.default > :last-child {
   border-radius: 0 0 2px 2px;
 }
 
@@ -373,6 +374,7 @@ samp {
   margin-left: 5px !important;
   padding-left: 22px !important;
 }
+
 /*---- Third party adjust -----*/
 /*--------- Material ---------*/
 mat-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
@@ -499,6 +501,60 @@ body .mat-mdc-select-trigger {
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
+/*-------- Scrollbar ---------*/
+body {
+  scrollbar-color: var(--focus-brd) var(--alt-bg1);
+}
+
+::-webkit-scrollbar {
+  height: 16px;
+  width: 16px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--focus-brd);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--alt-bg1);
+}
+
+/*-------- Scrollbar Arrows---------*/
+::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgb(96, 96, 96)'><polygon points='4,11 8,6 12,11'/></svg>");
+}
+
+::-webkit-scrollbar-button:vertical:increment {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgb(96, 96, 96)'><polygon points='4,5 8,10 12,5'/></svg>");
+}
+
+::-webkit-scrollbar-button:horizontal:decrement {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgb(96, 96, 96)'><polygon points='5,8 11,4 11,12'/></svg>");
+}
+
+::-webkit-scrollbar-button:horizontal:increment {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgb(96, 96, 96)'><polygon points='5,4 10,8 5,12'/></svg>"); //
+}
+
+::-webkit-scrollbar-button:horizontal:decrement,
+::-webkit-scrollbar-button:horizontal:increment,
+::-webkit-scrollbar-button:vertical:decrement,
+::-webkit-scrollbar-button:vertical:increment {
+  background-color: var(--bg2);
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 16px;
+  width: 16px;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--bg2);
+}
+
+::-webkit-resizer {
+  background-color: var(--bg2);
+}
+//
 /*-------- Chart js ---------*/
 .chart {
   margin-left: -10px;
@@ -707,7 +763,7 @@ body .mat-mdc-select-trigger {
   margin: 0;
 }
 
-.collapsed-menu .sidebar-panel .mat-nav-list > div >  .sidebar-list-item a .menu-caret {
+.collapsed-menu .sidebar-panel .mat-nav-list > div > .sidebar-list-item a .menu-caret {
   font-size: medium;
   left: 33px;
   position: absolute;
@@ -752,7 +808,7 @@ body .mat-mdc-select-trigger {
   text-align: left;
 }
 
-.default-table > thead  tr th {
+.default-table > thead tr th {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   font-weight: 400;
   padding: 0.9rem 1.2rem;
