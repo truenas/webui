@@ -1,3 +1,5 @@
+@import 'scss-imports/splitview';
+
 :host {
   color: var(--fg1);
   margin: 15px;
@@ -10,13 +12,28 @@
 .section {
   display: flex;
 
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+
   .fieldset {
     width: 50%;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+    }
   }
 
   .help {
     padding: 0 20px;
     width: 50%;
+
+    @media (max-width: $breakpoint-sm) {
+      background-color: var(--contrast-darker);
+      margin-bottom: 16px;
+      padding: 16px;
+      width: 100%;
+    }
 
     .title {
       font-family: var(--font-family-body);
