@@ -202,9 +202,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       const testDisk = disks.find((disk) => disk.devname === diskWithResults.devname);
       const tests = diskWithResults?.tests ?? [];
       const testsStillRunning = tests.filter((test) => test.status === SmartTestResultStatus.Running);
-      const testsStillFailed = tests.filter(
-        (test) => (SmartTestResultStatus.Failed, SmartTestResultStatus.Aborted).includes(test.status),
-      );
+      const testsStillFailed = tests.filter((test) => test.status === SmartTestResultStatus.Failed);
       testDisk.smartTestsRunning = testsStillRunning.length;
       testDisk.smartTestsFailed = testsStillFailed.length;
     });

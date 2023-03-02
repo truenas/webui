@@ -76,7 +76,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   get iconType(): PoolCardIconType {
-    if (this.diskState.alerts || this.diskState.smartTests) {
+    if (this.diskState.smartTests) {
       return PoolCardIconType.Warn;
     }
     return PoolCardIconType.Safe;
