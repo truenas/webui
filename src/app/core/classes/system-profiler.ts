@@ -64,10 +64,18 @@ export class SystemProfiler {
   private _isRackmount: boolean;
   get isRackmount() {
     switch (this.platform) {
-      case 'mini':
-      case 'mini-x':
-      case 'mini-xl':
-      case 'mini-xl-plus':
+      case 'FREENAS-MINI-3.0':
+      case 'TRUENAS-MINI-3.0':
+      case 'FREENAS-MINI-3.0-E':
+      case 'TRUENAS-MINI-3.0-E':
+      case 'FREENAS-MINI-3.0-E+':
+      case 'TRUENAS-MINI-3.0-E+':
+      case 'FREENAS-MINI-3.0-X':
+      case 'TRUENAS-MINI-3.0-X':
+      case 'FREENAS-MINI-3.0-X+':
+      case 'TRUENAS-MINI-3.0-X+':
+      case 'FREENAS-MINI-3.0-XL+':
+      case 'TRUENAS-MINI-3.0-XL+':
         return false;
       default:
         return true;
