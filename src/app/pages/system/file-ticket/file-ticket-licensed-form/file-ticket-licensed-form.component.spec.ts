@@ -15,7 +15,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
@@ -65,7 +65,7 @@ describe('FileTicketLicensedFormComponent', () => {
         mockJob('support.attach_ticket', fakeSuccessfulJob()),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockWindow({
         open: jest.fn(),
       }),

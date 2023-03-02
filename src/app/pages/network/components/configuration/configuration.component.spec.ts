@@ -9,7 +9,7 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
@@ -70,7 +70,7 @@ describe('NetworkConfigurationComponent', () => {
         mockCall('network.configuration.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(LanguageService),

@@ -9,7 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -42,7 +42,7 @@ export class DiskBulkEditComponent {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private snackbarService: SnackbarService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   setFormDiskBulk(selectedDisks: Disk[]): void {

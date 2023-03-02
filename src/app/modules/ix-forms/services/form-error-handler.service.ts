@@ -9,7 +9,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
 
 @Injectable({ providedIn: 'root' })
-export class ErrorHandlerService {
+export class FormErrorHandlerService {
   constructor(
     private dialog: DialogService,
     private translate: TranslateService,

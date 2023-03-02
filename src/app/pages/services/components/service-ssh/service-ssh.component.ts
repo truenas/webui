@@ -10,7 +10,7 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ssh';
 import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -59,7 +59,7 @@ export class ServiceSshComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private router: Router,

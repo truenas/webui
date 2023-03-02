@@ -16,7 +16,7 @@ import { alertServiceNames, AlertServiceType } from 'app/enums/alert-service-typ
 import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/system/alert-service';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   AwsSnsServiceComponent,
@@ -84,7 +84,7 @@ export class AlertServiceComponent implements OnInit {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,

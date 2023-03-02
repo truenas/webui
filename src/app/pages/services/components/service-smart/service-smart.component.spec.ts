@@ -8,7 +8,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import { SmartConfig } from 'app/interfaces/smart-test.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -37,7 +37,7 @@ describe('ServiceSmartComponent', () => {
         mockCall('smart.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
     ],

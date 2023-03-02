@@ -18,7 +18,7 @@ import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/c
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   AzureProviderFormComponent,
@@ -100,7 +100,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
   ) {

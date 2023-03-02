@@ -13,7 +13,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -84,7 +84,7 @@ export class ExtentFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private filesystemService: FilesystemService,

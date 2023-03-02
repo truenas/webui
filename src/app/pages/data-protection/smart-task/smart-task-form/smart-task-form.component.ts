@@ -8,7 +8,7 @@ import { SmartTestType, smartTestTypeLabels } from 'app/enums/smart-test-type.en
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   crontabToScheduleWithoutMinutes,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -62,7 +62,7 @@ export class SmartTaskFormComponent {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   setTestForEdit(test: SmartTestTask): void {

@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
@@ -73,7 +73,7 @@ export class ServiceSnmpComponent implements OnInit {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private validation: IxValidatorsService,
   ) {}
 

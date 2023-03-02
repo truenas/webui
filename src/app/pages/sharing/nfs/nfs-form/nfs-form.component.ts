@@ -15,7 +15,7 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -90,7 +90,7 @@ export class NfsFormComponent implements OnInit {
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) {}

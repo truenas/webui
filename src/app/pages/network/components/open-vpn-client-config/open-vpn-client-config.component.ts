@@ -10,7 +10,7 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, ServicesService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -91,7 +91,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,
     private cdr: ChangeDetectorRef,

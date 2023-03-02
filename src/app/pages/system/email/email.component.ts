@@ -14,7 +14,7 @@ import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
@@ -76,7 +76,7 @@ export class EmailComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,

@@ -5,7 +5,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
@@ -35,7 +35,7 @@ export class SigninFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private signinStore: SigninStore,
     private translate: TranslateService,
     private authService: AuthService,

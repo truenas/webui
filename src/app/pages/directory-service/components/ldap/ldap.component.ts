@@ -12,7 +12,7 @@ import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/options.
 import helptext from 'app/helptext/directory-service/ldap';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -76,7 +76,7 @@ export class LdapComponent implements OnInit {
     private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
     private slideInService: IxSlideInService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
     private router: Router,
     private translate: TranslateService,

@@ -10,7 +10,7 @@ import helptext from 'app/helptext/services/components/service-rsync';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -73,7 +73,7 @@ export class RsyncModuleFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private filesystemService: FilesystemService,

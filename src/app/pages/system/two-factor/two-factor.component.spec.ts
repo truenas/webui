@@ -12,7 +12,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
@@ -46,7 +46,7 @@ describe('TwoFactorComponent', () => {
         mockCall('auth.twofactor.renew_secret'),
         mockCall('auth.twofactor.update'),
       ]),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

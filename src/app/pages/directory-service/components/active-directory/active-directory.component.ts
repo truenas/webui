@@ -14,7 +14,7 @@ import helptext from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   LeaveDomainDialogComponent,
@@ -74,7 +74,7 @@ export class ActiveDirectoryComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,

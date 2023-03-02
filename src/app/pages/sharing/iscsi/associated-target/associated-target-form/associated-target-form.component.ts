@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -55,7 +55,7 @@ export class AssociatedTargetFormComponent {
     private ws: WebSocketService,
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
   ) {}
 

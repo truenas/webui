@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -51,7 +51,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     private translate: TranslateService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {

@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { inherit } from 'app/enums/with-inherit.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
@@ -73,7 +73,7 @@ export class DatasetCapacitySettingsComponent {
     private formBuilder: FormBuilder,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     private slideIn: IxSlideInService,

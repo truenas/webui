@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import {
@@ -67,7 +67,7 @@ describe('ServiceSmbComponent', () => {
         mockCall('user.query'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(Router),
       mockProvider(DialogService),
       mockProvider(SystemGeneralService),

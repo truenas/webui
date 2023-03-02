@@ -12,7 +12,7 @@ import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
@@ -84,7 +84,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,
     private loader: AppLoaderService,

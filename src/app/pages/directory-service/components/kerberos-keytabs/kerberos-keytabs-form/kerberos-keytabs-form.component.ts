@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -40,7 +40,7 @@ export class KerberosKeytabsFormComponent {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
   ) {}

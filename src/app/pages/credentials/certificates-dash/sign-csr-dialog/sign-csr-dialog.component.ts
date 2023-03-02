@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateAuthoritySignRequest } from 'app/interfaces/certificate-authority.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, SystemGeneralService,
 } from 'app/services';
@@ -33,7 +33,7 @@ export class SignCsrDialogComponent {
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
     private ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private caId: number,
   ) {}
 

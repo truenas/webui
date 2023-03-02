@@ -9,7 +9,7 @@ import { map, tap } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService, WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
@@ -60,7 +60,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     private websocket: WebSocketService,
     private loader: AppLoaderService,
     private fb: FormBuilder,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) private snapshotName: string,

@@ -14,7 +14,7 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import {
   AppLoaderService, DialogService,
@@ -67,7 +67,7 @@ export class KubernetesSettingsComponent implements OnInit {
     private slideInService: IxSlideInService,
     private appService: ApplicationsService,
     private fb: FormBuilder,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
   ) { }
 

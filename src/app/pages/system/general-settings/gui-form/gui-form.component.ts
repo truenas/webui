@@ -20,7 +20,7 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DialogService, SystemGeneralService,
@@ -80,7 +80,7 @@ export class GuiFormComponent {
     private loader: AppLoaderService,
     private router: Router,
     private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {

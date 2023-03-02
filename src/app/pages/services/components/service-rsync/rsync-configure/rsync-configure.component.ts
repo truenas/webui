@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-rsync';
 import { RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, AppLoaderService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -44,7 +44,7 @@ export class RsyncConfigureComponent implements OnInit {
     private dialogService: DialogService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {

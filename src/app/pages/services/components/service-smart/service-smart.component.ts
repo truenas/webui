@@ -10,7 +10,7 @@ import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -48,7 +48,7 @@ export class ServiceSmartComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,

@@ -17,7 +17,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   CloudCredentialService, DialogService, StorageService, WebSocketService,
@@ -179,7 +179,7 @@ export class ZvolFormComponent {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private formatter: IxFormatterService,
     protected storageService: StorageService,

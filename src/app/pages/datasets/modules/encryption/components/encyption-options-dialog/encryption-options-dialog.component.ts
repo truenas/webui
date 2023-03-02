@@ -16,7 +16,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -77,7 +77,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private dialog: DialogService,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
     private validatorsService: IxValidatorsService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private mdDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,

@@ -15,7 +15,7 @@ import helptext from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { UserService } from 'app/services/user.service';
@@ -102,7 +102,7 @@ export class ServiceSmbComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private router: Router,

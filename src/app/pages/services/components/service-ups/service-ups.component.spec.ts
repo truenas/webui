@@ -8,7 +8,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { DialogService } from 'app/services';
@@ -61,7 +61,7 @@ describe('ServiceUpsComponent', () => {
         mockCall('ups.port_choices', ['/dev/uhid', 'auto']),
         mockCall('ups.update'),
       ]),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
     ],

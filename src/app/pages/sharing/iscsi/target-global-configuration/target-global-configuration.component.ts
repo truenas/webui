@@ -15,7 +15,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi, shared } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
@@ -49,7 +49,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private snackbar: SnackbarService,

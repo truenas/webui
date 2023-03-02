@@ -16,7 +16,7 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -68,7 +68,7 @@ export class SyslogFormComponent implements OnInit {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {

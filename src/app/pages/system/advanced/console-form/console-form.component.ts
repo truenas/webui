@@ -9,7 +9,7 @@ import { of, Subscription } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   DialogService, WebSocketService,
 } from 'app/services';
@@ -58,7 +58,7 @@ export class ConsoleFormComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,

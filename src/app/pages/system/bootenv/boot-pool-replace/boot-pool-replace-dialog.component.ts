@@ -14,7 +14,7 @@ import { map } from 'rxjs/operators';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -64,7 +64,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
     private dialogService: DialogService,
   ) {}

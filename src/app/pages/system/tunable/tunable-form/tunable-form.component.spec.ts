@@ -7,7 +7,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import { WebSocketService } from 'app/services';
@@ -29,7 +29,7 @@ describe('TunableFormComponent', () => {
         mockCall('tunable.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
     ],
   });
 

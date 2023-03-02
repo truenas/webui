@@ -13,7 +13,7 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -51,7 +51,7 @@ export class DiskFormComponent implements OnInit {
     private ws: WebSocketService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private snackbarService: SnackbarService,
   ) {

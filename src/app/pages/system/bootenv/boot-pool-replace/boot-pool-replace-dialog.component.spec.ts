@@ -10,7 +10,7 @@ import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-we
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
@@ -35,7 +35,7 @@ describe('BootPoolReplaceDialogComponent', () => {
         ] as UnusedDisk[]),
         mockJob('boot.replace', fakeSuccessfulJob()),
       ]),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),

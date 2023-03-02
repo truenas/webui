@@ -9,7 +9,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
 import { DialogService, WebSocketService } from 'app/services';
@@ -41,7 +41,7 @@ describe('ConsoleFormComponent', () => {
         mockCall('system.advanced.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Store),
     ],

@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -50,7 +50,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private authService: AuthService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
     private translate: TranslateService,

@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
 import { ApiKey, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -37,7 +37,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private loader: AppLoaderService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private store: ApiKeyComponentStore,
     @Inject(MAT_DIALOG_DATA) private editingRow: ApiKey,
   ) {}

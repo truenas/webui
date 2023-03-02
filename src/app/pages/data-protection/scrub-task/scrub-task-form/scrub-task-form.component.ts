@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   crontabToSchedule,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -62,7 +62,7 @@ export class ScrubTaskFormComponent {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   setTaskForEdit(task: PoolScrubTask): void {

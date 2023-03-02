@@ -11,7 +11,7 @@ import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -47,7 +47,7 @@ export class ProactiveComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}

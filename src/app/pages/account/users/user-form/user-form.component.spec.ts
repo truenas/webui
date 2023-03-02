@@ -15,7 +15,7 @@ import { User } from 'app/interfaces/user.interface';
 import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
 import { StorageService, UserService } from 'app/services';
@@ -83,7 +83,7 @@ describe('UserFormComponent', () => {
         filesystemStat: jest.fn(() => of({ mode: 16832 })),
         downloadBlob: jest.fn(),
       }),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(UserService),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => of()),

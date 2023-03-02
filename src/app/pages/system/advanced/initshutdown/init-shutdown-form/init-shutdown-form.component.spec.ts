@@ -11,7 +11,7 @@ import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { SystemGeneralService } from 'app/services';
@@ -35,7 +35,7 @@ describe('InitShutdownFormComponent', () => {
         mockCall('initshutdownscript.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ErrorHandlerService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => {

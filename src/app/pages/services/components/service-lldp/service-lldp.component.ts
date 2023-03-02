@@ -9,7 +9,7 @@ import helptext from 'app/helptext/services/components/service-lldp';
 import { LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ServicesService, DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -68,7 +68,7 @@ export class ServiceLldpComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
   ) { }
 
   ngOnInit(): void {

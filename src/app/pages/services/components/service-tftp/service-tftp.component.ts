@@ -9,7 +9,7 @@ import helptext from 'app/helptext/services/components/service-tftp';
 import { TftpConfigUpdate } from 'app/interfaces/tftp-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { ErrorHandlerService } from 'app/modules/ix-forms/services/error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -52,7 +52,7 @@ export class ServiceTftpComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private userService: UserService,
     private filesystemService: FilesystemService,
