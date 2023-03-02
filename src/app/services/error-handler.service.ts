@@ -21,7 +21,7 @@ export class ErrorHandlerService implements ErrorHandler {
       const errors = this.parseWsError(error);
       this.dialog.error(errors);
     }
-    throw new Error('Method not implemented.');
+    console.error('Error', error);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
