@@ -353,7 +353,7 @@ export class AppSchemaService {
 
     const defaultValue = schema.default !== undefined ? schema.default : altDefault;
     const nullValidator = Validators.nullValidator;
-    const isCron = schema.type === ChartSchemaType.String && isValidCron(schema.default.toString());
+    const isCron = schema.type === ChartSchemaType.String && schema.default && isValidCron(schema.default.toString());
 
     const newFormControl = new CustomUntypedFormControl(defaultValue, [
       schema.required ? Validators.required : nullValidator,
