@@ -54,7 +54,7 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 def on_the_service_page_press_on_configure_smb(driver):
     """on the service page, press on configure SMB."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smb_Service_Name)
+    assert wait_on_element(driver, 5, xpaths.services.smb_Service)
     assert wait_on_element(driver, 5, xpaths.services.smb_Service_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.services.smb_Service_Button).click()
 

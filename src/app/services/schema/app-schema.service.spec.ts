@@ -575,12 +575,31 @@ describe('AppSchemaService', () => {
         groups: [],
         portals: {},
       })).toEqual({ a: { c: null, d: 'test' } });
-      expect(service.serializeFormValue('* * * * *', null)).toEqual({
-        hour: '*',
-        minute: '*',
-        month: '*',
-        dom: '*',
-        dow: '*',
+      expect(
+        service.serializeFormValue(
+          { cron_test: '* * * * *' },
+          {
+            groups: [],
+            portals: {},
+            questions: [
+              {
+                variable: 'cron_test',
+                label: 'schedule_cron_type',
+                schema: {
+                  type: ChartSchemaType.Cron,
+                },
+              },
+            ],
+          },
+        ),
+      ).toEqual({
+        cron_test: {
+          hour: '*',
+          minute: '*',
+          month: '*',
+          dom: '*',
+          dow: '*',
+        },
       });
     });
   });

@@ -2,7 +2,7 @@ import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
+import { MatSelectHarness } from '@angular/material/select/testing';
 import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';

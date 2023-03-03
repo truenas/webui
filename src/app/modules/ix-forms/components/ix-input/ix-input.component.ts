@@ -133,7 +133,7 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
   getType(): string {
     // Mimicking a password field to prevent browsers from remembering passwords.
     const isFakePassword = this.type === 'password' && (this.autocomplete === 'off' || this.showPassword);
-    return isFakePassword ? 'search' : this.type;
+    return isFakePassword ? 'text' : this.type;
   }
 
   isPasswordField(): boolean {

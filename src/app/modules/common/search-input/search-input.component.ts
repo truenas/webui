@@ -9,6 +9,7 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
+  HostBinding,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
@@ -21,6 +22,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchInputComponent implements OnInit, OnChanges {
+  @HostBinding('class.disabled')
   @Input() disabled = false;
   @Input() value = '';
   @Output() search = new EventEmitter<string>();
