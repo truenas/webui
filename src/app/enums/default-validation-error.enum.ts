@@ -9,4 +9,5 @@ export enum DefaultValidationError {
   Pattern = 'pattern',
   Forbidden = 'forbidden',
   Number = 'number',
+  Cron = 'cron',
 }

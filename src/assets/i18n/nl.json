@@ -79,6 +79,7 @@
   "Import Data": "",
   "Importing Disk": "",
   "Importing Disk...": "",
+  "Invalid cron expression": "",
   "It may impact currently running services and should be done during planned downtime.": "",
   "Keys for {id} datasets": "",
   "Local heartbeat interface does not exist.": "",
