@@ -1,4 +1,13 @@
 
+CHECKBOX = '//mat-checkbox'
+TOGGLE = '//mat-slide-toggle'
+BUTTON = '//button'
+
+
+def mat_Option(option):
+    return f'//mat-option[contains(.,"{option}")]'
+
+
 class active_Directory:
     title = '//h3[@class="ix-formtitle" and text()="Active Directory"]'
     enable_Checkbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
@@ -353,6 +362,45 @@ class interface:
     netmask_Option = '//mat-option[contains(.,"24")]'
 
 
+class iscsi:
+    title = '//h1[text()="iSCSI"]'
+    protals_Tab = '//a[normalize-space(text())="Portals"]'
+    targets_Tab = '//a[normalize-space(text())="Targets"]'
+    extents_Tab = '//a[normalize-space(text())="Extents"]'
+    iscsitest1_Text = '//div[normalize-space(text())="iscsitest1"]'
+
+
+class iscsi_Wizard:
+    """iscsi_Wizard contains xpaths for the iSCSI Wizard"""
+    title = '//h1[text()="Wizard"]'
+    block_Device_Title = '//mat-step-header[contains(.,"Create or Choose Block Device") and @tabindex="0"]'
+    device_Name_Input = '//input[@ix-auto="input__Name"]'
+    extent_Type_Select = '//mat-select[@ix-auto="select__Extent Type"]'
+    extent_Type_Device_Option = mat_Option('Device')
+    device_Dropdown = '//span[@id="disk-select"]'
+    create_New_Button = '//button[contains(.,"Create New")]'
+    pool_Dataset_Input = '//input[@data-placeholder="Pool/Dataset"]'
+    size_Input = '//input[@ix-auto="input__Size"]'
+    size_Select_Contain_GiB = '//mat-select[contains(.,"GiB")]'
+    block_Device_Next_Button = '//button[@id="goforward_button_0"]'
+    portal_Title = '//mat-step-header[contains(.,"Portal") and @tabindex="0"]'
+    portal_Select = '//mat-select[@ix-auto="select__Portal"]'
+    create_New_Option = '//mat-option[contains(.,"Create New")]'
+    discovery_Authentication_Method_Select = '//mat-select[@ix-auto="select__Discovery Authentication Method"]'
+    none_Option = mat_Option('NONE')
+    ip_Address_Select = '//mat-select[@ix-auto="select__IP Address"]'
+    zero_Ip_Option = mat_Option('0.0.0.0')
+    portal_Next_Button = '//button[@id="goforward_button_1"]'
+    initiator_Title = '//mat-step-header[contains(.,"Initiator") and @tabindex="0"]'
+    initiator_Input = '//input[@placeholder="Initiators"]'
+    initiator_Next_Button = '//button[@id="goforward_button_2"]'
+    confirm_Options_Title = '//mat-step-header[contains(.,"Confirm Options") and @tabindex="0"]'
+    iscsi_Summary = '//div[contains(text(),"iSCSI Summary")]'
+    summary_Name = '//div[contains(text(),"Name: iscsitest1")]'
+    extent_new_Device = '//div[contains(text(),"New Device: tank/iscsitest1(1 G)")]'
+    portal_listen = '//div[contains(text(),"Listen: 0.0.0.0")]'
+
+
 class ldap():
     title = '//h3[@class="ix-formtitle" and text()="LDAP"]'
     hostname_Input = '//ix-chips[@formcontrolname="hostname"]//input'
@@ -418,16 +466,26 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
-    nfs_Service_Checkbox = '//tr[contains(.,"NFS")]//mat-checkbox'
-    nfs_Service_Toggle = '//tr[contains(.,"NFS")]//mat-slide-toggle'
-    nfs_Service_Button = '//tr[contains(.,"NFS")]//button'
-    nfs_Service_Name = '//td[contains(text(),"NFS")]'
-    smb_Service_Toggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
-    smb_Service_Name = '//td[contains(text(),"SMB")]'
-    smb_Service_Button = '//tr[contains(.,"SMB")]//button'
-    ssh_Service_Toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
-    ssh_Service_Button = '//tr[contains(.,"SSH")]//button'
-    ssh_Service_Name = '//td[contains(text(),"SSH")]'
+
+    def service_Tr(serivce):
+        return f'//tr[contains(.,"{serivce}")]'
+
+    iscsi_Service = service_Tr('iSCSI')
+    iscsi_Service_Button = iscsi_Service + BUTTON
+    iscsi_Service_Checkbox = iscsi_Service + CHECKBOX
+    iscsi_Service_Toggle = iscsi_Service + TOGGLE
+    nfs_Service = service_Tr('NFS')
+    nfs_Service_Button = nfs_Service + BUTTON
+    nfs_Service_Checkbox = nfs_Service + CHECKBOX
+    nfs_Service_Toggle = nfs_Service + TOGGLE
+    smb_Service = service_Tr('SMB')
+    smb_Service_Button = smb_Service + BUTTON
+    smb_Service_Checkbox = smb_Service + CHECKBOX
+    smb_Service_Toggle = smb_Service + TOGGLE
+    ssh_Service = service_Tr('SSH')
+    ssh_Service_Button = ssh_Service + BUTTON
+    ssh_Service_Checkbox = ssh_Service + CHECKBOX
+    ssh_Service_Toggle = ssh_Service + TOGGLE
 
 
 class sharing:
@@ -439,6 +497,11 @@ class sharing:
     nfs_Panel_Title = '//a[contains(text(),"UNIX (NFS) Shares")]'
     nfs_Add_Button = '//span[contains(.,"UNIX (NFS) Shares")]//button[contains(.,"Add")]'
     nfs_Service_Status = '//span[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
+
+    iscsi_Wizard_Button = '//button[contains(.,"Wizard")]'
+    iscsi_Burger_Button = '//span[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
+    iscsi_Service_Status = '//span[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
+    turn_On_Service_Button = '//button[contains(.,"Turn On Service")]'
 
     def smb_Share_Name(share_name):
         return f'//div[contains(text(),"{share_name}")]'

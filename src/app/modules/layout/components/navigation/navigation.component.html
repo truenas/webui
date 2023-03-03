@@ -16,7 +16,7 @@
           *ngIf="item.type === MenuItemType.Link"
           matTooltipPosition="right"
           [ixTest]="getItemName(item)"
-          [routerLink]="['/', item.state]"
+          [routerLink]="getRouterLink(item.state)"
           [name]="getItemName(item)"
           [matTooltip]="isSidenavCollapsed ? (item.tooltip | translate) : null"
           (click)="closeMenu()"
