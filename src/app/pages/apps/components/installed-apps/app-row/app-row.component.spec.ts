@@ -8,6 +8,7 @@ describe('AppRowComponent', () => {
   const application = {
     name: 'app_name',
     status: ChartReleaseStatus.Active,
+    chart_metadata: { icon: 'https://image/' },
   } as ChartRelease;
 
   const createComponent = createComponentFactory({
@@ -25,6 +26,6 @@ describe('AppRowComponent', () => {
   });
 
   it('shows "Status"', () => {
-    expect(spectator.query('.cell-status span')).toHaveText(application.status);
+    expect(spectator.query('.cell-status .status')).toHaveText('Active');
   });
 });
