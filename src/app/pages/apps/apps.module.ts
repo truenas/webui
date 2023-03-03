@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
@@ -73,6 +74,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CoreComponents,
     MatSelectModule,
     MatCheckboxModule,
+    MatProgressSpinnerModule,
     FormsModule,
     MatDialogModule,
     ImgFallbackModule,

@@ -702,6 +702,7 @@
   "Delete {name}?": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Deleting interfaces while HA is enabled is not allowed.": "",
+  "Deploying": "",
   "Deployments": "",
   "Deregister": "",
   "Deregister TrueCommand Cloud Service": "",
