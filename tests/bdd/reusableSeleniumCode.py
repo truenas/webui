@@ -60,8 +60,8 @@ def Dismiss_All_Alerts(driver):
         assert wait_on_element(driver, 7, xpaths.alert.title)
         assert wait_on_element(driver, 7, '//button[contains(text(),"Dismiss All Alerts")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(text(),"Dismiss All Alerts")]').click()
-        assert wait_on_element(driver, 7, '//mat-icon[contains(.,"clear")]', 'clickable')
-        driver.find_element_by_xpath('//mat-icon[contains(.,"clear")]').click()
+        assert wait_on_element(driver, 7, '//ix-icon[contains(.,"clear")]', 'clickable')
+        driver.find_element_by_xpath('//ix-icon[contains(.,"clear")]').click()
 
 
 def Go_To_Service(driver):

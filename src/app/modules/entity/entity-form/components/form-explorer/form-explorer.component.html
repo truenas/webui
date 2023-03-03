@@ -76,11 +76,11 @@
         #treeNodeTemplate
         let-node
       >
-        <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">
-          folder
-        </mat-icon>
+        <ng-container *ngIf="node.data.hasChildren || node.data.children; else fileIcon">
+          <ix-icon name="folder"></ix-icon>
+        </ng-container>
         <ng-template #fileIcon>
-          <mat-icon>insert_drive_file</mat-icon>
+          <ix-icon name="insert_drive_file"></ix-icon>
         </ng-template>
         <span [title]="node.data.name">
           {{ node.data.subTitle }}

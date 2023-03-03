@@ -53,15 +53,15 @@
           [matMenuTriggerFor]="actionsMenu"
           [attr.aria-label]="'API Key Actions' | translate"
         >
-          <mat-icon>more_vert</mat-icon>
+          <ix-icon name="more_vert"></ix-icon>
         </button>
         <mat-menu #actionsMenu="matMenu">
           <button mat-menu-item ixTest="edit-key" (click)="openApiKeyForm(apiKey)">
-            <mat-icon>edit</mat-icon>
+            <ix-icon name="edit"></ix-icon>
             <span>{{ 'Edit' | translate }}</span>
           </button>
           <button mat-menu-item ixTest="delete" (click)="doDelete(apiKey)">
-            <mat-icon>delete</mat-icon>
+            <ix-icon name="delete"></ix-icon>
             <span>{{ 'Delete' | translate }}</span>
           </button>
         </mat-menu>

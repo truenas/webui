@@ -19,8 +19,8 @@
           (click)="checkAll()"
         >
           <span>
-            <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
-            <mat-icon *ngIf="!checkLength()">remove</mat-icon>
+            <ix-icon *ngIf="checkLength()" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!checkLength()" name="remove"></ix-icon>
           </span>
           <span>Select All</span>
         </button>
@@ -35,24 +35,24 @@
           (click)="onClick(option, i)"
         >
           <span>
-            <mat-icon *ngIf="selectStates[i]">check_circle</mat-icon>
-            <mat-icon *ngIf="!selectStates[i]">remove</mat-icon>
+            <ix-icon *ngIf="checkLength()" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!checkLength()" name="remove"></ix-icon>
           </span>
           <span>{{ option.label | translate }}</span>
           <span *ngIf="option.labelIcon" [class]="['icon-suffix', option.labelIconType]">
             &nbsp;
-            <mat-icon *ngIf="!option.labelIconType || option.labelIconType === 'default'">
-              {{ option.labelIcon }}
-            </mat-icon>
-            <mat-icon
-              *ngIf="option.labelIconType && option.labelIconType === 'community'"
-              fontSet="mdi-set"
-              [fontIcon]="'mdi-' + option.labelIcon"
-            ></mat-icon>
-            <mat-icon
-              *ngIf="option.labelIconType && option.labelIconType === 'custom'"
-              [svgIcon]="option.labelIcon"
-            ></mat-icon>
+            <ix-icon
+              *ngIf="!option.labelIconType || option.labelIconType === 'default'"
+              [name]="option.labelIcon"
+            ></ix-icon>
+            <ix-icon
+              *ngIf="option?.labelIconType === 'community'"
+              [name]="'mdi-' + option.labelIcon"
+            ></ix-icon>
+            <ix-icon
+              *ngIf="option?.labelIconType === 'custom'"
+              [name]="option.labelIcon"
+            ></ix-icon>
           </span>
         </button>
       </div>

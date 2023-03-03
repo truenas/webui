@@ -71,9 +71,8 @@
             [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
             (click)="$event.preventDefault()"
           >
-            <mat-icon>
-              {{ treeControl.isExpanded(topologyItem) ? 'expand_more' : 'chevron_right' }}
-            </mat-icon>
+            <ix-icon *ngIf="treeControl.isExpanded(topologyItem)" name="expand_more"></ix-icon>
+            <ix-icon *ngIf="!treeControl.isExpanded(topologyItem)" name="chevron_right"></ix-icon>
           </button>
           <ix-bootenv-node-item
             [node]="topologyItem"

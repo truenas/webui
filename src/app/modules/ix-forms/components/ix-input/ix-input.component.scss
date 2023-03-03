@@ -1,3 +1,4 @@
+@import 'scss-imports/cssvars';
 @import 'text-security/text-security.css';
 
 :host {
@@ -69,11 +70,29 @@
   padding-left: 28px;
 }
 
-.input-container .mat-icon {
+.input-container .ix-icon {
   font-size: 1rem;
   height: auto;
+  line-height: 1;
+  max-height: 16px;
   max-width: 16px;
   width: auto;
+}
+
+.input-container {
+  .toggle_pw {
+    @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+    opacity: var(--disabled-opacity);
+    position: absolute;
+    right: 0;
+    top: -5px;
+  }
+
+  .toggle_pw ix-icon {
+    font-size: 17px;
+    position: relative;
+    top: -2px;
+  }
 }
 
 .input-container .mat-icon-button {

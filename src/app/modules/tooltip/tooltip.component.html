@@ -10,13 +10,12 @@
         </div>
       </div>
       <div>
-        <mat-icon
+        <ix-icon
           class="close-icon"
-          fontSet="mdi-set"
-          fontIcon="mdi-close"
+          name="mdi-close"
           ixTest="close-tooltip"
           (click)="popperTooltip.hide()"
-        ></mat-icon>
+        ></ix-icon>
       </div>
     </div>
     <div
@@ -26,12 +25,13 @@
     ></div>
   </popper-content>
 
-  <mat-icon
-    class="material-icons tooltip-icon"
+  <ix-icon
+    class="tooltip-icon"
+    name="help_outline"
     popperAppendTo="body"
     [ixTest]="['tooltip', header]"
     [popperTrigger]="'click' | cast"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"
-  >help_outline</mat-icon>
+  ></ix-icon>
 </div>
