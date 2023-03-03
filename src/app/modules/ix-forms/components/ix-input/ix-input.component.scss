@@ -85,11 +85,13 @@
     opacity: var(--disabled-opacity);
     position: absolute;
     right: 0;
-    top: -6px;
+    top: -5px;
   }
 
   .toggle_pw ix-icon {
     font-size: 17px;
+    position: relative;
+    top: -2px;
   }
 }
 
