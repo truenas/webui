@@ -4,8 +4,11 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import { filter, tap } from 'rxjs';
+import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -28,6 +31,8 @@ export class AllowedAddressesComponent implements OnInit {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private loader: AppLoaderService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -56,6 +61,28 @@ export class AllowedAddressesComponent implements OnInit {
     this.form.controls.addresses.removeAt(index);
   }
 
+  handleServiceRestart(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
+      message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
+    }).pipe(
+      tap(() => this.slideInService.close()),
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loader.open();
+      this.ws.call('system.general.ui_restart').pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogService.errorReport(helptextSystemGeneral.dialog_error_title, error.reason, error.trace.formatted);
+        },
+      });
+    });
+  }
+
   onSubmit(): void {
     this.isFormLoading = true;
     const addresses = this.form.value.addresses;
@@ -64,7 +91,7 @@ export class AllowedAddressesComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.handleServiceRestart();
       },
       error: (error) => {
         this.isFormLoading = false;
