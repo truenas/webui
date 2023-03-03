@@ -1,5 +1,9 @@
 $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
 
+::ng-deep .cdk-overlay-container {
+  z-index: 99999; 
+}
+
 .mat-mdc-dialog-actions {
   display: block;
   min-height: unset;
