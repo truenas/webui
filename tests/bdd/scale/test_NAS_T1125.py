@@ -17,7 +17,7 @@ from pytest_bdd import (
     when,
     parsers
 )
-
+pytestmark = [pytest.mark.debug_test]
 
 @pytest.mark.dependency(name='LDAP_SETUP')
 @scenario('features/NAS-T1125.feature', 'Setting up LDAP and verify that it is setup on the NAS')

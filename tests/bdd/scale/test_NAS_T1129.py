@@ -19,6 +19,8 @@ from pytest_bdd import (
     parsers
 )
 from pytest_dependency import depends
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1129.feature', 'Create an smb share with the LDAP dataset and verify the connection')

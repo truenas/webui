@@ -14,9 +14,8 @@ from pytest_bdd import (
     then,
     when,
 )
-import pytest
+
 from pytest_dependency import depends
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1345.feature', 'Apps Page - Validate plex')
