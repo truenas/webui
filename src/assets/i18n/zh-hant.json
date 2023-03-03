@@ -1335,6 +1335,7 @@
   "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" are allowed.": "",
   "Internetwork control": "",
   "Invalid Pod name": "",
+  "Invalid cron expression": "",
   "Invalid file": "",
   "Invalid format or character": "",
   "Invalid format or character.": "",
