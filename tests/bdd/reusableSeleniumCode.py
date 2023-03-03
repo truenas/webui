@@ -1,5 +1,4 @@
 
-
 import time
 import xpaths
 from function import (
@@ -118,6 +117,11 @@ def Restart_SMB_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
     assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+
+
+def Select_Option(driver, xpath):
+    assert wait_on_element(driver, 5, xpath, 'clickable')
+    driver.find_element_by_xpath(xpath).click()
 
 
 def Trigger_Failover(driver):
