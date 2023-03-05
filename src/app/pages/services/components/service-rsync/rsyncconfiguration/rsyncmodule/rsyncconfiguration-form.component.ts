@@ -18,6 +18,7 @@ export class RYSNCConfigurationFormComponent {
   protected isEntity = true;
   formGroup: FormGroup;
   protected pk: any;
+  protected queryKey = 'id';
   protected addCall = 'rsyncmod.create';
   protected isNew: boolean;
   fieldConfig: FieldConfig[] = [];
