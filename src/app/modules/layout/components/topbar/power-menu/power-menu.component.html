@@ -6,21 +6,21 @@
   [matTooltip]="tooltips.power | translate"
   [matMenuTriggerFor]="powerMenu"
 >
-  <mat-icon>power_settings_new</mat-icon>
+  <ix-icon name="power_settings_new"></ix-icon>
 </button>
 <mat-menu #powerMenu="matMenu">
   <button name="power-log-out" mat-menu-item ixTest="log-out" (click)="onSignOut()">
-    <mat-icon>exit_to_app</mat-icon>
+    <ix-icon name="exit_to_app"></ix-icon>
     {{ 'Log Out' | translate }}
   </button>
 
   <button name="power-restart" mat-menu-item ixTest="restart" (click)="onReboot()">
-    <mat-icon>replay</mat-icon>
+    <ix-icon name="replay"></ix-icon>
     {{ 'Restart' | translate }}
   </button>
 
   <button name="power-shut-down" mat-menu-item ixTest="shut-down" (click)="onShutdown()">
-    <mat-icon>power_settings_new</mat-icon>
+    <ix-icon name="power_settings_new"></ix-icon>
     {{ 'Shut Down' | translate }}
   </button>
 </mat-menu>

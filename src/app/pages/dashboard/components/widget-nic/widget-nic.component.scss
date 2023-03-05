@@ -122,17 +122,17 @@
 
 .nic-name.up .icon-wrapper,
 .link-state.up .icon-wrapper,
-.link-state.up .mat-icon {
+.link-state.up .ix-icon {
   color: var(--green);
 }
 
 .nic-name.down .icon-wrapper,
 .link-state.down .icon-wrapper,
-.link-state.down .mat-icon {
+.link-state.down .ix-icon {
   color: var(--red);
 }
 
-.link-state .mat-icon {
+.link-state .ix-icon {
   font-size: 18px;
   height: 18px;
   width: 18px;
@@ -160,7 +160,7 @@
   width: 12px;
 }
 
-.carousel-nav .back-arrow.mat-icon {
+.carousel-nav .back-arrow.ix-icon {
   margin-top: -3px;
 }
 
@@ -194,7 +194,7 @@
   cursor: pointer;
 }
 
-.slide .mat-icon.next-slide {
+.slide .ix-icon.next-slide {
   position: absolute;
   right: 0;
 }

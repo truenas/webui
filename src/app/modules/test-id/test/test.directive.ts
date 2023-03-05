@@ -72,6 +72,8 @@ export class TestDirective {
         return tagName;
       case 'a':
         return 'link';
+      case 'ix-icon':
+        return 'icon';
       case 'div':
       case 'p':
         return 'text';

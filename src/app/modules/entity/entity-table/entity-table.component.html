@@ -37,7 +37,7 @@
               [id]="maction?.id"
               (click)="maction.onClick(this.selection.selected)"
             >
-              <mat-icon>{{ maction?.icon }}</mat-icon>
+              <ix-icon [name]="maction?.icon"></ix-icon>
               &nbsp;
               <span>{{ maction?.label | translate }}</span>
             </button>
@@ -54,7 +54,7 @@
                 ixTest="delete-selected"
                 (click)="doMultiDelete(this.selection.selected)"
               >
-                <mat-icon>delete</mat-icon>
+                <ix-icon name="delete"></ix-icon>
                 <br />
                 <span>
                   {{ 'Delete' | translate }}
@@ -71,7 +71,7 @@
                 [matTooltip]="'Delete selections' | translate"
                 (click)="doMultiDelete(this.selection.selected)"
               >
-                <mat-icon>delete</mat-icon>
+                <ix-icon name="delete"></ix-icon>
               </button>
             </ng-container>
           </span>
@@ -170,12 +170,11 @@
                     [ixTest]="['collapse-row', getRowIdentifier(element)]"
                     [attr.aria-label]="'Close expanded row' | translate"
                   >
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-chevron-up"
+                    <ix-icon
+                      name="mdi-chevron-up"
                       (mouseover)="onHover($event, true)"
                       (mouseout)="onHover($event, false)"
-                    ></mat-icon>
+                    ></ix-icon>
                   </button>
                 </ng-container>
                 <ng-container *ngIf="getRowIdentifier(element) !== getRowIdentifier(expandedElement)">
@@ -184,12 +183,11 @@
                     [ixTest]="['expand-row', getRowIdentifier(element)]"
                     [attr.aria-label]="'Expand row' | translate"
                   >
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-chevron-down"
+                    <ix-icon
+                      name="mdi-chevron-down"
                       (mouseover)="onHover($event, true)"
                       (mouseout)="onHover($event, false)"
-                    ></mat-icon>
+                    ></ix-icon>
                   </button>
                 </ng-container>
               </ng-container>
@@ -326,7 +324,7 @@
                     *ngIf="element[column].warnings?.length > 0"
                     class="label-warning-icon"
                   >
-                    <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    <ix-icon name="mdi-alert"></ix-icon>
                   </div>
                 </button>
               </ng-template>
@@ -393,13 +391,12 @@
             >
               <div class="path-locked-status">
                 <div class="text-overflow-ellipsis">{{ element[column] }}</div>
-                <mat-icon
+                <ix-icon
                   *ngIf="element.locked"
                   class="append"
+                  name="locked"
                   [matTooltip]="'Dataset is currently locked' | translate"
-                >
-                  locked
-                </mat-icon>
+                ></ix-icon>
               </div>
             </td>
           </ng-container>

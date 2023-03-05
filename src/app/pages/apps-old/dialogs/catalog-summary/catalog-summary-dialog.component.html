@@ -85,12 +85,11 @@
             <span>{{ versionStatusLabel(version) }}</span>
           </div>
           <span fxFlex="30%" class="text-center info-col">
-            <mat-icon
+            <ix-icon
               class="version-tooltip"
+              name="info"
               [htmlTooltip]="version.value.healthy ? version.value.app_readme : version.value.healthy_error"
-            >
-              info
-            </mat-icon>
+            ></ix-icon>
           </span>
         </div>
       </div>
