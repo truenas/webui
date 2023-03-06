@@ -34,10 +34,11 @@ export class ZfsInfoCardComponent {
   }
 
   get isRaidzParent(): boolean {
-    return this.topologyParentItem.type === TopologyItemType.Raidz
+    return this.topologyItem.guid === PoolTopologyCategory.Data
+    && (this.topologyParentItem.type === TopologyItemType.Raidz
       || this.topologyParentItem.type === TopologyItemType.Raidz1
       || this.topologyParentItem.type === TopologyItemType.Raidz2
-      || this.topologyParentItem.type === TopologyItemType.Raidz3;
+      || this.topologyParentItem.type === TopologyItemType.Raidz3);
   }
 
   get isDisk(): boolean {
