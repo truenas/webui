@@ -558,6 +558,7 @@ export class AppSchemaService {
       }
       formField.hidden$.next(true);
       formField.disable();
+      formField.clearValidators();
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges
@@ -601,6 +602,7 @@ export class AppSchemaService {
       }
       formField.hidden$.next(true);
       formField.disable();
+      formField.clearValidators();
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges
