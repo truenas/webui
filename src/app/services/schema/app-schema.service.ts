@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators, AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { isValidCron } from 'cron-validator';
+import { parseString } from 'cron-parser';
 import _ from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -213,6 +213,10 @@ export class AppSchemaService {
     return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
   }
 
+  checkIsValidCrontab(crontab: string): boolean {
+    return crontab && !Object.keys(parseString(crontab).errors).length;
+  }
+
   serializeFormValue(
     data: SerializeFormValue,
     schema: ChartSchema['schema'],
@@ -221,7 +225,7 @@ export class AppSchemaService {
     if (data == null) {
       return data;
     }
-    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && isValidCron(data.toString())) {
+    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCrontab(data.toString())) {
       return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
@@ -351,9 +355,9 @@ export class AppSchemaService {
       altDefault = false;
     }
 
-    const defaultValue = schema.default !== undefined ? schema.default : altDefault;
     const nullValidator = Validators.nullValidator;
-    const isCron = schema.type === ChartSchemaType.String && schema.default && isValidCron(schema.default.toString());
+    const defaultValue = schema.default !== undefined ? schema.default : altDefault;
+    const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
 
     const newFormControl = new CustomUntypedFormControl(defaultValue, [
       schema.required ? Validators.required : nullValidator,
@@ -362,7 +366,7 @@ export class AppSchemaService {
       schema.max_length ? Validators.maxLength(schema.max_length) : nullValidator,
       schema.min_length ? Validators.minLength(schema.min_length) : nullValidator,
       schema.type === ChartSchemaType.Uri ? Validators.pattern(this.urlValidationService.urlRegex) : nullValidator,
-      isCron ? cronValidator() : nullValidator,
+      schema.type === ChartSchemaType.String && schema.default && isValidCrontab ? cronValidator() : nullValidator,
     ]);
 
     this.handleSchemaSubQuestions(payload, newFormControl);

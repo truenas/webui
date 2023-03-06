@@ -1,12 +1,12 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { isValidCron } from 'cron-validator';
+import { parseString } from 'cron-parser';
 
 export function cronValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
+  return (control: AbstractControl<string>): ValidationErrors | null => {
     if (!control.value || control.value === '' || control.value === undefined) {
       return null;
     }
 
-    return !isValidCron(control.value) ? { cron: true } : null;
+    return Object.keys(parseString(control.value).errors).length ? { cron: true } : null;
   };
 }
