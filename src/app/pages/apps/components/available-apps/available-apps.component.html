@@ -11,35 +11,28 @@
 
 <ix-available-apps-header></ix-available-apps-header>
 
-<div class="available-apps-list">
-  <ng-container *ngTemplateOutlet="appsSection; context: {
-    title: 'Recommended Apps',
-    apps: recommendedApps
-  }"></ng-container>
+<div *ngIf="apps.length" class="available-apps-list">
+  <ng-container *ngFor="let appSection of appSections; trackBy: trackByAppSectionTitle">
+    <section *ngIf="appSection.apps$ | async as apps">
+      <ng-container *ngIf="apps.length">
+        <h3 class="apps-section-title">
+          {{ appSection.title | translate }}
+        </h3>
 
-  <ng-container *ngTemplateOutlet="appsSection; context: {
-    title: 'New & Updated Apps',
-    apps: newAndUpdatedApps
-  }"></ng-container>
+        <div class="apps">
+          <ix-app-card
+            *ngFor="let app of apps; trackBy: trackByAppId"
+            [app]="app"
+            [routerLink]="['/apps', 'available', app.name]"
+          ></ix-app-card>
+        </div>
+
+        <p *ngIf="apps.length <= sliceAmount" class="view-all" (click)="appSection.onViewMore()">
+          <b>
+            {{ 'View All' | translate }} {{ appSection.title | translate }}
+          </b>
+        </p>
+      </ng-container>
+    </section>
+  </ng-container>
 </div>
-
-<ng-template #appsSection let-title="title" let-apps="apps">
-  <section *ngIf="apps.length">
-    <h3 class="apps-section-title">
-      {{ title | translate }}
-    </h3>
-    <div class="apps">
-      <ix-app-card
-        *ngFor="let app of apps; trackBy: trackByAppId"
-        [app]="app"
-        [routerLink]="['/apps', 'available', app.name]"
-      ></ix-app-card>
-    </div>
-    <p class="view-all">
-      <b>
-        {{ 'View All' | translate }}
-        {{ title | translate }}
-      </b>
-    </p>
-  </section>
-</ng-template>

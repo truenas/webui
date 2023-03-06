@@ -26,6 +26,10 @@ export class ApplicationsService {
     return this.ws.call('catalog.query', [[], { extra: { cache: true, item_details: true } }]);
   }
 
+  getAllAppCategories(): Observable<string[]> {
+    return this.ws.call('app.categories');
+  }
+
   getChartReleases(name?: string): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true } };
 

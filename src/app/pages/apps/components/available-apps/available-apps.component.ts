@@ -2,6 +2,7 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -10,6 +11,12 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+
+interface AppSection {
+  title: string;
+  apps$: BehaviorSubject<CatalogApp[]>;
+  onViewMore: () => void;
+}
 
 @UntilDestroy()
 @Component({
@@ -22,14 +29,26 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   apps: CatalogApp[] = [];
 
-  get recommendedApps(): CatalogApp[] {
-    // return this.apps.filter((app) => app.recommended).slice(0, 6);
-    return this.apps.slice(0, 6);
-  }
+  allRecommendedApps: CatalogApp[] = [];
+  allNewAndUpdatedApps: CatalogApp[] = [];
 
-  get newAndUpdatedApps(): CatalogApp[] {
-    return this.apps.slice(0, 6).sort((a, b) => new Date(a.last_update).getTime() - new Date(b.last_update).getTime());
-  }
+  recommendedApps$ = new BehaviorSubject<CatalogApp[]>([]);
+  newAndUpdatedApps$ = new BehaviorSubject<CatalogApp[]>([]);
+
+  sliceAmount = 6;
+
+  appSections: AppSection[] = [
+    {
+      title: 'Recommended Apps',
+      apps$: this.recommendedApps$,
+      onViewMore: () => this.recommendedApps$.next(this.allRecommendedApps),
+    },
+    {
+      title: 'New & Updated Apps',
+      apps$: this.newAndUpdatedApps$,
+      onViewMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
+    },
+  ];
 
   constructor(
     private layoutService: LayoutService,
@@ -75,16 +94,49 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     return `${app.catalog.id}-${app.catalog.train}-${app.name}`;
   }
 
+  trackByAppSectionTitle(_: number, appSection: AppSection): string {
+    return `${appSection.title}`;
+  }
+
   private loadTestData(): void {
-    // TODO: Temporary
     this.loader.open();
-    this.appService.getAllCatalogs().pipe(
-      catalogToAppsTransform(),
-      untilDestroyed(this),
-    ).subscribe((apps) => {
-      this.apps = apps;
-      this.loader.close();
-      this.cdr.markForCheck();
+
+    combineLatest([
+      this.appService.getAllCatalogs().pipe(
+        catalogToAppsTransform(),
+      ),
+      this.appService.getAllAppCategories(),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(([apps, appCategories]) => {
+        this.setupApps(apps, appCategories);
+        this.loader.close();
+        this.cdr.markForCheck();
+      });
+  }
+
+  private setupApps(apps: CatalogApp[], appCategories: string[]): void {
+    this.apps = apps;
+
+    this.allRecommendedApps = this.apps.filter((app) => app.recommended);
+    this.allNewAndUpdatedApps = this.apps
+      .sort((a, b) => new Date(a.last_update).getTime() - new Date(b.last_update).getTime());
+
+    this.recommendedApps$.next(this.allRecommendedApps.slice(0, this.sliceAmount));
+    this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps.slice(0, this.sliceAmount));
+
+    appCategories.forEach((category) => {
+      this.appSections.push(
+        {
+          title: category,
+          apps$: new BehaviorSubject(
+            this.apps.filter((app) => app.categories.some((appCategory) => appCategory === category)),
+          ),
+          onViewMore: () => {},
+        },
+      );
     });
+
+    this.cdr.markForCheck();
   }
 }
