@@ -4,7 +4,7 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/apps/apps';
-import { Catalog, CatalogApp, CatalogTrain } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogItems } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -41,7 +41,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
     this.ws.call('catalog.items', [this.catalog.label])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (result: CatalogTrain) => {
+        next: (result: CatalogItems) => {
           this.loader.close();
           this.catalogItems = [];
           this.trainOptions = ['All'];
@@ -49,8 +49,8 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
             Object.keys(result).forEach((trainKey) => {
               const train = result[trainKey];
               this.trainOptions.push(trainKey);
-              Object.keys(train).forEach((appKey: keyof CatalogApp) => {
-                const app = train[appKey] as unknown as CatalogApp;
+              Object.keys(train).forEach((appKey) => {
+                const app = train[appKey];
                 this.catalogItems.push({
                   train: trainKey,
                   app: appKey,
