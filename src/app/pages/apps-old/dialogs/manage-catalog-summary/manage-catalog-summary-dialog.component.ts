@@ -3,10 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
-import { Catalog, CatalogItems } from 'app/interfaces/catalog.interface';
-import { Job } from 'app/interfaces/job.interface';
+import { Catalog, CatalogApp, CatalogTrain } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -43,24 +41,19 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.job('catalog.items', [this.catalog.label])
+    this.ws.call('catalog.items', [this.catalog.label])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (job: Job<CatalogItems>) => {
-          if (job.state !== JobState.Success) {
-            return;
-          }
-
+        next: (result: CatalogTrain) => {
           this.loader.close();
-          const result = job.result;
           this.catalogItems = [];
           this.trainOptions = ['All'];
           if (result) {
             Object.keys(result).forEach((trainKey) => {
               const train = result[trainKey];
               this.trainOptions.push(trainKey);
-              Object.keys(train).forEach((appKey) => {
-                const app = train[appKey];
+              Object.keys(train).forEach((appKey: keyof CatalogApp) => {
+                const app = train[appKey] as unknown as CatalogApp;
                 this.catalogItems.push({
                   train: trainKey,
                   app: appKey,
