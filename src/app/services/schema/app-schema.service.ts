@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators, AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { parseString } from 'cron-parser';
 import _ from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -22,6 +23,7 @@ import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.int
 import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
+import { cronValidator } from 'app/modules/entity/entity-form/validators/cron-validation';
 import {
   CustomUntypedFormArray,
 } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
@@ -49,15 +51,17 @@ import {
   transformStringSchemaType,
   transformUriSchemaType,
 } from 'app/services/schema/app-shema.transformer';
-
-const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+import { UrlValidationService } from 'app/services/url-validation.service';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class AppSchemaService {
-  constructor(protected filesystemService: FilesystemService) {}
+  constructor(
+    protected filesystemService: FilesystemService,
+    private urlValidationService: UrlValidationService,
+  ) {}
 
   transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;
@@ -209,12 +213,12 @@ export class AppSchemaService {
     event.array.removeAt(event.index);
   }
 
-  checkIsValidCronTab(crontab: string): boolean {
-    return !!crontab.match(/^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[a-z]{3}(,[a-z]{3}){0,10}) ?){5})$/);
-  }
-
   checkIsValidSchedule(schedule: Schedule): boolean {
     return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
+  }
+
+  checkIsValidCrontab(crontab: string): boolean {
+    return crontab && !Object.keys(parseString(crontab).errors).length;
   }
 
   serializeFormValue(
@@ -225,7 +229,7 @@ export class AppSchemaService {
     if (data == null) {
       return data;
     }
-    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCronTab(data.toString())) {
+    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCrontab(data.toString())) {
       return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
@@ -399,15 +403,18 @@ export class AppSchemaService {
       altDefault = false;
     }
 
+    const nullValidator = Validators.nullValidator;
     const defaultValue = schema.default !== undefined ? schema.default : altDefault;
+    const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
 
     const newFormControl = new CustomUntypedFormControl(defaultValue, [
-      schema.required ? Validators.required : Validators.nullValidator,
-      schema.max ? Validators.max(schema.max) : Validators.nullValidator,
-      schema.min ? Validators.min(schema.min) : Validators.nullValidator,
-      schema.max_length ? Validators.maxLength(schema.max_length) : Validators.nullValidator,
-      schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
-      schema.type === ChartSchemaType.Uri ? Validators.pattern(urlRegex) : Validators.nullValidator,
+      schema.required ? Validators.required : nullValidator,
+      schema.max ? Validators.max(schema.max) : nullValidator,
+      schema.min ? Validators.min(schema.min) : nullValidator,
+      schema.max_length ? Validators.maxLength(schema.max_length) : nullValidator,
+      schema.min_length ? Validators.minLength(schema.min_length) : nullValidator,
+      schema.type === ChartSchemaType.Uri ? Validators.pattern(this.urlValidationService.urlRegex) : nullValidator,
+      schema.type === ChartSchemaType.String && schema.default && isValidCrontab ? cronValidator() : nullValidator,
     ]);
 
     this.handleSchemaSubQuestions(payload, newFormControl);
