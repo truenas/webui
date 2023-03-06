@@ -14,6 +14,7 @@ import { LayoutService } from 'app/services/layout.service';
 
 interface AppSection {
   title: string;
+  totalApps: number;
   apps$: BehaviorSubject<CatalogApp[]>;
   onViewMore: () => void;
 }
@@ -28,27 +29,13 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   apps: CatalogApp[] = [];
-
   allRecommendedApps: CatalogApp[] = [];
   allNewAndUpdatedApps: CatalogApp[] = [];
+  sliceAmount = 6;
+  appSections: AppSection[] = [];
 
   recommendedApps$ = new BehaviorSubject<CatalogApp[]>([]);
   newAndUpdatedApps$ = new BehaviorSubject<CatalogApp[]>([]);
-
-  sliceAmount = 6;
-
-  appSections: AppSection[] = [
-    {
-      title: 'Recommended Apps',
-      apps$: this.recommendedApps$,
-      onViewMore: () => this.recommendedApps$.next(this.allRecommendedApps),
-    },
-    {
-      title: 'New & Updated Apps',
-      apps$: this.newAndUpdatedApps$,
-      onViewMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
-    },
-  ];
 
   constructor(
     private layoutService: LayoutService,
@@ -125,13 +112,29 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     this.recommendedApps$.next(this.allRecommendedApps.slice(0, this.sliceAmount));
     this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps.slice(0, this.sliceAmount));
 
+    this.appSections.push(
+      {
+        title: 'Recommended Apps',
+        apps$: this.recommendedApps$,
+        totalApps: this.allNewAndUpdatedApps.length,
+        onViewMore: () => this.recommendedApps$.next(this.allRecommendedApps),
+      },
+      {
+        title: 'New & Updated Apps',
+        apps$: this.newAndUpdatedApps$,
+        totalApps: this.allNewAndUpdatedApps.length,
+        onViewMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
+      },
+    );
+
     appCategories.forEach((category) => {
+      const categorizedApps = this.apps.filter((app) => app.categories.some((appCategory) => appCategory === category));
+
       this.appSections.push(
         {
           title: category,
-          apps$: new BehaviorSubject(
-            this.apps.filter((app) => app.categories.some((appCategory) => appCategory === category)),
-          ),
+          apps$: new BehaviorSubject(categorizedApps.slice(0, this.sliceAmount)),
+          totalApps: categorizedApps.length,
           onViewMore: () => {},
         },
       );

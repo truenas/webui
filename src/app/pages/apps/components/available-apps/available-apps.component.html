@@ -27,7 +27,7 @@
           ></ix-app-card>
         </div>
 
-        <p *ngIf="apps.length <= sliceAmount" class="view-all" (click)="appSection.onViewMore()">
+        <p *ngIf="appSection.totalApps > sliceAmount" class="view-all" (click)="appSection.onViewMore()">
           <b>
             {{ 'View All' | translate }} {{ appSection.title | translate }}
           </b>

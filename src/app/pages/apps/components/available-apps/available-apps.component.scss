@@ -4,6 +4,7 @@
       column-gap: 40px;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+      margin-bottom: 20px;
       row-gap: 16px;
     }
 
@@ -23,7 +24,7 @@
       cursor: pointer;
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 0;
+      margin: 0;
     }
   }
 }
