@@ -7,7 +7,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
+import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -16,6 +18,7 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 @UntilDestroy()
 @Component({
   templateUrl: 'allowed-addresses.component.html',
+  styleUrls: ['./allowed-addresses.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesComponent implements OnInit {
@@ -33,6 +36,7 @@ export class AllowedAddressesComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private loader: AppLoaderService,
     private translate: TranslateService,
+    private validatorsService: IxValidatorsService,
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +58,12 @@ export class AllowedAddressesComponent implements OnInit {
   }
 
   addAddress(): void {
-    this.form.controls.addresses.push(this.fb.control('', [Validators.required]));
+    this.form.controls.addresses.push(
+      this.fb.control('', [
+        this.validatorsService.withMessage(ipv4Validator(), this.translate.instant('Enter a valid IPv4 address.')),
+        Validators.required,
+      ]),
+    );
   }
 
   removeAddress(index: number): void {
