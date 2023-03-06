@@ -47,6 +47,7 @@ export class IxErrorsComponent implements OnChanges {
       { min, max },
     ),
     number: () => this.translate.instant('Value must be a number'),
+    cron: () => this.translate.instant('Invalid cron expression'),
   };
 
   constructor(
@@ -101,6 +102,8 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.forbidden(this.control.value);
       case DefaultValidationError.Number:
         return this.defaultErrMessages.number();
+      case DefaultValidationError.Cron:
+        return this.defaultErrMessages.cron();
       default:
         return undefined;
     }
