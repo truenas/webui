@@ -23,7 +23,7 @@
     <mat-form-field *ngIf="config.inputType !== 'file'">
       <div class="input-container">
         <span *ngIf="config.searchable" class="searchable">
-          <mat-icon>search</mat-icon>
+          <ix-icon name="search"></ix-icon>
         </span>
         <input
           #input
@@ -44,11 +44,10 @@
           (keyup)="search(input.value)"
         />
         <span *ngIf="hasValue() && !config.readonly" class="reset-input">
-          <mat-icon
-            fontSet="mdi-set"
-            fontIcon="mdi-close-circle"
+          <ix-icon
+            name="mdi-close-circle"
             (click)="resetInput()"
-          ></mat-icon>
+          ></ix-icon>
         </span>
       </div>
       <mat-autocomplete

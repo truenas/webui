@@ -5,7 +5,6 @@ import { EMPTY, throwError } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { rootUserId } from 'app/constants/root-user-id.constant';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -29,8 +28,8 @@ export class PreferencesEffects {
   loadPreferences$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
-        map(([user]) => {
+      return this.ws.call('auth.me').pipe(
+        map((user) => {
           const preferences = user.attributes?.preferences;
           const dashboardState = user.attributes?.dashState;
 
@@ -75,7 +74,7 @@ export class PreferencesEffects {
         return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
       }
 
-      return this.ws.call('user.set_attribute', [rootUserId, 'preferences', state.preferences]);
+      return this.ws.call('auth.set_attribute', ['preferences', state.preferences]);
     }),
   ), { dispatch: false });
 

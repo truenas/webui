@@ -35,7 +35,7 @@ describe('DatasetRolesCellComponent', () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
     expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('truenas_scale_logomark');
+    expect(await ixIcon.getName()).toBe('logo_truenas_scale_mark');
     expect(spectator.query(MatTooltip).message).toBe('This dataset is used by the system');
   });
 

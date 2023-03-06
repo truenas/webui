@@ -42,7 +42,6 @@ describe('SmbFormComponent', () => {
     guestok: true,
     hostsallow: ['host1'],
     hostsdeny: ['host2'],
-    auxsmbconf: '',
     aapl_name_mangling: false,
     abe: true,
     acl: true,
@@ -81,29 +80,24 @@ describe('SmbFormComponent', () => {
     durablehandle: 'Enable SMB2/3 Durable Handles',
     fsrvp: 'Enable FSRVP',
     path_suffix: 'Path Suffix',
-    auxsmbconf: 'Auxiliary Parameters',
   };
 
   const presets: SmbPresets = {
     NO_PRESET: {
       verbose_name: 'No presets',
-      params: {
-        auxsmbconf: '',
-      },
+      params: {},
     },
     ENHANCED_TIMEMACHINE: {
       verbose_name: 'Multi-user time machine',
       params: {
         path_suffix: '%U',
         timemachine: true,
-        auxsmbconf: 'zfs_core:zfs_auto_create=true\nzfs_core:base_user_quota=1T',
       },
     },
     PRIVATE_DATASETS: {
       verbose_name: 'Private SMB Datasets and Shares',
       params: {
         path_suffix: '%U',
-        auxsmbconf: 'zfs_core:zfs_auto_create=true',
       },
     },
   };
@@ -205,11 +199,8 @@ describe('SmbFormComponent', () => {
 
     for (let i = 0; i < labels.length; i++) {
       await purposeSelect.setValue(labels[i]);
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
       for (const param in presets[presetKeys[i]].params) {
-        if (param === 'auxsmbconf') {
-          continue;
-        }
         const expectedValue = presets[presetKeys[i]].params[param as keyof SmbShare];
         const value = await fields[formLabels[param]].getValue();
         expect(value).toStrictEqual(expectedValue);
@@ -394,7 +385,6 @@ describe('SmbFormComponent', () => {
       streams: true,
       durablehandle: true,
       fsrvp: false,
-      auxsmbconf: '',
       timemachine_quota: 0,
     }]);
 

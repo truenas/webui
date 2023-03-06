@@ -3,7 +3,7 @@ import {
   Component, OnInit, ChangeDetectionStrategy, OnDestroy, ViewChild, ChangeDetectorRef,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatLegacyColumnDef as MatColumnDef, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatColumnDef, MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';

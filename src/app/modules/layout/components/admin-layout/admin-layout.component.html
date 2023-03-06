@@ -20,18 +20,16 @@
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
       <div [class]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
         <a routerLink="/dashboard" class="logo" ixTest="main-logo">
-          <mat-icon
-            alt="TrueNAS SCALE"
+          <ix-icon
             class="app-logo"
-            [svgIcon]="themeService.isDefaultTheme ? 'ix:truenas_scale_logomark_color': 'ix:truenas_scale_logomark'"
-          ></mat-icon>
+            [name]="themeService.isDefaultTheme ? 'ix:logo_truenas_scale_mark_color': 'ix:logo_truenas_scale_mark'"
+          ></ix-icon>
         </a>
         <a routerLink="/dashboard" class="logo-text" ixTest="main-logo">
-          <mat-icon
-            alt="TrueNAS SCALE"
+          <ix-icon
             class="app-logo-text"
-            [svgIcon]="themeService.isDefaultTheme? 'ix:truenas_scale_logotype_color': 'ix:truenas_scale_logotype'"
-          ></mat-icon>
+            [name]="themeService.isDefaultTheme? 'ix:logo_truenas_scale_type_color': 'ix:logo_truenas_scale_type'"
+          ></ix-icon>
         </a>
       </div>
 
@@ -65,7 +63,7 @@
         matTooltipPosition="right"
         [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + (copyrightYear$ | async) + ' by iXsystems Inc.'"
       >
-        <mat-icon>copyright</mat-icon>
+        <ix-icon name="copyright"></ix-icon>
       </div>
     </div>
   </mat-sidenav>

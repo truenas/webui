@@ -1,8 +1,9 @@
 import {
-  Directive, ElementRef, HostBinding, Input,
+  Directive, ElementRef, HostBinding, Input, Optional,
 } from '@angular/core';
 import { kebabCase } from 'lodash';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 /**
  * Adds test attribute to the element for the benefit of Release Engineering.
@@ -25,12 +26,16 @@ export class TestDirective {
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
+    @Optional() private overrideDirective: TestOverrideDirective,
   ) {}
 
   get normalizedDescription(): string[] {
-    const description = Array.isArray(this.description) ? this.description : [this.description];
+    const description = this.overrideDirective?.overrideDescription ?? this.description;
+    const normalizedDescription = Array.isArray(description) ? description : [description];
 
-    return description.map((part) => kebabCase(String(part)));
+    return normalizedDescription
+      .filter((part) => part)
+      .map((part) => kebabCase(String(part)));
   }
 
   @HostBinding('attr.data-test')
@@ -67,9 +72,14 @@ export class TestDirective {
         return tagName;
       case 'a':
         return 'link';
+      case 'ix-icon':
+        return 'icon';
+      case 'div':
+      case 'p':
+        return 'text';
       default:
         assertUnreachable(tagName as never);
-        throw new Error(`Unknown element type: ${tagName}`);
+        return '';
     }
   }
 }

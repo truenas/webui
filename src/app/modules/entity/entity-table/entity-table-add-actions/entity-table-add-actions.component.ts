@@ -25,8 +25,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
   direction = 'left';
 
   get totalActions(): number {
-    const addAction = this.entity.conf.routeAdd || this.entity.conf.doAdd ? 1 : 0;
-    return this.actions.length + addAction;
+    return this.actions.length;
   }
 
   get conf(): EntityTableAddActionsConfig {

@@ -2,10 +2,10 @@ import { HarnessLoader, parallel, TestKey } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { NgControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatChipGridHarness } from '@angular/material/chips/testing';
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
-import { MatLegacyAutocompleteHarness as MatAutocompleteHarness } from '@angular/material/legacy-autocomplete/testing';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -122,7 +122,7 @@ describe('IxChipsComponent', () => {
     rootRemoveBtn.click();
     await matChipList.getRows();
 
-    expect(spectator.query('.mat-error')).toHaveText('Apply To Users is required');
+    expect(spectator.query('.mat-mdc-form-field-error')).toHaveText('Apply To Users is required');
   });
 
   it('disables input when form control is disabled', async () => {

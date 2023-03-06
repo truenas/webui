@@ -170,11 +170,11 @@ def navigate_to_dashboard(driver):
 def serial2_should_be_rebooting(driver, serial2):
     """"{serial2}" should be rebootting."""
     assert not is_element_present(driver, f'//span[contains(.,"{serial2}")]')
-    assert is_element_present(driver, '//mat-icon[@svgicon="ix:ha_disabled"]')
+    assert is_element_present(driver, '//ix-icon[@svgicon="ix:ha_disabled"]')
 
 
 @then(parsers.parse('wait for "{serial2}" to be up'))
 def wait_for_second_node_to_be_up(driver, serial2):
     """wait for "{serial2}" to be up"""
     assert wait_on_element(driver, 1, 300, f'//span[contains(.,"{serial2}")]')
-    assert wait_on_element(driver, 1, 10, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 1, 10, '//ix-icon[@svgicon="ix:ha_enabled"]')

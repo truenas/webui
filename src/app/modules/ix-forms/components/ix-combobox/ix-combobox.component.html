@@ -4,6 +4,7 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="required"
+    [ixTestOverride]="controlDirective.name"
   ></ix-label>
 
   <div class="input-container" [class.disabled]="isDisabled">
@@ -26,12 +27,11 @@
         [diameter]="15"
       ></mat-progress-spinner>
 
-      <mat-icon
+      <ix-icon
         *ngIf="shouldShowResetInput()"
-        fontSet="mdi-set"
-        fontIcon="mdi-close-circle"
+        name="mdi-close-circle"
         (click)="resetInput()"
-      ></mat-icon>
+      ></ix-icon>
     </span>
 
     <mat-autocomplete

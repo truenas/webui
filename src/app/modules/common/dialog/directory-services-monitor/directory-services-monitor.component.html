@@ -9,7 +9,7 @@
         ixTest="refresh-directory-services"
         (click)="getStatus()"
       >
-        <mat-icon>refresh</mat-icon>
+        <ix-icon name="refresh"></ix-icon>
       </button>
 
       <button
@@ -18,7 +18,7 @@
         mat-dialog-close
         ixTest="close-directory-services"
       >
-        <mat-icon>clear</mat-icon>
+        <ix-icon name="clear"></ix-icon>
       </button>
     </div>
   </div>
@@ -35,11 +35,11 @@
       <mat-header-cell *matHeaderCellDef fxFlex="74px"></mat-header-cell>
       <mat-cell *matCellDef="let element" fxFlex="74px">
         <ng-container [ngSwitch]="element.state">
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Healthy" class="state-healthy">check_circle</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Faulted" class="state-faulted">highlight_off</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Leaving" class="state-leaving">arrow_back</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Joining" class="state-joining">arrow_forward</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Disabled" class="state-disabled">remove_circle</mat-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Healthy" name="check_circle" class="state-healthy"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Faulted" name="highlight_off" class="state-faulted"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Leaving" name="arrow_back" class="state-leaving"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Joining" name="arrow_forward" class="state-joining"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Disabled" name="remove_circle" class="state-disabled"></ix-icon>
         </ng-container>
       </mat-cell>
     </ng-container>

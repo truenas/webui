@@ -72,7 +72,7 @@ def wait_for_the_alert_and_verify_the_core_files_warning_alert(driver):
     assert wait_on_element(driver, 7, xpaths.alert.title)
     assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//h3[contains(.,"Warning")]')
     assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
-    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//mat-icon[normalize-space(text())="error"]')
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//ix-icon[normalize-space(text())="error"]')
 
 
 @then('click on the core files warning Dismiss and verify it is dismissed')
@@ -80,7 +80,7 @@ def click_on_the_core_files_warning_dismiss_and_verify_it_is_dismissed(driver):
     """click on the core files warning Dismiss and verify it is dismissed."""
     assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//a[normalize-space(text())="Dismiss"]', 'clickable')
     driver.find_element_by_xpath('//ix-alert[contains(.,"Core files")]//a[normalize-space(text())="Dismiss"]').click()
-    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//mat-icon[normalize-space(text())="check_circle"]')
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//ix-icon[normalize-space(text())="check_circle"]')
 
 
 @then('click on the core files warning Re-Open and verify the alert is back')
@@ -89,7 +89,7 @@ def click_on_the_core_files_warning_reopen_and_verify_the_alert_is_back(driver):
     assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//a[normalize-space(text())="Re-Open"]', 'clickable')
     driver.find_element_by_xpath('//ix-alert[contains(.,"Core files")]//a[normalize-space(text())="Re-Open"]').click()
     assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//h3[contains(.,"Warning")]')
-    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//mat-icon[normalize-space(text())="error"]')
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//ix-icon[normalize-space(text())="error"]')
     assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.alert.close_Button).click()
 

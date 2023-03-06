@@ -101,15 +101,15 @@ describe('DatasetQuotasGrouplistComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
-      ['bin', '2', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
+      ['daemon', '1', '500 KiB', '0', '0%', '—', '0', '—', ''],
+      ['bin', '2', '500 KiB', '0', '0%', '—', '0', '—', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
   });
 
   it('should delete group quota when click delete button', async () => {
-    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'delete' }));
+    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await firstDeleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -133,7 +133,7 @@ describe('DatasetQuotasGrouplistComponent', () => {
 
   it('should open slide to edit group quota when click a row', async () => {
     const element = await spectator.fixture.nativeElement as HTMLElement;
-    const [firstRow] = element.querySelectorAll('.mat-row');
+    const [firstRow] = element.querySelectorAll('.mat-mdc-row');
     (firstRow as HTMLElement).click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetQuotaEditFormComponent);

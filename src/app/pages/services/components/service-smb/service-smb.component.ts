@@ -57,7 +57,6 @@ export class ServiceSmbComponent implements OnInit {
     dirmask: ['', []],
     admin_group: ['', [Validators.maxLength(120)]],
     bindip: [[] as string[], []],
-    smb_options: ['', []],
     aapl_extensions: [false, []],
   });
 
@@ -78,7 +77,6 @@ export class ServiceSmbComponent implements OnInit {
     dirmask: helptext.cifs_srv_dirmask_tooltip,
     admin_group: helptext.cifs_srv_admin_group_tooltip,
     bindip: helptext.cifs_srv_bindip_tooltip,
-    smb_options: helptext.cifs_srv_smb_options_tooltip,
     aapl_extensions: helptext.cifs_srv_aapl_extensions_tooltip,
   };
 

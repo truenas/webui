@@ -196,7 +196,7 @@ img.clickable,
   cursor: pointer;
 }
 
-.slide .mat-icon.next-slide {
+.slide .ix-icon.next-slide {
   position: absolute;
   right: 0;
 }
@@ -251,12 +251,12 @@ img.clickable,
   padding-top: 18px;
 }
 
-.platform-logo-wrapper .mat-icon {
+.platform-logo-wrapper .ix-icon {
   height: 2.5rem;
   width: auto;
 }
 
-.platform-logo-wrapper.core .mat-icon {
+.platform-logo-wrapper.core .ix-icon {
   height: 2.25rem;
 }
 
@@ -338,7 +338,7 @@ div.generic.alert {
   text-align: center;
 }
 
-div.generic.alert .mat-icon {
+div.generic.alert .ix-icon {
   font-size: 48px;
   height: auto;
   width: auto;
@@ -424,7 +424,7 @@ div.generic.alert .mat-icon {
   margin-top: 50%;
 }
 
-.xs.widget.generic-hardware .product-image.tower .mat-icon {
+.xs.widget.generic-hardware .product-image.tower .ix-icon {
   margin-top: 48px;
 }
 

@@ -8,7 +8,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { systemFeaturesLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
+import { systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
 export class SystemInfoEffects {
@@ -50,6 +50,15 @@ export class SystemInfoEffects {
         return of(systemFeaturesLoaded({ systemFeatures: features }));
       }
       return of(systemFeaturesLoaded({ systemFeatures: features }));
+    }),
+  ));
+
+  loadIsSystemHaCapable = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('system.is_ha_capable').pipe(
+        map((isSystemHaCapable: boolean) => systemHaCapabilityLoaded({ isSystemHaCapable })),
+      );
     }),
   ));
 

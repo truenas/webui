@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 
@@ -9,6 +10,9 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 })
 export class AppRowComponent {
   @Input() application: ChartRelease;
+
+  readonly imagePlaceholder = appImagePlaceholder;
+  readonly chartReleaseStatus = ChartReleaseStatus;
 
   get isAppStopped(): boolean {
     return this.application.status === ChartReleaseStatus.Stopped;

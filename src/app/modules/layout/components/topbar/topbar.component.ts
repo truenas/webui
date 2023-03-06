@@ -228,15 +228,15 @@ export class TopbarComponent implements OnInit, OnDestroy {
   getLogoIcon(): string {
     const isBlueTheme = this.themeService.activeTheme === 'ix-blue' || this.themeService.activeTheme === 'midnight';
     if (isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logomark';
+      return 'ix:logo_mark';
     }
     if (!isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logomark_rgb';
+      return 'ix:logo_mark_rgb';
     }
     if (isBlueTheme && this.screenSize !== 'xs') {
-      return 'ix:full_logo';
+      return 'ix:logo_full';
     }
-    return 'ix:full_logo_rgb';
+    return 'ix:logo_full_rgb';
   }
 
   checkEula(): void {

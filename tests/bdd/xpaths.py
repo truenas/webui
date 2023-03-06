@@ -1,4 +1,13 @@
 
+CHECKBOX = '//mat-checkbox'
+TOGGLE = '//mat-slide-toggle'
+BUTTON = '//button'
+
+
+def mat_Option(option):
+    return f'//mat-option[contains(.,"{option}")]'
+
+
 class active_Directory:
     title = '//h3[@class="ix-formtitle" and text()="Active Directory"]'
     enable_Checkbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
@@ -143,7 +152,7 @@ class button:
     CONTINUE = '//button[contains(*/text(),"CONTINUE")]'
     close = '//button[contains(.,"Close")]'
     CLOSE = '//button[contains(.,"CLOSE")]'
-    close_Icon = '//mat-icon[@id="ix-close-icon"]'
+    close_Icon = '//ix-icon[@id="ix-close-icon"]'
     advanced_Option = '//button[contains(*/text(),"Advanced Options")]'
     advanced_Settings = '//button[contains(.,"Advanced Settings")]'
     ok = '//button[@name="ok_button"]'
@@ -197,8 +206,8 @@ class dataset:
     zfs_Encryption_Edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
     lock_Button = '//button[contains(.,"Lock")]'
     unlock_Button = '//a[contains(.,"Unlock")]'
-    lock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock"]'
-    unlock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock-open-variant"]'
+    lock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//ix-icon[@fonticon="mdi-lock"]'
+    unlock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//ix-icon[@fonticon="mdi-lock-open-variant"]'
 
     def pool_Tree_Name(pool_name):
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
@@ -276,8 +285,8 @@ class edit_Acl:
     who_Select = '//ix-select[@formcontrolname="tag"]//mat-select'
     who_User_Option = '//mat-option[contains(.,"User")]'
     user_Combobox = '//ix-combobox[@formcontrolname="user"]//input'
-    builtin_Users_Cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
-    builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
+    builtin_Users_Cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//ix-icon[text()="cancel"]'
+    builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//ix-icon[text()="cancel"]'
     recursive_Checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
     traverse_Checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
     permission_Select = '//ix-select[@formcontrolname="basicPermission"]//mat-select'
@@ -325,9 +334,9 @@ class global_Configuration:
     nameserver1_Input = '//ix-input[contains(.,"Nameserver 1")]//input'
     nameserver2_Input = '//ix-input[contains(.,"Nameserver 2")]//input'
     nameserver3_Input = '//ix-input[contains(.,"Nameserver 3")]//input'
-    nameserver1_Delete = '//ix-input[contains(.,"Nameserver 1")]//mat-icon[@fonticon="mdi-close-circle"]'
-    nameserver2_Delete = '//ix-input[contains(.,"Nameserver 2")]//mat-icon[@fonticon="mdi-close-circle"]'
-    nameserver3_Delete = '//ix-input[contains(.,"Nameserver 3")]//mat-icon[@fonticon="mdi-close-circle"]'
+    nameserver1_Delete = '//ix-input[contains(.,"Nameserver 1")]//ix-icon[@fonticon="mdi-close-circle"]'
+    nameserver2_Delete = '//ix-input[contains(.,"Nameserver 2")]//ix-icon[@fonticon="mdi-close-circle"]'
+    nameserver3_Delete = '//ix-input[contains(.,"Nameserver 3")]//ix-icon[@fonticon="mdi-close-circle"]'
     ipv4_Default_Gateway_Input = '//ix-input[contains(.,"IPv4 Default Gateway")]//input'
     hostname_Input = '//ix-input[contains(.,"Hostname")]//input'
 
@@ -351,6 +360,45 @@ class interface:
     ip_Address_Input = '//ix-ip-input-with-netmask//input'
     netmask_Select = '//ix-ip-input-with-netmask//mat-select'
     netmask_Option = '//mat-option[contains(.,"24")]'
+
+
+class iscsi:
+    title = '//h1[text()="iSCSI"]'
+    protals_Tab = '//a[normalize-space(text())="Portals"]'
+    targets_Tab = '//a[normalize-space(text())="Targets"]'
+    extents_Tab = '//a[normalize-space(text())="Extents"]'
+    iscsitest1_Text = '//div[normalize-space(text())="iscsitest1"]'
+
+
+class iscsi_Wizard:
+    """iscsi_Wizard contains xpaths for the iSCSI Wizard"""
+    title = '//h1[text()="Wizard"]'
+    block_Device_Title = '//mat-step-header[contains(.,"Create or Choose Block Device") and @tabindex="0"]'
+    device_Name_Input = '//input[@ix-auto="input__Name"]'
+    extent_Type_Select = '//mat-select[@ix-auto="select__Extent Type"]'
+    extent_Type_Device_Option = mat_Option('Device')
+    device_Dropdown = '//span[@id="disk-select"]'
+    create_New_Button = '//button[contains(.,"Create New")]'
+    pool_Dataset_Input = '//input[@data-placeholder="Pool/Dataset"]'
+    size_Input = '//input[@ix-auto="input__Size"]'
+    size_Select_Contain_GiB = '//mat-select[contains(.,"GiB")]'
+    block_Device_Next_Button = '//button[@id="goforward_button_0"]'
+    portal_Title = '//mat-step-header[contains(.,"Portal") and @tabindex="0"]'
+    portal_Select = '//mat-select[@ix-auto="select__Portal"]'
+    create_New_Option = '//mat-option[contains(.,"Create New")]'
+    discovery_Authentication_Method_Select = '//mat-select[@ix-auto="select__Discovery Authentication Method"]'
+    none_Option = mat_Option('NONE')
+    ip_Address_Select = '//mat-select[@ix-auto="select__IP Address"]'
+    zero_Ip_Option = mat_Option('0.0.0.0')
+    portal_Next_Button = '//button[@id="goforward_button_1"]'
+    initiator_Title = '//mat-step-header[contains(.,"Initiator") and @tabindex="0"]'
+    initiator_Input = '//input[@placeholder="Initiators"]'
+    initiator_Next_Button = '//button[@id="goforward_button_2"]'
+    confirm_Options_Title = '//mat-step-header[contains(.,"Confirm Options") and @tabindex="0"]'
+    iscsi_Summary = '//div[contains(text(),"iSCSI Summary")]'
+    summary_Name = '//div[contains(text(),"Name: iscsitest1")]'
+    extent_new_Device = '//div[contains(text(),"New Device: tank/iscsitest1(1 G)")]'
+    portal_listen = '//div[contains(text(),"Listen: 0.0.0.0")]'
 
 
 class ldap():
@@ -380,7 +428,7 @@ class login:
 class network:
     title = '//h1[contains(.,"Network")]'
     global_Configuration_Title = '//h3[text()="Global Configuration"]'
-    interface = '//mat-icon[@id="enp0s8"]'
+    interface = '//ix-icon[@id="enp0s8"]'
 
 
 class pool_manager:
@@ -418,16 +466,26 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
-    nfs_Service_Checkbox = '//tr[contains(.,"NFS")]//mat-checkbox'
-    nfs_Service_Toggle = '//tr[contains(.,"NFS")]//mat-slide-toggle'
-    nfs_Service_Button = '//tr[contains(.,"NFS")]//button'
-    nfs_Service_Name = '//td[contains(text(),"NFS")]'
-    smb_Service_Toggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
-    smb_Service_Name = '//td[contains(text(),"SMB")]'
-    smb_Service_Button = '//tr[contains(.,"SMB")]//button'
-    ssh_Service_Toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
-    ssh_Service_Button = '//tr[contains(.,"SSH")]//button'
-    ssh_Service_Name = '//td[contains(text(),"SSH")]'
+
+    def service_Tr(serivce):
+        return f'//tr[contains(.,"{serivce}")]'
+
+    iscsi_Service = service_Tr('iSCSI')
+    iscsi_Service_Button = iscsi_Service + BUTTON
+    iscsi_Service_Checkbox = iscsi_Service + CHECKBOX
+    iscsi_Service_Toggle = iscsi_Service + TOGGLE
+    nfs_Service = service_Tr('NFS')
+    nfs_Service_Button = nfs_Service + BUTTON
+    nfs_Service_Checkbox = nfs_Service + CHECKBOX
+    nfs_Service_Toggle = nfs_Service + TOGGLE
+    smb_Service = service_Tr('SMB')
+    smb_Service_Button = smb_Service + BUTTON
+    smb_Service_Checkbox = smb_Service + CHECKBOX
+    smb_Service_Toggle = smb_Service + TOGGLE
+    ssh_Service = service_Tr('SSH')
+    ssh_Service_Button = ssh_Service + BUTTON
+    ssh_Service_Checkbox = ssh_Service + CHECKBOX
+    ssh_Service_Toggle = ssh_Service + TOGGLE
 
 
 class sharing:
@@ -439,6 +497,11 @@ class sharing:
     nfs_Panel_Title = '//a[contains(text(),"UNIX (NFS) Shares")]'
     nfs_Add_Button = '//span[contains(.,"UNIX (NFS) Shares")]//button[contains(.,"Add")]'
     nfs_Service_Status = '//span[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
+
+    iscsi_Wizard_Button = '//button[contains(.,"Wizard")]'
+    iscsi_Burger_Button = '//span[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
+    iscsi_Service_Status = '//span[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
+    turn_On_Service_Button = '//button[contains(.,"Turn On Service")]'
 
     def smb_Share_Name(share_name):
         return f'//div[contains(text(),"{share_name}")]'
@@ -494,11 +557,11 @@ class systemDataset:
 
 
 class toolbar:
-    ha_Disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
-    ha_Enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
-    notification = '//mat-icon[normalize-space(text())="notifications"]'
+    ha_Disabled = '//ix-icon[@data-mat-icon-name="ha_disabled"]'
+    ha_Enabled = '//ix-icon[@data-mat-icon-name="ha_enabled"]'
+    notification = '//ix-icon[normalize-space(text())="notifications"]'
     notification_Button = '//button[contains(.,"notifications")]'
-    notification_Text = '//button[contains(.,"notifications")]//mat-icon/span'
+    notification_Text = '//button[contains(.,"notifications")]//ix-icon/span'
 
     def notification_Count(text):
         return f'//span[contains(.,"notifications")]//span[contains(text(),"{text}")]'
