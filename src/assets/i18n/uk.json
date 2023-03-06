@@ -98,6 +98,7 @@
   "Import Data": "",
   "Importing Disk": "",
   "Importing Disk...": "",
+  "Invalid cron expression": "",
   "Is planned to be automatically destroyed at {datetime}": "",
   "It may impact currently running services and should be done during planned downtime.": "",
   "KDC": "",

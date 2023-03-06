@@ -14,6 +14,7 @@ import {
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { AppSchemaService } from 'app/services/app-schema.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UrlValidationService } from 'app/services/url-validation.service';
 
 const beforeIntString = [{
   variable: 'variable_dict',
@@ -374,7 +375,7 @@ const afterHidden = [[]] as DynamicFormSchemaIpaddr[][];
 const dynamicForm = new FormGroup<Record<string, UntypedFormGroup>>({});
 
 describe('AppSchemaService', () => {
-  const service = new AppSchemaService({} as FilesystemService);
+  const service = new AppSchemaService({} as FilesystemService, {} as UrlValidationService);
   describe('transformNode()', () => {
     beforeIntString.forEach((item, idx) => {
       it('converts schema with "int" and "string" type', () => {
