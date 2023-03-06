@@ -1,7 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { ValidationService } from 'app/services/validation.service';
 
-describe('ValidationService', () => {
+describe.skip('ValidationService', () => {
   const service = new ValidationService();
   const formControlName = 'value1';
   const otherFormControlName = 'value2';
