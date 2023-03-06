@@ -11,6 +11,10 @@ export interface DynamicFormSchema {
   schema: DynamicFormSchemaNode[];
 }
 
+export interface DynamicWizardSchema extends DynamicFormSchema {
+  help: string;
+}
+
 export type DynamicFormSchemaNode =
 | DynamicFormSchemaUri
 | DynamicFormSchemaCron

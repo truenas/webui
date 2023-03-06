@@ -119,3 +119,8 @@
 .has-reset-input-icon {
   padding-right: 20px;
 }
+
+::ng-deep .mat-option-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

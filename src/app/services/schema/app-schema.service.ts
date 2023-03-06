@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
+import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import {
   CommonSchemaAddControl,
   CommonSchemaTransform,
@@ -15,8 +16,11 @@ import {
   SerializeFormValue,
 } from 'app/interfaces/app-schema.interface';
 import { ChartFormValue, ChartSchema, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
-import { DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  DeleteListItemEvent, DynamicFormSchemaDict, DynamicFormSchemaNode, DynamicWizardSchema,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import { cronValidator } from 'app/modules/entity/entity-form/validators/cron-validation';
@@ -307,9 +311,53 @@ export class AppSchemaService {
     return newConfig;
   }
 
-  private createHierarchicalObjectFromArray(
-    payload: KeysRestoredFromFormGroup,
-  ): HierarchicalObjectMap<ChartFormValue> {
+  getSearchOptions(dynamicSchema: DynamicWizardSchema[], formValue: HierarchicalObjectMap<ChartFormValue>): Option[] {
+    let options: Option[] = [];
+    dynamicSchema.forEach((section) => {
+      section.schema.forEach((item) => {
+        if (item.type !== DynamicFormSchemaType.Dict) {
+          if (item.title && formValue[item.controlName] !== undefined) {
+            options.push({ label: item.title, value: item.controlName });
+          }
+        } else if (formValue[item.controlName] !== undefined) {
+          options = options.concat(
+            this.getSearchOptionsFromDict(
+              item,
+              formValue[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
+              item.controlName,
+            ),
+          );
+        }
+      });
+    });
+    return options;
+  }
+
+  private getSearchOptionsFromDict(
+    dict: DynamicFormSchemaDict,
+    formValue: HierarchicalObjectMap<ChartFormValue>,
+    valuePrefix: string,
+  ): Option[] {
+    let options: Option[] = [];
+    dict.attrs.forEach((item) => {
+      if (item.type !== DynamicFormSchemaType.Dict) {
+        if (item.title && formValue[item.controlName] !== undefined) {
+          options.push({ label: item.title, value: `${valuePrefix}.${item.controlName}` });
+        }
+      } else {
+        options = options.concat(
+          this.getSearchOptionsFromDict(
+            item,
+            formValue[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
+            `${valuePrefix}.${item.controlName}`,
+          ),
+        );
+      }
+    });
+    return options;
+  }
+
+  private createHierarchicalObjectFromArray(payload: KeysRestoredFromFormGroup): HierarchicalObjectMap<ChartFormValue> {
     const {
       newConfig, keyConfig, valueConfig, formConfig,
     } = payload;

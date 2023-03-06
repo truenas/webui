@@ -1,4 +1,5 @@
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -15,6 +16,7 @@ describe('IxInputComponent', () => {
     component: IxInputComponent,
     imports: [
       ReactiveFormsModule,
+      MatAutocompleteModule,
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
