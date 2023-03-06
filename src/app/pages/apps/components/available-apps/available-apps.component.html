@@ -11,10 +11,35 @@
 
 <ix-available-apps-header></ix-available-apps-header>
 
-<div class="apps">
-  <ix-app-card
-    *ngFor="let app of apps; trackBy: trackByAppId"
-    [app]="app"
-    [routerLink]="['/apps', 'available', app.name]"
-  ></ix-app-card>
+<div class="available-apps-list">
+  <ng-container *ngTemplateOutlet="appsSection; context: {
+    title: 'Recommended Apps',
+    apps: recommendedApps
+  }"></ng-container>
+
+  <ng-container *ngTemplateOutlet="appsSection; context: {
+    title: 'New & Updated Apps',
+    apps: newAndUpdatedApps
+  }"></ng-container>
 </div>
+
+<ng-template #appsSection let-title="title" let-apps="apps">
+  <section *ngIf="apps.length">
+    <h3 class="apps-section-title">
+      {{ title | translate }}
+    </h3>
+    <div class="apps">
+      <ix-app-card
+        *ngFor="let app of apps; trackBy: trackByAppId"
+        [app]="app"
+        [routerLink]="['/apps', 'available', app.name]"
+      ></ix-app-card>
+    </div>
+    <p class="view-all">
+      <b>
+        {{ 'View All' | translate }}
+        {{ title | translate }}
+      </b>
+    </p>
+  </section>
+</ng-template>

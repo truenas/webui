@@ -22,6 +22,15 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   apps: CatalogApp[] = [];
 
+  get recommendedApps(): CatalogApp[] {
+    // return this.apps.filter((app) => app.recommended).slice(0, 6);
+    return this.apps.slice(0, 6);
+  }
+
+  get newAndUpdatedApps(): CatalogApp[] {
+    return this.apps.slice(0, 6).sort((a, b) => new Date(a.last_update).getTime() - new Date(b.last_update).getTime());
+  }
+
   constructor(
     private layoutService: LayoutService,
     private loader: AppLoaderService,
