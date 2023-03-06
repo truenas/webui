@@ -5,7 +5,7 @@ import {
 } from '@angular/forms';
 import { doesNotEqualValidator, matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
-describe.skip('PasswordValidation', () => {
+describe('PasswordValidation', () => {
   describe('matchOtherValidator', () => {
     let thisControl: AbstractControl;
     let otherControl: AbstractControl;
