@@ -504,6 +504,7 @@ body .mat-mdc-select-trigger {
 /*-------- Scrollbar ---------*/
 body {
   scrollbar-color: var(--focus-brd) var(--alt-bg1);
+  scrollbar-width: auto;
 }
 
 ::-webkit-scrollbar {
@@ -536,6 +537,7 @@ body {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgb(96, 96, 96)'><polygon points='5,4 10,8 5,12'/></svg>"); //
 }
 
+::-webkit-scrollbar-button,
 ::-webkit-scrollbar-button:horizontal:decrement,
 ::-webkit-scrollbar-button:horizontal:increment,
 ::-webkit-scrollbar-button:vertical:decrement,
@@ -543,8 +545,16 @@ body {
   background-color: var(--bg2);
   background-position: center;
   background-repeat: no-repeat;
+  display: block;
   height: 16px;
   width: 16px;
+}
+
+::-webkit-scrollbar-button:vertical:start:increment,
+::-webkit-scrollbar-button:vertical:end:decrement,
+::-webkit-scrollbar-button:horizontal:start:increment,
+::-webkit-scrollbar-button:horizontal:end:decrement {
+  display: none;
 }
 
 ::-webkit-scrollbar-corner {
@@ -554,7 +564,7 @@ body {
 ::-webkit-resizer {
   background-color: var(--bg2);
 }
-//
+
 /*-------- Chart js ---------*/
 .chart {
   margin-left: -10px;
