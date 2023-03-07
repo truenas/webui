@@ -22,7 +22,7 @@ from pytest_bdd import (
     parsers
 )
 from pytest_dependency import depends
-
+pytestmark = [pytest.mark.debug_test]
 
 @pytest.mark.dependency(name='AD_SMB')
 @scenario('features/NAS-T1120.feature', 'Verify an smb share with  AD dataset from a system pool works')
