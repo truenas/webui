@@ -115,7 +115,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get enclosure(): ChassisView {
     if (!this.chassis) return null;
 
-    return this.view === 'rear' ? this.chassis.rear : this.chassis.front;
+    switch (this.view) {
+      case EnclosureLocation.Rear:
+        return this.chassis.rear;
+      case EnclosureLocation.Internal:
+        return this.chassis.internal;
+      default:
+        return this.chassis.front;
+    }
   }
 
   private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];

@@ -30,28 +30,29 @@ export class R30 extends Chassis {
     this.front.disabledOpacity = 0.2;
 
     // Rear (Actually internal)
-    this.rear = new ChassisView();
-    this.rear.totalDriveTrays = 4;
+    this.internal = new ChassisView();
+    this.internal.totalDriveTrays = 4;
 
-    this.rear.driveTraysOffsetX = 360;
-    this.rear.driveTraysOffsetY = 30;
-    this.rear.gapX = 5;
+    this.internal.driveTraysOffsetX = 360;
+    this.internal.driveTraysOffsetY = 30;
+    this.internal.gapX = 5;
 
-    const rscale = 1.2;
-    this.rear.driveTrays.scale = { x: rscale, y: rscale } as Point;
-    this.rear.chassisScale = { x: 1.4, y: 1.4 };
-    this.rear.disabledOpacity = 0.3;
+    const iscale = 1.2;
+    this.internal.driveTrays.scale = { x: iscale, y: iscale } as Point;
+    this.internal.chassisScale = { x: 1.4, y: 1.4 };
+    this.internal.disabledOpacity = 0.3;
+    this.internal.chassisOpacity = 0.6;
 
-    this.rear.container = new PIXI.Container();
+    this.internal.container = new PIXI.Container();
 
-    this.rear.chassisPath = 'assets/images/hardware/r30/r30_rear_960w.png';
-    this.rear.driveTrayBackgroundPath = 'assets/images/hardware/r30/r30_960w_drivetray_handle.png';
-    this.rear.driveTrayHandlePath = 'assets/images/hardware/r30/r30_960w_drivetray_handle.png';
+    this.internal.chassisPath = 'assets/images/hardware/r30/r30_internal_960w.png';
+    this.internal.driveTrayBackgroundPath = 'assets/images/hardware/r30/r30_960w_drivetray_bg.png';
+    this.internal.driveTrayHandlePath = 'assets/images/hardware/r30/r30_960w_drivetray_handle.png';
 
-    this.rear.columns = 2;
-    this.rear.rows = 2;
-    this.rear.slotRange = { start: 13, end: 16 };
+    this.internal.columns = 2;
+    this.internal.rows = 2;
+    this.internal.slotRange = { start: 13, end: 16 };
 
-    this.rear.totalDriveTrays = 4;
+    this.internal.totalDriveTrays = 4;
   }
 }
