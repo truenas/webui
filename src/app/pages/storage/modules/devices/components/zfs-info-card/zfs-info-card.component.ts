@@ -34,8 +34,7 @@ export class ZfsInfoCardComponent {
   }
 
   get isRaidzParent(): boolean {
-    return this.topologyItem.guid === PoolTopologyCategory.Data
-    && (this.topologyParentItem.type === TopologyItemType.Raidz
+    return (this.topologyParentItem.type === TopologyItemType.Raidz
       || this.topologyParentItem.type === TopologyItemType.Raidz1
       || this.topologyParentItem.type === TopologyItemType.Raidz2
       || this.topologyParentItem.type === TopologyItemType.Raidz3);
@@ -47,14 +46,17 @@ export class ZfsInfoCardComponent {
 
   get canExtendDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
+      && !this.isRaidzParent
       && this.topologyItem.type === TopologyItemType.Disk
-      && this.topologyCategory === PoolTopologyCategory.Data
+      && (this.topologyCategory === PoolTopologyCategory.Data || this.topologyCategory === PoolTopologyCategory.Special)
       && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
-      && this.topologyCategory !== PoolTopologyCategory.Data;
+      && !this.isRaidzParent
+      && this.topologyCategory !== PoolTopologyCategory.Data
+      && this.topologyCategory !== PoolTopologyCategory.Special;
   }
 
   get canDetachDisk(): boolean {
