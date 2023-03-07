@@ -206,8 +206,8 @@
             {{ 'REAR' | translate }}
           </button>
 
-          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">
-            {{ 'Internal' | translate }}
+          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride(EnclosureLocation.Internal)">
+            {{ 'INTERNAL' | translate }}
           </button>
         </div>
 

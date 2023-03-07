@@ -510,6 +510,7 @@ export class AppSchemaService {
       }
       formField.hidden$.next(true);
       formField.disable();
+      formField.clearValidators();
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges
@@ -520,7 +521,7 @@ export class AppSchemaService {
         }
 
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
-          if (value !== null && !isParentHidden) {
+          if (!isParentHidden) {
             const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
             if (!formField.hidden$) {
               formField.hidden$ = new BehaviorSubject<boolean>(false);
@@ -553,6 +554,7 @@ export class AppSchemaService {
       }
       formField.hidden$.next(true);
       formField.disable();
+      formField.clearValidators();
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges
@@ -563,7 +565,7 @@ export class AppSchemaService {
         }
 
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
-          if (value !== null && !isParentHidden) {
+          if (!isParentHidden) {
             const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
             if (!formField.hidden$) {
               formField.hidden$ = new BehaviorSubject<boolean>(false);
