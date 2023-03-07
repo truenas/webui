@@ -44,7 +44,6 @@ describe('ServiceSmbComponent', () => {
           guest: 'nobody',
           filemask: '',
           dirmask: '',
-          smb_options: '',
           bindip: [],
           cifs_SID: 'mockSid',
           ntlmv1_auth: false,
@@ -112,7 +111,6 @@ describe('ServiceSmbComponent', () => {
 
     expect(values).toEqual({
       'Administrators Group': '',
-      'Auxiliary Parameters': '',
       'Bind IP Addresses': [],
       Description: 'TrueNAS Server',
       'Directory Mask': '',
@@ -165,7 +163,6 @@ describe('ServiceSmbComponent', () => {
       localmaster: true,
       syslog: false,
       unixcharset: 'UTF-8',
-      smb_options: '',
     }]);
   });
 
@@ -184,7 +181,6 @@ describe('ServiceSmbComponent', () => {
       'File Mask': '0666',
       'Directory Mask': '0777',
       'Bind IP Addresses': ['1.1.1.1', '2.2.2.2'],
-      'Auxiliary Parameters': 'new-params',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -210,7 +206,6 @@ describe('ServiceSmbComponent', () => {
       localmaster: false,
       syslog: true,
       unixcharset: 'UTF-16',
-      smb_options: 'new-params',
     }]);
   });
 });

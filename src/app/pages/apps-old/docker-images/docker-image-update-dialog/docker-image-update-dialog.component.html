@@ -22,7 +22,7 @@
       {{ bulkItem.value.item.repo_tags.length ? bulkItem.value.item.repo_tags.join(', ') : bulkItem.value.item.id }}
 
       <div class="version">
-        <mat-icon>arrow_right_alt</mat-icon>
+        <ix-icon name="arrow_right_alt"></ix-icon>
         <ix-select
           *ngIf="options.has(bulkItem.key) && !wasSubmitted"
           [formControlName]="bulkItem.key"

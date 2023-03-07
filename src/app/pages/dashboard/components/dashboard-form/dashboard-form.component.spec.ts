@@ -26,7 +26,7 @@ describe('DashboardFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('user.set_attribute'),
+        mockCall('auth.set_attribute'),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
@@ -66,7 +66,7 @@ describe('DashboardFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.set_attribute', [1, 'dashState', clone]);
+      expect(ws.call).toHaveBeenCalledWith('auth.set_attribute', ['dashState', clone]);
     });
   });
 });

@@ -54,9 +54,10 @@
       >
         <ix-icon name="ix:enclosure" [title]="'Enclosure' | translate"></ix-icon>
         <span class="group-name">{{ asEnclosureGroup(group).group }}</span>
-        <mat-icon *ngIf="group.children.length">
-          {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
-        </mat-icon>
+        <ix-icon
+          *ngIf="group.children.length"
+          [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
+        ></ix-icon>
       </div>
 
       <ng-container

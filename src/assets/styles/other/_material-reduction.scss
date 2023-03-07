@@ -59,7 +59,7 @@ span.code {
 }
 
 .mat-mdc-menu-item.sticky-bottom,
-.mat-option.sticky-bottom {
+.mat-mdc-option.sticky-bottom {
   background: var(--bg2);
   border-top: solid 1px var(--lines);
   bottom: 0;
@@ -67,7 +67,7 @@ span.code {
 }
 
 .mat-mdc-menu-item.sticky-top,
-.mat-option.sticky-top {
+.mat-mdc-option.sticky-top {
   background: var(--bg2);
   border-bottom: solid 1px var(--lines);
   position: sticky;
@@ -200,10 +200,10 @@ textarea.mat-input-element::placeholder {
   position: relative;
 }
 
-.form-element.form-combobox .mat-form-field,
-.form-element.form-ip-netmask .mat-form-field,
+.form-element.form-combobox .mat-mdc-form-field,
+.form-element.form-ip-netmask .mat-mdc-form-field,
 .form-element.form-combobox .mat-mdc-menu-trigger,
-.form-element .mat-form-field-wrapper,
+.form-element .mat-mdc-text-field-wrapper,
 .form-element input[type = 'password'],
 .form-element input[type = 'email'],
 .form-element input[type = 'text'],
@@ -214,27 +214,30 @@ textarea.mat-input-element::placeholder {
   border: solid 1px var(--lines);
   box-sizing: border-box;
   color: var(--fg1);
-  padding: 8px;
 
   &[disabled] {
     cursor: not-allowed;
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 }
 
 .form-element,
 #password,
-.form-element.form-combobox .mat-form-field,
-.form-element.form-ip-netmask .mat-form-field,
+.form-element.form-combobox .mat-mdc-form-field,
+.form-element.form-ip-netmask .mat-mdc-form-field,
 .form-element.form-combobox .mat-mdc-menu-trigger,
-.form-element .mat-form-field-wrapper,
+.form-element .mat-mdc-text-field-wrapper,
+.mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid,
+.mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid input,
 .form-element .form-button,
 .form-element input[type = 'password'],
 .form-element input[type = 'email'],
 .form-element input[type = 'text'],
 .form-element input[type = 'number'],
+.form-element input[type = 'search'],
 .form-element textarea,
 .form-element select {
+  border-radius: 0;
   line-height: normal !important;
   min-height: 33px;
   width: 100% !important;
@@ -242,10 +245,10 @@ textarea.mat-input-element::placeholder {
 
 ix-entity-form-list .list-action-block-wrapper .form-element,
 ix-entity-form-list .list-action-block-wrapper #password,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-form-field,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-form-field,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-mdc-form-field,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-mdc-form-field,
 ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-mdc-menu-trigger,
-ix-entity-form-list .list-action-block-wrapper .form-element .mat-form-field-wrapper,
+ix-entity-form-list .list-action-block-wrapper .form-element .mat-mdc-text-field-wrapper,
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'password'],
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'email'],
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'text'],
@@ -262,14 +265,14 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   padding-bottom: 3px;
 }
 
-.form-element.form-combobox .mat-form-field-wrapper input,
-.form-element.form-combobox .mat-form-field-wrapper {
+.form-element.form-combobox .mat-mdc-text-field-wrapper input,
+.form-element.form-combobox .mat-mdc-text-field-wrapper {
   background-color: unset;
   border: unset;
   padding: unset;
 }
 
-.form-element.form-combobox .mat-form-field {
+.form-element.form-combobox .mat-mdc-form-field {
   height: 33px;
   margin-right: 1px;
   max-width: calc(100% - 34px) !important;
@@ -286,29 +289,29 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   top: -9px;
 }
 
-.form-element.form-combobox .mat-mdc-menu-trigger .mat-icon {
+.form-element.form-combobox .mat-mdc-menu-trigger .ix-icon {
   position: relative !important;
   top: 7px !important;
 }
 
-.form-element.form-combobox .mat-form-field,
+.form-element.form-combobox .mat-mdc-form-field,
 .form-element.form-combobox .mat-mdc-menu-trigger {
   height: 33px;
 }
 
 /* IP w/Netmask*/
-.form-element.form-ip-netmask .mat-form-field {
+.form-element.form-ip-netmask .mat-mdc-form-field {
   max-height: 33px;
 }
 
-.form-element.form-ip-netmask .mat-form-field-wrapper input,
-.form-element.form-ip-netmask .mat-form-field-wrapper {
+.form-element.form-ip-netmask .mat-mdc-text-field-wrapper input,
+.form-element.form-ip-netmask .mat-mdc-text-field-wrapper {
   background-color: unset;
   border: unset;
   padding: unset;
 }
 
-.form-element.form-combobox .mat-select-trigger {
+.form-element.form-combobox .mat-mdc-select-trigger {
   padding: 9px 2px 8px;
   position: relative;
   top: 2px;
@@ -335,10 +338,13 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 /* Chips */
 .form-element .mat-mdc-chip {
   font-size: smaller !important;
-  padding: 1px 16px 0 !important;
 }
 
-.form-element .mat-form-field-suffix {
+.mat-mdc-chip-set .mdc-evolution-chip-set__chips {
+  max-width: 100%;
+}
+
+.form-element .mat-mdc-form-field-suffix {
   top: -2px;
 }
 
@@ -364,28 +370,23 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   right: 0;
 }
 
-.form-element button.toggle_pw i {
+.form-element button.toggle_pw ix-icon {
   font-size: 22px;
   opacity: 0.75;
 }
 
-.form-element .mat-form-field-type-mat-select .mat-form-field-wrapper {
-  min-height: 33px;
-  width: 100% !important;
-}
-
-.form-element.form-explorer .mat-form-field-wrapper {
+.form-element.form-explorer .mat-mdc-text-field-wrapper {
   padding-left: 0;
 }
 
-.form-element.form-explorer .mat-form-field-wrapper,
-.form-element.form-explorer .mat-form-field-flex,
-.form-element.form-explorer .mat-form-field-flex input {
+.form-element.form-explorer .mat-mdc-text-field-wrapper,
+.form-element.form-explorer .mat-mdc-form-field-flex,
+.form-element.form-explorer .mat-mdc-form-field-flex input {
   border: none;
 }
 
-.form-element.form-combobox .mat-form-field-flex,
-.form-element.form-combobox .mat-form-field-flex input {
+.form-element.form-combobox .mat-mdc-form-field-flex,
+.form-element.form-combobox .mat-mdc-form-field-flex input {
   border: none;
 }
 
@@ -399,8 +400,11 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   opacity: 0.75;
 }
 
-ix-tooltip button i {
-  opacity: 0.5;
+ix-tooltip button {
+  i,
+  ix-icon {
+    opacity: 0.5;
+  }
 }
 
 .label-container ix-tooltip {
@@ -412,13 +416,13 @@ ix-tooltip button i {
 }
 
 /* Normalize mat-select */
-.mat-form-field-label-wrapper,
-.mat-form-field-underline,
-.mat-form-field-subscript-wrapper {
+.mat-mdc-form-field-label-wrapper,
+.mat-mdc-form-field-underline,
+.mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
 
-.mat-form-field-appearance-legacy .mat-form-field-infix {
+.mat-mdc-form-field-appearance-legacy .mat-mdc-form-field-infix {
   border: 0;
   height: fit-content;
   overflow: hidden;
@@ -511,7 +515,7 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
   max-height: 36px;
 }
 
-.mat-option:hover:not(.mat-option-disabled),
+.mat-mdc-option:hover:not(.mat-mdc-option-disabled),
 .sidenav-link:hover,
 .slide-in-nav-item:hover,
 .mat-mdc-menu-item:hover,
@@ -527,7 +531,7 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
 
 /* Top bar fixes */
 .topbar .mat-icon-button,
-.topbar .mat-icon-button .mat-icon[alt='iXsystem logo'] {
+.topbar .mat-icon-button .ix-icon.logo {
   color: var(--topbar-txt) !important;
 }
 
@@ -572,6 +576,10 @@ body .mdc-card__actions,
 }
 
 .mat-mdc-card .mat-toolbar-row .actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
   position: absolute;
   right: 16px;
 }
@@ -588,14 +596,15 @@ body .mdc-card__actions,
 
 /* Material Tables */
 
-table.mat-table {
+table.mat-mdc-table {
   background-color: var(--bg2) !important;
+  font-family: var(--mdc-dialog-subhead-font);
   width: 100%;
 }
 
-th.mat-table-sticky,
+th.mat-mdc-table-sticky,
 thead.ui-treetable-thead th,
-.mat-table thead th {
+.mat-mdc-table thead th {
   background-color: var(--contrast-darker) !important;
   background-color: rgba(0, 0, 0, 0.1);
   vertical-align: middle;
@@ -603,7 +612,7 @@ thead.ui-treetable-thead th,
 
 .ui-treetable tr,
 tr.mat-header-row,
-.mat-table thead tr {
+.mat-mdc-table thead tr {
   height: 48px;
   max-height: 48px;
 }
@@ -614,7 +623,7 @@ tr.mat-header-row,
 }
 
 .ui-treetable tr,
-.mat-row,
+.mat-mdc-row,
 .mat-header-row,
 .mat-footer-row,
 th.mat-header-cell,
@@ -634,25 +643,25 @@ td.mat-footer-cell {
   vertical-align: middle;
 }
 
-.mat-table-sticky {
+.mat-mdc-table-sticky {
   position: sticky !important;
 }
 
-td.mat-table-sticky:hover,
-td.mat-table-sticky {
+td.mat-mdc-table-sticky:hover,
+td.mat-mdc-table-sticky {
   background: unset !important;
 }
 
-td.mat-cell.mat-table-sticky.hover::before {
+td.mat-cell.mat-mdc-table-sticky.hover::before {
   max-width: unset;
 }
 
-td.mat-cell.mat-table-sticky {
+td.mat-cell.mat-mdc-table-sticky {
   background-color: var(--bg2) !important;
   overflow: hidden;
 }
 
-td.mat-cell.mat-table-sticky::before {
+td.mat-cell.mat-mdc-table-sticky::before {
   content: '';
   display: block;
   height: 1000px;
@@ -669,28 +678,28 @@ td.mat-cell.tree-cell {
   max-width: 300px;
 }
 
-td.mat-cell .mat-icon {
+td.mat-cell .ix-icon {
   top: calc(50% - 12px);
 }
 
-td.mat-cell .mat-icon.expansion-trigger {
+td.mat-cell .ix-icon.expansion-trigger {
   font-size: 24px;
 }
 
-td.mat-cell.mat-table-sticky.hover::before,
-td.mat-cell.mat-table-sticky .hover,
+td.mat-cell.mat-mdc-table-sticky.hover::before,
+td.mat-cell.mat-mdc-table-sticky .hover,
 .ui-treetable tr:hover,
-.mat-row:hover,
-tr.mat-row:hover {
+.mat-mdc-row:hover,
+tr.mat-mdc-row:hover {
   background: rgba(0, 0, 0, 0.1) !important;
 }
 
-.mat-table tr.details-row {
+.mat-mdc-table tr.details-row {
   height: 0;
   min-height: 0;
 }
 
-.mat-table tr.details-row td {
+.mat-mdc-table tr.details-row td {
   width: 100%;
 }
 
@@ -747,12 +756,12 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
   }
 }
 
-#row-filter.form-element .mat-form-field-wrapper {
+#row-filter.form-element .mat-mdc-text-field-wrapper {
   max-height: 36px !important;
   width: inherit !important;
 }
 
-#row-filter.form-element .mat-form-field-wrapper .mat-input-element {
+#row-filter.form-element .mat-mdc-text-field-wrapper .mat-input-element {
   height: 16px;
   padding-left: 8px;
   position: relative;
@@ -820,6 +829,7 @@ ul.nested-list li {
   height: auto !important;
   margin: 5px 0;
   padding-bottom: inherit;
+  padding-right: inherit;
   padding-top: inherit;
 }
 
@@ -941,23 +951,111 @@ ix-nested-tree-node > div {
   min-height: 56px;
 }
 
-body .mat-mdc-option {
-  min-height: 36px;
-}
-
 .mat-mdc-chip {
   font-weight: 500;
 }
 
 mat-chip-grid {
+  align-items: center;
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
-body .mat-mdc-checkbox label {
-  padding-left: 0;
-}
+body {
+  .mdc-tooltip {
+    word-break: break-word;
 
-body .mdc-evolution-chip-set .mdc-evolution-chip {
-  margin-bottom: 2px;
-  margin-top: 2px;
+    .mdc-tooltip__surface {
+      background-color: #666;
+      color: #fff;
+      font-size: 10px;
+      line-height: 16px;
+      padding: 6px 8px;
+    }
+  }
+
+  .mat-mdc-input-element {
+    background-color: transparent;
+    border: 0;
+    color: var(--fg2);
+    font-size: 12px;
+    outline: none !important;
+    width: 100%;
+  }
+
+  .mat-mdc-list-item {
+    border-bottom: solid 1px var(--lines);
+  }
+
+  .mat-mdc-menu-item {
+    height: inherit !important;
+    min-height: inherit;
+  }
+
+  .mdc-linear-progress__buffer-bar {
+    background-color: var(--primary);
+    opacity: 0.5;
+  }
+
+  .mdc-linear-progress__bar-inner {
+    border-color: var(--primary);
+  }
+
+  .mat-mdc-slide-toggle {
+    font-family: var(--mdc-dialog-subhead-font);
+  }
+
+  .mat-mdc-option {
+    min-height: 36px;
+  }
+
+  ix-checkbox {
+    ix-errors {
+      .mat-error {
+        margin-top: 0 !important;
+      }
+    }
+  }
+
+  .mat-mdc-checkbox label {
+    display: flex;
+    padding-left: 0;
+  }
+
+  .mdc-data-table__cell,
+  .mdc-data-table__header-cell {
+    border-color: var(--lines);
+  }
+
+  .mdc-data-table__header-row,
+  .mdc-data-table__row {
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .mat-column-action {
+    overflow: visible;
+  }
+
+  .mdc-data-table__header-cell {
+    font-size: 12px;
+  }
+
+  .mdc-data-table__cell ul {
+    padding-left: 12px;
+  }
+
+  .mdc-data-table__row:last-child .mdc-data-table__cell {
+    border-bottom: 1px solid var(--lines);
+  }
+
+  .mdc-evolution-chip-set .mdc-evolution-chip {
+    margin-bottom: 4px;
+    margin-top: 4px;
+  }
+
+  .mdc-checkbox__background {
+    transform: scale(0.9);
+  }
 }

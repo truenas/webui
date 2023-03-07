@@ -19,7 +19,7 @@
             ixTest="cpu-back"
             (click)="goBack()"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <h3 class="mat-card-title-text">
@@ -38,13 +38,12 @@
               ixTest="cpu-reports"
               [routerLink]="['/reportsdashboard/cpu']"
             >
-              <mat-icon
-                matTooltip="CPU Reports"
-                matTooltipPosition="above"
+              <ix-icon
+                name="insert_chart"
                 aria-label="CPU Reports"
-              >
-                insert_chart
-              </mat-icon>
+                matTooltipPosition="above"
+                [matTooltip]="'CPU Reports' | translate"
+              ></ix-icon>
             </a>
           </div>
         </mat-toolbar-row>
@@ -119,7 +118,7 @@
                   class="label-icon"
                   [ngClass]="{ warn: tempMax < 80, danger: tempMax > 79 }"
                 >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <ix-icon name="mdi-alert"></ix-icon>
                 </div>
                 <span class="label">
                   <strong>{{ 'Hottest' | translate }}:</strong>

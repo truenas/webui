@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Validators, AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { parseString } from 'cron-parser';
 import _ from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
+import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import {
   CommonSchemaAddControl,
   CommonSchemaTransform,
@@ -14,10 +16,14 @@ import {
   SerializeFormValue,
 } from 'app/interfaces/app-schema.interface';
 import { ChartFormValue, ChartSchema, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
-import { DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  DeleteListItemEvent, DynamicFormSchemaDict, DynamicFormSchemaNode, DynamicWizardSchema,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
+import { cronValidator } from 'app/modules/entity/entity-form/validators/cron-validation';
 import {
   CustomUntypedFormArray,
 } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
@@ -31,6 +37,7 @@ import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/i
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { findSchemaNode } from 'app/services/schema/app-schema.helpers';
 import {
   isCommonSchemaType,
   transformBooleanSchemaType,
@@ -44,15 +51,17 @@ import {
   transformStringSchemaType,
   transformUriSchemaType,
 } from 'app/services/schema/app-shema.transformer';
-
-const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+import { UrlValidationService } from 'app/services/url-validation.service';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class AppSchemaService {
-  constructor(protected filesystemService: FilesystemService) {}
+  constructor(
+    protected filesystemService: FilesystemService,
+    private urlValidationService: UrlValidationService,
+  ) {}
 
   transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;
@@ -204,20 +213,24 @@ export class AppSchemaService {
     event.array.removeAt(event.index);
   }
 
-  checkIsValidCronTab(crontab: string): boolean {
-    return !!crontab.match(/^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[a-z]{3}(,[a-z]{3}){0,10}) ?){5})$/);
-  }
-
   checkIsValidSchedule(schedule: Schedule): boolean {
     return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
   }
 
-  serializeFormValue(data: SerializeFormValue, schema: ChartSchema['schema']): SerializeFormValue {
+  checkIsValidCrontab(crontab: string): boolean {
+    return crontab && !Object.keys(parseString(crontab).errors).length;
+  }
+
+  serializeFormValue(
+    data: SerializeFormValue,
+    schema: ChartSchema['schema'],
+    fieldSchemaNode?: ChartSchemaNode,
+  ): SerializeFormValue {
     if (data == null) {
       return data;
     }
-    if (typeof data === 'string' && this.checkIsValidCronTab(data)) {
-      return crontabToSchedule(data) as SerializeFormValue;
+    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCrontab(data.toString())) {
+      return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
       return this.serializeFormList(data, schema);
@@ -234,11 +247,16 @@ export class AppSchemaService {
   ): HierarchicalObjectMap<ChartFormValue> {
     const result = {} as HierarchicalObjectMap<ChartFormValue>;
     Object.keys(groupValue).forEach((key) => {
-      result[key] = this.serializeFormValue(groupValue[key], schema) as HierarchicalObjectMap<ChartFormValue>;
-      if (result[key] === null) {
-        const fieldSchema = _.find(schema?.questions, { variable: key });
+      const fieldSchemaNode = findSchemaNode(schema?.questions, key);
 
-        if (fieldSchema?.schema?.null) {
+      result[key] = this.serializeFormValue(
+        groupValue[key],
+        schema,
+        fieldSchemaNode,
+      ) as HierarchicalObjectMap<ChartFormValue>;
+
+      if (result[key] === null) {
+        if (fieldSchemaNode?.schema?.null) {
           return;
         }
 
@@ -283,7 +301,7 @@ export class AppSchemaService {
         newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
       } else if (_.isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
-      } else if (_.isPlainObject(valueConfig) && keyConfig !== 'cron_test') {
+      } else if (_.isPlainObject(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromPlainObject(restoreKeysPayload);
       } else {
         newConfig[keyConfig] = valueConfig;
@@ -291,6 +309,52 @@ export class AppSchemaService {
     }
 
     return newConfig;
+  }
+
+  getSearchOptions(dynamicSchema: DynamicWizardSchema[], formValue: HierarchicalObjectMap<ChartFormValue>): Option[] {
+    let options: Option[] = [];
+    dynamicSchema.forEach((section) => {
+      section.schema.forEach((item) => {
+        if (item.type !== DynamicFormSchemaType.Dict) {
+          if (item.title && formValue[item.controlName] !== undefined) {
+            options.push({ label: item.title, value: item.controlName });
+          }
+        } else if (formValue[item.controlName] !== undefined) {
+          options = options.concat(
+            this.getSearchOptionsFromDict(
+              item,
+              formValue[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
+              item.controlName,
+            ),
+          );
+        }
+      });
+    });
+    return options;
+  }
+
+  private getSearchOptionsFromDict(
+    dict: DynamicFormSchemaDict,
+    formValue: HierarchicalObjectMap<ChartFormValue>,
+    valuePrefix: string,
+  ): Option[] {
+    let options: Option[] = [];
+    dict.attrs.forEach((item) => {
+      if (item.type !== DynamicFormSchemaType.Dict) {
+        if (item.title && formValue[item.controlName] !== undefined) {
+          options.push({ label: item.title, value: `${valuePrefix}.${item.controlName}` });
+        }
+      } else {
+        options = options.concat(
+          this.getSearchOptionsFromDict(
+            item,
+            formValue[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
+            `${valuePrefix}.${item.controlName}`,
+          ),
+        );
+      }
+    });
+    return options;
   }
 
   private createHierarchicalObjectFromArray(payload: KeysRestoredFromFormGroup): HierarchicalObjectMap<ChartFormValue> {
@@ -339,15 +403,18 @@ export class AppSchemaService {
       altDefault = false;
     }
 
+    const nullValidator = Validators.nullValidator;
     const defaultValue = schema.default !== undefined ? schema.default : altDefault;
+    const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
 
     const newFormControl = new CustomUntypedFormControl(defaultValue, [
-      schema.required ? Validators.required : Validators.nullValidator,
-      schema.max ? Validators.max(schema.max) : Validators.nullValidator,
-      schema.min ? Validators.min(schema.min) : Validators.nullValidator,
-      schema.max_length ? Validators.maxLength(schema.max_length) : Validators.nullValidator,
-      schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
-      schema.type === ChartSchemaType.Uri ? Validators.pattern(urlRegex) : Validators.nullValidator,
+      schema.required ? Validators.required : nullValidator,
+      schema.max ? Validators.max(schema.max) : nullValidator,
+      schema.min ? Validators.min(schema.min) : nullValidator,
+      schema.max_length ? Validators.maxLength(schema.max_length) : nullValidator,
+      schema.min_length ? Validators.minLength(schema.min_length) : nullValidator,
+      schema.type === ChartSchemaType.Uri ? Validators.pattern(this.urlValidationService.urlRegex) : nullValidator,
+      schema.type === ChartSchemaType.String && schema.default && isValidCrontab ? cronValidator() : nullValidator,
     ]);
 
     this.handleSchemaSubQuestions(payload, newFormControl);
@@ -491,6 +558,7 @@ export class AppSchemaService {
       }
       formField.hidden$.next(true);
       formField.disable();
+      formField.clearValidators();
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges
@@ -501,7 +569,7 @@ export class AppSchemaService {
         }
 
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
-          if (value !== null && !isParentHidden) {
+          if (!isParentHidden) {
             const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
             if (!formField.hidden$) {
               formField.hidden$ = new BehaviorSubject<boolean>(false);
@@ -534,6 +602,7 @@ export class AppSchemaService {
       }
       formField.hidden$.next(true);
       formField.disable();
+      formField.clearValidators();
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges
@@ -544,7 +613,7 @@ export class AppSchemaService {
         }
 
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
-          if (value !== null && !isParentHidden) {
+          if (!isParentHidden) {
             const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
             if (!formField.hidden$) {
               formField.hidden$ = new BehaviorSubject<boolean>(false);

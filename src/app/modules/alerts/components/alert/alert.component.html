@@ -1,10 +1,9 @@
-<mat-icon
+<ix-icon
   class="alert-icon"
+  [name]="icon"
   [color]="alertLevelColor"
   [matTooltip]="iconTooltip"
->
-  {{ icon }}
-</mat-icon>
+></ix-icon>
 
 <div class="alert-body">
   <h3 *ngIf="!alert.dismissed" [class]="['alert-level', alertLevelColor]">

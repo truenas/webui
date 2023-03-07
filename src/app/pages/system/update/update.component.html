@@ -32,7 +32,7 @@
         ixTest="refresh"
         (click)="check()"
       >
-        <mat-icon>refresh</mat-icon>
+        <ix-icon name="refresh"></ix-icon>
       </button>
     </div>
     <ng-template #trainName>
@@ -45,12 +45,12 @@
           mat-mini-fab
           color="primary"
           id="single-train-refresh-button"
-          matTooltip="Refresh"
           ixTest="refresh"
+          [matTooltip]="'Refresh' | translate"
           [disabled]="!checkable || isUpdateRunning"
           (click)="check()"
         >
-          <mat-icon>refresh</mat-icon>
+          <ix-icon name="refresh"></ix-icon>
         </button>
       </div>
     </ng-template>
@@ -135,7 +135,7 @@
   class="train-info-card"
 >
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
@@ -151,7 +151,7 @@
   class="train-info-card"
 >
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
@@ -167,7 +167,7 @@
   class="train-info-card"
 >
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <strong>
       {{ 'This is not a production release, and should only be used for testing.' | translate }}
     </strong>
@@ -176,7 +176,7 @@
 
 <mat-card *ngIf="updatesAvailable && nightlyTrain" class="train-info-card">
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <strong>
       {{ 'This is not a production release, and should only be used for testing.' | translate }}
     </strong>
@@ -223,7 +223,7 @@
   <div class="row">
     <div class="col-md-12">
       <p>
-        <i class="material-icons">warning</i>
+        <ix-icon name="warning"></ix-icon>
         <span id="update-running-msg">
           {{ isHa ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
         </span>

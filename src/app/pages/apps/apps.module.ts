@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
@@ -31,6 +32,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
+import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -48,6 +50,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AvailableAppsHeaderComponent,
     CatalogsComponent,
     ChartFormComponent,
+    ChartWizardComponent,
     ManageCatalogSummaryDialogComponent,
     CatalogEditFormComponent,
     CatalogAddFormComponent,
@@ -71,6 +74,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CoreComponents,
     MatSelectModule,
     MatCheckboxModule,
+    MatProgressSpinnerModule,
     FormsModule,
     MatDialogModule,
     ImgFallbackModule,

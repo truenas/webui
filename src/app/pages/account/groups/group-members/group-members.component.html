@@ -19,12 +19,11 @@
         [(selectedItems)]="selectedMembers"
       >
         <ng-template #templateItem let-item>
-          <mat-icon
+          <ix-icon
             matListItemIcon
-            fontSet="mdi-set"
-            fontIcon="mdi-account"
+            name="mdi-account"
             class="icon account"
-          ></mat-icon>
+          ></ix-icon>
           <span matListItemLine>{{ item.username }}</span>
         </ng-template>
       </ix-dual-listbox>

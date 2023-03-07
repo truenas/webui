@@ -18,9 +18,8 @@
           <div>
             <span class="app-name-header">
               <mat-checkbox
+                *ngIf="dataSource.length"
                 color="primary"
-                ix-auto
-                ix-auto-type="checkbox"
                 ixTest="select-all-app"
                 [checked]="allAppsChecked"
                 (change)="toggleAppsChecked($event.checked)"
@@ -44,6 +43,9 @@
               (keydown.enter)="selectApp(app)"
             ></ix-app-row>
           </ng-container>
+          <div *ngIf="!dataSource.length" class="no-apps">
+            {{ title | translate }}
+          </div>
         </div>
       </div>
     </div>

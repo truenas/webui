@@ -61,7 +61,9 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   getAddActions(): EntityTableAction[] {
     return [{
       label: this.translate.instant('Add'),
-      onClick: () => this.doAdd(),
+      onClick: () => {
+        this.slideInService.open(KerberosRealmsFormComponent);
+      },
     }] as EntityTableAction[];
   }
 
@@ -83,9 +85,5 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
         },
       },
     ] as EntityTableAction[];
-  }
-
-  doAdd(): void {
-    this.slideInService.open(KerberosRealmsFormComponent);
   }
 }

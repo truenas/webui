@@ -49,6 +49,7 @@
   text-align: center;
 
   .logo {
+    fill: currentColor;
     height: auto;
     position: relative;
     width: 256px;
@@ -62,6 +63,7 @@
     opacity: 0.75;
     position: absolute;
     top: 0;
+    user-select: none;
     width: 100%;
     z-index: 1;
   }

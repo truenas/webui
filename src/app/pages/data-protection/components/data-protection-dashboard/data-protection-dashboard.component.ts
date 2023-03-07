@@ -165,11 +165,11 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Pool'), prop: 'pool_name' },
             { name: this.translate.instant('Description'), prop: 'description', hiddenIfEmpty: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', width: '80px' },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', width: '110px' },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
-              width: '50px',
+              width: '80px',
               checkbox: true,
               onChange: (row: ScrubTaskUi) => this.onCheckboxToggle(TaskCardId.Scrub, row, 'enabled'),
             },
@@ -512,12 +512,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         : this.translate.instant(helptext.no_snapshot_sent_yet);
 
       if (task.job !== null) {
-        task.state.state = task.job.state;
         this.store$.select(selectJob(task.job.id)).pipe(
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
-          task.state.state = job.state;
           task.job = job;
           if (this.jobStates.get(job.id) !== job.state) {
             this.refreshTable(TaskCardId.Replication);

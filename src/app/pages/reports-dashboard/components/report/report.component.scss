@@ -193,7 +193,7 @@ span.disk-detail-subtitle {
   text-align: right;
 }
 
-.pool-status .mat-icon.mat-icon {
+.pool-status .ix-icon.ix-icon {
   bottom: -6px;
   margin: -4px 0 0 4px;
   position: relative;
@@ -609,7 +609,7 @@ p.value {
     &.mat-button-toggle-disabled {
       background-color: transparent;
       color: var(--fg1);
-      opacity: 0.38;
+      opacity: var(--disabled-opacity);
 
       .mat-button-toggle-button {
         cursor: not-allowed;

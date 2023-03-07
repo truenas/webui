@@ -75,7 +75,7 @@ describe('GroupMembersComponent', () => {
 
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
     const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All users"]' }));
-    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group members"' }));
+    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group members"]' }));
     const users = await userList.getItems();
 
     expect(users).toHaveLength(1);
@@ -83,8 +83,8 @@ describe('GroupMembersComponent', () => {
 
     await (await users[0].host()).click();
 
-    const forwardButton = await loader.getHarness(MatButtonHarness.with({ text: 'arrow_forward' }));
-    await forwardButton.click();
+    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="add-to-list"]' }));
+    await addButton.click();
 
     expect(await userList.getItems()).toHaveLength(0);
     expect(await memberList.getItems()).toHaveLength(2);

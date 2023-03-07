@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { forkJoin, Observable, tap } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
@@ -77,7 +77,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   private loadUnusedDisks(): Observable<UnusedDisk[]> {
     return this.ws.call('disk.get_unused').pipe(
-      switchMap((unusedDisks: UnusedDisk[]) => this.workAroundMissingField(unusedDisks)),
       tap((unusedDisks) => {
         this.patchState({ unusedDisks });
       }),
@@ -88,23 +87,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     return this.ws.call('enclosure.query').pipe(
       tap((enclosures) => {
         this.patchState({ enclosures });
-      }),
-    );
-  }
-
-  /**
-   * TODO: Remove after https://ixsystems.atlassian.net/browse/NAS-120360 is implemented.
-   */
-  private workAroundMissingField(unusedDisks: UnusedDisk[]): Observable<UnusedDisk[]> {
-    return this.ws.call('disk.query').pipe(
-      map((disks: Disk[]) => {
-        return unusedDisks.map((unusedDisk) => {
-          const diskWithEnclosure = disks.find((disk) => disk.name === unusedDisk.name);
-          return {
-            ...unusedDisk,
-            enclosure: diskWithEnclosure.enclosure,
-          };
-        });
       }),
     );
   }

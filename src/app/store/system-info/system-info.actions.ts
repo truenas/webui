@@ -12,6 +12,11 @@ export const systemFeaturesLoaded = createAction(
   props<{ systemFeatures: SystemFeatures }>(),
 );
 
+export const systemHaCapabilityLoaded = createAction(
+  '[System Info API] System is HA capable Loaded',
+  props<{ isSystemHaCapable: boolean }>(),
+);
+
 export const passiveNodeReplaced = createAction(
   '[System Info API] Passive Node Replaced',
 );
