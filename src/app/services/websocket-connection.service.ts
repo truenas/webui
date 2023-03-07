@@ -102,7 +102,7 @@ export class WebsocketConnectionService {
     this.isConnectionReady$.next(false);
     this.resetUi();
     if (event.code === 1008) {
-      this.dialogService.errorReport(
+      this.dialogService.fullScreenDialog(
         this.translate.instant('Access restricted'),
         this.translate.instant('Access from your IP is restricted'),
       ).pipe(untilDestroyed(this)).subscribe(() => {
