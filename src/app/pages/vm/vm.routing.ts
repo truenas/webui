@@ -1,9 +1,9 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
+import { VmWizardOldComponent } from 'app/pages/vm/vm-wizard/vm-wizard-old.component';
 import { DeviceListComponent } from './devices/device-list/device-list.component';
 import { VmListComponent } from './vm-list/vm-list.component';
-import { VmWizardComponent } from './vm-wizard/vm-wizard.component';
 
 export const routes: Routes = [
   {
@@ -13,7 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'wizard',
-    component: VmWizardComponent,
+    component: VmWizardOldComponent,
     data: { title: 'Wizard', breadcrumb: 'Wizard' },
   },
   {

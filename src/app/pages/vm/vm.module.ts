@@ -8,10 +8,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatStepperModule } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -24,6 +26,8 @@ import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/dev
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
+import { VmWizardOldComponent } from 'app/pages/vm/vm-wizard/vm-wizard-old.component';
+import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
@@ -32,7 +36,12 @@ import { CloneVmDialogComponent } from './vm-list/clone-vm-dialog/clone-vm-dialo
 import { DeleteVmDialogComponent } from './vm-list/delete-vm-dialog/delete-vm-dialog.component';
 import { StopVmDialogComponent } from './vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VmListComponent } from './vm-list/vm-list.component';
-import { VmWizardComponent } from './vm-wizard/vm-wizard.component';
+import { OsStepComponent } from './vm-wizard/steps/1-os-step/os-step.component';
+import { CpuAndMemoryStepComponent } from './vm-wizard/steps/2-cpu-and-memory-step/cpu-and-memory-step.component';
+import { DiskStepComponent } from './vm-wizard/steps/3-disks-step/disk-step.component';
+import { NetworkInterfaceStepComponent } from './vm-wizard/steps/4-network-interface-step/network-interface-step.component';
+import { InstallationMediaStepComponent } from './vm-wizard/steps/5-installation-media-step/installation-media-step.component';
+import { GpuStepComponent } from './vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { routing } from './vm.routing';
 
 @NgModule({
@@ -56,11 +65,13 @@ import { routing } from './vm.routing';
     LayoutModule,
     MatDialogModule,
     TestIdModule,
+    MatStepperModule,
+    AppCommonModule,
   ],
   declarations: [
     VmListComponent,
     DeviceListComponent,
-    VmWizardComponent,
+    VmWizardOldComponent,
     VmSerialShellComponent,
     DeviceFormComponent,
     DeviceDeleteModalComponent,
@@ -69,6 +80,13 @@ import { routing } from './vm.routing';
     DisplayVmDialogComponent,
     CloneVmDialogComponent,
     VmEditFormComponent,
+    OsStepComponent,
+    VmWizardComponent,
+    CpuAndMemoryStepComponent,
+    DiskStepComponent,
+    NetworkInterfaceStepComponent,
+    InstallationMediaStepComponent,
+    GpuStepComponent,
   ],
   providers: [
     VmService,

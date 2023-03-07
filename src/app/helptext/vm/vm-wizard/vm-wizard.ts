@@ -1,8 +1,9 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { VmCpuMode } from 'app/enums/vm.enum';
+import { VmCpuMode, VmOs } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 
+// TODO: Clean up
 export default {
   formTitle: T('Create Virtual Machine'),
 
@@ -10,9 +11,9 @@ export default {
   os_placeholder: T('Guest Operating System'),
   os_tooltip: T('Choose the VM operating system type.'),
   os_options: [
-    { label: 'Windows', value: 'Windows' },
-    { label: 'Linux', value: 'Linux' },
-    { label: 'FreeBSD', value: 'FreeBSD' },
+    { label: 'Windows', value: VmOs.Windows },
+    { label: 'Linux', value: VmOs.Linux },
+    { label: 'FreeBSD', value: VmOs.FreeBsd },
   ],
   os_validation: [Validators.required],
 
@@ -47,7 +48,7 @@ export default {
  address can be chosen.'),
 
   vcpus_label: T('CPU and Memory'),
-  vcpus_warning: T('The product of vCPUs, cores and threads must not exceed {maxVCPUs} on this system.'),
+  vcpus_warning: T('The product of vCPUs, cores and threads must not exceed {maxVcpus} on this system.'),
   vcpus_placeholder: T('Virtual CPUs'),
   vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  machine. The VM operating system\
@@ -72,6 +73,7 @@ E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
   },
 
   nodeset: {
+    // TODO: If still used, replace back with variable reference
     placeholder: T('Optional: NUMA nodeset (Example: 0-1)'),
     tooltip: T('Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined. \
 Better memory locality can be achieved by setting node set based on assigned CPU set. \

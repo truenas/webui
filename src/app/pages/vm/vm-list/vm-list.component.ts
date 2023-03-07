@@ -30,6 +30,7 @@ import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/d
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
+import { VmWizardOldComponent } from 'app/pages/vm/vm-wizard/vm-wizard-old.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
@@ -473,8 +474,12 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     });
   }
 
+  doAddOld(): void {
+    this.modalService.openInSlideIn(VmWizardOldComponent);
+  }
+
   doAdd(): void {
-    this.modalService.openInSlideIn(VmWizardComponent);
+    this.slideIn.open(VmWizardComponent);
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {

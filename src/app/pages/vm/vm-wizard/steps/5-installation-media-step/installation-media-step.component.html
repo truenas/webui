@@ -1,0 +1,45 @@
+<form [formGroup]="form">
+  <ix-explorer
+    formControlName="iso_path"
+    [label]="'Optional: Choose installation media image' | translate"
+    [nodeProvider]="fileNodeProvider"
+    [tooltip]="helptext.iso_path_tooltip | translate"
+  ></ix-explorer>
+
+  <ix-checkbox
+    formControlName="upload_iso"
+    [label]="'Upload an installer image file' | translate"
+    [tooltip]="helptext.upload_iso_checkbox_tooltip | translate"
+  ></ix-checkbox>
+
+  <ng-container *ngIf="form.value.upload_iso">
+    <ix-explorer
+      formControlName="upload_iso_path"
+      [label]="'ISO save location' | translate"
+      [nodeProvider]="directoryNodeProvider"
+      [tooltip]="helptext.upload_iso_path_tooltip | translate"
+    ></ix-explorer>
+
+    <ix-file-input
+      formControlName="upload_iso_file"
+      acceptedFiles=".img,.iso"
+      [label]="'Installer image file' | translate"
+      [tooltip]="helptext.upload_iso_tooltip | translate"
+    ></ix-file-input>
+  </ng-container>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+  </ix-form-actions>
+</form>
