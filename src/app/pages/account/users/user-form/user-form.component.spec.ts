@@ -18,10 +18,11 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
-import { StorageService, UserService } from 'app/services';
+import {
+  DialogService, StorageService, UserService, WebSocketService,
+} from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { UserFormComponent } from './user-form.component';
 
 const mockUser = {
@@ -76,6 +77,9 @@ describe('UserFormComponent', () => {
         }] as Group[]),
         mockCall('sharing.smb.query', [{ path: '/mnt/users' }] as SmbShare[]),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(IxSlideInService, {
         onClose$: of(true),
       }),
@@ -207,6 +211,7 @@ describe('UserFormComponent', () => {
         'Samba Authentication': true,
         'Authorized Keys': '',
         'Upload SSH Key': [],
+        'Create Home Directory': false,
         UID: '1004',
         Email: '',
         'New Password': '',
@@ -227,6 +232,7 @@ describe('UserFormComponent', () => {
         'Home Directory Permissions': '755',
         'Home Directory': '/home/updated',
         'Primary Group': 'mock-group',
+        'Create Home Directory': true,
         'Samba Authentication': false,
         'Lock User': true,
         Shell: 'zsh',
@@ -251,6 +257,7 @@ describe('UserFormComponent', () => {
           home: '/home/updated',
           locked: true,
           password_disabled: false,
+          home_create: true,
           shell: '/usr/bin/zsh',
           smb: false,
           sshpubkey: null,
