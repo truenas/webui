@@ -49,13 +49,13 @@ describe('AllowedAddressesComponent', () => {
 
   it('sends an update payload to websocket and closes modal when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'IP Address': '2.2.2.2/32' });
+    await form.fillForm({ 'IP Address': '2.2.2.2' });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('system.general.update', [
-      { ui_allowlist: ['2.2.2.2/32'] },
+      { ui_allowlist: ['2.2.2.2'] },
     ]);
   });
 });
