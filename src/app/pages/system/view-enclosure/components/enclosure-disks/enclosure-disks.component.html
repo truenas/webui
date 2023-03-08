@@ -390,6 +390,7 @@
             <div class="capacity">{{ converter(selectedDisk.size) }}</div>
             <div class="disk-actions">
               <button
+                *ngIf="!hideIdentifyDrive"
                 id="identify-btn"
                 mat-button
                 color="primary"
