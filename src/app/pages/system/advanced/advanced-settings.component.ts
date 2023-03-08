@@ -22,11 +22,13 @@ import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { AllowedAddressesComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
@@ -47,6 +49,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
@@ -65,6 +68,7 @@ enum AdvancedCardId {
   Gpus = 'gpus',
   Sed = 'sed',
   Sessions = 'sessions',
+  Addresses = 'addresses',
 }
 
 interface AuthSessionRow {
@@ -72,6 +76,10 @@ interface AuthSessionRow {
   current: boolean;
   username: string;
   created_at: string;
+}
+
+interface AllowedAddressRow {
+  address: string;
 }
 
 @UntilDestroy()
@@ -275,6 +283,48 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     ],
   };
 
+  addressesTableConf: AppTableConfig = {
+    title: helptextSystemAdvanced.fieldset_addresses,
+    queryCall: 'system.general.config',
+    parent: this,
+    emptyEntityLarge: false,
+    columns: [
+      { name: this.translate.instant('Address'), prop: 'address' },
+    ],
+    dataSourceHelper: this.addressesSourceHelper.bind(this),
+    getActions: (): AppTableAction<AllowedAddressRow>[] => {
+      return [
+        {
+          name: 'delete_allowed_address',
+          icon: 'delete',
+          matTooltip: this.translate.instant('Delete Allowed Address'),
+          onClick: (row: AllowedAddressRow): void => {
+            this.dialog
+              .confirm({
+                title: this.translate.instant('Delete Allowed Address'),
+                message: this.translate.instant('Are you sure you want to delete address {ip}?', { ip: row.address }),
+              })
+              .pipe(
+                filter(Boolean),
+                untilDestroyed(this),
+              ).subscribe({
+                next: () => this.deleteAllowedAddress(row),
+                error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+              });
+          },
+        },
+      ];
+    },
+    tableActions: [
+      {
+        label: this.translate.instant('Configure'),
+        onClick: () => {
+          this.slideInService.open(AllowedAddressesComponent);
+        },
+      },
+    ],
+  };
+
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -462,6 +512,11 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
             },
           ],
         },
+        {
+          id: AdvancedCardId.Addresses,
+          title: helptextSystemAdvanced.fieldset_addresses,
+          tableConf: this.addressesTableConf,
+        },
       ];
 
       this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
@@ -567,6 +622,16 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  deleteAllowedAddress(row: AllowedAddressRow): void {
+    this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      const addresses = config.ui_allowlist.filter((ip) => ip !== row.address);
+      this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(untilDestroyed(this)).subscribe({
+        next: () => this.store$.dispatch(generalConfigUpdated()),
+        error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+      });
+    });
+  }
+
   refreshTables(): void {
     this.dataCards.forEach((card) => {
       if (card.tableConf?.tableComponent) {
@@ -591,7 +656,6 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   }
 
   sessionsSourceHelper(data: AuthSession[]): AuthSessionRow[] {
-    console.warn(data);
     return data.map((session) => {
       return {
         id: session.id,
@@ -600,6 +664,10 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         created_at: format(session.created_at.$date, 'Pp'),
       };
     });
+  }
+
+  addressesSourceHelper(data: SystemGeneralConfig): AllowedAddressRow[] {
+    return data.ui_allowlist.map((ip) => ({ address: ip }));
   }
 
   private addDataCard(card: DataCard<AdvancedCardId>): void {
