@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{ 'Logs' | translate }}</h1>
 
 <div *ngIf="job?.logs_excerpt" class="logs">
-  <pre><code>{{ job.exception }}</code></pre>
+  <pre><code>{{ job.logs_excerpt }}</code></pre>
   <ix-copy-btn [text]="job.logs_excerpt"></ix-copy-btn>
 </div>
 
