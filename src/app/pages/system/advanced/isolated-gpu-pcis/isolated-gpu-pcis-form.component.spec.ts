@@ -62,14 +62,14 @@ describe('IsolatedGpuPcisFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      "GPUs": ['Intel Corporation HD Graphics 510'],
+      GPUs: ['Intel Corporation HD Graphics 510'],
     });
   });
 
   it('saves updated settings when Save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      "GPUs": 'Fake HD Graphics',
+      GPUs: 'Fake HD Graphics',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

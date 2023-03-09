@@ -546,7 +546,7 @@ export class VmWizardComponent implements WizardConfiguration {
         },
         {
           type: 'select',
-          placeholder: this.translate.instant("GPUs"),
+          placeholder: this.translate.instant('GPUs'),
           name: 'gpus',
           multiple: true,
           options: [],
