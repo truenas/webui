@@ -46,7 +46,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadTestData();
+    this.loadApplications();
   }
 
   ngAfterViewInit(): void {
@@ -85,7 +85,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     return `${appSection.title}`;
   }
 
-  private loadTestData(): void {
+  private loadApplications(): void {
     this.loader.open();
 
     combineLatest([
