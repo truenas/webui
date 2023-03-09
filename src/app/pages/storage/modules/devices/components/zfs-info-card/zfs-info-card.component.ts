@@ -48,8 +48,10 @@ export class ZfsInfoCardComponent {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
       && !this.isRaidzParent
       && this.topologyItem.type === TopologyItemType.Disk
-      && (this.topologyCategory === PoolTopologyCategory.Data || this.topologyCategory === PoolTopologyCategory.Special)
-      && this.topologyItem.status !== TopologyItemStatus.Unavail;
+      && (this.topologyCategory === PoolTopologyCategory.Data
+        || this.topologyCategory === PoolTopologyCategory.Dedup
+        || this.topologyCategory === PoolTopologyCategory.Special
+      ) && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   get canRemoveDisk(): boolean {

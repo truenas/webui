@@ -24,7 +24,6 @@
   </mat-card-content>
   <mat-card-actions *ngIf="isDisk">
     <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
-    {{ topologyParentItem | json }}
     <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
 
     <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
