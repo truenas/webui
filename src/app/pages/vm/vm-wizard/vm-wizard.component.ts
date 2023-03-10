@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
-  combineLatest, Observable, of, switchMap,
+  forkJoin, Observable, of, switchMap,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
@@ -189,7 +189,7 @@ export class VmWizardComponent implements OnInit {
       requests.push(...this.getGpuRequests(vm));
     }
 
-    return combineLatest(requests);
+    return forkJoin(requests);
   }
 
   private getNicRequest(vm: VirtualMachine): Observable<VmDevice> {
