@@ -11,6 +11,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
+import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
 
@@ -84,6 +85,21 @@ export class DialogService {
   generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<boolean> {
     const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
     dialogRef.componentInstance.conf = conf;
+
+    return dialogRef.afterClosed();
+  }
+
+  fullScreenDialog(title: string, message: string): Observable<boolean> {
+    const dialogRef = this.dialog.open(FullScreenDialogComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true,
+    });
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
 
     return dialogRef.afterClosed();
   }
