@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -83,6 +84,8 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
 
 
 @then('change should be saved, reopen the edit page, root group value should be visible')
