@@ -53,6 +53,14 @@ def Confirm_Single_Disk(driver):
     driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
+def Confirm_Warning(driver):
+    assert wait_on_element(driver, 5, xpaths.popup.warning)
+    assert wait_on_element(driver, 5, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
+    assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
+
+
 def Dismiss_All_Alerts(driver):
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
         assert wait_on_element(driver, 7, xpaths.toolbar.notification_Button, 'clickable')
