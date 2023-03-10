@@ -43,7 +43,7 @@ describe('GpuStepComponent', () => {
     await form.fillForm({
       'Hide from MSR': true,
       'Ensure Display Device': true,
-      'GPU\'s': ['GeForce GTX 1080 Ti'],
+      GPUs: ['GeForce GTX 1080 Ti'],
     });
   }
 

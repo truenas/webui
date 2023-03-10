@@ -30,7 +30,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   templateUrl: './vm-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CpuValidatorService, VmGpuService],
+  providers: [CpuValidatorService],
 })
 export class VmEditFormComponent {
   form = this.formBuilder.group({

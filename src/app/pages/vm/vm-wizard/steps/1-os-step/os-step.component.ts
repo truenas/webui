@@ -14,6 +14,7 @@ import {
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
@@ -25,16 +26,15 @@ export class OsStepComponent implements SummaryProvider {
   form = this.formBuilder.group({
     os: [null as VmOs],
     hyperv_enlightenments: [false],
-    // TODO: Extract pattern somewhere
     // TODO: Add validator to ban name in use
-    name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$')]],
+    name: ['', [Validators.required, Validators.pattern(vmNamePattern)]],
     description: [''],
     time: [VmTime.Local],
     bootloader: [VmBootloader.Uefi],
     shutdown_timeout: [90, [Validators.min(0)]],
     autostart: [true],
     enable_display: [true],
-    display_type: [VmDisplayType.Vnc], // TODO: Relations?
+    display_type: [VmDisplayType.Vnc],
     bind: ['0.0.0.0', [Validators.required]],
   });
 

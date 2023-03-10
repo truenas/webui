@@ -9,7 +9,7 @@ import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-gr
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
-import { DiskStepComponent, NewOrExistingDisk } from 'app/pages/vm/vm-wizard/steps/3-disks-step/disk-step.component';
+import { DiskStepComponent, NewOrExistingDisk } from 'app/pages/vm/vm-wizard/steps/3-disk-step/disk-step.component';
 
 describe('DiskStepComponent', () => {
   let spectator: Spectator<DiskStepComponent>;

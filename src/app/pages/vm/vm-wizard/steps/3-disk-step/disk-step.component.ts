@@ -23,7 +23,6 @@ export enum NewOrExistingDisk {
   selector: 'ix-disk-step',
   templateUrl: './disk-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [FreeSpaceValidatorService],
 })
 export class DiskStepComponent implements OnInit, SummaryProvider {
   form = this.formBuilder.group({

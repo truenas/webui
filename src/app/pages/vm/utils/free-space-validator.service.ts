@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services';
  * TODO: Feels weird to be setting up errors on control manually.
  * TODO: We should probably be able to show errors on the form itself.
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FreeSpaceValidatorService {
   private freeSpaceInPath$: Observable<number>;
   private previousPath: string;

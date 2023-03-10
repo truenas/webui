@@ -54,6 +54,7 @@
             matStepperNext
             color="primary"
             ixTest="save"
+            [disabled]="isLoading"
             (click)="onSubmit()"
           >{{ 'Save' | translate }}</button>
         </ix-form-actions>

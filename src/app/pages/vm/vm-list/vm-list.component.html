@@ -1,8 +1,5 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <button *ngIf="canAdd" mat-button color="primary" ixTest="add-vm" (click)="doAddOld()">
-      {{ 'Add (old)' | translate }}
-    </button>
     <button *ngIf="canAdd" mat-button color="primary" ixTest="add-vm" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>

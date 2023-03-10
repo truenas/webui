@@ -10,7 +10,9 @@ import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { WebSocketService } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class VmGpuService {
   constructor(
     private gpuService: GpuService,

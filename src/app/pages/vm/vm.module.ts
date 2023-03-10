@@ -26,7 +26,6 @@ import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/dev
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
-import { VmWizardOldComponent } from 'app/pages/vm/vm-wizard/vm-wizard-old.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   VmService, NetworkService, SystemGeneralService,
@@ -38,10 +37,11 @@ import { StopVmDialogComponent } from './vm-list/stop-vm-dialog/stop-vm-dialog.c
 import { VmListComponent } from './vm-list/vm-list.component';
 import { OsStepComponent } from './vm-wizard/steps/1-os-step/os-step.component';
 import { CpuAndMemoryStepComponent } from './vm-wizard/steps/2-cpu-and-memory-step/cpu-and-memory-step.component';
-import { DiskStepComponent } from './vm-wizard/steps/3-disks-step/disk-step.component';
+import { DiskStepComponent } from './vm-wizard/steps/3-disk-step/disk-step.component';
 import { NetworkInterfaceStepComponent } from './vm-wizard/steps/4-network-interface-step/network-interface-step.component';
 import { InstallationMediaStepComponent } from './vm-wizard/steps/5-installation-media-step/installation-media-step.component';
 import { GpuStepComponent } from './vm-wizard/steps/6-gpu-step/gpu-step.component';
+import { UploadIsoDialogComponent } from './vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { routing } from './vm.routing';
 
 @NgModule({
@@ -71,7 +71,6 @@ import { routing } from './vm.routing';
   declarations: [
     VmListComponent,
     DeviceListComponent,
-    VmWizardOldComponent,
     VmSerialShellComponent,
     DeviceFormComponent,
     DeviceDeleteModalComponent,
@@ -87,6 +86,7 @@ import { routing } from './vm.routing';
     NetworkInterfaceStepComponent,
     InstallationMediaStepComponent,
     GpuStepComponent,
+    UploadIsoDialogComponent,
   ],
   providers: [
     VmService,
