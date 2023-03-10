@@ -59,6 +59,7 @@ def Confirm_Warning(driver):
     driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
     assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
+    time.sleep(1)
 
 
 def Dismiss_All_Alerts(driver):

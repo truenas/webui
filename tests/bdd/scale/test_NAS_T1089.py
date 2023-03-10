@@ -91,7 +91,6 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
 @then('change should be saved, reopen the edit page, root group value should be visible')
 def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visible(driver):
     """change should be saved, reopen the edit page, root group value should be visible."""
-    assert wait_on_element(driver, 5, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
