@@ -1,0 +1,10 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+
+  .details-list {
+    flex: 1;
+    width: 100%;
+  }
+}

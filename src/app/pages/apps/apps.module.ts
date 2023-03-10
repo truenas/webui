@@ -33,14 +33,15 @@ import {
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
+import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
-import { AppInfoCardComponent } from './components/app-info-card/app-info-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
+import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
 
 @NgModule({
@@ -60,6 +61,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppRouterOutletComponent,
     AppInfoCardComponent,
     AppRowComponent,
+    AppDetailsPanelComponent,
   ],
   imports: [
     CommonModule,
