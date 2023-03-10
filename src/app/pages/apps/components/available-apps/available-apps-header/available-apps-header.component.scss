@@ -7,13 +7,17 @@
   display: flex;
   padding: 0 10px 25px;
 
-  @media (max-width: $breakpoint-xs) {
+  @media (max-width: $breakpoint-sm) {
     flex-direction: column-reverse;
   }
 }
 
 .search-filters {
-  width: 100%;
+  width: calc(100% - 360px);
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+  }
 
   .filters-btn {
     align-items: center;
@@ -23,14 +27,24 @@
     font-weight: 600;
     justify-content: flex-end;
   }
+
+  .filters-container {
+    display: flex;
+    gap: 18px;
+
+    ix-select {
+      width: 33%;
+    }
+  }
 }
 
 .header-numbers {
   column-gap: 25px;
   display: flex;
   white-space: nowrap;
+  width: 360px;
 
-  @media (min-width: $breakpoint-xs) {
+  @media (min-width: $breakpoint-sm) {
     margin-left: 20px;
   }
 }

@@ -1,7 +1,7 @@
 <div class="search-filters">
   <ix-input
     prefixIcon="search"
-    [formControl]="searchControl"
+    [formControl]="form.controls.search"
     [placeholder]="'Search' | translate"
   ></ix-input>
   <div class="filters-btn" (click)="changeFiltersVisible()">{{ 'Filters' | translate }}
@@ -9,6 +9,23 @@
     <ix-icon *ngIf="showFilters" name="expand_less"></ix-icon>
   </div>
   <div *ngIf="showFilters" class="filters-container">
+    <ix-select
+      [formControl]="form.controls.catalogs"
+      [label]="'Catalogs' | translate"
+      [options]="catalogsOptions$"
+      [multiple]="true"
+    ></ix-select>
+    <ix-select
+      [formControl]="form.controls.sort"
+      [label]="'Sort' | translate"
+      [options]="sortOptions$"
+    ></ix-select>
+    <ix-select
+      [formControl]="form.controls.categories"
+      [label]="'Categories' | translate"
+      [options]="categoriesOptions$"
+      [multiple]="true"
+    ></ix-select>
   </div>
 </div>
 

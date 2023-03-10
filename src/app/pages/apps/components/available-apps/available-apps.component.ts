@@ -2,7 +2,9 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
+import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
@@ -21,10 +23,21 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   apps: CatalogApp[] = [];
-  searchQuery = '';
+  filters: AppsFiltersValues = {
+    search: '',
+    catalogs: [],
+    sort: '',
+    categories: [],
+  };
 
   get filteredApps(): CatalogApp[] {
-    return this.apps.filter((app) => app.name.toLocaleLowerCase().includes(this.searchQuery.toLocaleLowerCase()));
+    const filtered = this.apps.filter((app) => (
+      app.name.toLocaleLowerCase().includes(this.filters.search.toLocaleLowerCase())
+      && this.filters.catalogs.includes(app.catalog.id)
+      && this.filters.categories.filter((category) => app.categories.includes(category)).length
+    ));
+    return this.filters.sort
+      ? _.orderBy(filtered, this.filters.sort, this.filters.sort === 'last_update' ? ['desc'] : ['asc']) : filtered;
   }
 
   constructor(
@@ -67,12 +80,12 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   }
 
-  trackByAppId(_: number, app: CatalogApp): string {
+  trackByAppId(id: number, app: CatalogApp): string {
     return `${app.catalog.id}-${app.catalog.train}-${app.name}`;
   }
 
-  changeSearchQuery(query: string): void {
-    this.searchQuery = query;
+  changeFilters(filters: AppsFiltersValues): void {
+    this.filters = filters;
   }
 
   private loadTestData(): void {
