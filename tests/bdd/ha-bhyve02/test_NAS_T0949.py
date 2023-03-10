@@ -1,11 +1,11 @@
 # coding=utf-8
 """High Availability (tn-bhyve06) feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
     wait_on_element,
-    is_element_present,
     wait_on_element_disappear,
     ssh_sudo
 )
@@ -38,17 +38,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_page_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    if not is_element_present(driver, xpaths.side_Menu.dashboard):
-        assert wait_on_element(driver, 7, xpaths.login.user_Input)
-        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-        assert wait_on_element(driver, 7, xpaths.login.signin_Button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
-    else:
-        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
 @then('You should see the dashboard')
@@ -122,6 +112,8 @@ def enable_permit_sudo_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
 
 
 @then('Change should be saved')
