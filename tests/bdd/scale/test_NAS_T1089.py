@@ -28,7 +28,7 @@ def test_add_root_to_auxiliary_group_of_a_user():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['First_User'], scope='session')
+    #depends(request, ['First_User'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -91,6 +91,7 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
 @then('change should be saved, reopen the edit page, root group value should be visible')
 def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visible(driver):
     """change should be saved, reopen the edit page, root group value should be visible."""
+    assert wait_on_element(driver, 5, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
