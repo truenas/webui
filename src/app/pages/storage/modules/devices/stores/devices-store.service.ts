@@ -78,7 +78,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
         return this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
           switchMap((pools) => {
             // TODO: Handle pool not found.
-            return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
+            return this.ws.call('disk.query', [[['pool', '=', pools?.[0]?.name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {
                 this.patchState({
                   isLoading: false,

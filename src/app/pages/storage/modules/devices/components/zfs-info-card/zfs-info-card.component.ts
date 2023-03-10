@@ -28,6 +28,7 @@ export class ZfsInfoCardComponent {
   @Input() disk: Disk;
   @Input() topologyCategory: PoolTopologyCategory;
   @Input() poolId: number;
+  @Input() hasTopLevelRaidz: boolean;
 
   get isMirror(): boolean {
     return this.topologyItem.type === TopologyItemType.Mirror;
@@ -57,8 +58,11 @@ export class ZfsInfoCardComponent {
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
       && !this.isRaidzParent
-      && this.topologyCategory !== PoolTopologyCategory.Data
-      && this.topologyCategory !== PoolTopologyCategory.Special;
+      && !this.hasTopLevelRaidz;
+  }
+
+  get canRemoveVDEV(): boolean {
+    return !this.hasTopLevelRaidz;
   }
 
   get canDetachDisk(): boolean {
