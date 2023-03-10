@@ -9,11 +9,14 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-available-apps-header></ix-available-apps-header>
+<ix-available-apps-header
+  (searchQuery)="changeSearchQuery($event)"
+></ix-available-apps-header>
 
+<div *ngIf="searchQuery" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}</div>
 <div class="apps">
   <ix-app-card
-    *ngFor="let app of apps; trackBy: trackByAppId"
+    *ngFor="let app of filteredApps; trackBy: trackByAppId"
     [app]="app"
     [routerLink]="['/apps', 'available', app.name]"
   ></ix-app-card>

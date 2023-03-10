@@ -21,6 +21,11 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   apps: CatalogApp[] = [];
+  searchQuery = '';
+
+  get filteredApps(): CatalogApp[] {
+    return this.apps.filter((app) => app.name.toLocaleLowerCase().includes(this.searchQuery.toLocaleLowerCase()));
+  }
 
   constructor(
     private layoutService: LayoutService,
@@ -64,6 +69,10 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   trackByAppId(_: number, app: CatalogApp): string {
     return `${app.catalog.id}-${app.catalog.train}-${app.name}`;
+  }
+
+  changeSearchQuery(query: string): void {
+    this.searchQuery = query;
   }
 
   private loadTestData(): void {
