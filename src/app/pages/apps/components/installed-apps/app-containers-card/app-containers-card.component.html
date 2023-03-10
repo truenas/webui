@@ -1,0 +1,75 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Containers' | translate }}
+    </h3>
+    <button
+      *ngIf="app"
+      mat-button
+      [ixTest]="[app.name, 'shell']"
+      (click)="onShellPressed()"
+    >
+      {{ 'Shell' | translate }}
+    </button>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="details-list">
+      <div class="details-item">
+        <span class="label">{{ 'Pods' | translate }}:</span>
+        <span class="value">
+          {{ appResources?.resources?.pods?.length || 0 }}
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Used Ports' | translate }}:</span>
+        <span class="value">
+          <ng-container *ngIf="app?.used_ports; else notAvailable">
+            {{ getPorts(app) }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Deployments' | translate }}:</span>
+        <span class="value">
+          {{ appResources?.resources?.deployments?.length || 0 }}
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Stateful Sets' | translate }}:</span>
+        <span class="value">
+          {{ appResources?.resources?.statefulsets?.length || 0 }}
+        </span>
+      </div>
+    </div>
+    <div class="containers">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'Containers' | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngIf="appResources?.resources?.container_images" class="expansion-content">
+          <div
+            *ngFor="let containerImage of appResources.resources.container_images | cast | keyvalue; let i = index"
+            class="detail-row"
+          >
+            <div fxLayout="row" fxLayoutAlign="center start">
+              <span fxFlex="70%">{{ containerImage.key }}</span>
+              <span fxFlex="30%" class="value">
+                <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
+                  {{ 'Update available' | translate }}
+                </ng-container>
+              </span>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #upToDate>
+  {{ 'Up to date' | translate }}
+</ng-template>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>

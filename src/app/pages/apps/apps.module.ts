@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,6 +14,7 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
@@ -41,6 +43,7 @@ import { AppRouterOutletComponent } from './components/app-router-outlet/app-rou
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
+import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
 
@@ -62,6 +65,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppInfoCardComponent,
     AppRowComponent,
     AppDetailsPanelComponent,
+    AppContainersCardComponent,
   ],
   imports: [
     CommonModule,
@@ -87,6 +91,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     TestIdModule,
     AppLoaderModule,
     AppCommonModule,
+    MatExpansionModule,
+    CastModule,
   ],
 })
 export class AppsModule { }

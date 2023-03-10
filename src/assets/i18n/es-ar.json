@@ -939,6 +939,7 @@
   "Start scrub on pool <i>{poolName}</i>?": "",
   "Start session time": "",
   "Start {service} Service": "",
+  "Stateful Sets": "",
   "Statefulsets": "",
   "Static Routes": "",
   "Stats": "",

@@ -34,4 +34,17 @@ export class ApplicationsService {
     }
     return this.ws.call('chart.release.query', [[], secondOption]);
   }
+
+  getChartReleaseWithResources(name: string): Observable<ChartRelease[]> {
+    const secondOption = { extra: { retrieve_resources: true } };
+    return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
+  }
+
+  getPorts(chart: ChartRelease): string {
+    const ports: string[] = [];
+    chart.used_ports.forEach((item) => {
+      ports.push(`${item.port}\\${item.protocol}`);
+    });
+    return ports.join(', ');
+  }
 }

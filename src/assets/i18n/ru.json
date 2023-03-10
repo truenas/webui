@@ -1496,6 +1496,7 @@
   "Start scrub on pool <i>{poolName}</i>?": "",
   "Start session time": "",
   "Start {service} Service": "",
+  "Stateful Sets": "",
   "Statefulsets": "",
   "Static IP addresses which SMB listens on for connections.  Leaving all unselected defaults to listening on all active interfaces.": "",
   "Stats": "",
