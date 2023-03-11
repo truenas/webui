@@ -1,3 +1,6 @@
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { Disk, TopologyItem } from './storage.interface';
+
 export interface Enclosure {
   controller: boolean;
   elements: EnclosureElementsGroup[] | EnclosureElement[];
@@ -33,4 +36,20 @@ export interface EnclosureElementData {
   Device?: string;
   Status: string; // Enum: OK
   Value: string;
+}
+
+export interface EnclosureSlot {
+  disk?: Disk;
+  enclosure: number | null;
+  slot: number | null;
+  pool?: string | null;
+  topologyCategory?: PoolTopologyCategory | null;
+  vdev?: TopologyItem | null;
+}
+
+export interface EnclosureView {
+  isController: boolean;
+  slots: EnclosureSlot[];
+  number: number;
+  model: string;
 }

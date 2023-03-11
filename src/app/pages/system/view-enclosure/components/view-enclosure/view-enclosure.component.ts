@@ -5,14 +5,16 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { ReplaySubject, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { EnclosureView } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
+import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
@@ -32,6 +34,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   private disksUpdateSubscriptionId: string;
+  private destroyed$ = new ReplaySubject<boolean>(1);
 
   currentView: ViewConfig = {
     name: 'Disks',
@@ -83,6 +86,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     private store$: Store<AppState>,
     private layoutService: LayoutService,
     private disksUpdateService: DisksUpdateService,
+    private enclosureStore: EnclosureStore,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -140,11 +144,25 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+
+    // Replace system-profiler with store...
+    this.enclosureStore.loadDashboard();
+    this.enclosureStore.data$.pipe(
+      takeUntil(this.destroyed$),
+      untilDestroyed(this),
+    ).subscribe((data: EnclosureState) => {
+      if (data.enclosures.length) {
+        const enclosureViews: EnclosureView[] = this.enclosureStore.mapEnclosures(data);
+        console.warn(enclosureViews);
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
     this.core.unregister({ observerClass: this });
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   selectEnclosure(index: number): void {

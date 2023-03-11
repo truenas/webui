@@ -26,6 +26,7 @@ import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/componen
 import { SetEnclosureLabelDialogComponent } from './components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { TemperatureMeterComponent } from './components/temperature-meter/temperature-meter.component';
+import { EnclosureStore } from './stores/enclosure-store.service';
 
 @NgModule({
   imports: [
@@ -59,6 +60,6 @@ import { TemperatureMeterComponent } from './components/temperature-meter/temper
     TemperatureMeterComponent,
     SetEnclosureLabelDialogComponent,
   ],
-  providers: [],
+  providers: [EnclosureStore],
 })
 export class EnclosureModule {}
