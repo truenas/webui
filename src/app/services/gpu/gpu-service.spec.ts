@@ -108,7 +108,9 @@ describe('GpuService', () => {
         const call$ = spectator.service.addIsolatedGpuPciIds(['0000:02:00.0']);
 
         expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalled();
-        expectObservable(call$).toBe('|');
+        expectObservable(call$).toBe('(a|)', {
+          a: undefined,
+        });
       });
     });
   });
