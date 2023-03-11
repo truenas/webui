@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDiskMode } from 'app/enums/vm.enum';
@@ -32,9 +33,9 @@ describe('DiskStepComponent', () => {
           '/dev/zvol/poolio/test-327brn': 'poolio/test-327brn',
         }),
       ]),
-    ],
-    componentProviders: [
-      mockProvider(FreeSpaceValidatorService),
+      mockProvider(FreeSpaceValidatorService, {
+        validate: () => of(null),
+      }),
     ],
   });
 
