@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { WebSocketService } from 'app/services/index';
 
@@ -43,6 +44,14 @@ export class ApplicationsService {
 
   getChartReleaseEvents(name: string): Observable<ChartReleaseEvent[]> {
     return this.ws.call('chart.release.events', [name]);
+  }
+
+  getChartUpgradeSummary(name: string, version?: string): Observable<UpgradeSummary> {
+    const payload: ChartReleaseUpgradeParams = [name];
+    if (version) {
+      payload.push({ item_version: version });
+    }
+    return this.ws.call('chart.release.upgrade_summary', payload);
   }
 
   getPorts(chart: ChartRelease): string {

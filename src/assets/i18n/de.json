@@ -1815,6 +1815,7 @@
   "Region": "",
   "Register": "",
   "Register Default Gateway": "",
+  "Related Kubernetes Events": "",
   "Remote": "",
   "Remote Controller": "",
   "Remote Graphite Server Hostname": "",

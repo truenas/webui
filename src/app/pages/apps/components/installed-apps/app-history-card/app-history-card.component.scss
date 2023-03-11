@@ -1,0 +1,22 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.events {
+  h4 {
+    margin-bottom: 8px;
+  }
+}
+
+.event-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 8px;
+}
+
+.event-item {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
