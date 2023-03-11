@@ -64,7 +64,7 @@ describe('NetworkInterfaceStepComponent', () => {
     expect(spectator.component.getSummary()).toEqual([
       {
         label: 'NIC',
-        value: 'Intel e82585 (e1000)  (eno1)',
+        value: 'Intel e82585 (e1000) (eno1)',
       },
     ]);
   });
