@@ -134,6 +134,7 @@ export class DeviceFormComponent implements OnInit {
           return {
             label: id,
             value: id,
+            tooltip: passthroughDevices[id]?.description,
           };
         });
       }),
