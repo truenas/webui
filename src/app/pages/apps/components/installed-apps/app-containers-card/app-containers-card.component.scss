@@ -3,3 +3,22 @@
 .card {
   @include details-card();
 }
+
+.containers {
+  margin-top: 16px;
+
+  h4 {
+    margin-bottom: 8px;
+  }
+}
+
+.container-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 8px;
+}
+
+.container-item {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}

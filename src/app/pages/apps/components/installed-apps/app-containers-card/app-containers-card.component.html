@@ -7,7 +7,7 @@
       *ngIf="app"
       mat-button
       [ixTest]="[app.name, 'shell']"
-      (click)="onShellPressed()"
+      (click)="shellButtonPressed()"
     >
       {{ 'Shell' | translate }}
     </button>
@@ -42,26 +42,27 @@
       </div>
     </div>
     <div class="containers">
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Containers' | translate }}</mat-panel-title>
-        </mat-expansion-panel-header>
-        <div *ngIf="appResources?.resources?.container_images" class="expansion-content">
-          <div
-            *ngFor="let containerImage of appResources.resources.container_images | cast | keyvalue; let i = index"
-            class="detail-row"
-          >
-            <div fxLayout="row" fxLayoutAlign="center start">
-              <span fxFlex="70%">{{ containerImage.key }}</span>
-              <span fxFlex="30%" class="value">
-                <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
-                  {{ 'Update available' | translate }}
-                </ng-container>
-              </span>
-            </div>
-          </div>
+      <h4>{{ 'Containers' | translate }}</h4>
+      <div *ngIf="appResources?.resources?.container_images" class="container-list">
+        <div
+          *ngFor="let containerImage of appResources.resources.container_images | cast | keyvalue; let i = index"
+          class="container-item"
+        >
+          <span>{{ containerImage.key }}</span>
+          <span class="value">
+            <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
+              {{ 'Update available' | translate }}
+            </ng-container>
+          </span>
+          <span>
+            <button
+              mat-button
+              [ixTest]="[containerImage.key, 'view_logs']"
+              (click)="viewLogsButtonPressed()"
+            >{{ 'View Logs' | translate }}</button>
+          </span>
         </div>
-      </mat-expansion-panel>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

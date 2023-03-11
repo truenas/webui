@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { startCase } from 'lodash';
+import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RedirectService } from 'app/services';
@@ -12,6 +13,7 @@ import { RedirectService } from 'app/services';
 })
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
+  @Input() events: ChartReleaseEvent[];
 
   constructor(
     private snackbar: SnackbarService,
@@ -26,12 +28,11 @@ export class AppInfoCardComponent {
     this.redirect.openWindow(chart.portals[name][0]);
   }
 
-  onUpdatePressed(): void {
-    console.info(this.app);
+  updateButtonPressed(): void {
     this.snackbar.success('Update App Pressed!');
   }
 
-  onDeletePressed(): void {
+  deleteButtonPressed(): void {
     this.snackbar.success('Delete App Pressed!');
   }
 }

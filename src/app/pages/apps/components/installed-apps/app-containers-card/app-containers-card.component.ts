@@ -28,8 +28,12 @@ export class AppContainersCardComponent implements OnInit {
     this.getResources();
   }
 
-  onShellPressed(): void {
+  shellButtonPressed(): void {
     this.snackbar.success('Shell Pressed!');
+  }
+
+  viewLogsButtonPressed(): void {
+    this.snackbar.success('View Logs Pressed!');
   }
 
   getResources(): void {

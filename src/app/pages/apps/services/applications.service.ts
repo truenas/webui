@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
+import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { WebSocketService } from 'app/services/index';
@@ -38,6 +39,10 @@ export class ApplicationsService {
   getChartReleaseWithResources(name: string): Observable<ChartRelease[]> {
     const secondOption = { extra: { retrieve_resources: true } };
     return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
+  }
+
+  getChartReleaseEvents(name: string): Observable<ChartReleaseEvent[]> {
+    return this.ws.call('chart.release.events', [name]);
   }
 
   getPorts(chart: ChartRelease): string {

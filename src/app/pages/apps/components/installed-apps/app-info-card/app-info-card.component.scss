@@ -7,4 +7,9 @@
     flex: 1;
     width: 100%;
   }
+
+  .details-item .value a {
+    display: block;
+    max-width: 100%;
+  }
 }

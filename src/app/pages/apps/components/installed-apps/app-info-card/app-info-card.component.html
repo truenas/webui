@@ -7,7 +7,7 @@
       *ngIf="app?.update_available"
       mat-button
       [ixTest]="[app.name, 'update']"
-      (click)="onUpdatePressed()"
+      (click)="updateButtonPressed()"
     >
       {{ 'Update' | translate }}
     </button>
@@ -35,9 +35,7 @@
         <div class="details-item">
           <span class="label">{{ 'Latest Updated' | translate }}:</span>
           <span class="value">
-            <ng-container *ngIf="app?.version; else notAvailable">
-              {{ app.version }}
-            </ng-container>
+            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
         </div>
         <div class="details-item">
@@ -53,17 +51,13 @@
         <div class="details-item">
           <span class="label">{{ 'Developer' | translate }}:</span>
           <span class="value">
-            <ng-container *ngIf="app?.name; else notAvailable">
-              {{ app.name }}
-            </ng-container>
+            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
         </div>
         <div class="details-item">
           <span class="label">{{ 'Commits in the last 60 days' | translate }}:</span>
           <span class="value">
-            <ng-container *ngIf="app?.name; else notAvailable">
-              {{ app.name }}
-            </ng-container>
+            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
         </div>
         <div class="details-item">
@@ -100,7 +94,7 @@
       *ngIf="app"
       mat-button
       [ixTest]="[app.name, 'delete']"
-      (click)="onDeletePressed()"
+      (click)="deleteButtonPressed()"
     >{{ 'Delete' | translate }}</button>
   </mat-card-actions>
 </mat-card>
