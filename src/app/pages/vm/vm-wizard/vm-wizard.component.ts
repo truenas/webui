@@ -34,7 +34,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
