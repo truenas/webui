@@ -4,9 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  combineLatest, of,
-} from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
@@ -113,7 +111,7 @@ export class VmEditFormComponent {
     delete vmPayload.gpus;
 
     const gpusIds = this.form.value.gpus;
-    combineLatest([
+    forkJoin([
       this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
       this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
       this.gpuService.addIsolatedGpuPciIds(gpusIds),
