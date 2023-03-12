@@ -32,19 +32,21 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  isTypeOfWebsocketError(obj: any): boolean {
-    return 'error' in obj
-    && 'extra' in obj
-    && 'reason' in obj
-    && 'trace' in obj;
+  isTypeOfWebsocketError(error: unknown): error is WebsocketError {
+    return typeof error === 'object'
+      && 'error' in error
+      && 'extra' in error
+      && 'reason' in error
+      && 'trace' in error;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  isTypeOfJobError(obj: any): boolean {
-    return 'state' in obj
-    || 'error' in obj
-    || 'exception' in obj
-    || 'exc_info' in obj;
+  isTypeOfJobError(obj: any): obj is Job {
+    return typeof obj === 'object'
+    && ('state' in obj
+      && 'error' in obj
+      && 'exception' in obj
+      && 'exc_info' in obj);
   }
 
   /**
@@ -98,16 +100,16 @@ export class ErrorHandlerService implements ErrorHandler {
     }
   }
 
-  reportWsError(error: WebsocketError): Observable<boolean> {
-    return this.dialog.error(this.parseWsError(error));
+  reportError(error: WebsocketError): Observable<boolean> {
+    return this.dialog.error(this.parseErrorOrJob(error));
   }
 
-  parseWsError(error: WebsocketError): ErrorReport | ErrorReport[] {
-    return this.parseErrorOrJob(error);
-  }
-
-  reportJobError(failedJob: Job): Observable<boolean> {
-    return this.dialog.error(this.parseJobError(failedJob));
+  parseWsError(error: WebsocketError): ErrorReport {
+    return {
+      title: error.trace.class,
+      message: error.reason,
+      backtrace: error.trace.formatted,
+    };
   }
 
   parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
@@ -120,9 +122,28 @@ export class ErrorHandlerService implements ErrorHandler {
       failedJob.extra.forEach((extraItem: [string, unknown]) => {
         const field = extraItem[0].split('.')[1];
         const error = extraItem[1] as string | WebsocketError | Job;
-        const parsedError = this.parseErrorOrJob(error);
-        parsedError.title = field + ': ' + parsedError.title;
-        errors.push(parsedError);
+
+        let parsedError: ErrorReport | ErrorReport[];
+        if (this.isTypeOfWebsocketError(error)) {
+          parsedError = this.parseWsError(error);
+        } else if (this.isTypeOfJobError(error)) {
+          parsedError = this.parseJobError(error);
+        } else if (typeof error === 'string') {
+          parsedError = {
+            title: this.translate.instant('Error'),
+            message: error,
+          };
+        }
+
+        if (Array.isArray(parsedError)) {
+          for (const err of parsedError) {
+            err.title = field + ': ' + err.title;
+            errors.push(err);
+          }
+        } else {
+          parsedError.title = field + ': ' + parsedError.title;
+          errors.push(parsedError);
+        }
       });
       return errors;
     }
@@ -134,22 +155,14 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  private parseErrorOrJob(errorOrJob: WebsocketError | Job | string): ErrorReport {
+  private parseErrorOrJob(errorOrJob: WebsocketError | Job | string): ErrorReport | ErrorReport[] {
     if (typeof errorOrJob === 'object') {
       if ('trace' in errorOrJob && errorOrJob.trace?.formatted) {
-        return {
-          title: errorOrJob.trace.class,
-          message: errorOrJob.reason,
-          backtrace: errorOrJob.trace.formatted,
-        };
+        return this.parseWsError(errorOrJob);
       }
 
       if ('state' in errorOrJob && errorOrJob.error && errorOrJob.exception) {
-        return {
-          title: errorOrJob.state,
-          message: errorOrJob.error,
-          backtrace: errorOrJob.exception,
-        };
+        return this.parseJobError(errorOrJob);
       }
     }
     return {
