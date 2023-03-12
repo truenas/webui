@@ -14,7 +14,6 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
-import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -26,7 +25,6 @@ import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-trans
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { sentryCustomExtractor } from 'app/helpers/sentry-custom-extractor.helper';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
@@ -137,15 +135,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
       useClass: ErrorHandlerService,
     },
     ThemeService,
-    {
-      provide: ErrorHandler,
-      useValue: Sentry.createErrorHandler({
-        showDialog: false,
-        extractor(error, defaultExtractor) {
-          return sentryCustomExtractor(error, defaultExtractor);
-        },
-      }),
-    },
     {
       provide: WINDOW,
       useFactory: getWindow,

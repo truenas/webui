@@ -287,7 +287,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             }
             this.getDuplicableDisks();
           },
-          error: (error) => this.errorHandler.reportWsError(error),
+          error: (error) => this.errorHandler.reportError(error),
         });
         this.nameControl.setValue(searchedPools[0].name);
         this.volEncrypt = searchedPools[0].encrypt;
@@ -298,10 +298,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
               this.size = filesize(this.extendedAvailable, { standard: 'iec' });
             }
           },
-          error: (error) => this.errorHandler.reportWsError(error),
+          error: (error) => this.errorHandler.reportError(error),
         });
       },
-      error: (error) => this.errorHandler.reportWsError(error),
+      error: (error) => this.errorHandler.reportError(error),
     });
   }
 
@@ -312,13 +312,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
         });
       },
-      error: (error) => this.errorHandler.reportWsError(error),
+      error: (error) => this.errorHandler.reportError(error),
     });
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe({
       next: (config) => {
         this.swapondrive = config.swapondrive;
       },
-      error: (error) => this.errorHandler.reportWsError(error),
+      error: (error) => this.errorHandler.reportError(error),
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params.poolId) {
@@ -338,7 +338,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             this.existingPools = pools;
           }
         },
-        error: (error) => this.errorHandler.reportWsError(error),
+        error: (error) => this.errorHandler.reportError(error),
       });
     }
     this.nameFilter = new RegExp('');
@@ -397,7 +397,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       },
       error: (error) => {
         this.loader.close();
-        this.errorHandler.reportWsError(error);
+        this.errorHandler.reportError(error);
       },
     });
   }
@@ -753,7 +753,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           .pipe(untilDestroyed(this)).subscribe(
             {
               next: () => {},
-              error: (error) => this.errorHandler.reportWsError(error),
+              error: (error) => this.errorHandler.reportError(error),
               complete: () => {
                 dialogRef.close(false);
                 this.goBack();
@@ -763,9 +763,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
           next: (error) => {
             dialogRef.close(false);
-            this.errorHandler.reportJobError(error);
+            this.errorHandler.reportError(error);
           },
-          error: (error) => this.errorHandler.reportWsError(error),
+          error: (error) => this.errorHandler.reportError(error),
         });
         dialogRef.componentInstance.submit();
       });

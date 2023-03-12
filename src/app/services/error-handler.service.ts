@@ -1,9 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, Injector } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import * as Sentry from '@sentry/angular';
 import { Observable } from 'rxjs';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -11,24 +13,41 @@ import { DialogService } from 'app/services';
 
 @Injectable()
 export class ErrorHandlerService implements ErrorHandler {
-  constructor(
-    private dialog: DialogService,
-    private translate: TranslateService,
-  ) {}
+  dialogService: DialogService;
+  translateService: TranslateService;
+  get translate(): TranslateService {
+    if (!this.translateService) {
+      this.translateService = this.injector.get(TranslateService);
+    }
+    return this.translate;
+  }
+
+  get dialog(): DialogService {
+    if (!this.dialogService) {
+      this.dialogService = this.injector.get(DialogService);
+    }
+    return this.dialogService;
+  }
+  constructor(private injector: Injector) { }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError(error: any): void {
+    let errors: ErrorReport | ErrorReport[];
     if (this.isTypeOfWebsocketError(error)) {
-      const errors = this.parseWsError(error);
+      errors = this.parseWsError(error);
+      Sentry.captureException(errors);
       this.dialog.error(errors);
       return;
     }
     if (this.isTypeOfJobError(error)) {
-      const errors = this.parseJobError(error);
+      errors = this.parseJobError(error);
+      Sentry.captureException(errors);
       this.dialog.error(errors);
       return;
     }
     console.error('Error', error);
+
+    sentryCustomExceptionExtraction(error);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,7 +119,7 @@ export class ErrorHandlerService implements ErrorHandler {
     }
   }
 
-  reportError(error: WebsocketError): Observable<boolean> {
+  reportError(error: WebsocketError | Job): Observable<boolean> {
     return this.dialog.error(this.parseErrorOrJob(error));
   }
 
