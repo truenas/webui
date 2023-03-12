@@ -15,11 +15,11 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./error-template.component.scss'],
 })
 export class ErrorTemplateComponent {
-  @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef;
-  @ViewChild('errorTitle') errorTitle: ElementRef;
-  @ViewChild('errorMdContent') errorMdContent: ElementRef;
-  @ViewChild('errorBtPanel') errorBtPanel: ElementRef;
-  @ViewChild('errorBtText') errorBtText: ElementRef;
+  @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef<HTMLElement>;
+  @ViewChild('errorTitle') errorTitle: ElementRef<HTMLElement>;
+  @ViewChild('errorMdContent') errorMdContent: ElementRef<HTMLElement>;
+  @ViewChild('errorBtPanel') errorBtPanel: ElementRef<HTMLElement>;
+  @ViewChild('errorBtText') errorBtText: ElementRef<HTMLElement>;
 
   @Input() title: string;
   @Input() message: string;
@@ -35,10 +35,10 @@ export class ErrorTemplateComponent {
   ) {}
 
   toggleOpen(): void {
-    const messageWrapper: HTMLElement = this.errorMessageWrapper.nativeElement;
-    const content: HTMLElement = this.errorMdContent.nativeElement;
-    const btPanel: HTMLElement = this.errorBtPanel.nativeElement;
-    const txtarea: HTMLElement = this.errorBtText.nativeElement;
+    const messageWrapper = this.errorMessageWrapper.nativeElement;
+    const content = this.errorMdContent.nativeElement;
+    const btPanel = this.errorBtPanel.nativeElement;
+    const txtarea = this.errorBtText.nativeElement;
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
