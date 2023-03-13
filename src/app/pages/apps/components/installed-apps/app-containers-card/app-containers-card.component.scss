@@ -15,11 +15,45 @@
 .container-list {
   background-color: rgba(0, 0, 0, 0.1);
   padding: 12px;
+
+  ngx-skeleton-loader {
+    ::ng-deep span {
+      margin: 0;
+    }
+  }
 }
 
 .container-item {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   margin: 2px 0;
+
+  .container-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 60%;
+  }
+
+  .container-status {
+    flex: 1;
+  }
+
+  .container-action {
+    flex: 1;
+    text-align: right;
+  }
+
+  button {
+    background: none;
+    border: 0;
+    color: var(--fg2);
+    cursor: pointer;
+    overflow: hidden;
+    text-decoration: underline;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

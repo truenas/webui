@@ -47,18 +47,18 @@
         <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
         <ng-container *ngIf="!isLoading && appResources?.resources?.container_images;">
           <div
-            *ngFor="let containerImage of appResources.resources.container_images | cast | keyvalue; let i = index"
+            *ngFor="let containerImage of appResources.resources.container_images | keyvalue;"
             class="container-item"
           >
-            <span>{{ containerImage.key }}</span>
-            <span class="value">
+            <span class="container-name">{{ containerImage.key }}</span>
+            <span class="container-status">
               <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
                 {{ 'Update available' | translate }}
               </ng-container>
             </span>
-            <span>
+            <span class="container-action">
               <button
-                mat-button
+                type="button"
                 [ixTest]="[containerImage.key, 'view_logs']"
                 (click)="viewLogsButtonPressed()"
               >{{ 'View Logs' | translate }}</button>

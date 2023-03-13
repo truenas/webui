@@ -10,7 +10,7 @@ describe('AppNotesCardComponent', () => {
     id: 'ix-test-app',
     name: 'test-app',
     chart_metadata: {
-      name: 'test-app',
+      name: 'rude-cardinal',
     },
     update_available: true,
   } as ChartRelease;
@@ -31,5 +31,15 @@ describe('AppNotesCardComponent', () => {
 
   it('shows header', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('Notes');
+  });
+
+  it('shows notes', () => {
+    const notes = spectator.queryAll('.notes-item');
+    expect(notes).toHaveLength(4);
+
+    expect(notes[0]).toHaveText('Thank you for installing test-app');
+    expect(notes[1]).toHaveText('Your release is named rude-cardinal');
+    expect(notes[2]).toHaveText('To learn more about the release, try:');
+    expect(notes[3]).toHaveText('$ mychart cli command');
   });
 });

@@ -43,7 +43,7 @@
           <span class="value">
             <ng-container *ngIf="app?.chart_metadata?.sources?.length; else notAvailable">
               <ng-container *ngFor="let source of app?.chart_metadata?.sources;">
-                <a [href]="source" [ixTest]="[app.name, source]">{{ source }}</a>
+                <a [href]="source" [title]="source" [ixTest]="[app.name, 'source']">{{ source }}</a>
               </ng-container>
             </ng-container>
           </span>
