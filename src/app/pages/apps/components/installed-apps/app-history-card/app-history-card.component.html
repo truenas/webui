@@ -5,24 +5,24 @@
   <mat-card-content>
     <div class="events">
       <h4>{{ 'Related Kubernetes Events' | translate }}</h4>
-      <div *ngIf="app" class="event-list">
-        <div class="event-item">
-          <strong>mm/dd/yyyy hh/mm</strong>
-          <span>Did some app related thing that you should know about</span>
-        </div>
-        <div class="event-item">
-          <strong>mm/dd/yyyy hh/mm</strong>
-          <span>Did some app related thing that you should know about</span>
-        </div>
-        <div class="event-item">
-          <strong>mm/dd/yyyy hh/mm</strong>
-          <span>Did some app related thing that you should know about</span>
-        </div>
-        <div class="event-item">
-          <strong>mm/dd/yyyy hh/mm</strong>
-          <span>Did some app related thing that you should know about</span>
-        </div>
+      <div class="event-list">
+        <ng-container *ngIf="isLoading; else loaded">
+          <ngx-skeleton-loader [count]="2"></ngx-skeleton-loader>
+        </ng-container>
       </div>
     </div>
   </mat-card-content>
 </mat-card>
+
+<ng-template #loaded>
+  <ng-container *ngIf="events.length; else emptyState">
+    <div *ngFor="let event of events" class="event-item">
+      <strong>{{ event.event_time }}</strong>
+      <span>{{ event.message }}</span>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #emptyState>
+  {{ 'No events are available.' | translate }}
+</ng-template>
