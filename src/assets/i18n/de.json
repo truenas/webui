@@ -2700,7 +2700,6 @@
   "You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.": "",
   "You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.": "",
   "You have successfully added credentials.": "",
-  "Your NAS time {datetime} does not match your computer time.": "",
   "Your query didn't return any results. Please try again.": "",
   "ZFS": "",
   "ZFS Cache": "",

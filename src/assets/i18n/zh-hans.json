@@ -4119,7 +4119,6 @@
   "You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.": "您已经隐藏了所有可用的小部件。使用仪表板配置表单添加小部件。",
   "You have left the domain.": "您已离开域。",
   "You have successfully added credentials.": "您已成功添加验证凭据",
-  "Your NAS time {datetime} does not match your computer time.": "您的 NAS 时间 {datetime} 与您的计算机时间不匹配。",
   "Your query didn't return any results. Please try again.": "您的查询未返回任何结果。请再试一次。",
   "ZFS": "ZFS",
   "ZFS Cache": "ZFS缓存",

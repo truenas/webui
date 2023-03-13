@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
@@ -713,7 +714,7 @@ export class VmWizardComponent implements WizardConfiguration {
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).hasErrors = false;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).errors = '';
             if (stat.free_bytes < volsize) {
-              const volsizeInGbs = Math.floor(stat.free_bytes / (1024 ** 3));
+              const volsizeInGbs = Math.floor(stat.free_bytes / GiB);
               this.getFormControlFromFieldName('volsize').setValue(`${volsizeInGbs} GiB`);
             } else if (stat.free_bytes > 40 * 1073741824) {
               this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));

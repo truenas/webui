@@ -4122,7 +4122,6 @@
   "You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.": "U hebt een van de instellingen gewijzigd waarvoor Kubernetes-cluster opnieuw moet worden geïnitialiseerd. Houd er rekening mee dat hiermee geïnstalleerde apps en hun data worden verwijderd.",
   "You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.": "U hebt al je beschikbare widgets verborgen. Gebruik het dashboardconfiguratieformulier om widgets toe te voegen.",
   "You have left the domain.": "U hebt het domein verlaten.",
-  "Your NAS time {datetime} does not match your computer time.": "Uw NAS-tijd {datetime} komt niet overeen met uw computertijd.",
   "Your query didn't return any results. Please try again.": "Uw zoekopdracht heeft geen resultaten opgeleverd. Probeer het opnieuw.",
   "ZFS Cache": "ZFS cache",
   "ZFS Deduplication": "ZFS deduplicatie",
