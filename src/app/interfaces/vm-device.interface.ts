@@ -118,6 +118,7 @@ export interface VmDeviceDelete {
 }
 
 export interface VmPassthroughDeviceChoice {
+  controller_type?: string;
   capability: {
     class: string;
     domain: string;

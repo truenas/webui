@@ -46,8 +46,10 @@
           [value]="option"
           [class.ix-selected]="option.value === selectedOption?.value"
           [class.ix-unselected]="option.value !== selectedOption?.value"
-        >
-          {{ option.label }}
+          [matTooltip]="option?.tooltip"
+          >
+          <span>{{ option.label }}</span>
+          <i *ngIf="option?.tooltip" class="material-icons tooltip-icon" >info_outline</i>
         </mat-option>
       </ng-container>
 

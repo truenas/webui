@@ -17,3 +17,7 @@ export interface RadioOption {
 export interface SelectOption extends Option {
   disabled?: boolean;
 }
+
+export interface ComboboxOption extends Option {
+  tooltip?: string;
+}

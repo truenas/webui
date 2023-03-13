@@ -20,7 +20,7 @@ import {
   catchError,
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
-import { Option } from 'app/interfaces/option.interface';
+import { ComboboxOption } from 'app/interfaces/option.interface';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 
 @UntilDestroy()
@@ -42,7 +42,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
 
-  options: Option[] = [];
+  options: ComboboxOption[] = [];
   getDisplayWith = this.displayWith.bind(this);
   hasErrorInOptions = false;
   loading = false;
@@ -52,7 +52,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   value: string | number = '';
   isDisabled = false;
   filterValue: string;
-  selectedOption: Option = null;
+  selectedOption: ComboboxOption = null;
   textContent = '';
 
   onChange: (value: string | number) => void = (): void => {};
@@ -68,7 +68,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   writeValue(value: string | number): void {
     this.value = value;
     if (this.value && this.options && this.options.length) {
-      this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
+      this.selectedOption = { ...(this.options.find((option: ComboboxOption) => option.value === this.value)) };
     }
     if (this.selectedOption) {
       this.filterChanged$.next('');
@@ -102,19 +102,19 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe((options: Option[]) => {
+    ).subscribe((options: ComboboxOption[]) => {
       this.loading = false;
       this.cdr.markForCheck();
 
       this.options = options;
-      const selectedOptionFromLabel = this.options.find((option: Option) => option.label === filterValue);
+      const selectedOptionFromLabel = this.options.find((option: ComboboxOption) => option.label === filterValue);
       if (selectedOptionFromLabel) {
         this.selectedOption = selectedOptionFromLabel;
         this.value = selectedOptionFromLabel.value;
         this.onChange(this.value);
       }
       if (!this.selectedOption && this.value !== null && this.value !== '') {
-        const setOption = this.options.find((option: Option) => option.value === this.value);
+        const setOption = this.options.find((option: ComboboxOption) => option.value === this.value);
         if (setOption) {
           this.selectedOption = setOption ? { ...setOption } : null;
           if (this.selectedOption) {
@@ -167,7 +167,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
           this.loading = true;
           this.cdr.markForCheck();
           this.provider?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
-            .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+            .pipe(untilDestroyed(this)).subscribe((options: ComboboxOption[]) => {
               this.loading = false;
               this.cdr.markForCheck();
               /**
@@ -200,7 +200,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
 
-    if (this.allowCustomValue && !this.options.some((option: Option) => option.value === changedValue)) {
+    if (this.allowCustomValue && !this.options.some((option: ComboboxOption) => option.value === changedValue)) {
       this.onChange(changedValue);
     }
   }
@@ -224,7 +224,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.onTouch = onTouched;
   }
 
-  optionSelected(option: Option): void {
+  optionSelected(option: ComboboxOption): void {
     this.selectedOption = { ...option };
     this.filterChanged$.next('');
     this.value = this.selectedOption.value;

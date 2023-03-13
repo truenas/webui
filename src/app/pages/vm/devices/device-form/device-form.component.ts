@@ -132,8 +132,9 @@ export class DeviceFormComponent implements OnInit {
       map((passthroughDevices) => {
         return Object.keys(passthroughDevices).map((id) => {
           return {
-            label: passthroughDevices[id].description || id,
+            label: `${id} ${passthroughDevices[id]?.controller_type}`,
             value: id,
+            tooltip: passthroughDevices[id]?.description,
           };
         });
       }),
