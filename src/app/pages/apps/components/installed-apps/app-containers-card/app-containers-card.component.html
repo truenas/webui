@@ -43,25 +43,28 @@
     </div>
     <div class="containers">
       <h4>{{ 'Containers' | translate }}</h4>
-      <div *ngIf="appResources?.resources?.container_images" class="container-list">
-        <div
-          *ngFor="let containerImage of appResources.resources.container_images | cast | keyvalue; let i = index"
-          class="container-item"
-        >
-          <span>{{ containerImage.key }}</span>
-          <span class="value">
-            <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
-              {{ 'Update available' | translate }}
-            </ng-container>
-          </span>
-          <span>
-            <button
-              mat-button
-              [ixTest]="[containerImage.key, 'view_logs']"
-              (click)="viewLogsButtonPressed()"
-            >{{ 'View Logs' | translate }}</button>
-          </span>
-        </div>
+      <div class="container-list">
+        <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+        <ng-container *ngIf="!isLoading && appResources?.resources?.container_images;">
+          <div
+            *ngFor="let containerImage of appResources.resources.container_images | cast | keyvalue; let i = index"
+            class="container-item"
+          >
+            <span>{{ containerImage.key }}</span>
+            <span class="value">
+              <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
+                {{ 'Update available' | translate }}
+              </ng-container>
+            </span>
+            <span>
+              <button
+                mat-button
+                [ixTest]="[containerImage.key, 'view_logs']"
+                (click)="viewLogsButtonPressed()"
+              >{{ 'View Logs' | translate }}</button>
+            </span>
+          </div>
+        </ng-container>
       </div>
     </div>
   </mat-card-content>

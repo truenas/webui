@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { startCase } from 'lodash';
 import { filter } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
@@ -33,6 +34,7 @@ export class AppInfoCardComponent {
     private appService: ApplicationsService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
+    private translate: TranslateService,
   ) {}
 
   portalName(name = 'web_portal'): string {
@@ -89,6 +91,63 @@ export class AppInfoCardComponent {
   }
 
   deleteButtonPressed(): void {
-    this.snackbar.success('Delete App Pressed!');
+    const name = this.app.name;
+
+    this.dialogService.confirm({
+      title: helptext.charts.delete_dialog.title,
+      message: this.translate.instant('Delete {name}?', { name }),
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Delete docker images used by the app'),
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe((result) => {
+        if (!result.confirmed) {
+          return;
+        }
+
+        const deleteUnusedImages = result.secondaryCheckbox;
+        if (result.secondaryCheckbox) {
+          this.appLoaderService.open();
+          this.appService.getChartReleaesUsingChartReleaseImages(name)
+            .pipe(untilDestroyed(this))
+            .subscribe((imagesNotTobeDeleted) => {
+              this.appLoaderService.close();
+              const imageNames = Object.keys(imagesNotTobeDeleted);
+              if (imageNames.length > 0) {
+                const imageMessage = imageNames.reduce((prev: string, current: string) => {
+                  return prev + '<li>' + current + '</li>';
+                }, '<ul>') + '</ul>';
+                this.dialogService.confirm({
+                  title: this.translate.instant('Images not to be deleted'),
+                  message: this.translate.instant('These images will not be removed as there are other apps which are consuming them')
+              + imageMessage,
+                  disableClose: true,
+                  buttonText: this.translate.instant('OK'),
+                }).pipe(filter(Boolean), untilDestroyed(this))
+                  .subscribe(() => {
+                    this.executeDelete(name, deleteUnusedImages);
+                  });
+              } else {
+                this.executeDelete(name, deleteUnusedImages);
+              }
+            });
+        } else {
+          this.executeDelete(name, deleteUnusedImages);
+        }
+      });
+  }
+
+  executeDelete(name: string, deleteUnusedImages: boolean): void {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.charts.delete_dialog.job,
+      },
+    });
+    dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      // this.refreshChartReleases();
+    });
   }
 }

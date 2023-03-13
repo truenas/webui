@@ -12,11 +12,16 @@
 
 .event-list {
   background-color: rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow: auto;
   padding: 12px;
 }
 
 .event-item {
-  align-items: center;
   display: flex;
   gap: 12px;
+}
+
+.event-timestamp {
+  white-space: nowrap;
 }

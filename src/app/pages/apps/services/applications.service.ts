@@ -5,6 +5,7 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
+import { Choices } from 'app/interfaces/choices.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { WebSocketService } from 'app/services/index';
 
@@ -52,6 +53,13 @@ export class ApplicationsService {
       payload.push({ item_version: version });
     }
     return this.ws.call('chart.release.upgrade_summary', payload);
+  }
+
+  getChartReleaesUsingChartReleaseImages(name: string): Observable<Choices> {
+    return this.ws.call(
+      'chart.release.get_chart_releases_using_chart_release_images',
+      [name],
+    );
   }
 
   getPorts(chart: ChartRelease): string {

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnInit,
+  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnInit, OnChanges,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
@@ -13,7 +13,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   styleUrls: ['./app-history-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppHistoryCardComponent implements OnInit {
+export class AppHistoryCardComponent implements OnInit, OnChanges {
   @Input() app: ChartRelease;
   isLoading = false;
   events: ChartReleaseEvent[] = [];
@@ -24,6 +24,11 @@ export class AppHistoryCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadEvents();
+  }
+
+  ngOnChanges(): void {
+    this.events = [];
     this.loadEvents();
   }
 
