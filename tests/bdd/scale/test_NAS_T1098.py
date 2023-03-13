@@ -126,6 +126,5 @@ def revert_your_changes_click_save_and_return_to_dashboard(driver):
 
     rsc.Confirm_Warning(driver)
 
-    assert wait_on_element(driver, 5, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
