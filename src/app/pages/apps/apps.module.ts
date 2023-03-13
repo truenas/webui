@@ -46,6 +46,7 @@ import { AvailableAppsComponent } from './components/available-apps/available-ap
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
+import { AppNotesCardComponent } from './components/installed-apps/app-notes-card/app-notes-card.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
 
 @NgModule({
@@ -68,6 +69,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppDetailsPanelComponent,
     AppContainersCardComponent,
     AppHistoryCardComponent,
+    AppNotesCardComponent,
   ],
   imports: [
     CommonModule,

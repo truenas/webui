@@ -4,21 +4,26 @@
   @include details-card();
 }
 
-.containers {
-  margin-top: 16px;
-
+.notes {
   h4 {
     margin-bottom: 8px;
   }
 }
 
-.container-list {
+.notes-list {
   background-color: rgba(0, 0, 0, 0.1);
   padding: 12px;
 }
 
-.container-item {
+.notes-item {
   align-items: center;
   display: flex;
-  justify-content: space-between;
+  font-family: var(--font-family-header);
+  font-size: 1.1em;
+  font-weight: bold;
+  gap: 12px;
+
+  &:not(:first-of-type) {
+    margin-top: 12px;
+  }
 }
