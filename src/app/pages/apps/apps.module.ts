@@ -40,7 +40,10 @@ import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-ro
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
+import { AppAvailableInfoCardComponent } from './components/available-apps/app-available-info-card/app-available-info-card.component';
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
+import { AppHelmChartCardComponent } from './components/available-apps/app-helm-chart-card/app-helm-chart-card.component';
+import { AppResourcesCardComponent } from './components/available-apps/app-resources-card/app-resources-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
@@ -70,6 +73,9 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppContainersCardComponent,
     AppHistoryCardComponent,
     AppNotesCardComponent,
+    AppResourcesCardComponent,
+    AppHelmChartCardComponent,
+    AppAvailableInfoCardComponent,
   ],
   imports: [
     CommonModule,

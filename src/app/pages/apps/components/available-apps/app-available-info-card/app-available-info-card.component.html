@@ -1,0 +1,18 @@
+<h3>{{ 'Application Info' | translate }}</h3>
+
+<div class="app-list-item">
+  {{ 'Version' | translate }}:
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+</div>
+<div class="app-list-item">
+  {{ 'App Source' | translate }}:
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+</div>
+<div class="app-list-item">
+  {{ 'Last App Updated' }}:
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+</div>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>
