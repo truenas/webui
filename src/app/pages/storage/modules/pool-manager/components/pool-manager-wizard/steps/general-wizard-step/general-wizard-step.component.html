@@ -16,6 +16,14 @@
     [options]="allowNonUniqueSerialDisksOptions$"
     [inlineFields]="true"
   ></ix-radio-group>
+  <ix-checkbox-list
+    *ngIf="exportedPools.length"
+    formControlName="allowDisksFromExportedPools"
+    [label]="'Allow Disks Attached to Exported Pools' | translate"
+    [tooltip]="exportedPoolsTooltip"
+    [options]="exportedPoolsOptions$"
+    [inlineFields]="true"
+  ></ix-checkbox-list>
   <ix-select
     *ngIf="form.controls.encryption_standard.enabled"
     formControlName="encryption_standard"
@@ -23,4 +31,5 @@
     [options]="encryptionAlgorithmOptions$"
     [required]="true"
   ></ix-select>
+
 </ng-container>

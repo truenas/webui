@@ -13,12 +13,12 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
-  hasNonUniqueSerialDisks = false;
   form = this.fb.group({
     general: this.fb.group({
       name: ['', Validators.required],
       encryption: [false],
       allowNonUniqueSerialDisks: ['false'],
+      allowDisksFromExportedPools: [[] as string[]],
       encryption_standard: [null as string, Validators.required],
     }),
     data: this.fb.group({
@@ -47,10 +47,6 @@ export class PoolManagerWizardComponent implements OnInit {
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((formValue) => {
       this.store.updateFormValue(formValue);
-    });
-
-    this.store.select((state) => state.unusedDisks).pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
-      this.hasNonUniqueSerialDisks = unusedDisks.some((disk) => disk.duplicate_serial.length);
     });
   }
 }
