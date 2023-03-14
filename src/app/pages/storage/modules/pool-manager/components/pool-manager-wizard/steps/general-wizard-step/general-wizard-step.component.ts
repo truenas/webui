@@ -3,8 +3,10 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Option } from 'app/interfaces/option.interface';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -17,6 +19,12 @@ import { DialogService, WebSocketService } from 'app/services';
 })
 export class GeneralWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['general'];
+  @Input() hasNonUniqueSerialDisks: boolean;
+  includeNonUniqueSerialDisks = false;
+  allowNonUniqueSerialDisksOptions$: Observable<Option[]> = of([
+    { label: this.translate.instant('Allow'), value: 'true' },
+    { label: this.translate.instant('Don\'t Allow'), value: 'false' },
+  ]);
 
   readonly encryptionAlgorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(
     choicesToOptions(),
@@ -51,5 +59,9 @@ export class GeneralWizardStepComponent implements OnInit {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  allowNonUniqueSerialDisks(allow: boolean): void {
+    this.includeNonUniqueSerialDisks = allow;
   }
 }

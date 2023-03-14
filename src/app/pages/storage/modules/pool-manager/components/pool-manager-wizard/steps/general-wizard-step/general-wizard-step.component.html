@@ -8,6 +8,14 @@
     formControlName="encryption"
     [label]="'Encryption' | translate"
   ></ix-checkbox>
+  <ix-radio-group
+    *ngIf="hasNonUniqueSerialDisks"
+    formControlName="allowNonUniqueSerialDisks"
+    [label]="'Allow non-unique serialed disks' | translate"
+    [required]="true"
+    [options]="allowNonUniqueSerialDisksOptions$"
+    [inlineFields]="true"
+  ></ix-radio-group>
   <ix-select
     *ngIf="form.controls.encryption_standard.enabled"
     formControlName="encryption_standard"
