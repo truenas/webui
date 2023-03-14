@@ -34,7 +34,8 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     const filtered = this.apps.filter((app) => (
       app.name.toLocaleLowerCase().includes(this.filters.search.toLocaleLowerCase())
       && this.filters.catalogs.includes(app.catalog.id)
-      && this.filters.categories.filter((category) => app.categories.includes(category)).length
+      && (!this.filters.categories.length
+        || this.filters.categories.filter((category) => app.categories.includes(category)).length)
     ));
     return this.filters.sort
       ? _.orderBy(filtered, this.filters.sort, this.filters.sort === 'last_update' ? ['desc'] : ['asc']) : filtered;

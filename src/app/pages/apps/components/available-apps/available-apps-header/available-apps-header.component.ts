@@ -11,6 +11,7 @@ import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface'
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 
@@ -34,10 +35,10 @@ export class AvailableAppsHeaderComponent implements OnInit {
   catalogsOptions$: Observable<Option[]> = of([]);
   sortOptions$: Observable<Option[]> = of([
     { label: this.translate.instant('App Name'), value: 'name' },
-    { label: this.translate.instant('Catalog Name'), value: 'catalog.train' },
+    { label: this.translate.instant('Catalog Name'), value: 'catalog.id' },
     { label: this.translate.instant('Updated Date'), value: 'last_update' },
   ]);
-  categoriesOptions$: Observable<Option[]> = of([]);
+  categoriesProvider$: ChipsProvider = () => of([]);
 
   isLoading = false;
   isFirstLoad = true;
@@ -89,11 +90,11 @@ export class AvailableAppsHeaderComponent implements OnInit {
       this.availableApps = apps;
       const categories = new Set<string>();
       apps.forEach((app) => app.categories.forEach((category) => categories.add(category)));
-      this.categoriesOptions$ = of(Array.from(categories).map((category) => ({ label: category, value: category })));
+      this.categoriesProvider$ = (query) => of(Array.from(categories).filter((category) => category.includes(query)));
 
       if (this.isFirstLoad) {
         this.isFirstLoad = false;
-        this.form.controls.categories.patchValue(Array.from(categories));
+        this.form.controls.categories.patchValue([]);
       }
       this.isLoading = false;
       this.cdr.markForCheck();
