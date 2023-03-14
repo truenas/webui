@@ -15,8 +15,8 @@ import { DialogService } from 'app/services';
   providedIn: 'root',
 })
 export class ErrorHandlerService implements ErrorHandler {
-  dialogService: DialogService;
-  translateService: TranslateService;
+  private dialogService: DialogService;
+  private translateService: TranslateService;
   get translate(): TranslateService {
     if (!this.translateService) {
       this.translateService = this.injector.get(TranslateService);
@@ -38,13 +38,13 @@ export class ErrorHandlerService implements ErrorHandler {
     if (this.isTypeOfWebsocketError(error)) {
       errors = this.parseWsError(error);
       Sentry.captureException(errors);
-      this.dialog.error(errors);
+      this.dialog?.error(errors);
       return;
     }
     if (this.isTypeOfJobError(error)) {
       errors = this.parseJobError(error);
       Sentry.captureException(errors);
-      this.dialog.error(errors);
+      this.dialog?.error(errors);
       return;
     }
     sentryCustomExceptionExtraction(error);
@@ -147,7 +147,7 @@ export class ErrorHandlerService implements ErrorHandler {
           parsedError = this.parseJobError(error);
         } else if (typeof error === 'string') {
           parsedError = {
-            title: this.translate.instant('Error'),
+            title: this.translate?.instant('Error') || 'Error',
             message: error,
           };
         }
@@ -183,7 +183,7 @@ export class ErrorHandlerService implements ErrorHandler {
       }
     }
     return {
-      title: this.translate.instant('Error'),
+      title: this.translate?.instant('Error') || 'Error',
       message: errorOrJob as string,
     };
   }
@@ -194,13 +194,13 @@ export class ErrorHandlerService implements ErrorHandler {
       const field = error.error[i];
       if (typeof field === 'string') {
         errors.push({
-          title: this.translate.instant('Error'),
+          title: this.translate?.instant('Error') || 'Error',
           message: field,
         });
       } else {
         (field as string[]).forEach((item: string) => {
           errors.push({
-            title: this.translate.instant('Error'),
+            title: this.translate?.instant('Error') || 'Error',
             message: item,
           });
         });
@@ -217,26 +217,31 @@ export class ErrorHandlerService implements ErrorHandler {
         this.handleObjError(error);
       } else {
         return {
-          title: this.translate.instant('Error ({code})', { code: error.status }),
+          title: this.translate?.instant('Error ({code})', { code: error.status })
+            || `Error (${error.status})`,
           message: error.error,
         };
       }
     } else if (error.status === 500) {
       if (error.error.error_message) {
         return {
-          title: this.translate.instant('Error ({code})', { code: error.status }),
+          title: this.translate?.instant('Error ({code})', { code: error.status })
+            || `Error (${error.status})`,
           message: error.error.error_message,
         };
       }
       return {
-        title: this.translate.instant('Error ({code})', { code: error.status }),
-        message: 'Server error: ' + error.error,
+        title: this.translate?.instant('Error ({code})', { code: error.status })
+          || `Error (${error.status})`,
+        message: this.translate?.instant('Server error: {error}', { error: error.error })
+          || `Server error: ${error.error}`,
       };
     }
-    console.error('Unknown error code', error.status);
+    console.error(this.translate?.instant('Unknown error code') || 'Unknown error code', error.status);
     return {
-      title: this.translate.instant('Error ({code})', { code: error.status }),
-      message: this.translate.instant('Fatal error! Check logs.'),
+      title: this.translate?.instant('Error ({code})', { code: error.status })
+        || `Error (${error.status})`,
+      message: this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
     };
   }
 
