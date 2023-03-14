@@ -3,6 +3,7 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { AppContainersCardComponent } from './app-containers-card.component';
 
 describe('AppContainersCardComponent', () => {
@@ -25,7 +26,7 @@ describe('AppContainersCardComponent', () => {
           update_available: false,
         },
       },
-      deployments: [{}],
+      deployments: [{}, {}],
       pods: [{}],
       statefulsets: [{}],
     },
@@ -36,7 +37,9 @@ describe('AppContainersCardComponent', () => {
     declarations: [
       MockComponent(NgxSkeletonLoaderComponent),
     ],
-    providers: [],
+    providers: [
+      ApplicationsService,
+    ],
   });
 
   beforeEach(() => {
@@ -53,20 +56,19 @@ describe('AppContainersCardComponent', () => {
   });
 
   it('shows details', () => {
-    // TODO: Merge app and appResources and fix test case
     const details = spectator.queryAll('.details-item');
     expect(details).toHaveLength(4);
 
     expect(details[0].querySelector('.label')).toHaveText('Pods:');
-    expect(details[0].querySelector('.value')).toHaveText('0');
+    expect(details[0].querySelector('.value')).toHaveText('1');
 
     expect(details[1].querySelector('.label')).toHaveText('Used Ports:');
-    expect(details[1].querySelector('.value')).toHaveText('');
+    expect(details[1].querySelector('.value')).toHaveText('22\\TCP, 44\\TCP, 66\\UDP');
 
     expect(details[2].querySelector('.label')).toHaveText('Deployments:');
-    expect(details[2].querySelector('.value')).toHaveText('0');
+    expect(details[2].querySelector('.value')).toHaveText('2');
 
     expect(details[3].querySelector('.label')).toHaveText('Stateful Sets:');
-    expect(details[3].querySelector('.value')).toHaveText('0');
+    expect(details[3].querySelector('.value')).toHaveText('1');
   });
 });

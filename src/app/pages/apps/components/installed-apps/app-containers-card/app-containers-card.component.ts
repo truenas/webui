@@ -11,6 +11,7 @@ import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { getPorts } from 'app/pages/apps/utils/get-ports';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +22,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 })
 export class AppContainersCardComponent implements OnInit, OnChanges {
   @Input() app: ChartRelease;
-  appResources: ChartRelease;
   isLoading = false;
 
   constructor(
@@ -37,7 +37,6 @@ export class AppContainersCardComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.appResources = undefined;
     this.getResources();
   }
 
@@ -76,12 +75,12 @@ export class AppContainersCardComponent implements OnInit, OnChanges {
       untilDestroyed(this),
     ).subscribe({
       next: (app) => {
-        this.appResources = app;
+        this.app = app;
         this.isLoading = false;
         this.cdr.markForCheck();
       },
       error: () => {
-        this.appResources = undefined;
+        this.app = undefined;
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -89,7 +88,7 @@ export class AppContainersCardComponent implements OnInit, OnChanges {
   }
 
   getPorts(app: ChartRelease): string {
-    return this.appService.getPorts(app);
+    return getPorts(app.used_ports);
   }
 
   private shellDialogSubmit(formValue: PodDialogFormValue, appName: string): void {

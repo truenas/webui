@@ -7,7 +7,7 @@
       <h4>{{ 'Related Kubernetes Events' | translate }}</h4>
       <div class="event-list">
         <ng-container *ngIf="isLoading; else loaded">
-          <ngx-skeleton-loader [count]="1"></ngx-skeleton-loader>
+          <ngx-skeleton-loader></ngx-skeleton-loader>
         </ng-container>
       </div>
     </div>
@@ -15,7 +15,7 @@
 </mat-card>
 
 <ng-template #loaded>
-  <ng-container *ngIf="events.length; else emptyState">
+  <ng-container *ngIf="events.length; else noEvents">
     <div *ngFor="let event of events" class="event-item">
       <strong *ngIf="event?.metadata?.creation_timestamp?.$date" class="event-timestamp">
         {{ event.metadata.creation_timestamp.$date | formatDateTime }}
@@ -25,6 +25,6 @@
   </ng-container>
 </ng-template>
 
-<ng-template #emptyState>
+<ng-template #noEvents>
   {{ 'No events are available.' | translate }}
 </ng-template>

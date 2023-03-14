@@ -31,5 +31,6 @@ describe('AppHistoryCardComponent', () => {
 
   it('shows header', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('History');
+    expect(spectator.query('h4')).toHaveText('Related Kubernetes Events');
   });
 });

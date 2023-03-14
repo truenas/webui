@@ -17,7 +17,9 @@
       <div class="details-item">
         <span class="label">{{ 'Pods' | translate }}:</span>
         <span class="value">
-          {{ appResources?.resources?.pods?.length || 0 }}
+          <ng-container *ngIf="app?.resources?.pods; else notAvailable">
+            {{ app.resources.pods.length }}
+          </ng-container>
         </span>
       </div>
       <div class="details-item">
@@ -31,44 +33,53 @@
       <div class="details-item">
         <span class="label">{{ 'Deployments' | translate }}:</span>
         <span class="value">
-          {{ appResources?.resources?.deployments?.length || 0 }}
+          <ng-container *ngIf="app?.resources?.deployments; else notAvailable">
+            {{ app.resources.deployments.length }}
+          </ng-container>
         </span>
       </div>
       <div class="details-item">
         <span class="label">{{ 'Stateful Sets' | translate }}:</span>
         <span class="value">
-          {{ appResources?.resources?.statefulsets?.length || 0 }}
+          <ng-container *ngIf="app?.resources?.statefulsets; else notAvailable">
+            {{ app.resources.statefulsets.length }}
+          </ng-container>
         </span>
       </div>
     </div>
     <div class="containers">
       <h4>{{ 'Containers' | translate }}</h4>
       <div class="container-list">
-        <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-        <ng-container *ngIf="!isLoading && appResources?.resources?.container_images;">
-          <div
-            *ngFor="let containerImage of appResources.resources.container_images | keyvalue;"
-            class="container-item"
-          >
-            <span class="container-name">{{ containerImage.key }}</span>
-            <span class="container-status">
-              <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
-                {{ 'Update available' | translate }}
-              </ng-container>
-            </span>
-            <span class="container-action">
-              <button
-                type="button"
-                [ixTest]="[containerImage.key, 'view_logs']"
-                (click)="viewLogsButtonPressed()"
-              >{{ 'View Logs' | translate }}</button>
-            </span>
-          </div>
+        <ng-container *ngIf="!isLoading; else loader">
+          <ng-container *ngIf="app?.resources?.container_images; else noContainers">
+            <div
+              *ngFor="let containerImage of app.resources.container_images | keyvalue;"
+              class="container-item"
+            >
+              <span class="container-name">{{ containerImage.key }}</span>
+              <span class="container-status">
+                <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
+                  {{ 'Update available' | translate }}
+                </ng-container>
+              </span>
+              <span class="container-action">
+                <button
+                  type="button"
+                  [ixTest]="[containerImage.key, 'view_logs']"
+                  (click)="viewLogsButtonPressed()"
+                >{{ 'View Logs' | translate }}</button>
+              </span>
+            </div>
+          </ng-container>
         </ng-container>
       </div>
     </div>
   </mat-card-content>
 </mat-card>
+
+<ng-template #loader>
+  <ngx-skeleton-loader></ngx-skeleton-loader>
+</ng-template>
 
 <ng-template #upToDate>
   {{ 'Up to date' | translate }}
@@ -76,4 +87,8 @@
 
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}
+</ng-template>
+
+<ng-template #noContainers>
+  {{ 'No containers are available.' | translate }}
 </ng-template>

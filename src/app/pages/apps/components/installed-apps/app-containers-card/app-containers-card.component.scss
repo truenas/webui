@@ -2,6 +2,18 @@
 
 .card {
   @include details-card();
+
+  .details-item .value {
+    display: inline-flex;
+  }
+
+  ::ng-deep ngx-skeleton-loader {
+    display: flex;
+
+    .loader {
+      margin: 0;
+    }
+  }
 }
 
 .containers {
@@ -15,12 +27,6 @@
 .container-list {
   background-color: rgba(0, 0, 0, 0.1);
   padding: 12px;
-
-  ngx-skeleton-loader {
-    ::ng-deep span {
-      margin: 0;
-    }
-  }
 }
 
 .container-item {

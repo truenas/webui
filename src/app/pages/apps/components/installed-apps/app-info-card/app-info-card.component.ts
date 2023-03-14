@@ -6,7 +6,6 @@ import { startCase } from 'lodash';
 import { filter } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -24,7 +23,6 @@ import { RedirectService, AppLoaderService, DialogService } from 'app/services';
 })
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
-  @Input() events: ChartReleaseEvent[];
 
   constructor(
     private appLoaderService: AppLoaderService,
@@ -39,8 +37,8 @@ export class AppInfoCardComponent {
     return startCase(name);
   }
 
-  portalLink(chart: ChartRelease, name = 'web_portal'): void {
-    this.redirect.openWindow(chart.portals[name][0]);
+  portalLink(app: ChartRelease, name = 'web_portal'): void {
+    this.redirect.openWindow(app.portals[name][0]);
   }
 
   updateButtonPressed(): void {

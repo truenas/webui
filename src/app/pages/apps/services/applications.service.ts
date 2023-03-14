@@ -61,12 +61,4 @@ export class ApplicationsService {
       [name],
     );
   }
-
-  getPorts(chart: ChartRelease): string {
-    const ports: string[] = [];
-    chart.used_ports.forEach((item) => {
-      ports.push(`${item.port}\\${item.protocol}`);
-    });
-    return ports.join(', ');
-  }
 }

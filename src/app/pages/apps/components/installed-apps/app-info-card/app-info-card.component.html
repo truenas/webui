@@ -78,7 +78,7 @@
         </div>
       </div>
     </div>
-    <div fxLayout="row" fxLayoutAlign="center">
+    <div *ngIf="app?.portals" fxLayout="row" fxLayoutAlign="center">
       <button
         *ngFor="let portal of app.portals | keyvalue"
         mat-button

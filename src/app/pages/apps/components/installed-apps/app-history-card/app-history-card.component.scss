@@ -2,6 +2,14 @@
 
 .card {
   @include details-card();
+
+  ::ng-deep ngx-skeleton-loader {
+    display: flex;
+
+    .loader {
+      margin: 0;
+    }
+  }
 }
 
 .events {
