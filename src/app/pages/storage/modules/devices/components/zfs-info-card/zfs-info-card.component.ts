@@ -15,6 +15,8 @@ import {
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { WebSocketService, DialogService } from 'app/services';
 
+const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
+
 @UntilDestroy()
 @Component({
   selector: 'ix-zfs-info-card',
@@ -35,10 +37,7 @@ export class ZfsInfoCardComponent {
   }
 
   get isRaidzParent(): boolean {
-    return (this.topologyParentItem.type === TopologyItemType.Raidz
-      || this.topologyParentItem.type === TopologyItemType.Raidz1
-      || this.topologyParentItem.type === TopologyItemType.Raidz2
-      || this.topologyParentItem.type === TopologyItemType.Raidz3);
+    return raidzItems.includes(this.topologyItem.type);
   }
 
   get isDisk(): boolean {

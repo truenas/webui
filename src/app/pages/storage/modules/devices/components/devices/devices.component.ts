@@ -29,6 +29,8 @@ import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-w
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
+const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
+
 @UntilDestroy()
 @Component({
   templateUrl: './devices.component.html',
@@ -56,8 +58,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   readonly hasTopLevelRaidz$: Observable<boolean> = this.devicesStore.nodes$.pipe(
     map((node) => {
       return node.some((nodeItem) => nodeItem.children.some((child: TopologyItem) => {
-        return child.type === TopologyItemType.Raidz || child.type === TopologyItemType.Raidz1
-        || child.type === TopologyItemType.Raidz2 || child.type === TopologyItemType.Raidz3;
+        return raidzItems.includes(child.type);
       }));
     }),
   );
