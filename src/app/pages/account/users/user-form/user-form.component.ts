@@ -11,7 +11,7 @@ import {
   combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap, tap,
+  filter, map, switchMap,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -168,7 +168,6 @@ export class UserFormComponent {
     this.form.controls.smb.errors$.pipe(
       filter((error) => error?.manualValidateErrorMsg),
       switchMap(() => this.form.controls.password.valueChanges),
-      tap(() => this.form.updateValueAndValidity()),
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.form.controls.smb.invalid) {
