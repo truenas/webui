@@ -11,7 +11,7 @@ import {
   combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap,
+  filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -164,7 +164,18 @@ export class UserFormComponent {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-  ) { }
+  ) {
+    this.form.controls.smb.errors$.pipe(
+      filter((error) => error?.manualValidateErrorMsg),
+      switchMap(() => this.form.controls.password.valueChanges),
+      tap(() => this.form.updateValueAndValidity()),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      if (this.form.controls.smb.invalid) {
+        this.form.controls.smb.updateValueAndValidity();
+      }
+    });
+  }
 
   /**
    * @param user Skip argument to add new user.
