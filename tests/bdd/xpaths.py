@@ -87,8 +87,8 @@ class add_User:
 
 class add_Zvol:
     title = '//h3[text()="Add Zvol"]'
-    name_Input = '//ix-input[@formcontrolname="name"]//input'
-    size_Input = '//ix-input[@formcontrolname="volsize"]//input'
+    name_Input = '//input[@ix-auto="input__Zvol name"]'
+    size_Input = '//input[@ix-auto="input__Size for this zvol"]'
 
 
 class advanced:
