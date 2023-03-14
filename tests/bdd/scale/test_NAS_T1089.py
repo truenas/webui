@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -27,7 +28,7 @@ def test_add_root_to_auxiliary_group_of_a_user():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['First_User'], scope='session')
+    #depends(request, ['First_User'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -83,6 +84,8 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
 
 
 @then('change should be saved, reopen the edit page, root group value should be visible')

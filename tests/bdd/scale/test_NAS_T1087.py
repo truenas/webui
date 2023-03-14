@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -82,6 +83,8 @@ def the_user_edit_page_should_open_change_the_user_email_and_click_save(driver, 
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
 
 
 @then('change should be saved, open the user dropdown, the email value should be visible')
