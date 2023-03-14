@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -84,6 +85,8 @@ def click_enable_permit_sudo_Checkbox_and_click_save(driver):
         driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox).click()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
 
 
 @then('the changes should be saved')

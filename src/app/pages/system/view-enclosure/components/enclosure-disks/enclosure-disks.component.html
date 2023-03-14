@@ -206,8 +206,8 @@
             {{ 'REAR' | translate }}
           </button>
 
-          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">
-            {{ 'Internal' | translate }}
+          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride(EnclosureLocation.Internal)">
+            {{ 'INTERNAL' | translate }}
           </button>
         </div>
 
@@ -386,6 +386,7 @@
             <div class="capacity">{{ converter(selectedDisk.size) }}</div>
             <div class="disk-actions">
               <button
+                *ngIf="!hideIdentifyDrive"
                 id="identify-btn"
                 mat-button
                 color="primary"

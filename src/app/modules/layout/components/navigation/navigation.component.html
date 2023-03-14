@@ -18,7 +18,7 @@
         <a
           *ngIf="item.type === MenuItemType.Link"
           class="sidenav-link"
-          [routerLink]="['/', item.state]"
+          [routerLink]="getRouterLink(item.state)"
           [name]="getItemName(item)"
           (click)="closeMenu()"
         >

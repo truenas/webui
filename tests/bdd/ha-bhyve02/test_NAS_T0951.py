@@ -109,6 +109,8 @@ def add_user_to_additional_groups_like_wheel_and_save_change(driver):
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
+    rsc.Confirm_Warning(driver)
+
 
 @then('Change should be saved')
 def change_should_be_saved(driver):

@@ -63,5 +63,6 @@ export interface UserUpdate {
   sshpubkey?: string;
   groups?: number[];
   group_create?: boolean;
+  home_create?: boolean;
   attributes?: Record<string, unknown>;
 }

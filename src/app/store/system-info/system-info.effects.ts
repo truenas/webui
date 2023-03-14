@@ -112,6 +112,8 @@ export class SystemInfoEffects {
           map((isUpgradePending) => upgradePendingStateLoaded({ isUpgradePending })),
         );
       }
+
+      return EMPTY;
     }),
   ));
 

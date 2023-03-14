@@ -44,6 +44,7 @@ import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
 import { R20 } from 'app/pages/system/view-enclosure/classes/hardware/r20';
 import { R20A } from 'app/pages/system/view-enclosure/classes/hardware/r20a';
 import { R20B } from 'app/pages/system/view-enclosure/classes/hardware/r20b';
+import { R30 } from 'app/pages/system/view-enclosure/classes/hardware/r30';
 import { R40 } from 'app/pages/system/view-enclosure/classes/hardware/r40';
 import { R50 } from 'app/pages/system/view-enclosure/classes/hardware/r50';
 import { R50B } from 'app/pages/system/view-enclosure/classes/hardware/r50b';
@@ -113,7 +114,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get enclosure(): ChassisView {
     if (!this.chassis) return null;
 
-    return this.view === 'rear' ? this.chassis.rear : this.chassis.front;
+    switch (this.view) {
+      case EnclosureLocation.Rear:
+        return this.chassis.rear;
+      case EnclosureLocation.Internal:
+        return this.chassis.internal;
+      default:
+        return this.chassis.front;
+    }
   }
 
   private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];
@@ -148,6 +156,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get enclosurePools(): string[] {
     const selectedEnclosure = this.getSelectedEnclosure();
     return Object.keys(selectedEnclosure.poolKeys);
+  }
+
+  get hideIdentifyDrive(): boolean {
+    const selectedEnclosure = this.getSelectedEnclosure();
+    return this.system.enclosures[selectedEnclosure.enclosureKey].model === 'TRUENAS-MINI-R';
   }
 
   selectedVdevDisks: string[];
@@ -414,6 +427,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R20B':
         this.chassis = new R20B(true);
         break;
+      case 'R30':
+      case 'TRUENAS-R30':
+        this.chassis = new R30();
+        break;
       case 'R40':
       case 'TRUENAS-R40':
         this.chassis = new R40();
@@ -552,6 +569,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'TRUENAS-R20B':
       case 'R20B':
         extractedChassis = new R20B();
+        break;
+      case 'R30':
+      case 'TRUENAS-R30':
+        extractedChassis = new R30();
         break;
       case 'TRUENAS-R40':
       case 'R40':

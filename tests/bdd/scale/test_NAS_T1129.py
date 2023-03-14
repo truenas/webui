@@ -132,6 +132,7 @@ def the_ldapsmbshare_should_be_added_to_the_shares_list(driver, share_name):
     """the ldapsmbshare should be added to the Shares list."""
     assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name(share_name))
     assert wait_on_element(driver, 5, xpaths.sharing.smb_Service_Status)
+    time.sleep(5)
 
 
 @then(parsers.parse('send a file to the share with ip/"{smb_share}" and "{ldap_user}" and "{ldap_password}"'))
