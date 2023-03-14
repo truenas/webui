@@ -18,7 +18,8 @@
       code {
         display: flex;
         overflow: auto;
-        white-space: pre-line;
+        padding: 20px;
+        white-space: pre-wrap;
       }
     }
 

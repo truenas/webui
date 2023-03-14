@@ -8,7 +8,7 @@ import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, merge } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -25,6 +25,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -519,6 +520,23 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }],
             },
             {
+              type: 'checkbox',
+              name: 'sudo',
+              placeholder: this.translate.instant('Use Sudo For Zfs Commands'),
+              tooltip: helptext.sudo_tooltip,
+              relation: [{
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
+                when: [{
+                  name: 'source_datasets_from',
+                  value: DatasetSource.Remote,
+                }, {
+                  name: 'target_dataset_from',
+                  value: DatasetSource.Remote,
+                }],
+              }],
+            },
+            {
               type: 'input',
               name: 'name',
               placeholder: helptext.name_placeholder,
@@ -648,7 +666,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ],
     },
   ];
-  private sshCredentials: { label: string; value: number }[];
+  private sshCredentials: KeychainSshCredentials[];
+  private sshCredentialOptions: { label: string; value: number }[];
 
   protected selectedReplicationTask: ReplicationTask;
 
@@ -729,12 +748,36 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     const sshCredentialsSourceField = _.find(this.sourceFieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
     const sshCredentialsTargetField = _.find(this.targetFieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
     this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
-      this.sshCredentials = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
-      sshCredentialsSourceField.options = [...this.sshCredentials];
-      sshCredentialsTargetField.options = [...this.sshCredentials];
+      this.sshCredentials = credentials;
+      this.sshCredentialOptions = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
+      sshCredentialsSourceField.options = [...this.sshCredentialOptions];
+      sshCredentialsTargetField.options = [...this.sshCredentialOptions];
       sshCredentialsSourceField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
       sshCredentialsTargetField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
     });
+
+    merge(
+      this.entityWizard.formArray.get([0]).get('ssh_credentials_source').valueChanges,
+      this.entityWizard.formArray.get([0]).get('ssh_credentials_target').valueChanges,
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe((credentialId: number) => {
+        const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
+        if (!selectedCredential || selectedCredential.attributes.username === 'root') {
+          return;
+        }
+
+        this.dialogService.confirm({
+          title: this.translate.instant('Sudo Enabled'),
+          message: helptext.sudo_warning,
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Use Sudo for Zfs Commands'),
+        })
+          .pipe(untilDestroyed(this))
+          .subscribe((useSudo) => {
+            this.entityWizard.formArray.get([0]).get('sudo').setValue(useSudo);
+          });
+      });
 
     this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: ReplicationTask) => {
       if (value !== null) {
@@ -1164,7 +1207,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
         const newCredential = credentials.find((credential) => {
-          return !this.sshCredentials.find((existingCredential) => existingCredential.value === credential.id);
+          return !this.sshCredentialOptions.find((existingCredential) => existingCredential.value === credential.id);
         });
 
         if (!newCredential) {
@@ -1173,10 +1216,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }
         const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
         const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-        sshCredentialsSourceField.options.push({ label: newCredential.name + ' (New Created)', value: newCredential.id });
-        sshCredentialsTargetField.options.push({ label: newCredential.name + ' (New Created)', value: newCredential.id });
+        sshCredentialsSourceField.options.push({ label: newCredential.name + ' (Newly Created)', value: newCredential.id });
+        sshCredentialsTargetField.options.push({ label: newCredential.name + ' (Newly Created)', value: newCredential.id });
+        this.sshCredentials = credentials;
+        this.sshCredentialOptions = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
         this.entityWizard.formArray.get([0]).get([activatedField]).setValue(newCredential.id);
-        this.sshCredentials = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
       });
     });
   }
@@ -1361,6 +1405,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       retention_policy: data.retention_policy,
       recursive: data.recursive,
       encryption: data.encryption,
+      sudo: data.sudo,
     } as ReplicationCreate;
     if (payload.encryption) {
       payload.encryption_key_format = data.encryption_key_format;

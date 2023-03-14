@@ -1,0 +1,40 @@
+<ix-modal-header
+  [title]="'Allowed IP Addresses' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-list
+        formArrayName="addresses"
+        [empty]="form.controls.addresses.controls.length === 0"
+        [label]="'Allowed IP Addresses' | translate"
+        (add)="addAddress()"
+      >
+        <ix-list-item
+          *ngFor="let network of form.controls.addresses.controls; let i = index"
+          (delete)="removeAddress(i)"
+        >
+          <ix-input
+            class="ip-address"
+            [formControlName]="i"
+            [label]="'IP Address' | translate"
+            [required]="true"
+          ></ix-input>
+        </ix-list-item>
+      </ix-list>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ "Save" | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

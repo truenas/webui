@@ -17,6 +17,7 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { DialogService, SystemGeneralService } from 'app/services';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('ManualUpdateFormComponent', () => {
@@ -61,6 +62,9 @@ describe('ManualUpdateFormComponent', () => {
         localStorage: {
           getItem: () => ProductType.ScaleEnterprise,
         },
+      }),
+      mockProvider(WebsocketConnectionService, {
+        isConnected$: of(true),
       }),
       provideMockStore({
         selectors: [

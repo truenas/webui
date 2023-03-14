@@ -320,7 +320,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
             {
               name: this.translate.instant('Enabled'),
-              width: '50px',
+              width: '80px',
               prop: 'enabled',
               checkbox: true,
               onChange: (row: CloudSyncTaskUi) => this.onCheckboxToggle(TaskCardId.CloudSync, row, 'enabled'),

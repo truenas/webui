@@ -74,6 +74,10 @@ export class AuthService {
       },
     });
 
+    this.wsManager.isConnected$.pipe(filter((isConnected) => !isConnected), untilDestroyed(this)).subscribe(() => {
+      this.isLoggedIn$.next(false);
+    });
+
     this.authToken$.pipe(untilDestroyed(this)).subscribe((token) => {
       this.token = token;
     });
