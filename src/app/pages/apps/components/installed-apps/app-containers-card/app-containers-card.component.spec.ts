@@ -1,5 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { ChartRelease, ChartContainerImage } from 'app/interfaces/chart-release.interface';
 import { AppContainersCardComponent } from './app-containers-card.component';
 
@@ -31,7 +33,9 @@ describe('AppContainersCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppContainersCardComponent,
-    declarations: [],
+    declarations: [
+      MockComponent(NgxSkeletonLoaderComponent),
+    ],
     providers: [],
   });
 
