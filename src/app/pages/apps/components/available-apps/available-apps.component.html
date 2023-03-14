@@ -16,7 +16,7 @@
     <section *ngIf="appSection.apps$ | async as apps">
       <ng-container *ngIf="apps.length">
         <h3 class="apps-section-title">
-          {{ appSection.title | translate }}
+          {{ appSection.title }}
         </h3>
 
         <div class="apps">
@@ -27,7 +27,11 @@
           ></ix-app-card>
         </div>
 
-        <p *ngIf="appSection.totalApps > sliceAmount" class="view-all" (click)="appSection.onViewMore()">
+        <p
+          *ngIf="appSection.totalApps > sliceAmount"
+          class="view-all"
+          (click)="appSection.fetchMore()"
+        >
           <b>
             {{ 'View All' | translate }} {{ appSection.title | translate }}
           </b>

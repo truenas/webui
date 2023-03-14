@@ -2,13 +2,13 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -16,7 +16,7 @@ interface AppSection {
   title: string;
   totalApps: number;
   apps$: BehaviorSubject<CatalogApp[]>;
-  onViewMore: () => void;
+  fetchMore?: () => void;
 }
 
 @UntilDestroy()
@@ -43,6 +43,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     private appService: ApplicationsService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -88,12 +89,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   private loadApplications(): void {
     this.loader.open();
 
-    combineLatest([
-      this.appService.getAllCatalogs().pipe(
-        catalogToAppsTransform(),
-      ),
-      this.appService.getAllAppCategories(),
-    ])
+    combineLatest([this.appService.getAllApps(), this.appService.getAllAppsCategories()])
       .pipe(untilDestroyed(this))
       .subscribe(([apps, appCategories]) => {
         this.setupApps(apps, appCategories);
@@ -114,16 +110,15 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
     this.appSections.push(
       {
-        title: 'Recommended Apps',
+        title: this.translate.instant('Recommended Apps'),
         apps$: this.recommendedApps$,
         totalApps: this.allNewAndUpdatedApps.length,
-        onViewMore: () => this.recommendedApps$.next(this.allRecommendedApps),
+        fetchMore: () => this.recommendedApps$.next(this.allRecommendedApps),
       },
       {
-        title: 'New & Updated Apps',
+        title: this.translate.instant('New & Updated Apps'),
         apps$: this.newAndUpdatedApps$,
-        totalApps: this.allNewAndUpdatedApps.length,
-        onViewMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
+        totalApps: this.sliceAmount,
       },
     );
 
@@ -135,7 +130,8 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
           title: category,
           apps$: new BehaviorSubject(categorizedApps.slice(0, this.sliceAmount)),
           totalApps: categorizedApps.length,
-          onViewMore: () => {},
+          // TODO: Implement logic to show all apps page per category
+          fetchMore: () => {},
         },
       );
     });
