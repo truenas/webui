@@ -23,6 +23,8 @@ from pytest_bdd import (
 )
 from pytest_dependency import depends
 
+pytestmark = [pytest.mark.debug_test]
+
 localHome = os.path.expanduser('~')
 dotsshPath = localHome + '/.ssh'
 keyPath = localHome + '/.ssh/ui_test_id_rsa'

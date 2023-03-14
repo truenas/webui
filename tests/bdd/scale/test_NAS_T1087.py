@@ -16,6 +16,8 @@ from pytest_bdd import (
     parsers
 )
 from pytest_dependency import depends
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1087.feature', 'Add an email to a user')

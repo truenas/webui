@@ -16,7 +16,8 @@ from pytest_bdd import (
     parsers
 )
 from pytest_dependency import depends
-
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1097.feature', 'Verify that users cannot save an invalid email')
 def test_verify_that_users_cannot_save_an_invalid_email():

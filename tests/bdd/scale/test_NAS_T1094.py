@@ -16,7 +16,8 @@ from pytest_bdd import (
     when,
 )
 from pytest_dependency import depends
-
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1094.feature', 'Enable password for a user')
 def test_enable_password_for_a_user():
