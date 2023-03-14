@@ -10,7 +10,6 @@ import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface'
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ChartUpgradeDialogComponent } from 'app/pages/apps-old/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -29,7 +28,6 @@ export class AppInfoCardComponent {
 
   constructor(
     private appLoaderService: AppLoaderService,
-    private snackbar: SnackbarService,
     private redirect: RedirectService,
     private appService: ApplicationsService,
     private matDialog: MatDialog,

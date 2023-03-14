@@ -21,6 +21,7 @@ import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
@@ -37,6 +38,8 @@ import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-f
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
+import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -76,6 +79,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppResourcesCardComponent,
     AppHelmChartCardComponent,
     AppAvailableInfoCardComponent,
+    PodLogsComponent,
+    PodShellComponent,
   ],
   imports: [
     CommonModule,
@@ -103,6 +108,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppCommonModule,
     MatExpansionModule,
     CastModule,
+    TerminalModule,
   ],
 })
 export class AppsModule { }

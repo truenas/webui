@@ -1,0 +1,46 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-toolbar-slider
+      [label]="'Set font size' | translate"
+      [min]="10"
+      [max]="20"
+      [value]="fontSize"
+      (valueChange)="onFontSizeChanged($event)"
+    ></ix-toolbar-slider>
+
+    <button mat-button ixTest="reconnect" (click)="onReconnect()">
+      {{ 'Reconnect' | translate }}
+    </button>
+
+    <button mat-button color="primary" ixTest="download-logs" (click)="onDownloadLogs()">
+      {{ 'Download Logs' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<div class="pod-logs-wrapper">
+  <div class="meta-data">
+    <label>{{ 'Application Name' | translate }}:</label>
+    <span class="name">{{ chartReleaseName }}</span>
+    <label>{{ 'Pod Name' | translate }}:</label>
+    <span class="name">{{ podName }}</span>
+    <label>{{ 'Container Name' | translate }}:</label>
+    <span class="name">{{ containerName }}</span>
+  </div>
+  <div
+    #logContainer
+    class="pod-logs"
+    [ngStyle]="{ 'font-size': fontSize + 'px' }"
+  >
+    <mat-spinner *ngIf="isLoadingPodLogs" class="spinner" [diameter]="40"></mat-spinner>
+    <div *ngIf="!isLoadingPodLogs && !podLogs.length" class="log-row">
+      <span  class="no-logs">{{ 'No logs yet' | translate }}</span>
+    </div>
+    <ng-container *ngIf="!isLoadingPodLogs">
+      <div *ngFor="let podLog of podLogs" class="log-row">
+        <span class="timestamp">{{ podLog.timestamp }}</span>
+        <span class="log-data">{{ podLog.data }}</span>
+      </div>
+    </ng-container>
+  </div>
+</div>

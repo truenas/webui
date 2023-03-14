@@ -2,7 +2,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { ChartRelease, ChartContainerImage } from 'app/interfaces/chart-release.interface';
+import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppContainersCardComponent } from './app-containers-card.component';
 
 describe('AppContainersCardComponent', () => {
@@ -23,11 +23,11 @@ describe('AppContainersCardComponent', () => {
         'docker.io/ix-test-app': {
           id: 'sha256:test',
           update_available: false,
-        } as ChartContainerImage,
+        },
       },
-      deployments: [{} as unknown],
-      pods: [{} as unknown],
-      statefulsets: [{} as unknown],
+      deployments: [{}],
+      pods: [{}],
+      statefulsets: [{}],
     },
   } as unknown as ChartRelease;
 
