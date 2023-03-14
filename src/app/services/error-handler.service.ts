@@ -50,7 +50,6 @@ export class ErrorHandlerService implements ErrorHandler {
     sentryCustomExceptionExtraction(error);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isTypeOfWebsocketError(error: unknown): error is WebsocketError {
     return typeof error === 'object'
       && 'error' in error
@@ -59,8 +58,7 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'trace' in error;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  isTypeOfJobError(obj: any): obj is Job {
+  isTypeOfJobError(obj: unknown): obj is Job {
     return typeof obj === 'object'
     && ('state' in obj
       && 'error' in obj
