@@ -18,6 +18,8 @@ from pytest_bdd import (
 )
 from pytest_dependency import depends
 
+pytestmark = [pytest.mark.debug_test]
+
 
 @pytest.mark.dependency(name='LDAP_Dataset')
 @scenario('features/NAS-T1126.feature', 'Create a new dataset with the LDAP user and group permissions')
