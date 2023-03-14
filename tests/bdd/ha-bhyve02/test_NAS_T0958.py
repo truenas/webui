@@ -108,6 +108,9 @@ def change_the_permissions_for_the_users_home_directory_invert_them_and_click_sa
     driver.find_element_by_xpath('(//tr[contains(.,"Other")]//mat-checkbox)[3]').click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
+
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
 
 
@@ -152,6 +155,9 @@ def the_changed_permissions_should_be_what_they_were_changed_to(driver):
     driver.find_element_by_xpath('(//tr[contains(.,"Other")]//mat-checkbox)[3]').click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
+
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User)
