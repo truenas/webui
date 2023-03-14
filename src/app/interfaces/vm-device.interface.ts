@@ -118,6 +118,7 @@ export interface VmDeviceDelete {
 }
 
 export interface VmPassthroughDeviceChoice {
+  controller_type?: string;
   capability: {
     class: string;
     domain: string;
@@ -141,6 +142,7 @@ export interface VmPassthroughDeviceChoice {
   available: boolean;
   error: unknown;
   reset_mechanism_defined: boolean;
+  description: string;
 }
 
 export interface VmUsbPassthroughDeviceChoice {
