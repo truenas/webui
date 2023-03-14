@@ -7,6 +7,7 @@
     [formControl]="transfers"
     [label]="helptext.transfers_placeholder | translate"
     [tooltip]="helptext.transfers_tooltip | translate"
+    [required]="true"
   ></ix-input>
 
   <ix-form-actions>
@@ -18,7 +19,7 @@
       mat-button
       color="primary"
       type="button"
-      ixTest="restore"
+      ixTest="save"
       [disabled]="transfers.invalid"
       (click)="onSave()"
     >

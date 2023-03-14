@@ -421,22 +421,18 @@ export class CloudsyncFormComponent {
     });
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-      const transfersDefaultValues = this.transfersDefaultOptions.map((transfers) => transfers.value);
-      if (value && !transfersDefaultValues.includes(value)) {
+      if (this.isCustomTransfers(value)) {
         if (!this.isCustomTransfersSelected) {
           const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
-          dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers) => {
-            if (transfers && !transfersDefaultValues.includes(transfers)) {
-              this.isCustomTransfersSelected = true;
-              const customOption = { label: this.translate.instant('Custom ({transfers})', { transfers }), value: transfers };
-              this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption]);
+          dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
+            if (this.isCustomTransfers(transfers)) {
+              this.setTransfersOptions(true, transfers);
             }
             this.form.controls.transfers.setValue(transfers || null);
           });
         }
       } else {
-        this.isCustomTransfersSelected = false;
-        this.transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
+        this.setTransfersOptions(false);
       }
     });
   }
@@ -532,15 +528,27 @@ export class CloudsyncFormComponent {
     };
   }
 
+  isCustomTransfers(transfers: number): boolean {
+    const transfersDefaultValues = this.transfersDefaultOptions.map((option) => option.value);
+    return transfers && !transfersDefaultValues.includes(transfers);
+  }
+
+  setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
+    this.isCustomTransfersSelected = isCustomTransfersSelected;
+    if (this.isCustomTransfersSelected) {
+      const customOption = { label: this.translate.instant('Custom ({customTransfers})', { customTransfers }), value: customTransfers };
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption]);
+    } else {
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
+    }
+  }
+
   setTaskForEdit(task: CloudSyncTaskUi): void {
     this.editingTask = task;
 
-    const transfersDefaultValues = this.transfersDefaultOptions.map((transfers) => transfers.value);
     const transfers = task.transfers;
-    if (transfers && !transfersDefaultValues.includes(transfers)) {
-      this.isCustomTransfersSelected = true;
-      const customOption = { label: this.translate.instant('Custom ({transfers})', { transfers }), value: transfers };
-      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption]);
+    if (this.isCustomTransfers(transfers)) {
+      this.setTransfersOptions(true, transfers);
     }
 
     this.form.patchValue({
