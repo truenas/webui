@@ -11,7 +11,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ErrorHandlerService implements ErrorHandler {
   dialogService: DialogService;
   translateService: TranslateService;
@@ -30,8 +32,8 @@ export class ErrorHandlerService implements ErrorHandler {
   }
   constructor(private injector: Injector) { }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleError(error: any): void {
+  handleError(error: unknown): void {
+    console.error(error);
     let errors: ErrorReport | ErrorReport[];
     if (this.isTypeOfWebsocketError(error)) {
       errors = this.parseWsError(error);
@@ -45,8 +47,6 @@ export class ErrorHandlerService implements ErrorHandler {
       this.dialog.error(errors);
       return;
     }
-    console.error('Error', error);
-
     sentryCustomExceptionExtraction(error);
   }
 
