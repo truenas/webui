@@ -28,7 +28,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -45,6 +45,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
 
+  isLoading = true;
   isNew = true;
   dynamicSection: DynamicWizardSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
@@ -85,7 +86,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
     private layoutService: LayoutService,
-    private loader: AppLoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -133,7 +133,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe((appId) => {
         this.appId = appId;
-        this.loader.close();
+        this.isLoading = false;
         this.cdr.markForCheck();
 
         if (this.activatedRoute.routeConfig.path === 'install') {
@@ -147,7 +147,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   makeChartCreate(): void {
-    this.loader.open();
+    this.isLoading = true;
     this.appService
       .getCatalogItem(this.appId, officialCatalog, chartsTrain)
       .pipe(
@@ -156,11 +156,11 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
           this.setChartCreate(app);
-          this.loader.close();
+          this.isLoading = false;
           this.cdr.markForCheck();
         },
         error: () => {
-          this.loader.close();
+          this.isLoading = false;
           this.cdr.markForCheck();
         },
       });
