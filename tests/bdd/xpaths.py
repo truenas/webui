@@ -72,6 +72,7 @@ class add_User:
     qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
     games_Group_Option = '//mat-option[contains(.,"games")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
+    create_Home_Directory_Checkbox = '//ix-checkbox[@formcontrolname="home_create"]//mat-checkbox'
     password_Disabled_Slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
     home_Mode_Owner_Write_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
     home_Mode_Owner_Read_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[2]'
