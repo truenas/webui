@@ -27,7 +27,6 @@ import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AllowedAddressesComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
@@ -333,7 +332,6 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     private loader: AppLoaderService,
-    private ixFormatter: IxFormatterService,
   ) {}
 
   ngOnInit(): void {
