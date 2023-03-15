@@ -17,8 +17,6 @@ from pytest_bdd import (
     when,
 )
 from pytest_dependency import depends
-import pytest
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1098.feature', 'Change the permissions of a user home directory')

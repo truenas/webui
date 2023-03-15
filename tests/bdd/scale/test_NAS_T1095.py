@@ -16,8 +16,6 @@ from pytest_bdd import (
     when,
 )
 from pytest_dependency import depends
-import pytest
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1095.feature', 'Change the password of a user')
