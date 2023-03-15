@@ -18,7 +18,7 @@ from pytest_bdd import (
     parsers
 )
 from pytest_dependency import depends
-pytestmark = [pytest.mark.debug_test]
+
 
 @pytest.mark.dependency(name='AD_Setup')
 @scenario('features/NAS-T1104.feature', 'Setup AD and verify it is working')

@@ -17,7 +17,7 @@ from pytest_bdd import (
     parsers
 )
 from pytest_dependency import depends
-pytestmark = [pytest.mark.debug_test]
+
 
 @pytest.mark.dependency(name='AD_Dataset')
 @scenario('features/NAS-T1108.feature', 'Create an Active Directory dataset on a system dataset pool')
