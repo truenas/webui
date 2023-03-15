@@ -14,7 +14,7 @@ from pytest_bdd import (
     then,
     when,
 )
-pytestmark = [pytest.mark.debug_test]
+
 
 @pytest.mark.dependency(name='First_User')
 @scenario('features/NAS-T1067.feature', 'Create a new user call ericbsd')

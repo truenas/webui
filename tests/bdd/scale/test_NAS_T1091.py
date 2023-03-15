@@ -18,8 +18,6 @@ from pytest_bdd import (
 )
 from pytest_dependency import depends
 
-pytestmark = [pytest.mark.debug_test]
-
 
 @pytest.mark.dependency(name='First_User_Home')
 @scenario('features/NAS-T1091.feature', 'Add a home directory to a user')
