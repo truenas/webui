@@ -118,7 +118,8 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
       {
         title: this.translate.instant('New & Updated Apps'),
         apps$: this.newAndUpdatedApps$,
-        totalApps: this.sliceAmount,
+        totalApps: this.allNewAndUpdatedApps.length,
+        fetchMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
       },
     );
 
