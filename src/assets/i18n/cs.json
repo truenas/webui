@@ -33,7 +33,7 @@
   "6 months": "",
   "<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Transport Protocol</a> for the remote system log server connection. Choosing Transport Layer Security (TLS) also requires selecting a preconfigured system Certificate.": "",
   "<a href=\"https://www.ixsystems.com/community/\" target=\"_blank\"> TrueNAS Forums</a> - Find answers from other users in the forums.": "",
-  "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
+  "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.": "",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Crtl+C</i>.": "",
   "<b>Not recommended.</b> Allow more than one group to have the same group ID.": "",
