@@ -130,7 +130,6 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
       });
   }
 
-  // TODO: Check the CertificateAuthorityStep interface on steps.
   private preparePayload(): CertificateAuthorityUpdate {
     const steps = this.isImport ? this.getImportCaSteps() : this.getNewCaSteps();
 
