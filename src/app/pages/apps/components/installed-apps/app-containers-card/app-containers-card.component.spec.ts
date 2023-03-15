@@ -1,9 +1,9 @@
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppContainersCardComponent } from './app-containers-card.component';
 
 describe('AppContainersCardComponent', () => {
@@ -38,7 +38,7 @@ describe('AppContainersCardComponent', () => {
       MockComponent(NgxSkeletonLoaderComponent),
     ],
     providers: [
-      ApplicationsService,
+      mockProvider(ApplicationsService),
     ],
   });
 

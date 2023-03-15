@@ -1,11 +1,11 @@
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 describe('AppInfoCardComponent', () => {
   let spectator: Spectator<AppInfoCardComponent>;
@@ -32,7 +32,9 @@ describe('AppInfoCardComponent', () => {
         NgxSkeletonLoaderComponent,
       ),
     ],
-    providers: [ApplicationsService],
+    providers: [
+      mockProvider(ApplicationsService),
+    ],
   });
 
   beforeEach(() => {
