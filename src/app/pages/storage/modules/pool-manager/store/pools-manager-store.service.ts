@@ -3,7 +3,6 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { forkJoin, Observable, tap } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -17,7 +16,6 @@ export interface PoolManagerState {
 
   unusedDisks: UnusedDisk[];
   enclosures: Enclosure[];
-  pools: Pool[];
   formValue: PoolManagerWizardFormValue;
 }
 
@@ -26,7 +24,6 @@ const initialState: PoolManagerState = {
 
   unusedDisks: [],
   enclosures: [],
-  pools: [],
   formValue: null,
 };
 
@@ -36,7 +33,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly hasMultipleEnclosures$ = this.select((state) => state.enclosures.length > 1);
   readonly formValue$ = this.select((state) => state.formValue);
-  readonly pools$ = this.select((state) => state.pools);
 
   constructor(
     private ws: WebSocketService,
@@ -57,7 +53,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         return forkJoin([
           this.loadUnusedDisks(),
           this.loadEnclosures(),
-          this.loadPools(),
         ]).pipe(
           tapResponse(() => {
             this.patchState({
@@ -94,14 +89,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     return this.ws.call('enclosure.query').pipe(
       tap((enclosures) => {
         this.patchState({ enclosures });
-      }),
-    );
-  }
-
-  private loadPools(): Observable<Pool[]> {
-    return this.ws.call('pool.query').pipe(
-      tap((pools) => {
-        this.patchState({ pools });
       }),
     );
   }

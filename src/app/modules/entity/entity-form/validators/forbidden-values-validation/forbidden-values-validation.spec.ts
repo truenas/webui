@@ -1,4 +1,3 @@
-import { TestBed } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { of } from 'rxjs';
 import {
@@ -13,11 +12,6 @@ describe('forbiddenValuesValidation', () => {
   const asyncArrayNames$ = of(existingNames);
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [FormBuilder],
-      declarations: [forbiddenValues],
-    });
-
     const formBuilder = new FormBuilder();
     form = formBuilder.group({
       name: [''],

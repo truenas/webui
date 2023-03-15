@@ -67,7 +67,7 @@ export class IxErrorsComponent implements OnChanges {
 
           return this.getDefaultError(error as DefaultValidationError);
         });
-        this.messages = newErrors;
+        this.messages = newErrors.filter(Boolean);
 
         this.cdr.markForCheck();
       });

@@ -3,14 +3,13 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -26,17 +25,17 @@ export class GeneralWizardStepComponent implements OnInit {
   readonly encryptionAlgorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(
     choicesToOptions(),
   );
-  readonly poolNames$ = this.poolManagerStore.pools$.pipe(map((pools) => pools.map((pool) => pool.name)));
+  poolNames$: Observable<string[]>;
 
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private poolManagerStore: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
+    this.poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
     this.form.controls.name.addAsyncValidators(forbiddenAsyncValues(this.poolNames$));
     this.form.controls.encryption_standard.disable();
     this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((isEncrypted) => {
