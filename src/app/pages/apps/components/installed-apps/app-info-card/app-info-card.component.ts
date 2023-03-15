@@ -9,8 +9,8 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ChartUpgradeDialogComponent } from 'app/pages/apps-old/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
+import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { RedirectService, AppLoaderService, DialogService } from 'app/services';
 
@@ -47,9 +47,10 @@ export class AppInfoCardComponent {
     this.appLoaderService.open();
     this.appService.getChartUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe({
       next: (summary: UpgradeSummary) => {
+        console.info('summary', summary);
         this.appLoaderService.close();
 
-        const dialogRef = this.matDialog.open(ChartUpgradeDialogComponent, {
+        const dialogRef = this.matDialog.open(AppUpgradeDialogComponent, {
           width: '50vw',
           minWidth: '500px',
           maxWidth: '750px',
