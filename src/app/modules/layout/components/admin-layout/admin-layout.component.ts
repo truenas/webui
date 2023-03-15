@@ -20,13 +20,12 @@ import { Store } from '@ngrx/store';
 import { filter, take } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
+import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { SystemGeneralService, LanguageService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { TokenLifetimeService } from 'app/services/token-lifetime.service';
@@ -65,7 +64,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private router: Router,
-    public core: CoreService,
     private authService: AuthService,
     public cd: ChangeDetectorRef,
     public themeService: ThemeService,
@@ -92,23 +90,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // Watches screen size and open/close sidenav
-    this.media.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+    this.media.asObservable().pipe(untilDestroyed(this)).subscribe(() => {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
-      core.emit({ name: 'MediaChange', data: changes, sender: this });
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
-    });
-
-    this.core.register({
-      observerClass: this,
-      eventName: 'SidenavStatus',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SidenavStatusEvent) => {
-      this.isSidenavOpen = evt.data.isOpen;
-      this.sidenavMode = evt.data.mode;
-      this.isSidenavCollapsed = evt.data.isCollapsed;
     });
   }
 
@@ -163,6 +151,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
           this.headerPortalOutlet = null;
         }
       });
+  }
+
+  onSidenavStatusChange(sidenav: SidenavStatusData): void {
+    this.isSidenavOpen = sidenav.isOpen;
+    this.sidenavMode = sidenav.mode;
+    this.isSidenavCollapsed = sidenav.isCollapsed;
   }
 
   updateSidenav(): void {

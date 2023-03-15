@@ -5,9 +5,3 @@ export interface SidenavStatusData {
   mode: MatDrawerMode;
   isCollapsed: boolean;
 }
-
-export interface SidenavStatusEvent {
-  name: 'SidenavStatus';
-  sender: unknown;
-  data: SidenavStatusData;
-}
