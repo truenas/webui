@@ -32,6 +32,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -317,6 +318,9 @@ export type ApiDirectory = {
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
   'api_key.delete': { params: [id: string]; response: boolean };
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
+
+  // App
+  'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
 
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };

@@ -2,14 +2,13 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -22,24 +21,13 @@ import { LayoutService } from 'app/services/layout.service';
 export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  apps: CatalogApp[] = [];
+  apps: AvailableApp[] = [];
   filters: AppsFiltersValues = {
     search: '',
     catalogs: [],
-    sort: '',
+    sort: undefined,
     categories: [],
   };
-
-  get filteredApps(): CatalogApp[] {
-    const filtered = this.apps.filter((app) => (
-      app.name.toLocaleLowerCase().includes(this.filters.search.toLocaleLowerCase())
-      && this.filters.catalogs.includes(app.catalog.id)
-      && (!this.filters.categories.length
-        || this.filters.categories.filter((category) => app.categories.includes(category)).length)
-    ));
-    return this.filters.sort
-      ? _.orderBy(filtered, this.filters.sort, this.filters.sort === 'last_update' ? ['desc'] : ['asc']) : filtered;
-  }
 
   constructor(
     private layoutService: LayoutService,
@@ -50,7 +38,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadTestData();
+    this.loadAvailableApps();
   }
 
   ngAfterViewInit(): void {
@@ -81,23 +69,24 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   }
 
-  trackByAppId(id: number, app: CatalogApp): string {
-    return `${app.catalog.id}-${app.catalog.train}-${app.name}`;
+  trackByAppId(id: number, app: AvailableApp): string {
+    return `${app.catalog}-${app.train}-${app.name}`;
   }
 
   changeFilters(filters: AppsFiltersValues): void {
     this.filters = filters;
+    this.loadAvailableApps(true);
   }
 
-  private loadTestData(): void {
-    // TODO: Temporary
-    this.loader.open();
-    this.appService.getAllCatalogs().pipe(
-      catalogToAppsTransform(),
-      untilDestroyed(this),
-    ).subscribe((apps) => {
+  private loadAvailableApps(hideLoader?: boolean): void {
+    if (!hideLoader) {
+      this.loader.open();
+    }
+    this.appService.getAvailableApps(this.filters).pipe(untilDestroyed(this)).subscribe((apps) => {
       this.apps = apps;
-      this.loader.close();
+      if (!hideLoader) {
+        this.loader.close();
+      }
       this.cdr.markForCheck();
     });
   }

@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services/index';
 
 @Injectable({ providedIn: 'root' })
@@ -24,6 +27,28 @@ export class ApplicationsService {
 
   getAllCatalogs(): Observable<Catalog[]> {
     return this.ws.call('catalog.query', [[], { extra: { cache: true, item_details: true } }]);
+  }
+
+  getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
+    const firstOption: QueryFilter<AvailableApp>[] = [];
+    firstOption.push(['name', '=', name]);
+    firstOption.push(['catalog', '=', catalog]);
+    firstOption.push(['train', '=', train]);
+    return this.ws.call('app.available', [firstOption]).pipe(switchMap((app) => of(app[0])));
+  }
+
+  getAvailableApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
+    if (!filters) {
+      return this.ws.call('app.available');
+    }
+
+    const firstOption: QueryFilter<AvailableApp>[] = [];
+    firstOption.push(['name', 'rin', filters.search]);
+    firstOption.push(['catalog', 'in', filters.catalogs]);
+    filters.categories.forEach((category) => firstOption.push(['categories', 'rin', category]));
+    const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
+
+    return this.ws.call('app.available', [firstOption, secondOption]);
   }
 
   getChartReleases(name?: string): Observable<ChartRelease[]> {

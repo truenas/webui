@@ -14,7 +14,7 @@
 <div *ngIf="filters.search" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: filters.search } }}</div>
 <div class="apps">
   <ix-app-card
-    *ngFor="let app of filteredApps; trackBy: trackByAppId"
+    *ngFor="let app of apps; trackBy: trackByAppId"
     [app]="app"
     [routerLink]="['/apps', 'available', app.name]"
   ></ix-app-card>

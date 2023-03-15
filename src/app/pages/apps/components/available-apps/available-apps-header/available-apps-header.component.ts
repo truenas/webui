@@ -4,16 +4,13 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  forkJoin, Observable, of, switchMap,
-} from 'rxjs';
-import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
-import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
+import { forkJoin, Observable, of } from 'rxjs';
+import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 
 @UntilDestroy()
 @Component({
@@ -28,24 +25,24 @@ export class AvailableAppsHeaderComponent implements OnInit {
   form = this.fb.group({
     search: [''],
     catalogs: [[] as string[]],
-    sort: [''],
+    sort: [null as AppsFiltersSort],
     categories: [[] as string[]],
   });
 
   catalogsOptions$: Observable<Option[]> = of([]);
   sortOptions$: Observable<Option[]> = of([
-    { label: this.translate.instant('App Name'), value: 'name' },
-    { label: this.translate.instant('Catalog Name'), value: 'catalog.id' },
-    { label: this.translate.instant('Updated Date'), value: 'last_update' },
+    { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
+    { label: this.translate.instant('Catalog Name'), value: AppsFiltersSort.Catalog },
+    { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
   ]);
   categoriesProvider$: ChipsProvider = () => of([]);
 
   isLoading = false;
   isFirstLoad = true;
   showFilters = false;
-  availableApps: CatalogApp[] = [];
+  availableApps: AvailableApp[] = [];
   installedApps: ChartRelease[] = [];
-  installedCatalogs: Catalog[] = [];
+  installedCatalogs: string[] = [];
 
   constructor(
     private appService: ApplicationsService,
@@ -61,7 +58,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
       this.filters.emit({
         search: filters.search || '',
         catalogs: filters.catalogs || [],
-        sort: filters.sort || '',
+        sort: filters.sort || undefined,
         categories: filters.categories || [],
       });
     });
@@ -70,31 +67,24 @@ export class AvailableAppsHeaderComponent implements OnInit {
   loadData(): void {
     this.isLoading = true;
     forkJoin([
-      this.appService.getAllCatalogs(),
+      this.appService.getAvailableApps(),
       this.appService.getChartReleases(),
-    ]).pipe(
-      switchMap(([catalogs, releases]) => {
-        this.installedApps = releases;
-        this.installedCatalogs = catalogs;
-        this.catalogsOptions$ = of(catalogs.map((catalog) => ({ label: catalog.label, value: catalog.id })));
+    ]).pipe(untilDestroyed(this)).subscribe(([availableApps, releases]) => {
+      this.availableApps = availableApps;
+      this.installedApps = releases;
 
-        if (this.isFirstLoad) {
-          this.form.controls.catalogs.patchValue(catalogs.map((catalog) => catalog.id));
-        }
+      const catalogs = new Set<string>();
+      availableApps.forEach((app) => catalogs.add(app.catalog));
+      this.installedCatalogs = Array.from(catalogs);
+      this.catalogsOptions$ = of(this.installedCatalogs.map((catalog) => ({ label: catalog, value: catalog })));
 
-        return of(catalogs);
-      }),
-      catalogToAppsTransform(),
-      untilDestroyed(this),
-    ).subscribe((apps) => {
-      this.availableApps = apps;
       const categories = new Set<string>();
-      apps.forEach((app) => app.categories.forEach((category) => categories.add(category)));
+      availableApps.forEach((app) => app.categories.forEach((category) => categories.add(category)));
       this.categoriesProvider$ = (query) => of(Array.from(categories).filter((category) => category.includes(query)));
 
       if (this.isFirstLoad) {
         this.isFirstLoad = false;
-        this.form.controls.categories.patchValue([]);
+        this.form.controls.catalogs.patchValue(this.installedCatalogs);
       }
       this.isLoading = false;
       this.cdr.markForCheck();
