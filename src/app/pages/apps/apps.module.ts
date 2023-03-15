@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
@@ -21,6 +22,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
+import { CommonAppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
@@ -60,6 +62,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppRouterOutletComponent,
     AppInfoCardComponent,
     AppRowComponent,
+    CommonAppsToolbarButtonsComponent,
   ],
   imports: [
     CommonModule,
@@ -85,6 +88,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     TestIdModule,
     AppLoaderModule,
     AppCommonModule,
+    MatMenuModule,
   ],
 })
 export class AppsModule { }
