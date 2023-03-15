@@ -1,3 +1,7 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -9,9 +13,11 @@ import { AppContainersCardComponent } from './app-containers-card.component';
 
 describe('AppContainersCardComponent', () => {
   let spectator: Spectator<AppContainersCardComponent>;
+  let loader: HarnessLoader;
 
   const app = {
     id: 'ix-test-app',
+    name: 'ix-test-app',
     update_available: true,
     used_ports: [{
       port: 22, protocol: 'TCP',
@@ -25,6 +31,10 @@ describe('AppContainersCardComponent', () => {
         'docker.io/ix-test-app': {
           id: 'sha256:test',
           update_available: false,
+        },
+        'docker.io/ix-test-dependency-app': {
+          id: 'sha256:test',
+          update_available: true,
         },
       },
       deployments: [{}, {}],
@@ -42,6 +52,9 @@ describe('AppContainersCardComponent', () => {
       mockProvider(ApplicationsService, {
         getChartReleaseWithResources: jest.fn(() => of([app])),
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => of(true)),
+      }),
     ],
   });
 
@@ -51,6 +64,11 @@ describe('AppContainersCardComponent', () => {
         app,
       },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('shows header', () => {
@@ -73,5 +91,34 @@ describe('AppContainersCardComponent', () => {
 
     expect(details[3].querySelector('.label')).toHaveText('Stateful Sets:');
     expect(details[3].querySelector('.value')).toHaveText('1');
+  });
+
+  it('shows container list', () => {
+    expect(spectator.query('.containers h4')).toHaveText('Containers');
+
+    const containers = spectator.queryAll('.container-item');
+    expect(containers).toHaveLength(2);
+
+    expect(containers[0].querySelector('.container-name')).toHaveText('docker.io/ix-test-app');
+    expect(containers[0].querySelector('.container-status')).toHaveText('Up to date');
+    expect(containers[0].querySelector('.container-action button')).toHaveText('View Logs');
+
+    expect(containers[1].querySelector('.container-name')).toHaveText('docker.io/ix-test-dependency-app');
+    expect(containers[1].querySelector('.container-status')).toHaveText('Update available');
+    expect(containers[1].querySelector('.container-action button')).toHaveText('View Logs');
+  });
+
+  it('opens shell app dialog when Shell button is pressed', async () => {
+    const shellButton = await loader.getHarness(MatButtonHarness.with({ text: 'Shell' }));
+    await shellButton.click();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens view logs dialog when View Logs button is pressed', async () => {
+    const showLogsButton = await loader.getHarness(MatButtonHarness.with({ text: 'View Logs' }));
+    await showLogsButton.click();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(1);
   });
 });
