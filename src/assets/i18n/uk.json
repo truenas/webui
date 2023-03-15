@@ -4131,7 +4131,6 @@
   "You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.": "Ви змінили один із параметрів, які вимагають повторної ініціалізації кластера Kubernetes. Майте на увазі, що це призведе до видалення встановлених програм і їхніх даних.",
   "You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.": "Ви сховали всі доступні віджети. Використовуйте форму конфігурації інформаційної панелі, щоб додати віджети.",
   "You have left the domain.": "Ви залишили домен.",
-  "Your NAS time {datetime} does not match your computer time.": "Час вашого NAS {datetime} не збігається з часом комп’ютера.",
   "Your query didn't return any results. Please try again.": "Ваш запит не дав жодного результату. Будь ласка спробуйте ще раз.",
   "ZFS Cache": "Кеш ZFS",
   "ZFS Deduplication": "Дедупликація ZFS",

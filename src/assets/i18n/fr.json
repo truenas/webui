@@ -4134,7 +4134,6 @@
   "You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.": "Vous avez modifié l'un des paramètres nécessitant la réinitialisation du cluster Kubernetes. Veuillez noter que cela supprimera les applications installées et leurs données.",
   "You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.": "Vous avez masqué tous vos widgets disponibles. Utilisez le formulaire de configuration du tableau de bord pour ajouter des widgets.",
   "You have left the domain.": "Vous avez quitté le domaine.",
-  "Your NAS time {datetime} does not match your computer time.": "L'heure de votre NAS {datetime} ne correspond pas à l'heure de votre ordinateur.",
   "Your query didn't return any results. Please try again.": "Votre requête n'a donné aucun résultat. Veuillez réessayer.",
   "ZFS Cache": "Cache ZFS",
   "ZFS Deduplication": "Déduplication ZFS",
