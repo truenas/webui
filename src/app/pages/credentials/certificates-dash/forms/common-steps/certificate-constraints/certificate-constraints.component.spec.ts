@@ -15,6 +15,7 @@ import {
   KeyUsageFlag,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
 
+// TODO: Update tests.
 describe('CertificateConstraintsComponent', () => {
   let spectator: Spectator<CertificateConstraintsComponent>;
   let loader: HarnessLoader;

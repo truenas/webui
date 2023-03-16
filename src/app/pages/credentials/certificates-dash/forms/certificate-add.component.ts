@@ -89,10 +89,10 @@ export class OldCertificateAddComponent implements WizardConfiguration {
               connective: RelationConnection.Or,
               when: [{
                 name: 'create_type',
-                value: CertificateCreateType.CreateImported,
+                value: CertificateCreateType.Import,
               }, {
                 name: 'create_type',
-                value: CertificateCreateType.CreateImportedCsr,
+                value: CertificateCreateType.ImportCsr,
               }],
             },
           ],
@@ -793,7 +793,7 @@ export class OldCertificateAddComponent implements WizardConfiguration {
           this.setDisabled('key_length', true);
           this.hideField('ec_curve', false);
         }
-      } else if (createType === CertificateCreateType.CreateImported) {
+      } else if (createType === CertificateCreateType.Import) {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -810,7 +810,7 @@ export class OldCertificateAddComponent implements WizardConfiguration {
         }
 
         this.wizardConfig[2].skip = true;
-      } else if (createType === CertificateCreateType.CreateImportedCsr) {
+      } else if (createType === CertificateCreateType.ImportCsr) {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));

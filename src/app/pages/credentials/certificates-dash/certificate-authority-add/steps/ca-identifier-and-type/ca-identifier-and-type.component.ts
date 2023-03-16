@@ -109,7 +109,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     return summary;
   }
 
-  getPayload(): Pick<CaIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type'> {
+  getPayload(): Pick<CaIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type' | 'add_to_trusted_store'> {
     return _.pick(this.form.value, ['name', 'create_type', 'add_to_trusted_store']);
   }
 

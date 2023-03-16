@@ -4,6 +4,7 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
+// TODO: Clean up
 export const helptextSystemCertificates = {
   add: {
     title: T('Add Certificate'),
@@ -27,7 +28,7 @@ export const helptextSystemCertificates = {
  <i>Import Certificate</i> lets you import an existing certificate onto the system.'),
       options: [
         { label: T('Internal Certificate'), value: CertificateCreateType.CreateInternal },
-        { label: T('Import Certificate'), value: CertificateCreateType.CreateImported },
+        { label: T('Import Certificate'), value: CertificateCreateType.Import },
       ],
       value: CertificateCreateType.CreateInternal,
     },
@@ -38,7 +39,7 @@ export const helptextSystemCertificates = {
  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
       options: [
         { label: T('Certificate Signing Request'), value: CertificateCreateType.CreateCsr },
-        { label: T('Import Certificate Signing Request'), value: CertificateCreateType.CreateImportedCsr },
+        { label: T('Import Certificate Signing Request'), value: CertificateCreateType.ImportCsr },
       ],
       value: CertificateCreateType.CreateCsr,
     },

@@ -44,7 +44,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
 
   readonly createTypes = new Map<CertificateCreateType, string>([
     [CertificateCreateType.CreateInternal, this.translate.instant('Internal Certificate')],
-    [CertificateCreateType.CreateImported, this.translate.instant('Import Certificate')],
+    [CertificateCreateType.Import, this.translate.instant('Import Certificate')],
   ]);
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 

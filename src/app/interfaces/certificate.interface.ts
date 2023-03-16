@@ -2,7 +2,7 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import {
-  AuthorityKeyIdentifier,
+  AuthorityKeyIdentifiers,
   BasicConstraints,
   CertificateAuthority,
   CertificateExtensions,
@@ -81,7 +81,7 @@ export type CertificateExtension = keyof CertificateExtensions;
 export type SomeCertificateExtension =
   Partial<
   & BasicConstraints
-  & AuthorityKeyIdentifier
+  & AuthorityKeyIdentifiers
   & ExtendedKeyUsage
   & KeyUsages
   >;
@@ -91,7 +91,7 @@ export type SomeCertificateExtension =
  */
 export type CertificationExtensionAttribute =
   | keyof BasicConstraints
-  | keyof AuthorityKeyIdentifier
+  | keyof AuthorityKeyIdentifiers
   | keyof ExtendedKeyUsage
   | keyof KeyUsages;
 

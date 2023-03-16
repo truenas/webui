@@ -562,6 +562,7 @@
   "Certificate Subject": "",
   "Certificate authority created": "",
   "Certificate has been created.": "",
+  "Certificate signing request created": "",
   "Certificate to use for key server authentication. A valid certificate is required to verify the key server connection. WARNING: for security reasons, please protect the Certificate used for key server authentication.": "",
   "Certificate to use when performing LDAP  certificate-based authentication. To configure LDAP certificate-based  authentication, create a Certificate Signing Request for the LDAP  provider to sign. A certificate is not required when using  username/password or Kerberos authentication.": "",
   "Change Enclosure Label": "",
