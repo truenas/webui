@@ -13,9 +13,9 @@ describe('CsrImportComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
-  const csr = '-----BEGIN CERTIFICATE-----\n'
+  const csr = '-----BEGIN CERTIFICATE REQUEST-----\n'
     + 'ABCDEFGHAwIBAgIJAKZQZ2Z0Z0ZmMA0GCSqGSIb3DQEBCwUA0987654321\n'
-    + '-----END CERTIFICATE-----';
+    + '-----END CERTIFICATE REQUEST-----';
 
   const createComponent = createComponentFactory({
     component: CsrImportComponent,

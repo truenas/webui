@@ -59,7 +59,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   ) {}
 
   get isImport(): boolean {
-    return this.form.value.create_type === CertificateCreateType.Import;
+    return this.form.value.create_type === CertificateCreateType.ImportCsr;
   }
 
   ngOnInit(): void {

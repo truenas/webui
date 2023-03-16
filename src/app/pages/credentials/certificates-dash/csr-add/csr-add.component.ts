@@ -10,11 +10,11 @@ import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
-  CaImportComponent,
-} from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-import/ca-import.component';
-import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
+import {
+  CsrImportComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
 import {
   CertificateConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
@@ -42,7 +42,7 @@ export class CsrAddComponent {
   @ViewChild(CertificateConstraintsComponent) constraints: CertificateConstraintsComponent;
 
   // Importing
-  @ViewChild(CaImportComponent) import: CaImportComponent;
+  @ViewChild(CsrImportComponent) import: CsrImportComponent;
 
   isLoading = false;
   summary: SummarySection[];
@@ -71,12 +71,12 @@ export class CsrAddComponent {
 
   getImportCsrSteps(): [
     CsrIdentifierAndTypeComponent,
-    CaImportComponent,
+    CsrImportComponent,
   ] {
     return [this.identifierAndType, this.import];
   }
 
-  // TODO: YO, same code in 3 places
+  // TODO: Similar code between all certificate forms.
   onProfileSelected(profile: CertificateProfile): void {
     if (!profile) {
       return;
@@ -101,7 +101,7 @@ export class CsrAddComponent {
     this.cdr.markForCheck();
 
     const payload = this.preparePayload();
-    this.ws.call('certificate.create', [payload])
+    this.ws.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

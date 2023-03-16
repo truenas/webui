@@ -76,7 +76,6 @@ import { CertificateEditComponent } from './certificates-dash/certificate-edit/c
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 import { CsrAddComponent } from './certificates-dash/csr-add/csr-add.component';
 import { CsrIdentifierAndTypeComponent } from './certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
-import { OldCertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
 import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
 import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
 import { CertificateOptionsComponent } from './certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
@@ -88,7 +87,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     SshConnectionFormComponent,
     SshKeypairFormComponent,
     CertificatesDashComponent,
-    OldCertificateAddComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
     CertificateEditComponent,

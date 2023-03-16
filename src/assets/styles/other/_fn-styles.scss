@@ -162,6 +162,7 @@ samp {
   font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace !important;
   padding: 2px;
 }
+
 /*---- Common -----*/
 .m-0 {
   margin: 0 !important;
@@ -257,7 +258,7 @@ samp {
   padding: 1rem;
 }
 
-.mat-mdc-card.default>:first-child {
+.mat-mdc-card.default > :first-child {
   border-radius: 2px 2px 0 0;
 }
 
@@ -283,7 +284,7 @@ samp {
   padding: 0.5rem;
 }
 
-.mat-mdc-card.default>:last-child {
+.mat-mdc-card.default > :last-child {
   border-radius: 0 0 2px 2px;
 }
 
@@ -373,6 +374,7 @@ samp {
   margin-left: 5px !important;
   padding-left: 22px !important;
 }
+
 /*---- Third party adjust -----*/
 /*--------- Material ---------*/
 mat-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
@@ -499,6 +501,36 @@ body .mat-mdc-select-trigger {
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
+/*-------- Scrollbar ---------*/
+body * {
+  scrollbar-color: rgba(0, 0, 0, 28%) var(--contrast-lightest);
+  scrollbar-width: auto;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.28), inset 1px 0 0 0 rgba(250, 250, 250, 0.03);
+}
+
+::-webkit-scrollbar-track:hover,
+::-webkit-scrollbar-track {
+  background-color: var(--contrast-lightest);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--contrast-lightest);
+}
+
+::-webkit-resizer {
+  background-color: var(--contrast-lightest);
+}
+
 /*-------- Chart js ---------*/
 .chart {
   margin-left: -10px;
@@ -545,7 +577,7 @@ body .mat-mdc-select-trigger {
 .sidebar-panel.mat-sidenav .navigation-hold {
   background: rgba(255, 255, 255, 0.95);
   height: 100%;
-  padding-top: 40px;
+  padding-top: 48px;
   position: relative;
   transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1);
 }
@@ -707,7 +739,7 @@ body .mat-mdc-select-trigger {
   margin: 0;
 }
 
-.collapsed-menu .sidebar-panel .mat-nav-list > div >  .sidebar-list-item a .menu-caret {
+.collapsed-menu .sidebar-panel .mat-nav-list > div > .sidebar-list-item a .menu-caret {
   font-size: medium;
   left: 33px;
   position: absolute;
@@ -752,7 +784,7 @@ body .mat-mdc-select-trigger {
   text-align: left;
 }
 
-.default-table > thead  tr th {
+.default-table > thead tr th {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   font-weight: 400;
   padding: 0.9rem 1.2rem;
