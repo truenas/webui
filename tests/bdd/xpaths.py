@@ -505,7 +505,7 @@ class sharing:
     turn_On_Service_Button = '//button[contains(.,"Turn On Service")]'
 
     def smb_Share_Name(share_name):
-        return f'//div[contains(text(),"{share_name}")]'
+        return f'//div[normalize-space(text())="{share_name}"]'
 
 
 class side_Menu:
