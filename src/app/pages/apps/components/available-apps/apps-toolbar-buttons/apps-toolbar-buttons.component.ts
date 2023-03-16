@@ -18,12 +18,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-common-apps-toolbar-buttons',
-  templateUrl: './common-apps-toolbar-buttons.component.html',
-  styleUrls: ['./common-apps-toolbar-buttons.component.scss'],
+  selector: 'ix-apps-toolbar-buttons',
+  templateUrl: './apps-toolbar-buttons.component.html',
+  styleUrls: ['./apps-toolbar-buttons.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CommonAppsToolbarButtonsComponent implements OnInit {
+export class AppsToolbarButtonsComponent implements OnInit {
   wasPoolSet = false;
   readonly customIxChartApp = ixChartApp;
 
