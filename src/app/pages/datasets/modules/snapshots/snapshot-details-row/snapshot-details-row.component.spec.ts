@@ -90,7 +90,7 @@ describe('SnapshotDetailsRowComponent', () => {
   });
 
   it('should delete snapshot when `Delete` button click', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'deleteDelete' }));
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(

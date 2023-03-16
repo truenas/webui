@@ -1,5 +1,6 @@
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarConfig } from './snackbar-config.interface';
 import { SnackbarComponent } from './snackbar.component';
 
@@ -27,6 +28,6 @@ describe('SnackbarComponent', () => {
   });
 
   it('shows an icon when it is set in config', () => {
-    expect(spectator.query('.icon')).toHaveText('error');
+    expect(spectator.query(IxIconComponent).name).toBe('error');
   });
 });

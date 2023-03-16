@@ -72,11 +72,11 @@
       <ng-template #gmailOauth>
         <div class="oauth-message">
           <ng-container *ngIf="hasOauthAuthorization; else logInToGmail">
-            <mat-icon>check_circle</mat-icon>
+            <ix-icon name="check_circle"></ix-icon>
             {{ 'Gmail credentials have been applied.' | translate }}
           </ng-container>
           <ng-template #logInToGmail>
-            <mat-icon>info</mat-icon>
+            <ix-icon name="info"></ix-icon>
             {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
           </ng-template>
         </div>

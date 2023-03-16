@@ -27,6 +27,7 @@
       </div>
       <ix-dynamic-form-item
         *ngFor="let attr of dynamicSchema.attrs"
+        [id]="attr.controlName"
         [dynamicSchema]="attr"
         [dynamicForm]="dynamicForm.controls[dynamicSchema.controlName] | cast"
         [isEditMode]="isEditMode"

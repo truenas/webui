@@ -1,5 +1,4 @@
 
-
 import time
 import xpaths
 from function import (
@@ -61,8 +60,8 @@ def Dismiss_All_Alerts(driver):
         assert wait_on_element(driver, 7, xpaths.alert.title)
         assert wait_on_element(driver, 7, '//button[contains(text(),"Dismiss All Alerts")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(text(),"Dismiss All Alerts")]').click()
-        assert wait_on_element(driver, 7, '//mat-icon[contains(.,"clear")]', 'clickable')
-        driver.find_element_by_xpath('//mat-icon[contains(.,"clear")]').click()
+        assert wait_on_element(driver, 7, '//ix-icon[contains(.,"clear")]', 'clickable')
+        driver.find_element_by_xpath('//ix-icon[contains(.,"clear")]').click()
 
 
 def Go_To_Service(driver):
@@ -118,6 +117,11 @@ def Restart_SMB_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
     assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+
+
+def Select_Option(driver, xpath):
+    assert wait_on_element(driver, 5, xpath, 'clickable')
+    driver.find_element_by_xpath(xpath).click()
 
 
 def Trigger_Failover(driver):

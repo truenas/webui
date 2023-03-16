@@ -10,7 +10,7 @@
   <form class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
       <span matPrefix class="search-icon-wrapper">
-        <mat-icon>search</mat-icon>
+        <ix-icon name="search"></ix-icon>
       </span>
       <input
         #filter
@@ -25,11 +25,10 @@
         matSuffix
         [class.invisible]="!filterValue || filterValue.length === 0"
       >
-        <mat-icon
-          fontSet="mdi-set"
-          fontIcon="mdi-close-circle"
+        <ix-icon
+          name="mdi-close-circle"
           (click)="resetFilter()"
-        ></mat-icon>
+        ></ix-icon>
       </span>
     </mat-form-field>
   </form>
@@ -72,8 +71,8 @@
           (click)="entity.checkAll()"
         >
           <span>
-            <mat-icon *ngIf="entity.checkLength()">check_circle</mat-icon>
-            <mat-icon *ngIf="!entity.checkLength()">remove</mat-icon>
+            <ix-icon *ngIf="entity.checkLength()" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!entity.checkLength()" name="remove"></ix-icon>
           </span>
           <span *ngIf="!entity.checkLength()">
             {{ 'Select All' | translate }}
@@ -94,8 +93,8 @@
           (click)="entity.toggle(col)"
         >
           <span>
-            <mat-icon *ngIf="entity.isChecked(col)">check_circle</mat-icon>
-            <mat-icon *ngIf="!entity.isChecked(col)">remove</mat-icon>
+            <ix-icon *ngIf="entity.isChecked(col)" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!entity.isChecked(col)" name="remove"></ix-icon>
           </span>
           <span>{{ col.name | translate }}</span>
         </button>
@@ -109,7 +108,7 @@
           (click)="entity.resetColViewToDefaults()"
         >
           <span>
-            <mat-icon>undo</mat-icon>
+            <ix-icon name="undo"></ix-icon>
           </span>
           <span>{{ 'Reset to Defaults' | translate }}</span>
         </button>
@@ -190,10 +189,10 @@
       [matTooltip]="conf.globalConfig.tooltip"
       (click)="conf.globalConfig.onClick()"
     >
-      <mat-icon *ngIf="conf.globalConfig.icon; else settingsIcon">
-        {{ conf.globalConfig.icon }}
-      </mat-icon>
-      <ng-template #settingsIcon><mat-icon>settings</mat-icon></ng-template>
+      <ng-container *ngIf="conf.globalConfig.icon; else settingsIcon">
+        <ix-icon [name]="conf.globalConfig.icon"></ix-icon>
+      </ng-container>
+      <ng-template #settingsIcon><ix-icon name="settings"></ix-icon></ng-template>
     </button>
   </div>
 

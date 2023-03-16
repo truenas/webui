@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -9,7 +9,6 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 import { LayoutService } from 'app/services/layout.service';
@@ -51,7 +50,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
-    private snackbar: SnackbarService,
+    private router: Router,
     private translate: TranslateService,
     private appService: ApplicationsService,
   ) {
@@ -126,8 +125,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   }
 
   onInstallButtonPressed(): void {
-    this.snackbar.success(
-      this.translate.instant('Install Button Pressed'),
-    );
+    this.router.navigate(['/apps', 'available', this.appId, 'install']);
   }
 }

@@ -11,9 +11,11 @@ import {
   DynamicFormSchemaIpaddr,
   DynamicFormSchemaCron,
   DynamicFormSchemaUri,
+  DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
+import { UrlValidationService } from 'app/services/url-validation.service';
 
 const beforeIntString = [{
   variable: 'variable_dict',
@@ -376,7 +378,7 @@ const afterHidden = [[]] as DynamicFormSchemaIpaddr[][];
 const dynamicForm = new FormGroup<Record<string, UntypedFormGroup>>({});
 
 describe('AppSchemaService', () => {
-  const service = new AppSchemaService({} as FilesystemService);
+  const service = new AppSchemaService({} as FilesystemService, {} as UrlValidationService);
   describe('transformNode()', () => {
     beforeIntString.forEach((item, idx) => {
       it('converts schema with "int" and "string" type', () => {
@@ -574,12 +576,31 @@ describe('AppSchemaService', () => {
         groups: [],
         portals: {},
       })).toEqual({ a: { c: null, d: 'test' } });
-      expect(service.serializeFormValue('* * * * *', null)).toEqual({
-        hour: '*',
-        minute: '*',
-        month: '*',
-        dom: '*',
-        dow: '*',
+      expect(
+        service.serializeFormValue(
+          { cron_test: '* * * * *' },
+          {
+            groups: [],
+            portals: {},
+            questions: [
+              {
+                variable: 'cron_test',
+                label: 'schedule_cron_type',
+                schema: {
+                  type: ChartSchemaType.Cron,
+                },
+              },
+            ],
+          },
+        ),
+      ).toEqual({
+        cron_test: {
+          hour: '*',
+          minute: '*',
+          month: '*',
+          dom: '*',
+          dow: '*',
+        },
       });
     });
   });
@@ -627,6 +648,52 @@ describe('AppSchemaService', () => {
         object: { nestedList: [{ key3: 'test6' }, { key3: 'test7' }] },
         cron_test: '* * * * *',
       });
+    });
+  });
+
+  describe('getSearchOptions()', () => {
+    it('get search options from dynamic schema', () => {
+      const dinamicSchema = [
+        {
+          schema: [
+            { controlName: 'control_name_1', title: 'Title 1', type: 'input' },
+            { controlName: 'control_name_2', title: 'Title 2', type: 'input' },
+          ],
+        },
+        {
+          schema: [
+            { controlName: 'control_name_3', title: 'Title 3', type: 'input' },
+            {
+              controlName: 'control_name_4',
+              title: 'Title 4',
+              type: 'dict',
+              attrs: [
+                { controlName: 'control_name_5', title: 'Title 5', type: 'input' },
+                {
+                  controlName: 'control_name_6',
+                  title: 'Title 6',
+                  type: 'dict',
+                  attrs: [{ controlName: 'control_name_7', title: 'Title 7', type: 'input' }],
+                },
+              ],
+            },
+          ],
+        },
+      ] as unknown as DynamicWizardSchema[];
+      const formValue = {
+        control_name_1: '',
+        control_name_2: '',
+        control_name_3: '',
+        control_name_4: { control_name_5: '', control_name_6: { control_name_7: '' } },
+      };
+      const options = service.getSearchOptions(dinamicSchema, formValue);
+      expect(options).toEqual([
+        { label: 'Title 1', value: 'control_name_1' },
+        { label: 'Title 2', value: 'control_name_2' },
+        { label: 'Title 3', value: 'control_name_3' },
+        { label: 'Title 5', value: 'control_name_4.control_name_5' },
+        { label: 'Title 7', value: 'control_name_4.control_name_6.control_name_7' },
+      ]);
     });
   });
 });

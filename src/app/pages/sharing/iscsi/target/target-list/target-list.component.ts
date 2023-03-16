@@ -103,7 +103,7 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
             for (const session of sessions) {
               if (session.target.split(':')[1] === rowinner.name) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
-                payload.push(true); // enable force delele
+                payload.push(true); // enable force delete
                 break;
               }
             }

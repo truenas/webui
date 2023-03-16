@@ -91,10 +91,6 @@ def the_changes_should_be_saved(driver):
     """the changes should be saved."""
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
-    assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
 
 
 @then('open the user dropdown')

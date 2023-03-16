@@ -12,6 +12,7 @@ import * as popmotion from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
@@ -23,7 +24,6 @@ import {
 } from 'app/interfaces/events/disk-events.interface';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
-import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
@@ -44,6 +44,7 @@ import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
 import { R20 } from 'app/pages/system/view-enclosure/classes/hardware/r20';
 import { R20A } from 'app/pages/system/view-enclosure/classes/hardware/r20a';
 import { R20B } from 'app/pages/system/view-enclosure/classes/hardware/r20b';
+import { R30 } from 'app/pages/system/view-enclosure/classes/hardware/r30';
 import { R40 } from 'app/pages/system/view-enclosure/classes/hardware/r40';
 import { R50 } from 'app/pages/system/view-enclosure/classes/hardware/r50';
 import { R50B } from 'app/pages/system/view-enclosure/classes/hardware/r50b';
@@ -89,7 +90,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   showCaption = true;
   protected aborted = false;
 
-  mqAlias: string;
   @ViewChild('visualizer', { static: true }) visualizer: ElementRef<HTMLElement>;
   @ViewChild('disksoverview', { static: true }) overview: ElementRef<HTMLElement>;
   @ViewChild('diskdetails', { static: false }) details: ElementRef<HTMLElement>;
@@ -114,7 +114,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get enclosure(): ChassisView {
     if (!this.chassis) return null;
 
-    return this.view === 'rear' ? this.chassis.rear : this.chassis.front;
+    switch (this.view) {
+      case EnclosureLocation.Rear:
+        return this.chassis.rear;
+      case EnclosureLocation.Internal:
+        return this.chassis.internal;
+      default:
+        return this.chassis.front;
+    }
   }
 
   private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];
@@ -148,6 +155,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get enclosurePools(): string[] {
     const selectedEnclosure = this.getSelectedEnclosure();
     return Object.keys(selectedEnclosure.poolKeys);
+  }
+
+  get hideIdentifyDrive(): boolean {
+    const selectedEnclosure = this.getSelectedEnclosure();
+    return this.system.enclosures[selectedEnclosure.enclosureKey].model === 'TRUENAS-MINI-R';
   }
 
   selectedVdevDisks: string[];
@@ -203,11 +215,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.temperatures = clone;
     });
     core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
-
-    core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: MediaChangeEvent) => {
-      this.mqAlias = evt.data.mqAlias;
-      this.resizeView();
-    });
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
@@ -414,6 +421,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R20B':
         this.chassis = new R20B(true);
         break;
+      case 'R30':
+      case 'TRUENAS-R30':
+        this.chassis = new R30();
+        break;
       case 'R40':
       case 'TRUENAS-R40':
         this.chassis = new R40();
@@ -552,6 +563,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'TRUENAS-R20B':
       case 'R20B':
         extractedChassis = new R20B();
+        break;
+      case 'R30':
+      case 'TRUENAS-R30':
+        extractedChassis = new R30();
         break;
       case 'TRUENAS-R40':
       case 'R40':
@@ -1067,7 +1082,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   converter(size: number): string {
-    const gb = size / 1024 / 1024 / 1024;
+    const gb = size / GiB;
     if (gb > 1000) {
       const tb = gb / 1024;
       return tb.toFixed(2) + ' TB';

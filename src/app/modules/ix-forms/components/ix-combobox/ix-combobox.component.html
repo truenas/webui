@@ -4,6 +4,7 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="required"
+    [ixTestOverride]="controlDirective.name"
   ></ix-label>
 
   <div class="input-container" [class.disabled]="isDisabled">
@@ -27,12 +28,11 @@
         [diameter]="15"
       ></mat-progress-spinner>
 
-      <mat-icon
+      <ix-icon
         *ngIf="shouldShowResetInput()"
-        fontSet="mdi-set"
-        fontIcon="mdi-close-circle"
+        name="mdi-close-circle"
         (click)="resetInput()"
-      ></mat-icon>
+      ></ix-icon>
     </span>
 
     <mat-autocomplete
@@ -48,8 +48,10 @@
           [class.ix-selected]="option.value === selectedOption?.value"
           [class.ix-unselected]="option.value !== selectedOption?.value"
           [ixTest]="[controlDirective.name, option.label]"
+          [matTooltip]="option?.tooltip"
         >
-          {{ option.label }}
+          <span>{{ option.label }}</span>
+          <i *ngIf="option?.tooltip" class="material-icons tooltip-icon" >info_outline</i>
         </mat-option>
       </ng-container>
 
