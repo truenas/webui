@@ -4,13 +4,16 @@
       <div class="type-container">
         <h3>{{vdev.type}}</h3>
         <p>{{'{size} Est. Usable Capacity' | translate: { size: ixFormatter.convertBytesToHumanReadable(vdev.rawSize) } }}</p>
-        <p *ngIf="spansEnclosures">{{ 'Vdevs spans enclosure' | translate }}</p>
+        <ix-warning *ngIf="spansEnclosures" [message]="'Vdevs spans enclosure' | translate"></ix-warning>
       </div>
       <div class="vdev-container">
-        <ix-vdev-wrapper [vdev]="vdev">
+        <ix-vdev-wrapper 
+          *ngFor= 
+           of enclosuresDisks | keyvalue" [enclosure]="enclosureDisks.key""let enclosureDisks[vdev]="vdev"
+        >
           <div class="disk-icons">
             <ix-disk-icon
-              *ngFor="let disk of vdev.disks"
+              *ngFor="let disk of enclosureDisks.value"
               class="disk-icon"
               [disk]="disk"
             ></ix-disk-icon>
