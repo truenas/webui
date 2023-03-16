@@ -1,4 +1,6 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component, EventEmitter, Input, Output,
+} from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -10,6 +12,8 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 })
 export class AppRowComponent {
   @Input() application: ChartRelease;
+  @Output() startApp = new EventEmitter<void>();
+  @Output() stopApp = new EventEmitter<void>();
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly chartReleaseStatus = ChartReleaseStatus;
@@ -20,5 +24,13 @@ export class AppRowComponent {
 
   toggleAppChecked(checked: boolean): void {
     this.application.selected = checked;
+  }
+
+  start(): void {
+    this.startApp.emit();
+  }
+
+  stop(): void {
+    this.stopApp.emit();
   }
 }
