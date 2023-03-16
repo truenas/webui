@@ -13,9 +13,7 @@ from pytest_bdd import (
     then,
     when,
 )
-import pytest
 from pytest_dependency import depends
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1334.feature', 'Apps Page - Stop an App')

@@ -17,6 +17,7 @@ from pytest_bdd import (
     when,
 )
 from pytest_dependency import depends
+pytestmark = [pytest.mark.debug_test]
 
 
 @pytest.mark.dependency(name='system_pool')

@@ -22,6 +22,7 @@ from pytest_bdd import (
     parsers
 )
 from pytest_dependency import depends
+pytestmark = [pytest.mark.debug_test]
 
 
 @pytest.mark.dependency(name='AD_SMB')

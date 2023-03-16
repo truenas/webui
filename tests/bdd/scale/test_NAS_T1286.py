@@ -15,7 +15,6 @@ from pytest_bdd import (
 )
 import pytest
 from pytest_dependency import depends
-pytestmark = [pytest.mark.debug_test]
 
 
 @pytest.mark.dependency(name='App_readd_pool')
