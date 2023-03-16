@@ -87,7 +87,7 @@ except getopt.GetoptError as e:
 global ip, password
 test_suite = 'scale'
 run_convert = False
-marker = 'debug_test'
+marker = ''
 
 for output, arg in myopts:
     if output == '--ip':
