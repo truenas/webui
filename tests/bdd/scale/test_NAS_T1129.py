@@ -23,6 +23,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='LDAP_SMB')
 @scenario('features/NAS-T1129.feature', 'Create an smb share with the LDAP dataset and verify the connection')
 def test_create_an_smb_share_with_the_ldap_dataset_and_verify_the_connection(driver):
     """Create an smb share with the LDAP dataset and verify the connection."""
