@@ -1437,3 +1437,9 @@ mat-form-field {
 .mdc-line-ripple::after {
   border: 0 !important;
 }
+
+.manual-selection-dialog {
+  .mat-mdc-dialog-container {
+    max-width: inherit;
+  }
+}

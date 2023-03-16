@@ -145,6 +145,7 @@ export class CreateDataWizardStepComponent implements OnInit {
 
     this.dialog.open(ManualDiskSelectionComponent, {
       data: {} as ManualDiskSelectionLayout,
+      panelClass: 'manual-selection-dialog',
     });
   }
 }

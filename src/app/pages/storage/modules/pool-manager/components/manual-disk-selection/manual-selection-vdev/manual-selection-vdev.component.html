@@ -2,15 +2,17 @@
   <mat-card-content>
     <div class="outer-container">
       <div class="type-container">
-        <h3>RaidZ2</h3>
-        <p>24 Tib Est. Usable Capacity</p>
-        <p>{{ 'Vdevs spans enclosure' | translate }}</p>
+        <h3>{{vdev.type}}</h3>
+        <p>{{'{size} Est. Usable Capacity' | translate: { size: ixFormatter.convertBytesToHumanReadable(vdev.rawSize) } }}</p>
+        <p *ngIf="spansEnclosures">{{ 'Vdevs spans enclosure' | translate }}</p>
       </div>
       <div class="vdev-container">
-        <ix-vdev-wrapper>
+        <ix-vdev-wrapper [vdev]="vdev">
           <div class="disk-icons">
             <ix-disk-icon
+              *ngFor="let disk of vdev.disks"
               class="disk-icon"
+              [disk]="disk"
             ></ix-disk-icon>
           </div>
         </ix-vdev-wrapper>
