@@ -11,7 +11,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateOptionsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
+} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
 import { SystemGeneralService } from 'app/services';
 
 describe('CertificateOptionsComponent', () => {
@@ -50,7 +50,6 @@ describe('CertificateOptionsComponent', () => {
   describe('RSA key type', () => {
     beforeEach(async () => {
       await form.fillForm({
-        'Signing Certificate Authority': 'Test CA',
         'Key Type': 'RSA',
         'Key Length': '4096',
         'Digest Algorithm': 'SHA384',
@@ -60,7 +59,6 @@ describe('CertificateOptionsComponent', () => {
 
     it('returns fields when getPayload() is called', () => {
       expect(spectator.component.getPayload()).toEqual({
-        signedby: 1,
         digest_algorithm: CertificateDigestAlgorithm.Sha384,
         lifetime: 3660,
         key_length: 4096,
@@ -70,10 +68,6 @@ describe('CertificateOptionsComponent', () => {
 
     it('returns a summary when getSummary() is called', () => {
       expect(spectator.component.getSummary()).toEqual([
-        {
-          label: 'Signing Certificate Authority',
-          value: 'Test CA',
-        },
         {
           label: 'Key Type',
           value: 'RSA',
@@ -97,7 +91,6 @@ describe('CertificateOptionsComponent', () => {
   describe('EC key type', () => {
     beforeEach(async () => {
       await form.fillForm({
-        'Signing Certificate Authority': 'My CA',
         'Key Type': 'EC',
         'Digest Algorithm': 'SHA384',
         Lifetime: '3660',
@@ -110,7 +103,6 @@ describe('CertificateOptionsComponent', () => {
 
     it('returns fields when getPayload() is called for a key of EC type', () => {
       expect(spectator.component.getPayload()).toEqual({
-        signedby: 2,
         ec_curve: 'SECP256K1',
         digest_algorithm: CertificateDigestAlgorithm.Sha384,
         lifetime: 3660,
@@ -120,10 +112,6 @@ describe('CertificateOptionsComponent', () => {
 
     it('returns a summary when getSummary() is called', () => {
       expect(spectator.component.getSummary()).toEqual([
-        {
-          label: 'Signing Certificate Authority',
-          value: 'My CA',
-        },
         {
           label: 'Key Type',
           value: 'EC',
@@ -141,6 +129,25 @@ describe('CertificateOptionsComponent', () => {
           value: '3660',
         },
       ]);
+    });
+  });
+
+  describe('hasSignedBy', () => {
+    it('shows Signing Certificate Authority when hasSignedBy is true', async () => {
+      spectator.setInput({ hasSignedBy: true });
+
+      await form.fillForm({
+        'Signing Certificate Authority': 'Test CA',
+      });
+
+      expect(spectator.component.getPayload()).toMatchObject({
+        signedby: 1,
+      });
+
+      expect(spectator.component.getSummary()[0]).toEqual({
+        label: 'Signing Certificate Authority',
+        value: 'Test CA',
+      });
     });
   });
 });
