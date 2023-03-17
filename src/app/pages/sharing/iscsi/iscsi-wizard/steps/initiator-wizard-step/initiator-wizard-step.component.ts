@@ -1,0 +1,14 @@
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
+
+@UntilDestroy()
+@Component({
+  selector: 'ix-initiator-wizard-step',
+  templateUrl: './initiator-wizard-step.component.html',
+  styleUrls: ['./initiator-wizard-step.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class InitiatorWizardStepComponent {
+  @Input() form: IscsiWizardComponent['form']['controls']['initiator'];
+}
