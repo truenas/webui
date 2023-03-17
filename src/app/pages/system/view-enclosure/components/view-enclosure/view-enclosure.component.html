@@ -19,14 +19,14 @@
 
 <ng-container *ngIf="errors.length === 0">
   <div
-    *ngIf="system && system.enclosures && systemManufacturer && systemManufacturer === 'ixsystems'"
+    *ngIf="systemProfile && systemState && systemState.enclosures && systemManufacturer && systemManufacturer === 'ixsystems'"
     class="page-viewport"
     fxLayout="row wrap"
   >
     <!-- Persistent Visualizer -->
     <div
       class="main-content"
-      [fxFlex]="'calc(100% - ' + (system.enclosures.length * 240).toString() + 'px )'"
+      [fxFlex]="'calc(100% - ' + (systemState.enclosures.length * 240).toString() + 'px )'"
     >
       <div>
         <mat-spinner
@@ -38,15 +38,14 @@
 
       <ng-container *ngIf="supportedHardware">
         <div
-          *ngIf="system.isRackmount; else mini"
+          *ngIf="systemState?.enclosureViews && systemProfile?.isRackmount(systemState); else mini"
           class="enclosure-disks-wrapper"
         >
           <ix-enclosure-disks
-            *ngIf="events && system && system.pools && selectedEnclosure"
+            *ngIf="events"
             [controller-events]="events"
             [current-tab]="currentView"
-            [system-profiler]="system"
-            [selected-enclosure]="selectedEnclosure"
+            [profile]="systemProfile"
           >
           </ix-enclosure-disks>
         </div>
@@ -54,11 +53,10 @@
         <ng-template #mini>
           <div>
             <ix-enclosure-disks-mini
-              *ngIf="events && system && system.pools && selectedEnclosure"
+              *ngIf="events && systemState && systemState.pools && systemState.enclosureViews "
               [controller-events]="events"
               [current-tab]="currentView"
-              [system-profiler]="system"
-              [selected-enclosure]="selectedEnclosure"
+              [profile]="systemProfile"
             >
             </ix-enclosure-disks-mini>
           </div>
@@ -68,24 +66,24 @@
 
     <!-- Enclosure Selector -->
     <div
-      *ngIf="showEnclosureSelector && events && system && system.pools && system.enclosures && system.enclosures.length > 1 && supportedHardware"
+      *ngIf="showEnclosureSelector && events && systemState && systemState.pools && systemState.enclosures && systemState.enclosures.length > 1 && supportedHardware"
       #navigation
       fxFlex="240px"
       fxFlex.lt-lg="180px"
       class="enclosure-selector"
     >
-      <ng-container *ngFor="let enclosure of system.profile; let i = index">
+      <ng-container *ngFor="let enclosure of systemState.enclosureViews; let i = index">
         <div
-          *ngIf="enclosure.enclosureKey !== system.rearIndex"
+          *ngIf="!enclosure.isRearChassis"
           [class]="['enclosure', 'enclosure-'+ i]"
-          [class.active]="selectedEnclosure.enclosureKey === i"
-          (click)="selectEnclosure(i)"
+          [class.active]="enclosure.number === systemState.selectedEnclosure"
+          (click)="selectEnclosure(enclosure.number)"
         >
-          <div *ngIf="system.enclosures[enclosure.enclosureKey].label === system.enclosures[enclosure.enclosureKey].name">
+          <div *ngIf="systemState.enclosures[enclosure.number].label === systemState.enclosures[enclosure.number].name">
             {{ enclosure.model }} ({{ i }})
           </div>
-          <div *ngIf="system.enclosures[enclosure.enclosureKey].label !== system.enclosures[enclosure.enclosureKey].name">
-            {{ system.enclosures[enclosure.enclosureKey].label }} ({{ i }})
+          <div *ngIf="systemState.enclosures[enclosure.number].label !== systemState.enclosures[enclosure.number].name">
+            {{ systemState.enclosures[enclosure.number].label }} ({{ i }})
           </div>
         </div>
       </ng-container>

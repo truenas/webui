@@ -1,5 +1,5 @@
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { Disk, TopologyItem } from './storage.interface';
+import { Disk, TopologyItem, TopologyItemStats } from './storage.interface';
 
 export interface Enclosure {
   controller: boolean;
@@ -39,9 +39,16 @@ export interface EnclosureElementData {
 }
 
 export interface EnclosureSlot {
+  isSelected: boolean;
   disk?: Disk;
+  diskStatus?: string;
   enclosure: number | null;
   slot: number | null;
+  slotStatus?: string;
+  topologyStatus?: string; // TopologyItemStatus;
+  topologyStats?: TopologyItemStats;
+  fault: boolean;
+  identify: boolean;
   pool?: string | null;
   topologyCategory?: PoolTopologyCategory | null;
   vdev?: TopologyItem | null;
@@ -52,4 +59,11 @@ export interface EnclosureView {
   slots: EnclosureSlot[];
   number: number;
   model: string;
+  isSelected: boolean;
+  isRearChassis: boolean;
+}
+
+export interface SelectedEnclosureSlot {
+  selected: EnclosureSlot;
+  vdevSlots: EnclosureSlot[]; // All members including selected
 }

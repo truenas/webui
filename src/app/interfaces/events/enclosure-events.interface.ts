@@ -1,5 +1,5 @@
 import { ElementRef } from '@angular/core';
-import { EnclosureMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
+import { EnclosureView } from 'app/interfaces/enclosure.interface';
 
 export interface EnclosureLabelChangedEvent {
   name: 'EnclosureLabelChanged';
@@ -38,6 +38,6 @@ export interface EnclosureCanvasEvent {
   sender: unknown;
   data: {
     canvas: HTMLCanvasElement;
-    profile: EnclosureMetadata;
+    enclosureView: EnclosureView;
   };
 }

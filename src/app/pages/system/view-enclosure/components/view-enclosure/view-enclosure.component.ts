@@ -5,13 +5,11 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { EnclosureView } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
@@ -22,6 +20,14 @@ import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+// import {SystemInfo} from "app/interfaces/system-info.interface";
+
+export interface SystemProfile {
+  storage$: Observable<EnclosureState>;
+  // enclosureViews$: Observable<EnclosureView[]>;
+  isRackmount: ((data: EnclosureState) => boolean);
+  getPoolNamesInEnclosure: ((enclosureView: EnclosureView) => string[]);
+}
 
 @UntilDestroy()
 @Component({
@@ -44,23 +50,35 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     showInNavbar: true,
   };
 
-  system: SystemProfiler;
-  selectedEnclosure: EnclosureMetadata;
+  systemProfile: SystemProfile;
+  systemState: EnclosureState;
   views: ViewConfig[] = [];
   spinner = true;
-
   supportedHardware = false;
+
+  get selectedEnclosure(): number | null {
+    if (!this.systemState) return null;
+    return this.systemState.enclosureViews?.filter((view: EnclosureView) => {
+      return view.number === this.systemState.selectedEnclosure;
+    })[0].number;
+  }
 
   get showEnclosureSelector(): boolean {
     if (
-      !this.system
+      !this.systemState
       || !this.events
-      || !this.system.pools
-      || !this.system.enclosures
       || !this.supportedHardware
     ) return false;
 
-    return (this.system.getShelfCount() > 0);
+    return (this.shelfCount > 0);
+  }
+
+  get shelfCount(): number {
+    // TODO: implement actual logic into store
+    const shelves = this.systemState.enclosureViews.filter((enclosureView: EnclosureView) => {
+      return (!enclosureView.isController);
+    });
+    return shelves.length;
   }
 
   systemManufacturer: string;
@@ -71,7 +89,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   set systemProduct(value) {
     if (!this._systemProduct) {
       this._systemProduct = value;
-      this.loadEnclosureData();
+      // this.loadEnclosureData();
     }
   }
 
@@ -99,7 +117,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             console.warn('No navigation UI detected');
             return;
           }
-          const selector = `.enclosure-${(evt as EnclosureCanvasEvent).data.profile.enclosureKey}`;
+
+          const selector = `.enclosure-${(evt as EnclosureCanvasEvent).data.enclosureView?.number}`;
           const el = this.nav.nativeElement.querySelector(selector);
 
           const oldCanvas = this.nav.nativeElement.querySelector(selector + ' canvas');
@@ -108,7 +127,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
           }
 
           (evt as EnclosureCanvasEvent).data.canvas.setAttribute('style', 'width: 80% ;');
-          el.appendChild((evt as EnclosureCanvasEvent).data.canvas);
+          el?.appendChild((evt as EnclosureCanvasEvent).data.canvas);
+
           break;
         }
         case 'Error':
@@ -119,13 +139,13 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     });
 
     this.store$.select(selectTheme).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      if (this.system) {
+      if (this.systemProfile) {
         this.extractVisualizations();
       }
     });
 
     core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureLabelChangedEvent) => {
-      this.system.enclosures[evt.data.index].label = evt.data.label;
+      this.systemState.enclosures[evt.data.index].label = evt.data.label;
       this.events.next(evt);
     });
 
@@ -147,13 +167,19 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     // Replace system-profiler with store...
     this.enclosureStore.loadDashboard();
+    this.systemProfile = {
+      storage$: this.enclosureStore.data$,
+      isRackmount: this.enclosureStore.isRackmount,
+      getPoolNamesInEnclosure: this.enclosureStore.getPoolNamesInEnclosureView,
+    };
+
     this.enclosureStore.data$.pipe(
       takeUntil(this.destroyed$),
       untilDestroyed(this),
-    ).subscribe((data: EnclosureState) => {
-      if (data.enclosures.length) {
-        const enclosureViews: EnclosureView[] = this.enclosureStore.mapEnclosures(data);
-        console.warn(enclosureViews);
+    ).subscribe((state: EnclosureState) => {
+      if (!state.areEnclosuresLoading && state.enclosures.length && !state.arePoolsLoading && !state.areDisksLoading) {
+        this.systemState = state;
+        this.spinner = false;
       }
     });
   }
@@ -165,17 +191,23 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  selectEnclosure(index: number): void {
-    this.selectedEnclosure = this.system.profile[index];
+  selectEnclosure(enclosureNumber: number): void {
+    this.enclosureStore.updateSelectedEnclosure(enclosureNumber);
+    this.events.next({
+      name: 'EnclosureSelected',
+      sender: this,
+    });
     this.addViews();
   }
 
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
-      this.system.profile.forEach((item, index) => {
-        if (this.system.rearIndex && item.enclosureKey === this.system.rearIndex) { return; }
-        if (this.system.profile) {
-          this.events.next({ name: 'CanvasExtract', data: this.system.profile[index], sender: this });
+      this.systemState.enclosureViews.forEach((enclosureView) => {
+        // Skip rear enclosures for system like m50 that report rear drives as separate chassis
+        if (enclosureView.isRearChassis) { return; }
+        // if (enclosureView.rearIndex && enclosureView.number === enclosureView.rearIndex) { return; }
+        if (this.systemState) {
+          this.events.next({ name: 'CanvasExtract', data: enclosureView, sender: this });
         }
       });
     }
@@ -193,8 +225,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     views.unshift(disks);
     let matchIndex;
-
-    this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
+    const selectedEnclosure = this.systemState?.enclosures[this.selectedEnclosure];
+    selectedEnclosure.elements?.forEach((element, index) => {
       const view = {
         name: element.name,
         alias: '',
@@ -249,6 +281,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  // TODO: LEAVING THIS HERE JUST FOR REFERENCE. Remove before making a PR
+/*
   private loadEnclosureData(): void {
     this.ws.call('enclosure.query').pipe(untilDestroyed(this)).subscribe((enclosures) => {
       if (enclosures.length === 0) {
@@ -294,4 +328,5 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       this.addViews();
     });
   }
+ */
 }
