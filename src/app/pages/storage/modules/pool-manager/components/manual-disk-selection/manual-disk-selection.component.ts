@@ -43,6 +43,7 @@ export class ManualDiskSelectionComponent implements OnInit {
         name: 'spad',
         identifier: 'spad',
         size: 4 * TiB,
+        real_capacity: 4 * TiB,
         enclosure: {
           number: 1,
           slot: 2,
@@ -51,6 +52,7 @@ export class ManualDiskSelectionComponent implements OnInit {
       newVdev.disks.push({
         name: 'spae',
         identifier: 'spae',
+        real_capacity: 4 * TiB,
         size: 4 * TiB,
         enclosure: {
           number: 2,
