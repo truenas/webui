@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import {
@@ -25,7 +25,6 @@ export class GeneralWizardStepComponent implements OnInit {
   readonly encryptionAlgorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(
     choicesToOptions(),
   );
-  poolNames$: Observable<string[]>;
 
   constructor(
     private ws: WebSocketService,
