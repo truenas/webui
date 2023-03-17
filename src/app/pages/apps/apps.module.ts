@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -105,6 +106,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatProgressSpinnerModule,
     FormsModule,
     MatDialogModule,
+    MatMenuModule,
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
     IxIconModule,

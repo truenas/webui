@@ -73,6 +73,30 @@ $scrollbar-offset: 20px;
     max-width: 1200px;
     width: 50%;
   }
+
+  .table-header {
+    align-items: center;
+    color: var(--fg1);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .bulk {
+      align-items: center;
+      display: flex;
+      font-size: 15px;
+      gap: 6px;
+    }
+  }
+
+  ix-fake-progress-bar {
+    position: unset;
+  }
 }
 
 .app-search {

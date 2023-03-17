@@ -19,6 +19,9 @@ import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import {
+  CertificateAuthorityAddComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
+import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
@@ -31,7 +34,6 @@ import { WebSocketService, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
-import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { OldCertificateAddComponent } from './forms/certificate-add.component';
 
 @UntilDestroy()
@@ -200,7 +202,7 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(CertificateAuthorityAddComponent);
+            this.slideInService.open(CertificateAuthorityAddComponent);
           },
           edit: (row: CertificateAuthority) => {
             const form = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true });
