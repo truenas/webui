@@ -3,6 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
@@ -20,6 +22,9 @@ describe('AppsToolbarButtonsComponent', () => {
       mockProvider(MatDialog),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
+      mockProvider(ApplicationsService, {
+        getKubernetesConfig: jest.fn(() => of({})),
+      }),
     ],
   });
 
@@ -58,9 +63,7 @@ describe('AppsToolbarButtonsComponent', () => {
   });
 
   it('shows Custom App button which will navigate to ix-chart install page', () => {
-    const link = spectator.query('a[ixTest="custom-app"]');
-
+    const link = spectator.query('a[href="/apps/available/ix-chart/install"]');
     expect(link).toHaveText('Custom App');
-    expect(link).toHaveAttribute('href', '/apps/available/ix-chart/install');
   });
 });
