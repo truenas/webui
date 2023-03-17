@@ -245,6 +245,7 @@
   "This disk is part of the exported pool {pool}. Reusing this disk will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure any sensitive data in {pool} is backed up before reusing/repusposing this disk.": "",
   "This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\n  to import. You will lose any and all data in {pool}. Please make sure that any sensitive data in {pool} is backed up before wiping this disk.": "",
   "This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable        to import. You will lose any and all data in {pool}. Please make sure that any sensitive data in {pool} is backed up before reusing/repurposing this disk.": "",
+  "This node is currently processing a failover event.": "",
   "This session is current and cannot be terminated": "",
   "This share is configured through TrueCommand": "",
   "Thread #": "",
