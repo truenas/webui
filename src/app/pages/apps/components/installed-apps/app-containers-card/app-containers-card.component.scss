@@ -26,6 +26,10 @@
 
 .container-list {
   background-color: rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  max-height: 200px;
+  min-height: 40px;
+  overflow-y: auto;
   padding: 12px;
 }
 
@@ -34,7 +38,6 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin: 2px 0;
 
   .container-name {
     overflow: hidden;
@@ -48,8 +51,10 @@
   }
 
   .container-action {
-    flex: 1;
-    text-align: right;
+    align-items: center;
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: flex-end;
   }
 
   button {

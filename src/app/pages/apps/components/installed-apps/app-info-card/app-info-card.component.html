@@ -4,7 +4,7 @@
       {{ 'Application Info' | translate }}
     </h3>
     <button
-      *ngIf="app?.update_available"
+      *ngIf="app?.update_available || app?.container_images_update_available"
       mat-button
       [ixTest]="[app.name, 'update']"
       (click)="updateButtonPressed()"

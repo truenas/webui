@@ -3,14 +3,6 @@
     <h3 mat-card-title>
       {{ 'Containers' | translate }}
     </h3>
-    <button
-      *ngIf="app"
-      mat-button
-      [ixTest]="[app.name, 'shell']"
-      (click)="shellButtonPressed()"
-    >
-      {{ 'Shell' | translate }}
-    </button>
   </mat-card-header>
   <mat-card-content>
     <div class="details-list">
@@ -64,10 +56,25 @@
               </span>
               <span class="container-action">
                 <button
-                  mat-button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'Shell' | translate"
+                  [ixTest]="[containerImage.key, 'shell']"
+                  [matTooltip]="'Shell' | translate"
+                  (click)="shellButtonPressed()"
+                >
+                  <ix-icon name="mdi-console"></ix-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'View Logs' | translate"
                   [ixTest]="[containerImage.key, 'view_logs']"
+                  [matTooltip]="'View Logs' | translate"
                   (click)="viewLogsButtonPressed()"
-                >{{ 'View Logs' | translate }}</button>
+                >
+                  <ix-icon name="mdi-text-box"></ix-icon>
+                </button>
               </span>
             </div>
           </ng-container>

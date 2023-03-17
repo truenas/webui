@@ -73,7 +73,6 @@ describe('AppContainersCardComponent', () => {
 
   it('shows header', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('Containers');
-    expect(spectator.query('mat-card-header button')).toHaveText('Shell');
   });
 
   it('shows details', () => {
@@ -101,22 +100,22 @@ describe('AppContainersCardComponent', () => {
 
     expect(containers[0].querySelector('.container-name')).toHaveText('docker.io/ix-test-app');
     expect(containers[0].querySelector('.container-status')).toHaveText('Up to date');
-    expect(containers[0].querySelector('.container-action button')).toHaveText('View Logs');
+    expect(containers[0].querySelectorAll('.container-action button')).toHaveLength(2);
 
     expect(containers[1].querySelector('.container-name')).toHaveText('docker.io/ix-test-dependency-app');
     expect(containers[1].querySelector('.container-status')).toHaveText('Update available');
-    expect(containers[1].querySelector('.container-action button')).toHaveText('View Logs');
+    expect(containers[1].querySelectorAll('.container-action button')).toHaveLength(2);
   });
 
   it('opens shell app dialog when Shell button is pressed', async () => {
-    const shellButton = await loader.getHarness(MatButtonHarness.with({ text: 'Shell' }));
+    const shellButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Shell"]' }));
     await shellButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(1);
   });
 
   it('opens view logs dialog when View Logs button is pressed', async () => {
-    const showLogsButton = await loader.getHarness(MatButtonHarness.with({ text: 'View Logs' }));
+    const showLogsButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="View Logs"]' }));
     await showLogsButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(1);

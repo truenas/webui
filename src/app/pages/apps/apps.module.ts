@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -115,6 +116,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatExpansionModule,
     CastModule,
     TerminalModule,
+    MatTooltipModule,
   ],
 })
 export class AppsModule { }
