@@ -30,10 +30,11 @@ export class ApplicationsService {
   }
 
   getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
-    const firstOption: QueryFilter<AvailableApp>[] = [];
-    firstOption.push(['name', '=', name]);
-    firstOption.push(['catalog', '=', catalog]);
-    firstOption.push(['train', '=', train]);
+    const firstOption: QueryFilter<AvailableApp>[] = [
+      ['name', '=', name],
+      ['catalog', '=', catalog],
+      ['train', '=', train],
+    ];
     return this.ws.call('app.available', [firstOption]).pipe(switchMap((app) => of(app[0])));
   }
 
@@ -42,9 +43,10 @@ export class ApplicationsService {
       return this.ws.call('app.available');
     }
 
-    const firstOption: QueryFilter<AvailableApp>[] = [];
-    firstOption.push(['name', 'rin', filters.search]);
-    firstOption.push(['catalog', 'in', filters.catalogs]);
+    const firstOption: QueryFilter<AvailableApp>[] = [
+      ['name', 'rin', filters.search],
+      ['catalog', 'in', filters.catalogs],
+    ];
     filters.categories.forEach((category) => firstOption.push(['categories', 'rin', category]));
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
