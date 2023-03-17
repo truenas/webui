@@ -263,6 +263,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           identify: slotSource.identify,
           pool: disk.pool,
           vdev: null,
+          topologyStatus: 'AVAILABLE',
         };
         if (pools && disk.pool) {
           const topologyInfo: SlotTopology | null = this.findVdevByDisk(
@@ -278,10 +279,8 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
               topologyInfo.vdev,
               enclosureSlot.disk.name,
             );
-            enclosureSlot.topologyStatus = topologyDisk.status ? topologyDisk.status as string : 'AVAILABLE';
+            enclosureSlot.topologyStatus = topologyDisk.status as string;
             enclosureSlot.topologyStats = topologyDisk.stats;
-          } else {
-            console.warn('Could not find topology info for disk ' + disk.name);
           }
         }
 
