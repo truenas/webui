@@ -140,7 +140,7 @@
   "Token Lifetime": "Token生存时间",
   "Token Settings": "Token设置",
   "Token expired": "Token已过期",
-  "Train: {train}": "通道",
+  "Train: {train}": "通道 {train}",
   "Treat Disk Size as Minimum": "",
   "Update All": "更新全部",
   "Updated Date": "",
