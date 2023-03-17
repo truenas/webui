@@ -1,3 +1,7 @@
+<ng-template #pageHeader>
+  <ix-page-title-header [pageTitle]="selectedApp?.name"></ix-page-title-header>
+</ng-template>
+
 <div class="container">
   <div class="table-container">
     <ix-fake-progress-bar
@@ -37,8 +41,9 @@
           <ng-container *ngFor="let app of dataSource">
             <ix-app-row
               class="row"
+              routerLinkActive="selected"
               [application]="app"
-              [class.selected]="selectedApp && app.name === selectedApp.name"
+              [routerLink]="['/apps/installed', app.id]"
               (click)="selectApp(app)"
               (keydown.enter)="selectApp(app)"
             ></ix-app-row>
