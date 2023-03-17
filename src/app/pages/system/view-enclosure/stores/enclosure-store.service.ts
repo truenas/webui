@@ -49,6 +49,12 @@ interface SlotTopology {
   vdev: TopologyItem | null;
 }
 
+interface ProcessParameters {
+  pools: Pool[];
+  disks: Disk[];
+  enclosures: Enclosure[];
+}
+
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly enclosures$ = this.select((state) => state.enclosures);
@@ -190,6 +196,18 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     let enclosureViews: EnclosureView[] = [];
     if (!enclosures.length) return of(enclosureViews);
 
+    // Deal with M50
+    const isM50 = enclosures.filter((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').length;
+    if (isM50) {
+      const mergedData = this.mergeM50Enclosures({
+        pools,
+        disks,
+        enclosures,
+      });
+      disks = mergedData.disks;
+      enclosures = mergedData.enclosures;
+    }
+
     enclosureViews = enclosures.map((enclosure: Enclosure) => {
       return {
         isSelected: selectedEnclosure && selectedEnclosure === enclosure.number
@@ -199,14 +217,16 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         slots: [],
         number: enclosure.number,
         model: enclosure.model,
-        isRearChassis: enclosure.id === 'm50_plx_enclosure',
       } as EnclosureView;
     });
     enclosureViews.sort((a, b) => a.number - b.number);
 
-    // Setup Selections
+    // Setup default Selections
     if (!selectedEnclosure && enclosureViews.length) {
+      // Select enclosure should be controller by default
       enclosureViews.find((enclosure: EnclosureView) => enclosure.isController).isSelected = true;
+      /*
+      // selected slot
       const selectedView = enclosureViews.find((enclosure: EnclosureView) => enclosure.isSelected);
       if (selectedView) {
         const selectedSlots = selectedView.slots.filter((enclosureSlot) => {
@@ -216,6 +236,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           selectedSlots[0].isSelected = true;
         }
       }
+      */
     }
 
     // TODO: Incorporate empty slots by iterating over enclosure elements instead of disks
@@ -270,6 +291,30 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     }
 
     return of(enclosureViews);
+  }
+
+  mergeM50Enclosures(data: ProcessParameters): ProcessParameters {
+    const rearNumber = data.enclosures.find((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').number;
+    const frontNumber = data.enclosures.find((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').number;
+
+    const updatedDisks = data.disks.map((disk: Disk) => {
+      const updatedDisk = disk;
+      if (disk.enclosure && disk.enclosure.number === rearNumber) {
+        updatedDisk.enclosure.number = frontNumber;
+        updatedDisk.enclosure.slot += 24;
+      }
+      return updatedDisk || disk;
+    });
+
+    const updatedEnclosures = data.enclosures.filter((enclosure: Enclosure) => enclosure.number !== rearNumber);
+
+    const updatedData: ProcessParameters = {
+      pools: data.pools,
+      disks: updatedDisks,
+      enclosures: updatedEnclosures,
+    };
+
+    return updatedData;
   }
 
   findVdevByDisk(disk: Disk, pool: Pool): { category: PoolTopologyCategory | null; vdev: TopologyItem | null } {

@@ -203,9 +203,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
       this.systemState.enclosureViews.forEach((enclosureView) => {
-        // Skip rear enclosures for system like m50 that report rear drives as separate chassis
-        if (enclosureView.isRearChassis) { return; }
-        // if (enclosureView.rearIndex && enclosureView.number === enclosureView.rearIndex) { return; }
         if (this.systemState) {
           this.events.next({ name: 'CanvasExtract', data: enclosureView, sender: this });
         }

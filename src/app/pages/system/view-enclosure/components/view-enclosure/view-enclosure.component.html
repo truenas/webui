@@ -74,7 +74,6 @@
     >
       <ng-container *ngFor="let enclosure of systemState.enclosureViews; let i = index">
         <div
-          *ngIf="!enclosure.isRearChassis"
           [class]="['enclosure', 'enclosure-'+ i]"
           [class.active]="enclosure.number === systemState.selectedEnclosure"
           (click)="selectEnclosure(enclosure.number)"

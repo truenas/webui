@@ -60,7 +60,6 @@ export interface EnclosureView {
   number: number;
   model: string;
   isSelected: boolean;
-  isRearChassis: boolean;
 }
 
 export interface SelectedEnclosureSlot {

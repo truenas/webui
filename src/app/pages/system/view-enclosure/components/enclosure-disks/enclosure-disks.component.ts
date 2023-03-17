@@ -126,14 +126,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   get expanders(): unknown[] {
     return [];
   }
-
   // Tracked by parent component
   get selectedEnclosureNumber(): number {
-    /* const selected = this.storage.enclosureViews.filter((enclosureView: EnclosureView) => {
-      return enclosureView.isSelected
-    })[0]; */
     const selected: number = this.systemState?.selectedEnclosure !== null
-      ? Number(this.systemState.selectedEnclosure) : -1;
+      ? Number(this.systemState?.selectedEnclosure) : -1;
     return selected;
   }
 
@@ -403,7 +399,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       .subscribe((data: EnclosureState) => {
         if (data.enclosureViews.length) {
           this.systemState = data;
-
           if (!this.app) {
             this.appSetup();
           }
@@ -623,15 +618,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.showCaption = false;
         break;
       case 'M Series': {
-        // const rearChassis: boolean = !!enclosure.rearIndex;
-        const rearChassis: EnclosureView = this.systemState.enclosureViews.find((enclosureView) => {
-          return enclosureView.isRearChassis;
-        });
-        this.chassis = new M50(rearChassis.isRearChassis);
+        // Do we need to detect rear chassis?
+        this.chassis = new M50(true);
         break;
       }
       case 'Rear': // Ignore reported rear chassis for M50
-
         break;
       case 'X Series':
       case 'ES12':
@@ -1335,8 +1326,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     }
   }
 
-  // Not sure what this one does
-  // looks like changes front/rear/internal I think
+  // Changes front/rear/internal
   enclosureOverride(view: string): void {
     if (view !== this.view) {
       this.clearDisk();
