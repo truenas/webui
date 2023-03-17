@@ -560,6 +560,7 @@
   "The {service} service has started.": "",
   "There are no records to show.": "",
   "These disks do not support S.M.A.R.T. tests:": "",
+  "This node is currently processing a failover event.": "",
   "This session is current and cannot be terminated": "",
   "Thread #": "",
   "Thread:": "",

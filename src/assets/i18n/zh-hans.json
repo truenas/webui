@@ -109,6 +109,7 @@
   "The VM could not start because the current configuration could potentially require more RAM than is available on the system. Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution. Would you like to overcommit memory?": "",
   "The {service} service has started.": "",
   "There are no records to show.": "",
+  "This node is currently processing a failover event.": "",
   "Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.": "",
   "Token Lifetime": "",
   "Token Settings": "",
