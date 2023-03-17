@@ -162,9 +162,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   get selectedVdevDisks(): string[] {
     const selectedSlot = this.selectedSlot;
-    return selectedSlot.vdev?.type === TopologyItemType.Disk
+    /* return selectedSlot?.vdev?.type === TopologyItemType.Disk
       ? [selectedSlot.vdev.disk]
-      : selectedSlot.vdev?.children?.map((item: TopologyDisk) => item.disk);
+      : selectedSlot?.vdev?.children?.map((item: TopologyDisk) => item.disk); */
+    const result = selectedSlot?.vdev?.type === TopologyItemType.Disk
+      ? [selectedSlot.vdev.disk]
+      : selectedSlot?.vdev?.children?.map((item: TopologyDisk) => item.disk);
+    if (result) {
+      return result.filter((name: string) => name !== null);
+    }
+    return [];
   }
 
   get selectedVdevSlotNumbers(): { [devName: string]: number } {
@@ -177,15 +184,23 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     return result as { [devName: string]: number };
   }
 
-  get selectedVdevSlots(): EnclosureSlot[] {
+  get selectedVdevSlots(): EnclosureSlot[] | null {
     if (!this.selectedVdevDisks) return [];
 
     const selectedVdevSlots: unknown[] = this.selectedVdevDisks.map((diskName: string) => {
       const enclosure = this.systemState.disks.find((disk: Disk) => disk.name === diskName)?.enclosure;
-      if (enclosure) {
+      /* if (enclosure) {
         return this.systemState.enclosureViews[enclosure.number].slots[enclosure.slot - 1];
       }
-      return [];
+      return []; */
+      if (enclosure) {
+        return this.systemState.enclosureViews.find((view: EnclosureView) => {
+          return view.number === enclosure.number;
+        }).slots.find((eSlot: EnclosureSlot) => {
+          return eSlot.slot === enclosure.slot;
+        });
+      }
+      return null;
     });
 
     return selectedVdevSlots as EnclosureSlot[];
@@ -922,7 +937,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           },
           sender: this,
         } as LabelDrivesEvent);
-
         break;
       }
     }

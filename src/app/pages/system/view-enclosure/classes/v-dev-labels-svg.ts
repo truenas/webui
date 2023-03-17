@@ -169,7 +169,7 @@ export class VDevLabelsSvg {
       // The Actual creating of labels
       // Requirements: diskNames, isOnController
       const isInRange = (
-        enclosureSlot.slot
+        enclosureSlot?.slot
         && enclosureSlot.slot >= this.chassis.slotRange.start
         && enclosureSlot.slot <= this.chassis.slotRange.end
       );

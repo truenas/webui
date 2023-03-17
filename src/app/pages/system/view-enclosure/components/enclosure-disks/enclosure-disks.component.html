@@ -128,10 +128,10 @@
               <span *ngIf="selectedSlot?.vdev" class="semibold">{{ 'vdev' | translate }}: </span>
               <span *ngIf="!selectedSlot?.vdev" class="semibold">{{ 'UNASSIGNED' | translate }} </span>
               <span>
-                {{ isTopologyDisk ? ('Disk' | translate) : (selectedSlot.vdev?.name | uppercase) }}
+                {{ isTopologyDisk ? ('Disk' | translate) : (selectedSlot?.vdev?.name | uppercase) }}
               </span>
             </div>
-            <div *ngIf="selectedSlot.vdev" class="title">
+            <div *ngIf="selectedSlot?.vdev" class="title">
               <span class="semibold">{{ 'Topology' | translate }}:</span>
               <span>
                 {{ !selectedSlot?.vdev?.type ? ('Unknown' | translate) : (selectedSlot.vdev.type | uppercase) }}
@@ -143,7 +143,7 @@
             </div>
             <div class="title">
               <span class="semibold">{{ 'Slot' | translate }}: </span>
-              <span>{{ selectedSlot.slot }}</span>
+              <span>{{ selectedSlot?.slot }}</span>
             </div>
           </div>
         </div>
