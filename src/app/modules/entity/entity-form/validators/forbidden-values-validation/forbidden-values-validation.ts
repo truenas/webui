@@ -45,5 +45,6 @@ function forbiddenValuesError(
   } else if (values.includes(formControlo.value)) {
     return { forbidden: true, value: formControlo.value };
   }
+
   return null;
 }

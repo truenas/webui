@@ -5,6 +5,7 @@ import { AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 
 @UntilDestroy()
@@ -59,7 +60,10 @@ export class IxErrorsComponent implements OnChanges {
     if ('control' in changes && this.control) {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();
-      this.statusChangeSubscription = this.control.statusChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.statusChangeSubscription = this.control.statusChanges.pipe(
+        filter((status) => status !== 'PENDING'),
+        untilDestroyed(this),
+      ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
           if (this.control.errors[error].message) {
             return this.control.errors[error].message;
@@ -67,7 +71,7 @@ export class IxErrorsComponent implements OnChanges {
 
           return this.getDefaultError(error as DefaultValidationError);
         });
-        this.messages = newErrors.filter(Boolean);
+        this.messages = newErrors;
 
         this.cdr.markForCheck();
       });
