@@ -18,6 +18,7 @@ export interface PoolManagerState {
   enclosures: Enclosure[];
   dataVdevs: ManagerVdev[];
   formValue: PoolManagerWizardFormValue;
+  dragActive: boolean;
 }
 
 const initialState: PoolManagerState = {
@@ -25,6 +26,7 @@ const initialState: PoolManagerState = {
   dataVdevs: [],
   unusedDisks: [],
   enclosures: [],
+  dragActive: false,
   formValue: null,
 };
 
@@ -35,6 +37,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly hasMultipleEnclosures$ = this.select((state) => state.enclosures.length > 1);
   readonly formValue$ = this.select((state) => state.formValue);
   readonly dataVdevs$ = this.select((state) => state.dataVdevs);
+  readonly dragActive$ = this.select((state) => state.dragActive);
 
   constructor(
     private ws: WebSocketService,
@@ -107,20 +110,28 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   removeFromDataVdev = this.updater((
     state: PoolManagerState,
-    enclosureUpdate: { disk: ManagerDisk; vdev: ManagerVdev },
+    disk: ManagerDisk,
   ) => {
     const dataVdevs = [...state.dataVdevs];
     for (const dataVdev of dataVdevs) {
-      if (dataVdev.uuid === enclosureUpdate.vdev.uuid) {
-        dataVdev.disks = dataVdev.disks.filter((vdevDisk) => vdevDisk.identifier !== enclosureUpdate.disk.identifier);
-      }
+      dataVdev.disks = dataVdev.disks.filter((vdevDisk) => vdevDisk.identifier !== disk.identifier);
     }
 
-    const unusedDisks = [...state.unusedDisks, enclosureUpdate.disk];
+    const unusedDisks = [...state.unusedDisks];
+    if (!unusedDisks.some((unusedDisk) => unusedDisk.identifier === disk.identifier)) {
+      unusedDisks.push(disk);
+    }
     return {
       ...state,
       dataVdevs,
       unusedDisks,
+    };
+  });
+
+  toggleActivateDrag = this.updater((state: PoolManagerState, activateDrag: boolean) => {
+    return {
+      ...state,
+      dragActive: activateDrag,
     };
   });
 

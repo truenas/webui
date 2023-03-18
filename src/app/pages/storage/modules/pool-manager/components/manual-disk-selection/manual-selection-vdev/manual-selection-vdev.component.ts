@@ -90,4 +90,16 @@ export class ManualSelectionVdevComponent implements OnInit {
 
     vdev.rawSize = estimate;
   }
+
+  onDragStart(): void {
+    this.store$.toggleActivateDrag(true);
+  }
+
+  onDragEnd(): void {
+    this.store$.toggleActivateDrag(false);
+  }
+
+  onDragCanceled(): void {
+    this.store$.toggleActivateDrag(false);
+  }
 }

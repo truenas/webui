@@ -20,7 +20,12 @@
   </form>
 </div>
 
-<div class="tree-container">
+<div
+  class="tree-container"
+  dndDropzone
+  [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
+  (dndDrop)="onDrop($event)"
+>
   <ix-tree-view
     [ixDataSource]="dataSource"
     [ixTreeControl]="treeControl"
@@ -36,6 +41,9 @@
           [dndDraggable]="asDisk(disk)"
           [dndEffectAllowed]="'move'"
           [disk]="asDisk(disk)"
+          (dndStart)="onDragStart()"
+          (dndCanceled)="onDragCanceled()"
+          (dndEnd)="onDragEnd()"
         ></ix-disk-icon>
 
         <ix-disk-info

@@ -1,6 +1,6 @@
 <div class="outer-container">
   <div class="horizontal-border top-border"></div>
-  <div class="vdev-container">
+  <div class="vdev-container" [ngClass]="{'drag-active': (store$.dragActive$ | async)}">
     <div class="vertical-border left-border"></div>
     <div
       dndDropzone

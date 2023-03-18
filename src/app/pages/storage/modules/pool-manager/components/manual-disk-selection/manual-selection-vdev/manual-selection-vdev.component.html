@@ -7,15 +7,19 @@
         <ix-warning *ngIf="spansEnclosures" [message]="'Vdevs spans enclosure' | translate"></ix-warning>
       </div>
       <div class="vdev-container">
-        <ix-vdev-wrapper 
-          *ngFor= 
-           of enclosuresDisks | keyvalue" [enclosure]="enclosureDisks.key""let enclosureDisks[vdev]="vdev"
+        <ix-vdev-wrapper *ngFor="let enclosureDisks of enclosuresDisks | keyvalue" 
+          [enclosure]="enclosureDisks.key"[vdev]="vdev"
         >
           <div class="disk-icons">
             <ix-disk-icon
-              *ngFor="let disk of enclosureDisks.value"
+              *ngFor=
+               of enclosureDisks.value"
               class="disk-icon"
-              [disk]="disk"
+              [dndDraggable]="disk"
+              [dndEffectAllowed]="'move'"
+              [disk]="disk""let disk(dndStart)="onDragStart()"
+              (dndCanceled)="onDragCanceled()"
+              (dndEnd)="onDragEnd()"
             ></ix-disk-icon>
           </div>
         </ix-vdev-wrapper>

@@ -22,13 +22,14 @@ export class VdevWrapperComponent {
     return !!this.vdev.disks.length;
   }
   constructor(
-    private store$: PoolManagerStore,
+    public store$: PoolManagerStore,
     private cdr: ChangeDetectorRef,
   ) { }
 
   onDrop(event: DndDropEvent): void {
     const disk = event.data as ManagerDisk;
     this.store$.addToDataVdev({ disk, vdev: this.vdev });
+    this.store$.toggleActivateDrag(false);
     this.cdr.markForCheck();
   }
 }
