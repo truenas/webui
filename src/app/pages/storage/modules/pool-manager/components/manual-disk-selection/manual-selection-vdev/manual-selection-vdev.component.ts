@@ -1,18 +1,21 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-manual-selection-vdev',
   templateUrl: './manual-selection-vdev.component.html',
   styleUrls: ['./manual-selection-vdev.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ManualSelectionVdevComponent implements OnChanges {
+export class ManualSelectionVdevComponent implements OnInit {
   @Input() vdev: ManagerVdev;
   @Input() swapondrive = 2;
   enclosuresDisks = new Map<number, ManagerDisk[]>();
@@ -29,22 +32,25 @@ export class ManualSelectionVdevComponent implements OnChanges {
   constructor(
     public ixFormatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
+    private store$: PoolManagerStore,
   ) {}
 
-  ngOnChanges(): void {
-    this.enclosuresDisks = new Map();
-    for (const disk of this.vdev?.disks) {
-      let enclosure = this.enclosuresDisks.get(disk.enclosure.number);
-      if (!enclosure) {
-        enclosure = [];
+  ngOnInit(): void {
+    this.store$.dataVdevs$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.enclosuresDisks = new Map();
+      for (const disk of this.vdev?.disks) {
+        let enclosure = this.enclosuresDisks.get(disk.enclosure.number);
+        if (!enclosure) {
+          enclosure = [];
+        }
+        this.enclosuresDisks.set(disk.enclosure.number, [...enclosure, disk]);
       }
-      this.enclosuresDisks.set(disk.enclosure.number, [...enclosure, disk]);
-    }
-    if (this.enclosuresDisks.size === 0) {
-      this.enclosuresDisks.set(0, []);
-    }
-    this.estimateSize(this.vdev);
-    this.cdr.markForCheck();
+      if (this.enclosuresDisks.size === 0) {
+        this.enclosuresDisks.set(0, []);
+      }
+      this.estimateSize(this.vdev);
+      this.cdr.markForCheck();
+    });
   }
 
   estimateSize(vdev: ManagerVdev): void {

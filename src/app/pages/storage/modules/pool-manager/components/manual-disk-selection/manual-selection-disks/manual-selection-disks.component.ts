@@ -138,7 +138,6 @@ export class ManualSelectionDisksComponent implements OnInit {
       enclosure.children.push({
         ...disk,
         children: [],
-        identifier: disk.name,
       });
     });
 

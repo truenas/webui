@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { DndModule } from 'ngx-drag-drop';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -44,6 +45,7 @@ import { ManualSelectionDisksComponent } from './components/manual-disk-selectio
     TreeModule,
     IxIconModule,
     ReactiveFormsModule,
+    DndModule,
     RouterModule.forChild(routes),
     TranslateModule,
     CommonModule,

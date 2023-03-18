@@ -33,6 +33,8 @@
       <div class="unused-disk">
         <ix-disk-icon
           class="disk-icon"
+          [dndDraggable]="asDisk(disk)"
+          [dndEffectAllowed]="'move'"
           [disk]="asDisk(disk)"
         ></ix-disk-icon>
 

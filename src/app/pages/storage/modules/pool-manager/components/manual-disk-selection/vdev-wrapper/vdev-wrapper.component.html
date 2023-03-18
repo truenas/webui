@@ -2,10 +2,14 @@
   <div class="horizontal-border top-border"></div>
   <div class="vdev-container">
     <div class="vertical-border left-border"></div>
-    <div class="content-container">
-      <ng-content *ngIf="vdev.disks.length"></ng-content>
+    <div
+      dndDropzone
+      class="content-container"
+      (dndDrop)="onDrop($event)"
+    >
+      <ng-content *ngIf="vdevDisksLength"></ng-content>
       <div
-        *ngIf="!vdev.disks.length"
+        *ngIf="!vdevDisksLength"
         class="empty-container"
       >
         <div><span>No disks</span></div>
