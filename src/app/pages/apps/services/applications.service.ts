@@ -4,7 +4,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService } from 'app/services';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
