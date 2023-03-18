@@ -11,12 +11,11 @@
           [enclosure]="enclosureDisks.key"[vdev]="vdev"
         >
           <div class="disk-icons">
-            <ix-disk-icon
-              *ngFor=
-               of enclosureDisks.value"
+            <ix-disk-icon *ngFor="let disk of enclosureDisks.value"
               class="disk-icon"
               [dndDraggable]="disk"[dndEffectAllowed]="'move'"
-              [disk]="disk""let disk(dndStart)="onDragStart()"
+              [disk]="disk"
+              (dndStart)="onDragStart()"
               (dndCanceled)="onDragCanceled()"
               (dndEnd)="onDragEnd()"
             ></ix-disk-icon>
