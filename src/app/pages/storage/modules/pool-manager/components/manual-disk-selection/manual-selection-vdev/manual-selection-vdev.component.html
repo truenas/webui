@@ -15,8 +15,7 @@
               *ngFor=
                of enclosureDisks.value"
               class="disk-icon"
-              [dndDraggable]="disk"
-              [dndEffectAllowed]="'move'"
+              [dndDraggable]="disk"[dndEffectAllowed]="'move'"
               [disk]="disk""let disk(dndStart)="onDragStart()"
               (dndCanceled)="onDragCanceled()"
               (dndEnd)="onDragEnd()"
