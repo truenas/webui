@@ -4,7 +4,8 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { lastValueFrom } from 'rxjs';
+import { forkJoin, lastValueFrom } from 'rxjs';
+import { DatasetType } from 'app/enums/dataset.enum';
 import {
   IscsiAuthMethod,
   IscsiExtentRpm,
@@ -13,19 +14,28 @@ import {
   IscsiNewOption,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
+  IscsiAuthAccess,
+  IscsiAuthAccessUpdate,
   IscsiExtent,
   IscsiExtentUpdate,
   IscsiInitiatorGroup,
   IscsiInitiatorGroupUpdate,
+  IscsiInterface,
+  IscsiPortal,
+  IscsiPortalUpdate,
   IscsiTarget,
   IscsiTargetExtent,
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, IscsiService, WebSocketService } from 'app/services';
+import {
+  DialogService, IscsiService, ValidationService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -36,9 +46,13 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class IscsiWizardComponent implements OnInit {
   isLoading = false;
+  toStop = false;
   namesInUse: string[] = [];
 
+  createdZvol: Dataset;
   createdExtent: IscsiExtent;
+  createdAuthgroup: IscsiAuthAccess;
+  createdPortal: IscsiPortal;
   createdInitiator: IscsiInitiatorGroup;
   createdTarget: IscsiTarget;
   createdTargetExtent: IscsiTargetExtent;
@@ -49,17 +63,39 @@ export class IscsiWizardComponent implements OnInit {
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
-      disk: [null as string, [Validators.required]],
+      disk: [null as IscsiNewOption | string, [Validators.required]],
+      dataset: ['', [Validators.required]],
+      volsize: [0, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
       target: [IscsiNewOption.New as IscsiNewOption | number, [Validators.required]],
     }),
     portal: this.fb.group({
-      portal: [null as number, [Validators.required]],
+      portal: [null as IscsiNewOption | number, [Validators.required]],
+      discovery_authmethod: [IscsiAuthMethod.None, [Validators.required]],
+      discovery_authgroup: [null as IscsiNewOption | number],
+      tag: [0, [Validators.min(0), Validators.required]],
+      user: ['', [Validators.required]],
+      secret: ['', [Validators.minLength(12), Validators.maxLength(16), Validators.required]],
+      secret_confirm: ['', [this.validationService.matchOtherValidator('secret'), Validators.required]],
+      listen: this.fb.array<string>([]),
     }),
     initiator: this.fb.group({
       initiators: [[] as string[]],
     }),
   });
+
+  get isNewZvol(): boolean {
+    return this.form.controls.device.enabled && this.form.value.device.disk === IscsiNewOption.New;
+  }
+
+  get isNewAuthgroup(): boolean {
+    return this.form.controls.portal.controls.discovery_authgroup.enabled
+      && this.form.value.portal.discovery_authgroup === IscsiNewOption.New;
+  }
+
+  get isNewPortal(): boolean {
+    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === IscsiNewOption.New;
+  }
 
   get isNewTarget(): boolean {
     return this.form.value.device.target === IscsiNewOption.New;
@@ -67,6 +103,15 @@ export class IscsiWizardComponent implements OnInit {
 
   get isNewInitiator(): boolean {
     return this.form.controls.initiator.enabled && !!this.form.value.initiator.initiators.length;
+  }
+
+  get zvolPayload(): DatasetCreate {
+    const value = this.form.value;
+    return {
+      name: value.device.dataset.replace(`${mntPath}/`, '') + '/' + value.device.name,
+      type: DatasetType.Volume,
+      volsize: value.device.volsize,
+    };
   }
 
   get extentPayload(): IscsiExtentUpdate {
@@ -85,9 +130,32 @@ export class IscsiWizardComponent implements OnInit {
       extentPayload.filesize = filesize % 512 ? (filesize + (512 - filesize % 512)) : filesize;
       extentPayload.path = value.path;
     } else if (extentPayload.type === IscsiExtentType.Disk) {
-      extentPayload.disk = value.disk;
+      if (value.disk === IscsiNewOption.New) {
+        extentPayload.disk = 'zvol/' + this.createdZvol.id.replace(' ', '+');
+      } else {
+        extentPayload.disk = value.disk;
+      }
     }
     return extentPayload;
+  }
+
+  get authgroupPayload(): IscsiAuthAccessUpdate {
+    const value = this.form.value.portal;
+    return {
+      tag: value.tag,
+      user: value.user,
+      secret: value.secret,
+    } as IscsiAuthAccessUpdate;
+  }
+
+  get portalPayload(): IscsiPortalUpdate {
+    const value = this.form.value;
+    return {
+      comment: value.device.name,
+      discovery_authmethod: value.portal.discovery_authmethod,
+      listen: value.portal.listen.map((ip) => ({ ip } as IscsiInterface)),
+      discovery_authgroup: this.isNewAuthgroup ? this.createdAuthgroup.tag : undefined,
+    };
   }
 
   get initiatorPayload(): IscsiInitiatorGroupUpdate {
@@ -104,7 +172,7 @@ export class IscsiWizardComponent implements OnInit {
     return {
       name: value.device.name,
       groups: [{
-        portal: value.portal.portal,
+        portal: this.isNewPortal ? this.createdPortal.id : value.portal.portal,
         initiator: this.isNewInitiator ? this.createdInitiator.id : null,
         authmethod: IscsiAuthMethod.None,
         auth: null,
@@ -128,6 +196,7 @@ export class IscsiWizardComponent implements OnInit {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private validationService: ValidationService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
@@ -140,6 +209,9 @@ export class IscsiWizardComponent implements OnInit {
   ngOnInit(): void {
     this.form.controls.device.controls.path.disable();
     this.form.controls.device.controls.filesize.disable();
+    this.form.controls.device.controls.dataset.disable();
+    this.form.controls.device.controls.volsize.disable();
+    this.disablePortalGroup();
 
     this.form.controls.device.controls.target.valueChanges.pipe(untilDestroyed(this)).subscribe((target) => {
       if (target === IscsiNewOption.New) {
@@ -148,12 +220,35 @@ export class IscsiWizardComponent implements OnInit {
       } else {
         this.form.controls.portal.disable();
         this.form.controls.initiator.disable();
+        this.disablePortalGroup();
       }
     });
   }
 
+  disablePortalGroup(): void {
+    this.form.controls.portal.controls.discovery_authmethod.disable();
+    this.form.controls.portal.controls.discovery_authgroup.disable();
+    this.form.controls.portal.controls.tag.disable();
+    this.form.controls.portal.controls.user.disable();
+    this.form.controls.portal.controls.secret.disable();
+    this.form.controls.portal.controls.secret_confirm.disable();
+    this.form.controls.portal.controls.listen.disable();
+  }
+
+  createZvol(): Promise<Dataset> {
+    return lastValueFrom(this.ws.call('pool.dataset.create', [this.zvolPayload]));
+  }
+
   createExtent(): Promise<IscsiExtent> {
     return lastValueFrom(this.ws.call('iscsi.extent.create', [this.extentPayload]));
+  }
+
+  createAuthgroup(): Promise<IscsiAuthAccess> {
+    return lastValueFrom(this.ws.call('iscsi.auth.create', [this.authgroupPayload]));
+  }
+
+  createPortal(): Promise<IscsiPortal> {
+    return lastValueFrom(this.ws.call('iscsi.portal.create', [this.portalPayload]));
   }
 
   createInitiator(): Promise<IscsiInitiatorGroup> {
@@ -168,71 +263,142 @@ export class IscsiWizardComponent implements OnInit {
     return lastValueFrom(this.ws.call('iscsi.targetextent.create', [this.targetExtentPayload]));
   }
 
+  rollBack(): void {
+    const requests = [];
+
+    if (this.createdZvol) {
+      requests.push(this.ws.call('pool.dataset.delete', [this.createdZvol.id, { recursive: true, force: true }]));
+    }
+
+    if (this.createdExtent) {
+      requests.push(this.ws.call('iscsi.extent.delete', [this.createdExtent.id, true, true]));
+    }
+
+    if (this.createdAuthgroup) {
+      requests.push(this.ws.call('iscsi.auth.delete', [this.createdAuthgroup.id]));
+    }
+
+    if (this.createdPortal) {
+      requests.push(this.ws.call('iscsi.portal.delete', [this.createdPortal.id]));
+    }
+
+    if (this.createdInitiator) {
+      requests.push(this.ws.call('iscsi.initiator.delete', [this.createdInitiator.id]));
+    }
+
+    if (this.createdTarget) {
+      requests.push(this.ws.call('iscsi.target.delete', [this.createdTarget.id]));
+    }
+
+    if (this.createdTargetExtent) {
+      requests.push(this.ws.call('iscsi.targetextent.delete', [this.createdTargetExtent.id]));
+    }
+
+    if (requests.length) {
+      forkJoin(requests).pipe(untilDestroyed(this)).subscribe(() => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
+    } else {
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  handleError(err: WebsocketError): void {
+    this.toStop = true;
+    new EntityUtils().handleWsError(this, err, this.dialogService);
+  }
+
   async onSubmit(): Promise<void> {
     this.isLoading = true;
-    let toStop = false;
+    this.toStop = false;
+
+    this.createdZvol = undefined;
     this.createdExtent = undefined;
+    this.createdAuthgroup = undefined;
+    this.createdPortal = undefined;
     this.createdInitiator = undefined;
     this.createdTarget = undefined;
     this.createdTargetExtent = undefined;
 
+    if (this.isNewZvol) {
+      await this.createZvol().then(
+        (createdZvol) => this.createdZvol = createdZvol,
+        (err: WebsocketError) => this.handleError(err),
+      );
+    }
+
+    if (this.toStop) {
+      this.rollBack();
+      return;
+    }
+
     await this.createExtent().then(
       (createdExtent) => this.createdExtent = createdExtent,
-      (err) => {
-        toStop = true;
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-      },
+      (err: WebsocketError) => this.handleError(err),
     );
 
-    if (toStop) {
-      this.isLoading = false;
-      this.cdr.markForCheck();
+    if (this.toStop) {
+      this.rollBack();
+      return;
+    }
+
+    if (this.isNewAuthgroup) {
+      await this.createAuthgroup().then(
+        (createdAuthgroup) => this.createdAuthgroup = createdAuthgroup,
+        (err: WebsocketError) => this.handleError(err),
+      );
+    }
+
+    if (this.toStop) {
+      this.rollBack();
+      return;
+    }
+
+    if (this.isNewPortal) {
+      await this.createPortal().then(
+        (createdPortal) => this.createdPortal = createdPortal,
+        (err: WebsocketError) => this.handleError(err),
+      );
+    }
+
+    if (this.toStop) {
+      this.rollBack();
       return;
     }
 
     if (this.isNewInitiator) {
       await this.createInitiator().then(
         (createdInitiator) => this.createdInitiator = createdInitiator,
-        (err) => {
-          toStop = true;
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
+        (err: WebsocketError) => this.handleError(err),
       );
     }
 
-    if (toStop) {
-      this.isLoading = false;
-      this.cdr.markForCheck();
+    if (this.toStop) {
+      this.rollBack();
       return;
     }
 
     if (this.isNewTarget) {
       await this.createTarget().then(
         (createdTarget) => this.createdTarget = createdTarget,
-        (err) => {
-          toStop = true;
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
+        (err: WebsocketError) => this.handleError(err),
       );
     }
 
-    if (toStop) {
-      this.isLoading = false;
-      this.cdr.markForCheck();
+    if (this.toStop) {
+      this.rollBack();
       return;
     }
 
     await this.createTargetExtent().then(
       (createdTargetExtent) => this.createdTargetExtent = createdTargetExtent,
-      (err) => {
-        toStop = true;
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-      },
+      (err: WebsocketError) => this.handleError(err),
     );
 
-    if (toStop) {
-      this.isLoading = false;
-      this.cdr.markForCheck();
+    if (this.toStop) {
+      this.rollBack();
       return;
     }
 

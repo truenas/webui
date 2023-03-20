@@ -37,7 +37,11 @@ export class DeviceWizardStepComponent implements OnInit {
   ]);
 
   readonly diskOptions$ = this.iscsiService.getExtentDevices()
-    .pipe(choicesToOptions(), untilDestroyed(this));
+    .pipe(
+      choicesToOptions(),
+      switchMap((options) => of([...options, { label: 'Create New', value: IscsiNewOption.New }])),
+      untilDestroyed(this),
+    );
 
   readonly targetOptions$ = this.iscsiService.getTargets()
     .pipe(
@@ -48,6 +52,10 @@ export class DeviceWizardStepComponent implements OnInit {
 
   get isDevice(): boolean {
     return (this.form.controls.type.value !== IscsiExtentType.File);
+  }
+
+  get isNewZvol(): boolean {
+    return this.form.enabled && this.form.value.disk === IscsiNewOption.New;
   }
 
   constructor(
@@ -67,6 +75,18 @@ export class DeviceWizardStepComponent implements OnInit {
         this.form.controls.disk.disable();
         this.form.controls.path.enable();
         this.form.controls.filesize.enable();
+        this.form.controls.dataset.disable();
+        this.form.controls.volsize.disable();
+      }
+    });
+
+    this.form.controls.disk.valueChanges.pipe(untilDestroyed(this)).subscribe((zvol) => {
+      if (zvol === IscsiNewOption.New) {
+        this.form.controls.dataset.enable();
+        this.form.controls.volsize.enable();
+      } else {
+        this.form.controls.dataset.disable();
+        this.form.controls.volsize.disable();
       }
     });
   }

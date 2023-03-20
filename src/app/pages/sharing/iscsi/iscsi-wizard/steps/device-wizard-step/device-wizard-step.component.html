@@ -21,6 +21,23 @@
     [fxHide]="!isDevice"
   ></ix-select>
   <ix-explorer
+    formControlName="dataset"
+    [label]="helptextSharingIscsi.dataset_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.dataset_tooltip | translate"
+    [required]="true"
+    [nodeProvider]="fileNodeProvider"
+    [fxHide]="!isNewZvol"
+  ></ix-explorer>
+  <ix-input
+    formControlName="volsize"
+    [label]="helptextSharingIscsi.volsize_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.volsize_tooltip | translate"
+    [format]="formatter.memorySizeFormatting"
+    [parse]="formatter.memorySizeParsing"
+    [required]="true"
+    [fxHide]="!isNewZvol"
+  ></ix-input>
+  <ix-explorer
     formControlName="path"
     [label]="helptextSharingIscsi.extent_placeholder_path | translate"
     [required]="true"
