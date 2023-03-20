@@ -30,6 +30,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
 
+const defaultHomePath = '/nonexistent';
+
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './user-form.component.html',
@@ -76,7 +78,7 @@ export class UserFormComponent {
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
-    home: ['/nonexistent', []],
+    home: [defaultHomePath, []],
     home_mode: ['755'],
     home_create: [false],
     sshpubkey: [null as string],
@@ -125,14 +127,14 @@ export class UserFormComponent {
     const home = this.form.get('home').value;
     const homeMode = this.form.get('home_mode').value;
     if (this.isNewUser) {
-      if (!homeCreate && home !== '/nonexistent') {
+      if (!homeCreate && home !== defaultHomePath) {
         return this.translate.instant(
           'With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.',
           { path: '\'' + this.form.get('home').value + '\'' },
         );
       }
     } else {
-      if (this.editingUser.immutable) {
+      if (this.editingUser.immutable || home === defaultHomePath) {
         return '';
       }
       if (!homeCreate && this.editingUser.home !== home) {
@@ -197,7 +199,7 @@ export class UserFormComponent {
       ),
     );
 
-    if (user?.home && user.home !== '/nonexistent') {
+    if (user?.home && user.home !== defaultHomePath) {
       this.storageService.filesystemStat(user.home).pipe(untilDestroyed(this)).subscribe((stat) => {
         this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
         this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
