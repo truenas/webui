@@ -83,6 +83,7 @@
           [tooltip]="helptext.cpu_mode.tooltip | translate"
         ></ix-select>
         <ix-select
+          *ngIf="showCpuModelField"
           formControlName="cpu_model"
           [label]="'CPU Model' | translate"
           [options]="cpuModelOptions$"
