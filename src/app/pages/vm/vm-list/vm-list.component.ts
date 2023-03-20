@@ -474,7 +474,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(VmWizardComponent);
+    this.slideIn.open(VmWizardComponent);
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {
