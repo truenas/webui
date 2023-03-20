@@ -165,7 +165,17 @@ export class UserFormComponent {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-  ) { }
+  ) {
+    this.form.controls.smb.errors$.pipe(
+      filter((error) => error?.manualValidateErrorMsg),
+      switchMap(() => this.form.controls.password.valueChanges),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      if (this.form.controls.smb.invalid) {
+        this.form.controls.smb.updateValueAndValidity();
+      }
+    });
+  }
 
   /**
    * @param user Skip argument to add new user.
