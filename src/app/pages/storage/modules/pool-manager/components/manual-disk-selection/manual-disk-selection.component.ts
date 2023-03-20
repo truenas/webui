@@ -3,12 +3,13 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ManualDiskSelectionLayout {
-  type: string;
+  type: CreateVdevLayout;
   // TODO:
 }
 
