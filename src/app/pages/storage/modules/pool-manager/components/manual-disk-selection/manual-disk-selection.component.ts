@@ -8,6 +8,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ManualDiskSelectionLayout {
+  type: string;
   // TODO:
 }
 
@@ -34,7 +35,7 @@ export class ManualDiskSelectionComponent implements OnInit {
   }
   trackVdevById = (_: number, vdev: ManagerVdev): string => vdev.uuid;
   addVdev(): void {
-    const vdev = new ManagerVdev('stripe', 'data');
+    const vdev = new ManagerVdev(this.data.type, 'data');
     this.store$.addDataVdev(vdev);
   }
 }
