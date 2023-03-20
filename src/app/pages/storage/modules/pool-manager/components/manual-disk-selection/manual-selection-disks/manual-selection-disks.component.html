@@ -76,4 +76,7 @@
       ></ng-container>
     </ix-nested-tree-node>
   </ix-tree-view>
+  <div *ngIf="!dataSource.data.length" class="empty-tree">
+    {{ 'No unused disks' | translate }}
+  </div>
 </div>
