@@ -13,8 +13,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { PoolManagerStore, VdevManagerDisk } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 interface EnclosureDisk extends Disk {
   children: [];
@@ -163,7 +162,7 @@ export class ManualSelectionDisksComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent): void {
-    const disk = event.data as ManagerDisk;
+    const disk = event.data as VdevManagerDisk;
     this.store$.toggleActivateDrag(false);
     this.store$.removeFromDataVdev(disk);
   }

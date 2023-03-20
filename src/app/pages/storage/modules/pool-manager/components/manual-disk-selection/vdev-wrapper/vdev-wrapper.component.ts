@@ -4,8 +4,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
-import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { PoolManagerStore, VdevManagerDisk } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +26,11 @@ export class VdevWrapperComponent {
   ) { }
 
   onDrop(event: DndDropEvent): void {
-    const disk = event.data as ManagerDisk;
+    const disk = event.data as VdevManagerDisk;
+    if (disk.vdevUuid) {
+      this.store$.removeFromDataVdev(disk);
+      this.store$.addToDataVdev({ disk, vdev: this.vdev });
+    }
     this.store$.addToDataVdev({ disk, vdev: this.vdev });
     this.store$.toggleActivateDrag(false);
     this.cdr.markForCheck();

@@ -11,6 +11,8 @@ import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.i
 import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
 import { DialogService, WebSocketService } from 'app/services';
 
+export type VdevManagerDisk = ManagerDisk & { vdevUuid: string };
+
 export interface PoolManagerState {
   isLoading: boolean;
 
@@ -110,12 +112,14 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   removeFromDataVdev = this.updater((
     state: PoolManagerState,
-    disk: ManagerDisk,
+    disk: VdevManagerDisk,
   ) => {
-    const dataVdevs = [...state.dataVdevs];
-    for (const dataVdev of dataVdevs) {
-      dataVdev.disks = dataVdev.disks.filter((vdevDisk) => vdevDisk.identifier !== disk.identifier);
-    }
+    const dataVdevs = [...state.dataVdevs].map((vdev) => {
+      if (vdev.uuid === disk.vdevUuid) {
+        vdev.disks = vdev.disks.filter((vdevDisk) => vdevDisk.identifier !== disk.identifier);
+      }
+      return vdev;
+    });
 
     const unusedDisks = [...state.unusedDisks];
     if (!unusedDisks.some((unusedDisk) => unusedDisk.identifier === disk.identifier)) {

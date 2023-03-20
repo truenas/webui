@@ -6,7 +6,7 @@ import { GiB, MiB } from 'app/constants/bytes.constant';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { PoolManagerStore, VdevManagerDisk } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 @UntilDestroy()
 @Component({
@@ -51,6 +51,13 @@ export class ManualSelectionVdevComponent implements OnInit {
       this.estimateSize(this.vdev);
       this.cdr.markForCheck();
     });
+  }
+
+  getMovableDisk(disk: ManagerDisk): VdevManagerDisk {
+    return {
+      ...disk,
+      vdevUuid: this.vdev.uuid,
+    };
   }
 
   estimateSize(vdev: ManagerVdev): void {

@@ -13,7 +13,8 @@
           <div class="disk-icons">
             <ix-disk-icon *ngFor="let disk of enclosureDisks.value"
               class="disk-icon"
-              [dndDraggable]="disk"[dndEffectAllowed]="'move'"
+              [dndDraggable]="getMovableDisk(disk)"
+              [dndEffectAllowed]="'move'"
               [disk]="disk"
               (dndStart)="onDragStart()"
               (dndCanceled)="onDragCanceled()"
