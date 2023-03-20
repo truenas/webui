@@ -16,17 +16,12 @@ const routes: Routes = [
   },
   {
     path: 'installed',
-    component: AppRouterOutletComponent,
+    component: InstalledAppsComponent,
     data: { title: T('Installed'), breadcrumb: T('Applications') },
     children: [{
-      path: '',
-      component: InstalledAppsComponent,
-      data: { title: T('Installed'), breadcrumb: T('Applications') },
-    },
-    {
       path: ':appId',
-      component: AppDetailViewComponent,
-      data: { title: T('App Detail'), breadcrumb: T('App Detail') },
+      component: InstalledAppsComponent,
+      data: { title: T('Installed Apps'), breadcrumb: T('Installed') },
     }],
   },
   {

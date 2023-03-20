@@ -20,12 +20,10 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 export class KernelFormComponent {
   isFormLoading = false;
   form = this.fb.group({
-    autotune: [false],
     debugkernel: [false],
   });
 
   readonly tooltips = {
-    autotune: helptextSystemAdvanced.autotune_tooltip,
     debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
   };
 
@@ -39,7 +37,6 @@ export class KernelFormComponent {
 
   setupForm(group: AdvancedConfig): void {
     this.form.patchValue({
-      autotune: group?.autotune,
       debugkernel: group?.debugkernel,
     });
     this.cdr.markForCheck();
@@ -48,7 +45,6 @@ export class KernelFormComponent {
   onSubmit(): void {
     const values = this.form.value;
     const commonBody = {
-      autotune: values.autotune,
       debugkernel: values.debugkernel,
     };
     this.isFormLoading = true;

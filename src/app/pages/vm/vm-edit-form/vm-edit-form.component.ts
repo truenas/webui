@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -33,7 +33,9 @@ const mbs = 1024 * 1024;
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CpuValidatorService, VmGpuService],
 })
-export class VmEditFormComponent {
+export class VmEditFormComponent implements OnInit {
+  showCpuModelField = true;
+
   form = this.formBuilder.group({
     name: ['', Validators.required],
     description: [''],
@@ -87,7 +89,15 @@ export class VmEditFormComponent {
     private snackbar: SnackbarService,
   ) {}
 
+  ngOnInit(): void {
+    this.listenForFormValueChanges();
+  }
+
   setVmForEdit(vm: VirtualMachine): void {
+    if (vm.cpu_mode !== VmCpuMode.Custom) {
+      this.showCpuModelField = false;
+    }
+
     this.existingVm = vm;
     this.form.patchValue({
       ...vm,
@@ -143,6 +153,12 @@ export class VmEditFormComponent {
 
       const vmGpuPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
       this.form.controls.gpus.setValue(vmGpuPciSlots, { emitEvent: false });
+    });
+  }
+
+  private listenForFormValueChanges(): void {
+    this.form.controls.cpu_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.showCpuModelField = value === VmCpuMode.Custom;
     });
   }
 }

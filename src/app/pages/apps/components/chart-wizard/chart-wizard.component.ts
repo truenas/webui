@@ -5,7 +5,7 @@ import {
   FormBuilder, FormControl, Validators,
 } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -86,6 +86,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
     private layoutService: LayoutService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -159,10 +160,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
+        error: () => this.router.navigate(['/apps', 'available']),
       });
   }
 

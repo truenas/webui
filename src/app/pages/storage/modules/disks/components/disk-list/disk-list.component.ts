@@ -27,7 +27,6 @@ import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -105,7 +104,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     protected ws: WebSocketService,
     protected router: Router,
     private matDialog: MatDialog,
-    private core: CoreService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,

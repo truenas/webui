@@ -69,21 +69,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   labels: string[] = [];
   isCpuAvgReady = false;
+  cpuData: WidgetCpuData;
 
   readonly ScreenType = ScreenType;
 
-  private _cpuData: WidgetCpuData;
   protected currentTheme: Theme;
   private utils: ThemeUtils;
   private dataSubscription: Subscription;
-
-  get cpuData(): WidgetCpuData {
-    return this._cpuData;
-  }
-
-  set cpuData(value) {
-    this._cpuData = value;
-  }
 
   constructor(
     public translate: TranslateService,

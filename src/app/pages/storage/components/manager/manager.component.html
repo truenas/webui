@@ -308,10 +308,8 @@
                     [matMenuTriggerFor]="menu"
                     [disabled]="this.disks.length === 0"
                   >
-                    <span>
-                      {{ 'Add Vdev' | translate }}
-                      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-                    </span>
+                    {{ 'Add Vdev' | translate }}
+                    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
                   </button>
                 </div>
               </div>
@@ -370,7 +368,7 @@
                 >
                   <div class="tr">
                     <div class="td icon">
-                      <ix-icon fontIcon="mdi-clipboard-outline"></ix-icon>
+                      <ix-icon name="mdi-clipboard-outline"></ix-icon>
                     </div>
                     <div class="td">
                       <h3>{{ help.log_vdev_title | translate }}</h3>

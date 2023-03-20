@@ -25,6 +25,11 @@
   width: 36px;
 }
 
+.logo-text {
+  align-items: center;
+  display: flex;
+}
+
 .branding {
   align-items: center;
   background-color: var(--topbar) !important;
@@ -50,7 +55,7 @@
   .app-logo-text {
     height: auto;
     margin-right: 8px;
-    top: 24px;
+    top: 2px;
     width: 96px;
   }
 

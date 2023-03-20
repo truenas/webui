@@ -12,6 +12,7 @@ import * as popmotion from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
@@ -23,7 +24,6 @@ import {
 } from 'app/interfaces/events/disk-events.interface';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
-import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
@@ -90,7 +90,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   showCaption = true;
   protected aborted = false;
 
-  mqAlias: string;
   @ViewChild('visualizer', { static: true }) visualizer: ElementRef<HTMLElement>;
   @ViewChild('disksoverview', { static: true }) overview: ElementRef<HTMLElement>;
   @ViewChild('diskdetails', { static: false }) details: ElementRef<HTMLElement>;
@@ -160,7 +159,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   get hideIdentifyDrive(): boolean {
     const selectedEnclosure = this.getSelectedEnclosure();
-    return this.system.enclosures[selectedEnclosure.enclosureKey].model === 'TRUENAS-MINI-R';
+    let hideButton = false;
+    if (
+      selectedEnclosure.model === 'TRUENAS-MINI-R'
+      || selectedEnclosure.model === 'TRUENAS-R30'
+      || selectedEnclosure.model === 'R30'
+    ) {
+      hideButton = true;
+    }
+    return hideButton;
   }
 
   selectedVdevDisks: string[];
@@ -216,11 +223,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.temperatures = clone;
     });
     core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
-
-    core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: MediaChangeEvent) => {
-      this.mqAlias = evt.data.mqAlias;
-      this.resizeView();
-    });
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
@@ -1088,7 +1090,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   converter(size: number): string {
-    const gb = size / 1024 / 1024 / 1024;
+    const gb = size / GiB;
     if (gb > 1000) {
       const tb = gb / 1024;
       return tb.toFixed(2) + ' TB';
