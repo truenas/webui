@@ -348,6 +348,10 @@ export type ApiDirectory = {
   'bootenv.delete': { params: [string]; response: boolean };
   'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
 
+  // App
+  'app.categories': { params: void; response: string[] };
+  'app.available': { params: void; response: CatalogApp[] };
+
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
   'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };

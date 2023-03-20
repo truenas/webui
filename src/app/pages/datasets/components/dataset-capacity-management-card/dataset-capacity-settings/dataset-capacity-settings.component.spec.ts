@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -21,7 +22,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 describe('DatasetCapacitySettingsComponent', () => {
   let spectator: Spectator<DatasetCapacitySettingsComponent>;
   let loader: HarnessLoader;
-  const gbs = 1024 ** 3;
   const createComponent = createComponentFactory({
     component: DatasetCapacitySettingsComponent,
     imports: [
@@ -43,14 +43,14 @@ describe('DatasetCapacitySettingsComponent', () => {
     spectator.component.setDatasetForEdit({
       id: 'root/path',
       name: 'root/path',
-      refquota: { parsed: 50 * gbs },
+      refquota: { parsed: 50 * GiB },
       refquota_warning: { parsed: 50, source: ZfsPropertySource.Local },
       refquota_critical: { parsed: 0, source: ZfsPropertySource.Default },
-      quota: { parsed: 100 * gbs },
+      quota: { parsed: 100 * GiB },
       quota_warning: { parsed: null, source: ZfsPropertySource.Local },
       quota_critical: { parsed: 0, source: ZfsPropertySource.Inherited },
-      refreservation: { parsed: 10 * gbs },
-      reservation: { parsed: 20 * gbs },
+      refreservation: { parsed: 10 * GiB },
+      reservation: { parsed: 20 * GiB },
     } as DatasetDetails);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -148,13 +148,13 @@ describe('DatasetCapacitySettingsComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', [
       'root/path',
       {
-        quota: 110 * gbs,
+        quota: 110 * GiB,
         quota_critical: 90,
         quota_warning: 50,
         refquota: 0,
         refquota_warning: inherit,
-        refreservation: 15 * gbs,
-        reservation: 25 * gbs,
+        refreservation: 15 * GiB,
+        reservation: 25 * GiB,
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -175,7 +175,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
       'root/path',
       {
-        quota: 105 * gbs,
+        quota: 105 * GiB,
         quota_critical: 93,
       },
     ]);

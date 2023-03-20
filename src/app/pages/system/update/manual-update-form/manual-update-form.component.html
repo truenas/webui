@@ -11,14 +11,6 @@
           <b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}
         </p>
 
-        <ix-select
-          formControlName="filelocation"
-          [label]="helptext.filelocation.placeholder | translate"
-          [tooltip]="helptext.filelocation.tooltip | translate"
-          [options]="fileLocationOptions$"
-          [required]="true"
-        ></ix-select>
-
         <ix-file-input
           formControlName="updateFile"
           [label]="helptext.filename.placeholder | translate"
@@ -27,6 +19,15 @@
           [required]="true"
           [acceptedFiles]="'.tar,.update'"
         ></ix-file-input>
+
+        <ix-select
+          formControlName="filelocation"
+          [label]="helptext.filelocation.placeholder | translate"
+          [tooltip]="helptext.filelocation.tooltip | translate"
+          [options]="fileLocationOptions$"
+          [required]="true"
+        ></ix-select>
+
         <ix-checkbox
           *ngIf="!isHaLicensed && systemService.isEnterprise"
           formControlName="rebootAfterManualUpdate"
