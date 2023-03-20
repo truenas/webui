@@ -147,9 +147,20 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   });
 
   removeDataVdev = this.updater((state: PoolManagerState, vdev: ManagerVdev) => {
+    const dataVdevs = state.dataVdevs.filter((dataVdev) => dataVdev.uuid !== vdev.uuid);
+    const unusedDisks = [...state.unusedDisks];
+    for (const disk of vdev.disks) {
+      const diskAlreadyExists = unusedDisks.some(
+        (unusedDisk) => unusedDisk.identifier === disk.identifier,
+      );
+      if (!diskAlreadyExists) {
+        unusedDisks.push(disk);
+      }
+    }
     return {
       ...state,
-      dataVdevs: state.dataVdevs.filter((dataVdev) => dataVdev.uuid !== vdev.uuid),
+      dataVdevs,
+      unusedDisks,
     };
   });
 

@@ -33,3 +33,10 @@
 p {
   margin: 5px 0;
 }
+
+.delete-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

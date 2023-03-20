@@ -109,4 +109,8 @@ export class ManualSelectionVdevComponent implements OnInit {
   onDragCanceled(): void {
     this.store$.toggleActivateDrag(false);
   }
+
+  deleteVdev(): void {
+    this.store$.removeDataVdev(this.vdev);
+  }
 }
