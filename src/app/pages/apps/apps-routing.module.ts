@@ -18,23 +18,19 @@ const routes: Routes = [
   },
   {
     path: 'installed',
-    component: AppRouterOutletComponent,
+    component: InstalledAppsComponent,
     data: { title: T('Installed'), breadcrumb: T('Applications') },
     children: [{
-      path: '',
-      component: InstalledAppsComponent,
-      data: { title: T('Installed'), breadcrumb: T('Applications') },
-    },
-    {
       path: ':appId',
-      component: AppDetailViewComponent,
-      data: { title: T('App Detail'), breadcrumb: T('App Detail') },
+      component: InstalledAppsComponent,
+      data: { title: T('Installed Apps'), breadcrumb: T('Installed') },
     },
     {
       path: ':appId/shell/:pname/:cname',
       component: PodShellComponent,
       data: { title: T('Pod Shell'), breadcrumb: T('Pod Shell') },
-    }, {
+    },
+    {
       path: ':appId/logs/:pname/:cname/:tail_lines',
       component: PodLogsComponent,
       data: { title: T('Pod Logs'), breadcrumb: T('Pod Logs') },
