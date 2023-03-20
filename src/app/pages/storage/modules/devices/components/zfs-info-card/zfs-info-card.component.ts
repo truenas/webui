@@ -15,6 +15,8 @@ import {
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { WebSocketService, DialogService } from 'app/services';
 
+const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
+
 @UntilDestroy()
 @Component({
   selector: 'ix-zfs-info-card',
@@ -28,16 +30,14 @@ export class ZfsInfoCardComponent {
   @Input() disk: Disk;
   @Input() topologyCategory: PoolTopologyCategory;
   @Input() poolId: number;
+  @Input() hasTopLevelRaidz: boolean;
 
   get isMirror(): boolean {
     return this.topologyItem.type === TopologyItemType.Mirror;
   }
 
   get isRaidzParent(): boolean {
-    return this.topologyParentItem.type === TopologyItemType.Raidz
-      || this.topologyParentItem.type === TopologyItemType.Raidz1
-      || this.topologyParentItem.type === TopologyItemType.Raidz2
-      || this.topologyParentItem.type === TopologyItemType.Raidz3;
+    return raidzItems.includes(this.topologyItem.type);
   }
 
   get isDisk(): boolean {
@@ -46,14 +46,22 @@ export class ZfsInfoCardComponent {
 
   get canExtendDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
+      && !this.isRaidzParent
       && this.topologyItem.type === TopologyItemType.Disk
-      && this.topologyCategory === PoolTopologyCategory.Data
-      && this.topologyItem.status !== TopologyItemStatus.Unavail;
+      && (this.topologyCategory === PoolTopologyCategory.Data
+        || this.topologyCategory === PoolTopologyCategory.Dedup
+        || this.topologyCategory === PoolTopologyCategory.Special
+      ) && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
-      && this.topologyCategory !== PoolTopologyCategory.Data;
+      && !this.isRaidzParent
+      && !this.hasTopLevelRaidz;
+  }
+
+  get canRemoveVDEV(): boolean {
+    return !this.hasTopLevelRaidz;
   }
 
   get canDetachDisk(): boolean {
