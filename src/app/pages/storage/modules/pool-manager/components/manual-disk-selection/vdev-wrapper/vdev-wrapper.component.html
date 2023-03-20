@@ -1,7 +1,7 @@
 <div class="outer-container">
-  <div class="horizontal-border top-border"></div>
+  <div [ngClass]="{ 'horizontal-border top-border': enclosureExists }"></div>
   <div class="vdev-container" [ngClass]="{'drag-active': (store$.dragActive$ | async)}">
-    <div class="vertical-border left-border"></div>
+    <div [ngClass]="{ 'vertical-border left-border': enclosureExists }"></div>
     <div
       dndDropzone
       class="content-container"
@@ -15,15 +15,15 @@
         <div><span>No disks</span></div>
       </div>
     </div>
-    <div class="vertical-border right-border"></div>
+    <div [ngClass]="{ 'vertical-border right-border': enclosureExists }"></div>
   </div>
-  <div class="bottom-border-container">
+  <div *ngIf="enclosureExists" class="bottom-border-container">
     <div class="horizontal-border bottom-border"></div>
     <div
       class="enclosure-container"
     >
       <ix-icon name="ix:enclosure"></ix-icon>
-      <strong>{{ enclosure || 0}}</strong>
+      <strong>{{ enclosure || '' }}</strong>
     </div>
     
     <div class="horizontal-border bottom-border"></div>

@@ -17,6 +17,10 @@ export class VdevWrapperComponent {
   @Input() enclosure: number;
   @Input() vdev: ManagerVdev;
 
+  get enclosureExists(): boolean {
+    return !!this.enclosure || this.enclosure === 0;
+  }
+
   get vdevDisksLength(): boolean {
     return !!this.vdev.disks.length;
   }
