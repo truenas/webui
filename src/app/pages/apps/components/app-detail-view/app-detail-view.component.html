@@ -10,6 +10,7 @@
           <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
         </div>
         <a
+          *ngIf="app"
           mat-button
           color="primary"
           [ixTest]="[app?.name, 'install']"
