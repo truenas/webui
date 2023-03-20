@@ -21,7 +21,7 @@ export interface IscsiInterface {
 export interface IscsiInitiatorGroup {
   comment: string;
   id: number;
-  initiators: string;
+  initiators: string[];
 }
 
 export type IscsiInitiatorGroupUpdate = Omit<IscsiInitiatorGroup, 'id'>;

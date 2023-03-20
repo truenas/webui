@@ -17,12 +17,21 @@
             type="button"
             ixTest="next"
             [disabled]="form.controls.device.invalid"
+            [fxHide]="!isNewTarget"
           >{{ 'Next' | translate }}</button>
+          <button
+            mat-button
+            color="primary"
+            type="submit"
+            ixTest="save"
+            [disabled]="form.invalid"
+            [fxHide]="isNewTarget"
+          >{{ 'Save' | translate }}</button>
         </div>
       </mat-step>
-      <mat-step #matStepInstance>
+      <mat-step *ngIf="isNewTarget" #matStepInstance>
         <ng-template matStepLabel>{{ 'Portal' | translate }}</ng-template>
-        <ix-device-wizard-step [form]="form.controls.device"></ix-device-wizard-step>
+        <ix-portal-wizard-step [form]="form.controls.portal"></ix-portal-wizard-step>
         <div class="step-buttons">
           <button
             mat-button
@@ -37,13 +46,13 @@
             color="primary"
             type="button"
             ixTest="next"
-            [disabled]="form.controls.device.invalid"
+            [disabled]="form.controls.portal.invalid"
           >{{ 'Next' | translate }}</button>
         </div>
       </mat-step>
-      <mat-step #matStepInstance>
+      <mat-step *ngIf="isNewTarget" #matStepInstance>
         <ng-template matStepLabel>{{ 'Initiator' | translate }}</ng-template>
-        <ix-device-wizard-step [form]="form.controls.device"></ix-device-wizard-step>
+        <ix-initiator-wizard-step [form]="form.controls.initiator"></ix-initiator-wizard-step>
         <div class="step-buttons">
           <button
             mat-button

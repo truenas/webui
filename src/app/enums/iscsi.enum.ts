@@ -23,3 +23,14 @@ export enum IscsiExtentRpm {
   Rpm10000 = '10000',
   Rpm15000 = '15000',
 }
+
+export enum IscsiExtentUsefor {
+  Vmware = 'vmware',
+  Xen = 'xen',
+  Legacyos = 'legacyos',
+  Modernos = 'modernos',
+}
+
+export enum IscsiNewOption {
+  New = 'NEW',
+}

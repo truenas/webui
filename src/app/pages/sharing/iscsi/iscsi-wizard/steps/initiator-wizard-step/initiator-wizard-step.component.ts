@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 
 @UntilDestroy()
@@ -11,4 +12,6 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 })
 export class InitiatorWizardStepComponent {
   @Input() form: IscsiWizardComponent['form']['controls']['initiator'];
+
+  readonly helptextSharingIscsi = helptextSharingIscsi;
 }

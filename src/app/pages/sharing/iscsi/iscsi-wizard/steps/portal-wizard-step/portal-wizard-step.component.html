@@ -1,2 +1,9 @@
 <ng-container [formGroup]="form">
+  <ix-select
+    formControlName="portal"
+    [label]="helptextSharingIscsi.portal_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.portal_tooltip | translate"
+    [options]="portalOptions$"
+    [required]="true"
+  ></ix-select>
 </ng-container>

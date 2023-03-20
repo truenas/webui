@@ -74,11 +74,11 @@ describe('TargetFormComponent', () => {
         mockCall('iscsi.initiator.query', [{
           id: 3,
           comment: 'comment_3',
-          initiators: 'initiator_1',
+          initiators: ['initiator_1'],
         }, {
           id: 4,
           comment: 'comment_4',
-          initiators: 'initiator_2',
+          initiators: ['initiator_2'],
         }] as IscsiInitiatorGroup[]),
         mockCall('iscsi.auth.query', [{
           id: 5,
