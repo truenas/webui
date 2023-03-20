@@ -26,6 +26,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
+import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
 import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
@@ -36,7 +37,6 @@ import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.c
 import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
-import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -66,7 +66,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AvailableAppsComponent,
     AvailableAppsHeaderComponent,
     CatalogsComponent,
-    ChartFormComponent,
     ChartWizardComponent,
     ManageCatalogSummaryDialogComponent,
     CatalogEditFormComponent,
@@ -89,6 +88,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     PodSelectDialogComponent,
     PodSelectLogsDialogComponent,
     AppUpgradeDialogComponent,
+    AppsToolbarButtonsComponent,
   ],
   imports: [
     CommonModule,
@@ -119,6 +119,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CastModule,
     TerminalModule,
     MatTooltipModule,
+    MatMenuModule,
   ],
 })
 export class AppsModule { }
