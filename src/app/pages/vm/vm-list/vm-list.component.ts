@@ -486,7 +486,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     })
       .afterClosed()
       .pipe(
-        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data.wasStopped),
+        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data?.wasStopped),
         untilDestroyed(this),
       )
       .subscribe((data) => {
