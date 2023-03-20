@@ -158,7 +158,7 @@ export class NfsFormComponent implements OnInit {
     this.ws.call('nfs.config')
       .pipe(untilDestroyed(this))
       .subscribe((nfsConfig) => {
-        this.hasNfsSecurityField = nfsConfig.v4;
+        this.hasNfsSecurityField = nfsConfig.v4 || nfsConfig.protocols?.includes(NfsProtocol.V4);
       });
   }
 
