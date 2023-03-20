@@ -1,5 +1,7 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle | titlecase"></ix-page-title-header>
+  <ix-page-title-header [pageTitle]="pageTitle | titlecase">
+    <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
+  </ix-page-title-header>
 </ng-template>
 
 <div fxLayout="row nowrap">
@@ -10,7 +12,6 @@
           <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
         </div>
         <a
-          *ngIf="app"
           mat-button
           color="primary"
           [ixTest]="[app?.name, 'install']"
