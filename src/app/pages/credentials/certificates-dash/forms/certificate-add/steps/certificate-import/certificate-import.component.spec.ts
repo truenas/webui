@@ -48,7 +48,7 @@ describe('CertificateImportComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  describe('using existing CSR', () => {
+  describe('not using an existing CSR', () => {
     beforeEach(async () => {
       await form.fillForm({
         Certificate: certificate,
@@ -80,7 +80,7 @@ describe('CertificateImportComponent', () => {
     });
   });
 
-  describe('not using an existing CSR', () => {
+  describe('using existing CSR', () => {
     beforeEach(async () => {
       await form.fillForm({
         Certificate: certificate,
