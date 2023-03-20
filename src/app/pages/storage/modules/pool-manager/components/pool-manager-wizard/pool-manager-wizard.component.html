@@ -3,7 +3,9 @@
     <mat-vertical-stepper #stepper>
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
-        <ix-general-wizard-step [form]="form.controls.general"></ix-general-wizard-step>
+        <ix-general-wizard-step
+          [form]="form.controls.general"
+        ></ix-general-wizard-step>
         <div class="step-buttons">
           <button
             mat-button
