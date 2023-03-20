@@ -845,7 +845,7 @@
   "Default Route": "",
   "Default TrueNAS controller": "",
   "Default is UTF-8 which supports all characters in all languages.": "",
-  "Define a length of time to retain the snapshot  on this system using a numeric value and a single lowercase letter for  units. Examples: <i>3h</i> is three hours, <i>1m</i> is one month, and  <i>1y</i> is one year. Does not accept Minute values. After the time  expires, the snapshot is removed. Snapshots which have been replicated  to other systems are not affected.": "",
+  "Define a length of time to retain the snapshot on this system. After the   time expires, the snapshot is removed. Snapshots which have been replicated   to other systems are not affected.": "",
   "Define a maximum size for both the dataset and any child datasets. Enter <i>0</i> to remove the quota.": "",
   "Define a number of minutes for <a href=\"https://linux.die.net/man/8/smartd\" target=\"_blank\">smartd</a> to wake up and check if any tests are configured to run.": "",
   "Define an alias for the interface  on this TrueNAS controller. The alias can be an IPv4 or IPv6  address.": "",
