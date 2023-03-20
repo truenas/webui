@@ -6,10 +6,32 @@
 
 <ix-available-apps-header></ix-available-apps-header>
 
-<div class="apps">
-  <ix-app-card
-    *ngFor="let app of apps; trackBy: trackByAppId"
-    [app]="app"
-    [routerLink]="['/apps', 'available', app.name]"
-  ></ix-app-card>
+<div *ngIf="apps.length" class="available-apps-list">
+  <ng-container *ngFor="let appSection of appSections; trackBy: trackByAppSectionTitle">
+    <section *ngIf="appSection.apps$ | async as apps">
+      <ng-container *ngIf="apps.length">
+        <h3 class="apps-section-title">
+          {{ appSection.title }}
+        </h3>
+
+        <div class="apps">
+          <ix-app-card
+            *ngFor="let app of apps; trackBy: trackByAppId"
+            [app]="app"
+            [routerLink]="['/apps', 'available', app.name]"
+          ></ix-app-card>
+        </div>
+
+        <p
+          *ngIf="appSection.totalApps > sliceAmount"
+          class="view-all"
+          (click)="appSection.fetchMore()"
+        >
+          <b>
+            {{ 'View All' | translate }} {{ appSection.title | translate }}
+          </b>
+        </p>
+      </ng-container>
+    </section>
+  </ng-container>
 </div>

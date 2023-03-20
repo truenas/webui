@@ -10,7 +10,6 @@ import {
 import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -106,8 +105,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadSimilarApps(): void {
     this.similarAppsLoading$.next(true);
-    this.appService.getAllCatalogs().pipe(
-      catalogToAppsTransform(),
+    this.appService.getAllApps().pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (apps) => {
@@ -124,7 +122,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     console.warn('The Screenshot section is under construction.');
   }
 
-  onInstallButtonPressed(): void {
+  installButtonPressed(): void {
     this.router.navigate(['/apps', 'available', this.appId, 'install']);
   }
 }
