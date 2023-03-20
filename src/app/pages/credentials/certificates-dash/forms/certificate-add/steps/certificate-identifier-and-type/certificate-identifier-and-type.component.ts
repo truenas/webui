@@ -14,9 +14,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import {
-  CertificateStep,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -25,7 +22,7 @@ import { DialogService, WebSocketService } from 'app/services';
   templateUrl: './certificate-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryProvider, CertificateStep {
+export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   @Output() profileSelected = new EventEmitter<CertificateProfile>();
 
   form = this.formBuilder.group({

@@ -1,5 +1,5 @@
 import {
-  Component, Inject, Input, OnDestroy, OnInit,
+  Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -52,6 +52,7 @@ import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.a
 })
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav: MatSidenav;
+  @Output() sidenavStatusChange = new EventEmitter<SidenavStatusData>();
 
   updateIsDone: Subscription;
 
@@ -218,11 +219,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.store$.dispatch(sidenavUpdated(data));
     }
 
-    this.core.emit({
-      name: 'SidenavStatus',
-      data,
-      sender: this,
-    });
+    this.sidenavStatusChange.emit(data);
   }
 
   getLogoIcon(): string {

@@ -498,24 +498,6 @@ export class StorageService {
     return vdevTypes.size > 1;
   }
 
-  isValidatable(layout: TopologyItemType): boolean {
-    switch (layout) {
-      case TopologyItemType.Disk:
-      case TopologyItemType.Stripe:
-      case TopologyItemType.Mirror:
-      case TopologyItemType.Spare:
-      case TopologyItemType.Log:
-      case TopologyItemType.Raidz:
-      case TopologyItemType.Raidz1:
-      case TopologyItemType.Raidz2:
-      case TopologyItemType.Raidz3:
-        return true;
-        break;
-      default:
-        return false;
-    }
-  }
-
   validateVdevs(category: PoolTopologyCategory,
     vdevs: TopologyItem[],
     disks: StorageDashboardDisk[],

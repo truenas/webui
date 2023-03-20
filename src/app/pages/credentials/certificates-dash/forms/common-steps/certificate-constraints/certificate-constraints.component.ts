@@ -15,9 +15,6 @@ import { CertificateCreate, CertificateExtension } from 'app/interfaces/certific
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import {
-  CertificateStep,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
-import {
   extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions-to-select-values.utils';
 import {
@@ -34,7 +31,7 @@ import { WebSocketService } from 'app/services';
   templateUrl: './certificate-constraints.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateConstraintsComponent implements OnInit, SummaryProvider, CertificateStep {
+export class CertificateConstraintsComponent implements OnInit, SummaryProvider {
   form = this.formBuilder.group({
     BasicConstraints: this.formBuilder.group({
       enabled: [false],
@@ -139,30 +136,44 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider,
       KeyUsage: keyUsage,
     } = extensions;
 
-    this.form.patchValue({
-      BasicConstraints: {
-        enabled: basicConstraints.enabled,
-        path_length: basicConstraints.path_length || null,
-        BasicConstraints: extensionsToSelectValues(
-          _.omit(basicConstraints, ['enabled', 'path_length']),
-        ) as BasicConstraint[],
-      },
-      AuthorityKeyIdentifier: {
-        enabled: authorityKeyIdentifier.enabled,
-        AuthorityKeyIdentifier: extensionsToSelectValues(
-          _.omit(authorityKeyIdentifier, ['enabled']),
-        ) as AuthorityKeyIdentifier[],
-      },
-      ExtendedKeyUsage: {
-        enabled: extendedKeyUsage.enabled,
-        extension_critical: extendedKeyUsage.extension_critical,
-        usages: extendedKeyUsage.usages,
-      },
-      KeyUsage: {
-        enabled: keyUsage.enabled,
-        KeyUsage: extensionsToSelectValues(_.omit(keyUsage, ['enabled'])),
-      },
-    });
+    if (basicConstraints) {
+      this.form.patchValue({
+        BasicConstraints: {
+          enabled: basicConstraints.enabled,
+          path_length: basicConstraints.path_length || null,
+          BasicConstraints: extensionsToSelectValues(
+            _.omit(basicConstraints, ['enabled', 'path_length']),
+          ) as BasicConstraint[],
+        },
+      });
+    }
+    if (authorityKeyIdentifier) {
+      this.form.patchValue({
+        AuthorityKeyIdentifier: {
+          enabled: authorityKeyIdentifier.enabled,
+          AuthorityKeyIdentifier: extensionsToSelectValues(
+            _.omit(authorityKeyIdentifier, ['enabled']),
+          ) as AuthorityKeyIdentifier[],
+        },
+      });
+    }
+    if (extendedKeyUsage) {
+      this.form.patchValue({
+        ExtendedKeyUsage: {
+          enabled: extendedKeyUsage.enabled,
+          extension_critical: extendedKeyUsage.extension_critical,
+          usages: extendedKeyUsage.usages,
+        },
+      });
+    }
+    if (keyUsage) {
+      this.form.patchValue({
+        KeyUsage: {
+          enabled: keyUsage.enabled,
+          KeyUsage: extensionsToSelectValues(_.omit(keyUsage, ['enabled'])),
+        },
+      });
+    }
   }
 
   private updateUsagesValidator(): void {
