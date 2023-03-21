@@ -47,7 +47,7 @@ export class ErrorTemplateComponent {
         errMsgHeight = 63;
       }
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
-      btPanel.setAttribute('style', 'width: 750px; height: calc(80vh - 240px)');
+      btPanel.setAttribute('style', 'width: 750px; max-height: calc(80vh - 240px)');
     } else {
       content.removeAttribute('style');
       btPanel.removeAttribute('style');

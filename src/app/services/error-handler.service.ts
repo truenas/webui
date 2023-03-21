@@ -21,7 +21,7 @@ export class ErrorHandlerService implements ErrorHandler {
     if (!this.translateService) {
       this.translateService = this.injector.get(TranslateService);
     }
-    return this.translate;
+    return this.translateService;
   }
 
   get dialog(): DialogService {
@@ -147,18 +147,27 @@ export class ErrorHandlerService implements ErrorHandler {
           parsedError = this.parseJobError(error);
         } else if (typeof error === 'string') {
           parsedError = {
-            title: this.translate?.instant('Error') || 'Error',
+            title: (this.translate?.instant('Error') || 'Error'),
             message: error,
+            backtrace: failedJob.exception,
           };
         }
 
         if (Array.isArray(parsedError)) {
           for (const err of parsedError) {
-            err.title = field + ': ' + err.title;
+            if (err.title === (this.translate?.instant('Error') || 'Error')) {
+              err.title = err.title + ': ' + field;
+            } else {
+              err.title = field + ': ' + err.title;
+            }
             errors.push(err);
           }
         } else {
-          parsedError.title = field + ': ' + parsedError.title;
+          if (parsedError.title === (this.translate?.instant('Error') || 'Error')) {
+            parsedError.title = parsedError.title + ': ' + field;
+          } else {
+            parsedError.title = field + ': ' + parsedError.title;
+          }
           errors.push(parsedError);
         }
       });

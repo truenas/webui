@@ -50,10 +50,13 @@ export class DialogService {
 
   error(error: ErrorReport | ErrorReport[]): Observable<boolean> {
     if (Array.isArray(error)) {
-      const dialogRef = this.dialog.open(MultiErrorDialogComponent, {
-        data: error,
-      });
-      return dialogRef.afterClosed();
+      if (error.length > 1) {
+        const dialogRef = this.dialog.open(MultiErrorDialogComponent, {
+          data: error,
+        });
+        return dialogRef.afterClosed();
+      }
+      error = error[0];
     }
     const dialogRef = this.dialog.open(ErrorDialogComponent, {
       data: error,
