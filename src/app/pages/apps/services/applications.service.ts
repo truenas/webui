@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -25,8 +25,12 @@ export class ApplicationsService {
     return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
   }
 
-  getAllCatalogs(): Observable<Catalog[]> {
-    return this.ws.call('catalog.query', [[], { extra: { cache: true, item_details: true } }]);
+  getAllApps(): Observable<CatalogApp[]> {
+    return this.ws.call('app.available');
+  }
+
+  getAllAppsCategories(): Observable<string[]> {
+    return this.ws.call('app.categories');
   }
 
   getChartReleases(name?: string): Observable<ChartRelease[]> {

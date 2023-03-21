@@ -4,7 +4,8 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
@@ -25,13 +26,11 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-const mbs = 1024 * 1024;
-
 @UntilDestroy()
 @Component({
   templateUrl: './vm-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CpuValidatorService, VmGpuService],
+  providers: [CpuValidatorService],
 })
 export class VmEditFormComponent implements OnInit {
   showCpuModelField = true;
@@ -52,7 +51,7 @@ export class VmEditFormComponent implements OnInit {
     cpu_mode: [null as VmCpuMode],
     cpu_model: [''],
     memory: [null as number, this.validators.withMessage(
-      Validators.min(256 * mbs),
+      Validators.min(256 * MiB),
       this.translate.instant(helptext.memory_size_err),
     )],
     min_memory: [null as number],
@@ -101,8 +100,8 @@ export class VmEditFormComponent implements OnInit {
     this.existingVm = vm;
     this.form.patchValue({
       ...vm,
-      memory: vm.memory * mbs,
-      min_memory: vm.min_memory ? vm.min_memory * mbs : null,
+      memory: vm.memory * MiB,
+      min_memory: vm.min_memory ? vm.min_memory * MiB : null,
     });
 
     this.setupGpuControl(vm);
@@ -114,15 +113,15 @@ export class VmEditFormComponent implements OnInit {
 
     const vmPayload = {
       ...this.form.value,
-      memory: Math.round(this.form.value.memory / mbs),
+      memory: Math.round(this.form.value.memory / MiB),
       min_memory: this.form.value.min_memory
-        ? Math.round(this.form.value.min_memory / mbs)
+        ? Math.round(this.form.value.min_memory / MiB)
         : null,
     };
     delete vmPayload.gpus;
 
     const gpusIds = this.form.value.gpus;
-    combineLatest([
+    forkJoin([
       this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
       this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
       this.gpuService.addIsolatedGpuPciIds(gpusIds),
