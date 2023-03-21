@@ -160,7 +160,7 @@ describe('CloudsyncFormComponent', () => {
       },
       snapshot: false,
       transfer_mode: TransferMode.Copy,
-      transfers: null,
+      transfers: 4,
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });

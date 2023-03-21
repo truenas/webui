@@ -208,13 +208,13 @@
             [label]="helptext.encryption_salt_placeholder | translate"
             [tooltip]="helptext.encryption_salt_tooltip | translate"
           ></ix-input>
-          <ix-input
+          <ix-select
             *ngIf="form.controls.transfers.enabled"
             formControlName="transfers"
-            type="number"
+            [options]="transfersOptions$"
             [label]="helptext.transfers_placeholder | translate"
             [tooltip]="helptext.transfers_tooltip | translate"
-          ></ix-input>
+          ></ix-select>
           <ix-chips
             *ngIf="form.controls.bwlimit.enabled"
             formControlName="bwlimit"

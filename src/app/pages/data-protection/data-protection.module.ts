@@ -16,6 +16,7 @@ import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
+import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -81,6 +82,7 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     CloudsyncRestoreDialogComponent,
     TransferModeExplanationComponent,
     ReplicationRestoreDialogComponent,
+    CustomTransfersDialogComponent,
   ],
 })
 export class DataProtectionModule {}
