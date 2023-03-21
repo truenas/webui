@@ -2107,7 +2107,7 @@
   "Invalid value. Valid values are numbers followed by optional unit letters,  like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>.": "Ongeldige waarde. Geldige waarden zijn cijfers gevolgd door optionele eenheidsletters, zoals <code>256k</code> of <code>1 G</code> of <code>2 MB</code>.",
   "Is planned to be automatically destroyed at {datetime}": "Staat gepland om automatisch te worden vernietigd op {datetime}",
   "Isolated GPU Device(s)": "Geïsoleerd(e) GPU-apparaat(apparaten)",
-  "Isolated GPU PCI Id's": "Geïsoleerde GPU PCI Id's",
+  "Isolated GPU PCI Ids": "Geïsoleerde GPU PCI Ids",
   "Issuer": "Uitgever",
   "It is not recommended to create a pool with vdevs containing different numbers of disks. Continue?": "Het wordt niet aanbevolen om een ​​pool te maken met vdevs die verschillende aantallen schijven bevatten. Doorgaan?",
   "It is not recommended to extend a pool with one or more vdevs containing different numbers of disks. Continue?": "Het wordt niet aanbevolen om een ​​pool uit te breiden met één of meer vdevs met verschillende aantallen schijven. Doorgaan?",

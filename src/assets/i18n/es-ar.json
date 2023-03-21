@@ -438,7 +438,7 @@
   "Inventory": "",
   "Is planned to be automatically destroyed at {datetime}": "",
   "Isolated GPU Device(s)": "",
-  "Isolated GPU PCI Id's": "",
+  "Isolated GPU PCI Ids": "",
   "It seems you haven't configured pools yet.": "",
   "It seems you haven't setup any NFS Shares yet. Please click the button below to add an NFS Share.": "",
   "It seems you haven't setup any SMB Shares yet. Please click the button below to add an SMB Share.": "",

@@ -2012,7 +2012,7 @@
   "Invalid value. Valid values are numbers followed by optional unit letters,  like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>.": "无效值。有效值是数字，后跟可选的单位字母，例如<code>256k</code>或<code>1 G</code>或<code>2 MiB</code>。",
   "Is planned to be automatically destroyed at {datetime}": "计划在 {datetime} 自动销毁",
   "Isolated GPU Device(s)": "隔离GPU设备",
-  "Isolated GPU PCI Id's": "隔离的GPU PCI Id",
+  "Isolated GPU PCI Ids": "隔离的GPU PCI Id",
   "Issuer": "颁发者",
   "It is not recommended to create a pool with vdevs containing different numbers of disks. Continue?": "不建议使用包含不同数量磁盘的 vdev 创建池。继续吗？",
   "It is not recommended to extend a pool with one or more vdevs containing different numbers of disks. Continue?": "不建议使用一个或多个包含不同数量磁盘的 vdev 扩展池。继续吗？",

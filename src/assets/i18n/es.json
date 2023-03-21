@@ -1729,7 +1729,7 @@
   "Inventory": "",
   "Is planned to be automatically destroyed at {datetime}": "",
   "Isolated GPU Device(s)": "",
-  "Isolated GPU PCI Id's": "",
+  "Isolated GPU PCI Ids": "",
   "Issuer": "",
   "It is not recommended to create a pool with vdevs containing different numbers of disks. Continue?": "",
   "It is not recommended to extend a pool with one or more vdevs containing different numbers of disks. Continue?": "",
