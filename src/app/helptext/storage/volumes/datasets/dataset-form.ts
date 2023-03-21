@@ -26,7 +26,7 @@ export default {
  the best files to compress.<br> <i>GZIP</i> options range from 1 for least \
  compression, best performance, through 9 for maximum compression with \
  greatest performance impact.<br> <i>ZLE</i> is a fast algorithm that only \
- elminates runs of zeroes.'),
+ eliminates runs of zeroes.'),
 
   dataset_form_atime_placeholder: T('Enable Atime'),
   dataset_form_atime_tooltip: T('Choose <i>ON</i> to update the access time for files\
