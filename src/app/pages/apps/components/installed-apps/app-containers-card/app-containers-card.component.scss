@@ -56,15 +56,4 @@
     flex: 1 0 auto;
     justify-content: flex-end;
   }
-
-  button {
-    background: none;
-    border: 0;
-    color: var(--fg2);
-    cursor: pointer;
-    overflow: hidden;
-    text-decoration: underline;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 }

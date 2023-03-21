@@ -33,6 +33,10 @@ export class AppInfoCardComponent {
     private translate: TranslateService,
   ) {}
 
+  hasNoUpdates(): boolean {
+    return !this.app?.update_available && !this.app?.container_images_update_available;
+  }
+
   portalName(name = 'web_portal'): string {
     return startCase(name);
   }
