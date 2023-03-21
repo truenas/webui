@@ -5,11 +5,11 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  CertificateImportComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
+  CaImportComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-import/ca-import.component';
 
-describe('CertificateImportComponent', () => {
-  let spectator: Spectator<CertificateImportComponent>;
+describe('CaImportComponent', () => {
+  let spectator: Spectator<CaImportComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
@@ -18,7 +18,7 @@ describe('CertificateImportComponent', () => {
     + '-----END CERTIFICATE-----';
 
   const createComponent = createComponentFactory({
-    component: CertificateImportComponent,
+    component: CaImportComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,

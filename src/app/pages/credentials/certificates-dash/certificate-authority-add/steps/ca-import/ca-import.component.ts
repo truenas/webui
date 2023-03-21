@@ -12,11 +12,11 @@ import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/u
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-common-certificate-import',
-  templateUrl: './common-certificate-import.component.html',
+  selector: 'ix-ca-import',
+  templateUrl: './ca-import.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CommonCertificateImportComponent implements SummaryProvider {
+export class CaImportComponent implements SummaryProvider {
   form = this.formBuilder.group({
     certificate: ['', Validators.required],
     privatekey: [''],
@@ -49,7 +49,7 @@ export class CommonCertificateImportComponent implements SummaryProvider {
     return summary;
   }
 
-  getPayload(): Omit<CommonCertificateImportComponent['form']['value'], 'passphrase2'> {
+  getPayload(): Omit<CaImportComponent['form']['value'], 'passphrase2'> {
     const values = this.form.value;
 
     return _.pick(values, ['certificate', 'privatekey', 'passphrase']);
