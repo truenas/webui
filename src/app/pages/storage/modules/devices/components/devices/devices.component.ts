@@ -16,16 +16,20 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
-  Disk, isTopologyDisk, isVdev, TopologyDisk,
+  Disk, isTopologyDisk, isVdev, TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { LayoutService } from 'app/services/layout.service';
+
+const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
 @UntilDestroy()
 @Component({
@@ -50,6 +54,14 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => Boolean(node.children?.length);
   readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
+
+  readonly hasTopLevelRaidz$: Observable<boolean> = this.devicesStore.nodes$.pipe(
+    map((node) => {
+      return node.some((nodeItem) => nodeItem.children.some((child: TopologyItem) => {
+        return raidzItems.includes(child.type);
+      }));
+    }),
+  );
 
   showMobileDetails = false;
   isMobileView = false;

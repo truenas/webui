@@ -109,7 +109,7 @@ export const helptextSystemSupport = {
   forums: T('<a href="https://www.ixsystems.com/community/" target="_blank">\
  TrueNAS Forums</a> - Find answers from other users in the forums.'),
 
-  licensing: T('<a href="https://www.ixsystems.com/support/" target="_blank">\
+  licensing: T('<a href="https://www.ixsystems.com/support/truenas-arrays/" target="_blank">\
  TrueNAS Licensing</a> - Learn more about enterprise-grade support.'),
 
   updateTxt: T('Update License'),

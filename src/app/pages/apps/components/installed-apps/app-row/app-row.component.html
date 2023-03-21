@@ -42,7 +42,7 @@
     <button
       mat-icon-button
       ixTest="app-action"
-      (click)="$event.stopPropagation()"
+      (click)="isAppStopped ? start() : stop(); $event.stopPropagation()"
     >
       <ix-icon *ngIf="isAppStopped" name="mdi-play"></ix-icon>
       <ix-icon *ngIf="!isAppStopped" name="mdi-stop"></ix-icon>

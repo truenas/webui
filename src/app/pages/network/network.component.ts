@@ -587,7 +587,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       name: 'manage',
       matTooltip: this.translate.instant('Manage'),
       onClick: (row: IpmiRow) => {
-        this.window.open(`http://${row.ipaddress}`);
+        this.window.open(`https://${row.ipaddress}`);
       },
     }];
   }

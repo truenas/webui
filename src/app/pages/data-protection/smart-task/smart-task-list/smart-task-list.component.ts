@@ -63,7 +63,6 @@ export class SmartTaskListComponent implements EntityTableConfig {
     protected storageService: StorageService,
     protected slideInService: IxSlideInService,
     protected taskService: TaskService,
-    protected entityFormService: EntityFormService,
     protected translate: TranslateService,
     protected store$: Store<AppState>,
   ) {

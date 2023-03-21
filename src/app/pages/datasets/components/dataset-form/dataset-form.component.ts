@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
@@ -90,8 +91,8 @@ export class DatasetFormComponent implements FormConfiguration {
     quota: '', refquota: '', reservation: '', refreservation: '', special_small_block_size: '',
   };
 
-  private minquota = 1024 * 1024 * 1024; // 1G minimum
-  private minrefquota = 1024 * 1024 * 1024;
+  private minquota = GiB; // 1G minimum
+  private minrefquota = GiB;
 
   parent: string;
   protected parentHasPassphrase = false;

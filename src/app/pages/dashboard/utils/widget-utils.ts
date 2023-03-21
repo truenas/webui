@@ -1,4 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import {
+  GiB, KiB, MiB, PiB, TiB,
+} from 'app/constants/bytes.constant';
 
 interface Converted {
   value: string;
@@ -19,23 +22,23 @@ export class WidgetUtils {
       case 'B':
       case 'KB':
         units = T('KiB');
-        result = value / 1024;
+        result = value / KiB;
         break;
       case 'MB':
         units = T('MiB');
-        result = value / 1024 / 1024;
+        result = value / MiB;
         break;
       case 'GB':
         units = T('GiB');
-        result = value / 1024 / 1024 / 1024;
+        result = value / GiB;
         break;
       case 'TB':
         units = T('TiB');
-        result = value / 1024 / 1024 / 1024 / 1024;
+        result = value / TiB;
         break;
       case 'PB':
         units = T('PiB');
-        result = value / 1024 / 1024 / 1024 / 1024 / 1024;
+        result = value / PiB;
         break;
       default:
         units = T('KiB');
@@ -48,13 +51,13 @@ export class WidgetUtils {
   optimizeUnits(value: number): string {
     value = Math.abs(value);
     let units = 'B';
-    if (value > 1024 && value < (1024 * 1024)) {
+    if (value > 1024 && value < MiB) {
       units = 'KB';
-    } else if (value >= (1024 * 1024) && value < (1024 * 1024 * 1024)) {
+    } else if (value >= MiB && value < GiB) {
       units = 'MB';
-    } else if (value >= (1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024)) {
+    } else if (value >= GiB && value < TiB) {
       units = 'GB';
-    } else if (value >= (1024 * 1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024 * 1024)) {
+    } else if (value >= TiB && value < PiB) {
       units = 'TB';
     }
 

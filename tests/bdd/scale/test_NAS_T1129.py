@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 import time
 import xpaths
 from function import (
@@ -21,6 +22,7 @@ from pytest_bdd import (
 from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='LDAP_SMB')
 @scenario('features/NAS-T1129.feature', 'Create an smb share with the LDAP dataset and verify the connection')
 def test_create_an_smb_share_with_the_ldap_dataset_and_verify_the_connection(driver):
     """Create an smb share with the LDAP dataset and verify the connection."""
@@ -85,7 +87,7 @@ def on_the_smb_add_set_path_to_mnttankmy_ldap_dataset(driver, path):
     global dataset_path
     dataset_path = path
     assert wait_on_element(driver, 5, xpaths.smb.addTitle)
-    assert wait_on_element(driver, 5, xpaths.smb.path_Input)
+    assert wait_on_element(driver, 5, xpaths.smb.path_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.path_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.path_Input).send_keys(path)
 
@@ -93,7 +95,7 @@ def on_the_smb_add_set_path_to_mnttankmy_ldap_dataset(driver, path):
 @then(parsers.parse('input "{name}" as name and click enable'))
 def input_ldapsmbshare_as_name_and_click_enable(driver, name):
     """input "ldapsmbshare" as name and click enable."""
-    assert wait_on_element(driver, 5, xpaths.smb.name_Input)
+    assert wait_on_element(driver, 5, xpaths.smb.name_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.name_Input).click()
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(name)
@@ -130,6 +132,7 @@ def the_ldapsmbshare_should_be_added_to_the_shares_list(driver, share_name):
     """the ldapsmbshare should be added to the Shares list."""
     assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name(share_name))
     assert wait_on_element(driver, 5, xpaths.sharing.smb_Service_Status)
+    time.sleep(1)
 
 
 @then(parsers.parse('send a file to the share with ip/"{smb_share}" and "{ldap_user}" and "{ldap_password}"'))
