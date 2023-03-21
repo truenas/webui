@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import {
   Component, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
@@ -27,6 +28,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
 interface CatalogSyncJob {
   id: number;
@@ -78,6 +80,8 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -280,7 +284,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.store$.dispatch(jobIndicatorPressed());
+        this.snackbar.success(this.translate.instant('Syncing all catalogs. This may take a few minutes.'));
       });
   }
 
