@@ -8,9 +8,7 @@
       [attr.aria-label]="expandedRow === row ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
       (click)="$event.stopPropagation(); onClick(row)"
     >
-      <mat-icon>
-        {{ expandedRow === row ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
+      <ix-icon [name]="expandedRow === row ? 'expand_less' : 'expand_more'"></ix-icon>
     </button>
   </td>
 </ng-container>

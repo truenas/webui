@@ -426,7 +426,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     };
   }
 
-  getChartBodyClassess(nic: BaseNetworkInterface): string[] {
+  getChartBodyClasses(nic: BaseNetworkInterface): string[] {
     const classes = [];
 
     if (this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Errors) {

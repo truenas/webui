@@ -1,0 +1,29 @@
+<h1 matDialogTitle>
+  {{ 'Custom Transfers' | translate }}
+</h1>
+<form class="ix-form-container">
+  <ix-input
+    type="number"
+    [formControl]="transfers"
+    [label]="helptext.transfers_placeholder | translate"
+    [tooltip]="helptext.transfers_tooltip | translate"
+    [required]="true"
+  ></ix-input>
+
+  <ix-form-actions>
+    <button mat-button type="button" matDialogClose ixTest="cancel">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      color="primary"
+      type="button"
+      ixTest="save"
+      [disabled]="transfers.invalid"
+      (click)="onSave()"
+    >
+      {{ 'Save' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

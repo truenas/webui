@@ -8,7 +8,7 @@
     [disabled]="!manager.selected.length"
     (click)="addSelectedDisks()"
   >
-    <mat-icon class="arrow">arrow_forward</mat-icon>
+    <ix-icon name="arrow_forward" class="arrow"></ix-icon>
   </button>
   <button
     id="vdev__remove-button"
@@ -19,7 +19,7 @@
     [disabled]="!selected.length"
     (click)="removeSelectedDisks()"
   >
-    <mat-icon class="arrow">arrow_back</mat-icon>
+    <ix-icon name="arrow_back" class="arrow"></ix-icon>
   </button>
 </div>
 <div class="container">
@@ -35,7 +35,7 @@
         [disabled]="group === 'data' && manager.vdevs['data'].length < 2"
         (click)="remove()"
       >
-        <mat-icon>close</mat-icon>
+        <ix-icon name="close"></ix-icon>
       </button>
     </div>
   </div>

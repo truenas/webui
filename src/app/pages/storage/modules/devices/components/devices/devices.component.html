@@ -84,9 +84,9 @@
                   [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
                   (click)="$event.preventDefault()"
                 >
-                  <mat-icon>
-                    {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
-                  </mat-icon>
+                  <ix-icon
+                    [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
+                  ></ix-icon>
                 </button>
               </ix-vdev-group-node>
             </div>
@@ -117,9 +117,9 @@
                 (click)="$event.preventDefault()"
                 (keydown.enter)="$event.stopPropagation()"
               >
-                <mat-icon>
-                  {{ treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right' }}
-                </mat-icon>
+                <ix-icon
+                  [name]="treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right'"
+                ></ix-icon>
               </button>
 
               <ix-topology-item-node
@@ -152,6 +152,7 @@
       [topologyParentItem]="selectedParentNode$ | async | cast"
       [disk]="getDisk(selectedNode.children[0] || selectedNode)"
       [poolId]="poolId"
+      [hasTopLevelRaidz]="hasTopLevelRaidz$ | async"
       [topologyCategory]="selectedTopologyCategory$ | async"
       (closeMobileDetails)="closeMobileDetails()"
     ></ix-disk-details-panel>

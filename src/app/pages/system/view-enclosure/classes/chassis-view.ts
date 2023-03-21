@@ -288,16 +288,19 @@ export class ChassisView {
   }
 
   colorDriveTray(options: ChangeDriveTrayOptions): void {
-    if (!options.slot) return; // TODO: find out why we get undefined options.slot
+    // if there is no disk in slot we can't get a slot number, so we use id instead
+    const slot = !options.slot ? Number(options.id) : options.slot;
+    const driveIndex = slot - this.slotRange.start;
 
-    const driveIndex = options.slot - this.slotRange.start;
     if (driveIndex < 0 || driveIndex >= this.totalDriveTrays) {
       console.warn(`IGNORING DRIVE AT INDEX ${driveIndex} SLOT ${options.slot} IS OUT OF RANGE`);
       return;
     }
+
     const dt = this.driveTrayObjects[driveIndex];
 
-    dt.color = options.color.toLowerCase();
+    if (dt) dt.color = options.color.toLowerCase();
+
     if (dt && this.initialized) {
       dt.handle.alpha = options.color === 'none' ? this.disabledOpacity : 1;
     }

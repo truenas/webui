@@ -163,6 +163,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-drawer,
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
   .mat-mdc-card,
+  .mat-mdc-option,
   .mat-mdc-paginator,
   .mat-mdc-select-content,
   .mat-mdc-select-panel,
@@ -499,7 +500,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       min-height: 40px;
     }
 
-    .more-info .mat-icon {
+    .more-info .ix-icon {
       margin: 0 4px;
     }
 
@@ -931,18 +932,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border-bottom: 1px solid var(--lines);
   }
 
-  .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
-    opacity: var(--disabled-opacity);
-    position: absolute;
-    right: 0;
-    top: -5px;
-
-    i {
-      font-size: 17px;
-    }
-  }
-
   datatable-selection > .empty-row {
     color: var(--alt-fg1);
   }
@@ -1071,7 +1060,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding-left: 3px;
   }
 
-  tree-node-content .mat-icon {
+  tree-node-content .ix-icon {
     vertical-align: top;
   }
 
@@ -1185,7 +1174,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--red) !important;
     color: white !important;
 
-    .mat-icon {
+    .ix-icon {
       color: white !important;
       opacity: 0.8 !important;
     }
@@ -1357,6 +1346,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.5;
     user-select: none;
 
+    .ix-icon,
     .mat-icon {
       align-items: center;
       display: flex;

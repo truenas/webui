@@ -33,9 +33,15 @@ import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import {
+  CaImportComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-import/ca-import.component';
+import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
+import {
+  CsrImportComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   CertificateAddComponent,
@@ -63,14 +69,16 @@ import { PcloudProviderFormComponent } from './backup-credentials/cloud-credenti
 import { S3ProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
 import { SftpProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
 import { WebdavProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
+import { CertificateAuthorityAddComponent } from './certificates-dash/certificate-authority-add/certificate-authority-add.component';
+import { CaIdentifierAndTypeComponent } from './certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
-import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
-import { OldCertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
+import { CsrAddComponent } from './certificates-dash/csr-add/csr-add.component';
+import { CsrIdentifierAndTypeComponent } from './certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
 import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
-import { CertificateOptionsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
 import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+import { CertificateOptionsComponent } from './certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
 import { CertificateSubjectComponent } from './certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 
 @NgModule({
@@ -79,7 +87,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     SshConnectionFormComponent,
     SshKeypairFormComponent,
     CertificatesDashComponent,
-    OldCertificateAddComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
     CertificateEditComponent,
@@ -113,6 +120,11 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CertificateIdentifierAndTypeComponent,
     CertificateConstraintsComponent,
     CertificateImportComponent,
+    CaIdentifierAndTypeComponent,
+    CaImportComponent,
+    CsrAddComponent,
+    CsrIdentifierAndTypeComponent,
+    CsrImportComponent,
   ],
   imports: [
     CommonModule,

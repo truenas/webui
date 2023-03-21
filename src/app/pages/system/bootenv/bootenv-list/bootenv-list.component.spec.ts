@@ -76,7 +76,7 @@ describe('BootEnvironmentListComponent', () => {
 
     const expectedRows = [
       ['', 'Name', 'Active', 'Date Created', 'Space', 'Keep', ''],
-      ['', 'CLONE', '', '2022-08-09 20:52:00', '384 KiB', 'No', 'more_vert'],
+      ['', 'CLONE', '', '2022-08-09 20:52:00', '384 KiB', 'No', ''],
       [
         '',
         '22.12-MASTER-20220808-020013',
@@ -84,7 +84,7 @@ describe('BootEnvironmentListComponent', () => {
         '2022-08-09 20:52:00',
         '3 GiB',
         'No',
-        'more_vert',
+        '',
       ],
     ];
 

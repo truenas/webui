@@ -24,12 +24,14 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
-import { UserService } from 'app/services';
+import { UserService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+
+const defaultHomePath = '/nonexistent';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -42,6 +44,8 @@ export class UserFormComponent {
 
   isFormLoading = false;
   subscriptions: Subscription[] = [];
+
+  homeModeOldValue = '';
 
   get isNewUser(): boolean {
     return !this.editingUser;
@@ -75,8 +79,9 @@ export class UserFormComponent {
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
-    home: ['/nonexistent', []],
+    home: [defaultHomePath, []],
     home_mode: ['755'],
+    home_create: [false],
     sshpubkey: [null as string],
     sshpubkey_file: [null as File[]],
     password_disabled: [false],
@@ -102,6 +107,7 @@ export class UserFormComponent {
     groups: helptext.user_form_aux_groups_tooltip,
     home: helptext.user_form_dirs_explorer_tooltip,
     home_mode: helptext.user_form_home_dir_permissions_tooltip,
+    home_create: helptext.user_form_home_create_tooltip,
     sshpubkey: helptext.user_form_auth_sshkey_tooltip,
     password_disabled: helptext.user_form_auth_pw_enable_tooltip,
     shell: helptext.user_form_shell_tooltip,
@@ -117,6 +123,37 @@ export class UserFormComponent {
   readonly shellProvider = new SimpleAsyncComboboxProvider(this.shellOptions$);
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
+  get homeCreateWarning(): string {
+    const homeCreate = this.form.value.home_create;
+    const home = this.form.value.home;
+    const homeMode = this.form.value.home_mode;
+    if (this.isNewUser) {
+      if (!homeCreate && home !== defaultHomePath) {
+        return this.translate.instant(
+          'With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+    } else {
+      if (this.editingUser.immutable || home === defaultHomePath) {
+        return '';
+      }
+      if (!homeCreate && this.editingUser.home !== home) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+      if (!homeCreate && !!homeMode && this.homeModeOldValue !== homeMode) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+    }
+    return '';
+  }
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
@@ -128,7 +165,18 @@ export class UserFormComponent {
     private slideIn: IxSlideInService,
     private storageService: StorageService,
     private store$: Store<AppState>,
-  ) { }
+    private dialog: DialogService,
+  ) {
+    this.form.controls.smb.errors$.pipe(
+      filter((error) => error?.manualValidateErrorMsg),
+      switchMap(() => this.form.controls.password.valueChanges),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      if (this.form.controls.smb.invalid) {
+        this.form.controls.smb.updateValueAndValidity();
+      }
+    });
+  }
 
   /**
    * @param user Skip argument to add new user.
@@ -152,9 +200,10 @@ export class UserFormComponent {
       ),
     );
 
-    if (user?.home && user.home !== '/nonexistent') {
+    if (user?.home && user.home !== defaultHomePath) {
       this.storageService.filesystemStat(user.home).pipe(untilDestroyed(this)).subscribe((stat) => {
         this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
+        this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
       });
     } else {
       this.form.patchValue({ home_mode: '755' });
@@ -183,6 +232,7 @@ export class UserFormComponent {
       group: values.group,
       groups: values.groups,
       home_mode: values.home_mode,
+      home_create: values.home_create,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
       password_disabled: values.password_disabled,
@@ -194,42 +244,59 @@ export class UserFormComponent {
       username: values.username,
     };
 
-    this.isFormLoading = true;
-    let request$: Observable<unknown>;
-    if (this.isNewUser) {
-      request$ = this.ws.call('user.create', [{
-        ...body,
-        group_create: values.group_create,
-        password: values.password,
-        uid: values.uid,
-      }]);
-    } else {
-      const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
-      if (passwordNotEmpty && !values.password_disabled) {
-        body.password = values.password;
-      }
-      request$ = this.ws.call('user.update', [this.editingUser.id, body]);
+    let homeCreateWarningConfirmation$ = of(true);
+    if (this.homeCreateWarning) {
+      homeCreateWarningConfirmation$ = this.dialog.confirm({
+        title: this.translate.instant('Warning!'),
+        message: this.homeCreateWarning,
+      });
     }
 
-    request$.pipe(
-      switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
-      map((users) => users[0]),
+    homeCreateWarningConfirmation$.pipe(
+      filter(Boolean),
       untilDestroyed(this),
     ).subscribe({
-      next: (user) => {
+      next: () => {
+        this.isFormLoading = true;
+        let request$: Observable<unknown>;
         if (this.isNewUser) {
-          this.store$.dispatch(userAdded({ user }));
+          request$ = this.ws.call('user.create', [{
+            ...body,
+            group_create: values.group_create,
+            password: values.password,
+            uid: values.uid,
+          }]);
         } else {
-          this.store$.dispatch(userChanged({ user }));
+          const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
+          if (passwordNotEmpty && !values.password_disabled) {
+            body.password = values.password;
+          }
+          request$ = this.ws.call('user.update', [this.editingUser.id, body]);
         }
-        this.isFormLoading = false;
-        this.slideIn.close();
-        this.cdr.markForCheck();
+
+        request$.pipe(
+          switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
+          map((users) => users[0]),
+          untilDestroyed(this),
+        ).subscribe({
+          next: (user) => {
+            if (this.isNewUser) {
+              this.store$.dispatch(userAdded({ user }));
+            } else {
+              this.store$.dispatch(userChanged({ user }));
+            }
+            this.isFormLoading = false;
+            this.slideIn.close();
+            this.cdr.markForCheck();
+          },
+          error: (error) => {
+            this.isFormLoading = false;
+            this.errorHandler.handleWsFormError(error, this.form);
+            this.cdr.markForCheck();
+          },
+        });
       },
-      error: (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
+      complete: () => {
       },
     });
   }
@@ -290,6 +357,7 @@ export class UserFormComponent {
       this.form.controls.group.disable();
       this.form.controls.home_mode.disable();
       this.form.controls.home.disable();
+      this.form.controls.home_create.disable();
       this.form.controls.username.disable();
     }
 

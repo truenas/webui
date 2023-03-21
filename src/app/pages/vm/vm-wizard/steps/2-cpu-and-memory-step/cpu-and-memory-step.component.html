@@ -1,0 +1,94 @@
+<form [formGroup]="form">
+  <p *ngIf="maxVcpus" class="warning-text">
+    {{ helptext.vcpus_warning | translate: { maxVcpus } }}
+  </p>
+
+  <ix-input
+    formControlName="vcpus"
+    type="number"
+    [label]="'Virtual CPUs' | translate"
+    [required]="true"
+    [tooltip]="helptext.vcpus_tooltip | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="cores"
+    type="number"
+    [label]="'Cores' | translate"
+    [required]="true"
+    [tooltip]="helptext.cores.tooltip | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="threads"
+    type="number"
+    [label]="'Threads' | translate"
+    [required]="true"
+    [tooltip]="helptext.threads.tooltip | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="cpuset"
+    [label]="'Optional: CPU Set (Examples: 0-3,8-11)' | translate"
+    [tooltip]="helptext.cpuset.tooltip | translate"
+  ></ix-input>
+
+  <ix-checkbox
+    formControlName="pin_vcpus"
+    [label]="'Pin vcpus' | translate"
+    [tooltip]="helptext.pin_vcpus.tooltip | translate"
+  ></ix-checkbox>
+
+  <ix-select
+    formControlName="cpu_mode"
+    [label]="'CPU Mode' | translate"
+    [options]="cpuModes$"
+    [required]="true"
+  ></ix-select>
+
+  <ix-select
+    *ngIf="isCpuCustom"
+    formControlName="cpu_model"
+    [label]="'CPU Model' | translate"
+    [options]="cpuModels$"
+  ></ix-select>
+
+  <ix-input
+    formControlName="memory"
+    [label]="'Memory Size' | translate"
+    [format]="formatter.memorySizeFormatting"
+    [parse]="formatter.memorySizeParsing"
+    [tooltip]="helptext.memory_tooltip | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="min_memory"
+    [label]="'Minimum Memory Size' | translate"
+    [format]="formatter.memorySizeFormatting"
+    [parse]="formatter.memorySizeParsing"
+    [tooltip]="helptext.min_memory_tooltip | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="nodeset"
+    [label]="'Optional: NUMA nodeset (Example: 0-1)' | translate"
+    [tooltip]="helptext.nodeset.tooltip | translate"
+  ></ix-input>
+
+  <p class="warning-text">{{ helptext.memory_warning | translate }}</p>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+  </ix-form-actions>
+</form>

@@ -23,7 +23,7 @@
             ixTest="nic-back"
             (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <!-- Back to previous slide -->
@@ -35,7 +35,7 @@
             [ixTest]="['nic-widget', 'back']"
             (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <h3 class="mat-card-title-text">
@@ -54,13 +54,12 @@
               [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
               (click)="manageInterface(nicState)"
             >
-              <mat-icon
+              <ix-icon
+                name="edit"
                 matTooltipPosition="above"
                 aria-label="Configure Interface"
                 [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
-              >
-                edit
-              </mat-icon>
+              ></ix-icon>
             </button>
 
             <button
@@ -68,13 +67,12 @@
               [ixTest]="['nic-widget', 'network-reports', nicState.name]"
               (click)="router.navigate(['reportsdashboard/network'])"
             >
-              <mat-icon
+              <ix-icon
+                name="insert_chart"
                 matTooltipPosition="above"
                 aria-label="Network Reports"
                 [matTooltip]="'Network Reports' | translate"
-              >
-                insert_chart
-              </mat-icon>
+              ></ix-icon>
             </button>
           </div>
         </mat-toolbar-row>
@@ -114,12 +112,8 @@
                   >
                     <div fxLayoutAlign="start center" fxLayoutGap="8px">
                       <span>{{ linkStateLabel | translate }}</span>
-                      <mat-icon *ngIf="linkState === LinkState.Up">
-                        check_circle
-                      </mat-icon>
-                      <mat-icon *ngIf="linkState !== LinkState.Up">
-                        cancel
-                      </mat-icon>
+                      <ix-icon *ngIf="linkState === LinkState.Up" name="check_circle"></ix-icon>
+                      <ix-icon *ngIf="linkState !== LinkState.Up" name="cancel"></ix-icon>
                     </div>
 
                     <div *ngIf="traffic && linkState === LinkState.Up" class="nic-traffic">
@@ -190,12 +184,11 @@
                     <span *ngIf="ipAddresses.length > 1" class="more-addresses">
                       ({{ '{n} more' | translate: { n: ipAddresses.length - 1 } }})
                     </span>
-                    <mat-icon
+                    <ix-icon
                       *ngIf="ipAddresses.length > 1"
+                      name="chevron_right"
                       class="next-slide"
-                    >
-                      chevron_right
-                    </mat-icon>
+                    ></ix-icon>
                   </mat-list-item>
                   <mat-list-item
                     *ngIf="nicState.vlans"
@@ -204,12 +197,11 @@
                   >
                     <strong>{{ 'VLANs' | translate }}:</strong>
                     {{ nicState.vlans.length }}
-                    <mat-icon
+                    <ix-icon
                       *ngIf="nicState.vlans.length > 0"
+                      name="chevron_right"
                       class="next-slide"
-                    >
-                      chevron_right
-                    </mat-icon>
+                    ></ix-icon>
                   </mat-list-item>
                   <mat-list-item
                     *ngIf="nicState.lagg_ports"
@@ -218,12 +210,11 @@
                   >
                     <strong>{{ 'Interfaces' | translate }}:</strong>
                     {{ nicState.lagg_ports.length }}
-                    <mat-icon
+                    <ix-icon
                       *ngIf="nicState.lagg_ports.length > 0"
+                      name="chevron_right"
                       class="next-slide"
-                    >
-                      chevron_right
-                    </mat-icon>
+                    ></ix-icon>
                   </mat-list-item>
                 </mat-list>
               </div>
@@ -263,12 +254,11 @@
               >
                 <strong>{{ vlan.name }}:</strong>&nbsp;&nbsp;
                 {{ vlanAliases(i).length }} addresses
-                <mat-icon
+                <ix-icon
                   *ngIf="vlan.aliases.length"
+                  name="chevron_right"
                   class="next-slide"
-                >
-                  chevron_right
-                </mat-icon>
+                ></ix-icon>
               </mat-list-item>
             </mat-list>
           </div>

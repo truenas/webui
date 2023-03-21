@@ -31,3 +31,11 @@ export interface Statfs {
   free_bytes: number;
   avail_bytes: number;
 }
+
+export type FilesystemPutParams = [
+  path: string,
+  options?: {
+    mode?: number;
+    append?: boolean;
+  },
+];

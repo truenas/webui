@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { GiB } from 'app/constants/bytes.constant';
 import { inherit } from 'app/enums/with-inherit.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -13,8 +14,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-
-const oneGb = 1024 * 1024 * 1024;
 
 @UntilDestroy()
 @Component({
@@ -27,7 +26,7 @@ export class DatasetCapacitySettingsComponent {
   readonly defaultQuotaCritical = 95;
 
   form = this.formBuilder.group({
-    refquota: [null as number, Validators.min(oneGb)],
+    refquota: [null as number, Validators.min(GiB)],
     refquota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
@@ -39,7 +38,7 @@ export class DatasetCapacitySettingsComponent {
     ]],
     refquota_critical_inherit: [false],
 
-    quota: [null as number, Validators.min(oneGb)],
+    quota: [null as number, Validators.min(GiB)],
     quota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),

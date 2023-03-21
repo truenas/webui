@@ -76,8 +76,8 @@ describe('DockerImagesListComponent', () => {
 
     const expectedRows = [
       ['', 'Image ID', 'Tags', 'Image Size', 'State', ''],
-      ['', 'sha256:test1', 'truenas/webui:3.1', '725.07 KiB', 'Update available', 'more_vert'],
-      ['', 'sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', 'Update available', 'more_vert'],
+      ['', 'sha256:test1', 'truenas/webui:3.1', '725.07 KiB', 'Update available', ''],
+      ['', 'sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', 'Update available', ''],
     ];
 
     expect(ws.call).toHaveBeenCalledWith('container.image.query');

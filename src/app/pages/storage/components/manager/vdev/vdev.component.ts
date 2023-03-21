@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { SortPropDir } from '@swimlane/ngx-datatable/lib/types/sort-prop-dir.type';
 import * as filesize from 'filesize';
+import { GiB, MiB } from 'app/constants/bytes.constant';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
 import { UpdatePoolTopologyGroup } from 'app/interfaces/pool.interface';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
@@ -48,7 +49,7 @@ export class VdevComponent implements OnInit {
   vdevDisksError: boolean;
   showDiskSizeError: boolean;
   vdevTypeDisabled = false;
-  private tenMib = 10 * 1024 * 1024;
+  private tenMib = 10 * MiB;
   protected mindisks: { [key: string]: number } = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
@@ -163,7 +164,7 @@ export class VdevComponent implements OnInit {
     let stripeSize = 0;
     let smallestdisk = 0;
     let estimate = 0;
-    const swapsize = this.manager.swapondrive * 1024 * 1024 * 1024;
+    const swapsize = this.manager.swapondrive * GiB;
     this.showDiskSizeError = false;
     for (let i = 0; i < this.disks.length; i++) {
       const size = this.disks[i].real_capacity - swapsize;

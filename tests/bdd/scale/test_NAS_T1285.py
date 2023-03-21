@@ -84,8 +84,8 @@ def verify_the_setting_slide_out_works(driver):
     assert wait_on_element(driver, 10, xpaths.button.advanced_Settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.advanced_Settings).click()
     assert wait_on_element(driver, 7, '//h3[contains(.,"Kubernetes Settings")]')
-    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
-    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
+    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//ix-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//ix-icon[contains(.,"cancel")]').click()
 
 
 @then('open the Installed Applications page')

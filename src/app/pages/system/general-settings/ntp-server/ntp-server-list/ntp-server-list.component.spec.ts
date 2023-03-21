@@ -104,9 +104,9 @@ describe('NtpServerListComponent', () => {
 
     const expectedRows = [
       ['Address', 'Burst', 'IBurst', 'Prefer', 'Min Poll', 'Max Poll', ''],
-      ['2.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', 'delete'],
-      ['1.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', 'delete'],
-      ['0.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', 'delete'],
+      ['2.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', ''],
+      ['1.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', ''],
+      ['0.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', ''],
     ];
 
     expect(ws.call).toHaveBeenCalledWith('system.ntpserver.query');
