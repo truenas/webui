@@ -33,7 +33,7 @@ export function forbiddenAsyncValues(
   };
 }
 
-function forbiddenValuesError(
+export function forbiddenValuesError(
   values: unknown[],
   caseInsensitive: boolean,
   formControlo: FormControl<string>,
