@@ -59,7 +59,7 @@ export class CertificateAddComponent {
   ) {}
 
   get isImport(): boolean {
-    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.CreateImported;
+    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.Import;
   }
 
   getNewCertificateSteps(): [

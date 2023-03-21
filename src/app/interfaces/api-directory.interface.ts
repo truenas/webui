@@ -32,6 +32,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -350,7 +351,7 @@ export type ApiDirectory = {
 
   // App
   'app.categories': { params: void; response: string[] };
-  'app.available': { params: void; response: CatalogApp[] };
+  'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
 
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
