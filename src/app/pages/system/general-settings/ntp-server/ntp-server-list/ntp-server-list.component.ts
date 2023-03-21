@@ -1,7 +1,7 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';

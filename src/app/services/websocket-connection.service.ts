@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
@@ -11,6 +12,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
+import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Injectable({
@@ -42,6 +44,8 @@ export class WebsocketConnectionService {
     @Inject(WINDOW) protected window: Window,
     protected router: Router,
     private dialog: MatDialog,
+    private dialogService: DialogService,
+    private translate: TranslateService,
   ) {
     this.initializeWebsocket();
   }
@@ -94,12 +98,23 @@ export class WebsocketConnectionService {
   }
 
   /** TODO: Extract disconnection logic somewhere else */
-  private onClose(): void {
+  private onClose(event: CloseEvent): void {
     this.isConnectionReady$.next(false);
     this.resetUi();
-    timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-      next: () => this.initializeWebsocket(),
-    });
+    if (event.code === 1008) {
+      this.dialogService.fullScreenDialog(
+        this.translate.instant('Access restricted'),
+        this.translate.instant('Access from your IP is restricted'),
+      ).pipe(untilDestroyed(this)).subscribe(() => {
+        timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
+          next: () => this.initializeWebsocket(),
+        });
+      });
+    } else {
+      timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
+        next: () => this.initializeWebsocket(),
+      });
+    }
   }
 
   resetUi(): void {

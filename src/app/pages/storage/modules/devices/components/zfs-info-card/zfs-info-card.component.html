@@ -23,13 +23,8 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="isDisk">
-    <button *ngIf="canExtendDisk" mat-button ixTest="extend" (click)="onExtend()">
-      {{ 'Extend' | translate }}
-    </button>
-
-    <button *ngIf="canRemoveDisk" mat-button ixTest="remove" (click)="onRemove()">
-      {{ 'Remove' | translate }}
-    </button>
+    <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
+    <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
 
     <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
       {{ 'Detach' | translate }}
@@ -44,12 +39,20 @@
     </button>
   </mat-card-actions>
   <mat-card-actions *ngIf="isMirror">
-    <button mat-button ixTest="extend" (click)="onExtend()">
-      {{ 'Extend' | translate }}
-    </button>
-    <!-- TODO: May have conditions when removing a mirror is not allowed -->
-    <button mat-button ixTest="remove" (click)="onRemove()">
-      {{ 'Remove' | translate }}
-    </button>
+    <ng-container [ngTemplateOutlet]="extend"></ng-container>
+    <ng-container *ngIf="canRemoveVDEV" [ngTemplateOutlet]="remove"></ng-container>
   </mat-card-actions>
 </mat-card>
+
+<ng-template #extend>
+  <button mat-button ixTest="extend" (click)="onExtend()">
+    {{ 'Extend' | translate }}
+  </button>
+</ng-template>
+
+<ng-template #remove>
+  <!-- TODO: May have conditions when removing a mirror is not allowed -->
+  <button mat-button ixTest="remove" (click)="onRemove()">
+    {{ 'Remove' | translate }}
+  </button>
+</ng-template>

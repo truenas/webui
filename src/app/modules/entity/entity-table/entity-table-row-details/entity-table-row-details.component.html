@@ -7,12 +7,11 @@
     <h4>{{ column.name | translate }}:</h4>
     <div fxLayoutAlign="start center" fxLayoutGap="4px">
       <ng-container *ngIf="column?.widget?.component; else notScheduleList">
-        <mat-icon
+        <ix-icon
           class="widget-icon"
-          fontSet="mdi-set"
-          [fontIcon]="'mdi-' + column.widget.icon"
+          [name]="'mdi-' + column.widget.icon"
           [matMenuTriggerFor]="widget"
-        ></mat-icon>
+        ></ix-icon>
         <mat-menu #widget="matMenu">
           <!-- column widgets need to be registered with this switch case -->
           <ng-container [ngSwitch]="column.widget.component">
@@ -54,7 +53,7 @@
         (click)="action.onClick(this.config)"
       >
         <div fxLayoutAlign="center center" fxLayoutGap="8px">
-          <mat-icon>{{ action.icon }}</mat-icon>
+          <ix-icon [name]="action.icon"></ix-icon>
           <p
             [matTooltip]="action.matTooltip"
             [matTooltipDisabled]="!action.disabled"

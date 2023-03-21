@@ -11,6 +11,8 @@ export const helptextSystemAdvanced = {
   fieldset_initshutdown: T('Init/Shutdown Scripts'),
   fieldset_sessions: T('Sessions'),
   fieldset_sessions_table: T('Active Sessions'),
+  fieldset_addresses: T('Allowed IP Addresses'),
+  fieldset_kernel: T('Kernel'),
 
   dialog_generate_debug_title: T('Generate Debug File'),
   dialog_generate_debug_message: T('This operation might take a long time. It cannot be aborted once started. Proceed?'),

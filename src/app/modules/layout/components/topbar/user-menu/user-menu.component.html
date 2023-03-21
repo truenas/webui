@@ -6,7 +6,7 @@
   [matTooltip]="tooltips.settings | translate"
   [matMenuTriggerFor]="userMenu"
 >
-  <mat-icon>account_circle</mat-icon>
+  <ix-icon name="account_circle"></ix-icon>
 </button>
 <mat-menu #userMenu="matMenu">
   <button
@@ -16,12 +16,12 @@
     ixTest="change-password"
     (click)="openChangePasswordDialog()"
   >
-    <mat-icon>dialpad</mat-icon>
+    <ix-icon name="dialpad"></ix-icon>
     {{ 'Change Password' | translate }}
   </button>
 
   <a name="settings-api" ixTest="api-keys" mat-menu-item [routerLink]="['/apikeys']">
-    <mat-icon>laptop</mat-icon>
+    <ix-icon name="laptop"></ix-icon>
     {{ 'API Keys' | translate }}
   </a>
 
@@ -32,12 +32,12 @@
     target="_blank"
     ixTest="guide"
   >
-    <mat-icon>library_books</mat-icon>
+    <ix-icon name="library_books"></ix-icon>
     {{ 'Guide' | translate }}
   </a>
 
   <button name="settings-about" mat-menu-item ixTest="about" (click)="onShowAbout()">
-    <mat-icon>info_outline</mat-icon>
+    <ix-icon name="info_outline"></ix-icon>
     {{ 'About' | translate }}
   </button>
 </mat-menu>

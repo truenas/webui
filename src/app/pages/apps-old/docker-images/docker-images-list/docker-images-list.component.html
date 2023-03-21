@@ -20,11 +20,11 @@
       [disabled]="!selectionHasUpdates"
       (click)="doUpdate(checkboxColumn?.selection.selected)"
     >
-      <mat-icon>update</mat-icon>
+      <ix-icon name="update"></ix-icon>
       {{ 'Update' | translate }}
     </button>
     <button mat-button ixTest="delete-selected" (click)="doDelete(checkboxColumn?.selection.selected)">
-      <mat-icon>delete</mat-icon>
+      <ix-icon name="delete"></ix-icon>
       {{ 'Delete' | translate }}
     </button>
   </div>
@@ -98,7 +98,7 @@
         [title]="'Settings' | translate"
         [matMenuTriggerFor]="actionsMenu"
       >
-        <mat-icon>more_vert</mat-icon>
+        <ix-icon name="more_vert"></ix-icon>
       </button>
       <mat-menu #actionsMenu="matMenu">
         <a

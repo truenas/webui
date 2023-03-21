@@ -465,8 +465,10 @@ export class StorageService {
       const vdevDiskCapacities = new Set<number>(); // There should only be one value
       if (vdev.children.length) {
         vdev.children.forEach((child) => {
-          const diskSize = disks?.find((disk) => disk.name === child.disk)?.size;
-          vdevDiskCapacities.add(diskSize);
+          const diskIndex = disks?.findIndex((disk) => disk.name === child.disk);
+          if (diskIndex >= 0 && disks[diskIndex].size) {
+            vdevDiskCapacities.add(disks[diskIndex].size);
+          }
         });
       } else {
         // Topology items of type DISK will not have children
@@ -494,24 +496,6 @@ export class StorageService {
 
   isMixedVdevType(vdevTypes: Set<string>): boolean {
     return vdevTypes.size > 1;
-  }
-
-  isValidatable(layout: TopologyItemType): boolean {
-    switch (layout) {
-      case TopologyItemType.Disk:
-      case TopologyItemType.Stripe:
-      case TopologyItemType.Mirror:
-      case TopologyItemType.Spare:
-      case TopologyItemType.Log:
-      case TopologyItemType.Raidz:
-      case TopologyItemType.Raidz1:
-      case TopologyItemType.Raidz2:
-      case TopologyItemType.Raidz3:
-        return true;
-        break;
-      default:
-        return false;
-    }
   }
 
   validateVdevs(category: PoolTopologyCategory,

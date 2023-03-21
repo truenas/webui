@@ -88,8 +88,8 @@ def click_on_the_three_dots_icon_for_nextcloud_then_click_delete(driver):
     assert wait_on_element(driver, 10, '//th[contains(.,"Tags")]')
 
     assert wait_on_element(driver, 5, '//td[contains(text(),"nextcloud")]')
-    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
+    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//ix-icon[contains(.,"more_vert")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//ix-icon[contains(.,"more_vert")]').click()
 
     assert wait_on_element(driver, 20, '//a[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//a[contains(.,"Delete")]').click()

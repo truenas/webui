@@ -47,11 +47,46 @@
     align-items: stretch;
     font-weight: bold;
 
+    img {
+      margin-right: 10px;
+      width: 42px;
+    }
+
     .name {
       align-items: center;
       background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
       display: inline-flex;
       padding-right: 15px;
+    }
+  }
+
+  .cell-status {
+    .status {
+      border: 2px solid;
+      border-radius: 20px;
+      display: flex;
+      font-weight: bold;
+      gap: 8px;
+      padding: 1px 20px;
+    }
+
+    .active {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .deploying {
+      border-color: var(--yellow);
+      color: var(--yellow);
+
+      mat-spinner::ng-deep circle {
+        stroke: var(--yellow);
+      }
+    }
+
+    .stopped {
+      border-color: var(--red);
+      color: var(--red);
     }
   }
 }

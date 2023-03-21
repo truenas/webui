@@ -1,5 +1,5 @@
 import {
-  Component, Inject, Input, OnDestroy, OnInit,
+  Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -52,6 +52,7 @@ import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.a
 })
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav: MatSidenav;
+  @Output() sidenavStatusChange = new EventEmitter<SidenavStatusData>();
 
   updateIsDone: Subscription;
 
@@ -218,25 +219,21 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.store$.dispatch(sidenavUpdated(data));
     }
 
-    this.core.emit({
-      name: 'SidenavStatus',
-      data,
-      sender: this,
-    });
+    this.sidenavStatusChange.emit(data);
   }
 
   getLogoIcon(): string {
     const isBlueTheme = this.themeService.activeTheme === 'ix-blue' || this.themeService.activeTheme === 'midnight';
     if (isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logomark';
+      return 'ix:logo_mark';
     }
     if (!isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logomark_rgb';
+      return 'ix:logo_mark_rgb';
     }
     if (isBlueTheme && this.screenSize !== 'xs') {
-      return 'ix:full_logo';
+      return 'ix:logo_full';
     }
-    return 'ix:full_logo_rgb';
+    return 'ix:logo_full_rgb';
   }
 
   checkEula(): void {

@@ -28,13 +28,12 @@
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
     >
-      <mat-icon
-        fontSet="mdi-set"
+      <ix-icon
         [id]="row[entity?.conf?.rowIdentifier || 'name'] + '_' + action + '_button'"
-        [fontIcon]="iconName"
+        [name]="iconName"
         [style.cursor]="'pointer'"
         [style.font-size]="'24px'"
-      ></mat-icon>
+      ></ix-icon>
     </button>
 
     <!-- Standard Material Icon Set -->
@@ -46,12 +45,11 @@
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
     >
-      <mat-icon
+      <ix-icon
         [id]="row[entity?.conf?.rowIdentifier || 'name'] + '_' + action + '_button'"
+        [name]="iconName"
         [style.cursor]="'pointer'"
-      >
-        {{ iconName }}
-      </mat-icon>
+      ></ix-icon>
     </button>
 
     <mat-menu #appMenu="matMenu">
@@ -119,7 +117,7 @@
         [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
         (click)="action.onClick(this.row)"
       >
-        <mat-icon>{{ action.icon }}</mat-icon>
+        <ix-icon [name]="action.icon"></ix-icon>
       </button>
     </ng-container>
   </ng-template>

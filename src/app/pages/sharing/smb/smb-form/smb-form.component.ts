@@ -147,7 +147,6 @@ export class SmbFormComponent implements OnInit {
     durablehandle: [false],
     fsrvp: [false],
     path_suffix: [''],
-    auxsmbconf: [''],
   });
 
   constructor(
@@ -271,7 +270,7 @@ export class SmbFormComponent implements OnInit {
       this.presetFields.push(param as keyof SmbShare);
       // eslint-disable-next-line no-restricted-syntax
       const ctrl = this.form.get(param);
-      if (ctrl && param !== 'auxsmbconf') {
+      if (ctrl) {
         ctrl.setValue(this.presets[preset].params[param as keyof SmbShare]);
         ctrl.disable();
       }

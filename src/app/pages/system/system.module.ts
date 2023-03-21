@@ -8,11 +8,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -36,6 +36,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
+import { AllowedAddressesComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
@@ -179,6 +180,7 @@ import { routing } from './system.routing';
     QrDialogComponent,
     ReplicationSettingsComponent,
     TokenSettingsComponent,
+    AllowedAddressesComponent,
     SupportComponent,
     SysInfoComponent,
     SyslogFormComponent,

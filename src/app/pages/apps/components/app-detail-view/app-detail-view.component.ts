@@ -1,17 +1,15 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
 import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -22,13 +20,13 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class AppDetailViewComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  app: CatalogApp;
+  app: AvailableApp;
   appId: string;
   isLoading$ = new BehaviorSubject<boolean>(false);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
-  similarApps: CatalogApp[] = [];
+  similarApps: AvailableApp[] = [];
   similarAppsLoading$ = new BehaviorSubject<boolean>(false);
 
   get pageTitle(): string {
@@ -51,7 +49,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
-    private snackbar: SnackbarService,
+    private router: Router,
     private translate: TranslateService,
     private appService: ApplicationsService,
   ) {
@@ -86,10 +84,8 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   private loadAppInfo(): void {
     this.isLoading$.next(true);
     this.appService
-      .getCatalogItem(this.appId, officialCatalog, chartsTrain)
-      .pipe(
-        untilDestroyed(this),
-      ).subscribe({
+      .getAvailableItem(this.appId, officialCatalog, chartsTrain)
+      .pipe(untilDestroyed(this)).subscribe({
         next: (app) => {
           this.app = app;
           this.isLoading$.next(false);
@@ -107,10 +103,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadSimilarApps(): void {
     this.similarAppsLoading$.next(true);
-    this.appService.getAllCatalogs().pipe(
-      catalogToAppsTransform(),
-      untilDestroyed(this),
-    ).subscribe({
+    this.appService.getAvailableApps().pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
         this.similarApps = apps.slice(0, 4);
         this.similarAppsLoading$.next(false);
@@ -125,9 +118,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     console.warn('The Screenshot section is under construction.');
   }
 
-  onInstallButtonPressed(): void {
-    this.snackbar.success(
-      this.translate.instant('Install Button Pressed'),
-    );
+  installButtonPressed(): void {
+    this.router.navigate(['/apps', 'available', this.appId, 'install']);
   }
 }

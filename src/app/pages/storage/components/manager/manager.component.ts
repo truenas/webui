@@ -14,6 +14,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
+import { GiB, MiB } from 'app/constants/bytes.constant';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -984,7 +985,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     let stripeSize = 0;
     let smallestdisk = 0;
     let estimate = 0;
-    const swapsize = this.swapondrive * 1024 * 1024 * 1024;
+    const swapsize = this.swapondrive * GiB;
     vdev.showDiskSizeError = false;
     for (let i = 0; i < vdev.disks.length; i++) {
       const size = vdev.disks[i].real_capacity - swapsize;
@@ -992,7 +993,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       if (i === 0) {
         smallestdisk = size;
       }
-      const tenMib = 10 * 1024 * 1024;
+      const tenMib = 10 * MiB;
       if (size > smallestdisk + tenMib || size < smallestdisk - tenMib) {
         vdev.showDiskSizeError = true;
       }

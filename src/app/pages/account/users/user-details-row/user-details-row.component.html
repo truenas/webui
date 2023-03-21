@@ -5,7 +5,7 @@
       [ixTest]="['edit', user.username]"
       (click)="doEdit(user)"
     >
-      <mat-icon>edit</mat-icon>
+      <ix-icon name="edit"></ix-icon>
       <span>{{ 'Edit' | translate }}</span>
     </button>
 
@@ -15,7 +15,7 @@
       [ixTest]="['delete', user.username]"
       (click)="doDelete(user)"
     >
-      <mat-icon>delete</mat-icon>
+      <ix-icon name="delete"></ix-icon>
       <span>{{ 'Delete' | translate }}</span>
     </button>
   </ix-table-expandable-row>

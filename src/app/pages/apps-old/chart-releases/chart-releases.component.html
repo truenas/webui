@@ -193,7 +193,7 @@
         [ixTest]="['actions', item.name]"
         [matMenuTriggerFor]="actionsMenu"
       >
-        <mat-icon>more_vert</mat-icon>
+        <ix-icon name="more_vert"></ix-icon>
       </button>
       <mat-menu #actionsMenu="matMenu">
         <button
@@ -203,7 +203,7 @@
           [disabled]="!item.update_available && !item.container_images_update_available"
           (click)="update(item.name)"
         >
-          <mat-icon>call_made</mat-icon>
+          <ix-icon name="call_made"></ix-icon>
           <span>{{ 'Upgrade' | translate }}</span>
         </button>
         <button
@@ -213,7 +213,7 @@
           [disabled]="!item.history || isEmpty(item.history)"
           (click)="onRollback(item.name)"
         >
-          <mat-icon>replay</mat-icon>
+          <ix-icon name="replay"></ix-icon>
           <span>{{ 'Roll Back' | translate }}</span>
         </button>
         <button
@@ -222,7 +222,7 @@
           [ixTest]="['edit', item.name]"
           (click)="edit(item.name)"
         >
-          <mat-icon>edit</mat-icon>
+          <ix-icon name="edit"></ix-icon>
           <span>{{ 'Edit' | translate }}</span>
         </button>
         <button
@@ -231,11 +231,10 @@
           [ixTest]="['shell', item.name]"
           (click)="openShell(item.name)"
         >
-          <mat-icon
-            fontSet="mdi-set"
-            fontIcon="mdi-console-line"
+          <ix-icon
+            name="mdi-console-line"
             class="shell-icon"
-          ></mat-icon>
+          ></ix-icon>
           <span>{{ 'Shell' | translate }}</span>
         </button>
         <button
@@ -244,7 +243,7 @@
           [ixTest]="['logs', item.name]"
           (click)="openLogs(item.name)"
         >
-          <mat-icon>description</mat-icon>
+          <ix-icon name="description"></ix-icon>
           <span>{{ 'Logs' | translate }}</span>
         </button>
         <button
@@ -253,7 +252,7 @@
           [ixTest]="['delete', item.name]"
           (click)="delete(item.name)"
         >
-          <mat-icon>delete</mat-icon>
+          <ix-icon name="delete"></ix-icon>
           <span>{{ 'Delete' | translate }}</span>
         </button>
       </mat-menu>

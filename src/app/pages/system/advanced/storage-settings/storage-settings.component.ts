@@ -17,7 +17,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
@@ -57,7 +56,6 @@ export class StorageSettingsComponent {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
-    public ixFormatter: IxFormatterService,
   ) {}
 
   onSubmit(): void {

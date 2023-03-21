@@ -1,22 +1,19 @@
 import {
-  Component, Inject, Input, OnDestroy, OnInit,
+  Component, Inject, Input, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  addSeconds, format,
-} from 'date-fns';
 import { filter, take } from 'rxjs/operators';
+import { GiB, MiB } from 'app/constants/bytes.constant';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { Timeout } from 'app/interfaces/timeout.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
   AppLoaderService, DialogService, SystemGeneralService,
@@ -38,7 +35,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     './widget-sys-info.component.scss',
   ],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   // HA
   @Input() isHaLicensed = false;
   @Input() isPassive = false;
@@ -48,8 +45,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
 
-  timeInterval: Timeout;
-  nasDateTime: Date;
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
   memory: string;
@@ -60,7 +55,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   certified = false;
   updateAvailable = false;
   manufacturer = '';
-  buildDate: string;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
   hasHa: boolean;
@@ -157,12 +151,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.timeInterval) {
-      clearInterval(this.timeInterval);
-    }
-  }
-
   get updateBtnStatus(): string {
     if (this.updateAvailable) {
       this._updateBtnStatus = 'default';
@@ -177,11 +165,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     return this.translate.instant('Check for Updates');
   }
 
-  get timeDiffWarning(): string {
-    const nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss, OOOO');
-    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
-  }
-
   addTimeDiff(timestamp: number): number {
     if (sessionStorage.systemInfoLoaded) {
       const now = Date.now();
@@ -193,25 +176,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
     const datetime = this.addTimeDiff(this.data.datetime.$date);
-    this.nasDateTime = new Date(datetime);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
-
-    if (this.timeInterval) {
-      clearInterval(this.timeInterval);
-    }
-
-    this.timeInterval = setInterval(() => {
-      this.nasDateTime = addSeconds(this.nasDateTime, 1);
-    }, 1000);
-
-    const build = new Date(this.data.buildtime.$date);
-    const year = build.getUTCFullYear();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const month = months[build.getUTCMonth()];
-    const day = build.getUTCDate();
-    const hours = build.getUTCHours();
-    const minutes = build.getUTCMinutes();
-    this.buildDate = `${month} ${day}, ${year} ${hours}:${minutes}`;
 
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
 
@@ -261,9 +226,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   formatMemory(physmem: number, units: string): string {
     let result: string;
     if (units === 'MiB') {
-      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MiB';
+      result = Number(physmem / MiB).toFixed(0) + ' MiB';
     } else if (units === 'GiB') {
-      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
+      result = Number(physmem / GiB).toFixed(0) + ' GiB';
     }
     return result;
   }

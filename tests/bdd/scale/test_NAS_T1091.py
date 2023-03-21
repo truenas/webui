@@ -65,14 +65,17 @@ def the_users_page_should_open_expand_the_user_and_click_the_edit_button(driver)
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
 
 
-@then('the User Edit Page should open, change the path of the users Home Directory')
-def the_user_edit_page_should_open_change_the_path_of_the_users_home_directory(driver):
-    """the User Edit Page should open, change the path of the users Home Directory."""
+@then('on the User Edit Page change the Home Directory with the pool path and click "Create Home Directory" checkbox')
+def on_the_user_edit_page_change_the_home_directory_with_the_pool_path_and_click_create_home_directory_checkbox(driver):
+    """on the User Edit Page change the Home Directory with the pool path and click "Create Home Directory" checkbox."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.add_User.home_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_User.home_Input).clear()
-    driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank/ericbsd')
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank')
+
+    assert wait_on_element(driver, 10, xpaths.add_User.create_Home_Directory_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.create_Home_Directory_Checkbox).click()
 
 
 @then('click save and changes should be saved, the drop-down details pane should show the home directory has changed')
@@ -80,6 +83,7 @@ def click_save_and_changes_should_be_saved_the_dropdown_details_pane_should_show
     """click save and changes should be saved, the drop-down details pane should show the home directory has changed."""
     assert wait_on_element(driver, 2, xpaths.button.save)
     driver.find_element_by_xpath(xpaths.button.save).click()
+
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')

@@ -10,13 +10,12 @@
       <strong class="chart-name">{{ catalogApp.name }}</strong>
       <span class="version"> {{ catalogApp.human_version }}</span>
       <span class="value">{{ appStatus() | translate }}</span>
-      <mat-icon
+      <ix-icon
         *ngIf="getUpdateVersionTooltip()"
+        name="info"
         class="version-tooltip"
         [matTooltip]="getUpdateVersionTooltip()"
-      >
-        info
-      </mat-icon>
+      ></ix-icon>
     </div>
   </div>
   <div class="ports">

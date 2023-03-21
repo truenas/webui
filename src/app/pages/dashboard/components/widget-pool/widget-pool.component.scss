@@ -126,7 +126,7 @@
   width: 40%;
 }
 
-.td .mat-icon {
+.td .ix-icon {
   height: auto;
   width: 12px;
 }
@@ -161,7 +161,7 @@ span.safe {
 
 .pool-status span .mat-icon,
 .used-space span .mat-icon,
-.disk-errors span .mat-icon {
+.disk-errors span .ix-icon {
   font-size: 17px;
   height: auto;
   margin-left: 4px;
@@ -171,7 +171,7 @@ span.safe {
 }
 
 .used-space span.safe .mat-icon,
-.disk-errors span.safe .mat-icon {
+.disk-errors span.safe .ix-icon {
   top: 4px; // TODO: Remove magic number
 }
 
@@ -201,7 +201,7 @@ span.safe {
   width: 12px;
 }
 
-.carousel-nav .back-arrow.mat-icon {
+.carousel-nav .back-arrow.ix-icon {
   margin-top: -3px; // TODO: Remove magic number
 }
 
@@ -224,7 +224,7 @@ span.safe {
   text-align: center;
 }
 
-.slide .locked.offline .mat-icon {
+.slide .locked.offline .ix-icon {
   font-size: 444%; /* TODO: Check it. Looks weird */
   height: auto;
   width: auto;
@@ -235,7 +235,7 @@ span.safe {
   cursor: pointer;
 }
 
-.slide .mat-icon.next-slide {
+.slide .ix-icon.next-slide {
   position: absolute;
   right: 0;
 }
@@ -294,7 +294,7 @@ span.capitalize {
   justify-content: center;
   margin-left: 5px;
 
-  .mat-icon {
+  .ix-icon {
     font-size: 20px;
     height: 20px;
     width: 20px;

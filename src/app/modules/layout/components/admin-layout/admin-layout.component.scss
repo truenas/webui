@@ -25,6 +25,11 @@
   width: 36px;
 }
 
+.logo-text {
+  align-items: center;
+  display: flex;
+}
+
 .branding {
   align-items: center;
   background-color: var(--topbar) !important;
@@ -48,26 +53,24 @@
   }
 
   .app-logo-text {
-    height: 40px;
-    width: auto;
+    height: auto;
+    margin-right: 8px;
+    top: 2px;
+    width: 96px;
   }
 
-  &.truenas-scale .app-logo {
-    height: 40px;
-    top: 12px;
-    width: 40px;
+  // 'truenas-' + (productType$ | async | lowercase)
+  &.truenas-scale {
+    .app-logo {
+      height: 40px;
+      top: 12px;
+      width: 40px;
+    }
+
+    .app-logo-text {
+      top: 10px;
+    }
   }
-}
-
-.branding .app-logo-text {
-  height: auto;
-  margin-right: 8px;
-  top: 24px;
-  width: 96px;
-}
-
-.branding.scale .app-logo-text {
-  top: 13px;
 }
 
 .logo:focus-visible,
@@ -82,7 +85,7 @@
   height: 100%;
 }
 
-.enterprise-logo .mat-icon {
+.enterprise-logo .ix-icon {
   height: auto !important;
   margin-left: -4px !important;
   top: 14px !important;

@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
@@ -68,7 +69,7 @@ export class SupportComponent implements OnInit {
   ngOnInit(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       this.systemInfo = { ...systemInfo };
-      this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
+      this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
         const getImage = this.productImgServ.getMiniImagePath(systemInfo.system_product);
         if (this.productImgServ.isRackmount(systemInfo.system_product)) {

@@ -56,15 +56,8 @@ describe('IsolatedGpuValidatorService', () => {
     });
 
     it(`returns null when selecting new GPUs leaves at least 1 available GPU
-    for host system because selected GPU has already been isolated`, async () => {
-      const control = new FormControl(['0000:02:00.0']);
-      const result = await firstValueFrom(spectator.service.validateGpu(control));
-      expect(result).toBeNull();
-    });
-
-    it(`returns null when selecting new GPUs leaves at least 1 available GPU
-    for host system because there are still un-isolated GPUs`, async () => {
-      const control = new FormControl(['0000:01:00.0']);
+    for host system`, async () => {
+      const control = new FormControl(['0000:02:00.0', '0000:01:00.0']);
       const result = await firstValueFrom(spectator.service.validateGpu(control));
       expect(result).toBeNull();
     });
@@ -72,7 +65,7 @@ describe('IsolatedGpuValidatorService', () => {
 
   describe('validateGpu - validation fails', () => {
     it(`returns an error when too many new GPUs are selected
-    leaving no GPU for host system (no GPUs were previously isolated)`, async () => {
+    leaving no GPU for host system`, async () => {
       jest.spyOn(spectator.inject(GpuService), 'getIsolatedGpuPciIds').mockReturnValue(of([]));
       jest.spyOn(spectator.inject(GpuService), 'getIsolatedGpus').mockReturnValue(of([]));
 
@@ -86,7 +79,7 @@ describe('IsolatedGpuValidatorService', () => {
     });
 
     it('returns an error listing currently isolated GPUs when validation fails', async () => {
-      const control = new FormControl(['0000:01:00.0', '0000:03:00.0']);
+      const control = new FormControl(['0000:01:00.0', '0000:03:00.0', '0000:02:00.0']);
       const result = await firstValueFrom(spectator.service.validateGpu(control));
       expect(result).toEqual({
         gpus: {

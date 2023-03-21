@@ -199,7 +199,7 @@ def verify_the_start_automatically_checkbox_is_checked_if_not_click_on_the_check
     """verify the Start Automatically checkbox is checked. If not, click on the checkbox."""
     value_exist = attribute_value_exist(driver, xpaths.services.nfs_Service_Checkbox, 'class', 'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
+        driver.find_element_by_xpath(xpaths.services.nfs_Service_Checkbox).click()
 
 
 @then(parsers.parse('create a mount point on {linux_host} with {linux_user} and {linux_password}'))

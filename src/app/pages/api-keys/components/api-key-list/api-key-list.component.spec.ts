@@ -75,8 +75,8 @@ describe('ApiKeyListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'Created Date', ''],
-      ['first-api-key', 'Jan 10 2022 10:36', 'more_vert'],
-      ['second-api-key', 'Jan 10 2022 10:36', 'more_vert'],
+      ['first-api-key', 'Jan 10 2022 10:36', ''],
+      ['second-api-key', 'Jan 10 2022 10:36', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -113,7 +113,7 @@ describe('ApiKeyListComponent', () => {
 
     const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="API Key Actions"]' }));
     await actionsMenu.open();
-    await actionsMenu.clickItem({ text: 'editEdit' });
+    await actionsMenu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ApiKeyFormDialogComponent, {
       data: {
@@ -140,7 +140,7 @@ describe('ApiKeyListComponent', () => {
 
     const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="API Key Actions"]' }));
     await actionsMenu.open();
-    await actionsMenu.clickItem({ text: 'deleteDelete' });
+    await actionsMenu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', ['1']);

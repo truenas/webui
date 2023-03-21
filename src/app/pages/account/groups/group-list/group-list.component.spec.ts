@@ -94,8 +94,8 @@ describe('GroupListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', ''],
-      ['mock', '1000', 'Yes', 'No', 'Yes', 'expand_more'],
-      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'expand_more'],
+      ['mock', '1000', 'Yes', 'No', 'Yes', ''],
+      ['fake', '1001', 'Yes', 'Yes', 'Yes', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -132,7 +132,7 @@ describe('GroupListComponent', () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'expand_more' }));
+    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
     await firstExpandButton.click();
     await secondExpandButton.click();
 

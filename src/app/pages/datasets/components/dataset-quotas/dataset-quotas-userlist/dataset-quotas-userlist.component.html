@@ -128,10 +128,11 @@
           mat-icon-button
           matTooltipPosition="below"
           [ixTest]="['delete-quota', row.name]"
+          [attr.aria-label]="'Delete' | translate"
           [matTooltip]="'Delete' | translate"
           (click)="$event.stopPropagation(); doDelete(row)"
         >
-          <mat-icon>delete</mat-icon>
+          <ix-icon name="delete"></ix-icon>
         </button>
       </td>
     </ng-container>
