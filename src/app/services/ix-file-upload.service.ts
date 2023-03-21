@@ -68,6 +68,7 @@ export class IxFileUploadService {
     });
   }
 
+  // TODO: Consider moving error handling out of onUploading or consolidating everything in one method.
   get onUploading$(): Subject<HttpProgressEvent> {
     return this.fileUploadProgress$;
   }

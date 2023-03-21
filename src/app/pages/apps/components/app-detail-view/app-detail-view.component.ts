@@ -118,7 +118,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     console.warn('The Screenshot section is under construction.');
   }
 
-  onInstallButtonPressed(): void {
+  installButtonPressed(): void {
     this.router.navigate(['/apps', 'available', this.appId, 'install']);
   }
 }

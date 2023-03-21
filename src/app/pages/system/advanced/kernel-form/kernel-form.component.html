@@ -8,12 +8,6 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
-          formControlName="autotune"
-          [label]="'Enable Autotune' | translate"
-          [tooltip]="tooltips.autotune"
-        ></ix-checkbox>
-
-        <ix-checkbox
           formControlName="debugkernel"
           [label]="'Enable Debug Kernel' | translate"
           [tooltip]="tooltips.debugkernel"

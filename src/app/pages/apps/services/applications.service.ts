@@ -3,7 +3,7 @@ import { Observable, of, switchMap } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
-import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -25,8 +25,8 @@ export class ApplicationsService {
     return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
   }
 
-  getAllCatalogs(): Observable<Catalog[]> {
-    return this.ws.call('catalog.query', [[], { extra: { cache: true, item_details: true } }]);
+  getAllAppsCategories(): Observable<string[]> {
+    return this.ws.call('app.categories');
   }
 
   getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
@@ -47,7 +47,6 @@ export class ApplicationsService {
       ['name', 'rin', filters.search],
       ['catalog', 'in', filters.catalogs],
     ];
-    filters.categories.forEach((category) => firstOption.push(['categories', 'rin', category]));
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
     return this.ws.call('app.available', [firstOption, secondOption]);
