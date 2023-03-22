@@ -149,7 +149,6 @@ describe('IpmiFormComponent', () => {
         gateway: '10.220.0.2',
         netmask: '255.255.240.0',
         vlan: null,
-        password: '',
       }]]);
       expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
