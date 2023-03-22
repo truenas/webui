@@ -46,7 +46,6 @@ describe('KernelFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'Enable Autotune': true,
       'Enable Debug Kernel': false,
     });
   });
@@ -54,7 +53,6 @@ describe('KernelFormComponent', () => {
   it('sends an update payload to websocket and closes modal when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Enable Autotune': false,
       'Enable Debug Kernel': true,
     });
 
@@ -63,7 +61,6 @@ describe('KernelFormComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
       {
-        autotune: false,
         debugkernel: true,
       },
     ]);

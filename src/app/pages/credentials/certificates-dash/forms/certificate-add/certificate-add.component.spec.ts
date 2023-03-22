@@ -227,7 +227,7 @@ describe('CertificateAddComponent', () => {
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
-      create_type: CertificateCreateType.CreateImported,
+      create_type: CertificateCreateType.Import,
       certificate: '-----BEGIN CERTIFICATE-----',
       passphrase: '1234567890',
       privatekey: '-----BEGIN PRIVATE-----',

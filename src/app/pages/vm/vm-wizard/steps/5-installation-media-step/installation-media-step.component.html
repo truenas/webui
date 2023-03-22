@@ -1,0 +1,31 @@
+<form [formGroup]="form">
+  <ix-explorer
+    formControlName="iso_path"
+    [label]="'Optional: Choose installation media image' | translate"
+    [nodeProvider]="fileNodeProvider"
+    [tooltip]="helptext.iso_path_tooltip | translate"
+  ></ix-explorer>
+
+  <div class="upload-button">
+    <button
+      mat-button
+      ixTest="upload-image-file"
+      (click)="onUploadIsoClicked()"
+    >{{ 'Upload New Image File' | translate }}</button>
+  </div>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+  </ix-form-actions>
+</form>
