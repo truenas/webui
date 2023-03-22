@@ -130,26 +130,27 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
-    if (failedJob.exc_info?.extra) {
-      failedJob.extra = failedJob.exc_info.extra as Record<string, unknown>;
+    const errorJob = { ...failedJob };
+    if (errorJob.exc_info?.extra) {
+      errorJob.extra = errorJob.exc_info.extra as Record<string, unknown>;
     }
 
-    if (failedJob.extra && Array.isArray(failedJob.extra)) {
+    if (errorJob.extra && Array.isArray(errorJob.extra)) {
       const errors: ErrorReport[] = [];
-      failedJob.extra.forEach((extraItem: [string, unknown]) => {
+      errorJob.extra.forEach((extraItem: [string, unknown]) => {
         const field = extraItem[0].split('.')[1];
-        const error = extraItem[1] as string | WebsocketError | Job;
+        const extractedError = extraItem[1] as string | WebsocketError | Job;
 
         let parsedError: ErrorReport | ErrorReport[];
-        if (this.isTypeOfWebsocketError(error)) {
-          parsedError = this.parseWsError(error);
-        } else if (this.isTypeOfJobError(error)) {
-          parsedError = this.parseJobError(error);
-        } else if (typeof error === 'string') {
+        if (this.isTypeOfWebsocketError(extractedError)) {
+          parsedError = this.parseWsError(extractedError);
+        } else if (this.isTypeOfJobError(extractedError)) {
+          parsedError = this.parseJobError(extractedError);
+        } else if (typeof extractedError === 'string') {
           parsedError = {
             title: (this.translate?.instant('Error') || 'Error'),
-            message: error,
-            backtrace: failedJob.exception,
+            message: extractedError,
+            backtrace: errorJob.exception,
           };
         }
 
@@ -175,9 +176,9 @@ export class ErrorHandlerService implements ErrorHandler {
     }
 
     return {
-      title: failedJob.state,
-      message: failedJob.error,
-      backtrace: failedJob.exception,
+      title: errorJob.state,
+      message: errorJob.error,
+      backtrace: errorJob.exception,
     };
   }
 
