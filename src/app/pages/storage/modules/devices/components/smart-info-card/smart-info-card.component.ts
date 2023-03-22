@@ -1,12 +1,14 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable } from 'rxjs';
+import {
+  Observable,
+} from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
@@ -32,7 +34,8 @@ export class SmartInfoCardComponent implements OnChanges {
   totalResults$: Observable<LoadingState<number>>;
   lastResultsInCategory$: Observable<SmartTestResult[]>;
   smartTasksCount$: Observable<LoadingState<number>>;
-  SmartTestResultPageType = SmartTestResultPageType;
+
+  readonly SmartTestResultPageType = SmartTestResultPageType;
 
   readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
 
@@ -42,6 +45,7 @@ export class SmartInfoCardComponent implements OnChanges {
     private ws: WebSocketService,
     private matDialog: MatDialog,
     private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnChanges(): void {
@@ -87,6 +91,7 @@ export class SmartInfoCardComponent implements OnChanges {
         return lastResultsInCategories.slice(0, this.maxResultCategories);
       }),
     );
+    this.cdr.markForCheck();
   }
 
   private loadSmartTasks(): void {
