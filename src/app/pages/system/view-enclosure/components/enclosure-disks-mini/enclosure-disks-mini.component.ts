@@ -31,6 +31,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   @ViewChild('cardcontent', { static: true }) cardContent: ElementRef;
 
   temperatureScales = false;
+  emptySlotView = this.defaultView;
 
   get enclosurePools(): string[] {
     return this.systemProfile.getPoolNamesInEnclosure(this.selectedEnclosureView);

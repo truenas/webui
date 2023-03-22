@@ -325,7 +325,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   currentView: string; // pools || status || expanders || details
   exitingView: string; // pools || status || expanders || details
 
-  private defaultView = 'pools';
+  protected defaultView = 'pools';
+  protected emptySlotView: string | null = null;
   private labels: VDevLabelsSvg;
   private identifyBtnRef: {
     animation: popmotion.ColdSubscription;
@@ -520,7 +521,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // TODO: Provide diskFailures in params instead?
-  // TODO: Rename this.enclosure to ChassisView related name
   loadEnclosure(enclosureView: EnclosureView, view?: string, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
@@ -721,8 +721,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           }
 
           this.selectedSlotNumber = slotNumber;
+          const isSlotEmpty: boolean = (this.selectedSlot === null || this.selectedSlot.disk === null);
 
-          if ((evt as DriveSelectedEvent).data.enabled) {
+          if (isSlotEmpty && this.emptySlotView) {
+            this.setCurrentView(this.emptySlotView);
+          } else if ((evt as DriveSelectedEvent).data.enabled) {
             this.setCurrentView('details');
           }
           break;
@@ -929,14 +932,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         const selectedSlot = !this.selectedSlot ? this.selectedEnclosureView.slots[0] : this.selectedSlot;
         this.labels = new VDevLabelsSvg(this.chassisView, this.app, selectedSlot.disk, this.theme);
 
-        this.labels.events$.next({
+        const evtData: unknown = {
           name: 'LabelDrives',
           data: {
             selected: this.selectedSlot,
             vdevSlots: this.selectedVdevSlots,
           },
           sender: this,
-        } as LabelDrivesEvent);
+        };
+        this.labels.events$.next(evtData as LabelDrivesEvent);
         break;
       }
     }

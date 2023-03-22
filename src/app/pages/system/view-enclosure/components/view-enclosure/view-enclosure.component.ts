@@ -24,7 +24,6 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
 
 export interface SystemProfile {
   storage$: Observable<EnclosureState>;
-  // enclosureViews$: Observable<EnclosureView[]>;
   isRackmount: ((data: EnclosureState) => boolean);
   getPoolNamesInEnclosure: ((enclosureView: EnclosureView) => string[]);
 }
