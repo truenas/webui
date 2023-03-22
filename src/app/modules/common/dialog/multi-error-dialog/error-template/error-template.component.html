@@ -1,7 +1,7 @@
-<h3 #errorTitle id="err-title">
-  <mat-icon class="warning-icon">error</mat-icon>
+<h1 #errorTitle mat-dialog-title id="err-title" class="err-title">
+  <ix-icon class="error-warning-icon" name="error"></ix-icon>
   {{ title | translate }}
-</h3>
+</h1>
 <div #errorMdContent id="err-md-content">
   <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message"></span></div>
   <div
