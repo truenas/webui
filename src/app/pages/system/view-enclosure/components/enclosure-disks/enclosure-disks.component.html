@@ -121,12 +121,13 @@
         <div *ngIf="currentView === 'details' || exitingView === 'details'"
              class="details stage-left dom-overlay">
           <div class="content" >
-            <h1 [class]="['disk-name', selectedSlot?.disk.name]">
-              {{ selectedSlot?.disk?.name }}
+            <h1 [class]="['disk-name', selectedSlot?.disk?.name]">
+              <span *ngIf="selectedSlot.disk">{{ selectedSlot?.disk?.name }}</span>
+              <span *ngIf="!selectedSlot.disk">{{ 'Empty' | translate }}</span>
             </h1>
             <div class="title">
               <span *ngIf="selectedSlot?.vdev" class="semibold">{{ 'vdev' | translate }}: </span>
-              <span *ngIf="!selectedSlot?.vdev" class="semibold">{{ 'UNASSIGNED' | translate }} </span>
+              <span *ngIf="!selectedSlot?.vdev && selectedSlot.disk" class="semibold">{{ 'UNASSIGNED' | translate }} </span>
               <span>
                 {{ isTopologyDisk ? ('Disk' | translate) : (selectedSlot?.vdev?.name | uppercase) }}
               </span>
@@ -247,11 +248,21 @@
       >
         <ix-icon name="chevron_left"></ix-icon>
       </a>
-      {{ selectedSlot?.disk ? 'Disk Details for ' + selectedSlot.disk.name : 'Disks Overview' }}
+      <span *ngIf="currentView === 'details' && selectedSlot?.disk">
+        {{ 'Disk Details for ' + selectedSlot.disk.name }}
+      </span>
+      <span *ngIf="currentView === 'details' && !selectedSlot?.disk">
+        {{ 'Slot ' + selectedSlot.slot }}
+      </span>
+      <span *ngIf="currentView !== 'details'">
+        {{ 'Disks Overview' }}
+      </span>
     </div>
 
     <!-- DETAILS/OVERVIEW -->
-    <div *ngIf="selectedSlot && currentView === 'details'; then details; else overview"></div>
+    <div *ngIf="currentView === 'details'; then details; else overview"></div>
+
+    <!-- OVERVIEW -->
     <ng-template #overview>
       <div class="disks-details">
         <div
@@ -371,7 +382,34 @@
 
     <!-- DETAILS/DISK -->
     <ng-template #details>
-      <div #diskdetails
+
+      <!-- Empty Slot -->
+      <div
+        *ngIf="!selectedSlot?.disk"
+        #diskdetails
+        [class]="{ 'disks-details': true, 'disk-selected': selectedSlot.disk }"
+      >
+        <div
+          class="details-wrapper"
+          fxFill
+          fxLayout="row"
+          fxLayoutAlign="space-around stretch"
+        >
+          <div
+            fxFlex="80"
+            class="disk-basic-details tiles empty-slot-details details-section"
+            fxLayout="column"
+            fxLayoutAlign="center center"
+          >
+            <h1>Slot {{ selectedSlot.slot }} is empty</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slot with Disk -->
+      <div
+        *ngIf="selectedSlot?.disk"
+        #diskdetails
         [class]="{ 'disks-details': true, 'disk-selected': selectedSlot.vdev }"
       >
         <div
@@ -382,7 +420,7 @@
         >
           <div
             fxFlex="25"
-            class="disk-basic-details"
+            class="disk-basic-details details-section"
             fxLayout="column"
             fxLayoutAlign="center center"
           >
@@ -403,7 +441,7 @@
             </div>
           </div>
 
-          <div fxFlex="75" class="tiles disk-advanced-details">
+          <div fxFlex="75" class="tiles details-section disk-advanced-details">
             <div class="details-wrapper" fxLayout="row wrap" fxLayoutGap="16px">
               <div
                 fxFlex="calc(25% - 16px)"

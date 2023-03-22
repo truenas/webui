@@ -96,6 +96,7 @@
   "Edit Global Configuration": "",
   "Edit VM": "",
   "Edit VM Snapshot": "",
+  "Empty": "",
   "Enable Host Path Safety Checks": "",
   "Enable passwordless sudo for zfs commands": "",
   "Enable to use <a href=\"https://searchstorage.techtarget.com/definition/thin-provisioning\" target=\"_blank\">thin provisioning</a> where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "",

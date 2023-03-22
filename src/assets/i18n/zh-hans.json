@@ -34,6 +34,7 @@
   "Do you want to сonfigure the ACL?": "",
   "Edit App": "",
   "Edit Certificate": "",
+  "Empty": "",
   "Enable to use <a href=\"https://searchstorage.techtarget.com/definition/thin-provisioning\" target=\"_blank\">thin provisioning</a> where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "",
   "Enabled Protocols": "",
   "Extend session": "",

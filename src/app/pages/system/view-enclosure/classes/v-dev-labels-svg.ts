@@ -132,7 +132,7 @@ export class VDevLabelsSvg {
     className: string,
     diskName: string,
   ): void {
-    const color = diskName === this.selectedDisk.devname ? this.selectedDiskColor : this.color;
+    const color = diskName === this.selectedDisk?.devname ? this.selectedDiskColor : this.color;
 
     const style = 'fill-opacity:0.25; stroke-width:1';
 
@@ -179,13 +179,17 @@ export class VDevLabelsSvg {
         const src = dt.container;
         const tray = src.getGlobalPosition();
 
-        const tileClass = 'tile tile_' + enclosureSlot.disk.name;
+        const tileClass = enclosureSlot.disk
+          ? 'tile tile_' + enclosureSlot.disk.name
+          : 'tile tile_empty';
+
+        const tileName = enclosureSlot.disk ? enclosureSlot.disk.name : 'empty';
 
         const tileWidth = src.width * this.chassis.driveTrays.scale.x * this.chassis.container.scale.x;
         const tileHeight = src.height * this.chassis.driveTrays.scale.y * this.chassis.container.scale.y;
 
-        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, enclosureSlot.disk.name);
-        this.trays[enclosureSlot.disk.name] = {
+        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, tileName);
+        this.trays[tileName] = {
           x: tray.x, y: tray.y, width: tileWidth, height: tileHeight,
         };
       }

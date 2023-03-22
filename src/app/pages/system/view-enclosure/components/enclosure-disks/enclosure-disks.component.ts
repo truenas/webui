@@ -90,11 +90,11 @@ export interface DiskFailure {
 * TODO:
 *  1 Rewrite visualization logic to only react to data changes
 *  2 Move any data manipulation that doesn't belong here to either the store or a service
-*  3 Handle rear slots (subenclosure) - currently references front slots when in M50 rear view
+*  3 Handle rear slots (subenclosure) - currently references front slots when in M50 rear view **** DONE
 *  4 Handle compound chassis AKA siblings (Do we still need them?)
-*  5 Fix CSS problems in templates
-*  6 Test/fix extracted enclosures and enclosure selection in parent component
-*  7 Fix rear drives for M50 (model: "M50 Series" and id: "m50_plx_enclosure")
+*  5 Fix CSS problems in templates **** DONE
+*  6 Test/fix extracted enclosures and enclosure selection in parent component **** DONE
+*  7 Fix rear drives for M50 (model: "M50 Series" and id: "m50_plx_enclosure") **** DONE
 * */
 
 @UntilDestroy()
@@ -326,7 +326,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   exitingView: string; // pools || status || expanders || details
 
   protected defaultView = 'pools';
-  protected emptySlotView: string | null = null;
+  protected emptySlotView: string | null = 'details';
   private labels: VDevLabelsSvg;
   private identifyBtnRef: {
     animation: popmotion.ColdSubscription;
@@ -415,6 +415,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       .subscribe((data: EnclosureState) => {
         if (data.enclosureViews.length) {
           this.systemState = data;
+
           if (!this.app) {
             this.appSetup();
           }
@@ -721,9 +722,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           }
 
           this.selectedSlotNumber = slotNumber;
-          const isSlotEmpty: boolean = (this.selectedSlot === null || this.selectedSlot.disk === null);
+          const isSlotEmpty: boolean = (this.selectedSlot === null || !this.selectedSlot.disk);
+          console.warn(isSlotEmpty);
 
-          if (isSlotEmpty && this.emptySlotView) {
+          if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);
           } else if ((evt as DriveSelectedEvent).data.enabled) {
             this.setCurrentView('details');
@@ -1198,32 +1200,22 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         if (
           enclosureSlot.slot < this.chassisView.slotRange.start
           || enclosureSlot.slot > this.chassisView.slotRange.end
+          || !enclosureSlot.disk
         ) {
           return;
         }
 
-        // Unassigned Disks
-        if (!enclosureSlot.vdev) {
-          this.chassisView.events.next({
-            name: 'ChangeDriveTrayColor',
-            data: {
-              id: enclosureSlot.slot,
-              color: '#999999',
-              enclosure: enclosureSlot.disk.enclosure.number,
-              slot: enclosureSlot.slot,
-            },
-          });
-          return;
-        }
-
-        const pIndex = this.selectedEnclosurePools.indexOf(enclosureSlot.pool); // disk.vdev.poolIndex;
+        const poolIndex = this.selectedEnclosurePools.indexOf(enclosureSlot.pool);
+        const driveColor = enclosureSlot.vdev
+          ? this.theme[this.theme.accentColors[poolIndex] as keyof Theme]
+          : '#999999';
 
         this.chassisView.events.next({
           name: 'ChangeDriveTrayColor',
           data: {
             id: enclosureSlot.slot,
-            color: this.theme[this.theme.accentColors[pIndex] as keyof Theme],
-            enclosure: enclosureSlot.disk.enclosure.number,
+            color: driveColor,
+            enclosure: enclosureSlot.enclosure,
             slot: enclosureSlot.slot,
           },
         });

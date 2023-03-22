@@ -49,8 +49,9 @@ nav.view-nav-bar {
   height: auto;
 }
 
-.view-card #disks-details {
-  height: 250px;
+.view-card .disks-details {
+  background: var(--bg2);
+  height: 280px;
   padding: 0;
 }
 
@@ -77,6 +78,11 @@ nav.view-nav-bar {
 .view-card .details-wrapper {
   min-height: 400;
   width: 100%;
+}
+
+#view-selector .tiles,
+.view-card .details-wrapper > .details-section {
+  min-height: 280px;
 }
 
 .view-card .tiles.active {
