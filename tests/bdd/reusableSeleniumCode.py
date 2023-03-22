@@ -188,6 +188,9 @@ def Verify_App_Status(driver, app_Name, app):
             if wait_on_element(driver, 3, xpaths.popup.please_Wait):
                 assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
 
+            # to make sure the loop does not run to fast.
+            time.sleep(1)
+
             if is_element_present(driver, f'//div[contains(text(),"Started container {app}")]'):
                 break
 
