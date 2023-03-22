@@ -1,0 +1,19 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Isolated GPU Device(s)' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        mat-button
+        [ixTest]="['isolated-gpus-devices', 'configure']"
+        (click)="onConfigurePressed()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
