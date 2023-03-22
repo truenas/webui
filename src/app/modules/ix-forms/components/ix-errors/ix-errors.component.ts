@@ -48,6 +48,7 @@ export class IxErrorsComponent implements OnChanges {
     ),
     number: () => this.translate.instant('Value must be a number'),
     cron: () => this.translate.instant('Invalid cron expression'),
+    ip2: () => this.translate.instant('Invalid IP address'),
   };
 
   constructor(
@@ -67,7 +68,8 @@ export class IxErrorsComponent implements OnChanges {
 
           return this.getDefaultError(error as DefaultValidationError);
         });
-        this.messages = newErrors;
+
+        this.messages = newErrors.filter((message) => !!message);
 
         this.cdr.markForCheck();
       });
@@ -104,6 +106,8 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.number();
       case DefaultValidationError.Cron:
         return this.defaultErrMessages.cron();
+      case DefaultValidationError.Ip2:
+        return this.defaultErrMessages.ip2();
       default:
         return undefined;
     }

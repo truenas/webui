@@ -53,6 +53,11 @@ export interface VmDiskAttributes {
   path: string;
   physical_sectorsize: number;
   type: VmDiskMode;
+
+  // TODO: May be only relevant when creating a vm
+  create_zvol?: boolean;
+  zvol_name?: string;
+  zvol_volsize?: number;
 }
 
 export interface BaseVmDevice {

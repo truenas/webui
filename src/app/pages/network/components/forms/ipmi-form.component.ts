@@ -120,7 +120,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   openManageWindow(): void {
-    this.redirect.openWindow(`http://${this.managementIp}`);
+    this.redirect.openWindow(`https://${this.managementIp}`);
   }
 
   prepareDataForm(): void {

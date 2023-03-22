@@ -1,0 +1,56 @@
+<form [formGroup]="form">
+  <ix-radio-group
+    formControlName="newOrExisting"
+    [options]="newOrExistingOptions$"
+  ></ix-radio-group>
+
+  <ix-select
+    formControlName="hdd_type"
+    [required]="true"
+    [label]="'Select Disk Type' | translate"
+    [options]="hddTypeOptions$"
+    [tooltip]="helptext.hdd_type_tooltip | translate"
+  ></ix-select>
+
+  <ng-container *ngIf="isCreatingNewDisk">
+    <ix-select
+      formControlName="datastore"
+      [label]="'Zvol Location' | translate"
+      [required]="true"
+      [options]="datastoreOptions$"
+      [tooltip]="helptext.datastore_tooltip | translate"
+    ></ix-select>
+
+    <ix-input
+      formControlName="volsize"
+      [label]="'Size' | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+      [tooltip]="helptext.volsize_tooltip | translate"
+    ></ix-input>
+  </ng-container>
+
+  <ix-select
+    *ngIf="!isCreatingNewDisk"
+    formControlName="hdd_path"
+    [label]="'Select Existing Zvol' | translate"
+    [options]="hddPathOptions$"
+    [required]="true"
+    [tooltip]="helptext.hdd_path_tooltip | translate"
+  ></ix-select>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+  </ix-form-actions>
+</form>
