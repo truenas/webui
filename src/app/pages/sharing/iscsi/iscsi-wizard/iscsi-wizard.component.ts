@@ -116,10 +116,12 @@ export class IscsiWizardComponent implements OnInit {
 
   get extentPayload(): IscsiExtentUpdate {
     const value = this.form.value.device;
+    const blocksizeDefault = 512;
+    const blocksizeModernos = 4096;
     const extentPayload = {
       name: value.name,
       type: value.type,
-      blocksize: value.usefor === IscsiExtentUsefor.Modernos ? 4096 : 512,
+      blocksize: value.usefor === IscsiExtentUsefor.Modernos ? blocksizeModernos : blocksizeDefault,
       insecure_tpc: true,
       xen: value.usefor === IscsiExtentUsefor.Xen,
       rpm: IscsiExtentRpm.Ssd,
@@ -127,7 +129,8 @@ export class IscsiWizardComponent implements OnInit {
 
     if (extentPayload.type === IscsiExtentType.File) {
       const filesize = value.filesize;
-      extentPayload.filesize = filesize % 512 ? (filesize + (512 - filesize % 512)) : filesize;
+      extentPayload.filesize = filesize % blocksizeDefault
+        ? (filesize + (blocksizeDefault - filesize % blocksizeDefault)) : filesize;
       extentPayload.path = value.path;
     } else if (extentPayload.type === IscsiExtentType.Disk) {
       if (value.disk === IscsiNewOption.New) {
@@ -235,32 +238,32 @@ export class IscsiWizardComponent implements OnInit {
     this.form.controls.portal.controls.listen.disable();
   }
 
-  createZvol(): Promise<Dataset> {
-    return lastValueFrom(this.ws.call('pool.dataset.create', [this.zvolPayload]));
+  createZvol(payload: DatasetCreate): Promise<Dataset> {
+    return lastValueFrom(this.ws.call('pool.dataset.create', [payload]));
   }
 
-  createExtent(): Promise<IscsiExtent> {
-    return lastValueFrom(this.ws.call('iscsi.extent.create', [this.extentPayload]));
+  createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
+    return lastValueFrom(this.ws.call('iscsi.extent.create', [payload]));
   }
 
-  createAuthgroup(): Promise<IscsiAuthAccess> {
-    return lastValueFrom(this.ws.call('iscsi.auth.create', [this.authgroupPayload]));
+  createAuthgroup(payload: IscsiAuthAccessUpdate): Promise<IscsiAuthAccess> {
+    return lastValueFrom(this.ws.call('iscsi.auth.create', [payload]));
   }
 
-  createPortal(): Promise<IscsiPortal> {
-    return lastValueFrom(this.ws.call('iscsi.portal.create', [this.portalPayload]));
+  createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
+    return lastValueFrom(this.ws.call('iscsi.portal.create', [payload]));
   }
 
-  createInitiator(): Promise<IscsiInitiatorGroup> {
-    return lastValueFrom(this.ws.call('iscsi.initiator.create', [this.initiatorPayload]));
+  createInitiator(payload: IscsiInitiatorGroupUpdate): Promise<IscsiInitiatorGroup> {
+    return lastValueFrom(this.ws.call('iscsi.initiator.create', [payload]));
   }
 
-  createTarget(): Promise<IscsiTarget> {
-    return lastValueFrom(this.ws.call('iscsi.target.create', [this.targetPayload]));
+  createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
+    return lastValueFrom(this.ws.call('iscsi.target.create', [payload]));
   }
 
-  createTargetExtent(): Promise<IscsiTargetExtent> {
-    return lastValueFrom(this.ws.call('iscsi.targetextent.create', [this.targetExtentPayload]));
+  createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
+    return lastValueFrom(this.ws.call('iscsi.targetextent.create', [payload]));
   }
 
   rollBack(): void {
@@ -323,7 +326,7 @@ export class IscsiWizardComponent implements OnInit {
     this.createdTargetExtent = undefined;
 
     if (this.isNewZvol) {
-      await this.createZvol().then(
+      await this.createZvol(this.zvolPayload).then(
         (createdZvol) => this.createdZvol = createdZvol,
         (err: WebsocketError) => this.handleError(err),
       );
@@ -334,7 +337,7 @@ export class IscsiWizardComponent implements OnInit {
       return;
     }
 
-    await this.createExtent().then(
+    await this.createExtent(this.extentPayload).then(
       (createdExtent) => this.createdExtent = createdExtent,
       (err: WebsocketError) => this.handleError(err),
     );
@@ -345,7 +348,7 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     if (this.isNewAuthgroup) {
-      await this.createAuthgroup().then(
+      await this.createAuthgroup(this.authgroupPayload).then(
         (createdAuthgroup) => this.createdAuthgroup = createdAuthgroup,
         (err: WebsocketError) => this.handleError(err),
       );
@@ -357,7 +360,7 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     if (this.isNewPortal) {
-      await this.createPortal().then(
+      await this.createPortal(this.portalPayload).then(
         (createdPortal) => this.createdPortal = createdPortal,
         (err: WebsocketError) => this.handleError(err),
       );
@@ -369,7 +372,7 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     if (this.isNewInitiator) {
-      await this.createInitiator().then(
+      await this.createInitiator(this.initiatorPayload).then(
         (createdInitiator) => this.createdInitiator = createdInitiator,
         (err: WebsocketError) => this.handleError(err),
       );
@@ -381,7 +384,7 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     if (this.isNewTarget) {
-      await this.createTarget().then(
+      await this.createTarget(this.targetPayload).then(
         (createdTarget) => this.createdTarget = createdTarget,
         (err: WebsocketError) => this.handleError(err),
       );
@@ -392,7 +395,7 @@ export class IscsiWizardComponent implements OnInit {
       return;
     }
 
-    await this.createTargetExtent().then(
+    await this.createTargetExtent(this.targetExtentPayload).then(
       (createdTargetExtent) => this.createdTargetExtent = createdTargetExtent,
       (err: WebsocketError) => this.handleError(err),
     );
