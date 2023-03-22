@@ -7,6 +7,7 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -25,6 +26,7 @@ interface AppSection {
 })
 export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  @ViewChild(AppsToolbarButtonsComponent, { static: false }) private appsToolbarButtons: AppsToolbarButtonsComponent;
 
   apps: AvailableApp[] = [];
   filters: AppsFiltersValues = {
@@ -129,5 +131,11 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     });
 
     this.cdr.markForCheck();
+  }
+
+  updateToolbarButtons(): void {
+    if (this.appsToolbarButtons) {
+      this.appsToolbarButtons.ngOnInit();
+    }
   }
 }

@@ -13,7 +13,6 @@ import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { DialogService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -33,7 +32,7 @@ export class AppsToolbarButtonsComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private core: CoreService,
+
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) { }
@@ -45,7 +44,6 @@ export class AppsToolbarButtonsComponent implements OnInit {
   onChoosePool(): void {
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.core.emit({ name: 'RefreshAppsTab' });
       this.loadIfPoolSet();
     });
   }
@@ -75,7 +73,6 @@ export class AppsToolbarButtonsComponent implements OnInit {
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close();
-        this.core.emit({ name: 'RefreshAppsTab' });
         this.loadIfPoolSet();
         this.snackbar.success(
           this.translate.instant('Pool has been unset.'),

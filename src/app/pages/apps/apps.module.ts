@@ -35,6 +35,7 @@ import {
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppInfoCardComponent } from './components/app-info-card/app-info-card.component';
@@ -43,6 +44,7 @@ import { AppCardComponent } from './components/available-apps/app-card/app-card.
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
+import { PoolConfigurationCheckerComponent } from './components/pool-configuration-checker/pool-configuration-checker.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +63,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppInfoCardComponent,
     AppRowComponent,
     AppsToolbarButtonsComponent,
+    PoolConfigurationCheckerComponent,
+    SelectPoolDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -5,6 +5,7 @@
 </ng-template>
 
 <ix-available-apps-header (filters)="changeFilters($event)"></ix-available-apps-header>
+<ix-pool-configuration-checker (choosePoolModalClosed)="updateToolbarButtons()"></ix-pool-configuration-checker>
 
 <div *ngIf="filters.search" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: filters.search } }}</div>
 <div *ngIf="apps.length" class="available-apps-list">
