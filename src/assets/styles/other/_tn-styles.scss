@@ -1365,6 +1365,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-form-field.mat-focused:focus-within {
     outline: 1px solid var(--primary);
   }
+
+  .error-warning-icon {
+    color: var(--orange);
+    margin-right: 10px;
+  }
 } // end of ix theme
 
 

@@ -40,3 +40,11 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 #err-md-content {
   overflow-y: auto !important;
 }
+
+.title-container {
+  display: inline-block;
+}
+
+.err-title {
+  align-items: center;
+}

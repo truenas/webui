@@ -1,5 +1,4 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import * as Sentry from '@sentry/angular';
 import { isString } from '@sentry/utils';
 import ErrorStackParser from 'error-stack-parser';
 
@@ -77,21 +76,19 @@ export const defaultExtractor = (errorCandidate: unknown): unknown => {
   return null;
 };
 
-export const sentryCustomExceptionExtraction = (error: unknown): void => {
+export const sentryCustomExceptionExtraction = (error: unknown): unknown => {
   const defaultExtractorResults = defaultExtractor(error);
   if (defaultExtractorResults) {
-    Sentry.captureException(defaultExtractorResults);
-    return;
+    return defaultExtractorResults;
   }
 
   try {
     const parsedErrorValue = ErrorStackParser.parse(error as Error);
 
     if (parsedErrorValue) {
-      Sentry.captureException(parsedErrorValue);
-      return;
+      return parsedErrorValue;
     }
   } catch {}
 
-  Sentry.captureException(error);
+  return error;
 };

@@ -4,7 +4,6 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   color: var(--orange);
   margin-right: 10px;
   position: relative;
-  top: 6px;
 }
 
 .backtrace-panel {
@@ -44,4 +43,8 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 
 #err-md-content {
   overflow-y: auto !important;
+}
+
+.err-title {
+  align-items: center;
 }

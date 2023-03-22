@@ -4,7 +4,6 @@ import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { Observable } from 'rxjs';
-import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -34,20 +33,26 @@ export class ErrorHandlerService implements ErrorHandler {
 
   handleError(error: unknown): void {
     console.error(error);
-    let errors: ErrorReport | ErrorReport[];
+    const parsedError = this.parseError(error);
+    if (parsedError) {
+      this.dialog?.error(parsedError);
+    } else {
+      this.logToSentry(error);
+    }
+  }
+
+  parseError(error: unknown): ErrorReport | ErrorReport[] {
     if (this.isTypeOfWebsocketError(error)) {
-      errors = this.parseWsError(error);
-      Sentry.captureException(errors);
-      this.dialog?.error(errors);
-      return;
+      return this.parseWsError(error);
     }
     if (this.isTypeOfJobError(error)) {
-      errors = this.parseJobError(error);
-      Sentry.captureException(errors);
-      this.dialog?.error(errors);
-      return;
+      return this.parseJobError(error);
     }
-    sentryCustomExceptionExtraction(error);
+    return null;
+  }
+
+  logToSentry(error: unknown): void {
+    Sentry.captureException(sentryCustomExceptionExtraction(error));
   }
 
   isTypeOfWebsocketError(error: unknown): error is WebsocketError {
@@ -64,57 +69,6 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'error' in obj
       && 'exception' in obj
       && 'exc_info' in obj);
-  }
-
-  /**
-   * @param error
-   * @param formGroup
-   * @param fieldsMap Overrides backend field names with frontend field names.
-   * TODO: See if second `string` in fieldsMap can be typed to key of formGroup.
-   */
-  handleWsFormError(
-    error: WebsocketError | Job,
-    formGroup: UntypedFormGroup,
-    fieldsMap: Record<string, string> = {},
-  ): void {
-    if ('type' in error && error.type === ResponseErrorType.Validation && error.extra) {
-      this.handleValidationError(error, formGroup, fieldsMap);
-      return;
-    }
-
-    if ('exc_info' in error && error.exc_info.type === ResponseErrorType.Validation && error.exc_info.extra) {
-      this.handleValidationError({ ...error, extra: error.exc_info.extra as Job['extra'] }, formGroup, fieldsMap);
-      return;
-    }
-
-    // Fallback to old error handling
-    this.dialog.error(this.parseErrorOrJob(error));
-  }
-
-  private handleValidationError(
-    error: WebsocketError | Job,
-    formGroup: UntypedFormGroup,
-    fieldsMap: Record<string, string>,
-  ): void {
-    for (const extraItem of (error as WebsocketError).extra) {
-      const field = extraItem[0].split('.')[1];
-      const errorMessage = extraItem[1];
-
-      const control = this.getFormField(formGroup, field, fieldsMap);
-      if (!control) {
-        console.error(`Could not find control ${field}.`);
-        // Fallback to default modal error message.
-        this.dialog.error(this.parseErrorOrJob(error));
-        return;
-      }
-
-      control.setErrors({
-        manualValidateError: true,
-        manualValidateErrorMsg: errorMessage,
-        ixManualValidateError: { message: errorMessage },
-      });
-      control.markAsTouched();
-    }
   }
 
   reportError(error: WebsocketError | Job): Observable<boolean> {

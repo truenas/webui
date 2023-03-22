@@ -20,11 +20,11 @@ import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
 import { UserService, DialogService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
@@ -156,7 +156,7 @@ export class UserFormComponent {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
