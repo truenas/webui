@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
-  filter, map, switchMap, tap,
+  filter, map, switchMap,
 } from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
@@ -163,10 +163,11 @@ export class OpenVpnClientConfigComponent implements OnInit {
         this.appLoaderService.open();
         return this.ws.call('openvpn.client.update', [{ remove_certificates: true } as OpenvpnClientConfigUpdate]);
       }),
-      tap(() => {
-        this.appLoaderService.close();
-      }),
       untilDestroyed(this),
-    ).subscribe();
+    ).subscribe({
+      complete: () => {
+        this.appLoaderService.close();
+      },
+    });
   }
 }
