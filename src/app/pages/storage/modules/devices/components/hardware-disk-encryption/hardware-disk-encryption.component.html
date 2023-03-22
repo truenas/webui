@@ -6,17 +6,10 @@
   <mat-card-content>
     <div class="details-item">
       <span class="label">{{ 'SED Password' | translate }}:</span>
-      <ng-container *ngIf="hasDiskEncryption$ | async as diskEncryption">
-        <ngx-skeleton-loader
-          *ngIf="diskEncryption.isLoading"
-        ></ngx-skeleton-loader>
-        <span *ngIf="diskEncryption.value !== undefined" class="value">
-          {{ diskEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
+      <ng-container *ixWithLoadingState="hasDiskEncryption$ as hasDiskEncryption">
+        <span class="value">
+          {{ hasDiskEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
         </span>
-        <ng-container *ngIf="diskEncryption.error">
-          <!-- TODO: Add error handler -->
-          Error
-        </ng-container>
       </ng-container>
       <a ixTest="manage-sed-password" (click)="onManageSedPassword()">
         {{ 'Manage SED Password' | translate }}
@@ -25,17 +18,10 @@
 
     <div class="details-item">
       <span class="label">{{ 'Global SED Password' | translate }}:</span>
-      <ng-container *ngIf="hasGlobalEncryption$ | async as globalEncryption">
-        <ngx-skeleton-loader
-          *ngIf="globalEncryption.isLoading"
-        ></ngx-skeleton-loader>
-        <span *ngIf="globalEncryption.value !== undefined" class="value">
-          {{ globalEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
+      <ng-container *ixWithLoadingState="hasGlobalEncryption$ as hasGlobalEncryption">
+        <span class="value">
+          {{ hasGlobalEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
         </span>
-        <ng-container *ngIf="globalEncryption.error">
-          <!-- TODO: Add error handler -->
-          Error
-        </ng-container>
       </ng-container>
       <a ixTest="manage-global-sed-password" [routerLink]="['/system/advanced']">
         {{ 'Manage Global SED Password' | translate }}
