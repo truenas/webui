@@ -88,3 +88,11 @@
 .empty-tree {
   margin: 16px 20px;
 }
+
+.drag-handle {
+  cursor: grab;
+}
+
+.grabbed {
+  cursor: grabbing;
+}

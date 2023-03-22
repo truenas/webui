@@ -12,7 +12,8 @@
         >
           <div class="disk-icons">
             <ix-disk-icon *ngFor="let disk of enclosureDisks.value"
-              class="disk-icon"
+              class="disk-icon drag-handle"
+              [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
               [dndDraggable]="getMovableDisk(disk)"
               [dndEffectAllowed]="'move'"
               [disk]="disk"

@@ -40,3 +40,11 @@ p {
   flex-direction: column;
   justify-content: center;
 }
+
+.drag-handle {
+  cursor: grab;
+}
+
+.grabbed {
+  cursor: grabbing;
+}

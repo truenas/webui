@@ -35,15 +35,20 @@
       treeNodeToggle
       routerLinkActive="selected"
     >
-      <div class="unused-disk">
+      <div
+        class="unused-disk drag-handle"
+        [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+        [dndDraggable]="asDisk(disk)"
+        [dndEffectAllowed]="'move'"
+        (dndStart)="onDragStart()"
+        (dndCanceled)="onDragCanceled()"
+        (dndEnd)="onDragEnd()"
+      >
         <ix-disk-icon
           class="disk-icon"
-          [dndDraggable]="asDisk(disk)"
-          [dndEffectAllowed]="'move'"
+          dndDragImageRef
           [disk]="asDisk(disk)"
-          (dndStart)="onDragStart()"
-          (dndCanceled)="onDragCanceled()"
-          (dndEnd)="onDragEnd()"
+          
         ></ix-disk-icon>
 
         <ix-disk-info

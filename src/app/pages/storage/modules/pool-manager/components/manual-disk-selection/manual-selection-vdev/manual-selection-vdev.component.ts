@@ -32,7 +32,7 @@ export class ManualSelectionVdevComponent implements OnInit {
   constructor(
     public ixFormatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
-    private store$: PoolManagerStore,
+    public store$: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
