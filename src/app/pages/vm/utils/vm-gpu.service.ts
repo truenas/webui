@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import _ from 'lodash';
-import { forkJoin, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  forkJoin, Observable, of, switchMap,
+} from 'rxjs';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device, PciDevice } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -10,7 +11,9 @@ import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { WebSocketService } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class VmGpuService {
   constructor(
     private gpuService: GpuService,
@@ -25,7 +28,7 @@ export class VmGpuService {
    */
   updateVmGpus(vm: VirtualMachine, newGpuIds: string[]): Observable<unknown> {
     return this.gpuService.getAllGpus().pipe(
-      map((allGpus) => {
+      switchMap((allGpus) => {
         const previousVmPciDevices = vm.devices.filter((device) => {
           return device.dtype === VmDeviceType.Pci;
         }) as VmPciPassthroughDevice[];
@@ -36,6 +39,10 @@ export class VmGpuService {
 
         const gpusToAdd = this.subtractGpus(newGpus, previousGpus);
         const gpusToRemove = this.subtractGpus(previousGpus, newGpus);
+
+        if (!gpusToAdd.length && !gpusToRemove.length) {
+          return of(undefined);
+        }
 
         return forkJoin([
           ...this.addGpus(vm, previousSlots, gpusToAdd),

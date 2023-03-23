@@ -1,0 +1,91 @@
+<form [formGroup]="form">
+  <ix-select
+    formControlName="os"
+    [label]="'Guest Operating System' | translate"
+    [required]="true"
+    [options]="osOptions$"
+    [tooltip]="helptext.os_tooltip | translate"
+  ></ix-select>
+
+  <ix-checkbox
+    *ngIf="form.controls.os.value === VmOs.Windows"
+    formControlName="hyperv_enlightenments"
+    [label]="'Enable Hyper-V Enlightenments' | translate"
+    [tooltip]="helptext.hyperv_enlightenments_tooltip | translate"
+  ></ix-checkbox>
+
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+    [tooltip]="helptext.name_tooltip | translate"
+  ></ix-input>
+
+  <ix-input
+    formControlName="description"
+    [label]="'Description' | translate"
+    [tooltip]="helptext.description_tooltip | translate"
+  ></ix-input>
+
+  <ix-select
+    formControlName="time"
+    [label]="'System Clock' | translate"
+    [required]="true"
+    [options]="timeOptions$"
+    [tooltip]="helptext.time_tooltip | translate"
+  ></ix-select>
+
+  <ix-select
+    formControlName="bootloader"
+    [label]="'Boot Method' | translate"
+    [options]="bootloaderOptions$"
+    [required]="true"
+    [tooltip]="helptext.bootloader_tooltip | translate"
+  ></ix-select>
+
+  <ix-input
+    formControlName="shutdown_timeout"
+    type="number"
+    [label]="'Shutdown Timeout' | translate"
+    [tooltip]="helptext.shutdown_timeout.tooltip | translate"
+  ></ix-input>
+
+  <ix-checkbox
+    formControlName="autostart"
+    [label]="'Start on Boot' | translate"
+    [tooltip]="helptext.autostart_tooltip | translate"
+  ></ix-checkbox>
+
+  <ix-checkbox
+    formControlName="enable_display"
+    [label]="'Enable Display' | translate"
+    [tooltip]="helptext.enable_display_tooltip | translate"
+  ></ix-checkbox>
+
+  <ng-container *ngIf="form.value.enable_display">
+    <ix-select
+      formControlName="display_type"
+      [label]="'Display Type' | translate"
+      [options]="displayTypeOptions$"
+      [required]="true"
+    ></ix-select>
+
+    <ix-select
+      formControlName="bind"
+      [label]="'Bind' | translate"
+      [options]="bindOptions$"
+      [required]="true"
+      [tooltip]="helptext.display_bind_tooltip | translate"
+    ></ix-select>
+  </ng-container>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+  </ix-form-actions>
+</form>

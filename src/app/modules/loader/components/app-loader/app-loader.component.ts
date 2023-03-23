@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
 })
 export class AppLoaderComponent {
   title: string;
-  message: string;
 }

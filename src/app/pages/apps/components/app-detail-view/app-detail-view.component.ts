@@ -8,7 +8,7 @@ import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
 import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -20,13 +20,13 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class AppDetailViewComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  app: CatalogApp;
+  app: AvailableApp;
   appId: string;
   isLoading$ = new BehaviorSubject<boolean>(false);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
-  similarApps: CatalogApp[] = [];
+  similarApps: AvailableApp[] = [];
   similarAppsLoading$ = new BehaviorSubject<boolean>(false);
 
   get pageTitle(): string {
@@ -84,10 +84,8 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   private loadAppInfo(): void {
     this.isLoading$.next(true);
     this.appService
-      .getCatalogItem(this.appId, officialCatalog, chartsTrain)
-      .pipe(
-        untilDestroyed(this),
-      ).subscribe({
+      .getAvailableItem(this.appId, officialCatalog, chartsTrain)
+      .pipe(untilDestroyed(this)).subscribe({
         next: (app) => {
           this.app = app;
           this.isLoading$.next(false);
@@ -105,9 +103,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadSimilarApps(): void {
     this.similarAppsLoading$.next(true);
-    this.appService.getAllApps().pipe(
-      untilDestroyed(this),
-    ).subscribe({
+    this.appService.getAvailableApps().pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
         this.similarApps = apps.slice(0, 4);
         this.similarAppsLoading$.next(false);
