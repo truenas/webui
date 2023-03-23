@@ -1,6 +1,7 @@
 {
   "": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  " Est. Usable Capacity": "",
   " cores at ": "",
   " threads at ": "",
   "1 day": "",
@@ -289,7 +290,6 @@
   "{app} Application Summary": "",
   "{app} Catalog Summary": "",
   "{service} Service is not currently running. Start the service now?": "",
-  "{size} Est. Usable Capacity": "",
   " Please click the button below to add {item}.": "Op onderstaande knop klikken om {item} toe te voegen.",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "Wanneer de UPS-modus is ingesteld op slave. Het open netwerkpoortnummer van het UPS Master-systeem invoeren. De standaardpoort is 3493.",
   " bytes.": "bytes,",

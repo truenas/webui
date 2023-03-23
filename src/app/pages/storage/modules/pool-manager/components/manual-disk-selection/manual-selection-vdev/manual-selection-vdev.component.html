@@ -8,7 +8,7 @@
     >
       <div class="type-container">
         <h3>{{vdev.type}}</h3>
-        <p>{{'{size} Est. Usable Capacity' | translate: { size: ixFormatter.convertBytesToHumanReadable(vdev.rawSize) } }}</p>
+        <p>{{ vdev.rawSize | filesize: { standard: 'iec' } }}{{' Est. Usable Capacity' | translate }}</p>
         <ix-warning *ngIf="spansEnclosures" [message]="'Vdevs spans enclosure' | translate"></ix-warning>
       </div>
       <div class="vdev-container">
