@@ -88,6 +88,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     state: PoolManagerState,
     vdevUpdate: { disk: ManagerDisk; vdev: ManagerVdev },
   ) => {
+    vdevUpdate.disk = { ...vdevUpdate.disk, real_capacity: vdevUpdate.disk.size };
     let dataVdevs = [...state.dataVdevs];
     if (!dataVdevs.length) {
       dataVdevs = [{ ...vdevUpdate.vdev }];
