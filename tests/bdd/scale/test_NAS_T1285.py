@@ -71,7 +71,7 @@ def when_choose_a_pool_for_apps_appear_select_pool(driver):
 @then('the Available Applications Tab loads')
 def the_available_applications_tab_loads(driver):
     """the Available Applications Tab loads."""
-    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
+    assert wait_on_element_disappear(driver, 40, xpaths.progress.spinner)
     assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
 
 
