@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -25,8 +26,8 @@ describe('TunableFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('tunable.create'),
-        mockCall('tunable.update'),
+        mockJob('tunable.create', fakeSuccessfulJob()),
+        mockJob('tunable.update', fakeSuccessfulJob()),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
@@ -52,7 +53,7 @@ describe('TunableFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('tunable.create', [{
+      expect(ws.job).toHaveBeenCalledWith('tunable.create', [{
         comment: 'Answer to the question',
         enabled: true,
         type: TunableType.Sysctl,
@@ -95,7 +96,7 @@ describe('TunableFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('tunable.update', [
+      expect(ws.job).toHaveBeenCalledWith('tunable.update', [
         1,
         {
           comment: 'Existing variable',

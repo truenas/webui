@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,15 +7,16 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, EMPTY, Observable, of,
+  combineLatest, EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  catchError, filter, switchMap, tap,
+  catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,18 +25,19 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
   templateUrl: './storage-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StorageSettingsFormComponent {
+export class StorageSettingsFormComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
     pool: ['', Validators.required],
-    swapondrive: ['', [
+    swapondrive: [null as number, [
       Validators.required,
       this.ixValidator.withMessage(Validators.min(0), this.translate.instant('Minimum value is 0')),
       this.ixValidator.withMessage(Validators.pattern('^[0-9]*$'), this.translate.instant('Only integers allowed')),
@@ -56,6 +58,10 @@ export class StorageSettingsFormComponent {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
   ) {}
+
+  ngOnInit(): void {
+    this.loadFormData();
+  }
 
   onSubmit(): void {
     const values = this.form.value;
@@ -92,8 +98,30 @@ export class StorageSettingsFormComponent {
     ).subscribe();
   }
 
-  setFormForEdit(data: { swapondrive: string; pool: string }): void {
-    this.form.patchValue(data);
+  private loadFormData(): void {
+    this.isFormLoading = true;
+    this.cdr.markForCheck();
+
+    forkJoin([
+      this.ws.call('systemdataset.config'),
+      this.store$.pipe(waitForAdvancedConfig, take(1)),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: ([systemDatasetConfig, advancedConfig]) => {
+          this.isFormLoading = false;
+          this.form.patchValue({
+            pool: systemDatasetConfig.pool,
+            swapondrive: advancedConfig.swapondrive,
+          });
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   /**

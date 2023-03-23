@@ -3,30 +3,31 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
-import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
+import {
+  ReplicationSettingsCardComponent,
+} from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
+import {
+  ReplicationSettingsFormComponent,
+} from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-describe('KernelCardComponent', () => {
-  let spectator: Spectator<KernelCardComponent>;
+describe('ReplicationSettingsCardComponent', () => {
+  let spectator: Spectator<ReplicationSettingsCardComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: KernelCardComponent,
+    component: ReplicationSettingsCardComponent,
     providers: [
-      mockProvider(IxSlideInService),
+      mockWebsocket([
+        mockCall('replication.config.config', {
+          max_parallel_replication_tasks: 5,
+        }),
+      ]),
       mockProvider(AdvancedSettingsService),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectAdvancedConfig,
-            value: {
-              debugkernel: true,
-            },
-          },
-        ],
+      mockProvider(IxSlideInService, {
+        onClose$: of(),
       }),
     ],
   });
@@ -36,20 +37,20 @@ describe('KernelCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows kernel related settings', async () => {
+  it('shows Replication related settings', async () => {
     const items = await loader.getAllHarnesses(MatListItemHarness);
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
-      'Enable Debug Kernel: Enabled',
+      'Replication Tasks Limit: 5',
     ]);
   });
 
-  it('opens Kernel form when Configure button is pressed', async () => {
+  it('opens Replication Settings form when Configure button is pressed', async () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(KernelFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationSettingsFormComponent);
   });
 });

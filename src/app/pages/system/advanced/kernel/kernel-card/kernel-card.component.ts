@@ -1,7 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
+import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @Component({
   selector: 'ix-kernel-card',
@@ -10,7 +15,14 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KernelCardComponent {
+  readonly debugKernel$ = this.store$.pipe(
+    waitForAdvancedConfig,
+    map((config) => config.debugkernel),
+    toLoadingState(),
+  );
+
   constructor(
+    private store$: Store<AppState>,
     private slideIn: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

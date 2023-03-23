@@ -14,6 +14,16 @@
 
   <mat-card-content>
     <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Token Lifetime' | translate }}:</span>
+        <span *ixWithLoadingState="tokenLifetime$ as tokenLifetime" class="value">
+          {{ tokenLifetime }}
+        </span>
+      </mat-list-item>
     </mat-list>
   </mat-card-content>
+
+  <ix-conf-table
+    [conf]="sessionsTableConf"
+  ></ix-conf-table>
 </mat-card>

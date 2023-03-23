@@ -11,12 +11,14 @@ import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-we
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
+import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SystemDatasetPoolComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
@@ -41,6 +43,9 @@ describe('SystemDatasetPoolComponent', () => {
           'new-pool': 'new-pool',
         }),
         mockJob('systemdataset.update', fakeSuccessfulJob()),
+        mockCall('systemdataset.config', {
+          pool: 'current-pool',
+        } as SystemDatasetConfig),
         mockCall('system.advanced.update'),
       ]),
       mockProvider(IxSlideInService),
@@ -48,7 +53,16 @@ describe('SystemDatasetPoolComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      provideMockStore(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              swapondrive: 5,
+            },
+          },
+        ],
+      }),
     ],
   });
 
@@ -59,11 +73,6 @@ describe('SystemDatasetPoolComponent', () => {
   });
 
   it('loads and shows current system dataset pool', async () => {
-    spectator.component.setFormForEdit({
-      pool: 'current-pool',
-      swapondrive: '5',
-    });
-    spectator.detectChanges();
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 

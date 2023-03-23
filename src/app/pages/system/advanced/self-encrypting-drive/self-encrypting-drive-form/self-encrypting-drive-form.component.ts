@@ -1,21 +1,22 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +24,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   styleUrls: ['./self-encrypting-drive-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelfEncryptingDriveFormComponent {
+export class SelfEncryptingDriveFormComponent implements OnInit {
   isFormLoading = false;
   title = helptextSystemAdvanced.fieldset_sed;
   form = this.fb.group({
@@ -61,14 +62,11 @@ export class SelfEncryptingDriveFormComponent {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
+    private dialog: DialogService,
   ) {}
 
-  setupForm(group: AdvancedConfig, sedPassword: string): void {
-    this.form.patchValue({
-      sed_user: group?.sed_user,
-      sed_passwd: sedPassword,
-    });
-    this.cdr.markForCheck();
+  ngOnInit(): void {
+    this.loadConfig();
   }
 
   onSubmit(): void {
@@ -90,5 +88,34 @@ export class SelfEncryptingDriveFormComponent {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private loadConfig(): void {
+    this.isFormLoading = true;
+    this.cdr.markForCheck();
+
+    forkJoin([
+      this.store$.pipe(
+        waitForAdvancedConfig,
+        take(1),
+      ),
+      this.ws.call('system.advanced.sed_global_password'),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: ([config, sedPassword]) => {
+          this.form.patchValue({
+            sed_user: config.sed_user,
+            sed_passwd: sedPassword,
+          });
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 }

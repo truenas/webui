@@ -13,7 +13,18 @@
   </mat-toolbar-row>
 
   <mat-card-content>
-    <mat-list>
+    <ix-entity-empty
+      *ngIf="isolatedGpus.length === 0"
+      [conf]="emptyConfig"
+    ></ix-entity-empty>
+
+    <mat-list *ngIf="isolatedGpus.length">
+      <mat-list-item>
+        <span class="label">{{ 'Isolated GPU Device(s)' | translate }}:</span>
+        <span class="value">
+          {{ isolatedGpuNames }}
+        </span>
+      </mat-list-item>
     </mat-list>
   </mat-card-content>
 </mat-card>

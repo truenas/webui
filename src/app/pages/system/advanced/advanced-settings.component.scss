@@ -8,4 +8,13 @@
   @media #{$media-lt-sm} {
     grid-template-columns: 100%;
   }
+
+  > * {
+    display: flex;
+    flex-direction: column;
+
+    ::ng-deep > * {
+      flex: 1;
+    }
+  }
 }

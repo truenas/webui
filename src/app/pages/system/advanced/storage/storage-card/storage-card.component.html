@@ -16,14 +16,14 @@
     <mat-list>
       <mat-list-item>
         <span class="label">{{ 'System Dataset Pool' | translate }}:</span>
-        <span class="value">
-
+        <span *ixWithLoadingState="systemDatasetPool$ as systemDatasetPool" class="value">
+          {{ systemDatasetPool }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Swap Size' | translate }}:</span>
-        <span class="value">
-          16 Gb
+        <span *ixWithLoadingState="swapSize$ as swapSize" class="value">
+          {{ swapSize ? swapSize + ' GiB' : '-' }}
         </span>
       </mat-list-item>
     </mat-list>

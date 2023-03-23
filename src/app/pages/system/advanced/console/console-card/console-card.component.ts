@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @Component({
   selector: 'ix-console-card',
@@ -12,6 +14,11 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsoleCardComponent {
+  readonly advancedConfig$ = this.store$.pipe(
+    waitForAdvancedConfig,
+    toLoadingState(),
+  );
+
   constructor(
     private store$: Store<AppState>,
     private slideIn: IxSlideInService,

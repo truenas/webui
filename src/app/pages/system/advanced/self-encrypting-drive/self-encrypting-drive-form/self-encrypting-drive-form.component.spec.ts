@@ -6,12 +6,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SedUser } from 'app/enums/sed-user.enum';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SedFormComponent', () => {
   let spectator: Spectator<SelfEncryptingDriveFormComponent>;
@@ -26,9 +26,19 @@ describe('SedFormComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('system.advanced.update'),
+        mockCall('system.advanced.sed_global_password', '123'),
       ]),
       mockProvider(IxSlideInService),
-      provideMockStore(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              sed_user: SedUser.User,
+            },
+          },
+        ],
+      }),
     ],
   });
 
@@ -36,10 +46,6 @@ describe('SedFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    spectator.component.setupForm(
-      { sed_user: SedUser.User } as AdvancedConfig,
-      '123',
-    );
   });
 
   it('shows current system advanced sed values when form is being edited', async () => {
