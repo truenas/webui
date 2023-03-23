@@ -158,6 +158,7 @@
   "Children": "",
   "Choose a path to the user's home directory. If the directory exists and matches the username, it is set as the user's home directory. When the path does not end with a subdirectory matching the username, a new subdirectory is created only if the 'Create Home Directory' field is marked checked. The full path to the user's home directory is shown here when editing a user.": "",
   "Choose to connect using either SSH private key stored   in user's home directory or SSH connection from the keychain": "",
+  "Click and hold to drag disks and add them to vdevs or remove them from vdevs": "",
   "Click for information on    <a href=\"https://www.truenas.com/docs/truenasupgrades/\" target=\"_blank\">TrueNAS SCALE Migration, Nightly trains    and other upgrade options.</a>": "",
   "Cloud credential added.": "",
   "Cloud credential updated.": "",

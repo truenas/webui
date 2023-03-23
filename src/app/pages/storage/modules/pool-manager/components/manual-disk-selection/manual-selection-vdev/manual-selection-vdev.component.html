@@ -11,9 +11,7 @@
         <p>{{'{size} Est. Usable Capacity' | translate: { size: ixFormatter.convertBytesToHumanReadable(vdev.rawSize) } }}</p>
         <ix-warning *ngIf="spansEnclosures" [message]="'Vdevs spans enclosure' | translate"></ix-warning>
       </div>
-      <div 
-        class="vdev-container"
-      >
+      <div class="vdev-container">
         <ix-enclosure-wrapper *ngFor="let enclosureDisks of enclosuresDisks | keyvalue" 
           [enclosure]="enclosureDisks.key"[vdev]="vdev"
         >
@@ -42,6 +40,7 @@
             (dndEnd)="onDragEnd()"
           ></ix-disk-icon>
         </div>
+        
       </div>
       <div class="delete-container" (click)="deleteVdev()">
         <ix-icon name="delete"></ix-icon>

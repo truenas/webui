@@ -515,6 +515,7 @@
   "Classification for each S3 object. Choose a class based on the specific use case or performance requirements. See <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information.": "",
   "Clear the Idmap Cache": "",
   "Click an item to view NFSv4 permissions": "",
+  "Click and hold to drag disks and add them to vdevs or remove them from vdevs": "",
   "Click for information on    <a href=\"https://www.truenas.com/docs/truenasupgrades/\" target=\"_blank\">TrueNAS SCALE Migration, Nightly trains    and other upgrade options.</a>": "",
   "Clicking Continue allows TrueNAS to finish the update in the background while  Abort stops the process and reverts the dataset ACL to the previously active ACL.": "",
   "Client Certificate": "",

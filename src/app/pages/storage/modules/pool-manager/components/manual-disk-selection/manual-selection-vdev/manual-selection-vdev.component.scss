@@ -56,3 +56,12 @@ p {
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
 }
+
+.empty-container {
+  align-items: flex-end;
+  border-top: var(--alt-bg2) dotted 1px;
+  display: flex;
+  justify-content: center;
+  padding: 2px !important;
+}
+
