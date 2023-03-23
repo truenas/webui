@@ -2,11 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IpmiChassisIdentifyState } from 'app/enums/ipmi.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { Ipmi } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
@@ -34,9 +35,7 @@ describe('IpmiFormComponent', () => {
     providers: [
       mockProvider(SystemGeneralService, {
         getProductType(): ProductType {
-          return productType === ProductType.ScaleEnterprise
-            ? ProductType.ScaleEnterprise
-            : ProductType.Scale;
+          return productType;
         },
       }),
       mockProvider(RedirectService),
@@ -64,20 +63,29 @@ describe('IpmiFormComponent', () => {
           netmask: '255.255.240.0',
           vlan: null,
         }] as Ipmi[]),
+        mockCall('ipmi.chassis.query', {
+          chassis_identify_state: IpmiChassisIdentifyState.Off,
+        } as IpmiChassis),
+        mockCall('ipmi.chassis.identify'),
       ]),
     ],
   });
+
+  async function setupTest(newProductType: ProductType): Promise<void> {
+    productType = newProductType;
+    spectator = createComponent();
+    spectator.component.setIdIpmi(1);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
+    ws = spectator.inject(WebSocketService);
+  }
+
   describe('product type is SCALE_ENTERPRISE', () => {
     beforeEach(async () => {
-      productType = ProductType.ScaleEnterprise;
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      await setupTest(ProductType.ScaleEnterprise);
     });
 
     it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
-      spectator.component.setIdIpmi(1);
       const formValue = await form.getValues();
 
       expect(formValue).toEqual({
@@ -121,7 +129,6 @@ describe('IpmiFormComponent', () => {
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
-      spectator.component.setIdIpmi(1);
       const dataForm = {
         'Remote Controller': 'Standby: TrueNAS Controller 2',
         DHCP: false,
@@ -142,7 +149,6 @@ describe('IpmiFormComponent', () => {
         gateway: '10.220.0.2',
         netmask: '255.255.240.0',
         vlan: null,
-        password: '',
       }]]);
       expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
@@ -151,15 +157,10 @@ describe('IpmiFormComponent', () => {
 
   describe('product type is SCALE', () => {
     beforeEach(async () => {
-      productType = ProductType.Scale;
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      await setupTest(ProductType.Scale);
     });
 
     it('loads data in the form if the product type is SCALE', async () => {
-      spectator.component.setIdIpmi(1);
       const formValue = await form.getValues();
 
       expect(formValue).toEqual({
@@ -170,6 +171,28 @@ describe('IpmiFormComponent', () => {
         'VLAN ID': '',
         Password: '',
       });
+    });
+  });
+
+  describe('IPMI lights', () => {
+    beforeEach(async () => {
+      await setupTest(ProductType.ScaleEnterprise);
+    });
+
+    it('flashes IPMI light when Flash Identify Light is pressed', async () => {
+      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      await flashButton.click();
+
+      expect(ws.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
+    });
+
+    it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
+      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      await flashButton.click();
+      const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
+      await stopFlashing.click();
+
+      expect(ws.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
     });
   });
 });
