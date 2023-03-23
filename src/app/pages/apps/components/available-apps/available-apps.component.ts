@@ -4,7 +4,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -12,7 +13,7 @@ import { LayoutService } from 'app/services/layout.service';
 interface AppSection {
   title: string;
   totalApps: number;
-  apps$: BehaviorSubject<CatalogApp[]>;
+  apps$: BehaviorSubject<AvailableApp[]>;
   fetchMore?: () => void;
 }
 
@@ -25,14 +26,21 @@ interface AppSection {
 export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  apps: CatalogApp[] = [];
-  allRecommendedApps: CatalogApp[] = [];
-  allNewAndUpdatedApps: CatalogApp[] = [];
+  apps: AvailableApp[] = [];
+  filters: AppsFiltersValues = {
+    search: '',
+    catalogs: [],
+    sort: undefined,
+    categories: [],
+  };
+
+  allRecommendedApps: AvailableApp[] = [];
+  allNewAndUpdatedApps: AvailableApp[] = [];
   sliceAmount = 6;
   appSections: AppSection[] = [];
 
-  recommendedApps$ = new BehaviorSubject<CatalogApp[]>([]);
-  newAndUpdatedApps$ = new BehaviorSubject<CatalogApp[]>([]);
+  recommendedApps$ = new BehaviorSubject<AvailableApp[]>([]);
+  newAndUpdatedApps$ = new BehaviorSubject<AvailableApp[]>([]);
 
   constructor(
     private layoutService: LayoutService,
@@ -50,27 +58,36 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  trackByAppId(_: number, app: CatalogApp): string {
-    return `${app.catalog.id}-${app.catalog.train}-${app.name}`;
+  trackByAppId(id: number, app: AvailableApp): string {
+    return `${app.catalog}-${app.train}-${app.name}`;
   }
 
   trackByAppSectionTitle(_: number, appSection: AppSection): string {
     return `${appSection.title}`;
   }
 
-  private loadApplications(): void {
-    this.loader.open();
+  changeFilters(filters: AppsFiltersValues): void {
+    this.filters = filters;
+    this.loadApplications(true);
+  }
 
-    combineLatest([this.appService.getAllApps(), this.appService.getAllAppsCategories()])
+  private loadApplications(hideLoader?: boolean): void {
+    if (!hideLoader) {
+      this.loader.open();
+    }
+
+    combineLatest([this.appService.getAvailableApps(this.filters), this.appService.getAllAppsCategories()])
       .pipe(untilDestroyed(this))
       .subscribe(([apps, appCategories]) => {
         this.setupApps(apps, appCategories);
-        this.loader.close();
+        if (!hideLoader) {
+          this.loader.close();
+        }
         this.cdr.markForCheck();
       });
   }
 
-  private setupApps(apps: CatalogApp[], appCategories: string[]): void {
+  private setupApps(apps: AvailableApp[], appCategories: string[]): void {
     this.apps = apps;
 
     this.allRecommendedApps = this.apps.filter((app) => app.recommended);
@@ -80,6 +97,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
     this.recommendedApps$.next(this.allRecommendedApps.slice(0, this.sliceAmount));
     this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps.slice(0, this.sliceAmount));
 
+    this.appSections = [];
     this.appSections.push(
       {
         title: this.translate.instant('Recommended Apps'),
@@ -95,7 +113,8 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
       },
     );
 
-    appCategories.forEach((category) => {
+    const categories = this.filters.categories.length ? this.filters.categories : appCategories;
+    categories.forEach((category) => {
       const categorizedApps = this.apps.filter((app) => app.categories.some((appCategory) => appCategory === category));
 
       this.appSections.push(
