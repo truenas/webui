@@ -100,6 +100,9 @@ export interface DiskFailure {
 *  5 Fix CSS problems in templates **** DONE
 *  6 Test/fix extracted enclosures and enclosure selection in parent component **** DONE
 *  7 Fix rear drives for M50 (model: "M50 Series" and id: "m50_plx_enclosure") **** DONE
+*  8 Add expander data to store **** DONE
+*  9 Failed Disk detection
+*  10 Unhealthy Pool detection
 * */
 
 @UntilDestroy()
@@ -218,16 +221,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Data fetching. TODO: Move to service or store
   get unhealthyPools(): Pool[] {
-    /* const sickPools: Pool[] = [];
-    this.storage.pools.forEach((pool: Pool, index: number) => {
-      const healthy = pool.healthy;
-      const inCurrentEnclosure = index === this.selectedEnclosure.poolKeys[pool.name];
-      if (!healthy && inCurrentEnclosure) {
-        sickPools.push(pool);
-      }
-    });
-    return sickPools; */
-    return [];
+    return this.systemState.pools.filter((pool: Pool) => this.selectedEnclosurePools.includes(pool.name));
   }
 
   // Data fetching. TODO: Move to service or store
