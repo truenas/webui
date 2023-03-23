@@ -37,7 +37,7 @@
 
     .filter {
       width: 40%;
-      
+
       ix-chips {
         margin-top: 12px;
       }
@@ -55,7 +55,7 @@
 .header-numbers {
   column-gap: 70px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   white-space: nowrap;
   width: 100%;
 
