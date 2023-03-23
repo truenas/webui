@@ -36,7 +36,7 @@ export default {
  the best files to compress.<br> <i>GZIP</i> options range from 1 for least \
  compression, best performance, through 9 for maximum compression with \
  greatest performance impact.<br> <i>ZLE</i> is a fast algorithm that only \
- elminates runs of zeroes.'),
+ eliminates runs of zeroes.'),
   zvol_compression_validation: [Validators.required],
 
   zvol_deduplication_placeholder: T('ZFS Deduplication'),
