@@ -180,112 +180,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   }
 
-  /* processDataOLD({
-    enclosures, pools, disks, selectedEnclosure,
-  }: {
-    enclosures: Enclosure[];
-    pools: Pool[];
-    disks: Disk[];
-    selectedEnclosure: number;
-  }): Observable<EnclosureView[]>
-  {
-    let enclosureViews: EnclosureView[] = [];
-    if (!enclosures.length) return of(enclosureViews);
-
-    // Deal with M50
-    const isM50 = enclosures.filter((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').length;
-    if (isM50) {
-      const mergedData = this.mergeM50Enclosures({
-        pools,
-        disks,
-        enclosures,
-      });
-      disks = mergedData.disks;
-      enclosures = mergedData.enclosures;
-    }
-
-    enclosureViews = enclosures.map((enclosure: Enclosure) => {
-      return {
-        isSelected: selectedEnclosure && selectedEnclosure === enclosure.number
-          ? selectedEnclosure
-          : false,
-        isController: enclosure.controller,
-        slots: [],
-        number: enclosure.number,
-        model: enclosure.model,
-      } as EnclosureView;
-    });
-    enclosureViews.sort((a, b) => a.number - b.number);
-
-    // Setup default Enclosure Selection
-    if (!selectedEnclosure && enclosureViews.length) {
-      // Selected enclosure should be controller by default
-      enclosureViews.find((enclosure: EnclosureView) => enclosure.isController).isSelected = true;
-    }
-
-    // TODO: Incorporate empty slots by iterating over enclosure elements instead of disks
-    if (disks.length) {
-      disks.forEach((disk: Disk) => {
-        if (!disk.enclosure) return;
-
-        let slotElements: EnclosureElementsGroup;
-        enclosures[disk.enclosure.number].elements
-          .forEach((elementGroup: EnclosureElementsGroup | EnclosureElement) => {
-            if (elementGroup.name === 'Array Device Slot') slotElements = elementGroup as EnclosureElementsGroup;
-          });
-
-        const slotSource = slotElements.elements
-          .find((element: EnclosureElement) => element.slot === disk.enclosure.slot);
-
-        const enclosureSlot: EnclosureSlot = {
-          disk: disk,
-          isSelected: false,
-          enclosure: disk.enclosure.number,
-          slot: disk.enclosure.slot,
-          slotStatus: slotSource.status,
-          fault: slotSource.fault,
-          identify: slotSource.identify,
-          pool: disk.pool,
-          vdev: null,
-          topologyStatus: 'AVAILABLE',
-        };
-        if (pools && disk.pool) {
-          if (disk.name === 'sda') console.log(disk.pool)
-          const topologyInfo: SlotTopology | null = this.findVdevByDisk(
-            disk,
-            pools.find((pool) => pool.name === disk.pool),
-          );
-
-          if (topologyInfo.vdev || topologyInfo.category) {
-            enclosureSlot.topologyCategory = topologyInfo ? topologyInfo.category : null;
-            enclosureSlot.vdev = topologyInfo ? topologyInfo.vdev : null;
-
-            const topologyDisk = this.findTopologyDiskInVdev(
-              topologyInfo.vdev,
-              enclosureSlot.disk.name,
-            );
-            enclosureSlot.topologyStatus = topologyDisk.status as string;
-            enclosureSlot.topologyStats = topologyDisk.stats;
-          }
-
-          if (disk.name === 'sda') {
-            console.log({
-              disk: disk,
-              topologyInfo: topologyInfo,
-              enclosureSlot: enclosureSlot,
-            })
-          }
-        }
-
-        enclosureViews[disk.enclosure.number].slots.push(enclosureSlot);
-        enclosureViews[disk.enclosure.number].slots.sort((a, b) => a.slot - b.slot);
-      });
-    }
-
-    return of(enclosureViews);
-  }
-*/
-
   processData({
     enclosures, pools, disks, selectedEnclosure,
   }: {
@@ -321,6 +215,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         slots: [],
         number: enclosure.number,
         model: enclosure.model,
+        expanders: (enclosure.elements as EnclosureElementsGroup[]).find((item) => {
+          return item.name === 'SAS Expander';
+        }).elements,
       } as EnclosureView;
     });
     enclosureViews.sort((a, b) => a.number - b.number);
@@ -407,11 +304,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     const frontChassisElements: EnclosureElement | EnclosureElementsGroup = data.enclosures[frontNumber].elements[0];
     const frontSlotElements = (frontChassisElements as EnclosureElementsGroup).elements;
     const mergedSlotElements = frontSlotElements.concat(rearSlotElements);
-    /* console.warn({
-      front: frontSlotElements,
-      rear: rearSlotElements,
-      merged: mergedSlotElements,
-    }); */
     (data.enclosures[frontNumber].elements as EnclosureElementsGroup[])[0].elements = mergedSlotElements;
     const updatedEnclosures = data.enclosures.filter((enclosure: Enclosure) => enclosure.number !== rearNumber);
 
@@ -420,7 +312,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       disks: updatedDisks,
       enclosures: updatedEnclosures,
     };
-    console.warn(updatedData);
 
     return updatedData;
   }

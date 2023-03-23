@@ -19,7 +19,12 @@ import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Enclosure, EnclosureSlot, EnclosureView } from 'app/interfaces/enclosure.interface';
+import {
+  Enclosure,
+  EnclosureElement,
+  EnclosureSlot,
+  EnclosureView,
+} from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import {
   CanvasExtractEvent,
@@ -123,8 +128,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   systemState: EnclosureState;
 
   // TODO: Implement Expanders
-  get expanders(): unknown[] {
-    return [];
+  get expanders(): EnclosureElement[] {
+    return this.selectedEnclosureView.expanders;
+    // return [];
   }
   // Tracked by parent component
   get selectedEnclosureNumber(): number {

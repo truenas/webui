@@ -60,6 +60,7 @@ export interface EnclosureView {
   number: number;
   model: string;
   isSelected: boolean;
+  expanders?: EnclosureElement[];
 }
 
 export interface SelectedEnclosureSlot {
