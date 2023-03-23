@@ -274,14 +274,9 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
+      this.snackbar.success(this.translate.instant('Syncing all catalogs. This may take a few minutes.'));
       this.loadCatalogs();
     });
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Syncing all catalogs. This may take a few minutes.'));
-      });
   }
 
   setupCatalogMenu(): void {
