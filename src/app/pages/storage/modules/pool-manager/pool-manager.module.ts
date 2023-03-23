@@ -20,9 +20,9 @@ import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-ma
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/disk-icon/disk-icon.component';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/disk-info/disk-info.component';
+import { EnclosureWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/enclosure-wrapper/enclosure-wrapper.component';
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-selection-vdev/manual-selection-vdev.component';
-import { VdevWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/vdev-wrapper/vdev-wrapper.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { CreateDataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/create-data-wizard-step/create-data-wizard-step.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/general-wizard-step/general-wizard-step.component';
@@ -59,7 +59,7 @@ import { ManualSelectionDisksComponent } from './components/manual-disk-selectio
     InventoryComponent,
     PoolManagerWizardComponent,
     DiskIconComponent,
-    VdevWrapperComponent,
+    EnclosureWrapperComponent,
     DiskInfoComponent,
     ManualSelectionVdevComponent,
     GeneralWizardStepComponent,

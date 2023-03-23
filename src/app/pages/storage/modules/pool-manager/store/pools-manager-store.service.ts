@@ -86,22 +86,22 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   addToDataVdev = this.updater((
     state: PoolManagerState,
-    enclosureUpdate: { disk: ManagerDisk; vdev: ManagerVdev },
+    vdevUpdate: { disk: ManagerDisk; vdev: ManagerVdev },
   ) => {
     let dataVdevs = [...state.dataVdevs];
     if (!dataVdevs.length) {
-      dataVdevs = [{ ...enclosureUpdate.vdev }];
+      dataVdevs = [{ ...vdevUpdate.vdev }];
     }
     for (const dataVdev of dataVdevs) {
       const diskAlreadyExists = dataVdev.disks.some(
-        (vdevDisk) => vdevDisk.identifier === enclosureUpdate.disk.identifier,
+        (vdevDisk) => vdevDisk.identifier === vdevUpdate.disk.identifier,
       );
-      if (dataVdev.uuid === enclosureUpdate.vdev.uuid && !diskAlreadyExists) {
-        dataVdev.disks.push(enclosureUpdate.disk);
+      if (dataVdev.uuid === vdevUpdate.vdev.uuid && !diskAlreadyExists) {
+        dataVdev.disks.push(vdevUpdate.disk);
       }
     }
     const unusedDisks = [...state.unusedDisks].filter(
-      (unusedDisk) => unusedDisk.identifier !== enclosureUpdate.disk.identifier,
+      (unusedDisk) => unusedDisk.identifier !== vdevUpdate.disk.identifier,
     );
     return {
       ...state,

@@ -1,13 +1,20 @@
 <mat-card class="container">
   <mat-card-content>
-    <div class="outer-container">
+    <div
+      class="outer-container"
+      dndDropzone
+      [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
+      (dndDrop)="onDrop($event)"
+    >
       <div class="type-container">
         <h3>{{vdev.type}}</h3>
         <p>{{'{size} Est. Usable Capacity' | translate: { size: ixFormatter.convertBytesToHumanReadable(vdev.rawSize) } }}</p>
         <ix-warning *ngIf="spansEnclosures" [message]="'Vdevs spans enclosure' | translate"></ix-warning>
       </div>
-      <div class="vdev-container">
-        <ix-vdev-wrapper *ngFor="let enclosureDisks of enclosuresDisks | keyvalue" 
+      <div 
+        class="vdev-container"
+      >
+        <ix-enclosure-wrapper *ngFor="let enclosureDisks of enclosuresDisks | keyvalue" 
           [enclosure]="enclosureDisks.key"[vdev]="vdev"
         >
           <div class="disk-icons">
@@ -22,7 +29,19 @@
               (dndEnd)="onDragEnd()"
             ></ix-disk-icon>
           </div>
-        </ix-vdev-wrapper>
+        </ix-enclosure-wrapper>
+        <div class="disk-icons">
+          <ix-disk-icon *ngFor="let disk of nonEnclosureDisks"
+            class="disk-icon drag-handle"
+            [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+            [dndDraggable]="getMovableDisk(disk)"
+            [dndEffectAllowed]="'move'"
+            [disk]="disk"
+            (dndStart)="onDragStart()"
+            (dndCanceled)="onDragCanceled()"
+            (dndEnd)="onDragEnd()"
+          ></ix-disk-icon>
+        </div>
       </div>
       <div class="delete-container" (click)="deleteVdev()">
         <ix-icon name="delete"></ix-icon>

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DndDropEvent } from 'ngx-drag-drop';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -19,34 +20,33 @@ export class ManualSelectionVdevComponent implements OnInit {
   @Input() vdev: ManagerVdev;
   @Input() swapondrive = 2;
   enclosuresDisks = new Map<number, ManagerDisk[]>();
+  nonEnclosureDisks: ManagerDisk[] = [];
 
   get spansEnclosures(): boolean {
-    if (!this.vdev.disks.length) {
-      return false;
-    }
-    const enclosure = this.vdev.disks[0].enclosure;
-    return this.vdev.disks.some(
-      (disk) => disk.enclosure.number !== enclosure.number,
-    );
+    return !!this.enclosuresDisks.size
+      && (this.enclosuresDisks.size > 1
+        || !!this.nonEnclosureDisks.length);
   }
   constructor(
     public ixFormatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     public store$: PoolManagerStore,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.store$.dataVdevs$.pipe(untilDestroyed(this)).subscribe(() => {
       this.enclosuresDisks = new Map();
+      this.nonEnclosureDisks = [];
       for (const disk of this.vdev?.disks) {
-        let enclosure = this.enclosuresDisks.get(disk.enclosure.number);
-        if (!enclosure) {
-          enclosure = [];
+        if (disk.enclosure) {
+          let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.number);
+          if (!enclosureDisks) {
+            enclosureDisks = [];
+          }
+          this.enclosuresDisks.set(disk.enclosure.number, [...enclosureDisks, disk]);
+        } else {
+          this.nonEnclosureDisks.push(disk);
         }
-        this.enclosuresDisks.set(disk.enclosure.number, [...enclosure, disk]);
-      }
-      if (this.enclosuresDisks.size === 0) {
-        this.enclosuresDisks.set(0, []);
       }
       this.estimateSize(this.vdev);
       this.cdr.markForCheck();
@@ -112,5 +112,15 @@ export class ManualSelectionVdevComponent implements OnInit {
 
   deleteVdev(): void {
     this.store$.removeDataVdev(this.vdev);
+  }
+
+  onDrop(event: DndDropEvent): void {
+    const disk = event.data as VdevManagerDisk;
+    if (disk.vdevUuid) {
+      this.store$.removeFromDataVdev(disk);
+    }
+    this.store$.addToDataVdev({ disk, vdev: this.vdev });
+    this.store$.toggleActivateDrag(false);
+    this.cdr.markForCheck();
   }
 }
