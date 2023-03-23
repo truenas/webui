@@ -415,7 +415,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       .subscribe((data: EnclosureState) => {
         if (data.enclosureViews.length) {
           this.systemState = data;
-
           if (!this.app) {
             this.appSetup();
           }
@@ -634,8 +633,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.showCaption = false;
         break;
       case 'M Series': {
-        // Do we need to detect rear chassis?
-        this.chassis = new M50(true);
+        // We need to detect rear chassis. Not all M Series will have rear slots
+        this.chassis = new M50(enclosure.slots.length > 24);
         break;
       }
       case 'Rear': // Ignore reported rear chassis for M50
@@ -723,7 +722,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
           this.selectedSlotNumber = slotNumber;
           const isSlotEmpty: boolean = (this.selectedSlot === null || !this.selectedSlot.disk);
-          console.warn(isSlotEmpty);
 
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);

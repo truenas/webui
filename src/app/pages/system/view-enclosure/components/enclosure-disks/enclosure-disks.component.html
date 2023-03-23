@@ -122,8 +122,8 @@
              class="details stage-left dom-overlay">
           <div class="content" >
             <h1 [class]="['disk-name', selectedSlot?.disk?.name]">
-              <span *ngIf="selectedSlot.disk">{{ selectedSlot?.disk?.name }}</span>
-              <span *ngIf="!selectedSlot.disk">{{ 'Empty' | translate }}</span>
+              <span *ngIf="selectedSlot?.disk">{{ selectedSlot?.disk?.name }}</span>
+              <span *ngIf="!selectedSlot?.disk">{{ 'Empty' | translate }}</span>
             </h1>
             <div class="title">
               <span *ngIf="selectedSlot?.vdev" class="semibold">{{ 'vdev' | translate }}: </span>

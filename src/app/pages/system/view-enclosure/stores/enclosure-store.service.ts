@@ -385,7 +385,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   mergeM50Enclosures(data: ProcessParameters): ProcessParameters {
     const rearNumber = data.enclosures.find((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').number;
-    const frontNumber = data.enclosures.find((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').number;
+    const frontNumber = data.enclosures.find((enclosure: Enclosure) => {
+      return enclosure.id !== 'm50_plx_enclosure' && enclosure.controller;
+    }).number;
 
     const updatedDisks = data.disks.map((disk: Disk) => {
       const updatedDisk = disk;
@@ -396,6 +398,21 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       return updatedDisk || disk;
     });
 
+    const rearChassisElements: EnclosureElement | EnclosureElementsGroup = data.enclosures[rearNumber].elements[0];
+    const rearSlotElements: EnclosureElement[] = (rearChassisElements as EnclosureElementsGroup).elements
+      .map((element: EnclosureElement) => {
+        element.slot += 24;
+        return element;
+      });
+    const frontChassisElements: EnclosureElement | EnclosureElementsGroup = data.enclosures[frontNumber].elements[0];
+    const frontSlotElements = (frontChassisElements as EnclosureElementsGroup).elements;
+    const mergedSlotElements = frontSlotElements.concat(rearSlotElements);
+    /* console.warn({
+      front: frontSlotElements,
+      rear: rearSlotElements,
+      merged: mergedSlotElements,
+    }); */
+    (data.enclosures[frontNumber].elements as EnclosureElementsGroup[])[0].elements = mergedSlotElements;
     const updatedEnclosures = data.enclosures.filter((enclosure: Enclosure) => enclosure.number !== rearNumber);
 
     const updatedData: ProcessParameters = {
@@ -403,6 +420,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       disks: updatedDisks,
       enclosures: updatedEnclosures,
     };
+    console.warn(updatedData);
 
     return updatedData;
   }
@@ -462,8 +480,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   private verifiedDiskPool(disk: Disk, pools: Pool[]): Pool | null {
     let result: Pool | null = null;
     pools.forEach((pool: Pool) => {
-      const test = this.findVdevByDisk(disk, pool);
-      if (test?.category || test?.vdev) result = pool;
+      if (pool.topology) {
+        // console.error('Pool Data Integrity: pool.topology is null');
+        const test = this.findVdevByDisk(disk, pool);
+        if (test?.category || test?.vdev) result = pool;
+      }
     });
     return result;
   }
