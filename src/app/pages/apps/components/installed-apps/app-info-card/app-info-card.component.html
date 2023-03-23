@@ -4,9 +4,9 @@
       {{ 'Application Info' | translate }}
     </h3>
     <button
+      *ngIf="hasUpdates"
       mat-button
       [ixTest]="[app?.name, 'update']"
-      [disabled]="hasNoUpdates()"
       (click)="updateButtonPressed()"
     >
       {{ 'Update' | translate }}
