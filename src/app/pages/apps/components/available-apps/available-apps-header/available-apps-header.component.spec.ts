@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatChipInputHarness } from '@angular/material/chips/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { MatSelectHarness } from '@angular/material/select/testing';
@@ -20,6 +21,7 @@ describe('AvailableAppsHeaderComponent', () => {
   let catalogsSelect: MatSelectHarness;
   let sortSelect: MatSelectHarness;
   let categoriesSelect: MatChipInputHarness;
+  const changeSearch = jest.fn();
   const changeFilters = jest.fn();
 
   const createComponent = createHostFactory({
@@ -41,15 +43,17 @@ describe('AvailableAppsHeaderComponent', () => {
           last_update: '2023-02-28 16:37:54',
           name: 'qbittorent',
         }] as AvailableApp[]),
+        mockCall('app.categories', ['storage', 'crypto', 'media', 'torrent']),
         mockCall('chart.release.query', [{}, {}, {}] as ChartRelease[]),
       ]),
     ],
   });
 
   beforeEach(async () => {
-    spectator = createComponent('<ix-available-apps-header (filters)="changeFilters($event)"></ix-available-apps-header>', {
-      hostProps: { changeFilters },
-    });
+    spectator = createComponent(
+      '<ix-available-apps-header (search)="changeSearch($event)" (filters)="changeFilters($event)"></ix-available-apps-header>',
+      { hostProps: { changeSearch, changeFilters } },
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
     const filtersButton = spectator.query('.filters-btn');
@@ -69,22 +73,18 @@ describe('AvailableAppsHeaderComponent', () => {
     expect(numbers[2]).toHaveText('2'); // installed catalogs
   });
 
-  it('emits (filters) when user types in the search input', async () => {
+  it('emits (search) when user types in the search input', async () => {
     await searchInput.setValue('search string');
-
-    expect(changeFilters).toHaveBeenLastCalledWith({
-      search: 'search string',
-      catalogs: ['OFFICIAL', 'TEST'],
-      sort: undefined,
-      categories: [],
-    });
+    expect(changeSearch).toHaveBeenLastCalledWith('search string');
   });
 
   it('emits (filters) when user selects catalogs', async () => {
     await catalogsSelect.clickOptions({ text: 'TEST' });
 
+    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
+    await applyButton.click();
+
     expect(changeFilters).toHaveBeenLastCalledWith({
-      search: '',
       catalogs: ['OFFICIAL'],
       sort: undefined,
       categories: [],
@@ -94,8 +94,10 @@ describe('AvailableAppsHeaderComponent', () => {
   it('emits (filters) when user selects sort', async () => {
     await sortSelect.clickOptions({ text: 'Updated Date' });
 
+    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
+    await applyButton.click();
+
     expect(changeFilters).toHaveBeenLastCalledWith({
-      search: '',
       catalogs: ['OFFICIAL', 'TEST'],
       sort: AppsFiltersSort.LastUpdate,
       categories: [],
@@ -106,11 +108,19 @@ describe('AvailableAppsHeaderComponent', () => {
     await categoriesSelect.setValue('storage');
     await categoriesSelect.blur();
 
+    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
+    await applyButton.click();
+
     expect(changeFilters).toHaveBeenLastCalledWith({
-      search: '',
       catalogs: ['OFFICIAL', 'TEST'],
       sort: undefined,
       categories: ['storage'],
     });
+  });
+
+  it('emits (filters) when reset button is pressed', async () => {
+    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
+    await resetButton.click();
+    expect(changeFilters).toHaveBeenLastCalledWith(undefined);
   });
 });

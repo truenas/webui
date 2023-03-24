@@ -21,13 +21,15 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 })
 export class AvailableAppsHeaderComponent implements OnInit {
   @Output() filters = new EventEmitter<AppsFiltersValues>();
+  @Output() search = new EventEmitter<string>();
 
   form = this.fb.group({
-    search: [''],
     catalogs: [[] as string[]],
     sort: [null as AppsFiltersSort],
     categories: [[] as string[]],
   });
+
+  searchControl = this.fb.control('');
 
   catalogsOptions$: Observable<Option[]> = of([]);
   sortOptions$: Observable<Option[]> = of([
@@ -43,6 +45,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
   availableApps: AvailableApp[] = [];
   installedApps: ChartRelease[] = [];
   installedCatalogs: string[] = [];
+  appsCategories: string[] = [];
 
   constructor(
     private appService: ApplicationsService,
@@ -54,13 +57,8 @@ export class AvailableAppsHeaderComponent implements OnInit {
   ngOnInit(): void {
     this.loadData();
 
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((filters) => {
-      this.filters.emit({
-        search: filters.search || '',
-        catalogs: filters.catalogs || [],
-        sort: filters.sort || undefined,
-        categories: filters.categories || [],
-      });
+    this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((searchQuery) => {
+      this.search.emit(searchQuery);
     });
   }
 
@@ -69,7 +67,8 @@ export class AvailableAppsHeaderComponent implements OnInit {
     forkJoin([
       this.appService.getAvailableApps(),
       this.appService.getChartReleases(),
-    ]).pipe(untilDestroyed(this)).subscribe(([availableApps, releases]) => {
+      this.appService.getAllAppsCategories(),
+    ]).pipe(untilDestroyed(this)).subscribe(([availableApps, releases, categories]) => {
       this.availableApps = availableApps;
       this.installedApps = releases;
 
@@ -78,9 +77,8 @@ export class AvailableAppsHeaderComponent implements OnInit {
       this.installedCatalogs = Array.from(catalogs);
       this.catalogsOptions$ = of(this.installedCatalogs.map((catalog) => ({ label: catalog, value: catalog })));
 
-      const categories = new Set<string>();
-      availableApps.forEach((app) => app.categories.forEach((category) => categories.add(category)));
-      this.categoriesProvider$ = (query) => of(Array.from(categories).filter((category) => category.includes(query)));
+      this.appsCategories = categories;
+      this.categoriesProvider$ = (query) => of(categories.filter((category) => category.includes(query)));
 
       if (this.isFirstLoad) {
         this.isFirstLoad = false;
@@ -93,5 +91,20 @@ export class AvailableAppsHeaderComponent implements OnInit {
 
   changeFiltersVisible(): void {
     this.showFilters = !this.showFilters;
+  }
+
+  applyFilters(): void {
+    this.filters.emit({
+      catalogs: this.form.value.catalogs || [],
+      sort: this.form.value.sort || undefined,
+      categories: this.form.value.categories || this.appsCategories,
+    });
+  }
+
+  resetFilters(): void {
+    this.form.controls.sort.setValue(null);
+    this.form.controls.catalogs.setValue(this.installedCatalogs);
+    this.form.controls.categories.setValue([]);
+    this.filters.emit(undefined);
   }
 }
