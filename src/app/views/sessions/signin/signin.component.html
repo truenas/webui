@@ -23,7 +23,10 @@
 
           <div class="card-bottom">
             <div *ngIf="canLogin$ | async" class="form-container">
-              <ix-signin-form *ngIf="wasAdminSet$ | async; else noAdminSet"></ix-signin-form>
+              <ix-signin-form
+                *ngIf="wasAdminSet$ | async; else noAdminSet"
+                [isLoading]="hasLoadingIndicator$ | async"
+              ></ix-signin-form>
               <ng-template #noAdminSet>
                 <ix-set-admin-password-form></ix-set-admin-password-form>
               </ng-template>
