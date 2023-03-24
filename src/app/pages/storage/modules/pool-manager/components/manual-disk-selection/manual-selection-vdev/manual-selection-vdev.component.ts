@@ -38,7 +38,7 @@ export class ManualSelectionVdevComponent implements OnInit {
       this.enclosuresDisks = new Map();
       this.nonEnclosureDisks = [];
       for (const disk of this.vdev?.disks) {
-        if (disk.enclosure) {
+        if (disk.enclosure?.number || disk.enclosure?.number === 0) {
           let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.number);
           if (!enclosureDisks) {
             enclosureDisks = [];

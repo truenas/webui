@@ -16,9 +16,6 @@ export class EnclosureWrapperComponent {
   @Input() enclosure: number;
   @Input() vdev: ManagerVdev;
 
-  get vdevDisksLength(): boolean {
-    return !!this.vdev.disks.length;
-  }
   constructor(
     public store$: PoolManagerStore,
   ) { }
