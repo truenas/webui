@@ -228,9 +228,9 @@
               [style.width]="(100 / expanders.length).toString() + '%'"
             >
               <div class="primary-number">{{ $any(expander).status }}</div>
-              <div class="subtitle">{{ 'Expander Status' | translate }}</div>
-              <div *ngIf="expander.descriptor" class="title">{{ expander.descriptor }}</div>
-              <div *ngIf="!expander.descriptor" class="title">{{ 'No descriptor provided' | translate }}</div>
+              <div class="title">{{ 'Expander Status' | translate }}</div>
+              <div *ngIf="expander.descriptor" class="subtitle">{{ expander.descriptor }}</div>
+              <div *ngIf="!expander.descriptor" class="subtitle">{{ 'No descriptor provided' | translate }}</div>
             </div>
           </div>
         </div>
