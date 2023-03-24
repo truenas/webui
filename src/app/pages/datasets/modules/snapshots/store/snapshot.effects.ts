@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
-  snapshotAdded, snapshotChanged,
+  snapshotAdded, snapshotBulkActionCompleted, snapshotChanged,
   snapshotPageEntered,
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
@@ -21,7 +21,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Injectable()
 export class SnapshotEffects {
   loadSnapshots$ = createEffect(() => this.actions$.pipe(
-    ofType(snapshotPageEntered),
+    ofType(snapshotPageEntered, snapshotBulkActionCompleted),
     switchMap(() => this.store$.pipe(waitForPreferences)),
     switchMap((preferences) => {
       return this.ws.call('zfs.snapshot.query', [
@@ -48,14 +48,14 @@ export class SnapshotEffects {
     switchMap(() => {
       return this.ws.subscribe('zfs.snapshot.query').pipe(
         filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
-        map((event) => {
+        switchMap((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
-              return snapshotAdded({ snapshot: event.fields });
+              return of(snapshotAdded({ snapshot: event.fields }));
             case IncomingApiMessageType.Changed:
-              return snapshotChanged({ snapshot: event.fields });
+              return of(snapshotChanged({ snapshot: event.fields }));
             default:
-              return undefined;
+              return EMPTY;
           }
         }),
       );

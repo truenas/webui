@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export const snapshotPageEntered = createAction('[Snapshots API] Load');
+export const snapshotBulkActionCompleted = createAction('[Snapshots API] Bulk Action Completed');
 
 export const snapshotsLoaded = createAction('[Snapshots API] Loaded', props<{ snapshots: ZfsSnapshot[] }>());
 export const snapshotsNotLoaded = createAction('[Snapshots API] Not Loaded', props<{ error: string }>());

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
@@ -44,14 +44,14 @@ export class AlertEffects {
     switchMap(() => {
       return this.ws.subscribe('alert.list').pipe(
         filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
-        map((event) => {
+        switchMap((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
-              return alertAdded({ alert: event.fields });
+              return of(alertAdded({ alert: event.fields }));
             case IncomingApiMessageType.Changed:
-              return alertChanged({ alert: event.fields });
+              return of(alertChanged({ alert: event.fields }));
             default:
-              return undefined;
+              return EMPTY;
           }
         }),
       );
