@@ -158,7 +158,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
   unsetCertificates(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Warning'),
-      message: this.translate.instant('This operation will unset/unselect any certificates assgined to OpenVPN Client configuration. Are you sure you want to proceed?'),
+      message: this.translate.instant('This operation will unset/unselect any certificates assigned to OpenVPN Client configuration. Are you sure you want to proceed?'),
     }).pipe(
       filter(Boolean),
       switchMap(() => {
