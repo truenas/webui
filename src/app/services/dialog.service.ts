@@ -7,6 +7,7 @@ import {
   ConfirmOptionsWithSecondaryCheckbox,
   DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
+import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -14,6 +15,7 @@ import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/err
 import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
 
 @UntilDestroy()
 @Injectable({
@@ -45,6 +47,28 @@ export class DialogService {
       // if it can't print the error at least put it on the console.
       console.error(error);
     }
+  }
+
+  error(error: ErrorReport | ErrorReport[]): Observable<boolean> {
+    if (Array.isArray(error)) {
+      if (error.length > 1) {
+        const dialogRef = this.dialog.open(MultiErrorDialogComponent, {
+          data: error,
+        });
+        return dialogRef.afterClosed();
+      }
+      error = error[0];
+    }
+    const dialogRef = this.dialog.open(ErrorDialogComponent, {
+      data: error,
+    });
+    dialogRef.componentInstance.title = error.title;
+    dialogRef.componentInstance.message = error.message;
+    dialogRef.componentInstance.backtrace = error.backtrace;
+    if (error.logs) {
+      dialogRef.componentInstance.logs = error.logs;
+    }
+    return dialogRef.afterClosed();
   }
 
   errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
