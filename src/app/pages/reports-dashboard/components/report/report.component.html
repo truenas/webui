@@ -49,7 +49,7 @@
                 [matTooltip]="'Reset Zoom' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="timeZoomReset()"
-              >{{ currentZoomLevel | mapValue: zoomLevelLabels }}</mat-button-toggle>
+              >{{ currentZoomLevel | mapValue: zoomLevelLabels | translate }}</mat-button-toggle>
 
               <mat-button-toggle
                 [disabled]="zoomLevelIndex === zoomLevelMax"

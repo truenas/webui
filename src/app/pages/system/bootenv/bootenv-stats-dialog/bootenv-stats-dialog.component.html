@@ -8,7 +8,7 @@
   <div class="status-item">
     <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
     <span class="status-value">
-      {{ condition | mapValue: poolStatusLabels }}
+      {{ condition | mapValue: poolStatusLabels | translate }}
       <ng-container *ngIf="condition === PoolStatus.Degraded">
         {{ 'Check Alerts for more details.' | translate }}
       </ng-container>

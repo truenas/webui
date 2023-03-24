@@ -36,6 +36,10 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
     private cdr: ChangeDetectorRef,
   ) {}
 
+  get isVirtio(): boolean {
+    return this.form.value.nic_type === VmNicType.Virtio;
+  }
+
   ngOnInit(): void {
     this.generateRandomMac();
   }
