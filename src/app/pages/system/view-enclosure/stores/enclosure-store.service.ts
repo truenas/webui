@@ -195,9 +195,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     if (!enclosures.length) return of(enclosureViews);
 
     // Deal with M50
-    const isM50 = enclosures.filter((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').length;
+    const isM50 = enclosures.filter((enclosure: Enclosure) => {
+      return enclosure.id === 'm50_plx_enclosure' || enclosure.id === 'm60_plx_enclosure';
+    }).length;
     if (isM50) {
-      const mergedData = this.mergeM50Enclosures({
+      const mergedData = this.mergeMseriesEnclosures({
         pools,
         disks,
         enclosures,
@@ -217,7 +219,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         model: enclosure.model,
         expanders: (enclosure.elements as EnclosureElementsGroup[]).find((item) => {
           return item.name === 'SAS Expander';
-        }).elements,
+        })?.elements,
       } as EnclosureView;
     });
     enclosureViews.sort((a, b) => a.number - b.number);
@@ -280,10 +282,18 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return of(enclosureViews);
   }
 
-  mergeM50Enclosures(data: ProcessParameters): ProcessParameters {
-    const rearNumber = data.enclosures.find((enclosure: Enclosure) => enclosure.id === 'm50_plx_enclosure').number;
+  mergeMseriesEnclosures(data: ProcessParameters): ProcessParameters {
+    let rearId = '';
+    const rearNumber = data.enclosures.find((enclosure: Enclosure) => {
+      if (enclosure.id === 'm50_plx_enclosure' || enclosure.id === 'm60_plx_enclosure') {
+        rearId = enclosure.id;
+        return true;
+      }
+      return false;
+    }).number;
+
     const frontNumber = data.enclosures.find((enclosure: Enclosure) => {
-      return enclosure.id !== 'm50_plx_enclosure' && enclosure.controller;
+      return enclosure.id !== rearId && enclosure.controller;
     }).number;
 
     const updatedDisks = data.disks.map((disk: Disk) => {

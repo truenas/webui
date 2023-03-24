@@ -164,6 +164,9 @@ export class VDevLabelsSvg {
         slot = defaultSlot;
       } */
 
+      // Ignore slots on non-selected enclosure
+      if (enclosureSlot.enclosure !== data.selected.enclosure) return;
+
       const isSibling = false; // TODO: implement sibling logic for compound chassis
 
       // The Actual creating of labels

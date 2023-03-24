@@ -1,11 +1,5 @@
 import {
-  AfterContentInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  OnDestroy,
-  ViewChild,
+  AfterContentInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,11 +13,9 @@ import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  Enclosure,
-  EnclosureElement,
-  EnclosureSlot,
-  EnclosureView,
+  Enclosure, EnclosureElement, EnclosureSlot, EnclosureView,
 } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import {
@@ -87,7 +79,7 @@ export interface DiskFailure {
   disk: string;
   enclosure: number;
   slot: number;
-  location: EnclosureLocation;
+  location: string;
   reasons?: string[];
 }
 
@@ -198,10 +190,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
     const selectedVdevSlots: unknown[] = this.selectedVdevDisks.map((diskName: string) => {
       const enclosure = this.systemState.disks.find((disk: Disk) => disk.name === diskName)?.enclosure;
-      /* if (enclosure) {
-        return this.systemState.enclosureViews[enclosure.number].slots[enclosure.slot - 1];
-      }
-      return []; */
+
       if (enclosure) {
         return this.systemState.enclosureViews.find((view: EnclosureView) => {
           return view.number === enclosure.number;
@@ -224,66 +213,34 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     return this.systemState.pools.filter((pool: Pool) => this.selectedEnclosurePools.includes(pool.name));
   }
 
-  // Data fetching. TODO: Move to service or store
+  // Find bad status strings in both disk.status and slot.status.
+  // TODO: Move to service or store
   get failedDisks(): DiskFailure[] {
+    if (!this.selectedEnclosureView) return [];
+
     const failedDisks: DiskFailure[] = [];
+    const failedSlots = this.selectedEnclosureView.slots.filter((slot: EnclosureSlot) => {
+      const triggers: string[] = [
+        TopologyItemStatus.Unavail,
+        TopologyItemStatus.Faulted,
+      ];
+      return triggers.includes(slot.topologyStatus);
+    });
+
+    failedSlots.forEach((slot: EnclosureSlot) => {
+      if (!slot.disk) return;
+
+      const failure: DiskFailure = {
+        disk: slot.disk.name,
+        enclosure: slot.enclosure,
+        slot: slot.slot,
+        location: this.view,
+        reasons: [slot.topologyStatus],
+      };
+      failedDisks.push(failure);
+    });
+
     return failedDisks;
-    /*
-    const selectedEnclosure = this.selectedEnclosure;
-
-    const analyze = (disk: EnclosureDisk): void => {
-      let failed = false;
-
-      // Health based on disk.status
-      if (disk && disk.status && disk.status === 'FAULT') {
-        failed = true;
-      }
-
-      // Also check slot status
-      const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
-        ? this.system.enclosures[disk.enclosure.number].elements as EnclosureElement[]
-        : (this.system.enclosures[disk.enclosure.number].elements[0] as EnclosureElementsGroup).elements;
-      const slot = elements.find((element) => element.slot === disk.enclosure.slot);
-
-      if (!failed && slot.fault) {
-        failed = true;
-      }
-
-      if (failed) {
-        const location = this.subenclosure && disk.enclosure.number === this.system.rearIndex
-          ? EnclosureLocation.Rear
-          : EnclosureLocation.Front;
-        const failure: DiskFailure = {
-          disk: disk.name, enclosure: disk.enclosure.number, slot: disk.enclosure.slot, location,
-        };
-        failedDisks.push(failure);
-      }
-    };
-
-    if (this.subenclosure) {
-      // If this is a head unit with rear bays, treat both enclosures as single unit
-      this.system.profile[this.system.headIndex].disks.forEach((disk) => {
-        analyze(disk);
-      });
-
-      this.system.profile[this.system.rearIndex].disks.forEach((disk) => {
-        analyze(disk);
-      });
-    } else if (selectedEnclosure.siblings.length) {
-      selectedEnclosure.disks.forEach((disk: EnclosureDisk) => {
-        analyze(disk);
-      });
-      const sibling = this.system.profile[selectedEnclosure.siblings[0]];
-      sibling.disks.forEach((disk: EnclosureDisk) => {
-        analyze(disk);
-      });
-    } else {
-      selectedEnclosure.disks.forEach((disk) => {
-        analyze(disk);
-      });
-    }
-*/
-    // this.failedDisks = failedDisks;
   }
 
   get isTopologyDisk(): boolean {
@@ -415,6 +372,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       .subscribe((data: EnclosureState) => {
         if (data.enclosureViews.length) {
           this.systemState = data;
+
           if (!this.app) {
             this.appSetup();
           }
@@ -1247,7 +1205,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     });
   }
 
-  // TODO: is this actually in use?
+  // Used on stage right disk name hover
   highlightPath(devname: string): void {
     // show the svg path
     this.labels.events$.next({
@@ -1257,7 +1215,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     });
   }
 
-  // TODO: is this actually in use?
+  // Used on stage right disk name hover
   unhighlightPath(devname: string): void {
     // show the svg path
     this.labels.events$.next({

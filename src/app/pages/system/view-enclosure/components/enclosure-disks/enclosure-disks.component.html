@@ -159,22 +159,22 @@
             (mouseenter)="toggleHighlightMode('on')"
             (mouseleave)="toggleHighlightMode('off')"
           >
-            <div *ngIf="selectedVdevDisks; else noVdevDisks" class="legend">
+            <div *ngIf="selectedVdevSlots; else noVdevDisks" class="legend">
               <div
-                *ngFor="let disk of selectedVdevDisks; let i = index"
-                [class]="['vdev-disk', disk]"
-                (mouseenter)="highlightPath(disk)"
-                (mouseleave)="unhighlightPath(disk)"
+                *ngFor="let slot of selectedVdevSlots; let i = index"
+                [class]="['vdev-disk', slot.disk.name]"
+                (mouseenter)="highlightPath(slot.disk.name)"
+                (mouseleave)="unhighlightPath(slot.disk.name)"
               >
                 <div
                   class="swatch"
-                  [style.background]="selectedSlot.disk.devname === disk ? theme.yellow : theme.cyan"
+                  [style.background]="selectedSlot.disk.devname === slot.disk.name ? theme.yellow : theme.cyan"
                 ></div>
-                {{ disk }}
-                <span *ngIf="!selectedVdevSlotNumbers[disk]">
-                  <!--({{ selectedVdev.diskEnclosures[disk] === system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})-->
-                </span
-                >
+                {{ slot.disk.name }}
+                <!--<span *ngIf="!selectedVdevSlotNumbers[disk]">-->
+                <span *ngIf="slot.enclosure !== selectedEnclosureView.number">
+                  (enclosure {{ slot.enclosure }}, slot {{ slot.slot }})
+                </span>
               </div>
             </div>
 
