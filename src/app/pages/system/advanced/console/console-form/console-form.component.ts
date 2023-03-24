@@ -16,6 +16,7 @@ import {
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -67,13 +68,14 @@ export class ConsoleFormComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('system.advanced.config')
-      .pipe(untilDestroyed(this))
+    this.store$.pipe(
+      waitForAdvancedConfig,
+      untilDestroyed(this),
+    )
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
-          this.cdr.markForCheck();
           this.cdr.markForCheck();
         },
         error: (error) => {
