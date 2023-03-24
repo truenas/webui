@@ -28,6 +28,7 @@ import { CreateDataWizardStepComponent } from 'app/pages/storage/modules/pool-ma
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/general-wizard-step/general-wizard-step.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
+import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { ManualSelectionDisksComponent } from './components/manual-disk-selection/manual-selection-disks/manual-selection-disks.component';
 
@@ -69,6 +70,7 @@ import { ManualSelectionDisksComponent } from './components/manual-disk-selectio
   ],
   providers: [
     PoolManagerStore,
+    ManualDiskSelectionStore,
   ],
 })
 

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 
 @UntilDestroy()
 @Component({
@@ -17,6 +17,6 @@ export class EnclosureWrapperComponent {
   @Input() vdev: ManagerVdev;
 
   constructor(
-    public store$: PoolManagerStore,
+    public store$: ManualDiskSelectionStore,
   ) { }
 }

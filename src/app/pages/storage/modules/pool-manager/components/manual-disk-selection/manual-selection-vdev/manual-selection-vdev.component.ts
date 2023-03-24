@@ -7,7 +7,8 @@ import { GiB, MiB } from 'app/constants/bytes.constant';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
-import { PoolManagerStore, VdevManagerDisk } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
+import { VdevManagerDisk } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +31,7 @@ export class ManualSelectionVdevComponent implements OnInit {
   constructor(
     public ixFormatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
-    public store$: PoolManagerStore,
+    public store$: ManualDiskSelectionStore,
   ) { }
 
   ngOnInit(): void {
@@ -117,9 +118,9 @@ export class ManualSelectionVdevComponent implements OnInit {
   onDrop(event: DndDropEvent): void {
     const disk = event.data as VdevManagerDisk;
     if (disk.vdevUuid) {
-      this.store$.removeFromDataVdev(disk);
+      this.store$.removeDiskFromDataVdev(disk);
     }
-    this.store$.addToDataVdev({ disk, vdev: this.vdev });
+    this.store$.addDiskToDataVdev({ disk, vdev: this.vdev });
     this.store$.toggleActivateDrag(false);
     this.cdr.markForCheck();
   }

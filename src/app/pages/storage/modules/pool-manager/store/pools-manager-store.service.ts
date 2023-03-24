@@ -18,14 +18,14 @@ export interface PoolManagerState {
 
   unusedDisks: UnusedDisk[];
   enclosures: Enclosure[];
-  dataVdevs: ManagerVdev[];
+  vdevs: { data: ManagerVdev[] };
   formValue: PoolManagerWizardFormValue;
   dragActive: boolean;
 }
 
 const initialState: PoolManagerState = {
   isLoading: false,
-  dataVdevs: [],
+  vdevs: { data: [] },
   unusedDisks: [],
   enclosures: [],
   dragActive: false,
@@ -38,8 +38,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly hasMultipleEnclosures$ = this.select((state) => state.enclosures.length > 1);
   readonly formValue$ = this.select((state) => state.formValue);
-  readonly dataVdevs$ = this.select((state) => state.dataVdevs);
-  readonly dragActive$ = this.select((state) => state.dragActive);
 
   constructor(
     private ws: WebSocketService,
@@ -81,87 +79,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     return {
       ...state,
       formValue: updatedFormValue,
-    };
-  });
-
-  addToDataVdev = this.updater((
-    state: PoolManagerState,
-    vdevUpdate: { disk: ManagerDisk; vdev: ManagerVdev },
-  ) => {
-    vdevUpdate.disk = { ...vdevUpdate.disk, real_capacity: vdevUpdate.disk.size };
-    let dataVdevs = [...state.dataVdevs];
-    if (!dataVdevs.length) {
-      dataVdevs = [{ ...vdevUpdate.vdev }];
-    }
-    for (const dataVdev of dataVdevs) {
-      const diskAlreadyExists = dataVdev.disks.some(
-        (vdevDisk) => vdevDisk.identifier === vdevUpdate.disk.identifier,
-      );
-      if (dataVdev.uuid === vdevUpdate.vdev.uuid && !diskAlreadyExists) {
-        dataVdev.disks.push(vdevUpdate.disk);
-      }
-    }
-    const unusedDisks = [...state.unusedDisks].filter(
-      (unusedDisk) => unusedDisk.identifier !== vdevUpdate.disk.identifier,
-    );
-    return {
-      ...state,
-      dataVdevs,
-      unusedDisks,
-    };
-  });
-
-  removeFromDataVdev = this.updater((
-    state: PoolManagerState,
-    disk: VdevManagerDisk,
-  ) => {
-    const dataVdevs = [...state.dataVdevs].map((vdev) => {
-      if (vdev.uuid === disk.vdevUuid) {
-        vdev.disks = vdev.disks.filter((vdevDisk) => vdevDisk.identifier !== disk.identifier);
-      }
-      return vdev;
-    });
-
-    const unusedDisks = [...state.unusedDisks];
-    if (!unusedDisks.some((unusedDisk) => unusedDisk.identifier === disk.identifier)) {
-      unusedDisks.push(disk);
-    }
-    return {
-      ...state,
-      dataVdevs,
-      unusedDisks,
-    };
-  });
-
-  toggleActivateDrag = this.updater((state: PoolManagerState, activateDrag: boolean) => {
-    return {
-      ...state,
-      dragActive: activateDrag,
-    };
-  });
-
-  addDataVdev = this.updater((state: PoolManagerState, vdev: ManagerVdev) => {
-    return {
-      ...state,
-      dataVdevs: [...state.dataVdevs, { ...vdev }],
-    };
-  });
-
-  removeDataVdev = this.updater((state: PoolManagerState, vdev: ManagerVdev) => {
-    const dataVdevs = state.dataVdevs.filter((dataVdev) => dataVdev.uuid !== vdev.uuid);
-    const unusedDisks = [...state.unusedDisks];
-    for (const disk of vdev.disks) {
-      const diskAlreadyExists = unusedDisks.some(
-        (unusedDisk) => unusedDisk.identifier === disk.identifier,
-      );
-      if (!diskAlreadyExists) {
-        unusedDisks.push(disk);
-      }
-    }
-    return {
-      ...state,
-      dataVdevs,
-      unusedDisks,
     };
   });
 
