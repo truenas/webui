@@ -7,14 +7,16 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of, Subscription } from 'rxjs';
+import { EMPTY, of, Subscription } from 'rxjs';
 import {
+  catchError,
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
@@ -194,6 +196,10 @@ export class OpenVpnServerConfigComponent implements OnInit {
       switchMap(() => {
         this.appLoaderService.open();
         return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
+      }),
+      catchError((error: WebsocketError) => {
+        this.dialogService.errorReportMiddleware(error);
+        return EMPTY;
       }),
       untilDestroyed(this),
     ).subscribe({
