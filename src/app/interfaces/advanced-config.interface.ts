@@ -14,7 +14,7 @@ export interface AdvancedConfig {
   id: number;
   isolated_gpu_pci_ids: string[];
   kdump_enabled: boolean;
-  motd: string; // Enum? FREENAS_MOTD
+  motd: string;
   overprovision: number;
   powerdaemon: boolean;
   sed_user: SedUser;

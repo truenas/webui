@@ -10,14 +10,14 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
-import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
+import { InitshutdownListComponent } from './advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
+import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
 import { AlertConfigFormComponent } from './alert-config-form/alert-config-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { SupportComponent } from './general-settings/support/support.component';
-import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
 

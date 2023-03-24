@@ -28,6 +28,14 @@ export class AppLoaderService {
     }
   }
 
+  setTitle(title: string): void {
+    if (!this.dialogRef) {
+      return;
+    }
+
+    this.dialogRef.componentInstance.title = title;
+  }
+
   // These pass signals from various components to entity form component to start/stop progress spinner
   callStarted = new EventEmitter<string>();
   callDone = new EventEmitter<string>();

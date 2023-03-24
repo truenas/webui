@@ -1,15 +1,67 @@
+@import 'scss-imports/splitview';
+
 :host {
-  align-items: center;
   border-bottom: 1px solid var(--lines);
   color: var(--fg1);
   display: flex;
   padding: 0 10px 25px;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column-reverse;
+  }
+}
+
+.search-filters {
+  width: 100%;
+
+  @media (min-width: $breakpoint-sm) {
+    max-width: 600px;
+  }
+
+  .filters-btn {
+    align-items: center;
+    color: var(--primary);
+    cursor: pointer;
+    display: flex;
+    font-weight: 600;
+    justify-content: flex-end;
+  }
+
+  .filters-container {
+    display: flex;
+    gap: 18px;
+
+    ix-select {
+      width: 30%;
+    }
+
+    .filter {
+      width: 40%;
+
+      ix-chips {
+        margin-top: 12px;
+      }
+    }
+
+    .info-container {
+      align-items: flex-start;
+      column-gap: 5px;
+      display: flex;
+      font-size: x-small;
+    }
+  }
 }
 
 .header-numbers {
-  column-gap: 25px;
+  column-gap: 70px;
   display: flex;
-  margin-left: auto;
+  justify-content: flex-end;
+  white-space: nowrap;
+  width: 100%;
+
+  @media (min-width: $breakpoint-sm) {
+    margin-left: 20px;
+  }
 }
 
 .header-number {

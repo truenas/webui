@@ -1,5 +1,5 @@
 <h1 matDialogTitle>{{ title }}</h1>
-<div *ngIf="data.exportedPool">
+<div *ngIf="data.exportedPool" class="warning-wrapper">
   <ix-warning [message]="'This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\
   to import. You will lose any and all data in {pool}. Please make sure that any sensitive data in {pool} is backed up before wiping this disk.' | translate: { pool: '\'' + data.exportedPool + '\'' }"></ix-warning>
 </div>

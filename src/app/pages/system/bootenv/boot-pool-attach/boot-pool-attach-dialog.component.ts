@@ -92,7 +92,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     this.dialogService.warn(
       this.translate.instant('Warning') + ': ' + unusedDisk.name,
       this.translate.instant(
-        'This disk is part of the exported pool {pool}. Reusing this disk will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure any sensitive data in {pool} is backed up before reusing/repusposing this disk.',
+        'This disk is part of the exported pool {pool}. Reusing this disk will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure any sensitive data in {pool} is backed up before reusing/repurposing this disk.',
         { pool: `'${unusedDisk.exported_zpool}'` },
       ),
     );

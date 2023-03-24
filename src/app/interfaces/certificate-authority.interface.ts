@@ -11,7 +11,7 @@ export interface BasicConstraints {
   extension_critical: boolean;
 }
 
-export interface AuthorityKeyIdentifier {
+export interface AuthorityKeyIdentifiers {
   authority_cert_issuer: boolean;
   enabled: boolean;
   extension_critical: boolean;
@@ -39,7 +39,7 @@ export interface KeyUsages {
 
 export interface CertificateExtensions {
   BasicConstraints: BasicConstraints;
-  AuthorityKeyIdentifier: AuthorityKeyIdentifier;
+  AuthorityKeyIdentifier: AuthorityKeyIdentifiers;
   ExtendedKeyUsage: ExtendedKeyUsage;
   KeyUsage: KeyUsages;
 }
