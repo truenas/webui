@@ -23,6 +23,7 @@ describe('AppCardComponent', () => {
           latest_version: '1.0.0',
           catalog: 'official',
           train: 'charts',
+          installed: true,
         } as AvailableApp,
       },
     });
@@ -37,7 +38,6 @@ describe('AppCardComponent', () => {
   });
 
   it('shows installed badge when [installed] is true', () => {
-    spectator.setInput({ installed: true });
     expect(spectator.query('.installed-badge')).toExist();
   });
 

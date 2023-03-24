@@ -11,51 +11,52 @@ import { AppRouterOutletComponent } from './components/app-router-outlet/app-rou
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'installed',
-    pathMatch: 'full',
-  },
-  {
-    path: 'installed',
-    component: InstalledAppsComponent,
-    data: { title: T('Installed'), breadcrumb: T('Applications') },
-    children: [{
-      path: ':appId',
-      component: InstalledAppsComponent,
-      data: { title: T('Installed Apps'), breadcrumb: T('Installed') },
-    }],
-  },
-  {
-    path: 'available',
-    component: AppRouterOutletComponent,
-    data: { title: T('Available'), breadcrumb: T('Applications') },
+    data: { title: T('Applications') },
     children: [{
       path: '',
-      component: AvailableAppsComponent,
-      data: { title: T('Available'), breadcrumb: T('Applications') },
+      redirectTo: 'installed',
+      pathMatch: 'full',
     },
     {
-      path: ':appId',
+      path: 'installed',
+      component: InstalledAppsComponent,
+      data: { title: T('Installed'), breadcrumb: T('Installed') },
+      children: [{
+        path: ':appId',
+        component: InstalledAppsComponent,
+        data: { title: T('Installed Apps'), breadcrumb: T('Installed Apps') },
+      }],
+    },
+    {
+      path: 'available',
+      component: AppRouterOutletComponent,
+      data: { title: T('Available'), breadcrumb: T('Available') },
       children: [{
         path: '',
+        component: AvailableAppsComponent,
+        data: { title: T('Available'), breadcrumb: T('Available') },
+      },
+      {
+        path: ':appId',
         component: AppDetailViewComponent,
         data: { title: T('App Detail'), breadcrumb: T('App Detail') },
       },
       {
-        path: 'install',
+        path: ':appId/install',
         component: ChartWizardComponent,
         data: { title: T('Install App'), breadcrumb: T('Install App') },
       },
       {
-        path: 'edit',
+        path: ':appId/edit',
         component: ChartWizardComponent,
         data: { title: T('Edit App'), breadcrumb: T('Edit App') },
       }],
+    },
+    {
+      path: 'catalogs',
+      component: CatalogsComponent,
+      data: { title: T('Catalogs'), breadcrumb: T('Catalogs') },
     }],
-  },
-  {
-    path: 'catalogs',
-    component: CatalogsComponent,
-    data: { title: T('Catalogs'), breadcrumb: T('Catalogs') },
   },
 ];
 
