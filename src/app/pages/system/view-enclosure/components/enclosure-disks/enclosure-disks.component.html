@@ -53,8 +53,8 @@
         </div>
         <div *ngIf="currentView === 'pools' || exitingView === 'pools'" class="pools stage-right dom-overlay list">
           <div class="content">
-            <div *ngIf="systemProfile.getPoolNamesInEnclosure(selectedEnclosureView).length > 0; else noPools" class="legend">
-              <div *ngFor="let pool of systemProfile.getPoolNamesInEnclosure(selectedEnclosureView); let i = index">
+            <div *ngIf="selectedEnclosureView.pools.length > 0; else noPools" class="legend">
+              <div *ngFor="let pool of selectedEnclosureView.pools; let i = index">
                 <div
                   class="swatch"
                   [style.background]="subenclosure

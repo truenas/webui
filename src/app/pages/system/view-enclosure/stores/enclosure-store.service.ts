@@ -279,6 +279,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         return view.number === enclosure.number;
       });
       enclosureView.slots = enclosureSlots;
+      enclosureView.pools = this.getPoolNamesInEnclosureView(enclosureView);
     });
     return of(enclosureViews);
   }
@@ -469,7 +470,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     };
   });
 
-  getPoolNamesInEnclosureView(enclosureView: EnclosureView): string[] {
+  private getPoolNamesInEnclosureView(enclosureView: EnclosureView): string[] {
     const pools: string[] = enclosureView?.slots
       .map((slot: EnclosureSlot) => slot.pool)
       .filter((poolName: string) => poolName !== null);

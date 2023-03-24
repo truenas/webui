@@ -23,9 +23,7 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
 // import {SystemInfo} from "app/interfaces/system-info.interface";
 
 export interface SystemProfile {
-  storage$: Observable<EnclosureState>;
-  // isRackmount: ((data: EnclosureState) => boolean);
-  getPoolNamesInEnclosure: ((enclosureView: EnclosureView) => string[]);
+  enclosureStore$: Observable<EnclosureState>;
 }
 
 @UntilDestroy()
@@ -186,8 +184,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     // Replace system-profiler with store...
     this.enclosureStore.loadDashboard();
     this.systemProfile = {
-      storage$: this.enclosureStore.data$,
-      getPoolNamesInEnclosure: this.enclosureStore.getPoolNamesInEnclosureView,
+      enclosureStore$: this.enclosureStore.data$,
     };
 
     this.enclosureStore.data$.pipe(

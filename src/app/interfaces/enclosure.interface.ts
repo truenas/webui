@@ -62,6 +62,7 @@ export interface EnclosureView {
   model: string;
   isSelected: boolean;
   expanders?: EnclosureElement[];
+  pools?: string[];
 }
 
 export interface SelectedEnclosureSlot {

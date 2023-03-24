@@ -202,7 +202,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   get selectedEnclosurePools(): string[] {
-    return this.systemProfile.getPoolNamesInEnclosure(this.selectedEnclosureView);
+    return this.selectedEnclosureView.pools;
   }
 
   // Data fetching. TODO: Move to service or store
@@ -367,7 +367,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Mainly data subscription and PIXI setup
   ngAfterContentInit(): void {
-    this.systemProfile.storage$.pipe(untilDestroyed(this))
+    this.systemProfile.enclosureStore$.pipe(untilDestroyed(this))
       .subscribe((data: EnclosureState) => {
         if (data.enclosureViews.length) {
           this.systemState = data;
