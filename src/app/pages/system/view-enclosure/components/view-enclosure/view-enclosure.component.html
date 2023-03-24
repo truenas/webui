@@ -18,8 +18,57 @@
 </ng-template>
 
 <ng-container *ngIf="errors.length === 0">
+  <!-- Loading indicators -->
+  <div *ngIf="spinner" class="loader-dialog mat-mdc-card">
+    <div class="loader-dialog-inner">
+      <h3>Requesting </h3>
+      <ul>
+        <li class="spinner-data-type">
+          <span class="td">enclosure data</span>
+          <span class="td">
+            <mat-spinner
+              *ngIf="!systemState || systemState.areEnclosuresLoading"
+              class="spinner indicator"
+              [diameter]="22"></mat-spinner>
+            <ix-icon
+              *ngIf="systemState && !systemState.areEnclosuresLoading"
+              name="mdi-check-circle"
+              class="icon indicator"></ix-icon>
+          </span>
+        </li>
+        <li class="spinner-data-type">
+          <span class="td">disk data</span>
+          <span class="td">
+            <mat-spinner
+              *ngIf="!systemState || systemState.areDisksLoading"
+              class="spinner indicator"
+              [diameter]="22"></mat-spinner>
+            <ix-icon
+              *ngIf="systemState && !systemState.areDisksLoading"
+              name="mdi-check-circle"
+              class="icon indicator"></ix-icon>
+          </span>
+        </li>
+        <li class="spinner-data-type">
+          <span class="td">pool data</span>
+          <span class="td">
+            <mat-spinner
+              *ngIf="!systemState || systemState.arePoolsLoading"
+              class="spinner indicator"
+              [diameter]="22"></mat-spinner>
+            <ix-icon
+              *ngIf="systemState && !systemState.arePoolsLoading"
+              name="mdi-check-circle"
+              class="icon indicator"></ix-icon>
+          </span>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
   <div
-    *ngIf="systemProfile && systemState && systemState.enclosures && systemManufacturer && systemManufacturer === 'ixsystems'"
+    *ngIf="systemState?.enclosures && !spinner && systemManufacturer && systemManufacturer === 'ixsystems'"
     class="page-viewport"
     fxLayout="row wrap"
   >
@@ -28,17 +77,10 @@
       class="main-content"
       [fxFlex]="'calc(100% - ' + (systemState.enclosures.length * 240).toString() + 'px )'"
     >
-      <div>
-        <mat-spinner
-          *ngIf="spinner"
-          class="spinner"
-          [diameter]="40"
-        ></mat-spinner>
-      </div>
 
-      <ng-container *ngIf="supportedHardware">
+      <ng-container *ngIf="controller && supportedHardware">
         <div
-          *ngIf="systemState?.enclosureViews && systemProfile?.isRackmount(systemState); else mini"
+          *ngIf="controller?.isRackmount; else mini"
           class="enclosure-disks-wrapper"
         >
           <ix-enclosure-disks
@@ -53,7 +95,7 @@
         <ng-template #mini>
           <div>
             <ix-enclosure-disks-mini
-              *ngIf="events && systemState && systemState.pools && systemState.enclosureViews "
+              *ngIf="events && systemState?.pools && systemState?.enclosureViews "
               [controller-events]="events"
               [current-tab]="currentView"
               [profile]="systemProfile"

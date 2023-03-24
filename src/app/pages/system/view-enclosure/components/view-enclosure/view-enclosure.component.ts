@@ -24,7 +24,7 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
 
 export interface SystemProfile {
   storage$: Observable<EnclosureState>;
-  isRackmount: ((data: EnclosureState) => boolean);
+  // isRackmount: ((data: EnclosureState) => boolean);
   getPoolNamesInEnclosure: ((enclosureView: EnclosureView) => string[]);
 }
 
@@ -52,8 +52,21 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   systemProfile: SystemProfile;
   systemState: EnclosureState;
   views: ViewConfig[] = [];
-  spinner = true;
   supportedHardware = false;
+
+  delayPending = true;
+  get spinner(): boolean {
+    const dataPending = (
+      this.systemState?.areEnclosuresLoading
+      || this.systemState?.areDisksLoading
+      || this.systemState?.arePoolsLoading
+    );
+
+    if (dataPending && !this.delayPending) {
+      return true;
+    }
+    return false;
+  }
 
   get selectedEnclosure(): number | null {
     if (!this.systemState) return null;
@@ -70,6 +83,12 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     ) return false;
 
     return (this.shelfCount > 0);
+  }
+
+  get controller(): EnclosureView | null {
+    return this.systemState?.enclosureViews
+      ? this.systemState?.enclosureViews.find((enclosureView: EnclosureView) => enclosureView.isController)
+      : null;
   }
 
   get shelfCount(): number {
@@ -168,7 +187,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     this.enclosureStore.loadDashboard();
     this.systemProfile = {
       storage$: this.enclosureStore.data$,
-      isRackmount: this.enclosureStore.isRackmount,
       getPoolNamesInEnclosure: this.enclosureStore.getPoolNamesInEnclosureView,
     };
 
@@ -176,10 +194,10 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       takeUntil(this.destroyed$),
       untilDestroyed(this),
     ).subscribe((state: EnclosureState) => {
-      if (!state.areEnclosuresLoading && state.enclosures.length && !state.arePoolsLoading && !state.areDisksLoading) {
-        this.systemState = state;
-        this.spinner = false;
-      }
+      this.systemState = state;
+      setTimeout(() => {
+        this.delayPending = false;
+      }, 1500);
     });
   }
 

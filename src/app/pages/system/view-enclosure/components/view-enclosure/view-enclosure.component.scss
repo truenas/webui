@@ -95,11 +95,49 @@ nav.view-nav-bar {
   position: relative;
 }
 
-.spinner {
-  left: calc(50% - 20px);
-  position: absolute;
+.loader-dialog {
+  margin: 0 auto;
+  max-width: 300px;
+  // left: calc(50% - 64px);
+  position: relative;
   top: 64px;
   z-index: 4;
+
+  .loader-dialog-inner {
+    padding: 16px;
+
+    ul {
+      display: table;
+      margin: 16px auto;
+      padding: 0;
+      width: 90%;
+
+      li {
+        display: table-row;
+
+        .td {
+          display: table-cell;
+          height: 40px;
+          vertical-align: middle;
+        }
+
+        .indicator {
+          margin-left: calc(100% - 16px);
+        }
+
+        .indicator.icon {
+          color: var(--green);
+        }
+
+        .indicator.spinner {
+          $spinner-size: 40px;
+          height: $spinner-size;
+          padding-left: 1px;
+          width: $spinner-size;
+        }
+      }
+    }
+  }
 }
 
 .lt-lg.enclosure-selector {

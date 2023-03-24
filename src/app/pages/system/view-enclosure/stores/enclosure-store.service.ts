@@ -214,6 +214,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           ? selectedEnclosure
           : false,
         isController: enclosure.controller,
+        isRackmount: this.isRackmount(enclosure),
         slots: [],
         number: enclosure.number,
         model: enclosure.model,
@@ -441,10 +442,8 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }
 
   // TODO: This should be part of enclosureViews
-  isRackmount(data: EnclosureState): boolean {
-    const controller = data.enclosures.find((enclosure: Enclosure) => enclosure.controller);
-
-    switch (controller.model) {
+  private isRackmount(enclosure: Enclosure): boolean {
+    switch (enclosure.model) {
       case 'FREENAS-MINI-3.0':
       case 'TRUENAS-MINI-3.0':
       case 'FREENAS-MINI-3.0-E':

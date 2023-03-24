@@ -125,7 +125,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // TODO: Implement Expanders
   get expanders(): EnclosureElement[] {
     return this.selectedEnclosureView.expanders;
-    // return [];
   }
   // Tracked by parent component
   get selectedEnclosureNumber(): number {
@@ -163,12 +162,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   get selectedVdevDisks(): string[] {
     const selectedSlot = this.selectedSlot;
-    /* return selectedSlot?.vdev?.type === TopologyItemType.Disk
-      ? [selectedSlot.vdev.disk]
-      : selectedSlot?.vdev?.children?.map((item: TopologyDisk) => item.disk); */
     const result = selectedSlot?.vdev?.type === TopologyItemType.Disk
       ? [selectedSlot.vdev.disk]
       : selectedSlot?.vdev?.children?.map((item: TopologyDisk) => item.disk);
+
     if (result) {
       return result.filter((name: string) => name !== null);
     }
@@ -210,7 +207,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Data fetching. TODO: Move to service or store
   get unhealthyPools(): Pool[] {
-    return this.systemState.pools.filter((pool: Pool) => this.selectedEnclosurePools.includes(pool.name));
+    return this.systemState.pools.filter((pool: Pool) => {
+      return !pool.healthy && this.selectedEnclosurePools.includes(pool.name);
+    });
   }
 
   // Find bad status strings in both disk.status and slot.status.
