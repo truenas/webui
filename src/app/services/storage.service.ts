@@ -422,7 +422,7 @@ export class StorageService {
   getVdevWidths(vdevs: TopologyItem[]): Set<number> {
     const allVdevWidths = new Set<number>(); // There should only be one value
 
-    vdevs.forEach((vdev) => {
+    vdevs?.forEach((vdev) => {
       let vdevWidthCounter = 0;
 
       if (vdev.type === TopologyItemType.Disk || vdev.type === TopologyItemType.Stripe || vdev.children.length === 0) {
@@ -446,7 +446,7 @@ export class StorageService {
   // Get usable space on VDEV.
   getVdevCapacities(vdevs: TopologyItem[]): Set<number> {
     const allVdevCapacities = new Set<number>(); // There should only be one value
-    vdevs.forEach((vdev) => {
+    vdevs?.forEach((vdev) => {
       allVdevCapacities.add(vdev.stats.size);
     });
     return allVdevCapacities;
@@ -459,7 +459,7 @@ export class StorageService {
 
   getVdevDiskCapacities(vdevs: TopologyItem[], disks: StorageDashboardDisk[]): Set<number>[] {
     const allDiskCapacities: Set<number>[] = [];
-    vdevs.forEach((vdev) => {
+    vdevs?.forEach((vdev) => {
       const vdevDiskCapacities = new Set<number>(); // There should only be one value
       if (vdev.children.length) {
         vdev.children.forEach((child) => {
@@ -486,7 +486,7 @@ export class StorageService {
 
   getVdevTypes(vdevs: TopologyItem[]): Set<string> {
     const vdevTypes = new Set<string>();
-    vdevs.forEach((vdev) => {
+    vdevs?.forEach((vdev) => {
       vdevTypes.add(vdev.type);
     });
     return vdevTypes;
@@ -566,40 +566,16 @@ export class StorageService {
 
       // Check that special & dedup VDEVs have same redundancy level as data VDEVs
       const isMismatchCategory = (category === PoolTopologyCategory.Dedup || category === PoolTopologyCategory.Special);
-      if (isMismatchCategory) {
-        const isMismatch: boolean = this.isRedundancyMismatch(vdevs, dataVdevs);
-        if (isMismatch) {
-          warnings.push(TopologyWarning.RedundancyMismatch);
-        }
+
+      if (isMismatchCategory && this.isSpecialRedundancyMismatch(vdevs, dataVdevs)) {
+        warnings.push(TopologyWarning.RedundancyMismatch);
       }
     }
 
     return warnings;
   }
 
-  private isRedundancyMismatch(vdevs: TopologyItem[], dataVdevs: TopologyItem[]): boolean {
-    let isMismatch = false;
-
-    const vdevTypes: Set<string> = this.getVdevTypes(vdevs);
-    const dataTypes: Set<string> = this.getVdevTypes(dataVdevs);
-
-    // Make sure there is only one layout
-    if (this.isMixedVdevType(vdevTypes) || this.isMixedVdevType(dataTypes)) {
-      return true;
-    }
-
-    const vdevLayout = vdevTypes.values().next().value as TopologyItemType;
-    const dataLayout = dataTypes.values().next().value as TopologyItemType;
-
-    if (vdevLayout === dataLayout) {
-      const vdevRedundancy = this.getRedundancyLevel(vdevs[0]);
-      const dataRedundancy = this.getRedundancyLevel(dataVdevs[0]);
-
-      isMismatch = vdevRedundancy !== dataRedundancy;
-    } else {
-      isMismatch = true;
-    }
-
-    return isMismatch;
+  private isSpecialRedundancyMismatch(vdevs: TopologyItem[], dataVdevs: TopologyItem[]): boolean {
+    return this.getRedundancyLevel(vdevs[0]) !== this.getRedundancyLevel(dataVdevs[0]);
   }
 }
