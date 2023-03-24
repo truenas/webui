@@ -107,8 +107,6 @@ def change_the_users_email_and_click_save(driver, email):
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
-    rsc.Confirm_Warning(driver)
-
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
