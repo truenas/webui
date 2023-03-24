@@ -1,0 +1,31 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Self-Encrypting Drive' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        mat-button
+        [ixTest]="['self-encrypted-drive', 'configure']"
+        (click)="onConfigure()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'ATA Security User' | translate }}:</span>
+        <span *ixWithLoadingState="sedUser$ as sedUser" class="value">
+          {{ sedUser || '–' }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Password' | translate }}:</span>
+        <span *ixWithLoadingState="sedPassword$ as sedPassword" class="value">
+          {{ sedPassword }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
