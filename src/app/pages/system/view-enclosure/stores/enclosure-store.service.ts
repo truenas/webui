@@ -73,7 +73,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     super(initialState);
   }
 
-  readonly loadDashboard = this.effect((triggers$: Observable<void>) => {
+  readonly loadData = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
         this.patchState({

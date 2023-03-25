@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { EnclosureView } from 'app/interfaces/enclosure.interface';
+import { Enclosure, EnclosureElement, EnclosureView } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
@@ -68,9 +68,10 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   get selectedEnclosure(): number | null {
     if (!this.systemState) return null;
-    return this.systemState.enclosureViews?.filter((view: EnclosureView) => {
+    const selected = this.systemState.enclosureViews?.find((view: EnclosureView) => {
       return view.number === this.systemState.selectedEnclosure;
-    })[0].number;
+    });
+    return selected ? selected.number : null;
   }
 
   get showEnclosureSelector(): boolean {
@@ -105,12 +106,11 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   set systemProduct(value) {
     if (!this._systemProduct) {
       this._systemProduct = value;
-      // this.loadEnclosureData();
     }
   }
 
-  changeView(index: number): void {
-    this.currentView = this.views[index];
+  changeView(view: ViewConfig): void {
+    this.currentView = this.views[view.id];
   }
 
   constructor(
@@ -182,7 +182,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
 
     // Replace system-profiler with store...
-    this.enclosureStore.loadDashboard();
+    this.enclosureStore.loadData();
     this.systemProfile = {
       enclosureStore$: this.enclosureStore.data$,
     };
@@ -195,6 +195,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => {
         this.delayPending = false;
       }, 1500);
+      this.addViews();
     });
   }
 
@@ -216,7 +217,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
-      this.systemState.enclosureViews.forEach((enclosureView) => {
+      this.systemState.enclosureViews.forEach((enclosureView: EnclosureView) => {
         if (this.systemState) {
           this.events.next({ name: 'CanvasExtract', data: enclosureView, sender: this });
         }
@@ -225,6 +226,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   addViews(): void {
+    if (!this.systemState?.enclosures) return;
+
     const views = [];
     const disks = {
       name: 'Disks',
@@ -236,8 +239,11 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     views.unshift(disks);
     let matchIndex;
-    const selectedEnclosure = this.systemState?.enclosures[this.selectedEnclosure];
-    selectedEnclosure.elements?.forEach((element, index) => {
+    const selectedEnclosure = this.systemState?.enclosures.find((enclosure: Enclosure) => {
+      return enclosure.number === this.selectedEnclosure;
+    });
+    selectedEnclosure?.elements?.forEach((el: unknown, index: number) => {
+      const element = el as EnclosureElement;
       const view = {
         name: element.name,
         alias: '',
