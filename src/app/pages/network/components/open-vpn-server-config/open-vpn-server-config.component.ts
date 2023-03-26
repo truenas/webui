@@ -205,6 +205,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
     ).subscribe({
       complete: () => {
         this.appLoaderService.close();
+        this.loadConfig();
       },
     });
   }
