@@ -164,6 +164,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
       switchMap(() => {
         this.isLoading = true;
         this.appLoaderService.open();
+        this.cdr.markForCheck();
         return this.ws.call('openvpn.client.update', [{ remove_certificates: true } as OpenvpnClientConfigUpdate]);
       }),
       catchError((error: WebsocketError) => {
@@ -175,6 +176,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
       complete: () => {
         this.isLoading = false;
         this.appLoaderService.close();
+        this.cdr.markForCheck();
         this.loadConfig();
       },
     });
