@@ -211,6 +211,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       complete: () => {
         this.appLoaderService.close();
         this.isLoading = true;
+        this.loadConfig();
         this.cdr.markForCheck();
       },
     });
