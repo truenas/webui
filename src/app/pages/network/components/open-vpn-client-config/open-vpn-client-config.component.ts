@@ -162,6 +162,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
+        this.isLoading = true;
         this.appLoaderService.open();
         return this.ws.call('openvpn.client.update', [{ remove_certificates: true } as OpenvpnClientConfigUpdate]);
       }),
@@ -172,6 +173,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       complete: () => {
+        this.isLoading = false;
         this.appLoaderService.close();
         this.loadConfig();
       },
