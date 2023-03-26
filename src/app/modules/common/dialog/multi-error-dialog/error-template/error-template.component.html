@@ -2,15 +2,15 @@
   <ix-icon class="error-warning-icon" name="error"></ix-icon>
   {{ title | translate }}
 </h1>
-<div #errorMdContent mat-dialog-content id="err-md-content">
+<div #errorMdContent id="err-md-content">
   <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message"></span></div>
   <div
     *ngIf="backtrace"
     class="more-info"
     (click)="toggleOpen()"
   >
-    <ix-icon *ngIf="isCloseMoreInfo" name="add_circle_outline"></ix-icon>
-    <ix-icon *ngIf="!isCloseMoreInfo" name="remove_circle_outline"></ix-icon>
+    <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
+    <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
     <span>{{ 'More info...' | translate }}</span>
   </div>
   <div
@@ -25,22 +25,12 @@
     </div>
   </div>
 </div>
-<div mat-dialog-actions>
-  <button
-    mat-button
-    class="mat-mdc-button mat-button mat-accent"
-    ixTest="close-error-dialog"
-    (click)="dialogRef.close(true)"
-  >
-    {{ 'Close' | translate }}
-  </button>
-  <button
-    *ngIf="logs"
-    mat-button
-    class="mat-mdc-button mat-button mat-primary"
-    ixTest="download-logs"
-    (click)="downloadLogs()"
-  >
-    {{ 'Download Logs' | translate }}
-  </button>
-</div>
+<button
+  *ngIf="logs"
+  mat-button
+  class="mat-mdc-button mat-button mat-primary"
+  ixTest="download-logs"
+  (click)="downloadLogs()"
+>
+  {{ 'Download Logs' | translate }}
+</button>

@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>Multiple Errors</h1>
+<div
+  class="multi-error-dialog"
+  mat-dialog-content
+>
+  <ng-container
+    *ngFor="let error of errors"
+  >
+    <ix-error-template
+      class="error-template"
+      [title]="error.title"
+      [message]="error.message"
+      [backtrace]="error.backtrace"
+      [logs]="error.logs"
+    ></ix-error-template>
+    <mat-divider></mat-divider>
+  </ng-container>
+  
+</div>
+<div mat-dialog-actions>
+  <button
+    mat-button
+    class="mat-mdc-button mat-button mat-accent"
+    ixTest="close-error-dialog"
+    (click)="dialogRef.close(true)"
+  >
+    {{ 'Close' | translate }}
+  </button>
+  <!-- <button
+    *ngIf="logs"
+    mat-button
+    class="mat-mdc-button mat-button mat-primary"
+    ixTest="download-logs"
+    (click)="downloadLogs()"
+  >
+    {{ 'Download Logs' | translate }}
+  </button> -->
+</div>

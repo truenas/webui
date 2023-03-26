@@ -3610,12 +3610,25 @@
   resolved "https://registry.npmjs.org/@sentry/types/-/types-5.30.0.tgz"
   integrity sha512-R8xOqlSTZ+htqrfteCWU5Nk0CDN5ApUTvrlvBuiH1DyP6czDZ4ktbZB0hAgBlVcK0U+qpD3ag3Tqqpa5Q67rPw==
 
+"@sentry/types@7.42.0":
+  version "7.42.0"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.42.0.tgz#e5019cd41a8c4a98c296e2ff28d6adab4b2eb14e"
+  integrity sha512-Ga0xaBIR/peuXQ88hI9a5TNY3GLNoH8jpsgPaAjAtRHkLsTx0y3AR+PrD7pUysza9QjvG+Qux01DRvLgaNKOHA==
+
 "@sentry/utils@5.30.0":
   version "5.30.0"
   resolved "https://registry.npmjs.org/@sentry/utils/-/utils-5.30.0.tgz"
   integrity sha512-zaYmoH0NWWtvnJjC9/CBseXMtKHm/tm40sz3YfJRxeQjyzRqNQPgivpd9R/oDJCYj999mzdW382p/qi2ypjLww==
   dependencies:
     "@sentry/types" "5.30.0"
+    tslib "^1.9.3"
+
+"@sentry/utils@~7.42.0":
+  version "7.42.0"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-7.42.0.tgz#fcffd0404836cb56975fbef9e889a42cc55de596"
+  integrity sha512-cBiDZVipC+is+IVgsTQLJyZWUZQxlLZ9GarNT+XZOZ5BFh0acFtz88hO6+S7vGmhcx2aCvsdC9yb2Yf+BphK6Q==
+  dependencies:
+    "@sentry/types" "7.42.0"
     tslib "^1.9.3"
 
 "@shopify/eslint-plugin@~42.0.1":
