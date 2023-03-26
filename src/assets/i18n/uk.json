@@ -1,6 +1,7 @@
 {
   "": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  " Est. Usable Capacity": "",
   " cores at ": "",
   " threads at ": "",
   "(No description)": "",
@@ -108,6 +109,7 @@
   "Don't Allow": "",
   "Download Authorized Keys": "",
   "Download Keys": "",
+  "Drag & drop disks to add or remove them": "",
   "Edit App": "",
   "Edit Associated Target": "",
   "Edit Certificate": "",
@@ -219,6 +221,7 @@
   "No matching results found": "",
   "No records": "",
   "No records have been added yet": "",
+  "No unused disks": "",
   "Nobind": "",
   "Not enough free space. Maximum available: {space}": "",
   "Number of VDEVs": "",

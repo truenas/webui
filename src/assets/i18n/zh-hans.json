@@ -1,6 +1,7 @@
 {
   "": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  " Est. Usable Capacity": "",
   ", ": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "Access from your IP is restricted": "",
@@ -50,6 +51,7 @@
   "Disk Description": "",
   "Do you want to configure the ACL?": "",
   "Don't Allow": "",
+  "Drag & drop disks to add or remove them": "",
   "Edit App": "",
   "Edit Certificate": "",
   "Enable to use <a href=\"https://searchstorage.techtarget.com/definition/thin-provisioning\" target=\"_blank\">thin provisioning</a> where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "",
@@ -106,6 +108,7 @@
   "No matching results found": "",
   "No records": "",
   "No records have been added yet": "",
+  "No unused disks": "",
   "Not enough free space. Maximum available: {space}": "",
   "Number of VDEVs": "",
   "Number of VDEVs to create": "",

@@ -1,6 +1,8 @@
 .outer-container {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 120px;
 }
 
 .horizontal-border {
@@ -15,6 +17,7 @@
 
 .vdev-container {
   display: flex;
+  height: 100%;
 
   .content-container {
     flex-grow: 1;

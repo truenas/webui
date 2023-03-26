@@ -1,6 +1,7 @@
 {
   "": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  " Est. Usable Capacity": "",
   " Please click the button below to add {item}.": "",
   " bytes.": "",
   " cores at ": "",
@@ -456,6 +457,7 @@
   "Download Keys": "",
   "Download Updates": "",
   "Download actions": "",
+  "Drag & drop disks to add or remove them": "",
   "Drive Details": "",
   "Drive Temperatures": "",
   "EC2 Instance ID": "",
@@ -993,6 +995,7 @@
   "No records have been added yet": "",
   "No snapshots are available.": "",
   "No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here": "",
+  "No unused disks": "",
   "No vdev info for disk.": "",
   "No {item}": "",
   "No {title} configured": "",

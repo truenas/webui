@@ -1,6 +1,7 @@
 {
   "": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  " Est. Usable Capacity": "",
   " Please click the button below to add {item}.": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "",
   " bytes.": "",
@@ -1136,6 +1137,7 @@
   "Download Update": "",
   "Download Updates": "",
   "Download actions": "",
+  "Drag & drop disks to add or remove them": "",
   "Drive Account Type": "",
   "Drive Details": "",
   "Drive ID": "",
@@ -2324,6 +2326,7 @@
   "No snapshots are available.": "",
   "No snapshots sent yet": "",
   "No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here": "",
+  "No unused disks": "",
   "No update found.": "",
   "No updates available.": "",
   "No vdev info for disk.": "",
