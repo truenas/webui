@@ -36,6 +36,10 @@ export default {
  <a href="https://support.apple.com/en-us/HT210803" target="_blank">protocol extensions</a> \
  can be used by macOS to improve the performance and behavioral characteristics of SMB shares. \
  This is required for Time Machine support.'),
+  cifs_srv_multichannel_tooltip: T('SMB multichannel allows servers to use multiple network connections \
+ simultaneously by combining the bandwidth of several network interface cards (NICs) for \
+ better performance. SMB multichannel does not function if you combine NICs into a LAGG.\
+ <a href="https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/" target="_blank">Read more in docs</a>'),
   cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is \
  <i>nobody</i>. The chosen account is required to have permissions to the \
  shared pool or dataset. To adjust permissions, edit the dataset Access \
