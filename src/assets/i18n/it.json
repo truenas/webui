@@ -500,7 +500,7 @@
   "Catalog Name": "",
   "Catalogs": "",
   "Categories": "",
-  "Categories are provided by the catalog maintainers. Changing the catalogs filter may affect categories displayed": "",
+  "Categories are provided by the catalog maintainers. Changing the catalogs filter may affect categories displayed.": "",
   "Certificate Authorities": "",
   "Certificate Authority": "",
   "Certificate Authority (CA) to use for connecting to the key server. A valid CA public certificate is required to authenticate the connection. WARNING: for security reasons, please protect the Certificate Authority used for key server authentication.": "",

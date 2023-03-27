@@ -4,7 +4,9 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import {
+  debounceTime, distinctUntilChanged, forkJoin, Observable, of,
+} from 'rxjs';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -42,6 +44,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
   isLoading = false;
   isFirstLoad = true;
   showFilters = false;
+  appliedFilters = false;
   availableApps: AvailableApp[] = [];
   installedApps: ChartRelease[] = [];
   installedCatalogs: string[] = [];
@@ -57,7 +60,11 @@ export class AvailableAppsHeaderComponent implements OnInit {
   ngOnInit(): void {
     this.loadData();
 
-    this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((searchQuery) => {
+    this.searchControl.valueChanges.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((searchQuery) => {
       this.search.emit(searchQuery);
     });
   }
@@ -99,12 +106,14 @@ export class AvailableAppsHeaderComponent implements OnInit {
       sort: this.form.value.sort || undefined,
       categories: this.form.value.categories || this.appsCategories,
     });
+    this.appliedFilters = true;
   }
 
   resetFilters(): void {
-    this.form.controls.sort.setValue(null);
+    this.form.reset();
     this.form.controls.catalogs.setValue(this.installedCatalogs);
     this.form.controls.categories.setValue([]);
     this.filters.emit(undefined);
+    this.appliedFilters = false;
   }
 }
