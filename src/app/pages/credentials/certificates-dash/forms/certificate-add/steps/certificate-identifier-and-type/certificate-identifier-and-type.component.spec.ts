@@ -85,7 +85,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
   describe('importing a certificate', () => {
     beforeEach(async () => {
       await form.fillForm({
-        Name: 'New Certificate',
+        Name: 'Import Certificate',
         Type: 'Import Certificate',
       });
     });
@@ -99,7 +99,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
       expect(spectator.component.getSummary()).toEqual([
         {
           label: 'Name',
-          value: 'New Certificate',
+          value: 'Import Certificate',
         },
         {
           label: 'Type',

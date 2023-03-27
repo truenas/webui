@@ -10,4 +10,5 @@ export enum DefaultValidationError {
   Forbidden = 'forbidden',
   Number = 'number',
   Cron = 'cron',
+  Ip2 = 'ip2',
 }

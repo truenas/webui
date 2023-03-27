@@ -14,6 +14,7 @@ import { Subject, Subscription } from 'rxjs';
 import {
   filter, map, throttleTime,
 } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -44,20 +45,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
   colorPattern: string[];
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
   screenType = ScreenType.Desktop;
+  memData: WidgetMemoryData;
 
   readonly ScreenType = ScreenType;
 
-  private _memData: WidgetMemoryData;
   private utils: ThemeUtils;
   private dataSubscription: Subscription;
-
-  get memData(): WidgetMemoryData {
-    return this._memData;
-  }
-
-  set memData(value) {
-    this._memData = value;
-  }
 
   constructor(
     public router: Router,
@@ -99,26 +92,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
   }
 
   bytesToGigabytes(value: number): number {
-    return value / 1024 / 1024 / 1024;
+    return value / GiB;
   }
 
   parseMemData(data: MemoryStatsEventData): string[][] {
-    /*
-     * PROVIDED BY MIDDLEWARE
-     * total
-     * available
-     * percent
-     * used
-     * free
-     * active
-     * inactive
-     * buffers
-     * cached
-     * shared
-     * wired
-     * zfs_cache?
-     * */
-
     const services = data.total - data.free - data.arc_size;
 
     return [

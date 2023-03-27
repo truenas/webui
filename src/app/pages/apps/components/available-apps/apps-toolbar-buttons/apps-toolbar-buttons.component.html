@@ -1,0 +1,31 @@
+<button mat-button ixTest="apps-settings" [matMenuTriggerFor]="menu">
+  {{ 'Settings' | translate }}
+  <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+</button>
+
+<mat-menu #menu="matMenu" overlapTrigger="false">
+  <button mat-menu-item ixTest="choose-pool" (click)="onChoosePool()">
+    {{ 'Choose Pool' | translate }}
+  </button>
+  <button mat-menu-item ixTest="advanced-settings" (click)="onAdvancedSettings()">
+    {{ 'Advanced Settings' | translate }}
+  </button>
+  <button
+    *ngIf="wasPoolSet"
+    mat-menu-item
+    ixTest="unset-pool"
+    (click)="onUnsetPool()"
+  >
+    {{ 'Unset Pool' | translate }}
+  </button>
+</mat-menu>
+
+<a
+  mat-button
+  color="primary"
+  ixTest="custom-app"
+  [disabled]="!wasPoolSet"
+  [routerLink]="['/apps', 'available', customIxChartApp, 'install']"
+>
+  {{ 'Custom App' | translate }}
+</a>

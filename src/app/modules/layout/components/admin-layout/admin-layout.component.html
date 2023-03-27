@@ -74,7 +74,7 @@
     [style.margin-left]="sidenavWidth"
   >
     <!-- Top Bar -->
-    <ix-topbar [sidenav]="sidenav"></ix-topbar>
+    <ix-topbar [sidenav]="sidenav" (sidenavStatusChange)="onSidenavStatusChange($event)"></ix-topbar>
 
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
       <ix-secondary-menu

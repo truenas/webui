@@ -40,12 +40,12 @@
   </mat-card-actions>
   <mat-card-actions *ngIf="isMirror">
     <ng-container [ngTemplateOutlet]="extend"></ng-container>
-    <ng-container [ngTemplateOutlet]="remove"></ng-container>
+    <ng-container *ngIf="canRemoveVDEV" [ngTemplateOutlet]="remove"></ng-container>
   </mat-card-actions>
 </mat-card>
 
 <ng-template #extend>
-  <button *ngIf="!isRaidzParent" mat-button ixTest="extend" (click)="onExtend()">
+  <button mat-button ixTest="extend" (click)="onExtend()">
     {{ 'Extend' | translate }}
   </button>
 </ng-template>

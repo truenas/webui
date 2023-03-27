@@ -5,9 +5,9 @@
 
   <div
     class="catalog"
-    [class.catalog-official]="app.catalog.id === officialCatalog"
+    [class.catalog-official]="app.catalog === officialCatalog"
   >
-    {{ app.catalog.label | titlecase }}
+    {{ app.catalog | titlecase }}
   </div>
 </div>
 
@@ -20,6 +20,6 @@
   <div class="description">{{ description }}</div>
 
   <div class="meta">
-    <div class="train">{{ 'Train: {train}' | translate: { train: app.catalog.train } }}</div>
+    <div class="train">{{ 'Train: {train}' | translate: { train: app.train || ('N/A' | translate) } }}</div>
   </div>
 </div>

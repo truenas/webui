@@ -74,7 +74,9 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
 
     # Home directory is needed
     driver.find_element_by_xpath(xpaths.add_User.home_Input).clear()
-    driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank/qetestuser')
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank')
+    # this line will create the qetestuser home directory
+    driver.find_element_by_xpath(xpaths.add_User.create_Home_Directory_Checkbox).click()
 
     # The default shell is nologin this test will fail with nologin
     assert wait_on_element(driver, 5, xpaths.add_User.shell_Select, 'clickable')
@@ -91,6 +93,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
 
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')

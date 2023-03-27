@@ -22,6 +22,7 @@ import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
@@ -148,6 +149,7 @@ export class LocalizationFormComponent {
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
+        this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideInService.close();

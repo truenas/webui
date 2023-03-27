@@ -16,6 +16,7 @@
       [disabled]="isDisabled"
       [matAutocomplete]="auto"
       [ixTest]="controlDirective.name"
+      [class.has-value]="selectedOption?.label || textContent"
       (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
     />
@@ -43,6 +44,7 @@
       <ng-container *ngIf="options && options.length; else loadingOrError">
         <mat-option
           *ngFor="let option of options"
+          class="combobox-mat-options"
           [value]="option"
           [class.ix-selected]="option.value === selectedOption?.value"
           [class.ix-unselected]="option.value !== selectedOption?.value"

@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
+import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { WebSocketService } from 'app/services/index';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebSocketService } from 'app/services';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
@@ -22,8 +25,31 @@ export class ApplicationsService {
     return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
   }
 
-  getAllCatalogs(): Observable<Catalog[]> {
-    return this.ws.call('catalog.query', [[], { extra: { cache: true, item_details: true } }]);
+  getAllAppsCategories(): Observable<string[]> {
+    return this.ws.call('app.categories');
+  }
+
+  getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
+    const firstOption: QueryFilter<AvailableApp>[] = [
+      ['name', '=', name],
+      ['catalog', '=', catalog],
+      ['train', '=', train],
+    ];
+    return this.ws.call('app.available', [firstOption]).pipe(switchMap((app) => of(app[0])));
+  }
+
+  getAvailableApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
+    if (!filters) {
+      return this.ws.call('app.available');
+    }
+
+    const firstOption: QueryFilter<AvailableApp>[] = [
+      ['name', 'rin', filters.search],
+      ['catalog', 'in', filters.catalogs],
+    ];
+    const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
+
+    return this.ws.call('app.available', [firstOption, secondOption]);
   }
 
   getChartReleases(name?: string): Observable<ChartRelease[]> {

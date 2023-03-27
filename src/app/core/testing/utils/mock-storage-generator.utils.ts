@@ -1,3 +1,4 @@
+import { TiB } from 'app/constants/bytes.constant';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -531,6 +532,6 @@ export class MockStorageGenerator {
   }
 
   terabytesToBytes(tb: number): number {
-    return tb * 1024 * 1024 * 1024 * 1024;
+    return tb * TiB;
   }
 }

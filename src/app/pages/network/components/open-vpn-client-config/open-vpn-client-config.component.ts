@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -97,7 +96,6 @@ export class OpenVpnClientConfigComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
-    private router: Router,
   ) {}
 
   ngOnInit(): void {

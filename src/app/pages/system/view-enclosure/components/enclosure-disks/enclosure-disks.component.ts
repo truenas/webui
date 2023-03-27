@@ -25,7 +25,6 @@ import {
 } from 'app/interfaces/events/disk-events.interface';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
-import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -107,7 +106,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   showCaption = true;
   protected aborted = false;
 
-  mqAlias: string;
   @ViewChild('visualizer', { static: true }) visualizer: ElementRef<HTMLElement>;
   @ViewChild('disksoverview', { static: true }) overview: ElementRef<HTMLElement>;
   @ViewChild('diskdetails', { static: false }) details: ElementRef<HTMLElement>;
@@ -339,13 +337,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       this.temperatures = clone;
     });
     core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
-
-    core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(
-      untilDestroyed(this),
-    ).subscribe((evt: MediaChangeEvent) => {
-      this.mqAlias = evt.data.mqAlias;
-      this.resizeView();
-    });
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),

@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
+  Component, ElementRef, HostListener, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,7 +17,6 @@ import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -59,7 +58,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
                   Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
                   <b>Kill Process</b> <br/>
-                  Kill process shortcut is <i>Crtl+C</i>.`);
+                  Kill process shortcut is <i>Ctrl+C</i>.`);
 
   constructor(
     private ws: WebSocketService,
@@ -70,7 +69,6 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     private store$: Store<AppState>,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    public core: CoreService,
   ) {}
 
   ngOnInit(): void {
@@ -97,15 +95,13 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
       }
     });
+  }
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'MediaChange',
-    }).pipe(untilDestroyed(this)).subscribe(() => {
-      if (this.shellConnected) {
-        setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
-      }
-    });
+  @HostListener('window:resize')
+  onWindowResized(): void {
+    if (this.shellConnected) {
+      setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
+    }
   }
 
   initShell(): void {

@@ -168,7 +168,7 @@
                     </div>
                   </div>
                   <div *ngIf="availableNics.length <= 3" class="nic-chart" fxFlex>
-                    <div class="chart-body" [ngClass]="getChartBodyClassess(nic)">
+                    <div class="chart-body" [ngClass]="getChartBodyClasses(nic)">
                       <ix-view-chart-area
                         *ngIf="nicInfoMap && nicInfoMap[nic.state.name].chartData; else emptychart"
                         [data]="nicInfoMap[nic.state.name]?.chartData"

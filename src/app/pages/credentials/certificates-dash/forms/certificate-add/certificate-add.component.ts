@@ -17,11 +17,11 @@ import {
   CertificateImportComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
 import {
-  CertificateOptionsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
-import {
   CertificateConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+import {
+  CertificateOptionsComponent,
+} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
@@ -59,7 +59,7 @@ export class CertificateAddComponent {
   ) {}
 
   get isImport(): boolean {
-    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.CreateImported;
+    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.Import;
   }
 
   getNewCertificateSteps(): [

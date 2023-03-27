@@ -20,11 +20,6 @@ import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encrypt
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 
-export interface Subs {
-  apiEndPoint: string;
-  file: File;
-}
-
 interface DatasetFormValue {
   key?: string;
   passphrase?: string;

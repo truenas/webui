@@ -41,12 +41,12 @@ describe('VmwareSnapshotFormComponent', () => {
             {
               type: DatasetType.Filesystem,
               name: 'fs01',
-              description: 'filesysyem 01',
+              description: 'filesystem 01',
             },
             {
               type: DatasetType.Filesystem,
               name: 'fs02',
-              description: 'filesysyem 02',
+              description: 'filesystem 02',
             },
           ],
           datastores: [
@@ -142,7 +142,7 @@ describe('VmwareSnapshotFormComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: 'The filesystem fs02 is filesysyem 02, but datastore ds01 is datastore 01. Is this correct?',
+        message: 'The filesystem fs02 is filesystem 02, but datastore ds01 is datastore 01. Is this correct?',
       }),
     );
 

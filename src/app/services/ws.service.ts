@@ -61,6 +61,12 @@ export class WebSocketService {
   ): Observable<Job<ApiDirectory[K]['response']>> {
     return this.call(method, params).pipe(
       switchMap((jobId: number) => {
+        if (typeof jobId !== 'number') {
+          return throwError(() => {
+            return new Error(`${method} did not return a job id. You may be calling ws.job when ws.call was expected.`);
+          });
+        }
+
         return merge(
           this.subscribeToJobUpdates(jobId),
           // Get job status here for jobs that complete too fast.

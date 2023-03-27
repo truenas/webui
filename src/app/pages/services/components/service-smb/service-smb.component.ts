@@ -5,7 +5,6 @@ import { AbstractControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,10 +16,9 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService, SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store/index';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -108,8 +106,6 @@ export class ServiceSmbComponent implements OnInit {
     private translate: TranslateService,
     private userService: UserService,
     private validatorsService: IxValidatorsService,
-    private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
