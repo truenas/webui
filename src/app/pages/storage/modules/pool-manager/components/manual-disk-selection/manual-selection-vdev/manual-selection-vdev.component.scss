@@ -17,6 +17,7 @@
 .vdev-container {
   display: flex;
   flex-direction: row;
+  gap: 5px;
   margin: 0 10px;
 }
 
@@ -31,4 +32,29 @@
 
 p {
   margin: 5px 0;
+}
+
+.delete-container {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.grabbed {
+  cursor: grabbing;
+}
+
+.drag-active {
+  border: 1px dotted #999;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.drag-hint {
+  justify-content: center;
 }

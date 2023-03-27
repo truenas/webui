@@ -3610,12 +3610,25 @@
   resolved "https://registry.npmjs.org/@sentry/types/-/types-5.30.0.tgz"
   integrity sha512-R8xOqlSTZ+htqrfteCWU5Nk0CDN5ApUTvrlvBuiH1DyP6czDZ4ktbZB0hAgBlVcK0U+qpD3ag3Tqqpa5Q67rPw==
 
+"@sentry/types@7.42.0":
+  version "7.42.0"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.42.0.tgz#e5019cd41a8c4a98c296e2ff28d6adab4b2eb14e"
+  integrity sha512-Ga0xaBIR/peuXQ88hI9a5TNY3GLNoH8jpsgPaAjAtRHkLsTx0y3AR+PrD7pUysza9QjvG+Qux01DRvLgaNKOHA==
+
 "@sentry/utils@5.30.0":
   version "5.30.0"
   resolved "https://registry.npmjs.org/@sentry/utils/-/utils-5.30.0.tgz"
   integrity sha512-zaYmoH0NWWtvnJjC9/CBseXMtKHm/tm40sz3YfJRxeQjyzRqNQPgivpd9R/oDJCYj999mzdW382p/qi2ypjLww==
   dependencies:
     "@sentry/types" "5.30.0"
+    tslib "^1.9.3"
+
+"@sentry/utils@~7.42.0":
+  version "7.42.0"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-7.42.0.tgz#fcffd0404836cb56975fbef9e889a42cc55de596"
+  integrity sha512-cBiDZVipC+is+IVgsTQLJyZWUZQxlLZ9GarNT+XZOZ5BFh0acFtz88hO6+S7vGmhcx2aCvsdC9yb2Yf+BphK6Q==
+  dependencies:
+    "@sentry/types" "7.42.0"
     tslib "^1.9.3"
 
 "@shopify/eslint-plugin@~42.0.1":
@@ -10834,6 +10847,13 @@ ngx-color-picker@~11.0.0:
   integrity sha512-HyiFNPYLrCyYbFpLvZJaHC43RhjfDdFDij4pnvk9R46iH1scVtO6f2ibBgxRwBKKsT94KYvOH8wF8OrvztWdEw==
   dependencies:
     tslib "^2.0.0"
+
+ngx-drag-drop@~15.0.1:
+  version "15.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-drag-drop/-/ngx-drag-drop-15.0.1.tgz#e751fa0f11a4c86456fbb241bc8c2c530149cee0"
+  integrity sha512-x0YgsVCk95x3YSNZT/EmJvo1sRjra+BtQuZMbRYKc88E0GHIOlmWNp/1Z7w5UdznEp0240KDwYp3crR4FuDGew==
+  dependencies:
+    tslib "^2.3.0"
 
 ngx-filesize@~3.0.1:
   version "3.0.1"
