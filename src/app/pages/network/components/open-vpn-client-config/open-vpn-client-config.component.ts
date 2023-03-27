@@ -5,9 +5,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
-  filter, map, switchMap, tap,
+  catchError,
+  filter, map, switchMap,
 } from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
@@ -161,12 +162,22 @@ export class OpenVpnClientConfigComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.appLoaderService.open();
+        this.isLoading = true;
+        this.cdr.markForCheck();
         return this.ws.call('openvpn.client.update', [{ remove_certificates: true } as OpenvpnClientConfigUpdate]);
       }),
-      tap(() => {
-        this.appLoaderService.close();
+      catchError((error) => {
+        this.dialogService.errorReportMiddleware(error);
+        return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe();
+    ).subscribe({
+      complete: () => {
+        this.appLoaderService.close();
+        this.isLoading = false;
+        this.loadConfig();
+        this.cdr.markForCheck();
+      },
+    });
   }
 }
