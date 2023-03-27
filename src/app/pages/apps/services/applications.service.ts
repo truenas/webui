@@ -43,10 +43,8 @@ export class ApplicationsService {
       return this.ws.call('app.available');
     }
 
-    const firstOption: QueryFilter<AvailableApp>[] = [
-      ['name', 'rin', filters.search],
-      ['catalog', 'in', filters.catalogs],
-    ];
+    const firstOption: QueryFilter<AvailableApp>[] = [['catalog', 'in', filters.catalogs]];
+    filters.categories.forEach((category) => firstOption.push(['categories', 'rin', category]));
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
     return this.ws.call('app.available', [firstOption, secondOption]);
