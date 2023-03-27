@@ -3,6 +3,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { AlertClassSettings } from 'app/interfaces/alert.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
@@ -84,6 +85,7 @@ describe('AlertConfigFormComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
+  // TODO: Does not interact with the form as a user.
   it('loads current config and shows values in the form', () => {
     expect(ws.call).toHaveBeenCalledWith('alert.list_categories');
     expect(ws.call).toHaveBeenCalledWith('alertclasses.config');
@@ -101,7 +103,7 @@ describe('AlertConfigFormComponent', () => {
       app_2: { level: AlertLevel.Notice },
       cert_1: { policy: AlertPolicy.Never },
       cert_2: { policy: AlertPolicy.Hourly },
-    });
+    } as Record<string, AlertClassSettings>);
 
     spectator.component.onSubmit();
 

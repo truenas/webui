@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { FormBuilder, ValuesOf } from '@ngneat/reactive-forms';
+import { FormBuilder, ValuesOf, FormGroup } from '@ngneat/reactive-forms';
 import { GroupResolverFormBuilder } from '@ngneat/reactive-forms/lib/form-builder';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
