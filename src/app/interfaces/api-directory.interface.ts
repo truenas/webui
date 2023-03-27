@@ -6,6 +6,7 @@ import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -125,7 +126,7 @@ import {
   InitShutdownScript,
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
-import { Ipmi, IpmiIdentify, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiChassis, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import {
   IscsiGlobalConfig,
   IscsiGlobalConfigUpdate,
@@ -615,9 +616,12 @@ export type ApiDirectory = {
 
   // IPMI
   'ipmi.is_loaded': { params: void; response: boolean };
-  'ipmi.identify': { params: [IpmiIdentify]; response: void };
   'ipmi.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
   'ipmi.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
+
+  // IPMI Chassis
+  'ipmi.chassis.identify': { params: [OnOff]; response: void };
+  'ipmi.chassis.query': { params: void; response: IpmiChassis };
 
   // Group
   'group.query': { params: QueryParams<Group>; response: Group[] };

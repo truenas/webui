@@ -6,7 +6,7 @@ export default {
   dataset_parent_name_placeholder: T('Parent path'),
   dataset_parent_name_tooltip: T('Parent dataset path (read-only).'),
   dataset_form_name_placeholder: T('Name'),
-  dataset_form_name_tooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Which is why, length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory heirarchy after you account for the nested levels in the parent path.'),
+  dataset_form_name_tooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Which is why, length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
   dataset_form_name_readonly_tooltip: T('Dataset name (read-only).'),
 
   dataset_form_comments_placeholder: T('Comments'),
@@ -26,7 +26,7 @@ export default {
  the best files to compress.<br> <i>GZIP</i> options range from 1 for least \
  compression, best performance, through 9 for maximum compression with \
  greatest performance impact.<br> <i>ZLE</i> is a fast algorithm that only \
- elminates runs of zeroes.'),
+ eliminates runs of zeroes.'),
 
   dataset_form_atime_placeholder: T('Enable Atime'),
   dataset_form_atime_tooltip: T('Choose <i>ON</i> to update the access time for files\

@@ -144,7 +144,10 @@ export class CreateDataWizardStepComponent implements OnInit {
     // TODO: Also keep in mind that user set custom layout in dialog, save and then press this button again.
 
     this.dialog.open(ManualDiskSelectionComponent, {
-      data: {} as ManualDiskSelectionLayout,
+      data: {
+        type: this.form.controls.type.value,
+      } as ManualDiskSelectionLayout,
+      panelClass: 'manual-selection-dialog',
     });
   }
 }

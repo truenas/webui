@@ -1,5 +1,5 @@
 <ix-modal-header
-  [title]="title | translate"
+  [title]="'IPMI' | translate"
   [loading]="isLoading"
 ></ix-modal-header>
 
@@ -9,8 +9,8 @@
       <ng-container *ngIf="remoteControllerOptions">
         <ix-fieldset [title]="helptext.ipmi_remote_controller | translate">
           <ix-radio-group
+            formControlName="remoteController"
             [label]="helptext.ipmi_remote_controller | translate"
-            [formControlName]="'remoteController'"
             [options]="remoteControllerOptions"
           >
           </ix-radio-group>
@@ -74,18 +74,25 @@
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" ixTest="identify-light" (click)="setFlashTime()">
-          {{ 'Identify Light' | translate }}
-        </button>
-
         <button
           mat-button
           type="button"
           ixTest="manage-ipmi"
-          [disabled]="isDisabledManageBtn || isLoading"
+          [disabled]="isManageButtonDisabled || isLoading"
           (click)="openManageWindow()"
         >
           {{ 'Manage' | translate }}
+        </button>
+
+        <button mat-button type="button" ixTest="toggle-identify-light" (click)="toggleFlashing()">
+          <ng-container *ngIf="!isFlashing">
+            <ix-icon name="highlight"></ix-icon>
+            {{ 'Flash Identify Light' | translate }}
+          </ng-container>
+          <ng-container *ngIf="isFlashing">
+            <ix-icon name="highlight"></ix-icon>
+            {{ 'Stop Flashing' | translate }}
+          </ng-container>
         </button>
       </mat-card-actions>
     </form>

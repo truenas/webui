@@ -1,0 +1,49 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Syslog' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        mat-button
+        [ixTest]="['syslog', 'configure']"
+        (click)="onConfigurePressed()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Use FQDN for Logging' | translate }}:</span>
+        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+          {{ advancedConfig.fqdn_syslog ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Syslog Level' | translate }}:</span>
+        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+          {{ advancedConfig.sysloglevel | mapValue: syslogLevelLabels | translate }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Syslog Server' | translate }}:</span>
+        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+          {{ advancedConfig.syslogserver }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Syslog Transport' | translate }}:</span>
+        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+          {{ advancedConfig.syslog_transport }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Use System Dataset' | translate }}:</span>
+        <span *ixWithLoadingState="syslog$ as syslog" class="value">
+          {{ syslog ? ('Enabled' | translate) : ('Disabled' | translate)  }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
