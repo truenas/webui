@@ -15,6 +15,9 @@ function isStringArray(items: unknown[]): items is string[] {
   return typeof items[0] === 'string';
 }
 
+const specialRedundancyCategories = [PoolTopologyCategory.Dedup, PoolTopologyCategory.Special];
+const redundancyCategories = [...specialRedundancyCategories, PoolTopologyCategory.Data];
+
 @Injectable()
 export class StorageService {
   protected diskResource = 'disk.query' as const;
@@ -544,14 +547,12 @@ export class StorageService {
       }
 
       // Check Redundancy
-      if (category === PoolTopologyCategory.Data && this.getRedundancyLevel(vdevs[0]) === 0) {
+      if (redundancyCategories.includes(category) && this.hasZeroRedundancyLevelVdev(vdevs)) {
         warnings.push(TopologyWarning.NoRedundancy);
       }
 
       // Check that special & dedup VDEVs have same redundancy level as data VDEVs
-      const isMismatchCategory = (category === PoolTopologyCategory.Dedup || category === PoolTopologyCategory.Special);
-
-      if (isMismatchCategory && this.isSpecialRedundancyMismatch(vdevs, dataVdevs)) {
+      if (specialRedundancyCategories.includes(category) && this.isSpecialRedundancyMismatch(vdevs, dataVdevs)) {
         warnings.push(TopologyWarning.RedundancyMismatch);
       }
     }
@@ -559,7 +560,18 @@ export class StorageService {
     return warnings;
   }
 
+  private hasZeroRedundancyLevelVdev(vdevs: TopologyItem[]): boolean {
+    return vdevs.filter((vdev) => this.getRedundancyLevel(vdev) === 0).length > 0;
+  }
+
+  private getUniqueRedundancyLevels(vdevs: TopologyItem[]): number[] {
+    return Array.from(new Set(vdevs.map((vdev) => this.getRedundancyLevel(vdev))));
+  }
+
   private isSpecialRedundancyMismatch(vdevs: TopologyItem[], dataVdevs: TopologyItem[]): boolean {
-    return this.getRedundancyLevel(vdevs[0]) !== this.getRedundancyLevel(dataVdevs[0]);
+    const hasVdevsLevelsMismatch = this.getUniqueRedundancyLevels(vdevs).length > 1;
+    const hasDataVdevsLevelsMismatch = this.getUniqueRedundancyLevels(dataVdevs).length > 1;
+
+    return (hasVdevsLevelsMismatch || hasDataVdevsLevelsMismatch);
   }
 }
