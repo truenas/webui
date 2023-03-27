@@ -24,23 +24,17 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ReportsConfigFormComponent implements OnInit {
   isFormLoading = true;
   tooltips = {
-    cpu_in_percentage: helptext.cpu_in_percentage_tooltip,
-    graphite_separateinstances: helptext.graphite_separateinstances_tooltip,
     graphite: helptext.graphite_tooltip,
     graph_age: helptext.graph_age_tooltip,
     graph_points: helptext.graph_points_tooltip,
   };
   userValues: ReportingConfigUpdate;
   readonly defaultValues: ReportingConfigUpdate = {
-    cpu_in_percentage: false,
-    graphite_separateinstances: false,
     graphite: '',
     graph_age: 12,
     graph_points: 1200,
   };
   form = this.fb.group({
-    cpu_in_percentage: [this.defaultValues.cpu_in_percentage, []],
-    graphite_separateinstances: [this.defaultValues.graphite_separateinstances, []],
     graphite: [this.defaultValues.graphite, []],
     graph_age: [this.defaultValues.graph_age, [Validators.required, rangeValidator(1, 60)]],
     graph_points: [this.defaultValues.graph_points, [Validators.required, rangeValidator(1, 4096)]],

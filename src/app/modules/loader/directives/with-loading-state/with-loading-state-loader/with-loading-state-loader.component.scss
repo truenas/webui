@@ -1,0 +1,15 @@
+:host {
+  display: inline-flex;
+}
+
+ngx-skeleton-loader {
+  display: inline-block;
+  flex: 0;
+  height: 20px;
+  min-width: 30px;
+  width: 30%;
+
+  ::ng-deep .loader {
+    margin-bottom: 2px;
+  }
+}

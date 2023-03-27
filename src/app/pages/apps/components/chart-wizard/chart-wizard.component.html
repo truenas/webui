@@ -1,50 +1,51 @@
 <ng-template #pageHeader>
   <ix-page-title-header [pageTitle]="pageTitle | titlecase"></ix-page-title-header>
 </ng-template>
-
-<div class="wizard-container">
-  <div class="mini-search-card">
-    <ix-input
-      prefixIcon="search"
-      [formControl]="searchControl"
-      [placeholder]="'Search Input Fields' | translate"
-      [autocompleteOptions]="searchOptions"
-    ></ix-input>
-  </div>
-  <form [formGroup]="form" (submit)="onSubmit()">
-    <ix-dynamic-wizard
-      [dynamicSection]="dynamicSection"
-      [dynamicForm]="form"
-      (addListItem)="addItem($event)"
-      (deleteListItem)="deleteItem($event)"
-    ></ix-dynamic-wizard>
-
-    <div class="actions">
-      <button
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="save"
-        [disabled]="form.invalid || isLoading"
-      >
-        {{ 'Save' | translate }}
-      </button>
+<ng-container *ngIf="appsLoaded">
+  <div class="wizard-container">
+    <div class="mini-search-card">
+      <ix-input
+        prefixIcon="search"
+        [formControl]="searchControl"
+        [placeholder]="'Search Input Fields' | translate"
+        [autocompleteOptions]="searchOptions"
+      ></ix-input>
     </div>
-  </form>
-</div>
-<div class="search-container">
-  <div class="search-card">
-    <ix-input
-      prefixIcon="search"
-      [formControl]="searchControl"
-      [placeholder]="'Search Input Fields' | translate"
-      [autocompleteOptions]="searchOptions"
-    ></ix-input>
-    <ng-container *ngFor="let section of dynamicSection">
-      <div class="section" (click)="onSectionClick(section.name)">
-        {{ section.name }}
-        <ix-icon *ngIf="checkSectionInvalid(section)" name="warning"></ix-icon>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <ix-dynamic-wizard
+        [dynamicSection]="dynamicSection"
+        [dynamicForm]="form"
+        (addListItem)="addItem($event)"
+        (deleteListItem)="deleteItem($event)"
+      ></ix-dynamic-wizard>
+
+      <div class="actions">
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
-    </ng-container>
+    </form>
   </div>
-</div>
+  <div *ngIf="appsLoaded" class="search-container">
+    <div class="search-card">
+      <ix-input
+        prefixIcon="search"
+        [formControl]="searchControl"
+        [placeholder]="'Search Input Fields' | translate"
+        [autocompleteOptions]="searchOptions"
+      ></ix-input>
+      <ng-container *ngFor="let section of dynamicSection">
+        <div class="section" (click)="onSectionClick(section.name)">
+          {{ section.name }}
+          <ix-icon *ngIf="checkSectionInvalid(section)" name="warning"></ix-icon>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

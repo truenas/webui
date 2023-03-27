@@ -1,0 +1,12 @@
+mat-list-item {
+  .label {
+    margin-right: 8px;
+  }
+
+  .value {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

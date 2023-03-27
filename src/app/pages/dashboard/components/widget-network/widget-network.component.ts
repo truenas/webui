@@ -2,9 +2,11 @@ import {
   Component, AfterViewInit, OnDestroy, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 import filesize from 'filesize';
 import { Subject } from 'rxjs';
 import {
@@ -28,6 +30,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface NicInfo {
   ip: string;
@@ -73,6 +77,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   aspectRatio = 474 / 200;
   dateFormat = this.localeService.getPreferredDateFormatForChart();
   timeFormat = this.localeService.getPreferredTimeFormatForChart();
+  timezone: string;
 
   minSizeToActiveTrafficArrowIcon = 1024;
 
@@ -164,10 +169,15 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     private storage: StorageService,
     private localeService: LocaleService,
     public themeService: ThemeService,
+    private store$: Store<AppState>,
   ) {
     super(translate);
     this.configurable = false;
     this.utils = new WidgetUtils();
+
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.timezone = timezone;
+    });
   }
 
   ngOnDestroy(): void {
@@ -357,7 +367,14 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         name: 'interface',
       } as ReportingParams;
       this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(
-        map((response) => response[0]),
+        map((response) => {
+          const updatedResponse = response[0];
+          if (this.timezone) {
+            updatedResponse.start = utcToZonedTime(updatedResponse.start * 1000, this.timezone).valueOf() / 1000;
+            updatedResponse.end = utcToZonedTime(updatedResponse.end * 1000, this.timezone).valueOf() / 1000;
+          }
+          return updatedResponse;
+        }),
         untilDestroyed(this),
       ).subscribe({
         next: (response) => {

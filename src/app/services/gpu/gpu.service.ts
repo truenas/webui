@@ -11,7 +11,7 @@ import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/index';
 import { AppState } from 'app/store';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +52,8 @@ export class GpuService {
   }
 
   getIsolatedGpuPciIds(): Observable<string[]> {
-    return this.store$.select(selectAdvancedConfig).pipe(
+    return this.store$.pipe(
+      waitForAdvancedConfig,
       take(1),
       map((advancedConfig) => advancedConfig.isolated_gpu_pci_ids),
     );
