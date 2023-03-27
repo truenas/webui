@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, ValuesOf, FormGroup } from '@ngneat/reactive-forms';
-import { GroupResolverFormBuilder } from '@ngneat/reactive-forms/lib/form-builder';
+import { FormControl } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -14,8 +14,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services/';
 
-type AlertCategoryForm = FormGroup<GroupResolverFormBuilder<AlertClassSettings>>;
-
 @UntilDestroy()
 @Component({
   selector: 'ix-alert-config-form',
@@ -25,7 +23,7 @@ type AlertCategoryForm = FormGroup<GroupResolverFormBuilder<AlertClassSettings>>
 export class AlertConfigFormComponent implements OnInit {
   categories: AlertCategory[] = [];
   selectedCategory: AlertCategory;
-  form = this.formBuilder.group<Record<string, AlertCategoryForm>>({});
+  form = this.formBuilder.group({});
   isFormLoading = false;
   readonly helptext = helptext;
 
@@ -66,20 +64,19 @@ export class AlertConfigFormComponent implements OnInit {
 
         categories.forEach((category) => {
           category.classes.forEach((cls) => {
-            const alertClassGroup = this.formBuilder.group<AlertClassSettings>({
+            this.form.addControl(cls.id, this.formBuilder.group<AlertClassSettings>({
               level: cls.level,
               policy: AlertPolicy.Immediately,
-            });
-            this.form.addControl(cls.id, alertClassGroup);
+            }));
+            this.form.controls[cls.id].controls.level.defaultValue = cls.level;
+            this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
           });
         });
 
         this.ws.call('alertclasses.config').pipe(untilDestroyed(this)).subscribe(
           {
             next: (alertConfig) => {
-              this.form.patchValue(
-                alertConfig.classes as ValuesOf<GroupResolverFormBuilder<Record<string, AlertCategoryForm>>>,
-              );
+              this.form.patchValue(alertConfig.classes);
               this.isFormLoading = false;
             },
             error: (error: WebsocketError) => {
@@ -104,8 +101,8 @@ export class AlertConfigFormComponent implements OnInit {
     this.isFormLoading = true;
     const payload: AlertClassesUpdate = { classes: {} };
     for (const [className, classControl] of Object.entries(this.form.controls)) {
-      const levelControl = classControl.controls.level;
-      const policyControl = classControl.controls.policy;
+      const levelControl = classControl.controls.level as FormControl<AlertLevel>;
+      const policyControl = classControl.controls.policy as FormControl<AlertPolicy>;
       if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
         payload.classes[className] = {};
         if (levelControl.value !== levelControl.defaultValue) {
