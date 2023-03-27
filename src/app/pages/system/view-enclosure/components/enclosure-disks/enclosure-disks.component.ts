@@ -82,20 +82,6 @@ export interface DiskFailure {
   reasons?: string[];
 }
 
-/*
-* TODO:
-*  1 Rewrite visualization logic to only react to data changes
-*  2 Move any data manipulation that doesn't belong here to either the store or a service
-*  3 Handle rear slots (subenclosure) - currently references front slots when in M50 rear view **** DONE
-*  4 Handle compound chassis AKA siblings (Do we still need them?)
-*  5 Fix CSS problems in templates **** DONE
-*  6 Test/fix extracted enclosures and enclosure selection in parent component **** DONE
-*  7 Fix rear drives for M50 (model: "M50 Series" and id: "m50_plx_enclosure") **** DONE
-*  8 Add expander data to store **** DONE
-*  9 Failed Disk detection
-*  10 Unhealthy Pool detection
-* */
-
 @UntilDestroy()
 @Component({
   selector: 'ix-enclosure-disks',

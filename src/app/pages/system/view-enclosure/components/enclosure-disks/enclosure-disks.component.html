@@ -159,7 +159,7 @@
             (mouseenter)="toggleHighlightMode('on')"
             (mouseleave)="toggleHighlightMode('off')"
           >
-            <div *ngIf="selectedVdevSlots; else noVdevDisks" class="legend">
+            <div *ngIf="selectedVdevSlots.length; else noVdevDisks" class="legend">
               <div
                 *ngFor="let slot of selectedVdevSlots; let i = index"
                 [class]="['vdev-disk', slot.disk.name]"
@@ -171,7 +171,6 @@
                   [style.background]="selectedSlot.disk.devname === slot.disk.name ? theme.yellow : theme.cyan"
                 ></div>
                 {{ slot.disk.name }}
-                <!--<span *ngIf="!selectedVdevSlotNumbers[disk]">-->
                 <span *ngIf="slot.enclosure !== selectedEnclosureView.number">
                   (enclosure {{ slot.enclosure }}, slot {{ slot.slot }})
                 </span>
@@ -181,7 +180,8 @@
             <ng-template #noVdevDisks>
               <div class="legend">
                 <div class="vdev-disk">
-                  {{ 'No vdev info for disk.' | translate }}
+                  <span *ngIf="selectedSlot?.disk">{{ 'No vdev info for disk.' | translate }}</span>
+                  <span *ngIf="!selectedSlot?.disk">{{ 'No disk in slot' | translate }}</span>
                 </div>
               </div>
             </ng-template>
@@ -423,8 +423,9 @@
             fxLayout="column"
             fxLayoutAlign="center center"
           >
-            <ix-disk-ui [data]="selectedSlot.disk"></ix-disk-ui
-            ><!-- disk icon + labels -->
+            <ix-disk-ui [data]="selectedSlot.disk"></ix-disk-ui>
+
+            <!-- disk icon + labels -->
             <div class="capacity">{{ selectedSlot.disk.size | filesize: { standard: 'iec' } }}</div>
             <div class="disk-actions">
               <button
