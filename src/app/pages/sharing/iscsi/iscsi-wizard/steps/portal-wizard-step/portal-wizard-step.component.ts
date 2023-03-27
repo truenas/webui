@@ -18,7 +18,6 @@ import { IscsiService } from 'app/services';
 @Component({
   selector: 'ix-portal-wizard-step',
   templateUrl: './portal-wizard-step.component.html',
-  styleUrls: ['./portal-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalWizardStepComponent implements OnInit {

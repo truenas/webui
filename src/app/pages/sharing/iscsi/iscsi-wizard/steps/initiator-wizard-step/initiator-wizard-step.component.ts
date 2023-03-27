@@ -7,7 +7,6 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 @Component({
   selector: 'ix-initiator-wizard-step',
   templateUrl: './initiator-wizard-step.component.html',
-  styleUrls: ['./initiator-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitiatorWizardStepComponent {

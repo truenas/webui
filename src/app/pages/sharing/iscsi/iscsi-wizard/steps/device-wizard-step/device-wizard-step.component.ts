@@ -15,7 +15,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 @Component({
   selector: 'ix-device-wizard-step',
   templateUrl: './device-wizard-step.component.html',
-  styleUrls: ['./device-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceWizardStepComponent implements OnInit {
