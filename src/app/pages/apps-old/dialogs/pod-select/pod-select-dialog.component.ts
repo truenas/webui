@@ -1,5 +1,7 @@
 import { OnInit, Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
@@ -9,6 +11,13 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
 import { WebSocketService } from 'app/services';
+
+interface PodSelectFormControls {
+  pods: FormControl<string>;
+  containers: FormControl<string>;
+  command?: FormControl<string>;
+  tail_lines?: FormControl<number>;
+}
 
 @UntilDestroy()
 @Component({
@@ -23,7 +32,7 @@ export class PodSelectDialogComponent implements OnInit {
   podList: string[] = [];
   podDetails: Record<string, string[]> = {};
 
-  form: FormGroup;
+  form: FormGroup<PodSelectFormControls>;
   pods$: Observable<Option[]>;
   containers$: Observable<Option[]>;
   title: string;
@@ -46,14 +55,14 @@ export class PodSelectDialogComponent implements OnInit {
           pods: ['', Validators.required],
           containers: ['', Validators.required],
           command: ['/bin/sh'],
-        });
+        }) as FormGroup<PodSelectFormControls>;
         break;
       case PodSelectDialogType.Logs:
         this.form = this.formBuilder.group({
           pods: ['', Validators.required],
           containers: ['', Validators.required],
           tail_lines: [this.tailLines, Validators.required],
-        });
+        }) as FormGroup<PodSelectFormControls>;
         break;
     }
   }

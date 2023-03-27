@@ -12,6 +12,7 @@ import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -221,7 +222,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.systemConfig = systemConfig;
           this.prepareForm();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
           this.dialogService.errorReport(helptext.exportError, error.reason, error.trace.formatted);
         },

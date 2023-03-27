@@ -620,7 +620,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                 }
                 this.updateTableServiceStatus(service);
               },
-              error: (error) => {
+              error: (error: WebsocketError) => {
                 let message = this.translate.instant(
                   'Error starting service {serviceName}.',
                   { serviceName: serviceNames.get(service.service) || service.service },

@@ -1,5 +1,5 @@
 import {
-  HttpClient, HttpRequest, HttpEventType, HttpResponse,
+  HttpClient, HttpRequest, HttpEventType, HttpResponse, HttpErrorResponse,
 } from '@angular/common/http';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
@@ -85,7 +85,7 @@ export class FormUploadComponent {
             this.snackbar.success(this.translate.instant('File upload complete'));
           }
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           this.loader.close();
           this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
         },

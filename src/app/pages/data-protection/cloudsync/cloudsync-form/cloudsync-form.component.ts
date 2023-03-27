@@ -460,14 +460,14 @@ export class CloudsyncFormComponent {
         this.form.controls.bucket_input.disable();
         this.cdr.markForCheck();
       },
-      error: (err) => {
+      error: (error) => {
         this.isLoading = false;
         this.form.controls.bucket.disable();
         this.form.controls.bucket_input.enable();
         this.dialog.closeAllDialogs();
         this.dialog.confirm({
-          title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
-          message: err.reason,
+          title: error.extra ? error.extra.excerpt : (this.translate.instant('Error: ') + error.error),
+          message: error.reason,
           hideCheckbox: true,
           buttonText: this.translate.instant('Fix Credential'),
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

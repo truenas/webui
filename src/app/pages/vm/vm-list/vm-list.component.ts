@@ -20,6 +20,7 @@ import {
   VirtualizationDetails,
   VirtualMachine, VirtualMachineUpdate,
 } from 'app/interfaces/virtual-machine.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -286,7 +287,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         }
         this.checkMemory();
       },
-      error: (err) => {
+      error: (err: WebsocketError) => {
         this.loader.close();
         if (method === this.wsMethods.start && err.error === 12) {
           this.onMemoryError(row);
