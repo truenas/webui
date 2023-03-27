@@ -14,7 +14,8 @@ import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
-import { DialogService } from 'app/services';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ChartWizardComponent', () => {
@@ -236,6 +237,10 @@ describe('ChartWizardComponent', () => {
     providers: [
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
+      mockProvider(ApplicationsService, {
+        getCatalogItem: jest.fn(() => of(existingCatalogApp)),
+      }),
+      mockProvider(AppLoaderService),
       mockWebsocket([
         mockCall('chart.release.create'),
         mockCall('chart.release.update'),
@@ -257,6 +262,8 @@ describe('ChartWizardComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    spectator.inject(ApplicationsService);
+    spectator.component.ngOnInit();
   });
 
   it('shows values for app when form is opened for create', async () => {

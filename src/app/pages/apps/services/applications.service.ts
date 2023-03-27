@@ -7,7 +7,7 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService } from 'app/services';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
