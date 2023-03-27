@@ -121,6 +121,7 @@
           {{ 'Save' | translate }}
         </button>
         <button
+          *ngIf="lastSavedCertificate"
           ixTest="unset-certs"
           mat-button
           type="button"
