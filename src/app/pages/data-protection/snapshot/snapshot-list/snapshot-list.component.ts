@@ -9,13 +9,14 @@ import {
   PeriodicSnapshotTaskUi,
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
   DialogService, StorageService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -77,6 +78,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private ws: WebSocketService,
     private taskService: TaskService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
     private router: Router,
@@ -120,7 +122,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   stateButton(row: PeriodicSnapshotTaskUi): void {
     if (row.state.state === JobState.Error) {
-      this.dialogService.errorReport(row.state.state, row.state.error);
+      this.dialogService.error({ title: row.state.state, message: row.state.error });
     }
   }
 
@@ -134,9 +136,9 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
             row.enabled = !row.enabled;
           }
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
