@@ -132,6 +132,7 @@
         </button>
         <button
           mat-button
+          *ngIf="lastSavedCertificate !== null || lastSavedRootCertificate !== null"
           type="button"
           (click)="unsetCertificates()"
         >

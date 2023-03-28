@@ -29,6 +29,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class OpenVpnClientConfigComponent implements OnInit {
   isLoading = false;
 
+  lastSavedCertificate: number = null;
+  lastSavedRootCertificate: number = null;
   form = this.formBuilder.group({
     client_certificate: [null as number],
     root_ca: [null as number],
@@ -135,6 +137,8 @@ export class OpenVpnClientConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.lastSavedCertificate = config.client_certificate;
+          this.lastSavedRootCertificate = config.root_ca;
           this.form.patchValue({
             ...config,
           });
