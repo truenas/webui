@@ -6,8 +6,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface TruecommandSignupModalState {
@@ -35,6 +35,7 @@ export class TruecommandConnectModalComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private data: TruecommandSignupModalState,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<TruecommandConnectModalComponent>,
@@ -78,7 +79,7 @@ export class TruecommandConnectModalComponent implements OnInit {
       },
       error: (err) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });
   }
@@ -109,7 +110,7 @@ export class TruecommandConnectModalComponent implements OnInit {
           },
           error: (err) => {
             this.loader.close();
-            new EntityUtils().handleWsError(this, err, this.dialogService);
+            this.dialogService.error(this.errorHandler.parseWsError(err));
           },
         });
     });
