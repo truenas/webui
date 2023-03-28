@@ -50,6 +50,10 @@ export default {
  and automatically have privileges to take ownership of any file in an SMB\
  share, reset permissions, and administer the SMB server through the\
  Computer Management MMC snap-in.'),
+  cifs_srv_multichannel_tooltip: T('SMB multichannel allows servers to use multiple network connections \
+ simultaneously by combining the bandwidth of several network interface cards (NICs) for \
+ better performance. SMB multichannel does not function if you combine NICs into a LAGG.\
+ <a href="https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/" target="_blank">Read more in docs</a>'),
   cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See the \
  <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html" target="_blank">Samba Guide</a> \
  for more information on these settings.<br> \
