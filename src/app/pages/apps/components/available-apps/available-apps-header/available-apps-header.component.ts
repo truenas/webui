@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   debounceTime, distinctUntilChanged, forkJoin, Observable, of,
 } from 'rxjs';
+import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -84,6 +85,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
       this.installedCatalogs = Array.from(catalogs);
       this.catalogsOptions$ = of(this.installedCatalogs.map((catalog) => ({ label: catalog, value: catalog })));
 
+      categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
       this.appsCategories = categories;
       this.categoriesProvider$ = (query) => of(categories.filter((category) => category.includes(query)));
 
