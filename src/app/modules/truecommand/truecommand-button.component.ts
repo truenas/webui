@@ -7,6 +7,7 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
 import {
@@ -108,7 +109,7 @@ export class TruecommandButtonComponent implements OnInit {
           next: () => {
             this.loader.close();
           },
-          error: (err) => {
+          error: (err: WebsocketError) => {
             this.loader.close();
             this.dialogService.error(this.errorHandler.parseWsError(err));
           },
