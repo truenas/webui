@@ -123,9 +123,9 @@ export class MockStorageGenerator {
         break;
       }
       case MockStorageScenario.Uniform: {
-        if (options.layout === TopologyItemType.Stripe || options.layout === TopologyItemType.Disk) {
-          options.layout = TopologyItemType.Mirror;
-        }
+        // if (options.layout === TopologyItemType.Stripe || options.layout === TopologyItemType.Disk) {
+        //   options.layout = TopologyItemType.Mirror;
+        // }
 
         const uniform = this.generateUniformTopology(options.layout, options.repeats, options.diskSize, options.width);
         this.disks = this.disks.concat(uniform.disks);
