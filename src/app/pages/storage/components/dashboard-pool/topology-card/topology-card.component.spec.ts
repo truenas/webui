@@ -64,7 +64,7 @@ describe('TopologyCardComponent', () => {
   it('rendering VDEVs rows', () => {
     const captions = spectator.queryAll('.vdev-line b');
     const values = spectator.queryAll('.vdev-line .vdev-value');
-    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
+    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(0);
     expect(captions).toHaveLength(6);
     expect(values).toHaveLength(6);
 
@@ -85,7 +85,7 @@ describe('TopologyCardComponent', () => {
 
     // Redundancy level should match data VDEVs
     expect(captions[1]).toHaveText('Metadata');
-    expect(values[1]).toHaveText('Redundancy Mismatch');
+    expect(values[1]).toHaveText('1 x MIRROR | 3 wide | 8 TiB');
     expect(captions[5]).toHaveText('Dedup VDEVs');
     expect(values[5]).toHaveText('VDEVs not assigned');
   });

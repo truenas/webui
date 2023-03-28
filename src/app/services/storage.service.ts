@@ -565,13 +565,15 @@ export class StorageService {
   }
 
   private getUniqueRedundancyLevels(vdevs: TopologyItem[]): number[] {
-    return Array.from(new Set(vdevs.map((vdev) => this.getRedundancyLevel(vdev))));
+    return Array.from(new Set(vdevs.map((vdev) => this.getRedundancyLevel(vdev)))).sort((a, b) => a - b);
   }
 
   private isSpecialRedundancyMismatch(vdevs: TopologyItem[], dataVdevs: TopologyItem[]): boolean {
-    const hasVdevsLevelsMismatch = this.getUniqueRedundancyLevels(vdevs).length > 1;
-    const hasDataVdevsLevelsMismatch = this.getUniqueRedundancyLevels(dataVdevs).length > 1;
+    const uniqueVdevsLevels = this.getUniqueRedundancyLevels(vdevs);
+    const uniqueDataVdevsLevels = this.getUniqueRedundancyLevels(dataVdevs);
 
-    return (hasVdevsLevelsMismatch || hasDataVdevsLevelsMismatch);
+    return (
+      (uniqueVdevsLevels.length > 1 || uniqueDataVdevsLevels.length > 1)
+      || (uniqueVdevsLevels[0] < uniqueDataVdevsLevels[0]));
   }
 }
