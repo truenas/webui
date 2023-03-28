@@ -6,8 +6,9 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -53,6 +54,8 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
   constructor(
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
 
@@ -119,7 +122,7 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
               this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
                 next: () => this.entityList.getData(),
                 error: (error: WebsocketError) => {
-                  new EntityUtils().handleWsError(this, error, this.entityList.dialogService);
+                  this.dialogService.error(this.errorHandler.parseWsError(error));
                   this.entityList.loader.close();
                 },
               });

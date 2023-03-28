@@ -27,6 +27,7 @@ import {
   IscsiInterface, IscsiPortal, IscsiTarget, IscsiTargetExtent, IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { FormComboboxConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
@@ -34,7 +35,6 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { UseforDefaults } from 'app/pages/sharing/iscsi/iscsi-wizard/usefor-defaults.interface';
@@ -42,6 +42,7 @@ import {
   IscsiService, NetworkService, StorageService, DialogService,
 } from 'app/services';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface CreatedItems {
@@ -541,6 +542,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     private iscsiService: IscsiService,
     private ws: WebSocketService,
     private cloudcredentialService: CloudCredentialService,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private ixValidatorService: IxValidatorsService,
@@ -574,9 +576,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
         this.loader.close();
         diskField.options = [...options, createNewOption];
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityWizard, error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
@@ -895,8 +897,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
                 createdItems[item] = createdItem.id as number;
               }
             },
-            (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
+            (error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               toStop = true;
               this.rollBack(createdItems);
             },
