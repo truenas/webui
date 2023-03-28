@@ -17,8 +17,8 @@ import helptext from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -26,6 +26,7 @@ import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required
 import {
   DialogService, IdmapService, ValidationService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const minAllowedRange = 1000;
@@ -148,9 +149,10 @@ export class IdmapFormComponent implements OnInit {
     private validators: ValidationService,
     private idmapService: IdmapService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private router: Router,
     private snackbar: SnackbarService,
@@ -205,7 +207,7 @@ export class IdmapFormComponent implements OnInit {
           this.slideInService.close();
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -231,10 +233,10 @@ export class IdmapFormComponent implements OnInit {
             this.setDefaultsForBackendOptions();
           }
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
