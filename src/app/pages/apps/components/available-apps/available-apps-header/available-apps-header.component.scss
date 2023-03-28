@@ -23,11 +23,7 @@
   }
 
   .filters-btn {
-    align-items: center;
-    color: var(--primary);
-    cursor: pointer;
     display: flex;
-    font-weight: 600;
     justify-content: flex-end;
   }
 
@@ -66,7 +62,7 @@
 .header-numbers {
   column-gap: 70px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   white-space: nowrap;
   width: 100%;
 

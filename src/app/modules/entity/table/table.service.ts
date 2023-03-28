@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable, Optional } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -23,6 +23,7 @@ export class TableService {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    @Optional() private cdr: ChangeDetectorRef,
   ) { }
 
   // get table data source
@@ -68,6 +69,7 @@ export class TableService {
         }
 
         table.afterGetDataHook$.next();
+        this.cdr?.markForCheck();
       });
   }
 

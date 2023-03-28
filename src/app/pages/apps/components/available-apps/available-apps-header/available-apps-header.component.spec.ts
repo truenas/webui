@@ -21,6 +21,8 @@ describe('AvailableAppsHeaderComponent', () => {
   let catalogsSelect: MatSelectHarness;
   let sortSelect: MatSelectHarness;
   let categoriesSelect: MatChipInputHarness;
+  let applyButton: MatButtonHarness;
+  let resetButton: MatButtonHarness;
   const changeSearch = jest.fn();
   const changeFilters = jest.fn();
 
@@ -56,13 +58,15 @@ describe('AvailableAppsHeaderComponent', () => {
     );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const filtersButton = spectator.query('.filters-btn');
-    (filtersButton as HTMLElement).click();
+    const filtersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Filters' }));
+    await filtersButton.click();
 
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
     catalogsSelect = (await loader.getAllHarnesses(MatSelectHarness))[0];
     sortSelect = (await loader.getAllHarnesses(MatSelectHarness))[1];
     categoriesSelect = await loader.getHarness(MatChipInputHarness);
+    applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
+    resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
   });
 
   it('checks the displayed numbers', () => {
@@ -80,8 +84,6 @@ describe('AvailableAppsHeaderComponent', () => {
 
   it('emits (filters) when user selects catalogs', async () => {
     await catalogsSelect.clickOptions({ text: 'TEST' });
-
-    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
     await applyButton.click();
 
     expect(changeFilters).toHaveBeenLastCalledWith({
@@ -93,8 +95,6 @@ describe('AvailableAppsHeaderComponent', () => {
 
   it('emits (filters) when user selects sort', async () => {
     await sortSelect.clickOptions({ text: 'Updated Date' });
-
-    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
     await applyButton.click();
 
     expect(changeFilters).toHaveBeenLastCalledWith({
@@ -107,8 +107,6 @@ describe('AvailableAppsHeaderComponent', () => {
   it('emits (filters) when user selects categories', async () => {
     await categoriesSelect.setValue('storage');
     await categoriesSelect.blur();
-
-    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
     await applyButton.click();
 
     expect(changeFilters).toHaveBeenLastCalledWith({
@@ -119,8 +117,18 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('emits (filters) when reset button is pressed', async () => {
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
+    await catalogsSelect.clickOptions({ text: 'TEST' });
+    await sortSelect.clickOptions({ text: 'Updated Date' });
+    await categoriesSelect.setValue('storage');
+    await categoriesSelect.blur();
+    await applyButton.click();
     await resetButton.click();
     expect(changeFilters).toHaveBeenLastCalledWith(undefined);
+
+    expect(spectator.component.form.value).toEqual({
+      catalogs: ['OFFICIAL', 'TEST'],
+      sort: null,
+      categories: [],
+    });
   });
 });

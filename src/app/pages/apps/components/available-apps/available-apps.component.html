@@ -9,7 +9,7 @@
   (search)="changeSearchQuery($event)"
 ></ix-available-apps-header>
 
-<div *ngIf="searchQuery" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}</div>
+<h3 *ngIf="searchQuery" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}</h3>
 <div *ngIf="isFilterOrSearch" class="available-apps-list">
   <div class="filtered-apps">
     <ix-app-card
