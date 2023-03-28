@@ -2,6 +2,7 @@
   <mat-card-content>
     <div
       dndDropzone
+      class="drag-container"
       [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
       (dndDrop)="onDrop($event)"
     >
@@ -14,7 +15,7 @@
           <ix-warning *ngIf="spansEnclosures" [message]="'Vdevs spans enclosure' | translate"></ix-warning>
         </div>
         <div class="vdev-container">
-          <ix-enclosure-wrapper *ngFor="let enclosureDisks of enclosuresDisks | keyvalue" 
+          <ix-enclosure-wrapper *ngFor="let enclosureDisks of enclosuresDisks | keyvalue"
             [enclosure]="enclosureDisks.key"[vdev]="vdev"
           >
             <div class="disk-icons">
@@ -42,7 +43,7 @@
               (dndEnd)="onDragEnd()"
             ></ix-disk-icon>
           </div>
-          
+
         </div>
         <div class="delete-container" (click)="deleteVdev()">
           <ix-icon name="delete"></ix-icon>
