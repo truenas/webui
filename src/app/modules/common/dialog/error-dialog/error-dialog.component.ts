@@ -2,7 +2,9 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -29,6 +31,8 @@ export class ErrorDialogComponent {
     public dialogRef: MatDialogRef<ErrorDialogComponent>,
     private ws: WebSocketService,
     public storage: StorageService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
   ) {}
 
   toggleOpen(): void {
@@ -46,16 +50,16 @@ export class ErrorDialogComponent {
               this.dialogRef.close();
             }
           },
-          error: (err) => {
+          error: (err: WebsocketError) => {
             if (this.dialogRef) {
               this.dialogRef.close();
             }
-            new EntityUtils().handleWsError(this, err);
+            this.dialogService.error(this.errorHandler.parseWsError(err));
           },
         });
       },
       error: (err) => {
-        new EntityUtils().handleWsError(this, err);
+        this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });
   }

@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/volumes/download-key';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   WebSocketService,
   StorageService, DialogService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -28,6 +29,7 @@ export class DownloadKeyDialogComponent {
     private storage: StorageService,
     public dialog: DialogService,
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   downloadKey(): void {
@@ -49,9 +51,9 @@ export class DownloadKeyDialogComponent {
               this.isDownloaded = true;
             });
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
     } else {

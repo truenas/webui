@@ -8,8 +8,6 @@ import {
   DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
@@ -38,16 +36,16 @@ export class DialogService {
       .afterClosed();
   }
 
-  errorReportMiddleware(error: WebsocketError | Job): void {
-    if ('trace' in error && error.trace.formatted) {
-      this.errorReport(error.trace.class, error.reason, error.trace.formatted);
-    } else if ('state' in error && error.error && error.exception) {
-      this.errorReport(error.state, error.error, error.exception);
-    } else {
-      // if it can't print the error at least put it on the console.
-      console.error(error);
-    }
-  }
+  // errorReportMiddleware(error: WebsocketError | Job): void {
+  //   if ('trace' in error && error.trace.formatted) {
+  //     this.errorReport(error.trace.class, error.reason, error.trace.formatted);
+  //   } else if ('state' in error && error.error && error.exception) {
+  //     this.errorReport(error.state, error.error, error.exception);
+  //   } else {
+  //     // if it can't print the error at least put it on the console.
+  //     console.error(error);
+  //   }
+  // }
 
   error(error: ErrorReport | ErrorReport[]): Observable<boolean> {
     if (Array.isArray(error)) {
@@ -71,18 +69,18 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
-    const dialogRef = this.dialog.open(ErrorDialogComponent);
+  // errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
+  //   const dialogRef = this.dialog.open(ErrorDialogComponent);
 
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.message = message;
-    dialogRef.componentInstance.backtrace = backtrace;
-    if (logs) {
-      dialogRef.componentInstance.logs = logs;
-    }
+  //   dialogRef.componentInstance.title = title;
+  //   dialogRef.componentInstance.message = message;
+  //   dialogRef.componentInstance.backtrace = backtrace;
+  //   if (logs) {
+  //     dialogRef.componentInstance.logs = logs;
+  //   }
 
-    return dialogRef.afterClosed();
-  }
+  //   return dialogRef.afterClosed();
+  // }
 
   info(title: string, info: string, isHtml = false): Observable<boolean> {
     const dialogRef = this.dialog.open(InfoDialogComponent);
