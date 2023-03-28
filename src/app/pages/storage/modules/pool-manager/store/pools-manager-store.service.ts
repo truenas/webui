@@ -8,7 +8,9 @@ import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
-import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
+import {
+  PoolManagerWizardFormValue,
+} from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
 import { DialogService, WebSocketService } from 'app/services';
 
 export type VdevManagerDisk = ManagerDisk & { vdevUuid: string };

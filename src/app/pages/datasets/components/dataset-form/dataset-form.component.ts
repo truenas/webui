@@ -38,7 +38,7 @@ import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/mo
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { FormSelectOption } from 'app/modules/entity/entity-form/models/form-select-option.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
