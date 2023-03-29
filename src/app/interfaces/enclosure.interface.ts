@@ -29,6 +29,7 @@ export interface EnclosureElement {
   status: string; // Enum: OK
   value: string;
   value_raw: string;
+  original?: EnclosureElementOriginal;
 }
 
 export interface EnclosureElementData {
@@ -36,6 +37,11 @@ export interface EnclosureElementData {
   Device?: string;
   Status: string; // Enum: OK
   Value: string;
+}
+
+export interface EnclosureElementOriginal {
+  enclosure_id: string;
+  slot: number;
 }
 
 export interface EnclosureSlot {

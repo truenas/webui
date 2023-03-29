@@ -3,75 +3,30 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { Subject } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { DiskBus } from 'app/enums/disk-bus.enum';
-import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { DiskType } from 'app/enums/disk-type.enum';
+import {
+  EnclosureDispersalStrategy,
+  MockStorageGenerator,
+  MockStorageScenario,
+} from 'app/core/testing/utils/mock-storage-generator.utils';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import {
+  Enclosure,
+  EnclosureElement,
+  EnclosureSlot,
+  EnclosureView,
+} from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
-import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
+import { Disk } from 'app/interfaces/storage.interface';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { EnclosureState, EnclosureStore } from './enclosure-store.service';
 
-const temperatureAgg = {
-  sda: { min: 10, max: 30, avg: 20 },
-  sdd: { min: 20, max: 50, avg: 40 },
-} as DiskTemperatureAgg;
-
-const disk: Disk = {
-  advpowermgmt: DiskPowerLevel.Disabled,
-  bus: DiskBus.Spi,
-  critical: 0,
-  description: '',
-  devname: 'sdd',
-  difference: 0,
-  duplicate_serial: [],
-  enclosure: {
-    number: 0,
-    slot: 0,
-  },
-  expiretime: '',
-  hddstandby: DiskStandby.AlwaysOn,
-  identifier: '{uuid}b3ba146f-1ab6-4a45-ae6b-37ea00baf0aa',
-  informational: 0,
-  model: 'VMware_Virtual_S',
-  multipath_member: '',
-  multipath_name: '',
-  name: 'sdd',
-  number: 2096,
-  pool: 'lio',
-  rotationrate: 0,
-  serial: '',
-  size: 5368709120,
-  smartoptions: '',
-  subsystem: 'scsi',
-  togglesmart: true,
-  transfermode: 'Auto',
-  type: DiskType.Hdd,
-  zfs_guid: '12387051346845729003',
-};
-
-const disks: Disk[] = [
-  { ...disk },
-];
-
-const dashboardDisks: StorageDashboardDisk[] = [
-  {
-    ...disk,
-    alerts: [],
-    tempAggregates: { min: 20, max: 50, avg: 40 },
-    smartTestsRunning: 0,
-    smartTestsFailed: 0,
-  },
-];
-
-describe('PoolsDashboardStore', () => {
+describe('EnclosureStore', () => {
   const websocketSubscription$ = new Subject<ApiEvent<Pool>>();
-  let spectator: SpectatorService<PoolsDashboardStore>;
+  let spectator: SpectatorService<EnclosureStore>;
   let testScheduler: TestScheduler;
   const createService = createServiceFactory({
-    service: PoolsDashboardStore,
+    service: EnclosureStore,
     providers: [
       StorageService,
       mockProvider(WebSocketService, {
@@ -86,72 +41,83 @@ describe('PoolsDashboardStore', () => {
     testScheduler = getTestScheduler();
   });
 
-  it('loads pool topology and root datasets and sets loading indicators when loadNodes is called', () => {
-    testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebsocket = spectator.inject(WebSocketService);
-      const pools = [
-        { name: 'pool1' },
-        { name: 'pool2' },
-      ] as Pool[];
-      const rootDatasets = [
-        { id: 'pool1' },
-        { id: 'pool2' },
-      ] as Dataset[];
-      jest.spyOn(mockWebsocket, 'call').mockImplementation((method: string) => {
-        switch (method) {
-          case 'pool.dataset.query':
-            return cold('-a|', { a: rootDatasets });
-          case 'pool.query':
-            return cold('-a|', { a: pools });
-          case 'disk.query':
-            return cold('-a|', { a: [...disks] });
-          case 'disk.temperature_alerts':
-            return cold('-a|', { a: [] });
-          case 'smart.test.results':
-            return cold('-a|', { a: [] });
-          case 'disk.temperature_agg':
-            return cold('-a|', { a: { ...temperatureAgg } });
-          default:
-            throw new Error(`Unexpected method: ${method}`);
-        }
-      });
+  describe('broadcast received and generated data', () => {
+    const mockStorage = new MockStorageGenerator();
+    const mockModel = 'M40';
+    const mockShelf = 'ES24';
 
-      spectator.service.loadDashboard();
-      expectObservable(spectator.service.state$).toBe('abc', {
-        a: {
-          arePoolsLoading: true,
-          areDisksLoading: true,
-          pools: [],
-          rootDatasets: {},
-          disks: [],
-        },
-        b: {
-          arePoolsLoading: false,
-          areDisksLoading: true,
-          pools: [
-            { name: 'pool1' },
-            { name: 'pool2' },
-          ],
-          rootDatasets: {
-            pool1: { id: 'pool1' },
-            pool2: { id: 'pool2' },
-          },
-          disks: [],
-        },
-        c: {
-          arePoolsLoading: false,
-          areDisksLoading: false,
-          pools: [
-            { name: 'pool1' },
-            { name: 'pool2' },
-          ],
-          rootDatasets: {
-            pool1: { id: 'pool1' },
-            pool2: { id: 'pool2' },
-          },
-          disks: [...dashboardDisks],
-        },
+    mockStorage.addDataTopology({
+      scenario: MockStorageScenario.MixedVdevLayout,
+      layout: TopologyItemType.Mirror,
+      diskSize: 4,
+      width: 2,
+      repeats: 20,
+    }).addSpecialTopology({
+      scenario: MockStorageScenario.Uniform,
+      layout: TopologyItemType.Mirror,
+      diskSize: 4,
+      width: 2,
+      repeats: 0,
+    }).addEnclosures({
+      controllerModel: mockModel,
+      expansionModels: [mockShelf],
+      dispersal: EnclosureDispersalStrategy.Default,
+    });
+
+    it('loads data', () => {
+      testScheduler.run(({ cold }) => {
+        const mockWebsocket: WebSocketService = spectator.inject(WebSocketService);
+        const poolResponse: Pool[] = [mockStorage.poolState];
+        const diskResponse: Disk[] = mockStorage.disks;
+        const enclosureResponse: Enclosure[] = mockStorage.enclosures;
+
+        jest.spyOn(mockWebsocket, 'call').mockImplementation((method: string) => {
+          switch (method) {
+            case 'pool.query':
+              return cold('-a|', { a: poolResponse });
+            case 'disk.query':
+              return cold('-a|', { a: [...diskResponse] });
+            case 'enclosure.query':
+              return cold('-a|', { a: [...enclosureResponse] });
+            default:
+              throw new Error(`Unexpected method: ${method}`);
+          }
+        });
+
+        spectator.service.loadData();
+        spectator.service.data$.subscribe((data: EnclosureState) => {
+          if (
+            !data.areDisksLoading
+            && !data.arePoolsLoading
+            && !data.areEnclosuresLoading
+          ) {
+            return;
+          }
+
+          expect(data.enclosures).toHaveLength(2);
+        });
+
+        spectator.service.enclosureViews$.subscribe((views: EnclosureView[]) => {
+          if (!views.length) return;
+
+          expect(views).toHaveLength(2);
+          expect(views[0].slots).toHaveLength(24);
+          expect(views[1].slots).toHaveLength(24);
+
+          const emptySlots = views[1].slots.filter((slot: EnclosureSlot) => !slot.disk);
+          expect(emptySlots).toHaveLength(6);
+        });
       });
+    });
+
+    it('should receive authentic data', () => {
+      expect(mockStorage.poolState.topology.data.length).toBeGreaterThan(0);
+      expect(mockStorage.disks).toHaveLength(42);
+
+      const controllerSlots: EnclosureElement[] = mockStorage.getEnclosureSlots(0);
+      const shelfSlots: EnclosureElement[] = mockStorage.getEnclosureSlots(1);
+      expect(controllerSlots).toHaveLength(24);
+      expect(shelfSlots).toHaveLength(24);
     });
   });
 });
