@@ -53,7 +53,10 @@ export class OauthProviderComponent {
     }
 
     if (message.data.error) {
-      this.dialogService.errorReport(this.translate.instant('Error'), message.data.error);
+      this.dialogService.error({
+        title: this.translate.instant('Error'),
+        message: message.data.error,
+      });
       return;
     }
 

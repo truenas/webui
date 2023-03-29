@@ -191,11 +191,11 @@ export class SupportComponent implements OnInit {
         },
         error: (error) => {
           this.loader.close();
-          this.dialog.errorReport(
-            helptext.is_production_error_dialog.title,
-            error.error.message,
-            error.error.traceback,
-          );
+          this.dialog.error({
+            title: helptext.is_production_error_dialog.title,
+            message: error.error.message,
+            backtrace: error.error.traceback,
+          });
         },
       });
   }

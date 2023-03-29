@@ -168,7 +168,10 @@ export class FileTicketFormComponent implements OnInit {
             untilDestroyed(this),
           ).subscribe({
             error: () => {
-              this.dialog.errorReport('Ticket', 'Uploading screenshots has failed');
+              this.dialog.error({
+                title: this.translate.instant('Ticket'),
+                message: this.translate.instant('Uploading screenshots has failed'),
+              });
             },
           });
           this.fileUpload.onUploaded$.pipe(

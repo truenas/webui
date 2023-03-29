@@ -8,14 +8,17 @@ import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
+import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -74,6 +77,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ExportDisconnectModalComponent>,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
@@ -127,8 +131,8 @@ export class ExportDisconnectModalComponent implements OnInit {
         }
         entityJobRef.close(true);
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
 
@@ -182,22 +186,34 @@ export class ExportDisconnectModalComponent implements OnInit {
             const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
             conditionalErrMessage = msg + (failureData.extra.processes as string);
             entityJobRef.close(true);
-            this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, failureData.exception);
+            this.dialogService.error({
+              title: helptext.exportError,
+              message: conditionalErrMessage,
+              backtrace: failureData.exception,
+            });
           } else {
             this.dialogRef.close(true);
             this.isFormLoading = false;
             entityJobRef.close(true);
-            this.dialogService.errorReport(helptext.exportError, failureData.error, failureData.exception);
+            this.dialogService.error({
+              title: helptext.exportError,
+              message: failureData.error,
+              backtrace: failureData.exception,
+            });
           }
         } else {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           entityJobRef.close(true);
-          this.dialogService.errorReport(helptext.exportError, failureData.error, failureData.exception);
+          this.dialogService.error({
+            title: helptext.exportError,
+            message: failureData.error,
+            backtrace: failureData.exception,
+          });
         }
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
 
@@ -223,7 +239,11 @@ export class ExportDisconnectModalComponent implements OnInit {
         },
         error: (error) => {
           this.loader.close();
-          this.dialogService.errorReport(helptext.exportError, error.reason, error.trace.formatted);
+          this.dialogService.error({
+            title: helptext.exportError,
+            message: error.reason,
+            backtrace: error.trace.formatted,
+          });
         },
       });
   }

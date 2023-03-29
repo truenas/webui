@@ -8,10 +8,12 @@ import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };
 
@@ -31,6 +33,7 @@ export class AppUpgradeDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<AppUpgradeDialogComponent>,
     private appLoaderService: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public data: ChartUpgradeDialogConfig,
@@ -79,9 +82,9 @@ export class AppUpgradeDialogComponent {
             this.selectedVersion.item_update_available = summary.item_update_available;
             this.selectedVersion.fetched = true;
           },
-          error: (err) => {
+          error: (error: WebsocketError) => {
             this.appLoaderService.close();
-            this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
+            this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         });
     }

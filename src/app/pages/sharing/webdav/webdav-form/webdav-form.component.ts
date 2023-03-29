@@ -14,9 +14,11 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, AppLoaderService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -73,7 +75,8 @@ export class WebdavFormComponent {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
@@ -129,7 +132,7 @@ export class WebdavFormComponent {
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -161,8 +164,8 @@ export class WebdavFormComponent {
               this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
             );
           }),
-          catchError((error) => {
-            this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
+          catchError((error: WebsocketError) => {
+            this.dialog.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
         );
