@@ -32,7 +32,7 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -403,7 +403,7 @@ export class SmbFormComponent implements OnInit {
             if (redirect) {
               this.dialog.confirm({
                 title: this.translate.instant('Configure ACL'),
-                message: this.translate.instant('Do you want to сonfigure the ACL?'),
+                message: this.translate.instant('Do you want to configure the ACL?'),
                 buttonText: this.translate.instant('Configure'),
                 hideCheckbox: true,
               }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {

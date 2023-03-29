@@ -20,7 +20,12 @@
   </form>
 </div>
 
-<div class="tree-container">
+<div
+  class="tree-container"
+  dndDropzone
+  [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
+  (dndDrop)="onDrop($event)"
+>
   <ix-tree-view
     [ixDataSource]="dataSource"
     [ixTreeControl]="treeControl"
@@ -30,10 +35,20 @@
       treeNodeToggle
       routerLinkActive="selected"
     >
-      <div class="unused-disk">
+      <div
+        class="unused-disk drag-handle"
+        [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+        [dndDraggable]="asDisk(disk)"
+        [dndEffectAllowed]="'move'"
+        (dndStart)="onDragStart()"
+        (dndCanceled)="onDragCanceled()"
+        (dndEnd)="onDragEnd()"
+      >
         <ix-disk-icon
           class="disk-icon"
+          dndDragImageRef
           [disk]="asDisk(disk)"
+          
         ></ix-disk-icon>
 
         <ix-disk-info
@@ -66,4 +81,7 @@
       ></ng-container>
     </ix-nested-tree-node>
   </ix-tree-view>
+  <div *ngIf="!dataSource.data.length" class="empty-tree">
+    {{ 'No unused disks' | translate }}
+  </div>
 </div>

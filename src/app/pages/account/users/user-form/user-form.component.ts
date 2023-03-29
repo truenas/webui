@@ -17,7 +17,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -258,6 +258,8 @@ export class UserFormComponent {
     ).subscribe({
       next: () => {
         this.isFormLoading = true;
+        this.cdr.markForCheck();
+
         let request$: Observable<unknown>;
         if (this.isNewUser) {
           request$ = this.ws.call('user.create', [{

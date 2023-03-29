@@ -5,6 +5,8 @@ import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
+import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
+import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
 
@@ -22,6 +24,16 @@ const routes: Routes = [
       path: ':appId',
       component: InstalledAppsComponent,
       data: { title: T('Installed Apps'), breadcrumb: T('Installed') },
+    },
+    {
+      path: ':appId/shell/:pname/:cname',
+      component: PodShellComponent,
+      data: { title: T('Pod Shell'), breadcrumb: T('Pod Shell') },
+    },
+    {
+      path: ':appId/logs/:pname/:cname/:tail_lines',
+      component: PodLogsComponent,
+      data: { title: T('Pod Logs'), breadcrumb: T('Pod Logs') },
     }],
   },
   {

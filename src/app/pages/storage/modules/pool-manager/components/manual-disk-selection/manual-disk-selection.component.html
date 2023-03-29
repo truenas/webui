@@ -14,12 +14,18 @@
               mat-button
               class="mat-button"
               ixTest="add"
+              (click)="addVdev()"
             >{{ 'Add' | translate }}</button>
           </div>
         </div>
+
         <mat-divider class="header-divider"></mat-divider>
         <div class="vdevs-container">
           <!-- TODO: see <ix-manual-selection-vdev> -->
+          <ix-manual-selection-vdev
+            *ngFor="let vdev of store$.dataVdevs$ | async; trackBy: trackVdevById"
+            [vdev]="vdev"
+          ></ix-manual-selection-vdev>
         </div>
         <mat-divider class="divider actions-divider"></mat-divider>
         <div class="actions">

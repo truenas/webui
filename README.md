@@ -84,7 +84,7 @@ rm yarn.lock
 yarn cache clean --force
 yarn install
 ```
-This should bring the yarn environment back to a useable state.
+This should bring the yarn environment back to a usable state.
 
 # Translating Text to Other Languages
 
