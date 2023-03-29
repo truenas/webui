@@ -72,12 +72,12 @@ export class SaveDebugButtonComponent {
                     this.storage.downloadBlob(blob, fileName);
                     dialogRef.close();
                   },
-                  error: (error: WebsocketError | HttpErrorResponse) => {
+                  error: (error: WebsocketError | HttpErrorResponse | Job) => {
                     dialogRef.close();
                     if (error instanceof HttpErrorResponse) {
                       this.dialogService.error(this.errorHandler.parseHttpError(error));
                     } else {
-                      this.dialogService.error(this.errorHandler.parseWsError(error));
+                      this.dialogService.error(this.errorHandler.parseError(error));
                     }
                   },
                 });

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -285,11 +286,11 @@ export class CertificatesDashComponent implements OnInit {
                   next: (file) => {
                     this.storage.downloadBlob(file, fileName);
                   },
-                  error: (err) => {
+                  error: (error: HttpErrorResponse) => {
                     this.dialogService.error({
                       title: helptextSystemCertificates.list.download_error_dialog.title,
                       message: helptextSystemCertificates.list.download_error_dialog.cert_message,
-                      backtrace: `${err.status} - ${err.statusText}`,
+                      backtrace: `${error.status} - ${error.statusText}`,
                     });
                   },
                 });
@@ -308,11 +309,11 @@ export class CertificatesDashComponent implements OnInit {
                   next: (file) => {
                     this.storage.downloadBlob(file, keyName);
                   },
-                  error: (err) => {
+                  error: (error: HttpErrorResponse) => {
                     this.dialogService.error({
                       title: helptextSystemCertificates.list.download_error_dialog.title,
                       message: helptextSystemCertificates.list.download_error_dialog.key_message,
-                      backtrace: `${err.status} - ${err.statusText}`,
+                      backtrace: `${error.status} - ${error.statusText}`,
                     });
                   },
                 });

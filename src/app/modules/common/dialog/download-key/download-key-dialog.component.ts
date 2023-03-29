@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -46,9 +47,14 @@ export class DownloadKeyDialogComponent {
           this.loader.close();
           this.storage.streamDownloadFile(url, this.fileName, mimetype)
             .pipe(untilDestroyed(this))
-            .subscribe((file) => {
-              this.storage.downloadBlob(file, this.fileName);
-              this.isDownloaded = true;
+            .subscribe({
+              next: (file) => {
+                this.storage.downloadBlob(file, this.fileName);
+                this.isDownloaded = true;
+              },
+              error: (error: HttpErrorResponse) => {
+                this.dialog.error(this.errorHandler.parseHttpError(error));
+              },
             });
         },
         error: (error: WebsocketError) => {
@@ -63,11 +69,16 @@ export class DownloadKeyDialogComponent {
           this.loader.close();
           this.storage.streamDownloadFile(encryptionKey, this.fileName, mimetype)
             .pipe(untilDestroyed(this))
-            .subscribe((file) => {
-              if (encryptionKey !== null && encryptionKey !== '') {
-                this.storage.downloadBlob(file, this.fileName);
-                this.isDownloaded = true;
-              }
+            .subscribe({
+              next: (file) => {
+                if (encryptionKey !== null && encryptionKey !== '') {
+                  this.storage.downloadBlob(file, this.fileName);
+                  this.isDownloaded = true;
+                }
+              },
+              error: (error: HttpErrorResponse) => {
+                this.dialog.error(this.errorHandler.parseHttpError(error));
+              },
             });
         },
         error: () => {

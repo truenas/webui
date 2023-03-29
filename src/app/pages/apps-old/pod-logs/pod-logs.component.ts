@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
   Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
@@ -168,10 +169,15 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         const [, url] = download;
         this.storageService.streamDownloadFile(url, fileName, mimetype)
           .pipe(untilDestroyed(this))
-          .subscribe((file: Blob) => {
-            if (download !== null) {
-              this.storageService.downloadBlob(file, fileName);
-            }
+          .subscribe({
+            next: (file: Blob) => {
+              if (download !== null) {
+                this.storageService.downloadBlob(file, fileName);
+              }
+            },
+            error: (error: HttpErrorResponse) => {
+              this.dialogService.error(this.errorHandler.parseHttpError(error));
+            },
           });
       },
       error: (error: WebsocketError | Job) => {

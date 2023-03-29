@@ -1,8 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -50,11 +50,11 @@ export class ErrorDialogComponent {
               this.dialogRef.close();
             }
           },
-          error: (err: WebsocketError) => {
+          error: (err: HttpErrorResponse) => {
             if (this.dialogRef) {
               this.dialogRef.close();
             }
-            this.dialogService.error(this.errorHandler.parseWsError(err));
+            this.dialogService.error(this.errorHandler.parseHttpError(err));
           },
         });
       },
