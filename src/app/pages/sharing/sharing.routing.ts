@@ -2,7 +2,6 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
-import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
 import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
@@ -73,11 +72,6 @@ export const routes: Routes = [
                 path: '',
                 redirectTo: 'configuration',
                 pathMatch: 'full',
-              },
-              {
-                path: 'wizard',
-                data: { title: 'Wizard', breadcrumb: 'Wizard' },
-                component: IscsiWizardComponent,
               },
               {
                 path: ':pk',

@@ -56,6 +56,7 @@ export class ServiceSmbComponent implements OnInit {
     admin_group: ['', [Validators.maxLength(120)]],
     bindip: [[] as string[], []],
     aapl_extensions: [false, []],
+    multichannel: [false, []],
   });
 
   readonly helptext = helptext;
@@ -76,6 +77,7 @@ export class ServiceSmbComponent implements OnInit {
     admin_group: helptext.cifs_srv_admin_group_tooltip,
     bindip: helptext.cifs_srv_bindip_tooltip,
     aapl_extensions: helptext.cifs_srv_aapl_extensions_tooltip,
+    multichannel: helptext.cifs_srv_multichannel_tooltip,
   };
 
   readonly logLevelOptions$ = of([
