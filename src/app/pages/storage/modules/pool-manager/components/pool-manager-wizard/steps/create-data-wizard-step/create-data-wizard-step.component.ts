@@ -54,11 +54,11 @@ export class CreateDataWizardStepComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private translate: TranslateService,
-    public store: PoolManagerStore,
+    public poolManagerStore: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
-    this.store.unusedDisks$.pipe(untilDestroyed(this)).subscribe((disks) => {
+    this.poolManagerStore.unusedDisks$.pipe(untilDestroyed(this)).subscribe((disks) => {
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();

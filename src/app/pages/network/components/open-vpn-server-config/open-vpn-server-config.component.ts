@@ -6,11 +6,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { EMPTY, of, Subscription } from 'rxjs';
+import {
+  catchError,
+  filter, map, switchMap,
+} from 'rxjs/operators';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
+import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
@@ -31,6 +37,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class OpenVpnServerConfigComponent implements OnInit {
   isLoading = false;
 
+  lastSavedServerCertificate: number = null;
   form = this.formBuilder.group({
     server_certificate: [null as number, Validators.required],
     root_ca: [null as number, Validators.required],
@@ -94,6 +101,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private dialogService: DialogService,
     private storageService: StorageService,
     private matDialog: MatDialog,
+    private translate: TranslateService,
+    private appLoaderService: AppLoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -156,6 +165,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.lastSavedServerCertificate = config.server_certificate;
           this.form.patchValue({
             ...config,
             server: `${config.server}/${config.netmask}`,
@@ -177,5 +187,32 @@ export class OpenVpnServerConfigComponent implements OnInit {
     );
 
     this.subscriptions.push(topologySubscription);
+  }
+
+  unsetCertificates(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning'),
+      message: this.translate.instant('This operation will unset any certificates assigned to OpenVPN Server configuration. Are you sure you want to proceed?'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.isLoading = true;
+        this.appLoaderService.open();
+        this.cdr.markForCheck();
+        return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
+      }),
+      catchError((error: WebsocketError) => {
+        this.dialogService.errorReportMiddleware(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      complete: () => {
+        this.isLoading = false;
+        this.appLoaderService.close();
+        this.cdr.markForCheck();
+        this.loadConfig();
+      },
+    });
   }
 }
