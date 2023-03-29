@@ -1,0 +1,11 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.step-buttons {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+}
