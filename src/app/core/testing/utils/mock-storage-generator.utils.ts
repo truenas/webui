@@ -13,7 +13,10 @@ import {
   VDev,
 } from 'app/interfaces/storage.interface';
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
+import { MockEs24 } from './enclosure-templates/mock-es24';
 import { MockM40 } from './enclosure-templates/mock-m40';
+import { MockM50 } from './enclosure-templates/mock-m50';
+import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
 import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
 
 export enum MockStorageScenario {
@@ -568,22 +571,42 @@ export class MockStorageGenerator {
       mockEnclosures.push(shelf);
     });
 
+    // M50/M60 have separate chassis reported for rear drives
+    if (options.controllerModel === 'M50' || options.controllerModel === 'M60') {
+      const rearChassis: MockEnclosure = this.generateMockEnclosure(
+        options.controllerModel + '-REAR',
+        options.expansionModels.length + 1,
+      );
+      mockEnclosures.push(rearChassis);
+    }
+
     // Next populate enclosures based on dispersal setting
     this.enclosures = this.populateEnclosures(mockEnclosures, options.dispersal);
   }
 
   private generateMockEnclosure(
     model = 'M40',
-    enclosureNumber: number,
+    enclosureNumber = 0,
   ): MockEnclosure {
     let chassis: MockEnclosure;
     switch (model) {
       case 'MINI-3.0-XL+':
         chassis = new MockMini30Xl(enclosureNumber);
         break;
+      case 'M50':
+        chassis = new MockM50(enclosureNumber);
+        break;
+      case 'M50-REAR':
+        chassis = new MockM50Rear(enclosureNumber);
+        break;
+      case 'ES24':
+        chassis = new MockEs24(enclosureNumber);
+        break;
       case 'M40':
-      default:
         chassis = new MockM40(enclosureNumber);
+        break;
+      default:
+        console.error('Chassis ' + model + ' not found');
     }
 
     return chassis;

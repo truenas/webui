@@ -1,18 +1,15 @@
-import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { MockEnclosure } from './mock-enclosure-template';
 
-export class MockEnclosure {
-  enclosureNumber = 0;
-  readonly totalSlotsFront: number = 16;
+export class MockM50 extends MockEnclosure {
+  readonly totalSlotsFront: number = 24;
   readonly totalSlotsRear: number = 0;
   readonly totalSlotsInternal: number = 0;
-  get totalSlots(): number {
-    return this.totalSlotsFront + this.totalSlotsRear + this.totalSlotsInternal;
-  }
 
-  data: Enclosure = {
-    id: 'abcdefgh12345678',
-    name: 'iX 1176Ss e007',
-    model: 'Mock',
+  data = {
+    id: '5b0bd6d1a309b73f',
+    name: 'iX 4024Ss e001',
+    model: 'M Series',
     controller: true,
     elements: [
       {
@@ -25,7 +22,7 @@ export class MockEnclosure {
           'Device',
         ],
         elements: [],
-        has_slot_status: false,
+        has_slot_status: true,
       },
       {
         name: 'Enclosure',
@@ -47,20 +44,20 @@ export class MockEnclosure {
             descriptor: '',
             status: 'OK',
             value: 'None',
-            value_raw: '0x1000000',
+            value_raw: '0x11000000',
           },
           {
             slot: 2,
             data: {
               Descriptor: '',
-              Status: 'Not installed',
+              Status: 'OK',
               Value: 'None',
             },
             name: 'Enclosure',
             descriptor: '',
-            status: 'Not installed',
+            status: 'OK',
             value: 'None',
-            value_raw: '0x5000000',
+            value_raw: '0x1000000',
           },
         ],
         has_slot_status: false,
@@ -103,27 +100,27 @@ export class MockEnclosure {
             slot: 1,
             data: {
               Descriptor: '',
-              Status: 'Unsupported',
-              Value: null,
+              Status: 'OK',
+              Value: '40C',
             },
             name: 'Temperature Sensor',
             descriptor: '',
-            status: 'Unsupported',
-            value: null,
-            value_raw: '0x0',
+            status: 'OK',
+            value: '40C',
+            value_raw: '0x1003c00',
           },
           {
             slot: 2,
             data: {
               Descriptor: '',
               Status: 'OK',
-              Value: '34C',
+              Value: '35C',
             },
             name: 'Temperature Sensor',
             descriptor: '',
             status: 'OK',
-            value: '34C',
-            value_raw: '0x1003600',
+            value: '35C',
+            value_raw: '0x1003700',
           },
           {
             slot: 3,
@@ -143,13 +140,13 @@ export class MockEnclosure {
             data: {
               Descriptor: '',
               Status: 'OK',
-              Value: '25C',
+              Value: '22C',
             },
             name: 'Temperature Sensor',
             descriptor: '',
             status: 'OK',
-            value: '25C',
-            value_raw: '0x1002d00',
+            value: '22C',
+            value_raw: '0x1002a00',
           },
         ],
         has_slot_status: false,
@@ -168,109 +165,38 @@ export class MockEnclosure {
             data: {
               Descriptor: '',
               Status: 'OK',
-              Value: '5.04V',
+              Value: '5.06V',
             },
             name: 'Voltage Sensor',
             descriptor: '',
             status: 'OK',
-            value: '5.04V',
-            value_raw: '0x10001f8',
+            value: '5.06V',
+            value_raw: '0x10001fa',
           },
           {
             slot: 2,
             data: {
               Descriptor: '',
               Status: 'OK',
-              Value: '12.12V',
+              Value: '12.25V',
             },
             name: 'Voltage Sensor',
             descriptor: '',
             status: 'OK',
-            value: '12.12V',
-            value_raw: '0x10004bc',
+            value: '12.25V',
+            value_raw: '0x10004c9',
           },
         ],
         has_slot_status: false,
       },
     ],
-    number: this.enclosureNumber,
-    label: 'iX 1176Ss e007',
+    number: 0,
+    label: 'iX 4024Ss e001',
   } as Enclosure;
 
-  readonly emptySlotTemplate: EnclosureElement = {
-    slot: 0,
-    data: {
-      Descriptor: '',
-      Status: 'Not installed',
-      Value: 'None',
-      Device: '',
-    },
-    name: 'Array Device Slot',
-    descriptor: '',
-    status: 'Not installed',
-    value: 'None',
-    value_raw: '0x5000000',
-    fault: false,
-    identify: false,
-  };
-
-  readonly slotTemplate: EnclosureElement = {
-    slot: 0,
-    data: {
-      Descriptor: '',
-      Status: 'OK',
-      Value: 'None',
-      Device: 'device name goes here...',
-    },
-    name: 'Array Device Slot',
-    descriptor: '',
-    status: 'OK',
-    value: 'None',
-    value_raw: '0x1000000',
-    fault: false,
-    identify: false,
-  };
-
   constructor(number: number) {
+    super(number);
     this.enclosureNumber = number;
     this.resetSlotsToEmpty();
-  }
-
-  addDiskToSlot(diskName: string, slotNumber: number): MockEnclosure {
-    if (!this.data) return this;
-
-    const slot: EnclosureElement = { ...this.slotTemplate };
-    slot.slot = slotNumber;
-    slot.data.Device = diskName;
-    this.addSlotToData(slot);
-    return this;
-  }
-
-  protected addSlotToData(slot: EnclosureElement): void {
-    const slotElementsGroup: EnclosureElementsGroup = this.data.elements[0] as EnclosureElementsGroup;
-    const slotIndex = slotElementsGroup.elements.findIndex((element: EnclosureElement) => element.slot === slot.slot);
-    slotElementsGroup.elements.splice(slotIndex, 1, this.processSlotTemplate(slot));
-  }
-
-  resetSlotsToEmpty(): void {
-    const emptySlots = this.generateEmptySlots();
-    (this.data.elements[0] as EnclosureElementsGroup).elements = emptySlots;
-  }
-
-  generateEmptySlots(totalSlots: number = this.totalSlotsFront): EnclosureElement[] {
-    const emptySlots: EnclosureElement[] = [];
-    for (let slotNumber = 1; slotNumber <= totalSlots; slotNumber++) {
-      const slot = { ...this.emptySlotTemplate };
-      slot.slot = slotNumber;
-      emptySlots.push(this.processSlotTemplate(slot));
-    }
-
-    return emptySlots;
-  }
-
-  protected processSlotTemplate(element: EnclosureElement): EnclosureElement {
-    // Subclasses can override this method to deal with whatever unique values
-    // particular models may require. eg. minis have the original property
-    return element;
   }
 }

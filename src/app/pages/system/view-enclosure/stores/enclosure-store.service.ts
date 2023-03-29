@@ -234,8 +234,8 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     /*
     * EnclosureSlots setup
     * */
+
     // Add Slots to View
-    // TODO: Incorporate empty slots by iterating over enclosure elements instead of disks
     enclosures.forEach((enclosure: Enclosure) => {
       const slots = (enclosure.elements as EnclosureElementsGroup[]).find((element: EnclosureElementsGroup) => {
         return element.name === 'Array Device Slot';
@@ -281,6 +281,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       enclosureView.slots = enclosureSlots;
       enclosureView.pools = this.getPoolNamesInEnclosureView(enclosureView);
     });
+
     return of(enclosureViews);
   }
 
@@ -313,6 +314,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         element.slot += 24;
         return element;
       });
+
     const frontChassisElements: EnclosureElement | EnclosureElementsGroup = data.enclosures[frontNumber].elements[0];
     const frontSlotElements = (frontChassisElements as EnclosureElementsGroup).elements;
     const mergedSlotElements = frontSlotElements.concat(rearSlotElements);
@@ -442,7 +444,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   }
 
-  // TODO: This should be part of enclosureViews
   private isRackmount(enclosure: Enclosure): boolean {
     switch (enclosure.model) {
       case 'FREENAS-MINI-3.0':
