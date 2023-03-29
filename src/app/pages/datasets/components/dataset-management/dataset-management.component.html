@@ -42,7 +42,7 @@
       <div
         #ixTreeHeader
         class="sticky-header"
-        (scroll)="updateScroll(scrollTypes.IxTreeHeader)"
+        (scroll)="treeHeaderScrolled()"
       >
         <div class="dataset-tree-header" [style.width.px]="ixTreeHeaderWidth">
           <div>
@@ -63,9 +63,8 @@
       <div
         #ixTree
         class="dataset-tree-wrapper"
-        (scroll)="updateScroll(scrollTypes.IxTree)"
       >
-        <div class="dataset-tree-inner" (resized)="onIxTreeWidthChange($event)">
+        <div class="dataset-tree-inner">
           <ix-tree-virtual-scroll-view
             class="dataset-tree"
             [ixDataSource]="dataSource"
@@ -74,6 +73,8 @@
             [ixMinBufferPx]="48"
             [ixMaxBufferPx]="48"
             [trackBy]="trackById"
+            (viewportScrolled)="datasetTreeScrolled($event)"
+            (viewportResized)="datasetTreeWidthChanged($event)"
           >
             <ix-tree-node
               *treeNodeDef="let dataset; dataSource: dataSource"

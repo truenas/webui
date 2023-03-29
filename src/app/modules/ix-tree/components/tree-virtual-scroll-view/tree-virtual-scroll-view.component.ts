@@ -6,16 +6,19 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   HostBinding,
   Input,
   IterableDiffers,
   OnChanges,
+  Output,
   SimpleChanges,
   TrackByFunction,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { ResizedEvent } from 'angular-resize-event';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
@@ -47,6 +50,10 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   @Input() ixMinBufferPx = defaultSize * 4;
   @Input() ixMaxBufferPx = defaultSize * 8;
   @Input() override trackBy!: TrackByFunction<T>;
+
+  @Output() viewportScrolled = new EventEmitter<number>();
+  @Output() viewportResized = new EventEmitter<ResizedEvent>();
+
   nodes$ = new BehaviorSubject<TreeVirtualNodeData<T>[]>([]);
   innerTrackBy: TrackByFunction<TreeVirtualNodeData<T>> = (index: number) => index;
   private renderNodeChanges$ = new BehaviorSubject<T[] | readonly T[]>([]);
@@ -76,6 +83,14 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   scrollToTop(): void {
     this.virtualScrollViewport.scrollToIndex(0, 'smooth');
     this.changeDetectorRef.markForCheck();
+  }
+
+  scrolled(viewport: CdkVirtualScrollViewport): void {
+    this.viewportScrolled.emit(viewport.elementRef.nativeElement.scrollLeft);
+  }
+
+  resized(event: ResizedEvent): void {
+    this.viewportResized.emit(event);
   }
 
   override renderNodeChanges(data: T[] | readonly T[]): void {
