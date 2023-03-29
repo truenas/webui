@@ -10,9 +10,11 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -27,6 +29,7 @@ export class SaveDebugButtonComponent {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private datePipe: DatePipe,
+    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private storage: StorageService,
     private translate: TranslateService,
@@ -69,24 +72,24 @@ export class SaveDebugButtonComponent {
                     this.storage.downloadBlob(blob, fileName);
                     dialogRef.close();
                   },
-                  error: (error) => {
+                  error: (error: WebsocketError | HttpErrorResponse) => {
                     dialogRef.close();
                     if (error instanceof HttpErrorResponse) {
-                      this.dialogService.errorReport(error.name, error.message);
+                      this.dialogService.error(this.errorHandler.parseHttpError(error));
                     } else {
-                      new EntityUtils().handleWsError(this, error, this.dialogService);
+                      this.dialogService.error(this.errorHandler.parseWsError(error));
                     }
                   },
                 });
               dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
                 this.matDialog.closeAll();
-                new EntityUtils().handleWsError(this, error, this.dialogService);
+                this.dialogService.error(this.errorHandler.parseJobError(error));
               });
             }),
           );
       }),
-      catchError((error) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+      catchError((error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
