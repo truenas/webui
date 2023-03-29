@@ -34,6 +34,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const newStorjBucket = 'new_storj_bucket';
+const customOptionValue = -1;
 
 type FormValue = CloudsyncFormComponent['form']['value'];
 
@@ -95,7 +96,6 @@ export class CloudsyncFormComponent {
   bucketTooltip = helptext.bucket_tooltip;
   bucketInputPlaceholder = helptext.bucket_input_placeholder;
   bucketInputTooltip = helptext.bucket_input_tooltip;
-  isCustomTransfersSelected = false;
 
   readonly transferModeTooltip = `
     ${helptext.transfer_mode_warning_sync}<br><br>
@@ -146,7 +146,7 @@ export class CloudsyncFormComponent {
     { label: this.translate.instant('High Bandwidth (16)'), value: 16 },
   ];
 
-  transfersCustomOption = { label: this.translate.instant('Custom'), value: 1 };
+  transfersCustomOption = { label: this.translate.instant('Custom'), value: customOptionValue };
 
   transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
 
@@ -416,18 +416,16 @@ export class CloudsyncFormComponent {
     });
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-      if (this.isCustomTransfers(value)) {
-        if (!this.isCustomTransfersSelected) {
-          const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
-          dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
-            if (this.isCustomTransfers(transfers)) {
-              this.setTransfersOptions(true, transfers);
-            }
-            this.form.controls.transfers.setValue(transfers || null);
-          });
-        }
-      } else {
-        this.setTransfersOptions(false);
+      if (value === customOptionValue) {
+        const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
+          if (this.isCustomTransfers(transfers)) {
+            this.setTransfersOptions(true, transfers);
+          }
+          this.form.controls.transfers.setValue(transfers || null);
+        });
+      } else if (!this.isCustomTransfers(value)) {
+        this.setTransfersOptions(false, value);
       }
     });
   }
@@ -529,10 +527,9 @@ export class CloudsyncFormComponent {
   }
 
   setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
-    this.isCustomTransfersSelected = isCustomTransfersSelected;
-    if (this.isCustomTransfersSelected) {
+    if (isCustomTransfersSelected) {
       const customOption = { label: this.translate.instant('Custom ({customTransfers})', { customTransfers }), value: customTransfers };
-      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption]);
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption, this.transfersCustomOption]);
     } else {
       this.transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
     }
