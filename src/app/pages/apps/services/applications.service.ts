@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { format } from 'date-fns-tz';
 import { Observable, of, switchMap } from 'rxjs';
+import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -47,7 +49,19 @@ export class ApplicationsService {
     }
 
     const firstOption: QueryFilter<AvailableApp>[] = [['catalog', 'in', filters.catalogs]];
-    filters.categories.forEach((category) => firstOption.push(['categories', 'rin', category]));
+    const datetime = format(new Date().setMonth(new Date().getMonth() - 1), 'yyyy-MM-dd HH-mm-ss');
+    filters.categories.forEach((category) => {
+      switch (category) {
+        case AppExtraCategory.Recommended:
+          firstOption.push(['recommended', '=', true]);
+          break;
+        case AppExtraCategory.NewAndUpdated:
+          firstOption.push(['last_update', '>', datetime]);
+          break;
+        default:
+          firstOption.push(['categories', 'rin', category]);
+      }
+    });
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
     return this.ws.call('app.available', [firstOption, secondOption]);
