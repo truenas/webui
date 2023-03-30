@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, EventEmitter, Output, ChangeDetectorRef, OnInit,
+  Component, ChangeDetectionStrategy, Input, EventEmitter, Output, ChangeDetectorRef, OnInit, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,7 +22,7 @@ import { DialogService, WebSocketService, AppLoaderService } from 'app/services'
   styleUrls: ['./snapshot-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotDetailsRowComponent implements OnInit {
+export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   @Input() snapshot: ZfsSnapshot;
   @Input() colspan: number;
   @Output() update = new EventEmitter<void>();
@@ -42,6 +42,10 @@ export class SnapshotDetailsRowComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSnapshotInfo();
+  }
+
+  ngOnDestroy(): void {
+    this.loader.close();
   }
 
   getSnapshotInfo(): void {
