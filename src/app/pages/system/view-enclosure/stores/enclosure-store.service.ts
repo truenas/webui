@@ -52,12 +52,6 @@ interface ProcessParameters {
 
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
-  readonly enclosures$ = this.select((state) => state.enclosures);
-  readonly pools$ = this.select((state) => state.pools);
-  readonly areEnclosuresLoading$ = this.select((state) => state.areEnclosuresLoading);
-  readonly arePoolsLoading$ = this.select((state) => state.arePoolsLoading);
-  readonly areDisksLoading$ = this.select((state) => state.areDisksLoading);
-  readonly disks$ = this.select((state) => state.disks);
   readonly data$ = this.select((state) => state);
   readonly enclosureViews$ = this.select((state) => state.enclosureViews);
   readonly selectedEnclosure$ = this.select((state) => state.selectedEnclosure);
