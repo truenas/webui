@@ -298,7 +298,6 @@
   "This node is currently processing a failover event.": "",
   "This operation will unset any certificates assigned to OpenVPN Server configuration. Are you sure you want to proceed?": "",
   "This operation will unset/unselect any certificates assigned to OpenVPN Client configuration. Are you sure you want to proceed?": "",
-  "This session is current and cannot be terminated": "",
   "This share is configured through TrueCommand": "",
   "Thread #": "",
   "Thread responsible for syncing db transactions not running on other node.": "",
