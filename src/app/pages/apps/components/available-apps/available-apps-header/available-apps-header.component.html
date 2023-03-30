@@ -1,35 +1,64 @@
 <div class="search-filters">
   <ix-input
     prefixIcon="search"
-    [formControl]="form.controls.search"
+    [formControl]="searchControl"
     [placeholder]="'Search' | translate"
   ></ix-input>
-  <div class="filters-btn" (click)="changeFiltersVisible()">{{ 'Filters' | translate }}
-    <ix-icon *ngIf="!showFilters" name="expand_more"></ix-icon>
-    <ix-icon *ngIf="showFilters" name="expand_less"></ix-icon>
+  <div class="filters-btn">
+    <button
+      mat-button
+      ixTest="filter"
+      (click)="changeFiltersVisible()"
+    >
+      {{ 'Filters' | translate }}
+      <ix-icon *ngIf="!showFilters" name="expand_more"></ix-icon>
+      <ix-icon *ngIf="showFilters" name="expand_less"></ix-icon>
+    </button>
   </div>
   <div *ngIf="showFilters" class="filters-container">
-    <ix-select
-      [formControl]="form.controls.catalogs"
-      [label]="'Catalogs' | translate"
-      [options]="catalogsOptions$"
-      [multiple]="true"
-    ></ix-select>
-    <ix-select
-      [formControl]="form.controls.sort"
-      [label]="'Sort' | translate"
-      [options]="sortOptions$"
-    ></ix-select>
-    <div class="filter">
-      <ix-chips
-        [formControl]="form.controls.categories"
-        [label]="'Categories' | translate"
-        [autocompleteProvider]="categoriesProvider$"
-      ></ix-chips>
-      <div class="info-container">
-        <ix-icon name="info"></ix-icon>
-        {{'Categories are provided by the catalog maintainers. Changing the catalogs filter may affect categories displayed' | translate}}
+    <div class="filters">
+      <ix-select
+        [formControl]="form.controls.catalogs"
+        [label]="'Catalogs' | translate"
+        [options]="catalogsOptions$"
+        [multiple]="true"
+      ></ix-select>
+      <ix-select
+        [formControl]="form.controls.sort"
+        [label]="'Sort' | translate"
+        [options]="sortOptions$"
+      ></ix-select>
+      <div class="filter">
+        <ix-chips
+          [formControl]="form.controls.categories"
+          [label]="'Categories' | translate"
+          [autocompleteProvider]="categoriesProvider$"
+        ></ix-chips>
+        <div class="info-container">
+          <ix-icon name="info"></ix-icon>
+          {{ 'Categories are provided by the catalog maintainers. Changing the catalogs filter may affect categories displayed.' | translate }}
+        </div>
       </div>
+    </div>
+    <div class="actions">
+      <button
+        mat-button
+        color="primary"
+        ixTest="apply"
+        [disabled]="!form.dirty"
+        (click)="applyFilters()"
+      >
+        {{ 'Apply' | translate }}
+      </button>
+      <button
+        mat-button
+        color="accent"
+        ixTest="reset"
+        [disabled]="!form.dirty || !appliedFilters"
+        (click)="resetFilters()"
+      >
+        {{ 'Reset' | translate }}
+      </button>
     </div>
   </div>
 </div>

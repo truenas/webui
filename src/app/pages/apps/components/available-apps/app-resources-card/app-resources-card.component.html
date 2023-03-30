@@ -1,0 +1,22 @@
+<h3>{{ 'Available Resources' | translate }}</h3>
+
+<div class="app-list-item">
+  {{ 'CPU Usage' | translate }}:
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+</div>
+<div class="app-list-item">
+  {{ 'Memory Usage' | translate }}:
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+</div>
+<div class="app-list-item">
+  {{ 'Pool' | translate }}:
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+</div>
+<div class="app-list-item">
+  {{ 'Available Space' | translate }}:
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+</div>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>

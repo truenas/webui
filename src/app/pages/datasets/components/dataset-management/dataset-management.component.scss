@@ -214,6 +214,7 @@ ix-dataset-details-panel {
   color: var(--fg2);
   grid-template-columns: auto 125px 125px 125px 40px;
   min-height: 48px;
+  min-width: 100%;
   padding-left: 48px;
 
   @media (max-width: $breakpoint-tablet) {

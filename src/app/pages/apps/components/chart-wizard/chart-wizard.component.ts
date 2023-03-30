@@ -28,7 +28,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DialogService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -46,6 +46,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   catalogApp: CatalogApp;
 
   isLoading = true;
+  appsLoaded = false;
   isNew = true;
   dynamicSection: DynamicWizardSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
@@ -86,6 +87,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
     private layoutService: LayoutService,
+    private loader: AppLoaderService,
     private router: Router,
   ) {}
 
@@ -149,6 +151,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   makeChartCreate(): void {
     this.isLoading = true;
+    this.loader.open();
     this.appService
       .getCatalogItem(this.appId, officialCatalog, chartsTrain)
       .pipe(
@@ -156,11 +159,17 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       ).subscribe({
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
+          this.appsLoaded = true;
+          this.cdr.detectChanges();
           this.setChartCreate(app);
           this.isLoading = false;
+          this.loader.close();
           this.cdr.markForCheck();
         },
-        error: () => this.router.navigate(['/apps', 'available']),
+        error: () => {
+          this.loader.close();
+          this.router.navigate(['/apps', 'available']);
+        },
       });
   }
 
@@ -385,5 +394,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
     this.slideInService.close();
+    this.router.navigate(['/apps/installed']);
   }
 }

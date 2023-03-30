@@ -1,0 +1,29 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.notes {
+  h4 {
+    margin-bottom: 8px;
+  }
+}
+
+.notes-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 12px;
+}
+
+.notes-item {
+  align-items: center;
+  display: flex;
+  font-family: var(--font-family-header);
+  font-size: 1.1em;
+  font-weight: bold;
+  gap: 12px;
+
+  &:not(:first-of-type) {
+    margin-top: 12px;
+  }
+}

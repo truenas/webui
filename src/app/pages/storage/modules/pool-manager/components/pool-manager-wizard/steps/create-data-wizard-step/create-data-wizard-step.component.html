@@ -35,7 +35,7 @@
       <h3>{{'Advanced Options' | translate}}</h3>
 
       <ix-radio-group
-        *ngIf="store.hasMultipleEnclosures$ | async"
+        *ngIf="poolManagerStore.hasMultipleEnclosures$ | async"
         formControlName="minimizeEnclosureDispersal"
         [options]="dispersalOptions$"
         [required]="true"
