@@ -8,12 +8,14 @@
       <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #elementsMenu="matMenu">
-      <button *ngFor="let view of views"
-        mat-menu-item
-        [ixTest]="view.alias"
-        (click)="changeView(view)">
-        <span>{{ view.alias | translate }}</span>
-      </button>
+      <ng-container *ngIf="views.length">
+        <button *ngFor="let view of views"
+          mat-menu-item
+          [ixTest]="view.alias"
+          (click)="changeView(view)">
+          <span>{{ view.alias | translate }}</span>
+        </button>
+      </ng-container>
     </mat-menu>
   </ix-page-title-header>
 </ng-template>

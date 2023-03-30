@@ -447,36 +447,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     this.app.destroy(true);
   }
 
-  // TODO: Provide diskFailures in params instead?
+  // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
   loadEnclosure(enclosureView: EnclosureView, view?: string, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
-
     this.destroyEnclosure();
-
     if (view) {
       this.view = view;
     }
-
-    if (this.chassisView) {
-      this.exitingView = this.currentView;
-      this.currentView = this.defaultView;
-      if (this.exitingView === 'details') {
-        this.labels.exit();
-        if (this.identifyBtnRef) {
-          this.toggleSlotStatus(true);
-          this.radiate(true);
-        }
-        this.exit('stage-left');
-        this.exit('stage-right');
-      } else if (this.exitingView === 'expanders') {
-        this.exit('full-stage');
-      }
-
-      if (update) {
-        this.createEnclosure(enclosureView);
-      }
+    if (update && this.chassisView) {
+      this.createEnclosure(enclosureView);
     }
   }
 
