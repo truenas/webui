@@ -98,19 +98,22 @@ import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status
 import { EmailComponent } from 'app/pages/system/email/email.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
-import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
-import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
+import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
+import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
+import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
+import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import {
   ManageConfigurationMenuComponent,
 } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
+import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eula.component';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
+import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import {
@@ -189,6 +192,8 @@ import { routing } from './system.routing';
     FailoverSettingsComponent,
     GeneralSettingsComponent,
     GuiFormComponent,
+    GuiCardComponent,
+    LocalizationCardComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
     InitShutdownCardComponent,
@@ -198,7 +203,7 @@ import { routing } from './system.routing';
     LocalizationFormComponent,
     ManualUpdateFormComponent,
     NtpServerFormComponent,
-    NtpServerListComponent,
+    NtpServerCardComponent,
     ProactiveComponent,
     QrDialogComponent,
     ReplicationSettingsFormComponent,
@@ -252,6 +257,7 @@ import { routing } from './system.routing';
     SelfEncryptingDriveCardComponent,
     IsolatedGpusCardComponent,
     KernelCardComponent,
+    SupportCardComponent,
   ],
   providers: [
     TranslateService,
