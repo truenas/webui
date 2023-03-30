@@ -48,7 +48,7 @@ export class SnapshotEffects {
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.ws.subscribe('zfs.snapshot.query').pipe(
-        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+        filter((event) => event.msg !== IncomingApiMessageType.Removed),
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
@@ -64,9 +64,9 @@ export class SnapshotEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotsLoaded),
     switchMap(() => {
-      return this.ws.sub('zfs.snapshot.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
-        map((event) => snapshotRemoved({ id: event.id })),
+      return this.ws.subscribe('zfs.snapshot.query').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        map((event) => snapshotRemoved({ id: event.id.toString() })),
       );
     }),
   ));

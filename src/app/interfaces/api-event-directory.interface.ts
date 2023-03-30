@@ -1,8 +1,9 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { PullContainerImageResponse, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { PullContainerImageResponse, PullContainerImageParams, ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -26,4 +27,6 @@ export type ApiEventDirectory = {
   'user.query': { response: User };
   'container.image.pull': { response: Job<PullContainerImageResponse, PullContainerImageParams> };
   'disk.query': { response: Disk };
+  'group.query': { response: Group };
+  'container.image.query': { response: ContainerImage };
 };

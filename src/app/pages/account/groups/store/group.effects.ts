@@ -45,8 +45,8 @@ export class GroupEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(groupsLoaded),
     switchMap(() => {
-      return this.ws.sub('group.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+      return this.ws.subscribe('group.query').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => groupRemoved({ id: event.id })),
       );
     }),

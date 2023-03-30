@@ -46,8 +46,8 @@ export class UserEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
     switchMap(() => {
-      return this.ws.sub('user.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+      return this.ws.subscribe('user.query').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => userRemoved({ id: event.id })),
       );
     }),
