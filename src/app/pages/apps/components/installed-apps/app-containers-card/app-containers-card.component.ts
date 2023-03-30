@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnInit, OnChanges,
+  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -20,7 +20,7 @@ import { getPorts } from 'app/pages/apps/utils/get-ports';
   styleUrls: ['./app-containers-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppContainersCardComponent implements OnInit, OnChanges {
+export class AppContainersCardComponent implements OnChanges {
   @Input() app: ChartRelease;
   isLoading = false;
 
@@ -31,10 +31,6 @@ export class AppContainersCardComponent implements OnInit, OnChanges {
     private router: Router,
     private translate: TranslateService,
   ) {}
-
-  ngOnInit(): void {
-    this.getResources();
-  }
 
   ngOnChanges(): void {
     this.getResources();

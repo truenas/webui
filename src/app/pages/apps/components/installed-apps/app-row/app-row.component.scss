@@ -3,11 +3,59 @@
 
 :host {
   align-items: center;
+  border-bottom: 1px solid var(--lines);
+  color: var(--fg2);
+  cursor: pointer;
   display: flex;
   flex: 1;
   font-weight: 500;
   min-height: 48px;
+  min-width: fit-content;
   padding: 0;
+  position: relative;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--hover-bg);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+    }
+  }
+
+  .app-name {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .app-catalog {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .app-logo {
+    margin-right: 12px;
+    max-height: 40px;
+    max-width: 40px;
+    min-width: 40px;
+
+    img {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+  }
 }
 
 .row-grid {
@@ -47,11 +95,6 @@
     align-items: stretch;
     font-weight: bold;
 
-    img {
-      margin-right: 10px;
-      width: 42px;
-    }
-
     .name {
       align-items: center;
       background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
@@ -87,6 +130,16 @@
     .stopped {
       border-color: var(--red);
       color: var(--red);
+    }
+  }
+
+  .cell-update {
+    gap: 4px;
+
+    .mdi-alert-circle {
+      color: var(--yellow);
+      font-size: 18px;
+      line-height: 1;
     }
   }
 }

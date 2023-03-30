@@ -1,67 +1,79 @@
 <ng-template #pageHeader>
   <ix-page-title-header [pageTitle]="selectedApp?.name">
-    <button mat-button color="primary" ixTest="update-all" (click)="syncAll()">
+    <button
+      *ngIf="hasSelectionUpdates"
+      mat-button
+      color="primary"
+      ixTest="update-all"
+      [disabled]="!hasCheckedApps"
+      (click)="syncAll()"
+    >
       {{ 'Update All' | translate }}
     </button>
   </ix-page-title-header>
 </ng-template>
 
+
 <div class="container">
   <div class="table-container">
     <div class="table-header">
-      <div class="title">{{ 'Applications' | translate }}</div>
-      <div *ngIf="dataSource.length" class="bulk">
-        <div>{{ checkedAppsNames.length }}</div>
-        <div>{{ 'Selected' | translate }}</div>
-        <button
-          mat-button
-          ixTest="bulk-actions-menu"
-          [matMenuTriggerFor]="menu"
-          [disabled]="dataSource.length === 0"
-        >
-          {{ 'Bulk Actions' | translate }}
-          <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-        </button>
+      <h2 class="title">{{ 'Applications' | translate }}</h2>
+      <div *ngIf="hasCheckedApps" class="bulk-actions-container">
+
+        <div class="bulk-selected">
+          <span>{{ checkedAppsNames.length }}</span>
+          <span>{{ 'Selected' | translate }}</span>
+        </div>
+
+        <div class="bulk-button-wrapper">
+          <label>{{ 'Bulk Actions' | translate }}</label>
+          <button
+            mat-button
+            ixTest="bulk-actions-menu"
+            [matMenuTriggerFor]="menu"
+            [disabled]="!hasCheckedApps"
+          >
+            {{ 'Stop All Selected' | translate }}
+            <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+          </button>
+        </div>
+
         <mat-menu #menu="matMenu">
           <button
             mat-menu-item
             ixTest="start-selected"
-            [disabled]="!isSomethingChecked"
+            [disabled]="isBulkStartDisabled"
             (click)="onBulkStart()"
           >
-            <ix-icon name="mdi-play"></ix-icon>
-            <span>{{ 'Start' | translate }}</span>
+            <span>{{ 'Start All Selected' | translate }}</span>
           </button>
           <button
             mat-menu-item
             ixTest="stop-selected"
-            [disabled]="!isSomethingChecked"
+            [disabled]="isBulkStopDisabled"
             (click)="onBulkStop()"
           >
-            <ix-icon name="mdi-stop"></ix-icon>
-            <span>{{ 'Stop' | translate }}</span>
+            <span>{{ 'Stop All Selected' | translate }}</span>
           </button>
           <button
             mat-menu-item
             ixTest="upgrade-selected"
-            [disabled]="!hasUpdates"
+            [disabled]="isBulkUpgradeDisabled"
             (click)="onBulkUpgrade()"
           >
-            <ix-icon name="mdi-update"></ix-icon>
-            <span>{{ 'Upgrade' | translate }}</span>
+            <span>{{ 'Upgrade All Selected' | translate }}</span>
           </button>
           <button
             mat-menu-item
             ixTest="delete-selected"
-            [disabled]="!isSomethingChecked"
             (click)="onBulkDelete()"
           >
-            <ix-icon name="mdi-delete"></ix-icon>
-            <span>{{ 'Delete' | translate }}</span>
+            <span>{{ 'Delete All Selected' | translate }}</span>
           </button>
         </mat-menu>
       </div>
     </div>
+
     <ix-fake-progress-bar
       class="loader-bar"
       [loading]="isLoading"
@@ -93,14 +105,22 @@
           <div>{{ 'CPU' | translate }}</div>
           <div>{{ 'RAM' | translate }}</div>
           <div>{{ 'Disk' | translate }}</div>
-          <div>{{ 'Updates' | translate }}</div>
+          <div class="app-update-header">
+            <span>{{ 'Updates' | translate }}</span>
+            <ix-icon
+              *ngIf="hasUpdates"
+              name="mdi-alert-circle"
+              matTooltipPosition="above"
+              [matTooltip]="'Updates available' | translate"
+            ></ix-icon>
+          </div>
+          <div>{{ 'Action' | translate }}</div>
         </div>
         <div class="apps-rows">
           <ng-container *ngFor="let app of dataSource">
             <ix-app-row
-              class="row"
               routerLinkActive="selected"
-              [application]="app"
+              [app]="app"
               [routerLink]="['/apps/installed', app.id]"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
@@ -109,7 +129,7 @@
             ></ix-app-row>
           </ng-container>
           <div *ngIf="!dataSource.length" class="no-apps">
-            {{ title | translate }}
+            <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
           </div>
         </div>
       </div>
@@ -117,11 +137,7 @@
     </div>
   </div>
 
-  <div
-    *ngIf="selectedApp"
-    class="details-container"
-  >
+  <div *ngIf="selectedApp" class="details-container">
     <ix-app-details-panel [app]="selectedApp"></ix-app-details-panel>
   </div>
 </div>
-

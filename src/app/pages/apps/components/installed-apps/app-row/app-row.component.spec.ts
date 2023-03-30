@@ -5,7 +5,7 @@ import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-ro
 
 describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
-  const application = {
+  const app = {
     name: 'app_name',
     status: ChartReleaseStatus.Active,
     chart_metadata: { icon: 'https://image/' },
@@ -17,15 +17,19 @@ describe('AppRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { application },
+      props: { app },
     });
   });
 
   it('shows "Application"', () => {
-    expect(spectator.query('.name')).toHaveText(application.name);
+    expect(spectator.query('.name')).toHaveText(app.name);
   });
 
   it('shows "Status"', () => {
     expect(spectator.query('.cell-status .status')).toHaveText('Active');
+  });
+
+  it('shows "Updates"', () => {
+    expect(spectator.query('.cell-update')).toHaveText('Up to date');
   });
 });

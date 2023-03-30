@@ -2,8 +2,7 @@
 @import 'scss-imports/splitview';
 @import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
-$singlecolumn-max-width: ($card-width-slim + $gap * 2);
-$dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
+$singlecolumn-max-width: ($card-width + $gap * 2);
 $scrollbar-offset: 20px;
 
 :host {
@@ -47,44 +46,19 @@ $scrollbar-offset: 20px;
   }
 
   // One Cards Column
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
     max-width: calc(100% - $singlecolumn-max-width - 16px);
     min-width: calc($table-min-width + 0px);
   }
 
-  // Two Cards Slim Columns
-  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
-    min-width: calc($table-min-width + 0px);
-  }
-
-  // Two Cards Columns
-  @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-    min-width: calc(98% - 2 * ($card-width + $gap));
-  }
-
-  // Three Cards Columns
-  @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-    min-width: calc(98% - 3 * ($card-width + $gap));
-  }
-
-  // Cards spill to the right
-  @media (min-width: $breakpoint-flex) {
-    max-width: 1200px;
-    width: 50%;
-  }
-
   .table-header {
-    align-items: center;
+    align-items: flex-end;
     color: var(--fg1);
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
-    
-    .title {
-      font-size: 18px;
-      font-weight: bold;
-    }
+    margin-top: -27px;
+    min-height: 56px;
 
     .bulk {
       align-items: center;
@@ -140,6 +114,7 @@ $scrollbar-offset: 20px;
   grid-template-columns: auto 125px 40px 40px 40px 125px 40px;
   min-height: 48px;
   padding-left: 8px;
+  padding-right: 8px;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0;
@@ -174,40 +149,23 @@ $scrollbar-offset: 20px;
     padding-left: 8px;
     padding-right: 15px;
   }
+
+  .app-update-header {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+
+    ix-icon {
+      color: var(--yellow);
+      font-size: 18px;
+      line-height: 1;
+    }
+  }
 }
 
 .apps-rows {
   background: var(--bg2);
-
-  .row {
-    align-items: center;
-    border-bottom: 1px solid var(--lines);
-    color: var(--fg2);
-    cursor: pointer;
-    display: flex;
-    min-width: fit-content;
-    position: relative;
-
-    &:hover {
-      background-color: var(--hover-bg);
-    }
-
-    &.selected {
-      background-color: var(--hover-bg);
-      color: var(--fg2);
-
-      &::before {
-        background-color: var(--primary);
-        content: '';
-        height: 100%;
-        left: 0;
-        opacity: 1;
-        position: absolute;
-        top: 0;
-        width: 6px;
-      }
-    }
-  }
+  min-height: calc(48px * 5);
 
   .no-apps {
     color: var(--fg1);
@@ -233,18 +191,38 @@ $scrollbar-offset: 20px;
   }
 
   // One Card Column
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
     max-width: $singlecolumn-max-width;
   }
+}
 
-  // Two Cards Columns
-  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
+
+.bulk-selected {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+  min-height: 36px;
+}
+
+.bulk-actions-container {
+  align-items: flex-end;
+  display: flex;
+  gap: 12px;
+}
+
+.bulk-button-wrapper {
+  display: flex;
+  flex-direction: column;
+
+
+  label {
+    color: var(--fg2);
+    font-size: 10px;
+    margin-bottom: 4px;
   }
 
-  // Two Cards Columns
-  @media (min-width: $breakpoint-dualcolumn) {
-    max-width: 70%;
+  button {
+    background-color: var(--bg1);
+    border: 1px solid var(--lines);
   }
-
 }

@@ -11,19 +11,23 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
   styleUrls: ['./app-row.component.scss'],
 })
 export class AppRowComponent {
-  @Input() application: ChartRelease;
+  @Input() app: ChartRelease;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly chartReleaseStatus = ChartReleaseStatus;
 
+  get hasUpdates(): boolean {
+    return this.app.update_available || this.app.container_images_update_available;
+  }
+
   get isAppStopped(): boolean {
-    return this.application.status === ChartReleaseStatus.Stopped;
+    return this.app.status === ChartReleaseStatus.Stopped;
   }
 
   toggleAppChecked(checked: boolean): void {
-    this.application.selected = checked;
+    this.app.selected = checked;
   }
 
   start(): void {
