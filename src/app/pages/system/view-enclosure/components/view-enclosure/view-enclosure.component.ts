@@ -20,7 +20,6 @@ import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-// import {SystemInfo} from "app/interfaces/system-info.interface";
 
 export interface SystemProfile {
   enclosureStore$: Observable<EnclosureState>;
@@ -297,53 +296,4 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       this.currentView = disks;
     }
   }
-
-  // TODO: LEAVING THIS HERE JUST FOR REFERENCE. Remove before making a PR
-/*
-  private loadEnclosureData(): void {
-    this.ws.call('enclosure.query').pipe(untilDestroyed(this)).subscribe((enclosures) => {
-      if (enclosures.length === 0) {
-        const noDataError: ErrorMessage = {
-          name: 'No Enclosure Data',
-          message: 'The system did not return any enclosure data. Nothing to display',
-        };
-        this.errors.push(noDataError);
-        return;
-      }
-
-      this.system = new SystemProfiler(this.systemProduct, enclosures);
-      this.selectedEnclosure = this.system.profile[this.system.headIndex];
-      this.loadDiskData();
-
-      this.ws.call('sensor.query').pipe(untilDestroyed(this)).subscribe((sensorData) => {
-        this.system.sensorData = sensorData;
-      });
-    });
-  }
-
-  private loadDiskData(): void {
-    this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((disks) => {
-      this.handleLoadedDisks(disks);
-      setTimeout(() => {
-        this.spinner = false;
-      }, 1500);
-    });
-    if (!this.disksUpdateSubscriptionId) {
-      const diskUpdatesTrigger$ = new Subject<Disk[]>();
-      diskUpdatesTrigger$.pipe(untilDestroyed(this)).subscribe((disks) => {
-        this.handleLoadedDisks(disks);
-      });
-      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
-    }
-  }
-
-  handleLoadedDisks(disks: Disk[]): void {
-    this.system.diskData = disks;
-    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
-      this.system.pools = pools;
-      this.events.next({ name: 'PoolsChanged', sender: this });
-      this.addViews();
-    });
-  }
- */
 }

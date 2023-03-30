@@ -420,13 +420,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
             if (diskName && this.currentView === 'details' && this.exitingView === 'details') {
               this.updateHtml('stage-right'); // View has changed so we launch transition animations
               this.updateHtml('stage-left'); // View has changed so we launch transition animations
-
-              // TODO: Remove as the vdev labels class doesn't actually do anything with this
-              /* this.labels.events$.next({
-                name: 'OverlayReady',
-                data: { vdev: this.selectedVdev, overlay: this.domLabels },
-                sender: this,
-              }); */
             }
             break;
           }
@@ -674,7 +667,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     }
   }
 
-  // TODO: Same as createEnclosure method. This just provides parent with images for enclosure selector strip
+  // Similar to createEnclosure method. This just provides parent with images for enclosure selector strip
   createExtractedEnclosure(enclosureView: EnclosureView): void {
     const rawEnclosure = this.systemState.enclosures[enclosureView.number];
     let extractedChassis: Chassis;
@@ -911,16 +904,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     }
 
     this.updateHtml(className);
-    /* const sideStage: HTMLElement = this.overview.nativeElement
-    .querySelector('.' + this.currentView + '.' + className);
-    const html: HTMLElement = this.overview.nativeElement
-    .querySelector('.' + this.currentView + '.' + className + ' .content');
-    const el = popmotion.styler(html, {});
-
-    const x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
-    const y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
-    html.style.left = x.toString() + 'px';
-    html.style.top = y.toString() + 'px'; */
 
     const html: HTMLElement = this.overview.nativeElement
       .querySelector('.' + this.currentView + '.' + className + ' .content');
@@ -931,16 +914,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       duration: 360,
     }).start({
       update: (valuesUpdate: { scale: number; opacity: number }) => { el.set(valuesUpdate); },
-      complete: () => {
-        if (this.currentView === 'details') {
-          /* this.labels.events$.next({
-           name: 'OverlayReady',
-           data: { vdev: this.selectedVdev,
-           overlay: this.domLabels },
-           sender: this
-           }); */
-        }
-      },
     });
   }
 

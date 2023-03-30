@@ -65,14 +65,14 @@ export class VDevLabelsSvg {
         case 'LabelDrives':
           this.createVdevLabels((evt as LabelDrivesEvent).data);
           break;
-        case 'OverlayReady':
+        /* case 'OverlayReady':
           break;
         case 'ShowPath':
           break;
         case 'HidePath':
           break;
         case 'EnableHighlightMode':
-          break;
+          break; */
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile');
           this.showAllTiles(tiles as NodeListOf<HTMLElement>);

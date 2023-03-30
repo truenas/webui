@@ -83,6 +83,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     // therefore we will never need to create
     // any enclosure selection UI. Leave this
     // empty or the base class will throw errors
+    console.error('Cannot create extracted enclosure for selector UI. MINI products do not support expansion shelves');
   }
 
   createEnclosure(enclosure: EnclosureView = this.selectedEnclosureView): void {
