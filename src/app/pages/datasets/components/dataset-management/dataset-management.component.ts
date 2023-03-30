@@ -44,6 +44,7 @@ import { ImportDataComponent } from 'app/pages/datasets/components/import-data/i
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -119,6 +120,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private datasetStore: DatasetTreeStore,
     private router: Router,
     protected translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
     private layoutService: LayoutService,
@@ -253,7 +255,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(error);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   isSystemDataset(dataset: DatasetDetails): boolean {

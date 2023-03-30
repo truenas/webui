@@ -11,6 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -21,6 +22,7 @@ import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsy
 import {
   DialogService, TaskService, UserService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -84,6 +86,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
     protected dialog: DialogService,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     protected translate: TranslateService,
     private route: ActivatedRoute,
     private store$: Store<AppState>,
@@ -121,8 +124,8 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
             }),
           )),
           switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-          catchError((error) => {
-            this.dialog.errorReportMiddleware(error);
+          catchError((error: WebsocketError) => {
+            this.dialog.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
           untilDestroyed(this),
