@@ -8,12 +8,14 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
+import {
+  systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded, systemInfoUpdated,
+} from 'app/store/system-info/system-info.actions';
 
 @Injectable()
 export class SystemInfoEffects {
   loadSystemInfo = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
+    ofType(adminUiInitialized, systemInfoUpdated),
     mergeMap(() => {
       return this.ws.call('system.info').pipe(
         map((systemInfo) => systemInfoLoaded({ systemInfo })),

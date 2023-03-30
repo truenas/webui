@@ -31,7 +31,6 @@ describe('OpenVpnClientConfigComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      DialogService,
       mockWebsocket([
         mockCall('openvpn.client.update'),
         mockCall('openvpn.client.config', {
@@ -77,7 +76,9 @@ describe('OpenVpnClientConfigComponent', () => {
       mockProvider(StorageService, {
         downloadBlob: jest.fn(),
       }),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
     ],
     declarations: [
       DownloadClientConfigModalComponent,
@@ -147,5 +148,12 @@ describe('OpenVpnClientConfigComponent', () => {
       tls_crypt_auth: 'Key 2',
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+  });
+
+  it('unsets certificates when unset button is clicked', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Unset Certificates' }));
+    await button.click();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('openvpn.client.update', [{ remove_certificates: true }]);
   });
 });

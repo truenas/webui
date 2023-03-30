@@ -4,7 +4,6 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { of } from 'rxjs';
 import {
   CertificateDigestAlgorithm,
@@ -26,6 +25,7 @@ import { SystemGeneralService, WebSocketService } from 'app/services';
 })
 export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryProvider {
   @Input() hasSignedBy = false;
+  @Input() hasLifetime = false;
 
   form = this.formBuilder.group({
     signedby: [null as number],
@@ -85,17 +85,20 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
         ? { label: this.translate.instant('Key Length'), value: String(values.key_length) }
         : { label: this.translate.instant('EC Curve'), value: String(values.ec_curve) },
       { label: this.translate.instant('Digest Algorithm'), value: values.digest_algorithm },
-      { label: this.translate.instant('Lifetime'), value: String(values.lifetime) },
     );
+
+    if (this.hasLifetime) {
+      summary.push({ label: this.translate.instant('Lifetime'), value: String(values.lifetime) });
+    }
 
     return summary;
   }
 
   getPayload(): CertificateOptionsComponent['form']['value'] {
-    const payload: CertificateOptionsComponent['form']['value'] = _.pick(
-      this.form.value,
-      ['key_type', 'digest_algorithm', 'lifetime'],
-    );
+    const payload: CertificateOptionsComponent['form']['value'] = {
+      key_type: this.form.value.key_type,
+      digest_algorithm: this.form.value.digest_algorithm,
+    };
 
     if (this.isRsa) {
       payload.key_length = this.form.value.key_length;
@@ -105,6 +108,10 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
 
     if (this.hasSignedBy) {
       payload.signedby = this.form.value.signedby;
+    }
+
+    if (this.hasLifetime) {
+      payload.lifetime = this.form.value.lifetime;
     }
 
     return payload;

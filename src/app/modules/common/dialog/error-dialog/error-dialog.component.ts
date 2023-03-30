@@ -32,32 +32,7 @@ export class ErrorDialogComponent {
   ) {}
 
   toggleOpen(): void {
-    const dialogs = document.getElementsByClassName('mat-dialog-container');
-    const dialog = dialogs[dialogs.length - 1];
-    const messageWrapper: HTMLElement = this.errorMessageWrapper.nativeElement;
-    const title: HTMLElement = this.errorTitle.nativeElement;
-    const content: HTMLElement = this.errorMdContent.nativeElement;
-    const btPanel: HTMLElement = this.errorBtPanel.nativeElement;
-    const txtarea: HTMLElement = this.errorBtText.nativeElement;
-
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
-    if (!this.isCloseMoreInfo) {
-      dialog.setAttribute('style', 'width : 800px; max-height: 80vh;');
-      let errMsgHeight = messageWrapper.offsetHeight - 21;
-      if (errMsgHeight > 63) {
-        errMsgHeight = 63;
-      }
-      title.setAttribute('style', 'height: 40px; overflow: hidden');
-      messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
-      btPanel.setAttribute('style', 'width: 750px; height: calc(80vh - 240px)');
-    } else {
-      dialog.removeAttribute('style');
-      title.removeAttribute('style');
-      content.removeAttribute('style');
-      btPanel.removeAttribute('style');
-      messageWrapper.removeAttribute('style');
-      txtarea.removeAttribute('style');
-    }
   }
 
   downloadLogs(): void {

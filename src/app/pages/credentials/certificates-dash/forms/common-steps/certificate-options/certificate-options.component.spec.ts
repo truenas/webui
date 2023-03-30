@@ -53,14 +53,12 @@ describe('CertificateOptionsComponent', () => {
         'Key Type': 'RSA',
         'Key Length': '4096',
         'Digest Algorithm': 'SHA384',
-        Lifetime: '3660',
       });
     });
 
     it('returns fields when getPayload() is called', () => {
       expect(spectator.component.getPayload()).toEqual({
         digest_algorithm: CertificateDigestAlgorithm.Sha384,
-        lifetime: 3660,
         key_length: 4096,
         key_type: CertificateKeyType.Rsa,
       });
@@ -80,10 +78,6 @@ describe('CertificateOptionsComponent', () => {
           label: 'Digest Algorithm',
           value: 'SHA384',
         },
-        {
-          label: 'Lifetime',
-          value: '3660',
-        },
       ]);
     });
   });
@@ -93,7 +87,6 @@ describe('CertificateOptionsComponent', () => {
       await form.fillForm({
         'Key Type': 'EC',
         'Digest Algorithm': 'SHA384',
-        Lifetime: '3660',
       });
 
       await form.fillForm({
@@ -105,7 +98,6 @@ describe('CertificateOptionsComponent', () => {
       expect(spectator.component.getPayload()).toEqual({
         ec_curve: 'SECP256K1',
         digest_algorithm: CertificateDigestAlgorithm.Sha384,
-        lifetime: 3660,
         key_type: CertificateKeyType.Ec,
       });
     });
@@ -124,10 +116,6 @@ describe('CertificateOptionsComponent', () => {
           label: 'Digest Algorithm',
           value: 'SHA384',
         },
-        {
-          label: 'Lifetime',
-          value: '3660',
-        },
       ]);
     });
   });
@@ -144,9 +132,28 @@ describe('CertificateOptionsComponent', () => {
         signedby: 1,
       });
 
-      expect(spectator.component.getSummary()[0]).toEqual({
+      expect(spectator.component.getSummary()).toContainEqual({
         label: 'Signing Certificate Authority',
         value: 'Test CA',
+      });
+    });
+  });
+
+  describe('hasLifetime', () => {
+    it('shows Lifetime field when hasLifetime is true', async () => {
+      spectator.setInput({ hasLifetime: true });
+
+      await form.fillForm({
+        Lifetime: '3660',
+      });
+
+      expect(spectator.component.getPayload()).toMatchObject({
+        lifetime: 3660,
+      });
+
+      expect(spectator.component.getSummary()).toContainEqual({
+        label: 'Lifetime',
+        value: '3660',
       });
     });
   });

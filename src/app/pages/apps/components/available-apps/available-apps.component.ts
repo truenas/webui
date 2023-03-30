@@ -2,14 +2,20 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { catalogToAppsTransform } from 'app/pages/apps/utils/catalog-to-apps-transform';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+
+interface AppSection {
+  title: string;
+  totalApps: number;
+  apps$: BehaviorSubject<AvailableApp[]>;
+  fetchMore?: () => void;
+}
 
 @UntilDestroy()
 @Component({
@@ -20,62 +26,111 @@ import { LayoutService } from 'app/services/layout.service';
 export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  apps: CatalogApp[] = [];
+  apps: AvailableApp[] = [];
+  filteredApps: AvailableApp[] = [];
+  filters: AppsFiltersValues = undefined;
+  searchQuery = '';
+  isFilterOrSearch = false;
+
+  allRecommendedApps: AvailableApp[] = [];
+  allNewAndUpdatedApps: AvailableApp[] = [];
+  sliceAmount = 6;
+  appSections: AppSection[] = [];
+
+  recommendedApps$ = new BehaviorSubject<AvailableApp[]>([]);
+  newAndUpdatedApps$ = new BehaviorSubject<AvailableApp[]>([]);
 
   constructor(
     private layoutService: LayoutService,
     private loader: AppLoaderService,
     private appService: ApplicationsService,
-    private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
-    this.loadTestData();
+    this.loadApplications();
   }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  onCustomAppPressed(): void {
-    this.loader.open();
-    this.appService.getCatalogItem(ixChartApp, officialCatalog, chartsTrain)
-      .pipe(untilDestroyed(this))
-      .subscribe((catalogApp) => {
-        this.loader.close();
+  trackByAppId(id: number, app: AvailableApp): string {
+    return `${app.catalog}-${app.train}-${app.name}`;
+  }
 
-        const catalogAppInfo = {
-          ...catalogApp,
-          catalog: {
-            id: officialCatalog,
-            train: chartsTrain,
-          },
-          schema: catalogApp.versions[catalogApp.latest_version].schema,
-        } as CatalogApp;
-        const chartWizard = this.slideIn.open(ChartFormComponent, { wide: true });
-        chartWizard.setChartCreate(catalogAppInfo);
+  trackByAppSectionTitle(_: number, appSection: AppSection): string {
+    return `${appSection.title}`;
+  }
+
+  changeFilters(filters: AppsFiltersValues): void {
+    this.filters = filters;
+    this.loadApplications(this.filters);
+  }
+
+  changeSearchQuery(query: string): void {
+    this.searchQuery = query;
+    this.filterApps(this.apps);
+  }
+
+  private loadApplications(filters?: AppsFiltersValues): void {
+    this.loader.open();
+    combineLatest([this.appService.getAvailableApps(filters), this.appService.getAllAppsCategories()])
+      .pipe(untilDestroyed(this))
+      .subscribe(([apps, appCategories]) => {
+        this.apps = apps;
+        this.filterApps(apps);
+        this.setupApps(apps, appCategories);
+
+        this.loader.close();
+        this.cdr.markForCheck();
       });
   }
 
-  onSettingsPressed(): void {
-
+  private filterApps(apps: AvailableApp[]): void {
+    this.isFilterOrSearch = !!this.searchQuery || !!this.filters;
+    this.filteredApps = apps.filter((app) => app.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
   }
 
-  trackByAppId(_: number, app: CatalogApp): string {
-    return `${app.catalog.id}-${app.catalog.train}-${app.name}`;
-  }
+  private setupApps(apps: AvailableApp[], appCategories: string[]): void {
+    this.allRecommendedApps = apps.filter((app) => app.recommended);
+    this.allNewAndUpdatedApps = apps
+      .sort((a, b) => new Date(a.last_update).getTime() - new Date(b.last_update).getTime());
 
-  private loadTestData(): void {
-    // TODO: Temporary
-    this.loader.open();
-    this.appService.getAllCatalogs().pipe(
-      catalogToAppsTransform(),
-      untilDestroyed(this),
-    ).subscribe((apps) => {
-      this.apps = apps;
-      this.loader.close();
-      this.cdr.markForCheck();
+    this.recommendedApps$.next(this.allRecommendedApps.slice(0, this.sliceAmount));
+    this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps.slice(0, this.sliceAmount));
+
+    this.appSections = [];
+    this.appSections.push(
+      {
+        title: this.translate.instant('Recommended Apps'),
+        apps$: this.recommendedApps$,
+        totalApps: this.allNewAndUpdatedApps.length,
+        fetchMore: () => this.recommendedApps$.next(this.allRecommendedApps),
+      },
+      {
+        title: this.translate.instant('New & Updated Apps'),
+        apps$: this.newAndUpdatedApps$,
+        totalApps: this.allNewAndUpdatedApps.length,
+        fetchMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
+      },
+    );
+
+    appCategories.forEach((category) => {
+      const categorizedApps = apps.filter((app) => app.categories.some((appCategory) => appCategory === category));
+
+      this.appSections.push(
+        {
+          title: category,
+          apps$: new BehaviorSubject(categorizedApps.slice(0, this.sliceAmount)),
+          totalApps: categorizedApps.length,
+          // TODO: Implement logic to show all apps page per category
+          fetchMore: () => {},
+        },
+      );
     });
+
+    this.cdr.markForCheck();
   }
 }

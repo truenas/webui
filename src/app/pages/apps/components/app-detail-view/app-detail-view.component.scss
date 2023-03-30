@@ -5,6 +5,17 @@
   width: 100%;
 }
 
+::ng-deep ix-page-title-header {
+  position: relative;
+
+  ix-fake-progress-bar {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+}
+
 .app {
   display: flex;
   flex-direction: column;
@@ -26,7 +37,9 @@
 }
 
 .app-description {
-  flex-basis: 50%;
+  flex-basis: 1;
+  max-height: 180px;
+  overflow-y: auto;
   padding-left: 2rem;
 }
 

@@ -9,7 +9,6 @@ import { Observable, of } from 'rxjs';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
-import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
@@ -43,7 +42,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   profiles: CertificateProfiles;
   profileOptions$: Observable<Option[]>;
 
-  readonly helptext = helptextSystemCertificates;
+  readonly helptext = helptextSystemCa;
 
   readonly createTypes = new Map<CaCreateType, string>([
     [CaCreateType.Internal, this.translate.instant('Internal CA')],
@@ -109,7 +108,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     return summary;
   }
 
-  getPayload(): Pick<CaIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type'> {
+  getPayload(): Pick<CaIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type' | 'add_to_trusted_store'> {
     return _.pick(this.form.value, ['name', 'create_type', 'add_to_trusted_store']);
   }
 

@@ -24,6 +24,9 @@ import {
   CaIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
 import {
+  CaImportComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-import/ca-import.component';
+import {
   CertificateConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
 import {
@@ -32,9 +35,6 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import {
-  CommonCertificateImportComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/common-certificate-import/common-certificate-import.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -108,7 +108,7 @@ describe('CertificateAuthorityAddComponent', () => {
       CertificateOptionsComponent,
       CertificateSubjectComponent,
       CertificateConstraintsComponent,
-      CommonCertificateImportComponent,
+      CaImportComponent,
       MockComponent(SummaryComponent),
     ],
     providers: [

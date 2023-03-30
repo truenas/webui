@@ -5,6 +5,7 @@ import { AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 
 @UntilDestroy()
@@ -48,6 +49,7 @@ export class IxErrorsComponent implements OnChanges {
     ),
     number: () => this.translate.instant('Value must be a number'),
     cron: () => this.translate.instant('Invalid cron expression'),
+    ip2: () => this.translate.instant('Invalid IP address'),
   };
 
   constructor(
@@ -59,7 +61,10 @@ export class IxErrorsComponent implements OnChanges {
     if ('control' in changes && this.control) {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();
-      this.statusChangeSubscription = this.control.statusChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.statusChangeSubscription = this.control.statusChanges.pipe(
+        filter((status) => status !== 'PENDING'),
+        untilDestroyed(this),
+      ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
           if (this.control.errors[error].message) {
             return this.control.errors[error].message;
@@ -67,7 +72,8 @@ export class IxErrorsComponent implements OnChanges {
 
           return this.getDefaultError(error as DefaultValidationError);
         });
-        this.messages = newErrors;
+
+        this.messages = newErrors.filter((message) => !!message);
 
         this.cdr.markForCheck();
       });
@@ -99,11 +105,13 @@ export class IxErrorsComponent implements OnChanges {
       case DefaultValidationError.Pattern:
         return this.defaultErrMessages.pattern();
       case DefaultValidationError.Forbidden:
-        return this.defaultErrMessages.forbidden(this.control.value);
+        return this.defaultErrMessages.forbidden(this.control.errors.value);
       case DefaultValidationError.Number:
         return this.defaultErrMessages.number();
       case DefaultValidationError.Cron:
         return this.defaultErrMessages.cron();
+      case DefaultValidationError.Ip2:
+        return this.defaultErrMessages.ip2();
       default:
         return undefined;
     }

@@ -44,14 +44,13 @@
       <ng-container *ngIf="options && options.length; else loadingOrError">
         <mat-option
           *ngFor="let option of options"
+          class="combobox-mat-options"
           [value]="option"
           [class.ix-selected]="option.value === selectedOption?.value"
           [class.ix-unselected]="option.value !== selectedOption?.value"
           [ixTest]="[controlDirective.name, option.label]"
-          [matTooltip]="option?.tooltip"
         >
-          <span>{{ option.label }}</span>
-          <i *ngIf="option?.tooltip" class="material-icons tooltip-icon" >info_outline</i>
+          {{ option.label }}
         </mat-option>
       </ng-container>
 

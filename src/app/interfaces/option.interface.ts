@@ -18,7 +18,3 @@ export interface SelectOption extends Option {
   disabled?: boolean;
   tooltip?: string;
 }
-
-export interface ComboboxOption extends Option {
-  tooltip?: string;
-}

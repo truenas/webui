@@ -159,7 +159,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   get hideIdentifyDrive(): boolean {
     const selectedEnclosure = this.getSelectedEnclosure();
-    return this.system.enclosures[selectedEnclosure.enclosureKey].model === 'TRUENAS-MINI-R';
+    let hideButton = false;
+    if (
+      selectedEnclosure.model === 'TRUENAS-MINI-R'
+      || selectedEnclosure.model === 'TRUENAS-R30'
+      || selectedEnclosure.model === 'R30'
+    ) {
+      hideButton = true;
+    }
+    return hideButton;
   }
 
   selectedVdevDisks: string[];

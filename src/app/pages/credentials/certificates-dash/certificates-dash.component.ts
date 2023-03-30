@@ -3,7 +3,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -25,6 +24,7 @@ import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
+import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   CertificateAddComponent,
@@ -32,9 +32,7 @@ import {
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
-import { OldCertificateAddComponent } from './forms/certificate-add.component';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +45,6 @@ export class CertificatesDashComponent implements OnInit {
   private downloadActions: AppTableAction[];
 
   constructor(
-    private modalService: ModalService,
     private slideInService: IxSlideInService,
     private ws: WebSocketService,
     private dialog: MatDialog,
@@ -59,10 +56,7 @@ export class CertificatesDashComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCards();
-    merge(
-      this.slideInService.onClose$,
-      this.modalService.refreshTable$,
-    )
+    this.slideInService.onClose$
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.getCards();
@@ -161,7 +155,7 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(OldCertificateAddComponent, 'csr');
+            this.slideInService.open(CsrAddComponent);
           },
           edit: (certificate: Certificate) => {
             const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });

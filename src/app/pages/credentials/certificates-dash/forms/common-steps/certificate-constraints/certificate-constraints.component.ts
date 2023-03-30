@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,7 +10,11 @@ import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 import { choicesToOptions, valueToLabel } from 'app/helpers/options.helper';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { CertificateExtensions, KeyUsages } from 'app/interfaces/certificate-authority.interface';
+import {
+  AuthorityKeyIdentifiers,
+  CertificateExtensions,
+  KeyUsages,
+} from 'app/interfaces/certificate-authority.interface';
 import { CertificateCreate, CertificateExtension } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
@@ -32,6 +36,8 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateConstraintsComponent implements OnInit, SummaryProvider {
+  @Input() hasAuthorityKeyIdentifier = false;
+
   form = this.formBuilder.group({
     BasicConstraints: this.formBuilder.group({
       enabled: [false],
@@ -103,13 +109,15 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
           extension_critical: basicConstraints.BasicConstraints.includes(BasicConstraint.ExtensionCritical),
           path_length: basicConstraints.path_length,
         },
-        AuthorityKeyIdentifier: {
-          enabled: authorityKeyIdentifier.enabled,
-          authority_cert_issuer: authorityKeyIdentifier.AuthorityKeyIdentifier
-            .includes(AuthorityKeyIdentifier.AuthorityCertIssuer),
-          extension_critical: authorityKeyIdentifier.AuthorityKeyIdentifier
-            .includes(AuthorityKeyIdentifier.ExtensionCritical),
-        },
+        AuthorityKeyIdentifier: this.hasAuthorityKeyIdentifier
+          ? {
+            enabled: authorityKeyIdentifier.enabled,
+            authority_cert_issuer: authorityKeyIdentifier.AuthorityKeyIdentifier
+              .includes(AuthorityKeyIdentifier.AuthorityCertIssuer),
+            extension_critical: authorityKeyIdentifier.AuthorityKeyIdentifier
+              .includes(AuthorityKeyIdentifier.ExtensionCritical),
+          }
+          : {} as AuthorityKeyIdentifiers,
         ExtendedKeyUsage: {
           enabled: extendedKeyUsage.enabled,
           extension_critical: extendedKeyUsage.extension_critical,
@@ -217,7 +225,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   }
 
   private getAuthorityKeyIdentifierSummary(): SummaryItem[] {
-    if (!this.hasExtension('AuthorityKeyIdentifier')) {
+    if (!this.hasExtension('AuthorityKeyIdentifier') || !this.hasAuthorityKeyIdentifier) {
       return [];
     }
 

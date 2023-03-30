@@ -1,10 +1,11 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -37,12 +38,23 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   constructor(
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private layoutService: LayoutService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-  ) {}
+  ) {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+      });
+  }
 
   get allAppsChecked(): boolean {
     return this.dataSource.every((app) => app.selected);
@@ -73,6 +85,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.listenForRouteChanges();
     this.updateChartReleases();
   }
 
@@ -90,6 +103,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   selectApp(app: ChartRelease): void {
     this.selectedApp = app;
+    this.cdr.markForCheck();
   }
 
   showLoadStatus(type: EmptyType): void {
@@ -114,6 +128,22 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
 
     this.title = title;
+  }
+
+  private listenForRouteChanges(): void {
+    this.activatedRoute.params
+      .pipe(
+        map((params) => params.appId as string),
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe((appId) => {
+        const app = this.dataSource.find((chart) => chart.id === appId);
+        if (app) {
+          this.selectApp(app);
+          this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+        }
+      });
   }
 
   updateChartReleases(): void {

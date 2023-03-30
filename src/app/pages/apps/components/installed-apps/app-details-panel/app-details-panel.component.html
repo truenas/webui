@@ -1,0 +1,9 @@
+<h2>{{ 'Application Details' | translate }}</h2>
+
+<ng-container *ngIf="app">
+  <ix-app-info-card [app]="app"></ix-app-info-card>
+  <ix-app-containers-card [app]="app"></ix-app-containers-card>
+  <ix-app-history-card [app]="app"></ix-app-history-card>
+  <ix-app-notes-card [app]="app"></ix-app-notes-card>
+</ng-container>
+

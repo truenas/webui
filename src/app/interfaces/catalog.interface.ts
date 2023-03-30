@@ -72,6 +72,8 @@ export interface CatalogApp {
   latest_app_version: string;
   latest_human_version: string;
   versions?: { [version: string]: CatalogAppVersion };
+  recommended?: boolean;
+  last_update?: string;
   catalog?: {
     id?: string;
     label?: string;

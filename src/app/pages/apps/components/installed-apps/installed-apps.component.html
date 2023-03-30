@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <ix-page-title-header>
+  <ix-page-title-header [pageTitle]="selectedApp?.name">
     <button mat-button color="primary" ixTest="update-all" (click)="syncAll()">
       {{ 'Update All' | translate }}
     </button>
@@ -99,8 +99,9 @@
           <ng-container *ngFor="let app of dataSource">
             <ix-app-row
               class="row"
+              routerLinkActive="selected"
               [application]="app"
-              [class.selected]="selectedApp && app.name === selectedApp.name"
+              [routerLink]="['/apps/installed', app.id]"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
               (click)="selectApp(app)"
@@ -112,6 +113,15 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
+
+  <div
+    *ngIf="selectedApp"
+    class="details-container"
+  >
+    <ix-app-details-panel [app]="selectedApp"></ix-app-details-panel>
+  </div>
 </div>
+

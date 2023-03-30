@@ -18,6 +18,9 @@ import {
   CaIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
 import {
+  CaImportComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-import/ca-import.component';
+import {
   CertificateConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
 import {
@@ -29,15 +32,13 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import {
-  CommonCertificateImportComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/common-certificate-import/common-certificate-import.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './certificate-authority-add.component.html',
+  styleUrls: ['./certificate-authority-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateAuthorityAddComponent implements AfterViewInit {
@@ -49,7 +50,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   @ViewChild(CertificateConstraintsComponent) constraints: CertificateConstraintsComponent;
 
   // Importing
-  @ViewChild(CommonCertificateImportComponent) import: CommonCertificateImportComponent;
+  @ViewChild(CaImportComponent) import: CaImportComponent;
 
   isLoading = false;
   summary: SummarySection[];
@@ -84,7 +85,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
     return [this.identifierAndType, this.options, this.subject, this.constraints];
   }
 
-  getImportCaSteps(): [CaIdentifierAndTypeComponent, CommonCertificateImportComponent] {
+  getImportCaSteps(): [CaIdentifierAndTypeComponent, CaImportComponent] {
     return [this.identifierAndType, this.import];
   }
 

@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services';
  */
 @Injectable()
 export class CpuValidatorService {
-  maximumCpus$: Observable<number>;
+  private maximumCpus$: Observable<number>;
 
   constructor(
     private validators: IxValidatorsService,
@@ -43,7 +43,7 @@ export class CpuValidatorService {
 
           return this.validators.makeErrorMessage(
             'invalidCpus',
-            this.translate.instant(helptext.vcpus_warning, { maxVCPUs: maxVcpus }),
+            this.translate.instant(helptext.vcpus_warning, { maxVcpus }),
           );
         }),
         catchError(() => of(null)),

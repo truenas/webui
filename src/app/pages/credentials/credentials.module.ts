@@ -33,9 +33,15 @@ import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import {
+  CaImportComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-import/ca-import.component';
+import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
+import {
+  CsrImportComponent,
+} from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   CertificateAddComponent,
@@ -43,9 +49,6 @@ import {
 import {
   CertificateImportComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
-import {
-  CommonCertificateImportComponent,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/common-certificate-import/common-certificate-import.component';
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
@@ -71,7 +74,8 @@ import { CaIdentifierAndTypeComponent } from './certificates-dash/certificate-au
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
-import { OldCertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
+import { CsrAddComponent } from './certificates-dash/csr-add/csr-add.component';
+import { CsrIdentifierAndTypeComponent } from './certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
 import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
 import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
 import { CertificateOptionsComponent } from './certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
@@ -83,7 +87,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     SshConnectionFormComponent,
     SshKeypairFormComponent,
     CertificatesDashComponent,
-    OldCertificateAddComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
     CertificateEditComponent,
@@ -118,7 +121,10 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CertificateConstraintsComponent,
     CertificateImportComponent,
     CaIdentifierAndTypeComponent,
-    CommonCertificateImportComponent,
+    CaImportComponent,
+    CsrAddComponent,
+    CsrIdentifierAndTypeComponent,
+    CsrImportComponent,
   ],
   imports: [
     CommonModule,
