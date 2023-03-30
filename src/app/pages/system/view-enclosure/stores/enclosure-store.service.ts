@@ -4,6 +4,7 @@ import {
   combineLatest, forkJoin, Observable, Observer, of, tap,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -250,7 +251,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           identify: slotSource.identify,
           pool: pool ? pool.name : null,
           vdev: pool ? topologyInfo.vdev : null,
-          topologyStatus: enclosureDisk ? 'AVAILABLE' : null,
+          topologyStatus: enclosureDisk ? EnclosureSlotDiskStatus.Available : null,
         };
 
         if (topologyInfo?.vdev || topologyInfo?.category) {
@@ -261,7 +262,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
             topologyInfo.vdev,
             enclosureSlot.disk.name,
           );
-          enclosureSlot.topologyStatus = topologyDisk.status as string;
+          enclosureSlot.topologyStatus = topologyDisk.status;
           enclosureSlot.topologyStats = topologyDisk.stats;
         }
 

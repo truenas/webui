@@ -1,3 +1,4 @@
+import { EnclosureSlotTopologyStatus } from 'app/enums/enclosure-slot-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { Disk, TopologyItem, TopologyItemStats } from './storage.interface';
 
@@ -51,7 +52,7 @@ export interface EnclosureSlot {
   enclosure: number | null;
   slot: number | null;
   slotStatus?: string;
-  topologyStatus?: string; // TopologyItemStatus;
+  topologyStatus?: EnclosureSlotTopologyStatus;
   topologyStats?: TopologyItemStats;
   fault: boolean;
   identify: boolean;
