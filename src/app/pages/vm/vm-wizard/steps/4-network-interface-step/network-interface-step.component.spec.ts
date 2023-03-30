@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { VmNicType } from 'app/enums/vm.enum';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -40,7 +41,7 @@ describe('NetworkInterfaceStepComponent', () => {
 
   async function fillForm(): Promise<void> {
     await form.fillForm({
-      'Adapter Type': 'Intel e82585 (e1000)',
+      'Adapter Type': 'VirtIO',
       'Mac Address': '00:00:00:00:00:AA',
       'Attach NIC': 'eno1',
       'Trust Guest Filters': true,
@@ -53,7 +54,7 @@ describe('NetworkInterfaceStepComponent', () => {
     expect(spectator.component.form.value).toEqual({
       nic_attach: 'eno1',
       nic_mac: '00:00:00:00:00:AA',
-      nic_type: 'E1000',
+      nic_type: VmNicType.Virtio,
       trust_guest_rx_filters: true,
     });
   });
@@ -64,7 +65,7 @@ describe('NetworkInterfaceStepComponent', () => {
     expect(spectator.component.getSummary()).toEqual([
       {
         label: 'NIC',
-        value: 'Intel e82585 (e1000) (eno1)',
+        value: 'VirtIO (eno1)',
       },
     ]);
   });

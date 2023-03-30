@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
@@ -48,14 +48,14 @@ export class SnapshotEffects {
     switchMap(() => {
       return this.ws.subscribe('zfs.snapshot.query').pipe(
         filter((event) => event.msg !== IncomingApiMessageType.Removed),
-        map((event) => {
+        switchMap((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
-              return snapshotAdded({ snapshot: event.fields });
+              return of(snapshotAdded({ snapshot: event.fields }));
             case IncomingApiMessageType.Changed:
-              return snapshotChanged({ snapshot: event.fields });
+              return of(snapshotChanged({ snapshot: event.fields }));
             default:
-              return undefined;
+              return EMPTY;
           }
         }),
       );
