@@ -45,7 +45,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
         this.datasetStore.datasetUpdated();
         this.router.navigate(['/datasets', dataset.id]).then(() => {
           this.snackbar.success(
-            this.translate.instant('Switched to new dataset «{name}»', { name: getDatasetLabel(dataset) }),
+            this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
           );
         });
       }
@@ -58,7 +58,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
           this.datasetStore.datasetUpdated();
           this.router.navigate(['/datasets', zvol.id]).then(() => {
             this.snackbar.success(
-              this.translate.instant('Switched to new zvol «{name}»', { name: getDatasetLabel(zvol) }),
+              this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(zvol) }),
             );
           });
         }
