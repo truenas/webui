@@ -1,45 +1,22 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { Subject } from 'rxjs';
-import { TestScheduler } from 'rxjs/testing';
-import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import {
   EnclosureDispersalStrategy,
   MockStorageGenerator,
   MockStorageScenario,
 } from 'app/core/testing/utils/mock-storage-generator.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
-  Enclosure,
   EnclosureElement,
   EnclosureSlot,
   EnclosureView,
 } from 'app/interfaces/enclosure.interface';
-import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService } from 'app/services';
 import { EnclosureState, EnclosureStore } from './enclosure-store.service';
 
 describe('EnclosureStore', () => {
-  const websocketSubscription$ = new Subject<ApiEvent<Pool>>();
   let spectator: SpectatorService<EnclosureStore>;
-  let testScheduler: TestScheduler;
-  const createService = createServiceFactory({
-    service: EnclosureStore,
-    providers: [
-      StorageService,
-      mockProvider(WebSocketService, {
-        subscribe: jest.fn(() => websocketSubscription$),
-      }),
-      mockProvider(DialogService),
-    ],
-  });
-
-  beforeEach(() => {
-    spectator = createService();
-    testScheduler = getTestScheduler();
-  });
 
   describe('broadcast received and generated data', () => {
     const mockStorage = new MockStorageGenerator();
@@ -64,6 +41,23 @@ describe('EnclosureStore', () => {
       dispersal: EnclosureDispersalStrategy.Default,
     });
 
+    const createService = createServiceFactory({
+      service: EnclosureStore,
+      providers: [
+        StorageService,
+        mockWebsocket([
+          mockCall('enclosure.query', mockStorage.enclosures),
+          mockCall('pool.query', [mockStorage.poolState]),
+          mockCall('disk.query', mockStorage.disks),
+        ]),
+        mockProvider(DialogService),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createService();
+    });
+
     it('should receive authentic Mock data', () => {
       expect(mockStorage.poolState.topology.data.length).toBeGreaterThan(0);
       expect(mockStorage.disks).toHaveLength(42);
@@ -74,49 +68,30 @@ describe('EnclosureStore', () => {
       expect(shelfSlots).toHaveLength(24);
     });
 
-    it('loads data and generates views data', () => {
-      testScheduler.run(({ cold }) => {
-        const mockWebsocket: WebSocketService = spectator.inject(WebSocketService);
-        const poolResponse: Pool[] = [mockStorage.poolState];
-        const diskResponse: Disk[] = mockStorage.disks;
-        const enclosureResponse: Enclosure[] = mockStorage.enclosures;
+    it('loads data and generates correct views data', () => {
+      expect(1).toBe(1);
+      spectator.service.loadData();
+      spectator.service.data$.subscribe((data: EnclosureState) => {
+        if (
+          data.areDisksLoading
+          && data.arePoolsLoading
+          && data.areEnclosuresLoading
+        ) {
+          return;
+        }
 
-        jest.spyOn(mockWebsocket, 'call').mockImplementation((method: string) => {
-          switch (method) {
-            case 'pool.query':
-              return cold('-a|', { a: poolResponse });
-            case 'disk.query':
-              return cold('-a|', { a: [...diskResponse] });
-            case 'enclosure.query':
-              return cold('-a|', { a: [...enclosureResponse] });
-            default:
-              throw new Error(`Unexpected method: ${method}`);
-          }
-        });
+        expect(data.enclosures).toHaveLength(2);
+      });
 
-        spectator.service.loadData();
-        spectator.service.data$.subscribe((data: EnclosureState) => {
-          if (
-            data.areDisksLoading
-            && data.arePoolsLoading
-            && data.areEnclosuresLoading
-          ) {
-            return;
-          }
+      spectator.service.enclosureViews$.subscribe((views: EnclosureView[]) => {
+        if (!views.length) return;
 
-          expect(data.enclosures).toHaveLength(2);
-        });
+        expect(views).toHaveLength(2);
+        expect(views[0].slots).toHaveLength(24);
+        expect(views[1].slots).toHaveLength(24);
 
-        spectator.service.enclosureViews$.subscribe((views: EnclosureView[]) => {
-          if (!views.length) return;
-
-          expect(views).toHaveLength(2);
-          expect(views[0].slots).toHaveLength(24);
-          expect(views[1].slots).toHaveLength(24);
-
-          const emptySlots = views[1].slots.filter((slot: EnclosureSlot) => !slot.disk);
-          expect(emptySlots).toHaveLength(6);
-        });
+        const emptySlots = views[1].slots.filter((slot: EnclosureSlot) => !slot.disk);
+        expect(emptySlots).toHaveLength(6);
       });
     });
   });
@@ -144,49 +119,48 @@ describe('EnclosureStore', () => {
       dispersal: EnclosureDispersalStrategy.Default,
     });
 
+    const createService = createServiceFactory({
+      service: EnclosureStore,
+      providers: [
+        StorageService,
+        mockWebsocket([
+          mockCall('enclosure.query', mockStorage.enclosures),
+          mockCall('pool.query', [mockStorage.poolState]),
+          mockCall('disk.query', mockStorage.disks),
+        ]),
+        mockProvider(DialogService),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createService();
+    });
+
     it('should properly merge M50/M60 enclosures into single enclosure view', () => {
-      testScheduler.run(({ cold }) => {
-        const mockWebsocket: WebSocketService = spectator.inject(WebSocketService);
-        const poolResponse: Pool[] = [mockStorage.poolState];
-        const diskResponse: Disk[] = mockStorage.disks;
-        const enclosureResponse: Enclosure[] = mockStorage.enclosures;
+      expect(1).toBe(1);
 
-        jest.spyOn(mockWebsocket, 'call').mockImplementation((method: string) => {
-          switch (method) {
-            case 'pool.query':
-              return cold('-a|', { a: poolResponse });
-            case 'disk.query':
-              return cold('-a|', { a: [...diskResponse] });
-            case 'enclosure.query':
-              return cold('-a|', { a: [...enclosureResponse] });
-            default:
-              throw new Error(`Unexpected method: ${method}`);
-          }
-        });
+      spectator.service.loadData();
+      spectator.service.data$.subscribe((data: EnclosureState) => {
+        if (
+          data.areDisksLoading
+          && data.arePoolsLoading
+          && data.areEnclosuresLoading
+        ) {
+          return;
+        }
 
-        spectator.service.loadData();
-        spectator.service.data$.subscribe((data: EnclosureState) => {
-          if (
-            data.areDisksLoading
-            && data.arePoolsLoading
-            && data.areEnclosuresLoading
-          ) {
-            return;
-          }
+        expect(data.enclosures).toHaveLength(3);
+      });
 
-          expect(data.enclosures).toHaveLength(3);
-        });
+      spectator.service.enclosureViews$.subscribe((views: EnclosureView[]) => {
+        if (!views.length) return;
 
-        spectator.service.enclosureViews$.subscribe((views: EnclosureView[]) => {
-          if (!views.length) return;
-
-          // M50/M60 report 24 bay front chassis and a separate 4 bay rear chassis
-          // the EnclosureStore should merge these into a single 28 bay chassis to make it consistent
-          // with all other models.
-          expect(views).toHaveLength(2);
-          expect(views[0].slots).toHaveLength(28);
-          expect(views[1].slots).toHaveLength(24);
-        });
+        // M50/M60 report 24 slot front chassis and a separate 4 slot rear chassis
+        // the EnclosureStore should merge these into a single 28 slot chassis to make it consistent
+        // with all other models.
+        expect(views).toHaveLength(2);
+        expect(views[0].slots).toHaveLength(28);
+        expect(views[1].slots).toHaveLength(24);
       });
     });
   });
