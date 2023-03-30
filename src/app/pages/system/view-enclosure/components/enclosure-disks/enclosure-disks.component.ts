@@ -639,9 +639,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         case 'DriveSelected': {
           const slotNumber = parseInt((evt as DriveSelectedEvent).data.id);
 
-          // Don't trigger any changes if the same disk is selected
-          if (slotNumber === this.selectedSlotNumber) { break; }
-
           if (this.identifyBtnRef) {
             this.toggleSlotStatus(true);
             this.radiate(true);
