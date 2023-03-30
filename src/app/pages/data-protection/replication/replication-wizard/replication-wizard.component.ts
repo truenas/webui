@@ -271,6 +271,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               value: this.defaultNamingSchema,
               parent: this,
               blurStatus: true,
+              required: true,
+              validation: [Validators.required],
               blurEvent: () => {
                 this.getSnapshots();
               },
@@ -282,6 +284,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
+              required: true,
+              validation: [Validators.required],
               blurEvent: () => {
                 this.getSnapshots();
               },
@@ -1020,6 +1024,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     });
 
+    this.entityWizard.formArray.get([1]).get('schedule_method').valueChanges
+      .pipe(untilDestroyed(this)).subscribe((value: ScheduleMethod) => {
+        const customSnapshotsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'custom_snapshots' });
+        customSnapshotsFieldConfig.required = value === ScheduleMethod.Once;
+        customSnapshotsFieldConfig.validation = value === ScheduleMethod.Once ? [Validators.required] : undefined;
+      });
+
     this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       this.toggleNamingSchemaOrRegex();
       if (!value) {
@@ -1503,6 +1514,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
 
       if (key === 'snapshot') {
+        if (!items[key]?.length) {
+          continue;
+        }
+        for (const task of items[key]) {
+          await this.ws.call('zfs.snapshot.delete', [task.name]).toPromise();
+        }
         continue;
       }
 
