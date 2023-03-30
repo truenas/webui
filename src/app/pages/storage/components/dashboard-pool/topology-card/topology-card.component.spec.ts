@@ -36,14 +36,14 @@ describe('TopologyCardComponent', () => {
     // Add Topologies to Storage
     storage.addDataTopology({
       scenario: MockStorageScenario.Uniform,
-      layout: TopologyItemType.Mirror,
-      diskSize: 8,
-      width: 2,
-      repeats: 6,
+      layout: TopologyItemType.Raidz3,
+      diskSize: 4,
+      width: 7,
+      repeats: 2,
     }).addSpecialTopology({
       scenario: MockStorageScenario.Uniform,
       layout: TopologyItemType.Mirror,
-      diskSize: 8,
+      diskSize: 4,
       width: 3,
       repeats: 1,
     }).addLogTopology(2, true, 2)
@@ -61,12 +61,12 @@ describe('TopologyCardComponent', () => {
   it('rendering VDEVs rows', () => {
     const captions = spectator.queryAll('.vdev-line b');
     const values = spectator.queryAll('.vdev-line .vdev-value');
-    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(0);
+    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
     expect(captions).toHaveLength(6);
     expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('6 x MIRROR | 2 wide | 8 TiB');
+    expect(values[0]).toHaveText('2 x RAIDZ3 | 7 wide | 4 TiB');
 
     // Can be Disk or MIRROR
     expect(captions[2]).toHaveText('Log VDEVs');
@@ -82,7 +82,7 @@ describe('TopologyCardComponent', () => {
 
     // Redundancy level should match data VDEVs
     expect(captions[1]).toHaveText('Metadata');
-    expect(values[1]).toHaveText('1 x MIRROR | 3 wide | 8 TiB');
+    expect(values[1]).toHaveText('Redundancy Mismatch');
     expect(captions[5]).toHaveText('Dedup VDEVs');
     expect(values[5]).toHaveText('VDEVs not assigned');
   });
