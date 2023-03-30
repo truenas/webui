@@ -64,7 +64,7 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
 
   readonly subscribeToUpdates = this.effect(() => {
     return this.ws.subscribe('core.get_jobs').pipe(
-      filter((event) => event.fields.method === 'container.image.pull' && event.fields.state === JobState.Success && !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+      filter((event) => event.fields.method === 'container.image.pull' && event.fields.state === JobState.Success && event.msg !== IncomingApiMessageType.Removed),
       switchMap(() => this.ws.call('container.image.query')),
       map((entities) => this.patchState({ entities })),
     );
@@ -72,7 +72,7 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
 
   readonly subscribeToRemoval = this.effect(() => {
     return this.ws.subscribe('container.image.query').pipe(
-      filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+      filter((event) => event.msg === IncomingApiMessageType.Removed),
       map((event) => this.entityDeleted(event.id.toString())),
     );
   });

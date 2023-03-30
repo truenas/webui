@@ -43,7 +43,7 @@ export class AlertEffects {
     ofType(adminUiInitialized),
     switchMap(() => {
       return this.ws.subscribe('alert.list').pipe(
-        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+        filter((event) => event.msg !== IncomingApiMessageType.Removed),
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
@@ -62,7 +62,7 @@ export class AlertEffects {
     ofType(adminUiInitialized),
     switchMap(() => {
       return this.ws.subscribe('alert.list').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => alertRemoved({ id: event.id.toString() })),
       );
     }),
