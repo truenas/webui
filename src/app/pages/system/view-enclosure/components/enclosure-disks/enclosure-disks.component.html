@@ -127,7 +127,7 @@
             </h1>
             <div class="title">
               <span *ngIf="selectedSlot?.vdev" class="semibold">{{ 'vdev' | translate }}: </span>
-              <span *ngIf="!selectedSlot?.vdev && selectedSlot.disk" class="semibold">{{ 'UNASSIGNED' | translate }} </span>
+              <span *ngIf="!selectedSlot?.vdev && selectedSlot?.disk" class="semibold">{{ 'UNASSIGNED' | translate }} </span>
               <span>
                 {{ isTopologyDisk ? ('Disk' | translate) : (selectedSlot?.vdev?.name | uppercase) }}
               </span>
