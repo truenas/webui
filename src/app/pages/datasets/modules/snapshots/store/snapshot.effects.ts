@@ -10,7 +10,7 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
-  snapshotAdded, snapshotBulkActionCompleted, snapshotChanged,
+  snapshotAdded, snapshotChanged,
   snapshotPageEntered,
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
@@ -21,7 +21,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Injectable()
 export class SnapshotEffects {
   loadSnapshots$ = createEffect(() => this.actions$.pipe(
-    ofType(snapshotPageEntered, snapshotBulkActionCompleted),
+    ofType(snapshotPageEntered),
     switchMap(() => this.store$.pipe(waitForPreferences)),
     switchMap((preferences) => {
       return this.ws.call('zfs.snapshot.query', [

@@ -14,7 +14,6 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { snapshotRemoved } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
 import { AppState } from 'app/store';
 
@@ -100,7 +99,6 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.store$.dispatch(snapshotRemoved({ id: snapshot.id }));
         this.loader.close();
       },
       error: (error: WebsocketError) => {
