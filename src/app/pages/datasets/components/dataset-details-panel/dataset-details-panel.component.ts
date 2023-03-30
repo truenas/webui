@@ -4,7 +4,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -37,16 +36,21 @@ export class DatasetDetailsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.datasetStore.datasetUpdated();
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe((value) => {
+      const datasetId = (value.response as { id?: string }).id;
+      if (value.modalType === DatasetFormComponent && datasetId) {
+        this.datasetStore.datasetUpdated();
+        this.router.navigate(['/datasets', datasetId]);
+      }
     });
     this.slideIn.onClose$
-      .pipe(
-        filter((value) => value.response === true),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.datasetStore.datasetUpdated();
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        const zvolId = (value.response as { id?: string }).id;
+        if (value.modalType === ZvolFormComponent && zvolId) {
+          this.datasetStore.datasetUpdated();
+          this.router.navigate(['/datasets', zvolId]);
+        }
       });
   }
 
