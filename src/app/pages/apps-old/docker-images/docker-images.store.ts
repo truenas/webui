@@ -64,7 +64,12 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
 
   readonly subscribeToUpdates = this.effect(() => {
     return this.ws.subscribe('core.get_jobs').pipe(
-      filter((event) => event.fields.method === 'container.image.pull' && event.fields.state === JobState.Success && event.msg !== IncomingApiMessageType.Removed),
+      filter((event) => {
+        const isImagePullMethod = event.fields.method === 'container.image.pull';
+        const isSuccessState = event.fields.state === JobState.Success;
+        const isRemovedMsg = event.msg === IncomingApiMessageType.Removed;
+        return isImagePullMethod && isSuccessState && !isRemovedMsg;
+      }),
       switchMap(() => this.ws.call('container.image.query')),
       map((entities) => this.patchState({ entities })),
     );
