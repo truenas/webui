@@ -28,12 +28,6 @@ export interface ApiEvent<T = unknown> {
   fields: T;
   id: number;
   msg: IncomingApiMessageType.Changed | IncomingApiMessageType.Added | IncomingApiMessageType.Removed;
-  // true when item is fully removed from the collection
-  // TODO: Find usages and guard against directly in WebsocketService. Only rely on 'removed' ApiEventMessage
-  /**
-   * @deprecated
-   */
-  cleared?: boolean;
 }
 
 export type IncomingWebsocketMessage =
