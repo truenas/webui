@@ -12,6 +12,7 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -114,7 +115,7 @@ export class BootStatusListComponent implements OnInit {
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
         this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
       },

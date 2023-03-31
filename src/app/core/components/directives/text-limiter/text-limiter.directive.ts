@@ -39,7 +39,7 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges {
   }
 
   constructor(
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     private overlayPositionBuilder: OverlayPositionBuilder,
     private overlay: Overlay,
   ) {}

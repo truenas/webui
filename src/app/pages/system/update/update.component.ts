@@ -175,12 +175,12 @@ export class UpdateComponent implements OnInit {
           } else {
             this.currentTrainDescription = '';
           }
-          // To remember train descrip if user switches away and then switches back
+          // To remember train description if user switches away and then switches back
           this.trainDescriptionOnPageLoad = this.currentTrainDescription;
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           this.dialogService.warn(
-            err.trace.class,
+            error.trace.class,
             this.translate.instant('TrueNAS was unable to reach update servers.'),
           );
         },
@@ -474,10 +474,10 @@ export class UpdateComponent implements OnInit {
           this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
         }
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-        this.dialogService.errorReport(this.translate.instant('Error checking for updates.'), err.reason, err.trace.formatted);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.errorReport(this.translate.instant('Error checking for updates.'), error.reason, error.trace.formatted);
       },
       complete: () => {
         this.loader.close();

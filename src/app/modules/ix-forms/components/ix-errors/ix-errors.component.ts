@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +58,7 @@ export class IxErrorsComponent implements OnChanges {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('control' in changes && this.control) {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();

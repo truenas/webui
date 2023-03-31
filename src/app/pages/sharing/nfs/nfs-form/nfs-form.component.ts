@@ -12,6 +12,7 @@ import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
@@ -198,7 +199,7 @@ export class NfsFormComponent implements OnInit {
 
             return undefined;
           }),
-          catchError((error) => {
+          catchError((error: WebsocketError) => {
             this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
             return EMPTY;
           }),

@@ -38,7 +38,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() allowCustomValue = false;
   @Input() provider: IxComboboxProvider;
 
-  @ViewChild('ixInput') inputElementRef: ElementRef;
+  @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
 
@@ -154,7 +154,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       fromEvent(this.autoCompleteRef.panel.nativeElement, 'scroll')
         .pipe(
           debounceTime(300),
-          map(() => this.autoCompleteRef.panel.nativeElement.scrollTop),
+          map(() => (this.autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
           takeUntil(this.autocompleteTrigger.panelClosingActions),
           untilDestroyed(this),
         ).subscribe(() => {

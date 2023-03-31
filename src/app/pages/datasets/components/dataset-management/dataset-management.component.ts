@@ -60,8 +60,8 @@ enum ScrollType {
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef;
-  @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
+  @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef<HTMLElement>;
+  @ViewChild('ixTree', { static: false }) ixTree: ElementRef<HTMLElement>;
 
   isSystemHaCapable$ = this.store$.select(selectIsSystemHaCapable);
 

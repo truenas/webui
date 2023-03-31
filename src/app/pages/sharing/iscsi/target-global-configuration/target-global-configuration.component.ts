@@ -14,6 +14,7 @@ import {
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi, shared } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -122,7 +123,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
               this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
             );
           }),
-          catchError((error) => {
+          catchError((error: WebsocketError) => {
             this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
             return EMPTY;
           }),

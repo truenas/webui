@@ -8,11 +8,11 @@ import {
   ViewChild,
   OnInit,
   OnChanges,
-  SimpleChanges,
   HostBinding,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ export class SearchInputComponent implements OnInit, OnChanges {
     this.handleSearchValueChanges();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.disabled?.previousValue !== changes.disabled?.currentValue && !!this.searchValue) {
       this.updateSearchValue(this.searchValue);
     }
