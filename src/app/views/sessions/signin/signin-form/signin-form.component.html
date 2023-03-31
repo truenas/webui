@@ -34,6 +34,6 @@
     type="submit"
     color="primary"
     ixTest="log-in"
-    [disabled]="(form.invalid || (isLoading$ | async)) && !wasFormAutofilled"
+    [disabled]="(isLoading$ | async) && !wasFormAutofilled"
   >{{ 'Log In' | translate }}</button>
 </form>
