@@ -114,7 +114,6 @@ import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eu
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
-import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import {
   UploadConfigDialogComponent,
@@ -209,7 +208,6 @@ import { routing } from './system.routing';
     ReplicationSettingsFormComponent,
     TokenSettingsComponent,
     AllowedAddressesFormComponent,
-    SupportComponent,
     SysInfoComponent,
     SyslogCardComponent,
     SyslogFormComponent,

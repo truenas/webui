@@ -5,7 +5,7 @@
   gap: 8px;
   grid-template-columns: 50% 50%;
 
-  @media #{$media-lt-lg} {
+  @media #{$media-lt-md} {
     grid-template-columns: 100%;
   }
 

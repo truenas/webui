@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, TemplateRef, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, Component, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { LayoutService } from 'app/services/layout.service';
@@ -8,6 +8,7 @@ import { LayoutService } from 'app/services/layout.service';
 @Component({
   templateUrl: './general-settings.component.html',
   styleUrls: ['./general-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralSettingsComponent implements AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
