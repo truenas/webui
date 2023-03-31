@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
@@ -45,14 +45,14 @@ export class JobEffects {
     switchMap(() => {
       return this.ws.subscribe('core.get_jobs').pipe(
         filter((event) => event.msg !== IncomingApiMessageType.Removed),
-        map((event) => {
+        switchMap((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
-              return jobAdded({ job: event.fields });
+              return of(jobAdded({ job: event.fields }));
             case IncomingApiMessageType.Changed:
-              return jobChanged({ job: event.fields });
+              return of(jobChanged({ job: event.fields }));
             default:
-              return undefined;
+              return EMPTY;
           }
         }),
       );
