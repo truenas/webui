@@ -25,6 +25,7 @@ export class WebsocketConnectionService {
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private pendingCallsBeforeConnectionReady = new Map<string, unknown>();
 
+  private isTryingReconnect = false;
   private shutDownInProgress = false;
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
 
@@ -99,6 +100,10 @@ export class WebsocketConnectionService {
 
   /** TODO: Extract disconnection logic somewhere else */
   private onClose(event: CloseEvent): void {
+    if (this.isTryingReconnect) {
+      return;
+    }
+    this.isTryingReconnect = true;
     this.isConnectionReady$.next(false);
     this.resetUi();
     if (event.code === 1008) {
@@ -107,12 +112,18 @@ export class WebsocketConnectionService {
         this.translate.instant('Access from your IP is restricted'),
       ).pipe(untilDestroyed(this)).subscribe(() => {
         timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-          next: () => this.initializeWebsocket(),
+          next: () => {
+            this.isTryingReconnect = false;
+            this.initializeWebsocket();
+          },
         });
       });
     } else {
       timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-        next: () => this.initializeWebsocket(),
+        next: () => {
+          this.isTryingReconnect = false;
+          this.initializeWebsocket();
+        },
       });
     }
   }

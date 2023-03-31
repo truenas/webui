@@ -1,0 +1,29 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Sessions' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        mat-button
+        [ixTest]="['sessions', 'configure']"
+        (click)="onConfigure()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Token Lifetime' | translate }}:</span>
+        <span *ixWithLoadingState="tokenLifetime$ as tokenLifetime" class="value">
+          {{ tokenLifetime }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+
+  <ix-conf-table
+    [conf]="sessionsTableConf"
+  ></ix-conf-table>
+</mat-card>

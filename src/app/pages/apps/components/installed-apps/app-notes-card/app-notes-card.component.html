@@ -1,0 +1,23 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Notes' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="notes">
+      <div class="notes-list">
+        <div class="notes-item">
+          {{ 'Thank you for installing {app}' | translate: { app: app.name } }}
+        </div>
+        <div class="notes-item">
+          {{ 'Your release is named {name}' | translate: { name: app.chart_metadata.name } }}
+        </div>
+        <div class="notes-item">
+          {{ 'To learn more about the release, try:' | translate }}
+        </div>
+        <div class="notes-item">
+          {{ '$ mychart cli command' | translate }}
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

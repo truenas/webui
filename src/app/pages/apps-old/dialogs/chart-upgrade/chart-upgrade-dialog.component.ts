@@ -8,6 +8,7 @@ import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
@@ -79,9 +80,9 @@ export class ChartUpgradeDialogComponent {
             this.selectedVersion.item_update_available = summary.item_update_available;
             this.selectedVersion.fetched = true;
           },
-          error: (err) => {
+          error: (error: WebsocketError) => {
             this.appLoaderService.close();
-            this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
+            this.dialogService.errorReport(error.trace.class, error.reason, error.trace.formatted);
           },
         });
     }

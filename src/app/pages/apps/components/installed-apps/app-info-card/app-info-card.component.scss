@@ -1,0 +1,17 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+
+  .details-list {
+    flex: 1;
+    width: 100%;
+  }
+
+  .details-item .value a {
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-all;
+  }
+}

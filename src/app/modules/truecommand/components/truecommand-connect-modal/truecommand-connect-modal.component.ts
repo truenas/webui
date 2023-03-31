@@ -15,6 +15,8 @@ export interface TruecommandSignupModalState {
   config: TrueCommandConfig;
 }
 
+export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
+
 @UntilDestroy()
 @Component({
   styleUrls: ['./truecommand-connect-modal.component.scss'],
@@ -37,7 +39,7 @@ export class TruecommandConnectModalComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private data: TruecommandSignupModalState,
     private dialogService: DialogService,
-    private dialogRef: MatDialogRef<TruecommandConnectModalComponent>,
+    private dialogRef: MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>,
     private fb: FormBuilder,
     private loader: AppLoaderService,
     private ws: WebSocketService,

@@ -42,6 +42,8 @@ import {
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
   @Input() name: string;
 
+  _elementRef: ElementRef<HTMLElement>;
+
   private get iconName(): string {
     if (this.name) {
       return this.name;

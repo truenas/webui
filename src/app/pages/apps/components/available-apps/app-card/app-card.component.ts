@@ -12,7 +12,6 @@ import { AvailableApp } from 'app/interfaces/available-app.interfase';
 })
 export class AppCardComponent {
   @Input() app: AvailableApp;
-  @Input() installed: boolean;
 
   readonly officialCatalog = officialCatalog;
 

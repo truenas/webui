@@ -26,6 +26,7 @@ import {
   AppTableHeaderAction,
 } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -267,7 +268,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add: () => {
-            this.router.navigate(['/', 'sharing', 'iscsi', 'wizard']);
+            this.slideInService.open(IscsiWizardComponent);
           },
           addButtonLabel: this.translate.instant('Wizard'),
           edit: (row: IscsiTarget) => {
@@ -620,7 +621,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                 }
                 this.updateTableServiceStatus(service);
               },
-              error: (error) => {
+              error: (error: WebsocketError) => {
                 let message = this.translate.instant(
                   'Error starting service {serviceName}.',
                   { serviceName: serviceNames.get(service.service) || service.service },
