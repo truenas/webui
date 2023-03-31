@@ -113,6 +113,15 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
+
+  <div
+    *ngIf="selectedApp"
+    class="details-container"
+  >
+    <ix-app-details-panel [app]="selectedApp"></ix-app-details-panel>
+  </div>
 </div>
+

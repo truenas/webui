@@ -27,12 +27,10 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   apps: AvailableApp[] = [];
-  filters: AppsFiltersValues = {
-    search: '',
-    catalogs: [],
-    sort: undefined,
-    categories: [],
-  };
+  filteredApps: AvailableApp[] = [];
+  filters: AppsFiltersValues = undefined;
+  searchQuery = '';
+  isFilterOrSearch = false;
 
   allRecommendedApps: AvailableApp[] = [];
   allNewAndUpdatedApps: AvailableApp[] = [];
@@ -68,30 +66,36 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   changeFilters(filters: AppsFiltersValues): void {
     this.filters = filters;
-    this.loadApplications(true);
+    this.loadApplications(this.filters);
   }
 
-  private loadApplications(hideLoader?: boolean): void {
-    if (!hideLoader) {
-      this.loader.open();
-    }
+  changeSearchQuery(query: string): void {
+    this.searchQuery = query;
+    this.filterApps(this.apps);
+  }
 
-    combineLatest([this.appService.getAvailableApps(this.filters), this.appService.getAllAppsCategories()])
+  private loadApplications(filters?: AppsFiltersValues): void {
+    this.loader.open();
+    combineLatest([this.appService.getAvailableApps(filters), this.appService.getAllAppsCategories()])
       .pipe(untilDestroyed(this))
       .subscribe(([apps, appCategories]) => {
+        this.apps = apps;
+        this.filterApps(apps);
         this.setupApps(apps, appCategories);
-        if (!hideLoader) {
-          this.loader.close();
-        }
+
+        this.loader.close();
         this.cdr.markForCheck();
       });
   }
 
-  private setupApps(apps: AvailableApp[], appCategories: string[]): void {
-    this.apps = apps;
+  private filterApps(apps: AvailableApp[]): void {
+    this.isFilterOrSearch = !!this.searchQuery || !!this.filters;
+    this.filteredApps = apps.filter((app) => app.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+  }
 
-    this.allRecommendedApps = this.apps.filter((app) => app.recommended);
-    this.allNewAndUpdatedApps = this.apps
+  private setupApps(apps: AvailableApp[], appCategories: string[]): void {
+    this.allRecommendedApps = apps.filter((app) => app.recommended);
+    this.allNewAndUpdatedApps = apps
       .sort((a, b) => new Date(a.last_update).getTime() - new Date(b.last_update).getTime());
 
     this.recommendedApps$.next(this.allRecommendedApps.slice(0, this.sliceAmount));
@@ -113,9 +117,8 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
       },
     );
 
-    const categories = this.filters.categories.length ? this.filters.categories : appCategories;
-    categories.forEach((category) => {
-      const categorizedApps = this.apps.filter((app) => app.categories.some((appCategory) => appCategory === category));
+    appCategories.forEach((category) => {
+      const categorizedApps = apps.filter((app) => app.categories.some((appCategory) => appCategory === category));
 
       this.appSections.push(
         {

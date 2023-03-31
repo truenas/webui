@@ -43,7 +43,7 @@ export class SearchInputComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.disabled.previousValue !== changes.disabled.currentValue && !!this.searchValue) {
+    if (changes.disabled?.previousValue !== changes.disabled?.currentValue && !!this.searchValue) {
       this.updateSearchValue(this.searchValue);
     }
   }

@@ -77,3 +77,20 @@
 .tree-container {
   overflow-y: auto;
 }
+
+.drag-active {
+  border: 1px dotted #999;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.empty-tree {
+  margin: 16px 20px;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.grabbed {
+  cursor: grabbing;
+}

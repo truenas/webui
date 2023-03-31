@@ -123,6 +123,7 @@
     "ng2-charts": "~2.4.1",
     "ng2-dragula": "~2.1.1",
     "ngx-color-picker": "~11.0.0",
+    "ngx-drag-drop": "~15.0.1",
     "ngx-filesize": "~3.0.1",
     "ngx-img-fallback": "^2.0.0",
     "ngx-popperjs": "^15.0.4",

@@ -1,0 +1,75 @@
+<ix-modal-header
+  [title]="'Wizard iSCSI' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card class="card">
+  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
+    <mat-vertical-stepper #stepper>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Create or Choose Block Device' | translate }}</ng-template>
+        <ix-device-wizard-step [form]="form.controls.device"></ix-device-wizard-step>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+            [disabled]="form.controls.device.invalid"
+            [fxHide]="!isNewTarget"
+          >{{ 'Next' | translate }}</button>
+          <button
+            mat-button
+            color="primary"
+            type="submit"
+            ixTest="save"
+            [disabled]="form.invalid || isLoading"
+            [fxHide]="isNewTarget"
+          >{{ 'Save' | translate }}</button>
+        </div>
+      </mat-step>
+      <mat-step *ngIf="isNewTarget" #matStepInstance>
+        <ng-template matStepLabel>{{ 'Portal' | translate }}</ng-template>
+        <ix-portal-wizard-step [form]="form.controls.portal"></ix-portal-wizard-step>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >{{ 'Back' | translate }}</button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+            [disabled]="form.controls.portal.invalid"
+          >{{ 'Next' | translate }}</button>
+        </div>
+      </mat-step>
+      <mat-step *ngIf="isNewTarget" #matStepInstance>
+        <ng-template matStepLabel>{{ 'Initiator' | translate }}</ng-template>
+        <ix-initiator-wizard-step [form]="form.controls.initiator"></ix-initiator-wizard-step>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >{{ 'Back' | translate }}</button>
+          <button
+            mat-button
+            color="primary"
+            type="submit"
+            ixTest="save"
+            [disabled]="form.invalid || isLoading"
+          >{{ 'Save' | translate }}</button>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </form>
+</mat-card>

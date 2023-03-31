@@ -20,3 +20,7 @@ export const systemHaCapabilityLoaded = createAction(
 export const passiveNodeReplaced = createAction(
   '[System Info API] Passive Node Replaced',
 );
+
+export const systemInfoUpdated = createAction(
+  '[System Info API] System Info Updated',
+);

@@ -187,15 +187,15 @@ $scrollbar-offset: 20px;
     display: flex;
     min-width: fit-content;
     position: relative;
-  
+
     &:hover {
       background-color: var(--hover-bg);
     }
-  
+
     &.selected {
       background-color: var(--hover-bg);
       color: var(--fg2);
-  
+
       &::before {
         background-color: var(--primary);
         content: '';
@@ -215,4 +215,36 @@ $scrollbar-offset: 20px;
     justify-content: center;
     margin: 15px;
   }
+}
+
+.details-container {
+  color: var(--fg2);
+  display: flex;
+  flex: 1;
+  min-width: inherit;
+  overflow: hidden;
+  padding: 0;
+  position: sticky;
+  top: 0;
+
+  // Hide Details
+  @media (max-width: $breakpoint-hidden) {
+    display: none;
+  }
+
+  // One Card Column
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    max-width: $singlecolumn-max-width;
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn) {
+    max-width: 70%;
+  }
+
 }

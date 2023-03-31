@@ -10848,6 +10848,13 @@ ngx-color-picker@~11.0.0:
   dependencies:
     tslib "^2.0.0"
 
+ngx-drag-drop@~15.0.1:
+  version "15.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-drag-drop/-/ngx-drag-drop-15.0.1.tgz#e751fa0f11a4c86456fbb241bc8c2c530149cee0"
+  integrity sha512-x0YgsVCk95x3YSNZT/EmJvo1sRjra+BtQuZMbRYKc88E0GHIOlmWNp/1Z7w5UdznEp0240KDwYp3crR4FuDGew==
+  dependencies:
+    tslib "^2.3.0"
+
 ngx-filesize@~3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/ngx-filesize/-/ngx-filesize-3.0.1.tgz#620933ae181a1128905404e43b26abb99accba90"
