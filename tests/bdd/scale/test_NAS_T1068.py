@@ -85,8 +85,6 @@ def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
-    rsc.Confirm_Warning(driver)
-
 
 @then('open the user dropdown, and verify the shell value has changed')
 def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):

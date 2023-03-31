@@ -141,6 +141,7 @@ export interface VmPassthroughDeviceChoice {
   available: boolean;
   error: unknown;
   reset_mechanism_defined: boolean;
+  description: string;
 }
 
 export interface VmUsbPassthroughDeviceChoice {

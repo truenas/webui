@@ -1018,8 +1018,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: auto;
   }
 
-  ix-select-dialog .mat-select-placeholder,
-  ix-ipmi .mat-select-placeholder {
+  ix-select-dialog .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
 

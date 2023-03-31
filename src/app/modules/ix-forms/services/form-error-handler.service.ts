@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -46,7 +46,8 @@ export class FormErrorHandlerService {
       const field = extraItem[0].split('.')[1];
       const errorMessage = extraItem[1];
 
-      const control = this.getFormField(formGroup, field, fieldsMap);
+      let control = this.getFormField(formGroup, field, fieldsMap);
+
       if (!control) {
         console.error(`Could not find control ${field}.`);
         // Fallback to default modal error message.
@@ -54,11 +55,19 @@ export class FormErrorHandlerService {
         return;
       }
 
+      if ((control as UntypedFormArray).controls?.length) {
+        const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
+
+        control = (control as UntypedFormArray).controls
+          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value));
+      }
+
       control.setErrors({
         manualValidateError: true,
         manualValidateErrorMsg: errorMessage,
         ixManualValidateError: { message: errorMessage },
       });
+
       control.markAsTouched();
     }
   }

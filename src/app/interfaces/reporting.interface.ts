@@ -98,7 +98,6 @@ export interface ZfsUpdate {
 
 export interface ReportingConfig {
   confirm_rrd_destroy?: boolean;
-  cpu_in_percentage: boolean;
   graph_age: number;
   graph_points: number;
   graphite: string;

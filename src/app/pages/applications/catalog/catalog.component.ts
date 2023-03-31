@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Subscription } from 'rxjs';
 import {
@@ -18,6 +18,7 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { CommonAppsToolbarButtonsComponent } from 'app/pages/applications/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
@@ -25,8 +26,6 @@ import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/char
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { AppState } from 'app/store';
-import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 interface CatalogSyncJob {
   id: number;
@@ -77,7 +76,8 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
-    private store$: Store<AppState>,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -274,14 +274,9 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
+      this.snackbar.success(this.translate.instant('Syncing all catalogs. This may take a few minutes.'));
       this.loadCatalogs();
     });
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.store$.dispatch(jobIndicatorPressed());
-      });
   }
 
   setupCatalogMenu(): void {

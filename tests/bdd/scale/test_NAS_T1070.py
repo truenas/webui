@@ -86,8 +86,6 @@ def click_enable_permit_sudo_Checkbox_and_click_save(driver):
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
-    rsc.Confirm_Warning(driver)
-
 
 @then('the changes should be saved')
 def the_changes_should_be_saved(driver):

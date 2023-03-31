@@ -38,7 +38,7 @@
           </ng-container>
         </span>
       </div>
-      <div class="details-item">
+      <div *ngIf="!isZvol" class="details-item">
         <span class="label">{{ 'Enable Atime' | translate }}:</span>
         <span class="value">
           {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}

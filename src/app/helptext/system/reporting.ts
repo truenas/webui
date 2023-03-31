@@ -1,8 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext = {
-  cpu_in_percentage_tooltip: T('When set, report CPU usage in percent \
- instead of units of kernel time.'),
   graphite_tooltip: T('Hostname or IP address of a remote  \
  <a href="http://graphiteapp.org/" target="_blank">Graphite</a> server.'),
   graph_age_tooltip: T('Maximum time a graph is stored in months (allowed values are 1-60). \

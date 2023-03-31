@@ -27,9 +27,6 @@ import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import {
-  IpmiIdentifyDialogComponent,
-} from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
   OpenVpnServerConfigComponent,
@@ -574,13 +571,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getIpmiActions(): AppTableAction[] {
     return [{
-      icon: 'highlight',
-      name: 'identify',
-      matTooltip: this.translate.instant('Identify Light'),
-      onClick: () => {
-        this.matDialog.open(IpmiIdentifyDialogComponent);
-      },
-    }, {
       icon: 'launch',
       name: 'manage',
       matTooltip: this.translate.instant('Manage'),

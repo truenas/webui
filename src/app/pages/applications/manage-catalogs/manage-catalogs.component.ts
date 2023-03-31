@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
@@ -13,6 +14,7 @@ import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
@@ -73,6 +75,8 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -201,6 +205,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
+      this.snackbar.success(this.translate.instant('Syncing all catalogs. This may take a few minutes.'));
       this.refresh();
     });
   }

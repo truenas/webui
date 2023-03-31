@@ -170,6 +170,38 @@ def Verify_The_Dashboard(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
+def Verify_App_Status(driver, app_Name, app):
+    if is_element_present(driver, f'//mat-card[contains(.,"{app_Name}")]//span[@class="status active"]') is False:
+        assert wait_on_element(driver, 20, f'//strong[contains(.,"{app_Name}")]', 'clickable')
+        driver.find_element_by_xpath(f'//strong[contains(.,"{app_Name}")]').click()
+        if wait_on_element(driver, 3, xpaths.popup.please_Wait):
+            assert wait_on_element_disappear(driver, 60, xpaths.popup.please_Wait)
+        # refresh loop
+        assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
+        driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
+
+        timeout = time.time() + 30
+        while time.time() < timeout:
+            assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
+            driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
+            # make sure Please wait pop up is gone before continuing.
+            if wait_on_element(driver, 3, xpaths.popup.please_Wait):
+                assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
+
+            # to make sure the loop does not run to fast.
+            time.sleep(1)
+
+            if is_element_present(driver, f'//div[contains(text(),"Started container {app}")]'):
+                break
+
+        assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
+        assert wait_on_element_disappear(driver, 40, xpaths.progress.spinner)
+        assert wait_on_element(driver, 500, f'//mat-card[contains(.,"{app_Name}")]//span[@class="status active"]')
+    else:
+        assert wait_on_element(driver, 500, f'//mat-card[contains(.,"{app_Name}")]//span[@class="status active"]')
+
+
 def Wait_For_Inputable_And_Input_Value(driver, xpath, value):
     assert wait_on_element(driver, 5, xpath, 'inputable')
     driver.find_element_by_xpath(xpath).clear()

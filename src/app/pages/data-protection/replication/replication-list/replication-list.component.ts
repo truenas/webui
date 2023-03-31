@@ -34,7 +34,7 @@ import {
   KeychainCredentialService,
   ReplicationService,
 } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { ModalService, ModalServiceMessage } from 'app/services/modal.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -104,6 +104,15 @@ export class ReplicationListComponent implements EntityTableConfig {
     this.entityList = entityList;
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
+    });
+
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
+      if (message.action === 'open' && message.component === 'replicationForm') {
+        this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
+      }
+      if (message.action === 'open' && message.component === 'replicationWizard') {
+        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
+      }
     });
   }
 

@@ -15,7 +15,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ReportsConfigFormComponent } from './reports-config-form.component';
 
 const mockInitialConfig = {
-  cpu_in_percentage: false,
   graph_age: 12,
   graph_points: 1200,
   graphite: '',
@@ -23,7 +22,6 @@ const mockInitialConfig = {
 } as ReportingConfig;
 
 const mockUserConfig = {
-  cpu_in_percentage: true,
   graph_age: 24,
   graph_points: 2048,
   graphite: '127.0.0.1',
@@ -66,7 +64,6 @@ describe('ReportsConfigFormComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('reporting.config');
     expect(values).toEqual({
-      'Report CPU usage in percent': true,
       'Graphite Separate Instances': true,
       'Remote Graphite Server Hostname': '127.0.0.1',
       'Graph Age in Months': '24',
@@ -105,7 +102,6 @@ describe('ReportsConfigFormComponent', () => {
     );
     expect(ws.call).toHaveBeenLastCalledWith('reporting.update', [{
       confirm_rrd_destroy: true,
-      cpu_in_percentage: true,
       graph_age: 18,
       graph_points: 2048,
       graphite: '127.0.0.1',
@@ -117,7 +113,6 @@ describe('ReportsConfigFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
 
     expect(await form.getValues()).toEqual({
-      'Report CPU usage in percent': true,
       'Graphite Separate Instances': true,
       'Remote Graphite Server Hostname': '127.0.0.1',
       'Graph Age in Months': '24',
@@ -128,7 +123,6 @@ describe('ReportsConfigFormComponent', () => {
     await resetButton.click();
 
     expect(await form.getValues()).toEqual({
-      'Report CPU usage in percent': false,
       'Graphite Separate Instances': false,
       'Remote Graphite Server Hostname': '',
       'Graph Age in Months': '12',

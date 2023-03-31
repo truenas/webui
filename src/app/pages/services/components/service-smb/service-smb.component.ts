@@ -56,6 +56,7 @@ export class ServiceSmbComponent implements OnInit {
     bindip: [[] as string[], []],
     smb_options: ['', []],
     aapl_extensions: [false, []],
+    multichannel: [false, []],
   });
 
   readonly helptext = helptext;
@@ -77,6 +78,7 @@ export class ServiceSmbComponent implements OnInit {
     bindip: helptext.cifs_srv_bindip_tooltip,
     smb_options: helptext.cifs_srv_smb_options_tooltip,
     aapl_extensions: helptext.cifs_srv_aapl_extensions_tooltip,
+    multichannel: helptext.cifs_srv_multichannel_tooltip,
   };
 
   readonly logLevelOptions$ = of([

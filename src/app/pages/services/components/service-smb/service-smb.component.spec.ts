@@ -123,6 +123,7 @@ describe('ServiceSmbComponent', () => {
       'Log Level': 'Minimum',
       'NTLMv1 Auth': false,
       'NetBIOS Alias': [],
+      Multichannel: false,
       'NetBIOS Name': 'truenas',
       'UNIX Charset': 'UTF-8',
       'Use Syslog Only': false,
@@ -164,6 +165,7 @@ describe('ServiceSmbComponent', () => {
       localmaster: true,
       syslog: false,
       unixcharset: 'UTF-8',
+      multichannel: false,
       smb_options: '',
     }]);
   });
@@ -208,6 +210,7 @@ describe('ServiceSmbComponent', () => {
       loglevel: 'FULL',
       localmaster: false,
       syslog: true,
+      multichannel: false,
       unixcharset: 'UTF-16',
       smb_options: 'new-params',
     }]);

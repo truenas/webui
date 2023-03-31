@@ -1,7 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -127,25 +127,5 @@ def confirm_installation_is_successful_and_the_app_is_active(driver):
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
     assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]')
-    if is_element_present(driver, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]') is False:
-        assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]', 'clickable')
-        driver.find_element_by_xpath('//strong[contains(.,"truecommand-test")]').click()
-        if wait_on_element(driver, 3, xpaths.popup.please_Wait):
-            assert wait_on_element_disappear(driver, 60, xpaths.popup.please_Wait)
-        # refresh loop
-        assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
-        driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
-        while is_element_present(driver, '//div[(normalize-space(text())="Started container ix-chart")]') is False:
-            time.sleep(2)
-            assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
-            driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
-            # make sure Please wait pop up is gone before continuing.
-            if wait_on_element(driver, 3, xpaths.popup.please_Wait):
-                assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-        else:
-            assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
-            driver.find_element_by_xpath(xpaths.button.close).click()
-            assert wait_on_element_disappear(driver, 40, xpaths.progress.spinner)
-        assert wait_on_element(driver, 500, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
-    else:
-        assert wait_on_element(driver, 500, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+
+    rsc.Verify_App_Status(driver, "truecommand-test", "ix-chart")

@@ -257,6 +257,8 @@ export class UserFormComponent {
     ).subscribe({
       next: () => {
         this.isFormLoading = true;
+        this.cdr.markForCheck();
+
         let request$: Observable<unknown>;
         if (this.isNewUser) {
           request$ = this.ws.call('user.create', [{
