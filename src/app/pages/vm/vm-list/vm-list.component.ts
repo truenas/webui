@@ -474,7 +474,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(VmWizardComponent);
+    this.slideIn.open(VmWizardComponent);
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {
@@ -483,7 +483,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     })
       .afterClosed()
       .pipe(
-        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data.wasStopped),
+        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data?.wasStopped),
         untilDestroyed(this),
       )
       .subscribe((data: { forceAfterTimeout: boolean }) => {

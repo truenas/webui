@@ -27,9 +27,6 @@ import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import {
-  IpmiIdentifyDialogComponent,
-} from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
   OpenVpnServerConfigComponent,
@@ -43,6 +40,7 @@ import {
   StorageService, SystemGeneralService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
@@ -193,7 +191,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ipmiEnabled: boolean;
 
-  hasConsoleFooter = false;
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -207,6 +204,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     private core: CoreService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
+    private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -214,13 +212,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.ws
-      .call('system.advanced.config')
-      .pipe(untilDestroyed(this))
-      .subscribe((advancedConfig) => {
-        this.hasConsoleFooter = advancedConfig.consolemsg;
-      });
-
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
       this.getInterfaces();
@@ -576,18 +567,11 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getIpmiActions(): AppTableAction[] {
     return [{
-      icon: 'highlight',
-      name: 'identify',
-      matTooltip: this.translate.instant('Identify Light'),
-      onClick: () => {
-        this.matDialog.open(IpmiIdentifyDialogComponent);
-      },
-    }, {
       icon: 'launch',
       name: 'manage',
       matTooltip: this.translate.instant('Manage'),
       onClick: (row: IpmiRow) => {
-        this.window.open(`http://${row.ipaddress}`);
+        this.window.open(`https://${row.ipaddress}`);
       },
     }];
   }
@@ -630,13 +614,12 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             error: (err) => {
               row.onChanging = false;
-              this.dialog.errorReport(
-                this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
+              this.dialog.error({
+                ...this.errorHandler.parseWsError(err),
+                title: this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.reason,
-                err.trace.formatted,
-              );
+              });
             },
           });
       },
@@ -668,13 +651,12 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             error: (err) => {
               row.onChanging = false;
-              this.dialog.errorReport(
-                this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
+              this.dialog.error({
+                ...this.errorHandler.parseWsError(err),
+                title: this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.reason,
-                err.trace.formatted,
-              );
+              });
             },
           });
       },

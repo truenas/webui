@@ -212,11 +212,6 @@ export class IdmapFormComponent implements OnInit {
       });
   }
 
-  certificatesLinkClicked(): void {
-    this.slideInService.close();
-    this.router.navigate(['/', 'credentials', 'certificates']);
-  }
-
   private loadBackendChoices(): void {
     this.isLoading = true;
 

@@ -37,7 +37,11 @@ describe('CertificateConstraintsComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        hasAuthorityKeyIdentifier: true,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   });
@@ -232,6 +236,27 @@ describe('CertificateConstraintsComponent', () => {
           ],
         },
       });
+    });
+  });
+
+  describe('hasAuthorityKeyIdentifier = false', () => {
+    beforeEach(() => {
+      spectator.setInput('hasAuthorityKeyIdentifier', false);
+    });
+
+    it('does not show Authority Key Identifier section', async () => {
+      const labels = await form.getLabels();
+      expect(labels).not.toContain('Authority Key Identifier');
+    });
+
+    it('has empty object for Authority Key Identifier in getPayload()', () => {
+      const payload = spectator.component.getPayload();
+      expect(payload.cert_extensions.AuthorityKeyIdentifier).toMatchObject({});
+    });
+
+    it('does not show Authority Key Identifier in getSummary()', () => {
+      const summary = spectator.component.getSummary();
+      expect(summary).toHaveLength(0);
     });
   });
 });

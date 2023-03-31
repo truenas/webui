@@ -1,0 +1,25 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Replication' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        mat-button
+        [ixTest]="['replication', 'configure']"
+        (click)="onConfigurePressed()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Replication Tasks Limit' | translate }}:</span>
+        <span *ixWithLoadingState="taskLimit$ as taskLimit" class="value">
+          {{ taskLimit || '–' }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

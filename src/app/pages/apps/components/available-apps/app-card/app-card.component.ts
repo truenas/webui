@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { officialCatalog } from 'app/constants/catalog.constants';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 
 @Component({
   selector: 'ix-app-card',
@@ -11,8 +11,7 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppCardComponent {
-  @Input() app: CatalogApp;
-  @Input() installed: boolean;
+  @Input() app: AvailableApp;
 
   readonly officialCatalog = officialCatalog;
 

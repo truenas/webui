@@ -30,11 +30,11 @@ import {
   CertificateImportComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
 import {
-  CertificateOptionsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
-import {
   CertificateConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+import {
+  CertificateOptionsComponent,
+} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
@@ -227,7 +227,7 @@ describe('CertificateAddComponent', () => {
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
-      create_type: CertificateCreateType.CreateImported,
+      create_type: CertificateCreateType.Import,
       certificate: '-----BEGIN CERTIFICATE-----',
       passphrase: '1234567890',
       privatekey: '-----BEGIN PRIVATE-----',

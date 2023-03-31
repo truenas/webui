@@ -17,7 +17,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -30,6 +30,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+
+const defaultHomePath = '/nonexistent';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -77,7 +79,7 @@ export class UserFormComponent {
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
-    home: ['/nonexistent', []],
+    home: [defaultHomePath, []],
     home_mode: ['755'],
     home_create: [false],
     sshpubkey: [null as string],
@@ -126,14 +128,14 @@ export class UserFormComponent {
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;
     if (this.isNewUser) {
-      if (!homeCreate && home !== '/nonexistent') {
+      if (!homeCreate && home !== defaultHomePath) {
         return this.translate.instant(
           'With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.',
           { path: '\'' + this.form.value.home + '\'' },
         );
       }
     } else {
-      if (this.editingUser.immutable) {
+      if (this.editingUser.immutable || home === defaultHomePath) {
         return '';
       }
       if (!homeCreate && this.editingUser.home !== home) {
@@ -164,7 +166,17 @@ export class UserFormComponent {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-  ) { }
+  ) {
+    this.form.controls.smb.errors$.pipe(
+      filter((error) => error?.manualValidateErrorMsg),
+      switchMap(() => this.form.controls.password.valueChanges),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      if (this.form.controls.smb.invalid) {
+        this.form.controls.smb.updateValueAndValidity();
+      }
+    });
+  }
 
   /**
    * @param user Skip argument to add new user.
@@ -188,7 +200,7 @@ export class UserFormComponent {
       ),
     );
 
-    if (user?.home && user.home !== '/nonexistent') {
+    if (user?.home && user.home !== defaultHomePath) {
       this.storageService.filesystemStat(user.home).pipe(untilDestroyed(this)).subscribe((stat) => {
         this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
         this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
@@ -246,6 +258,8 @@ export class UserFormComponent {
     ).subscribe({
       next: () => {
         this.isFormLoading = true;
+        this.cdr.markForCheck();
+
         let request$: Observable<unknown>;
         if (this.isNewUser) {
           request$ = this.ws.call('user.create', [{

@@ -8,7 +8,7 @@ import {
 import { Pool } from 'app/interfaces/pool.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import {
-  Disk, isTopologyDisk, TopologyItem, TopologyItemStats,
+  Disk, isTopologyDisk, TopologyItemStats,
 } from 'app/interfaces/storage.interface';
 
 export enum EnclosureRelation {
@@ -258,10 +258,6 @@ export class SystemProfiler {
       }
       this.storeVdevInfo(metadata, stats);
     });
-  }
-
-  getVdev(alias: VDevMetadata): TopologyItem {
-    return this.pools[alias.poolIndex].topology.data[alias.vdevIndex];
   }
 
   storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: TopologyItemStats }): void {

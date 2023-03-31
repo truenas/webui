@@ -12,9 +12,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import {
-  CertificateStep,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
+import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -23,7 +21,7 @@ import { DialogService, WebSocketService } from 'app/services';
   templateUrl: './certificate-import.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateImportComponent implements OnInit, SummaryProvider, CertificateStep {
+export class CertificateImportComponent implements OnInit, SummaryProvider {
   form = this.formBuilder.group({
     csrExistsOnSystem: [false],
     csr: [null as number],
@@ -61,9 +59,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider, Cert
 
   getSummary(): SummarySection {
     const values = this.form.value;
-    const certificateBody = values.certificate.match(/-----BEGIN CERTIFICATE-----\s(.*)\s-----END CERTIFICATE-----/s)?.[1]
-      || values.certificate;
-    const certificatePreview = certificateBody.replace(/(.{6}).*(.{6})/s, '$1......$2');
+    const certificatePreview = getCertificatePreview(values.certificate);
 
     const summary: SummarySection = [];
 

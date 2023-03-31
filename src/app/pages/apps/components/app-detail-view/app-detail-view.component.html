@@ -1,5 +1,7 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle | titlecase"></ix-page-title-header>
+  <ix-page-title-header [pageTitle]="pageTitle | titlecase">
+    <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
+  </ix-page-title-header>
 </ng-template>
 
 <div fxLayout="row nowrap">
@@ -12,8 +14,9 @@
         <a
           mat-button
           color="primary"
-          [ixTest]="[app.name, 'install']"
-          [disabled]="!app" (click)="onInstallButtonPressed()"
+          [ixTest]="[app?.name, 'install']"
+          [disabled]="!app"
+          (click)="installButtonPressed()"
         >{{ 'Install' | translate }}</a>
       </div>
 
@@ -24,7 +27,7 @@
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
           <ng-template #latestAppVersion>
             <ng-container *ngIf="app?.latest_app_version; else notAvailable">
-              {{ app.latest_app_version }}
+              {{ app?.latest_app_version }}
             </ng-container>
           </ng-template>
         </div>
@@ -33,7 +36,7 @@
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
           <ng-template #appCategories>
             <ng-container *ngIf="app?.categories; else notAvailable">
-              {{ app.categories.join(', ') }}
+              {{ app?.categories.join(', ') }}
             </ng-container>
           </ng-template>
         </div>
@@ -116,64 +119,9 @@
   <div fxFlex fxLayoutAlign="end">
 
     <section class="app-info-cards">
-      <ix-app-info-card>
-        <h3>{{ 'Available Resources' | translate }}</h3>
-
-        <div class="app-list-item">
-          {{ 'CPU Usage' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Memory Usage' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Pool' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Available Space' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-      </ix-app-info-card>
-
-      <ix-app-info-card>
-        <h3>{{ 'Helm Chart Info' | translate }}</h3>
-
-        <div class="app-list-item">
-          {{ 'Catalog' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Train' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Chart Version' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Maintainer' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-      </ix-app-info-card>
-
-      <ix-app-info-card>
-        <h3>{{ 'Application Info' | translate }}</h3>
-
-        <div class="app-list-item">
-          {{ 'Version' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'App Source' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Last App Updated' }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-      </ix-app-info-card>
+      <ix-app-resources-card [isLoading$]="isLoading$"></ix-app-resources-card>
+      <ix-app-helm-chart-card [isLoading$]="isLoading$"></ix-app-helm-chart-card>
+      <ix-app-available-info-card [isLoading$]="isLoading$"></ix-app-available-info-card>
     </section>
 
   </div>

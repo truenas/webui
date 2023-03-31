@@ -35,7 +35,6 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly isError$ = this.select((state) => state.error);
   readonly entities$ = this.select((state) => state.entities);
-  readonly entitiesTotal$ = this.select((state) => state.entities.length);
 
   readonly loadEntities = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(

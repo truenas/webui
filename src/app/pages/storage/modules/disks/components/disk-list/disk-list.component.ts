@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import {
-  forkJoin, lastValueFrom, of, Subject,
+  forkJoin, lastValueFrom, of, Subject, switchMap,
 } from 'rxjs';
 import { catchError, debounceTime, map } from 'rxjs/operators';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
@@ -27,7 +27,6 @@ import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -105,7 +104,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     protected ws: WebSocketService,
     protected router: Router,
     private matDialog: MatDialog,
-    private core: CoreService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
@@ -197,8 +195,10 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
     disksUpdateTrigger$.pipe(
       debounceTime(50),
+      switchMap(() => this.ws.call('disk.get_unused')),
       untilDestroyed(this),
-    ).subscribe(() => {
+    ).subscribe((unusedDisks) => {
+      this.unusedDisks = unusedDisks;
       entityList.getData();
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);

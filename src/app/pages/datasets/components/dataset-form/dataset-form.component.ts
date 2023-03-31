@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
@@ -37,7 +38,7 @@ import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/mo
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { FormSelectOption } from 'app/modules/entity/entity-form/models/form-select-option.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -90,8 +91,8 @@ export class DatasetFormComponent implements FormConfiguration {
     quota: '', refquota: '', reservation: '', refreservation: '', special_small_block_size: '',
   };
 
-  private minquota = 1024 * 1024 * 1024; // 1G minimum
-  private minrefquota = 1024 * 1024 * 1024;
+  private minquota = GiB; // 1G minimum
+  private minrefquota = GiB;
 
   parent: string;
   protected parentHasPassphrase = false;

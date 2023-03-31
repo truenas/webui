@@ -91,13 +91,6 @@
                 </span>
               </mat-list-item>
               <mat-list-item>
-                <div
-                  *ngIf="usageMax >= 70"
-                  class="label-icon"
-                  [ngClass]="{ warn: usageMax < 90, danger: usageMax > 89 }"
-                >
-                  <ix-icon name="error"></ix-icon>
-                </div>
                 <span class="label">
                   <strong> {{ 'Highest Usage' | translate }}: </strong>
                 </span>

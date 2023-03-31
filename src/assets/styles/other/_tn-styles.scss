@@ -163,6 +163,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-drawer,
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
   .mat-mdc-card,
+  .mat-mdc-option,
   .mat-mdc-paginator,
   .mat-mdc-select-content,
   .mat-mdc-select-panel,
@@ -998,8 +999,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: auto;
   }
 
-  ix-select-dialog .mat-mdc-select-placeholder,
-  ix-ipmi .mat-mdc-select-placeholder {
+  ix-select-dialog .mat-mdc-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
 
@@ -1364,6 +1364,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-form-field.mat-focused:focus-within {
     outline: 1px solid var(--primary);
   }
+
+  .error-warning-icon {
+    color: var(--orange);
+    margin-right: 10px;
+  }
 } // end of ix theme
 
 
@@ -1436,4 +1441,15 @@ mat-form-field {
 .mdc-line-ripple::before,
 .mdc-line-ripple::after {
   border: 0 !important;
+}
+
+.manual-selection-dialog {
+  .mat-mdc-dialog-container {
+    max-width: inherit;
+  }
+}
+
+.multi-error-dialog.mat-mdc-dialog-container,
+.multi-error-dialog.mat-mdc-dialog-content {
+  overflow: auto !important;
 }

@@ -224,7 +224,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     this.dialogService.confirm({
       title: this.translate.instant('Remove Invalid Quotas'),
       message: this.translate.instant('This action will set all dataset quotas for the removed or invalid groups to 0, \
-      virutally removing any dataset quota entires for such groups. \
+      virtually removing any dataset quota entries for such groups. \
       Are you sure you want to proceed?'),
       buttonText: this.translate.instant('Remove'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
