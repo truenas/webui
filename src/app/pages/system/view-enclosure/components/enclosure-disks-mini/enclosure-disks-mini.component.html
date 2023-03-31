@@ -38,16 +38,16 @@
       <!-- LEGEND -->
       <div class="header-container" id="legend">
         <h3 class="header">{{ 'Pools' | translate }}</h3>
-        <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
+        <div *ngIf="enclosurePools?.length > 0; else noPools" class="legend">
           <div *ngFor="let pool of selectedEnclosurePools; let i = index" class="legend-item">
             <div
               class="swatch"
               [style.background]="theme[themeKey(theme.accentColors[i])]"
             ></div>
-            {{ pool }}
-            <span *ngIf="!findPoolByName(pool)?.healthy">
+            <div class="legend-label">{{ pool }}</div>
+            <div *ngIf="!findPoolByName(pool)?.healthy" class="legend-icon">
               <ix-icon name="mdi-alert"></ix-icon>
-            </span>
+            </div>
           </div>
         </div>
 

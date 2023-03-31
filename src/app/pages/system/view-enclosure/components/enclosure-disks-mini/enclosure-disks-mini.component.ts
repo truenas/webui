@@ -34,7 +34,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   emptySlotView = this.defaultView;
 
   get enclosurePools(): string[] {
-    return this.selectedEnclosureView.pools;
+    return this.selectedEnclosureView?.pools;
   }
 
   constructor(

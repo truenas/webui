@@ -429,16 +429,30 @@ div.vdev-disk {
 }
 
 .mini .legend-item {
-  display: inline-block;
-  margin-right: 12px;
-}
+  display: inline;
+  height: 24px;
+  line-height: 24px;
+  margin: 0 8px;
 
-.mini .legend-item .swatch {
-  border-radius: 6px;
-  float: left;
-  height: 8px;
-  margin: 6px;
-  width: 8px;
+  .swatch {
+    border-radius: 6px;
+    display: inline-block;
+    height: 8px;
+    margin: 12px 6px 0;
+    width: 8px;
+  }
+
+  .legend-label {
+    display: inline;
+    margin: 0 6px;
+    vertical-align: middle;
+  }
+
+  .legend-icon {
+    display: inline;
+    position: relative;
+    top: 4px;
+  }
 }
 
 .mini .disk-basic-details {

@@ -25,6 +25,12 @@ export interface SystemProfile {
   enclosureStore$: Observable<EnclosureState>;
 }
 
+export enum EnclosureSelectorState {
+  Show = 'show',
+  Hide = 'hide',
+  Uninitialized = 'uninitialized',
+}
+
 @UntilDestroy()
 @Component({
   templateUrl: './view-enclosure.component.html',
@@ -50,6 +56,23 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   systemState: EnclosureState;
   views: ViewConfig[] = [];
   supportedHardware = false;
+  get minWidth(): string {
+    let count = 1;
+    if (this.showEnclosureSelector) {
+      count = this.systemState.enclosureViews.length;
+    }
+
+    return (count * 240).toString();
+  }
+
+  private _showEnclosureSelector: EnclosureSelectorState = EnclosureSelectorState.Uninitialized;
+  get showEnclosureSelector(): boolean {
+    return this._showEnclosureSelector === EnclosureSelectorState.Show;
+  }
+
+  get showVisualizer(): boolean {
+    return this._showEnclosureSelector !== EnclosureSelectorState.Uninitialized;
+  }
 
   delayPending = true;
   get spinner(): boolean {
@@ -65,22 +88,32 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return false;
   }
 
+  get isRackmount(): boolean {
+    switch (this.systemProduct) {
+      case 'FREENAS-MINI-3.0':
+      case 'TRUENAS-MINI-3.0':
+      case 'FREENAS-MINI-3.0-E':
+      case 'TRUENAS-MINI-3.0-E':
+      case 'FREENAS-MINI-3.0-E+':
+      case 'TRUENAS-MINI-3.0-E+':
+      case 'FREENAS-MINI-3.0-X':
+      case 'TRUENAS-MINI-3.0-X':
+      case 'FREENAS-MINI-3.0-X+':
+      case 'TRUENAS-MINI-3.0-X+':
+      case 'FREENAS-MINI-3.0-XL+':
+      case 'TRUENAS-MINI-3.0-XL+':
+        return false;
+      default:
+        return true;
+    }
+  }
+
   get selectedEnclosure(): number | null {
     if (!this.systemState) return null;
     const selected = this.systemState.enclosureViews?.find((view: EnclosureView) => {
       return view.number === this.systemState.selectedEnclosure;
     });
     return selected ? selected.number : null;
-  }
-
-  get showEnclosureSelector(): boolean {
-    if (
-      !this.systemState
-      || !this.events
-      || !this.supportedHardware
-    ) return false;
-
-    return (this.shelfCount > 0);
   }
 
   get controller(): EnclosureView | null {
@@ -180,7 +213,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
 
-    // Replace system-profiler with store...
     this.enclosureStore.loadData();
     this.systemProfile = {
       enclosureStore$: this.enclosureStore.data$,
@@ -191,10 +223,23 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe((state: EnclosureState) => {
       this.systemState = state;
+
+      // Only set Hide on first load of data to avoid rendering every update
+      if (this._showEnclosureSelector === EnclosureSelectorState.Uninitialized) {
+        this._showEnclosureSelector = state.enclosureViews.length > 1
+          ? EnclosureSelectorState.Show
+          : EnclosureSelectorState.Hide;
+      }
+
+      if (state.enclosureViews.length > 1) {
+        this._showEnclosureSelector = EnclosureSelectorState.Show;
+        this.extractVisualizations();
+      }
+
       setTimeout(() => {
         this.delayPending = false;
+        this.addViews();
       }, 1500);
-      this.addViews();
     });
   }
 

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import {
-  combineLatest, forkJoin, Observable, Observer, of, tap,
+  combineLatest, forkJoin, Observable, Observer, of, Subject, tap,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
@@ -22,6 +23,7 @@ import {
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DisksUpdateService } from 'app/services/disks-update.service';
 
 export interface EnclosureState {
   areEnclosuresLoading: boolean;
@@ -51,21 +53,25 @@ interface ProcessParameters {
   enclosures: Enclosure[];
 }
 
+@UntilDestroy()
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly data$ = this.select((state) => state);
   readonly enclosureViews$ = this.select((state) => state.enclosureViews);
   readonly selectedEnclosure$ = this.select((state) => state.selectedEnclosure);
 
+  private disksUpdateSubscriptionId: string;
   private defaultEnclosureSelection = 0;
   private selectedSlotNumber: number | null = null;
 
   constructor(
     private ws: WebSocketService,
+    private disksUpdateService: DisksUpdateService,
     private dialogService: DialogService,
     private sorter: StorageService,
   ) {
     super(initialState);
+    this.listenForDiskUpdates();
   }
 
   readonly loadData = this.effect((triggers$: Observable<void>) => {
@@ -397,8 +403,14 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return this.ws.subscribe('pool.query');
   }
 
-  listenForDiskUpdates(): Observable<ApiEvent<Disk>> {
-    return this.ws.subscribe('disk.query');
+  listenForDiskUpdates(): void { // Observable<Disk[]> {
+    if (!this.disksUpdateSubscriptionId) {
+      const diskUpdatesTrigger$ = new Subject<Disk[]>();
+      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
+      diskUpdatesTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.loadData();
+      });
+    }
   }
 
   patchStateWithPoolData(): (source: Observable<Pool[]>) => Observable<Pool[]> {
