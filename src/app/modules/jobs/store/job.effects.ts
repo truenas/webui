@@ -44,7 +44,7 @@ export class JobEffects {
     ofType(jobsLoaded),
     switchMap(() => {
       return this.ws.subscribe('core.get_jobs').pipe(
-        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+        filter((event) => event.msg !== IncomingApiMessageType.Removed),
         switchMap((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
@@ -63,7 +63,7 @@ export class JobEffects {
     ofType(jobsLoaded),
     switchMap(() => {
       return this.ws.subscribe('core.get_jobs').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => jobRemoved({ id: event.id })),
       );
     }),
