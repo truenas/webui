@@ -553,9 +553,9 @@ export class ZvolFormComponent {
     delete data.algorithm;
 
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+      next: (dataset) => {
         this.isLoading = false;
-        this.slideInService.close(null, true);
+        this.slideInService.close(null, dataset);
       },
       error: (error) => {
         this.isLoading = false;

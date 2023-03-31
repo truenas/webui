@@ -157,6 +157,8 @@
   "Stop Flashing": "",
   "Subject Alternative Name": "",
   "Sudo Enabled": "",
+  "Switched to new dataset «{name}».": "",
+  "Switched to new zvol «{name}».": "",
   "Thank you for installing {app}": "",
   "The VM could not start because the current configuration could potentially require more RAM than is available on the system. Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution. Would you like to overcommit memory?": "",
   "The product of vCPUs, cores and threads must not exceed {maxVcpus} on this system.": "",
