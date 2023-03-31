@@ -73,6 +73,8 @@ export class SigninFormComponent implements OnInit {
   }
 
   private checkForTwoFactor(): void {
+    // TODO: NAS-121248 Temporarily disabled, as it is broken due to middleware changes.
+    return;
     this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactor) => {
       this.hasTwoFactor = hasTwoFactor;
       if (hasTwoFactor) {
