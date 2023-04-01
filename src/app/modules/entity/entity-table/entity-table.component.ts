@@ -550,13 +550,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.getFunction = EMPTY;
     }
 
-    if (this.conf.callGetFunction) {
-      this.conf.callGetFunction(this);
-    } else {
-      this.callGetFunction();
-    }
-
-    if (this.asyncView) {
+    if (this.asyncView && !this.interval) {
+      // One interval per table is enough
       this.interval = setInterval(() => {
         if (this.conf.callGetFunction) {
           this.conf.callGetFunction(this);
@@ -564,6 +559,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           this.callGetFunction(true);
         }
       }, 10000);
+    } else if (this.conf.callGetFunction) {
+      this.conf.callGetFunction(this);
+    } else {
+      this.callGetFunction();
     }
   }
 
