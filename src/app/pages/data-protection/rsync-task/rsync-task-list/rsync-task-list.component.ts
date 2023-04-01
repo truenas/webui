@@ -93,7 +93,10 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
 
   afterInit(entityList: EntityTableComponent<RsyncTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(
+      filter((value) => !!value.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.entityList.getData();
     });
   }
