@@ -100,10 +100,13 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     );
   }
 
-  private parseDevs(vdevs: TopologyItem[],
+  private parseDevs(
+    vdevs: TopologyItem[],
     category: PoolTopologyCategory,
-    dataVdevs?: TopologyItem[]): string {
+    dataVdevs?: TopologyItem[],
+  ): string {
     const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataVdevs);
+
     let outputString = vdevs.length ? '' : notAssignedDev;
 
     // Check VDEV Widths
@@ -135,6 +138,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     if (!warnings.length && outputString && outputString === notAssignedDev) {
       return outputString;
     }
+
     const type = vdevs[0]?.type;
     const size = vdevs[0]?.children.length
       ? this.disks.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
@@ -148,6 +152,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     } else {
       outputString += '?';
     }
+
     return outputString;
   }
 
