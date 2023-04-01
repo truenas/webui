@@ -57,7 +57,6 @@ export class ReplicationListComponent implements EntityTableConfig {
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
   entityList: EntityTableComponent;
-  asyncView = true;
   filterValue = '';
 
   columns = [

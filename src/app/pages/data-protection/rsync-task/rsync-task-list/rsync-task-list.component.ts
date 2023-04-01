@@ -38,7 +38,6 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   routeAddTooltip = this.translate.instant('Add Rsync Task');
   routeEdit: string[] = ['tasks', 'rsync', 'edit'];
   entityList: EntityTableComponent<RsyncTaskUi>;
-  asyncView = true;
   filterValue = '';
 
   columns = [

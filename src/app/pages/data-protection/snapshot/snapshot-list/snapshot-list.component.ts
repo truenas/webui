@@ -36,7 +36,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   routeAddTooltip = this.translate.instant('Add Periodic Snapshot Task');
   routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
   entityList: EntityTableComponent<PeriodicSnapshotTaskUi>;
-  asyncView = true;
   filterValue = '';
 
   columns = [

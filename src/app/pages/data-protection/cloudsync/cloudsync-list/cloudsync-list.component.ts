@@ -50,7 +50,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   routeEdit: string[] = ['tasks', 'cloudsync', 'edit'];
   wsDelete = 'cloudsync.delete' as const;
   entityList: EntityTableComponent<CloudSyncTaskUi>;
-  asyncView = true;
   filterValue = '';
 
   columns = [
