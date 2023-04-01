@@ -171,6 +171,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
         task.state = { state: task.job.state };
         this.store$.select(selectJob(task.job.id)).pipe(
           filter(Boolean),
+          take(1),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           task.state = { state: job.state };

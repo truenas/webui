@@ -131,6 +131,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         transformed.state = { state: task.job.state };
         this.store$.select(selectJob(task.job.id)).pipe(
           filter(Boolean),
+          take(1),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           transformed.job = { ...job };
