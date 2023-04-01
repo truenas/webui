@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   PeriodicSnapshotTask,
@@ -89,7 +90,10 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   afterInit(entityList: EntityTableComponent<PeriodicSnapshotTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(
+      filter((value) => !!value.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.entityList.getData();
     });
   }
