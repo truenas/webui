@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -84,7 +85,7 @@ export class AllowedAddressesFormComponent implements OnInit {
         next: () => {
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
           this.dialogService.errorReport(helptextSystemGeneral.dialog_error_title, error.reason, error.trace.formatted);
         },

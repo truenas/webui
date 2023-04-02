@@ -1675,7 +1675,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return operation$.pipe(untilDestroyed(this)).subscribe({
       next: (restPostResp) => {
         this.loader.close();
-        this.modalService.closeSlideIn();
+        this.modalService.closeSlideIn(restPostResp);
         const parentPath = `/mnt/${this.parent}`;
         this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe({
           next: (isTrivial) => {

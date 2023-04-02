@@ -12,7 +12,6 @@ import {
   IterableDiffers,
   OnChanges,
   Output,
-  SimpleChanges,
   TrackByFunction,
   ViewChild,
   ViewEncapsulation,
@@ -21,6 +20,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ResizedEvent } from 'angular-resize-event';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
@@ -70,7 +70,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     this.listenForNodeChanges();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.trackBy) {
       if (typeof changes.trackBy.currentValue === 'function') {
         this.innerTrackBy = (index: number, node) => this.trackBy(index, node.data);

@@ -14,6 +14,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, AppLoaderService } from 'app/services';
@@ -161,7 +162,7 @@ export class WebdavFormComponent {
               this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
             );
           }),
-          catchError((error) => {
+          catchError((error: WebsocketError) => {
             this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
             return EMPTY;
           }),

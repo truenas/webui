@@ -126,7 +126,7 @@
           {{ 'Download Client Config' | translate }}
         </button>
         <button
-          *ngIf="lastSavedServerCertificate"
+          *ngIf="lastSavedServerCertificate !== null || lastSavedRootCertificate !== null"
           mat-button
           ixTest="unset-certs"
           type="button"

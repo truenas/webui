@@ -46,7 +46,7 @@ export class GroupEffects {
     ofType(groupsLoaded),
     switchMap(() => {
       return this.ws.subscribe('group.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => groupRemoved({ id: event.id })),
       );
     }),

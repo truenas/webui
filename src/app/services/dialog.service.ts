@@ -71,10 +71,10 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
+  errorReport(title: string | number, message: string, backtrace = '', logs?: Job): Observable<boolean> {
     const dialogRef = this.dialog.open(ErrorDialogComponent);
 
-    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.title = String(title);
     dialogRef.componentInstance.message = message;
     dialogRef.componentInstance.backtrace = backtrace;
     if (logs) {

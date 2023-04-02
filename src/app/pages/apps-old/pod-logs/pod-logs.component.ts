@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { map, Subscription } from 'rxjs';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -34,7 +35,7 @@ interface PodLogEvent {
   encapsulation: ViewEncapsulation.None,
 })
 export class PodLogsComponent implements OnInit, AfterViewInit {
-  @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
+  @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;
@@ -97,7 +98,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
           this.scrollToBottom();
         }
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoadingPodLogs = false;
         if (error.reason) {
           this.dialogService.errorReport('Error', error.reason);

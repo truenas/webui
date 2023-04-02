@@ -1,5 +1,5 @@
 import {
-  Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
+  Component, Input, AfterContentInit, OnChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -25,6 +25,7 @@ import {
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { CompoundChassisView } from 'app/pages/system/view-enclosure/classes/compound-chassis-view';
@@ -319,7 +320,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     domChanges.observe(this.overview?.nativeElement, observerOptions);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.selectedEnclosure) {
       // Enabled subenclosure functionality
       this.loadEnclosure(

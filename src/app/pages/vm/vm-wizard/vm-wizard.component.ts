@@ -9,9 +9,10 @@ import {
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
-import { VmDeviceType, VmOs } from 'app/enums/vm.enum';
+import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -199,7 +200,9 @@ export class VmWizardComponent implements OnInit {
         type: this.nicForm.nic_type,
         mac: this.nicForm.nic_mac,
         nic_attach: this.nicForm.nic_attach,
-        trust_guest_rx_filters: this.nicForm.trust_guest_rx_filters,
+        trust_guest_rx_filters: this.nicForm.nic_type === VmNicType.Virtio
+          ? this.nicForm.trust_guest_rx_filters
+          : false,
       },
     });
   }
@@ -272,10 +275,10 @@ export class VmWizardComponent implements OnInit {
       ...payload,
     }])
       .pipe(
-        catchError((error) => {
+        catchError((error: WebsocketError) => {
           this.dialogService.errorReport(
             this.translate.instant('Error creating device'),
-            error.error,
+            String(error.error),
             error.trace.formatted,
           );
           return of(null);

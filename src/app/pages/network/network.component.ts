@@ -191,7 +191,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ipmiEnabled: boolean;
 
-  hasConsoleFooter = false;
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -213,13 +212,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.ws
-      .call('system.advanced.config')
-      .pipe(untilDestroyed(this))
-      .subscribe((advancedConfig) => {
-        this.hasConsoleFooter = advancedConfig.consolemsg;
-      });
-
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
       this.getInterfaces();
