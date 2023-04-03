@@ -16,10 +16,14 @@
 
   &:hover {
     background-color: var(--hover-bg);
+
+    .row-grid .cell-name .name {
+      background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+    }
   }
 
   &.selected {
-    background-color: var(--hover-bg);
+    background-color: var(--bg1);
 
     &::before {
       background-color: var(--primary);
@@ -30,6 +34,11 @@
       position: absolute;
       top: 0;
       width: 6px;
+      z-index: 1;
+    }
+
+    .row-grid .cell-name .name {
+      background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 11px), transparent 100%);
     }
   }
 
@@ -48,6 +57,7 @@
     max-height: 40px;
     max-width: 40px;
     min-width: 40px;
+    overflow: hidden;
 
     img {
       display: block;
@@ -59,12 +69,12 @@
 }
 
 .row-grid {
-  @include grid-row();
+  @include grid-row(7);
   align-items: center;
 
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 125px 40px 40px 40px 125px 40px;
+  grid-template-columns: auto 150px 40px 40px 40px 125px 50px;
 
   @media (max-width: $breakpoint-tablet) {
     // Override default fraction based values to avoid misaligned columns
@@ -82,7 +92,6 @@
     }
 
     &:first-child {
-      left: 15px;
       position: sticky;
 
       @media (max-width: $breakpoint-tablet) {
@@ -99,6 +108,7 @@
       align-items: center;
       background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
       display: inline-flex;
+      padding-left: 15px;
       padding-right: 15px;
     }
   }
@@ -142,11 +152,8 @@
       line-height: 1;
     }
   }
-}
 
-:host-context(ix-app-row:hover),
-:host-context(ix-app-row.selected) {
-  .row-grid .cell-name .name {
-    background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  .cell-action {
+    justify-content: center;
   }
 }

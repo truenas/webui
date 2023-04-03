@@ -22,7 +22,7 @@
   <div class="cell cell-status">
     <ng-container [ngSwitch]="app.status">
       <div *ngSwitchCase="chartReleaseStatus.Active" class="status active">
-        {{ 'Active' | translate }}
+        {{ 'Running' | translate }}
       </div>
       <div *ngSwitchCase="chartReleaseStatus.Deploying" class="status deploying">
         <mat-spinner [diameter]="20"></mat-spinner>

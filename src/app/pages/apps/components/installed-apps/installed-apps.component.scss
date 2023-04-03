@@ -2,6 +2,7 @@
 @import 'scss-imports/splitview';
 @import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
+$card-width: 609px;
 $singlecolumn-max-width: ($card-width + $gap * 2);
 $scrollbar-offset: 20px;
 
@@ -57,20 +58,25 @@ $scrollbar-offset: 20px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
-    margin-top: -27px;
     min-height: 56px;
+
+    h2 {
+      align-items: center;
+      display: flex;
+      margin-top: 20px;
+      min-height: 36px;
+    }
 
     .bulk {
       align-items: center;
       display: flex;
-      font-size: 15px;
       gap: 6px;
     }
   }
+}
 
-  ix-fake-progress-bar {
-    position: unset;
-  }
+.table-body {
+  position: relative;
 }
 
 .app-search {
@@ -105,7 +111,7 @@ $scrollbar-offset: 20px;
 }
 
 .app-header {
-  @include grid-row();
+  @include grid-row(7);
 
   align-items: center;
   color: var(--fg2);
@@ -114,7 +120,6 @@ $scrollbar-offset: 20px;
   grid-template-columns: auto 125px 40px 40px 40px 125px 40px;
   min-height: 48px;
   padding-left: 8px;
-  padding-right: 8px;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0;
@@ -122,7 +127,7 @@ $scrollbar-offset: 20px;
   }
 
   @media (min-width: $breakpoint-singlecolumn) {
-    grid-template-columns: auto 125px 40px 40px 40px 125px 40px;
+    grid-template-columns: auto 150px 40px 40px 40px 125px 50px;
     overflow-x: hidden;
   }
 
@@ -141,6 +146,10 @@ $scrollbar-offset: 20px;
       @media (max-width: $breakpoint-tablet) {
         display: block;
       }
+    }
+
+    &:last-child {
+      text-align: center;
     }
   }
 
@@ -199,9 +208,11 @@ $scrollbar-offset: 20px;
 
 .bulk-selected {
   align-items: center;
+  align-self: flex-end;
   display: inline-flex;
+  font-size: 16px;
   gap: 4px;
-  min-height: 36px;
+  height: 36px;
 }
 
 .bulk-actions-container {
@@ -218,11 +229,21 @@ $scrollbar-offset: 20px;
   label {
     color: var(--fg2);
     font-size: 10px;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
   button {
     background-color: var(--bg1);
     border: 1px solid var(--lines);
+    font-size: 12px;
+  }
+}
+
+.global-update {
+  align-items: center;
+  display: flex;
+
+  span {
+    font-size: 16px;
   }
 }

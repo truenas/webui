@@ -159,7 +159,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         break;
       case EmptyType.NoPageData:
         this.entityEmptyConf.title = helptext.message.no_installed;
-        this.entityEmptyConf.message = helptext.message.no_installed_message;
+        this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
           action: () => this.redirectToAvailableApps(),
