@@ -3,13 +3,18 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
+import {
+  TruecommandConnectModalComponent,
+  TruecommandSignupModalResult,
+  TruecommandSignupModalState,
+} from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
 import {
   TruecommandSignupModalComponent,
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
@@ -81,8 +86,8 @@ export class TruecommandButtonComponent implements OnInit {
       })
       .afterClosed()
       .pipe(untilDestroyed(this))
-      .subscribe((dialogResult) => {
-        if (dialogResult?.deregistered) {
+      .subscribe((dialogResult: TruecommandSignupModalResult) => {
+        if (_.isObject(dialogResult) && dialogResult?.deregistered) {
           this.tcStatusDialogRef.close(true);
         }
       });

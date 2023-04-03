@@ -176,12 +176,12 @@ export class UpdateComponent implements OnInit {
           } else {
             this.currentTrainDescription = '';
           }
-          // To remember train descrip if user switches away and then switches back
+          // To remember train description if user switches away and then switches back
           this.trainDescriptionOnPageLoad = this.currentTrainDescription;
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           this.dialogService.warn(
-            err.trace.class,
+            error.trace.class,
             this.translate.instant('TrueNAS was unable to reach update servers.'),
           );
         },

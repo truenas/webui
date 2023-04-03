@@ -524,7 +524,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
   }
 
   logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
-    const tailLines = (formValue.tail_lines as number).toString();
+    const tailLines = formValue.tail_lines.toString();
     this.router.navigate(['/apps-old/1/logs/', appName, formValue.pods, formValue.containers, tailLines]);
   }
 

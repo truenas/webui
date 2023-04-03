@@ -84,6 +84,7 @@ describe('AlertConfigFormComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
+  // TODO: Does not interact with the form as a user.
   it('loads current config and shows values in the form', () => {
     expect(ws.call).toHaveBeenCalledWith('alert.list_categories');
     expect(ws.call).toHaveBeenCalledWith('alertclasses.config');

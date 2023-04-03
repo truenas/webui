@@ -166,7 +166,11 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
               }
             },
             error: (error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+              this.dialogService.error({
+                title: helptextSharingSmb.action_edit_acl_dialog.title,
+                message: error.reason,
+                backtrace: error.trace.formatted,
+              });
             },
           });
         },

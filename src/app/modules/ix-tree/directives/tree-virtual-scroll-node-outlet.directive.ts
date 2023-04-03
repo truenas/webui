@@ -1,7 +1,8 @@
 import { CdkTreeNode, CdkTreeNodeOutletContext } from '@angular/cdk/tree';
 import {
-  Directive, OnChanges, EmbeddedViewRef, Input, ViewContainerRef, SimpleChanges, SimpleChange,
+  Directive, OnChanges, EmbeddedViewRef, Input, ViewContainerRef,
 } from '@angular/core';
+import { IxSimpleChange, IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
 
 @Directive({
@@ -13,7 +14,7 @@ export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
 
   constructor(private _viewContainerRef: ViewContainerRef) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     const recreateView = this.shouldRecreateView(changes);
     if (recreateView) {
       const viewContainerRef = this._viewContainerRef;
@@ -34,12 +35,12 @@ export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
     }
   }
 
-  private shouldRecreateView(changes: SimpleChanges): boolean {
+  private shouldRecreateView(changes: IxSimpleChanges<this>): boolean {
     const ctxChange = changes.data;
     return ctxChange && this.hasContextShapeChanged(ctxChange);
   }
 
-  private hasContextShapeChanged(ctxChange: SimpleChange): boolean {
+  private hasContextShapeChanged(ctxChange: IxSimpleChange<this['data']>): boolean {
     const prevCtxKeys = Object.keys(ctxChange.previousValue || {});
     const currCtxKeys = Object.keys(ctxChange.currentValue || {});
 

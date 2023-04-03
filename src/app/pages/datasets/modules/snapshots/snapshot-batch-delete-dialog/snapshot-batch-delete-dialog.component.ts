@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs/operators';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -13,6 +14,7 @@ import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfa
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +37,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     private websocket: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
     private dialogService: DialogService,
   ) { }

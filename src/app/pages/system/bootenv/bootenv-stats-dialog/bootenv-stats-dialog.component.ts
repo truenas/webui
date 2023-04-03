@@ -6,7 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { getPoolStatusLabels, PoolStatus } from 'app/enums/pool-status.enum';
+import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -30,7 +30,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   state: PoolInstance;
 
   readonly PoolStatus = PoolStatus;
-  readonly poolStatusLabels = getPoolStatusLabels(this.translate);
+  readonly poolStatusLabels = poolStatusLabels;
 
   constructor(
     private ws: WebSocketService,

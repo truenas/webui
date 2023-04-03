@@ -38,6 +38,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
   isLoading = false;
 
   lastSavedServerCertificate: number = null;
+  lastSavedRootCertificate: number = null;
+
   form = this.formBuilder.group({
     server_certificate: [null as number, Validators.required],
     root_ca: [null as number, Validators.required],
@@ -166,6 +168,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.lastSavedRootCertificate = config.root_ca;
           this.lastSavedServerCertificate = config.server_certificate;
           this.form.patchValue({
             ...config,

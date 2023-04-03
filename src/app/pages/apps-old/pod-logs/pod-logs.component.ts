@@ -37,7 +37,7 @@ interface PodLogEvent {
   encapsulation: ViewEncapsulation.None,
 })
 export class PodLogsComponent implements OnInit, AfterViewInit {
-  @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
+  @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;

@@ -58,26 +58,22 @@ export class SessionsCardComponent implements OnInit {
           name: 'terminate',
           icon: 'exit_to_app',
           matTooltip: this.translate.instant('Terminate session'),
+          disabledCondition: (row: AuthSessionRow): boolean => {
+            return row.current;
+          },
           onClick: (row: AuthSessionRow): void => {
-            if (!row.current) {
-              this.dialogService
-                .confirm({
-                  title: this.translate.instant('Terminate session'),
-                  message: this.translate.instant('Are you sure you want to terminate the session?'),
-                })
-                .pipe(
-                  filter(Boolean),
-                  untilDestroyed(this),
-                ).subscribe({
-                  next: () => this.terminateSession(row.id),
-                  error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
-                });
-            } else {
-              this.dialogService.info(
-                this.translate.instant('Terminate session'),
-                this.translate.instant('This session is current and cannot be terminated'),
-              );
-            }
+            this.dialogService
+              .confirm({
+                title: this.translate.instant('Terminate session'),
+                message: this.translate.instant('Are you sure you want to terminate the session?'),
+              })
+              .pipe(
+                filter(Boolean),
+                untilDestroyed(this),
+              ).subscribe({
+                next: () => this.terminateSession(row.id),
+                error: (err: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(err)),
+              });
           },
         },
       ];

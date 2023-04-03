@@ -86,7 +86,7 @@ export class AllowedAddressesFormComponent implements OnInit {
         next: () => {
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
           this.dialogService.error({
             title: helptextSystemGeneral.dialog_error_title,

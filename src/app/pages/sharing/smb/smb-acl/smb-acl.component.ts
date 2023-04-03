@@ -121,7 +121,7 @@ export class SmbAclComponent {
 
   private requireSidOrDomainAndName = this.validatorService.withMessage(
     (form) => {
-      const values = form.value;
+      const values = form.value as FormAclEntry;
       if (values.ae_who_sid || (values.ae_who_name_domain && values.ae_who_name_name)) {
         return null;
       }

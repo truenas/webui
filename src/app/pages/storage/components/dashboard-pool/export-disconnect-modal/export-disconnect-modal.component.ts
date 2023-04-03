@@ -237,7 +237,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.systemConfig = systemConfig;
           this.prepareForm();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
           this.dialogService.error({
             title: helptext.exportError,
