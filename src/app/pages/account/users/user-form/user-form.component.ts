@@ -118,9 +118,8 @@ export class UserFormComponent {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  readonly shellOptions$ = this.ws.call('user.shell_choices').pipe(choicesToOptions());
+  shellOptions$ = this.ws.call('user.shell_choices', [[]]).pipe(choicesToOptions());
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
-  readonly shellProvider = new SimpleAsyncComboboxProvider(this.shellOptions$);
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
   get homeCreateWarning(): string {
@@ -191,6 +190,14 @@ export class UserFormComponent {
       untilDestroyed(this),
     ).subscribe((key) => {
       this.form.controls.sshpubkey.setValue(key);
+    });
+
+    this.form.controls.group.valueChanges.pipe(untilDestroyed(this)).subscribe((group) => {
+      this.updateShellOptions(group, this.form.value.groups);
+    });
+
+    this.form.controls.groups.valueChanges.pipe(untilDestroyed(this)).subscribe((groups) => {
+      this.updateShellOptions(this.form.value.group, groups);
     });
 
     this.form.controls.password_conf.addValidators(
@@ -434,5 +441,14 @@ export class UserFormComponent {
     }
 
     return username.toLocaleLowerCase();
+  }
+
+  private updateShellOptions(group: number, groups: number[]): void {
+    let ids: number[] = [];
+    ids = ids.concat(groups);
+    if (group && !ids.find((id) => id === group)) {
+      ids.push(group);
+    }
+    this.shellOptions$ = this.ws.call('user.shell_choices', [ids]).pipe(choicesToOptions());
   }
 }
