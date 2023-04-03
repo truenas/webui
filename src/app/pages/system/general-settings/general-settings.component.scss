@@ -5,8 +5,21 @@
   gap: 8px;
   grid-template-columns: 50% 50%;
 
+  @media #{$media-lt-lg} {
+    ix-support-card,
+    ix-ntp-server-card {
+      grid-column-end: 3;
+      grid-column-start: 1;
+    }
+  }
+
   @media #{$media-lt-md} {
     grid-template-columns: 100%;
+
+    ix-support-card,
+    ix-ntp-server-card {
+      grid-column-end: inherit;
+    }
   }
 
   > * {
