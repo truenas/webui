@@ -17,6 +17,8 @@ import {
   FileTicketLicensedFormComponent,
 } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
+import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
+import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
@@ -27,17 +29,15 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { LicenseComponent } from './license/license.component';
-import { ProactiveComponent } from './proactive/proactive.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-support',
-  templateUrl: './support.component.html',
-  styleUrls: ['./support.component.scss'],
+  selector: 'ix-support-card',
+  templateUrl: './support-card.component.html',
+  styleUrls: ['./support-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupportComponent implements OnInit {
+export class SupportCardComponent implements OnInit {
   isProduction: boolean;
   productImage = 'ix-original-cropped.png';
   isProductImageRack = false;
