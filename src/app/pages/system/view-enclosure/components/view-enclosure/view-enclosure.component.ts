@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectorRef,
   Component, ElementRef, OnDestroy, TemplateRef, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -153,6 +153,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private disksUpdateService: DisksUpdateService,
     private enclosureStore: EnclosureStore,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -240,6 +241,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
         this.delayPending = false;
         this.addViews();
       }, 1500);
+
+      this.changeDetectorRef.detectChanges();
     });
   }
 
