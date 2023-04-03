@@ -1,0 +1,55 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ helptext.localeTitle | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        *ixWithLoadingState="generalConfig$ as generalConfig"
+        mat-button
+        color="default"
+        [ixTest]="['localization', 'settings']"
+        (click)="doAdd(generalConfig)"
+      >
+        {{ 'Settings' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ helptext.stg_language.placeholder | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          <ng-container *ixWithLoadingState="languages$ as languages">
+            {{ languages[generalConfig.language] }}
+          </ng-container>
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.date_format.placeholder | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ localeService.getDateAndTime(generalConfig.timezone)?.[0] }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.time_format.placeholder | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ localeService.getDateAndTime(generalConfig.timezone)?.[1] }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.stg_timezone.placeholder | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.timezone }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.stg_kbdmap.placeholder | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          <ng-container *ixWithLoadingState="mapChoices$ as mapChoices">
+            {{ getKeyboardMapValue(mapChoices, generalConfig) }}
+          </ng-container>
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
