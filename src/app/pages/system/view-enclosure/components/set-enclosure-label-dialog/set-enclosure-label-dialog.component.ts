@@ -5,9 +5,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface SetEnclosureLabelDialogData {
   enclosureId: string;
@@ -39,6 +40,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<SetEnclosureLabelDialogComponent, string>,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
@@ -65,9 +67,9 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
           this.loader.close();
           this.dialogRef.close(newLabel);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.dialogRef.close();
         },
       });

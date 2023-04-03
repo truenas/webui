@@ -13,13 +13,13 @@ import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -32,6 +32,7 @@ import {
   DialogService,
   TaskService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -95,6 +96,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     protected slideInService: IxSlideInService,
     protected loader: AppLoaderService,
     protected taskService: TaskService,
+    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private route: ActivatedRoute,
     private store$: Store<AppState>,
@@ -160,8 +162,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialog.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -193,8 +195,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     true,
                   );
                 },
-                error: (wsErr) => {
-                  new EntityUtils().handleWsError(this.entityList, wsErr);
+                error: (wsErr: WebsocketError) => {
+                  this.dialog.error(this.errorHandler.parseWsError(wsErr));
                 },
               });
             });
@@ -218,8 +220,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialog.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),

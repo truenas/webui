@@ -5,10 +5,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogItems } from 'app/interfaces/catalog.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -29,6 +30,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Catalog,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -61,9 +63,9 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
             this.filteredItems = this.catalogItems;
           }
         },
-        error: (err) => {
+        error: (err: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
   }

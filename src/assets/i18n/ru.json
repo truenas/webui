@@ -1855,6 +1855,7 @@
   "Upload Key file": "",
   "Upload New Image File": "",
   "Upload SSH Key": "",
+  "Uploading screenshots has failed": "",
   "Usable Capacity": "",
   "Usages": "",
   "Use <i>Window</i> to extend the validity of passwords beyond the <i>Interval</i> setting. For example, a window setting of 1 means that one password before and after the current one is valid. leaving three valid passwords. Extending the window can be useful in high-latency situations. IMPORTANT: Two-factor authentication is time-based and requires that the system time is set correctly.": "",

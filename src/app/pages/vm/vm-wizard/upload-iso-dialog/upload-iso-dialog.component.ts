@@ -5,9 +5,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 
@@ -31,6 +32,7 @@ export class UploadIsoDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private filesystemService: FilesystemService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<UploadIsoDialogComponent, string | null>,
     private uploadService: IxFileUploadService,
@@ -51,9 +53,9 @@ export class UploadIsoDialogComponent {
           this.translate.instant('{n}% Uploaded', { n: percentDone }),
         );
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
     this.uploadService.onUploaded$.pipe(untilDestroyed(this)).subscribe(() => {

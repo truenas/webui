@@ -30,6 +30,7 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
   FieldConfig,
@@ -44,7 +45,6 @@ import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   SshConnectionFormComponent,
@@ -59,6 +59,7 @@ import {
   ReplicationService,
   TaskService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -693,6 +694,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private replicationService: ReplicationService,
+    private errorHandler: ErrorHandlerService,
     private datePipe: DatePipe,
     private entityFormService: EntityFormService,
     private modalService: ModalService,
@@ -931,7 +933,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials).then(
         (listing) => {
           const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
           const prevErrors = sourceDatasetsFormControl.errors;
@@ -976,7 +978,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials).then(
         (listing) => {
           const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
           const prevErrors = targetDatasetFormControl.errors;
@@ -1152,8 +1154,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 }
               }
             },
-            (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
+            (error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               toStop = true;
               this.rollBack(createdItems);
             },
@@ -1299,10 +1301,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           }
           this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${snapshotCount.eligible}</b> snapshots found. ${snapexpl}</span>`;
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           this.eligibleSnapshots = 0;
           this.snapshotsCountField.paraText = '';
-          new EntityUtils().handleWsError(this, err);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     } else {

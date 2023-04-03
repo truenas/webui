@@ -30,6 +30,7 @@ import { FieldRelationService } from 'app/modules/entity/entity-form/services/fi
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -93,6 +94,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     public translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {
     this.loader.callStarted.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = true);
     this.loader.callDone.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = false);
@@ -467,11 +469,16 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.loader.close();
             this.loaderOpen = false;
 
-            if ((this.conf.isEditJob || this.conf.isCreateJob) && (response as Job).error) {
-              if ((response as Job).exc_info && (response as Job).exc_info.extra) {
-                new EntityUtils().handleWsError(this, response as Job);
+            const responseAsJob = response as Job;
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && responseAsJob.error) {
+              if (responseAsJob.exc_info && responseAsJob.exc_info.extra) {
+                this.dialog.error(this.errorHandler.parseJobError(responseAsJob));
               } else {
-                this.dialog.errorReport('Error', (response as Job).error, (response as Job).exception);
+                this.dialog.error({
+                  title: this.translate.instant('Error'),
+                  message: responseAsJob.error,
+                  backtrace: responseAsJob.exception,
+                });
               }
             } else {
               if (this.conf.afterSave) {
@@ -506,9 +513,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if (this.conf.errorReport) {
               this.conf.errorReport(error);
             } else if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace'))) {
-              new EntityUtils().handleWsError(this, error);
+              this.dialog.error(this.errorHandler.parseWsError(error));
             } else {
-              new EntityUtils().handleError(this, error);
+              this.dialog.error(this.errorHandler.parseError(error));
             }
           },
         });

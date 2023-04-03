@@ -5,9 +5,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -24,6 +25,7 @@ export class AddSpnDialogComponent {
 
   constructor(
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<CloudsyncRestoreDialogComponent>,
@@ -48,9 +50,9 @@ export class AddSpnDialogComponent {
           this.translate.instant('You have successfully added credentials.'),
         );
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

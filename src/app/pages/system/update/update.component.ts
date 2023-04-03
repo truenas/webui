@@ -18,7 +18,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -26,6 +25,7 @@ import {
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UpdateService } from 'app/services/update.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -95,6 +95,7 @@ export class UpdateComponent implements OnInit {
     protected ws: WebSocketService,
     protected matDialog: MatDialog,
     public sysGenService: SystemGeneralService,
+    private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
     public translate: TranslateService,
@@ -281,8 +282,8 @@ export class UpdateComponent implements OnInit {
       next: () => {
         this.check();
       },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.trainValue = prevTrain;
         this.showSpinner = false;
       },
@@ -386,7 +387,7 @@ export class UpdateComponent implements OnInit {
       this.router.navigate(['/others/reboot']);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWsError(this, err, this.dialogService);
+      this.dialogService.error(this.errorHandler.parseJobError(err));
     });
   }
 
@@ -399,8 +400,8 @@ export class UpdateComponent implements OnInit {
           this.startUpdate();
         }
       },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -476,8 +477,11 @@ export class UpdateComponent implements OnInit {
       },
       error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
-        this.dialogService.errorReport(this.translate.instant('Error checking for updates.'), error.reason, error.trace.formatted);
+        this.dialogService.error({
+          title: this.translate.instant('Error checking for updates.'),
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        });
       },
       complete: () => {
         this.loader.close();
@@ -521,8 +525,8 @@ export class UpdateComponent implements OnInit {
             this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
             this.pendingUpdates();
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-            new EntityUtils().handleWsError(this, err, this.dialogService);
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+            this.dialogService.error(this.errorHandler.parseJobError(error));
           });
         } else {
           this.update();
@@ -557,7 +561,7 @@ export class UpdateComponent implements OnInit {
           }).pipe(untilDestroyed(this)).subscribe();
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseJobError(err));
         });
       });
     }

@@ -10,9 +10,9 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services/';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +45,8 @@ export class AlertConfigFormComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    public dialog: DialogService,
+    public dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     protected translate: TranslateService,
     private snackbarService: SnackbarService,
     private formBuilder: FormBuilder,
@@ -81,14 +82,14 @@ export class AlertConfigFormComponent implements OnInit {
             },
             error: (error: WebsocketError) => {
               this.isFormLoading = false;
-              new EntityUtils().handleWsError(this, error, this.dialog);
+              this.dialogService.error(this.errorHandler.parseWsError(error));
             },
           },
         );
       },
       error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -116,7 +117,7 @@ export class AlertConfigFormComponent implements OnInit {
 
     this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe({
       next: () => this.snackbarService.success(this.translate.instant('Settings saved.')),
-      error: (error) => new EntityUtils().handleWsError(this, error, this.dialog),
+      error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
     }).add(() => this.isFormLoading = false);
   }
 }

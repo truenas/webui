@@ -10,10 +10,10 @@ import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -69,10 +69,11 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
   };
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private router: Router,
     private slideInService: IxSlideInService,
-    private dialog: DialogService,
+    private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
 
@@ -165,11 +166,11 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
               }
             },
             error: (error: WebsocketError) => {
-              this.dialog.errorReport(
-                helptextSharingSmb.action_edit_acl_dialog.title,
-                error.reason,
-                error.trace.formatted,
-              );
+              this.dialogService.error({
+                title: helptextSharingSmb.action_edit_acl_dialog.title,
+                message: error.reason,
+                backtrace: error.trace.formatted,
+              });
             },
           });
         },
@@ -186,10 +187,10 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
   }
 
   lockedPathDialog(path: string): void {
-    this.dialog.errorReport(
-      helptextSharingSmb.action_edit_acl_dialog.title,
-      this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
-    );
+    this.dialogService.error({
+      title: helptextSharingSmb.action_edit_acl_dialog.title,
+      message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    });
   }
 
   onCheckboxChange(row: SmbShare): void {
@@ -197,9 +198,9 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
       next: (share) => {
         row.enabled = share.enabled;
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         row.enabled = !row.enabled;
-        new EntityUtils().handleWsError(this, err, this.dialog);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

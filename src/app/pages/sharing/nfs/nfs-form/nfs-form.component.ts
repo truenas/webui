@@ -19,6 +19,7 @@ import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -89,9 +90,10 @@ export class NfsFormComponent implements OnInit {
     private userService: UserService,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) {}
@@ -151,7 +153,7 @@ export class NfsFormComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -200,7 +202,7 @@ export class NfsFormComponent implements OnInit {
             return undefined;
           }),
           catchError((error: WebsocketError) => {
-            this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
+            this.dialogService.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
         );

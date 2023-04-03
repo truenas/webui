@@ -10,11 +10,9 @@ import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable()
@@ -22,6 +20,7 @@ export class ReplicationService {
   constructor(
     protected ws: WebSocketService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   /**
@@ -76,7 +75,6 @@ export class ReplicationService {
   getRemoteDataset(
     transport: TransportMode,
     sshCredentials: number,
-    parentComponent: ReplicationFormComponent | ReplicationWizardComponent,
   ): Promise<ListdirChild[]> {
     const queryParams: [transport: TransportMode, credentials?: number] = [transport];
     if (transport !== TransportMode.Local) {
@@ -114,7 +112,7 @@ export class ReplicationService {
         return nodes;
       }),
       catchError((err) => {
-        new EntityUtils().handleWsError(parentComponent, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(err));
         return throwError(err);
       }),
     ).toPromise();
