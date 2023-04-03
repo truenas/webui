@@ -46,10 +46,14 @@ describe('DashboardPoolComponent', () => {
       MockComponent(NgxSkeletonLoaderComponent),
     ],
     providers: [
-      mockProvider(MatDialog),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({ afterClosed: jest.fn(() => of()) })),
+      }),
       mockProvider(SnackbarService),
       mockProvider(AppLoaderService),
-      mockProvider(PoolsDashboardStore),
+      mockProvider(PoolsDashboardStore, {
+        loadDashboard: jest.fn(),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

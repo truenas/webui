@@ -179,11 +179,11 @@ describe('CloudCredentialsFormComponent', () => {
       const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
       await verifyButton.click();
 
-      expect(spectator.inject(DialogService).errorReport).toHaveBeenCalledWith(
-        'Error',
-        'Missing some important field',
-        expect.anything(),
-      );
+      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+        title: 'Error',
+        message: 'Missing some important field',
+        backtrace: expect.anything(),
+      });
     });
   });
 

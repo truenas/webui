@@ -35,7 +35,6 @@ import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbi
 import {
   DialogService, IscsiService, ValidationService,
 } from 'app/services';
-import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -199,7 +198,6 @@ export class IscsiWizardComponent implements OnInit {
     private slideInService: IxSlideInService,
     private iscsiService: IscsiService,
     private ws: WebSocketService,
-    private cloudcredentialService: CloudCredentialService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
