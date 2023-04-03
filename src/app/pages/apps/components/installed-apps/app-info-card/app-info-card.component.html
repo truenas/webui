@@ -3,14 +3,23 @@
     <h3 mat-card-title>
       {{ 'Application Info' | translate }}
     </h3>
-    <button
-      *ngIf="hasUpdates"
-      mat-button
-      [ixTest]="[app?.name, 'update']"
-      (click)="updateButtonPressed()"
-    >
-      {{ 'Update' | translate }}
-    </button>
+    <div>
+      <button
+        mat-button
+        [ixTest]="[app?.name, 'edit']"
+        [routerLink]="['/apps/available', app.id, 'edit']"
+      >
+        {{ 'Edit' | translate }}
+      </button>
+      <button
+        *ngIf="hasUpdates"
+        mat-button
+        [ixTest]="[app?.name, 'update']"
+        (click)="updateButtonPressed()"
+      >
+        {{ 'Update' | translate }}
+      </button>
+    </div>
   </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
