@@ -73,14 +73,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.checkedAppsNames.length > 0;
   }
 
-  get hasSelectionUpdates(): boolean {
-    if (this.dataSource.length === 0) {
-      return false;
-    }
-
+  get hasSelectionUpdates(): number {
     return this.checkedAppsNames
       .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.update_available || app.container_images_update_available);
+      .filter((app) => app.update_available || app.container_images_update_available).length;
   }
 
   get hasUpdates(): boolean {
