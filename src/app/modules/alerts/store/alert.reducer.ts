@@ -47,7 +47,7 @@ export const alertReducer = createReducer(
 
   on(alertAdded, (state, { alert }) => adapter.addOne(alert, state)),
   on(alertChanged, (state, { alert }) => adapter.updateOne({
-    id: alert.id,
+    id: alert?.id,
     changes: alert,
   }, state)),
   on(alertRemoved, (state, { id }) => adapter.removeOne(id, state)),
