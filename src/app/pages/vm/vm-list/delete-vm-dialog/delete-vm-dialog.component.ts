@@ -6,10 +6,11 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/vm/vm-list';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +33,7 @@ export class DeleteVmDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<DeleteVmDialogComponent>,
     private validators: IxValidatorsService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachineRow,
@@ -54,9 +56,9 @@ export class DeleteVmDialogComponent implements OnInit {
           this.loader.close();
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

@@ -209,7 +209,7 @@
                     <button
                       mat-icon-button
                       [ixTest]="['row-action', _tableConf.name, rowAction.name]"
-                      [disabled]="rowAction.disabled"
+                      [disabled]="rowAction.disabled || rowAction.disabledCondition"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
                       <ix-icon

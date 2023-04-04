@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
   DatasetCapacityManagementCardComponent,
@@ -87,6 +88,7 @@ describe('DatasetDetailsPanelComponent', () => {
           },
         ],
       }),
+      mockProvider(SnackbarService),
     ],
   });
 

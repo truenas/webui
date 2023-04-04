@@ -10,14 +10,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/directory-service/ldap';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DialogService, ModalService, SystemGeneralService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -75,8 +76,9 @@ export class LdapComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
@@ -102,9 +104,9 @@ export class LdapComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -129,7 +131,7 @@ export class LdapComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -146,9 +148,9 @@ export class LdapComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -169,7 +171,7 @@ export class LdapComponent implements OnInit {
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWsError(this, error, this.dialogService);
+      this.dialogService.error(this.errorHandler.parseJobError(error));
       this.modalService.refreshTable();
       dialogRef.close();
     });

@@ -14,11 +14,11 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, ServicesService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -30,6 +30,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class OpenVpnClientConfigComponent implements OnInit {
   isLoading = false;
   lastSavedCertificate: number = null;
+  lastSavedRootCertificate: number = null;
   form = this.formBuilder.group({
     client_certificate: [null as number],
     root_ca: [null as number],
@@ -97,10 +98,11 @@ export class OpenVpnClientConfigComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private router: Router,
@@ -123,7 +125,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
           this.slideInService.close();
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -136,6 +138,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.lastSavedRootCertificate = config.root_ca;
           this.lastSavedCertificate = config.client_certificate;
           this.form.patchValue({
             ...config,
@@ -146,7 +149,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
         error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -169,7 +172,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
         return this.ws.call('openvpn.client.update', [{ remove_certificates: true } as OpenvpnClientConfigUpdate]);
       }),
       catchError((error: WebsocketError) => {
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

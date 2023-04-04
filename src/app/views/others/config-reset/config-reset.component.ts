@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
@@ -19,6 +20,7 @@ export class ConfigResetComponent implements OnInit {
     private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     public translate: TranslateService,
     protected dialogService: DialogService,
     protected dialog: MatDialog,
@@ -63,7 +65,7 @@ export class ConfigResetComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       dialogRef.close();
-      this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+      this.dialogService.error(this.errorHandler.parseJobError(failedJob));
     });
   }
 }

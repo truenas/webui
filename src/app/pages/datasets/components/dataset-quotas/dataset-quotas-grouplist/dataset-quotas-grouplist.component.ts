@@ -28,6 +28,7 @@ import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dat
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -62,6 +63,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
+    private errorHandler: ErrorHandlerService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
@@ -93,7 +95,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(error);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
@@ -265,9 +267,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         this.loader.close();
         this.getGroupQuotas();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

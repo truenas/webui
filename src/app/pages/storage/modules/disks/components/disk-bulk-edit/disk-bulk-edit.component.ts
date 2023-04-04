@@ -123,7 +123,10 @@ export class DiskBulkEditComponent {
           const isSuccessful = job.result.every((result) => {
             if (result.error !== null) {
               this.slideInService.close();
-              this.dialogService.errorReport(helptext.dialog_error, result.error);
+              this.dialogService.error({
+                title: helptext.dialog_error,
+                message: result.error,
+              });
               return false;
             }
 

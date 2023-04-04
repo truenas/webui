@@ -17,7 +17,6 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   DownloadClientConfigModalComponent,
@@ -25,6 +24,7 @@ import {
 import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -38,6 +38,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
   isLoading = false;
 
   lastSavedServerCertificate: number = null;
+  lastSavedRootCertificate: number = null;
+
   form = this.formBuilder.group({
     server_certificate: [null as number, Validators.required],
     root_ca: [null as number, Validators.required],
@@ -91,7 +93,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,
     private loader: AppLoaderService,
@@ -127,7 +130,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
           this.slideInService.close();
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -148,9 +151,9 @@ export class OpenVpnServerConfigComponent implements OnInit {
         });
         this.storageService.downloadText(download, 'openVPNStatic.key');
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -165,6 +168,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.lastSavedRootCertificate = config.root_ca;
           this.lastSavedServerCertificate = config.server_certificate;
           this.form.patchValue({
             ...config,
@@ -173,10 +177,10 @@ export class OpenVpnServerConfigComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -202,7 +206,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
         return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
       }),
       catchError((error: WebsocketError) => {
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

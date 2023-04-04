@@ -14,12 +14,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-ntp-server-list',
-  templateUrl: './ntp-server-list.component.html',
-  styleUrls: ['./ntp-server-list.component.scss'],
+  selector: 'ix-ntp-server-card',
+  templateUrl: './ntp-server-card.component.html',
+  styleUrls: ['./ntp-server-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NtpServerListComponent implements OnInit {
+export class NtpServerCardComponent implements OnInit {
   dataSource = new MatTableDataSource<NtpServer>([]);
   displayedColumns = [
     'address',

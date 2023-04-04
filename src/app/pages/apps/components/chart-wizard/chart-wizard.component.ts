@@ -24,11 +24,11 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -77,6 +77,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
@@ -266,7 +267,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.updateSearchOption();
     } catch (error: unknown) {
       console.error(error);
-      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+      this.dialogService.error({
+        title: helptext.chartForm.parseError.title,
+        message: helptext.chartForm.parseError.message,
+      });
     }
   }
 
@@ -384,11 +388,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFailure(failedJob: Job): void {
-    if (failedJob.exc_info && failedJob.exc_info.extra) {
-      new EntityUtils().handleWsError(this, failedJob);
-    } else {
-      this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
-    }
+    this.dialogService.error(this.errorHandler.parseJobError(failedJob));
   }
 
   onSuccess(): void {

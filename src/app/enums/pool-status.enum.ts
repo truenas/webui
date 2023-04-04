@@ -1,4 +1,4 @@
-import { TranslateService } from '@ngx-translate/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum PoolStatus {
   Online = 'ONLINE',
@@ -14,13 +14,11 @@ export enum PoolStatus {
   Healthy = 'HEALTHY',
 }
 
-export function getPoolStatusLabels(translate: TranslateService): Map<PoolStatus, string> {
-  return new Map([
-    [PoolStatus.Online, translate.instant('Online')],
-    [PoolStatus.Degraded, translate.instant('Degraded')],
-    [PoolStatus.Faulted, translate.instant('Faulted')],
-    [PoolStatus.Offline, translate.instant('Offline')],
-    [PoolStatus.Unavailable, translate.instant('Unavailable')],
-    [PoolStatus.Removed, translate.instant('Removed')],
-  ]);
-}
+export const poolStatusLabels = new Map([
+  [PoolStatus.Online, T('Online')],
+  [PoolStatus.Degraded, T('Degraded')],
+  [PoolStatus.Faulted, T('Faulted')],
+  [PoolStatus.Offline, T('Offline')],
+  [PoolStatus.Unavailable, T('Unavailable')],
+  [PoolStatus.Removed, T('Removed')],
+]);

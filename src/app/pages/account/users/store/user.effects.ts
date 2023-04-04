@@ -47,7 +47,7 @@ export class UserEffects {
     ofType(usersLoaded),
     switchMap(() => {
       return this.ws.subscribe('user.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => userRemoved({ id: event.id })),
       );
     }),

@@ -8,10 +8,10 @@ import { of } from 'rxjs';
 import { Weekday } from 'app/enums/weekday.enum';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, TaskService } from 'app/services';
 import { CalendarService } from 'app/services/calendar.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -49,8 +49,9 @@ export class ResilverConfigComponent implements OnInit {
   timeOptions$ = of(this.taskService.getTimeOptions());
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private calendarService: CalendarService,
@@ -73,7 +74,7 @@ export class ResilverConfigComponent implements OnInit {
         error: (error) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -92,7 +93,7 @@ export class ResilverConfigComponent implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

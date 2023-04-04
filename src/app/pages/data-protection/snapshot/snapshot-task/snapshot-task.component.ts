@@ -142,7 +142,7 @@ export class SnapshotTaskComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;

@@ -8,14 +8,16 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   DialogService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -58,7 +60,8 @@ export class ConsoleFormComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
@@ -67,18 +70,19 @@ export class ConsoleFormComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('system.advanced.config')
-      .pipe(untilDestroyed(this))
+    this.store$.pipe(
+      waitForAdvancedConfig,
+      untilDestroyed(this),
+    )
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -102,7 +106,7 @@ export class ConsoleFormComponent implements OnInit {
       },
       error: (error) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
     });

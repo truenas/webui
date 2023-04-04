@@ -19,7 +19,6 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -28,6 +27,7 @@ import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-poo
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -81,8 +81,9 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   constructor(
     public formatter: IxFormatterService,
     private loader: AppLoaderService,
-    private dialog: DialogService,
+    private dialogService: DialogService,
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
@@ -131,7 +132,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   }
 
   doScrub(): void {
-    this.dialog.confirm({
+    this.dialogService.confirm({
       title: this.translate.instant('Scrub'),
       message: this.translate.instant('Start the scrub now?'),
       buttonText: this.translate.instant('Start Scrub'),
@@ -145,8 +146,8 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         this.loader.close();
         this.snackbar.success(this.translate.instant('Scrub Started'));
       },
-      error: (websocketError: WebsocketError) => {
-        new EntityUtils().handleWsError(this, websocketError, this.dialog);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.loader.close();
       },
     });
@@ -210,7 +211,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   }
 
   doActivate(bootenv: Bootenv): void {
-    this.dialog.confirm({
+    this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
       buttonText: helptextSystemBootenv.list_dialog_activate_action,
@@ -226,7 +227,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         this.checkboxColumn.clearSelection();
       },
       error: (error: WebsocketError) => {
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.loader.close();
       },
     });
@@ -234,7 +235,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   toggleKeep(bootenv: Bootenv): void {
     if (!bootenv.keep) {
-      this.dialog.confirm({
+      this.dialogService.confirm({
         title: this.translate.instant('Keep'),
         message: this.translate.instant('Keep this Boot Environment?'),
         buttonText: this.translate.instant('Set Keep Flag'),
@@ -250,14 +251,14 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
               this.checkboxColumn.clearSelection();
             },
             error: (error: WebsocketError) => {
-              new EntityUtils().handleWsError(this, error, this.dialog);
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               this.loader.close();
             },
           },
         );
       });
     } else {
-      this.dialog.confirm({
+      this.dialogService.confirm({
         title: this.translate.instant('Unkeep'),
         message: this.translate.instant('No longer keep this Boot Environment?'),
         buttonText: this.translate.instant('Remove Keep Flag'),
@@ -273,7 +274,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
           this.checkboxColumn.selection.clear();
         },
         error: (error: WebsocketError) => {
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.loader.close();
         },
       });

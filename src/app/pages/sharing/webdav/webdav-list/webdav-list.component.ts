@@ -3,11 +3,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextSharingWebdav } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -57,6 +58,7 @@ export class WebdavListComponent implements EntityTableConfig<WebDavShare>, OnIn
     private ws: WebSocketService,
     private dialog: DialogService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
   ) {}
 
@@ -84,9 +86,9 @@ export class WebdavListComponent implements EntityTableConfig<WebDavShare>, OnIn
         next: (share) => {
           row.enabled = share.enabled;
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWsError(this, err, this.dialog);
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
   }

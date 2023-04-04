@@ -50,9 +50,17 @@ p {
   cursor: grabbing;
 }
 
+.drag-container {
+  border: 1px solid transparent;
+}
+
 .drag-active {
   border: 1px dotted #999;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+
+  &.dndDragover {
+    background-color: var(--alt-bg2);
+  }
 }
 
 .drag-hint {

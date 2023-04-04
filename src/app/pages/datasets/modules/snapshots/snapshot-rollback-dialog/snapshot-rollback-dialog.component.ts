@@ -8,9 +8,11 @@ import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService, WebSocketService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +62,8 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     private websocket: WebSocketService,
     private loader: AppLoaderService,
     private fb: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) private snapshotName: string,
@@ -85,10 +88,10 @@ export class SnapshotRollbackDialogComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -112,7 +115,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
       },
       error: (error) => {
         this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
   }

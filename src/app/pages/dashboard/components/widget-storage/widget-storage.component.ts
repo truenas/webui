@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, Input, OnChanges, SimpleChanges,
+  AfterViewInit, Component, Input, OnChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -8,6 +8,7 @@ import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { Pool } from 'app/interfaces/pool.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -92,7 +93,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     this.configurable = false;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.pools || changes.volumeData) {
       this.updateGridInfo();
       this.updatePoolInfoMap();

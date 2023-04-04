@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { Store } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -14,6 +14,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('ConsoleFormComponent', () => {
   let spectator: Spectator<ConsoleFormComponent>;
@@ -31,19 +32,25 @@ describe('ConsoleFormComponent', () => {
           ttyS0: 'ttyS0',
           ttyS1: 'ttyS1',
         }),
-        mockCall('system.advanced.config', {
-          consolemenu: true,
-          serialconsole: true,
-          serialport: 'ttyS0',
-          serialspeed: '9600',
-          motd: 'Welcome back, commander',
-        } as AdvancedConfig),
         mockCall('system.advanced.update'),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
-      mockProvider(Store),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              consolemenu: true,
+              serialconsole: true,
+              serialport: 'ttyS0',
+              serialspeed: '9600',
+              motd: 'Welcome back, commander',
+            } as AdvancedConfig,
+          },
+        ],
+      }),
     ],
   });
 
@@ -57,7 +64,6 @@ describe('ConsoleFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.config');
     expect(values).toEqual({
       'Show Text Console without Password Prompt': true,
       'Enable Serial Console': true,

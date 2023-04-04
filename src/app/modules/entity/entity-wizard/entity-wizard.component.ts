@@ -19,6 +19,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -53,6 +54,7 @@ export class EntityWizardComponent implements OnInit {
     protected aroute: ActivatedRoute,
     private dialog: DialogService,
     protected translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -188,8 +190,7 @@ export class EntityWizardComponent implements OnInit {
           next: (result) => {
             this.loader.close();
             if (result.error) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              this.dialog.errorReport(result.error, (result as any).reason, result.exception);
+              this.dialog.error(this.errorHandler.parseJobError(result));
             } else if (this.conf.routeSuccess) {
               this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
             } else {
@@ -198,7 +199,7 @@ export class EntityWizardComponent implements OnInit {
           },
           error: (error) => {
             this.loader.close();
-            new EntityUtils().handleError(this, error);
+            this.dialog.error(this.errorHandler.parseError(error));
           },
         });
     }

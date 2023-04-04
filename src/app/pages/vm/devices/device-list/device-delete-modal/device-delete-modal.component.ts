@@ -5,9 +5,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface DeviceDeleteModalState {
   row: VmDevice;
@@ -35,6 +36,7 @@ export class DeviceDeleteModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DeviceDeleteModalState,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DeviceDeleteModalComponent>,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
@@ -98,8 +100,8 @@ export class DeviceDeleteModalComponent implements OnInit {
           this.dialogRef.close(true);
           this.loader.close();
         },
-        error: (err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.loader.close();
         },
       });

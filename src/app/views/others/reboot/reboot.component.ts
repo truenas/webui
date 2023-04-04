@@ -3,8 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -18,6 +20,7 @@ export class RebootComponent implements OnInit {
     protected ws: WebSocketService,
     private wsManager: WebsocketConnectionService,
     protected router: Router,
+    private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
     protected dialog: MatDialog,
@@ -50,8 +53,8 @@ export class RebootComponent implements OnInit {
 
     this.dialog.closeAll();
     this.ws.call('system.reboot').pipe(untilDestroyed(this)).subscribe({
-      error: (error) => { // error on reboot
-        this.dialogService.errorReport(error.error, error.reason, error.trace.formatted)
+      error: (error: WebsocketError) => { // error on reboot
+        this.dialogService.error(this.errorHandler.parseWsError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);

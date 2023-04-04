@@ -8,11 +8,11 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -55,7 +55,7 @@ export class CronCardComponent implements OnInit {
                     true,
                   );
                 },
-                error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+                error: (error: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(error)),
               });
           },
         },
@@ -87,6 +87,7 @@ export class CronCardComponent implements OnInit {
   constructor(
     private slideIn: IxSlideInService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
     private advancedSettings: AdvancedSettingsService,
