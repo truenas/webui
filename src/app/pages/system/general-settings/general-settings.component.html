@@ -4,48 +4,9 @@
   </ix-page-title-header>
 </ng-template>
 
-<div
-  class="wrapper"
-  gdGap="8px"
-  gdRows="fit-content(30vh)"
-  gdColumns="50% auto"
-  gdColumns.lt-lg="50% auto "
-  gdColumns.lt-md="auto"
-  gdAreas="system-card data-card1 | system-card data-card1 | data-card2 ntp-card"
-  gdAreas.lt-lg="system-card system-card | data-card1 data-card2 | ntp-card ntp-card"
-  gdAreas.lt-md="system-card | data-card1 | data-card2 | ntp-card"
->
-  <mat-card class="system-card" gdArea="system-card">
-    <mat-toolbar-row class="title-bar">
-      <h3>{{ supportTitle | translate }}</h3>
-    </mat-toolbar-row>
-
-    <ix-support></ix-support>
-  </mat-card>
-
-  <mat-card
-    *ngFor="let card of dataCards; index as i"
-    [class]="'data-card' + (i + 1)"
-    [gdArea]="'data-card' + (i + 1)"
-  >
-    <mat-toolbar-row>
-      <h3>{{ card.title | translate }}</h3>
-      <div class="actions action-icon">
-        <button mat-button color="default" [ixTest]="[card.id, 'settings']" (click)="doAdd(card.id)">
-          {{ 'Settings' | translate }}
-        </button>
-      </div>
-    </mat-toolbar-row>
-
-    <mat-card-content>
-      <mat-list>
-        <mat-list-item *ngFor="let item of card.items" class="card-list-item">
-          <span class="label">{{ item.label | translate }}:</span>
-          <span class="value">{{ item.value | cast | translate }}</span>
-        </mat-list-item>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
-
-  <ix-ntp-server-list gdArea="ntp-card"></ix-ntp-server-list>
+<div class="cards">
+  <ix-support-card></ix-support-card>
+  <ix-gui-card></ix-gui-card>
+  <ix-localization-card></ix-localization-card>
+  <ix-ntp-server-card></ix-ntp-server-card>
 </div>

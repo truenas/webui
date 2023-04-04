@@ -16,7 +16,7 @@ import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
-import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
+import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -26,11 +26,11 @@ const systemInfo = {
   datetime: { $date: 1666376171107 },
 } as SystemInfo;
 
-describe('SupportComponent', () => {
-  let spectator: Spectator<SupportComponent>;
+describe('SupportCardComponent', () => {
+  let spectator: Spectator<SupportCardComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: SupportComponent,
+    component: SupportCardComponent,
     imports: [
       FlexLayoutModule,
       FormsModule,

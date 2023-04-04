@@ -7,10 +7,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -32,6 +33,7 @@ export class DownloadClientConfigModalComponent {
     private services: ServicesService,
     private router: Router,
     private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     private storageService: StorageService,
   ) {}
 
@@ -52,9 +54,9 @@ export class DownloadClientConfigModalComponent {
           this.dialogRef.close();
           this.storageService.downloadText(key, 'openVPNClientConfig.ovpn');
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

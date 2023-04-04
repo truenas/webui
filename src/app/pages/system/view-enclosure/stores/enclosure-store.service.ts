@@ -21,9 +21,9 @@ import {
   Disk, TopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { DisksUpdateService } from 'app/services/disks-update.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface EnclosureState {
   areEnclosuresLoading: boolean;
@@ -68,6 +68,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     private disksUpdateService: DisksUpdateService,
     private dialogService: DialogService,
     private sorter: StorageService,
+    private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
     this.listenForDiskUpdates();
@@ -134,7 +135,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         this.patchState({
           areDisksLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }
@@ -165,7 +166,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         this.patchState({
           areEnclosuresLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }
@@ -405,7 +406,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         this.patchState({
           arePoolsLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }
@@ -426,7 +427,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         this.patchState({
           areDisksLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }

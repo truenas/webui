@@ -7,7 +7,6 @@ import {
   Input,
   OnChanges,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import {
@@ -17,6 +16,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
     this.controlDirective.valueAccessor = this;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('autocompleteOptions' in changes) {
       this.filterOptions();
     }

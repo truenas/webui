@@ -9,11 +9,11 @@ import {
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
-import { VmDeviceType, VmOs } from 'app/enums/vm.enum';
+import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
@@ -29,6 +29,7 @@ import {
 } from 'app/pages/vm/vm-wizard/steps/5-installation-media-step/installation-media-step.component';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -78,6 +79,7 @@ export class VmWizardComponent implements OnInit {
     private dialogService: DialogService,
     private slideIn: IxSlideInService,
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
     private snackbar: SnackbarService,
@@ -115,9 +117,9 @@ export class VmWizardComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -199,7 +201,9 @@ export class VmWizardComponent implements OnInit {
         type: this.nicForm.nic_type,
         mac: this.nicForm.nic_mac,
         nic_attach: this.nicForm.nic_attach,
-        trust_guest_rx_filters: this.nicForm.trust_guest_rx_filters,
+        trust_guest_rx_filters: this.nicForm.nic_type === VmNicType.Virtio
+          ? this.nicForm.trust_guest_rx_filters
+          : false,
       },
     });
   }
@@ -272,12 +276,12 @@ export class VmWizardComponent implements OnInit {
       ...payload,
     }])
       .pipe(
-        catchError((error) => {
-          this.dialogService.errorReport(
-            this.translate.instant('Error creating device'),
-            error.error,
-            error.trace.formatted,
-          );
+        catchError((error: WebsocketError) => {
+          this.dialogService.error({
+            title: this.translate.instant('Error creating device'),
+            message: error.reason,
+            backtrace: error.trace.formatted,
+          });
           return of(null);
         }),
       );

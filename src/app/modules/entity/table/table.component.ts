@@ -17,6 +17,7 @@ export interface AppTableAction<Row = unknown> {
   matTooltip?: string;
   onChanging?: boolean;
   disabled?: boolean;
+  disabledCondition?: (row: Row) => boolean;
   onClick: (row: Row) => void;
 }
 

@@ -56,7 +56,7 @@ describe('DashboardFormComponent', () => {
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
-      const clone = Object.assign([], dashState);
+      const clone = Object.assign([] as DashConfigItem[], dashState);
       clone[1].rendered = true;
 
       await form.fillForm({

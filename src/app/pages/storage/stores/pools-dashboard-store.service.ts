@@ -13,8 +13,8 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface PoolsDashboardState {
   arePoolsLoading: boolean;
@@ -46,6 +46,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private sorter: StorageService,
@@ -100,7 +101,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         this.patchState({
           arePoolsLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }
@@ -136,7 +137,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         this.patchState({
           areDisksLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }

@@ -96,7 +96,7 @@ export class AppContainersCardComponent implements OnInit, OnChanges {
   }
 
   private logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
-    const tailLines = (formValue.tail_lines as number).toString();
+    const tailLines = (formValue.tail_lines).toString();
     this.router.navigate(['/apps/installed', appName, 'logs', formValue.pods, formValue.containers, tailLines]);
   }
 }

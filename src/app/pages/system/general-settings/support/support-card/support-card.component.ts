@@ -16,7 +16,9 @@ import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticke
 import {
   FileTicketLicensedFormComponent,
 } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
+import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
+import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
@@ -27,17 +29,15 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { LicenseComponent } from './license/license.component';
-import { ProactiveComponent } from './proactive/proactive.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-support',
-  templateUrl: './support.component.html',
-  styleUrls: ['./support.component.scss'],
+  selector: 'ix-support-card',
+  templateUrl: './support-card.component.html',
+  styleUrls: ['./support-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupportComponent implements OnInit {
+export class SupportCardComponent implements OnInit {
   isProduction: boolean;
   productImage = 'ix-original-cropped.png';
   isProductImageRack = false;
@@ -191,11 +191,11 @@ export class SupportComponent implements OnInit {
         },
         error: (error) => {
           this.loader.close();
-          this.dialog.errorReport(
-            helptext.is_production_error_dialog.title,
-            error.error.message,
-            error.error.traceback,
-          );
+          this.dialog.error({
+            title: helptext.is_production_error_dialog.title,
+            message: error.error.message,
+            backtrace: error.error.traceback,
+          });
         },
       });
   }

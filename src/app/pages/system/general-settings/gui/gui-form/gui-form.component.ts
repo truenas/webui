@@ -202,11 +202,11 @@ export class GuiFormComponent {
           },
           error: (error: WebsocketError) => {
             this.loader.close();
-            this.dialog.errorReport(
-              helptext.dialog_error_title,
-              error.reason,
-              error.trace.formatted,
-            );
+            this.dialog.error({
+              title: helptext.dialog_error_title,
+              message: error.reason,
+              backtrace: error.trace.formatted,
+            });
           },
         });
       });

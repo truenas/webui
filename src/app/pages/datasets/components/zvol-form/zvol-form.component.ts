@@ -14,14 +14,15 @@ import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   CloudCredentialService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 interface ZvolFormData {
@@ -179,7 +180,8 @@ export class ZvolFormComponent {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private formatter: IxFormatterService,
     protected storageService: StorageService,
@@ -338,16 +340,16 @@ export class ZvolFormComponent {
               }
               this.cdr.markForCheck();
             },
-            error: (error): void => {
-              new EntityUtils().handleWsError(this.form, error, this.dialogService);
+            error: (error: WebsocketError): void => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
             },
           });
         }
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error): void => {
-        new EntityUtils().handleWsError(this.form, error, this.dialogService);
+      error: (error: WebsocketError): void => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -553,13 +555,13 @@ export class ZvolFormComponent {
     delete data.algorithm;
 
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+      next: (dataset) => {
         this.isLoading = false;
-        this.slideInService.close(null, true);
+        this.slideInService.close(null, dataset);
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -622,18 +624,21 @@ export class ZvolFormComponent {
             },
             error: (error) => {
               this.isLoading = false;
-              this.errorHandler.handleWsFormError(error, this.form);
+              this.formErrorHandler.handleWsFormError(error, this.form);
               this.cdr.markForCheck();
             },
           });
         } else {
           this.isLoading = false;
-          this.dialogService.errorReport(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
+          this.dialogService.error({
+            title: helptext.zvol_save_errDialog.title,
+            message: helptext.zvol_save_errDialog.msg,
+          });
           this.slideInService.close(null, false);
         }
       },
-      error: (error): void => {
-        new EntityUtils().handleWsError(this.form, error, this.dialogService);
+      error: (error: WebsocketError): void => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -655,8 +660,8 @@ export class ZvolFormComponent {
         this.form.controls.volblocksize.setValue(recommendedSize);
         this.minimumRecommendedBlockSize = recommendedSize;
       },
-      error: (error): void => {
-        new EntityUtils().handleWsError(this.form, error, this.dialogService);
+      error: (error: WebsocketError): void => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

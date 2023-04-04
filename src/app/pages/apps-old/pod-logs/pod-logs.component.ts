@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
   Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
@@ -7,13 +8,15 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { map, Subscription } from 'rxjs';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   LogsDialogFormValue,
   PodSelectLogsDialogComponent,
 } from 'app/pages/apps-old/dialogs/pod-select-logs/pod-select-logs-dialog.component';
 import { DialogService, ShellService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,7 +37,7 @@ interface PodLogEvent {
   encapsulation: ViewEncapsulation.None,
 })
 export class PodLogsComponent implements OnInit, AfterViewInit {
-  @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
+  @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;
@@ -53,6 +56,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
     private ws: WebSocketService,
     private dialogService: DialogService,
     protected aroute: ActivatedRoute,
+    private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
     private layoutService: LayoutService,
@@ -97,11 +101,9 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
           this.scrollToBottom();
         }
       },
-      error: (error) => {
+      error: (error: WebsocketError | Job) => {
         this.isLoadingPodLogs = false;
-        if (error.reason) {
-          this.dialogService.errorReport('Error', error.reason);
-        }
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -167,15 +169,20 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         const [, url] = download;
         this.storageService.streamDownloadFile(url, fileName, mimetype)
           .pipe(untilDestroyed(this))
-          .subscribe((file: Blob) => {
-            if (download !== null) {
-              this.storageService.downloadBlob(file, fileName);
-            }
+          .subscribe({
+            next: (file: Blob) => {
+              if (download !== null) {
+                this.storageService.downloadBlob(file, fileName);
+              }
+            },
+            error: (error: HttpErrorResponse) => {
+              this.dialogService.error(this.errorHandler.parseHttpError(error));
+            },
           });
       },
-      error: (error) => {
+      error: (error: WebsocketError | Job) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
