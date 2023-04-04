@@ -67,7 +67,6 @@ export interface EnclosureView {
   slots: EnclosureSlot[];
   number: number;
   model: string;
-  isSelected: boolean;
   expanders?: EnclosureElement[];
   pools?: string[];
 }

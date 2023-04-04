@@ -71,7 +71,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   get showVisualizer(): boolean {
-    return this._showEnclosureSelector !== EnclosureSelectorState.Uninitialized;
+    return this._showEnclosureSelector !== EnclosureSelectorState.Uninitialized
+      && this.systemState?.enclosures.length > 0;
   }
 
   delayPending = true;

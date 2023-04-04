@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import {
-  combineLatest, forkJoin, Observable, Observer, of, Subject, tap,
+  combineLatest, forkJoin, Observable, of, Subject, tap,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
@@ -61,7 +61,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly selectedEnclosure$ = this.select((state) => state.selectedEnclosure);
 
   private disksUpdateSubscriptionId: string;
-  private defaultEnclosureSelection = 0;
   private selectedSlotNumber: number | null = null;
 
   constructor(
@@ -107,15 +106,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       enclosureViews: this.getEnclosureViewsData().pipe(
         this.patchStateWithEnclosureViewsData(),
       ),
-      selectedEnclosure: this.getSelectedEnclosure().pipe(
-        this.patchStateWithSelectedEnclosure(),
-      ),
-    });
-  }
-
-  getSelectedEnclosure(): Observable<number> {
-    return new Observable((subscriber: Observer<number>) => {
-      subscriber.next(this.defaultEnclosureSelection);
     });
   }
 
@@ -154,7 +144,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       enclosures: this.getEnclosures(),
       pools: this.getPools(),
       disks: this.getDisks(),
-      selectedEnclosure: this.getSelectedEnclosure(),
     }).pipe(
       switchMap(this.processData.bind(this)),
     );
@@ -182,7 +171,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }
 
   processData({
-    enclosures, pools, disks, selectedEnclosure,
+    enclosures, pools, disks,
   }: {
     enclosures: Enclosure[];
     pools: Pool[];
@@ -211,9 +200,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
     enclosureViews = enclosures.map((enclosure: Enclosure) => {
       return {
-        isSelected: selectedEnclosure && selectedEnclosure === enclosure.number
-          ? selectedEnclosure
-          : false,
         isController: enclosure.controller,
         isRackmount: this.isRackmount(enclosure),
         slots: [],
@@ -225,12 +211,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       } as EnclosureView;
     });
     enclosureViews.sort((a, b) => a.number - b.number);
-
-    // Setup default Enclosure Selection
-    if (!selectedEnclosure && enclosureViews.length) {
-      // Selected enclosure should be controller by default
-      enclosureViews.find((enclosure: EnclosureView) => enclosure.isController).isSelected = true;
-    }
 
     /*
     * EnclosureSlots setup
