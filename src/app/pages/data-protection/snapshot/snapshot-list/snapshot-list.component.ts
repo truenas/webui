@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter, take } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   PeriodicSnapshotTask,
@@ -35,7 +36,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   routeAddTooltip = this.translate.instant('Add Periodic Snapshot Task');
   routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
   entityList: EntityTableComponent<PeriodicSnapshotTaskUi>;
-  asyncView = true;
   filterValue = '';
 
   columns = [
@@ -86,7 +86,10 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   afterInit(entityList: EntityTableComponent<PeriodicSnapshotTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(
+      filter((value) => !!value.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -105,7 +108,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
       };
 
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.store$.select(selectTimezone).pipe(take(1), untilDestroyed(this)).subscribe((timezone) => {
         transformedData.next_run = this.taskService.getTaskNextRun(transformedData.cron_schedule, timezone);
       });
 

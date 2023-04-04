@@ -57,7 +57,6 @@ export class ReplicationListComponent implements EntityTableConfig {
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
   entityList: EntityTableComponent;
-  asyncView = true;
   filterValue = '';
 
   columns = [
@@ -102,7 +101,10 @@ export class ReplicationListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(
+      filter((value) => !!value.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.entityList.getData();
     });
 

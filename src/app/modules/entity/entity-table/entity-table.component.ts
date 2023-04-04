@@ -149,7 +149,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     paging: true,
     sorting: { columns: this.columns },
   };
-  asyncView = false; // default table view is not async
   showDefaults = false;
   showSpinner = true;
   cardHeaderReady = false;
@@ -299,8 +298,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         this.conf.afterInit(this);
       }
     }
-
-    this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
 
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
@@ -555,16 +552,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     } else {
       this.callGetFunction();
     }
-
-    if (this.asyncView) {
-      this.interval = setInterval(() => {
-        if (this.conf.callGetFunction) {
-          this.conf.callGetFunction(this);
-        } else {
-          this.callGetFunction(true);
-        }
-      }, 10000);
-    }
   }
 
   callGetFunction(skipActions = false): void {
@@ -637,7 +624,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.paginationPageIndex = 0;
       this.showDefaults = true;
     }
-    if (this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) {
+    if (this.expandedRows === 0 || this.excuteDeletion || this.needRefreshTable) {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
 
