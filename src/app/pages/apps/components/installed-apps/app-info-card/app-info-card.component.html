@@ -5,6 +5,7 @@
     </h3>
     <div>
       <button
+        id="edit-app"
         mat-button
         [ixTest]="[app?.name, 'edit']"
         [routerLink]="['/apps/available', app.id, 'edit']"
@@ -13,6 +14,7 @@
       </button>
       <button
         *ngIf="hasUpdates"
+        id="update-app"
         mat-button
         [ixTest]="[app?.name, 'update']"
         (click)="updateButtonPressed()"

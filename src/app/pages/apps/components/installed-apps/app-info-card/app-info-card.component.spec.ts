@@ -82,7 +82,8 @@ describe('AppInfoCardComponent', () => {
 
   it('shows header', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('Application Info');
-    expect(spectator.query('mat-card-header button')).toHaveText('Update');
+    expect(spectator.query('mat-card-header button#edit-app')).toHaveText('Edit');
+    expect(spectator.query('mat-card-header button#update-app')).toHaveText('Update');
   });
 
   it('shows details', () => {
