@@ -27,7 +27,8 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
   providedIn: 'root',
 })
 export class AuthService {
-  @LocalStorage() private token: string;
+  @LocalStorage() private localStorageToken: string;
+  private authToken: string;
   private loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
   /**
@@ -40,7 +41,7 @@ export class AuthService {
   private readonly latestTokenGenerated$ = new Subject<string>();
 
   get authToken$(): Observable<string> {
-    return of(this.token);
+    return of(this.authToken);
   }
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -80,7 +81,8 @@ export class AuthService {
     });
 
     this.latestTokenGenerated$.pipe(untilDestroyed(this)).subscribe((token) => {
-      this.token = token;
+      this.localStorageToken = token;
+      this.authToken = token;
     });
   }
 
@@ -131,7 +133,7 @@ export class AuthService {
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login_with_token',
-      params: [this.token || ''],
+      params: [this.localStorageToken || ''],
     };
 
     const requestTrigger$ = new Observable((subscriber) => {
