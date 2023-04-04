@@ -111,10 +111,11 @@ $scrollbar-offset: 20px;
 
 .app-header {
   align-items: center;
+  border-bottom: 1px solid var(--lines);
   color: var(--fg2);
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: auto 125px 40px 40px 40px 100px 60px;
+  grid-template-columns: auto 130px 40px 40px 40px 115px 60px;
   min-height: 48px;
   min-width: fit-content;
   padding-left: 8px;
