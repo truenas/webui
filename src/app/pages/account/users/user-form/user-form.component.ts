@@ -16,6 +16,7 @@ import {
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
+import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
@@ -118,7 +119,7 @@ export class UserFormComponent {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  shellOptions$ = this.ws.call('user.shell_choices', [[]]).pipe(choicesToOptions());
+  shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
@@ -449,6 +450,8 @@ export class UserFormComponent {
     if (group && !ids.find((id) => id === group)) {
       ids.push(group);
     }
-    this.shellOptions$ = this.ws.call('user.shell_choices', [ids]).pipe(choicesToOptions());
+    this.ws.call('user.shell_choices', [ids]).pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
+      this.shellOptions$ = of(options);
+    });
   }
 }
