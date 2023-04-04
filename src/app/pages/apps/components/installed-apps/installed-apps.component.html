@@ -96,7 +96,7 @@
           <div>{{ 'Updates' | translate }}</div>
         </div>
         <div class="apps-rows">
-          <ng-container *ngFor="let app of dataSource">
+          <ng-container *ngFor="let app of filteredApps">
             <ix-app-row
               class="row"
               routerLinkActive="selected"
@@ -110,6 +110,9 @@
           </ng-container>
           <div *ngIf="!dataSource.length" class="no-apps">
             {{ title | translate }}
+          </div>
+          <div *ngIf="dataSource.length && !filteredApps.length" class="no-apps">
+            {{ 'Applications not found.' | translate }}
           </div>
         </div>
       </div>
