@@ -102,7 +102,7 @@ def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_
     driver.find_element_by_xpath(xpaths.network.interface).click()
     assert wait_on_element(driver, 7, xpaths.interface.title)
     assert wait_on_element(driver, 7, xpaths.interface.dhcp_Checkbox, 'clickable')
-    if attribute_value_exist(driver, xpaths.interface.dhcp_Checkbox, 'class', 'mat-checkbox-checked'):
+    if attribute_value_exist(driver, xpaths.interface.dhcp_Checkbox, 'class', 'mat-mdc-checkbox-checked'):
         driver.find_element_by_xpath(xpaths.interface.dhcp_Checkbox).click()
     assert wait_on_element(driver, 7, xpaths.interface.add_Allias, 'clickable')
     driver.find_element_by_xpath(xpaths.interface.add_Allias).click()
@@ -127,15 +127,13 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__testChange"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__testChange"]').click()
+    assert wait_on_element(driver, 7, '//button[@data-test="button-test-changes"]', 'clickable')
+    driver.find_element_by_xpath('//button[@data-test="button-test-changes"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Test Changes")]')
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__TEST CHANGES"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__keepChange"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__keepChange"]').click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.new_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
+    assert wait_on_element(driver, 7, '//button[@data-test="button-dialog-confirm"]', 'clickable')
+    driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
 
 
 @then('when Save Changes appear click the "Save Changes" button')
@@ -143,9 +141,11 @@ def when_save_changes_appear_click_the_save_changes_button(driver):
     """when Save Changes appear click the "Save Changes" button."""
     assert wait_on_element_disappear(driver, 65, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 10, xpaths.network.title)
+    assert wait_on_element(driver, 7, '//button[@data-test="button-save-changes"]', 'clickable')
+    driver.find_element_by_xpath('//button[@data-test="button-save-changes"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Save Changes")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('the changes should be successfully saved')

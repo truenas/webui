@@ -188,7 +188,7 @@ def on_the_service_page_verify_the_nfs_service_is_running_in_the_ui_and_with_the
     """on the Service page, verify the NFS service is running in the UI and with the API."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.nfs_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mat-checked')
+    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mdc-switch--checked')
 
     results = get(nas_Hostname, "/service?service=nfs", (admin_User, admin_Password))
     assert results.json()[0]["state"] == "RUNNING", results.text
@@ -197,7 +197,7 @@ def on_the_service_page_verify_the_nfs_service_is_running_in_the_ui_and_with_the
 @then('verify the Start Automatically checkbox is checked. If not, click on the checkbox')
 def verify_the_start_automatically_checkbox_is_checked_if_not_click_on_the_checkbox(driver):
     """verify the Start Automatically checkbox is checked. If not, click on the checkbox."""
-    value_exist = attribute_value_exist(driver, xpaths.services.nfs_Service_Checkbox, 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, xpaths.services.nfs_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath(xpaths.services.nfs_Service_Checkbox).click()
 
@@ -335,7 +335,7 @@ def verify_the_nfs_service_is_running_in_the_ui_and_with_the_api(driver):
     """verify the NFS service is RUNNING in the UI and with the API."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.nfs_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mat-checked')
+    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mdc-switch--checked')
 
     results = get(nas_Hostname, "/service?service=nfs", (admin_User, admin_Password))
     assert results.json()[0]["state"] == "RUNNING", results.text

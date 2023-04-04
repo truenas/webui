@@ -81,7 +81,7 @@ def input_the_share_name_then_click_to_enable(driver, share_name):
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(share_name)
     assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked'):
+    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked'):
         driver.find_element_by_xpath(xpaths.checkbox.enable).click()
 
 
@@ -125,7 +125,7 @@ def on_the_Service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mat-checked')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mdc-switch--checked')
 
 
 @then(parsers.parse('send a file on {share_name}on {nas_hostname} with {ad_user}%{ad_password}'))
@@ -188,7 +188,7 @@ def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_runn
 
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mat-checked')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mdc-switch--checked')
 
 
 @then(parsers.parse('verify you can get the file from {share_name} and modify it on {nas_hostname} with {ad_user}%{ad_password}'))

@@ -201,10 +201,10 @@ def create_an_smb_share_with_path_mnttankrtacltest1share(driver, dataset1_path):
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys('rt-test')
     assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
+    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
-    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
     time.sleep(1)
     assert wait_on_element(driver, 5, xpaths.smb.description_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.description_Input).clear()

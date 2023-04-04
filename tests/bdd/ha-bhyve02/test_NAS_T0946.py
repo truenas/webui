@@ -189,7 +189,7 @@ def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
     element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
-    if 'mat-checkbox-checked' not in class_attribute:
+    if 'mat-mdc-checkbox-checked' not in class_attribute:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
 
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
@@ -261,8 +261,8 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     assert wait_on_element(driver, 7, '//button[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Test Changes")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
+    driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
+    driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
     assert wait_on_element(driver, 5, xpaths.popup.please_Wait)
     # sleep 5 second to let the changes to take effect
     time.sleep(5)
@@ -394,7 +394,7 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
-    if 'mat-checkbox-checked' in class_attribute:
+    if 'mat-mdc-checkbox-checked' in class_attribute:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
 
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')

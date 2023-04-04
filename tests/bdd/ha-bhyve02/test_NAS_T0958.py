@@ -135,15 +135,15 @@ def the_changed_permissions_should_be_what_they_were_changed_to(driver):
     """The changed permissions should be what they were changed to."""
     assert wait_on_element(driver, 7, '//span[text()="Home Directory Permissions"]')
     assert wait_on_element(driver, 5, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'clickable')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[1]', 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[2]', 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[3]', 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[1]', 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[3]', 'class', 'mat-checkbox-checked') is False
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[1]', 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[2]', 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[3]', 'class', 'mat-checkbox-checked') is False
+    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[1]', 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[2]', 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[3]', 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[1]', 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[3]', 'class', 'mat-mdc-checkbox-checked') is False
+    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[1]', 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[2]', 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[3]', 'class', 'mat-mdc-checkbox-checked') is False
     # setting back the original permission for future test
     assert wait_on_element(driver, 5, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'clickable')
     driver.find_element_by_xpath('(//tr[contains(.,"Group")]//mat-checkbox)[2]').click()
