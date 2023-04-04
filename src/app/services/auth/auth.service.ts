@@ -9,7 +9,7 @@ import {
   map,
   Observable,
   of,
-  ReplaySubject,
+  Subject,
   Subscription,
   switchMap,
   take,
@@ -37,9 +37,10 @@ export class AuthService {
    */
   readonly tokenRegenerationTimeMillis = 290 * 1000;
 
-  private readonly latestTokenGenerated$ = new ReplaySubject<string>(1);
+  private readonly latestTokenGenerated$ = new Subject<string>();
+
   get authToken$(): Observable<string> {
-    return this.latestTokenGenerated$.asObservable();
+    return of(this.token);
   }
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -78,7 +79,7 @@ export class AuthService {
       this.isLoggedIn$.next(false);
     });
 
-    this.authToken$.pipe(untilDestroyed(this)).subscribe((token) => {
+    this.latestTokenGenerated$.pipe(untilDestroyed(this)).subscribe((token) => {
       this.token = token;
     });
   }
@@ -119,7 +120,7 @@ export class AuthService {
           return of(false);
         }
 
-        return this.authToken$.pipe(map(() => loginResponse));
+        return this.latestTokenGenerated$.pipe(map(() => loginResponse));
       }),
     );
   }
