@@ -106,8 +106,8 @@ export class CertificatesDashComponent implements OnInit {
           parent: this,
           add: () => this.slideInService.open(CertificateAddComponent),
           edit: (certificate: Certificate) => {
-            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
-            slideIn.setCertificate(certificate);
+            const slideInServiceRef = this.slideInService.open(CertificateEditComponent, { wide: true });
+            slideInServiceRef.componentInstance.setCertificate(certificate);
           },
           delete: (item: Certificate, table: TableComponent) => {
             const dialogRef = this.dialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: item } });
@@ -158,8 +158,8 @@ export class CertificatesDashComponent implements OnInit {
             this.slideInService.open(CsrAddComponent);
           },
           edit: (certificate: Certificate) => {
-            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
-            slideIn.setCertificate(certificate);
+            const slideInServiceRef = this.slideInService.open(CertificateEditComponent, { wide: true });
+            slideInServiceRef.componentInstance.setCertificate(certificate);
           },
         },
       },
@@ -199,8 +199,8 @@ export class CertificatesDashComponent implements OnInit {
             this.slideInService.open(CertificateAuthorityAddComponent);
           },
           edit: (row: CertificateAuthority) => {
-            const form = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true });
-            form.setCertificateAuthority(row);
+            const slideInServiceRef = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true });
+            slideInServiceRef.componentInstance.setCertificateAuthority(row);
           },
           delete: (row: CertificateAuthority, table: TableComponent) => {
             if (row.signed_certificates > 0) {
@@ -233,8 +233,8 @@ export class CertificatesDashComponent implements OnInit {
             this.slideInService.open(AcmednsFormComponent);
           },
           edit: (row: DnsAuthenticator) => {
-            const form = this.slideInService.open(AcmednsFormComponent);
-            form.setAcmednsForEdit(row);
+            const slideInServiceRef = this.slideInService.open(AcmednsFormComponent);
+            slideInServiceRef.componentInstance.setAcmednsForEdit(row);
           },
         },
       },
@@ -352,8 +352,8 @@ export class CertificatesDashComponent implements OnInit {
       name: 'create_ACME',
       matTooltip: this.translate.instant('Create ACME Certificate'),
       onClick: (csr: Certificate) => {
-        const acmeForm = this.slideInService.open(CertificateAcmeAddComponent);
-        acmeForm.setCsr(csr);
+        const acmeFormSlide = this.slideInService.open(CertificateAcmeAddComponent);
+        acmeFormSlide.componentInstance.setCsr(csr);
       },
     };
 

@@ -81,8 +81,8 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   doEdit(id: number, entityTable: EntityTableComponent<AlertService>): void {
     const alertService = entityTable.rows.find((row) => row.id === id);
 
-    const form = this.slideInService.open(AlertServiceComponent);
-    form.setAlertServiceForEdit(alertService);
+    const slideInServiceRef = this.slideInService.open(AlertServiceComponent);
+    slideInServiceRef.componentInstance.setAlertServiceForEdit(alertService);
   }
 
   onCheckboxChange(row: AlertService): void {

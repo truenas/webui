@@ -70,9 +70,9 @@ export class UserDetailsRowComponent {
   }
 
   doEdit(user: User): void {
-    const editForm = this.slideIn.open(UserFormComponent, { wide: true });
-    if (editForm) {
-      editForm.setupForm(user);
+    const editFormSlideRef = this.slideIn.open(UserFormComponent, { wide: true });
+    if (editFormSlideRef) {
+      editFormSlideRef.componentInstance.setupForm(user);
     }
   }
 

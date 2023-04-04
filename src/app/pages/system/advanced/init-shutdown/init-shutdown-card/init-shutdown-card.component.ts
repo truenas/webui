@@ -44,8 +44,8 @@ export class InitShutdownCardComponent implements OnInit {
     edit: async (script: InitShutdownScript) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const modal = this.slideIn.open(InitShutdownFormComponent);
-      modal.setScriptForEdit(script);
+      const slideInServiceRef = this.slideIn.open(InitShutdownFormComponent);
+      slideInServiceRef.componentInstance.setScriptForEdit(script);
     },
   };
 

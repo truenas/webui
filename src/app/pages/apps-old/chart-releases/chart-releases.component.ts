@@ -344,14 +344,14 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
       { extra: { include_chart_schema: true } },
     ]).pipe(untilDestroyed(this)).subscribe((releases: ChartRelease[]) => {
       this.appLoaderService.close();
-      const form = this.slideInService.open(ChartFormComponent, { wide: true });
+      const slideInServiceRef = this.slideInService.open(ChartFormComponent, { wide: true });
       if (catalogApp.chart_metadata.name === ixChartApp) {
-        form.setTitle(helptext.launch);
+        slideInServiceRef.componentInstance.setTitle(helptext.launch);
       } else {
-        form.setTitle(catalogApp.chart_metadata.name);
+        slideInServiceRef.componentInstance.setTitle(catalogApp.chart_metadata.name);
       }
       if (releases.length) {
-        form.setChartEdit(releases[0]);
+        slideInServiceRef.componentInstance.setChartEdit(releases[0]);
       }
     });
   }

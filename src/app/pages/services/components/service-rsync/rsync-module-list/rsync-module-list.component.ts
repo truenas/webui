@@ -76,7 +76,7 @@ export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRo
 
   doEdit(id: number): void {
     const rsyncModule = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
-    form.setModuleForEdit(rsyncModule);
+    const slideInServiceRef = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
+    slideInServiceRef.componentInstance.setModuleForEdit(rsyncModule);
   }
 }

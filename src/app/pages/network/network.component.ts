@@ -86,8 +86,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       this.slideInService.open(InterfaceFormComponent);
     },
     edit: (row: NetworkInterfaceUi) => {
-      const interfacesForm = this.slideInService.open(InterfaceFormComponent);
-      interfacesForm.setInterfaceForEdit(row);
+      const interfacesFormSlide = this.slideInService.open(InterfaceFormComponent);
+      interfacesFormSlide.componentInstance.setInterfaceForEdit(row);
     },
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
@@ -133,8 +133,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       this.slideInService.open(StaticRouteFormComponent);
     },
     edit: (route: StaticRoute) => {
-      const modal = this.slideInService.open(StaticRouteFormComponent);
-      modal.setEditingStaticRoute(route);
+      const slideInServiceRef = this.slideInService.open(StaticRouteFormComponent);
+      slideInServiceRef.componentInstance.setEditingStaticRoute(route);
     },
     deleteMsg: {
       title: 'static route',
@@ -184,8 +184,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit: (row: IpmiRow) => {
-      const ipmiEditForm = this.slideInService.open(IpmiFormComponent);
-      ipmiEditForm.setIdIpmi(row.id);
+      const ipmiEditFormSlide = this.slideInService.open(IpmiFormComponent);
+      ipmiEditFormSlide.componentInstance.setIdIpmi(row.id);
     },
   };
 
@@ -704,8 +704,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
           }
 
-          const form = this.slideInService.open(InterfaceFormComponent);
-          form.setInterfaceForEdit(interfaces[0]);
+          const slideInServiceRef = this.slideInService.open(InterfaceFormComponent);
+          slideInServiceRef.componentInstance.setInterfaceForEdit(interfaces[0]);
         },
         error: (error) => {
           this.loader.close();

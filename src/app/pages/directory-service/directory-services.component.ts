@@ -72,8 +72,8 @@ export class DirectoryServicesComponent implements OnInit {
         });
     },
     edit: (row: Idmap) => {
-      const slideIn = this.slideInService.open(IdmapFormComponent);
-      slideIn.setIdmapForEdit(row);
+      const slideInServiceRef = this.slideInService.open(IdmapFormComponent);
+      slideInServiceRef.componentInstance.setIdmapForEdit(row);
     },
     getActions: () => {
       return [
@@ -132,8 +132,8 @@ export class DirectoryServicesComponent implements OnInit {
       this.slideInService.open(KerberosRealmsFormComponent);
     },
     edit: (realm: KerberosRealm) => {
-      const modal = this.slideInService.open(KerberosRealmsFormComponent);
-      modal.setRealmForEdit(realm);
+      const slideInServiceRef = this.slideInService.open(KerberosRealmsFormComponent);
+      slideInServiceRef.componentInstance.setRealmForEdit(realm);
     },
   };
 
@@ -155,8 +155,8 @@ export class DirectoryServicesComponent implements OnInit {
       this.slideInService.open(KerberosKeytabsFormComponent);
     },
     edit: (row: KerberosKeytab) => {
-      const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
-      slideIn.setKerberosKeytabsForEdit(row);
+      const slideInServiceRef = this.slideInService.open(KerberosKeytabsFormComponent);
+      slideInServiceRef.componentInstance.setKerberosKeytabsForEdit(row);
     },
   };
 

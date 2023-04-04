@@ -101,8 +101,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
   }
 
   onAddZvol(): void {
-    const addZvolComponent = this.slideIn.open(ZvolFormComponent);
-    addZvolComponent.zvolFormInit(true, this.dataset.id);
+    const addZvolSlide = this.slideIn.open(ZvolFormComponent);
+    addZvolSlide.componentInstance.zvolFormInit(true, this.dataset.id);
   }
 
   onCloseMobileDetails(): void {

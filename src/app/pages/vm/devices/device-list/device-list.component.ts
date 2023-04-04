@@ -69,9 +69,9 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (device: VmDevice) => {
-        const slideIn = this.slideIn.open(DeviceFormComponent);
-        slideIn.setVirtualMachineId(Number(this.pk));
-        slideIn.setDeviceForEdit(device);
+        const slideInServiceRef = this.slideIn.open(DeviceFormComponent);
+        slideInServiceRef.componentInstance.setVirtualMachineId(Number(this.pk));
+        slideInServiceRef.componentInstance.setDeviceForEdit(device);
       },
     });
     actions.push({
@@ -140,7 +140,7 @@ export class DeviceListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    const slideIn = this.slideIn.open(DeviceFormComponent);
-    slideIn.setVirtualMachineId(Number(this.pk));
+    const slideInServiceRef = this.slideIn.open(DeviceFormComponent);
+    slideInServiceRef.componentInstance.setVirtualMachineId(Number(this.pk));
   }
 }

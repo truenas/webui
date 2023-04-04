@@ -79,11 +79,11 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     ttpos: 'above' as TooltipPosition,
     onClick: (selected: Disk[]) => {
       if (selected.length > 1) {
-        const diskBulkEditForm = this.slideInService.open(DiskBulkEditComponent);
-        diskBulkEditForm.setFormDiskBulk(selected);
+        const diskBulkEditFormSlide = this.slideInService.open(DiskBulkEditComponent);
+        diskBulkEditFormSlide.componentInstance.setFormDiskBulk(selected);
       } else {
-        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-        editForm.setFormDisk(selected[0]);
+        const editFormSlide = this.slideInService.open(DiskFormComponent, { wide: true });
+        editFormSlide.componentInstance.setFormDisk(selected[0]);
       }
     },
   }, {
@@ -121,8 +121,8 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       name: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (disk: Disk) => {
-        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-        editForm.setFormDisk(disk);
+        const editFormSlideRef = this.slideInService.open(DiskFormComponent, { wide: true });
+        editFormSlideRef.componentInstance.setFormDisk(disk);
       },
     }];
 

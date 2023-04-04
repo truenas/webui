@@ -147,7 +147,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   doEdit(id: number): void {
     const snapshotTask = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-    form.setTaskForEdit(snapshotTask);
+    const slideInServiceRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    slideInServiceRef.componentInstance.setTaskForEdit(snapshotTask);
   }
 }

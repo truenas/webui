@@ -88,8 +88,8 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
         name: 'edit',
         actionName: 'edit',
         onClick: (row: Tunable) => {
-          const tunableForm = this.slideInService.open(TunableFormComponent);
-          tunableForm.setTunableForEdit(row);
+          const tunableFormSlide = this.slideInService.open(TunableFormComponent);
+          tunableFormSlide.componentInstance.setTunableForEdit(row);
         },
       },
       {

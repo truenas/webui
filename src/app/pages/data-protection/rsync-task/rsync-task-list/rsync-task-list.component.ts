@@ -201,7 +201,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
 
   doEdit(id: number): void {
     const rsyncTask = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-    form.setTaskForEdit(rsyncTask);
+    const slideInServiceRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+    slideInServiceRef.componentInstance.setTaskForEdit(rsyncTask);
   }
 }

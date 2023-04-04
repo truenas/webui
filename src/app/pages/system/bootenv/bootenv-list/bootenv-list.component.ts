@@ -116,18 +116,18 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    const modal = this.slideInService.open(BootEnvironmentFormComponent);
-    modal.setupForm(BootEnvironmentAction.Create);
+    const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
+    slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Create);
   }
 
   doRename(bootenv: Bootenv): void {
-    const modal = this.slideInService.open(BootEnvironmentFormComponent);
-    modal.setupForm(BootEnvironmentAction.Rename, bootenv.id);
+    const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
+    slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Rename, bootenv.id);
   }
 
   doClone(bootenv: Bootenv): void {
-    const modal = this.slideInService.open(BootEnvironmentFormComponent);
-    modal.setupForm(BootEnvironmentAction.Clone, bootenv.id);
+    const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
+    slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Clone, bootenv.id);
   }
 
   doScrub(): void {

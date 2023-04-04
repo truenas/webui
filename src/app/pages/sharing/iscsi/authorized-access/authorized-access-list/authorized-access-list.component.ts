@@ -64,7 +64,7 @@ export class AuthorizedAccessListComponent implements EntityTableConfig<IscsiAut
 
   doEdit(id: number, entityList: EntityTableComponent<IscsiAuthAccess>): void {
     const authAccess = entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(AuthorizedAccessFormComponent);
-    form.setAccessForEdit(authAccess);
+    const slideInServiceRef = this.slideInService.open(AuthorizedAccessFormComponent);
+    slideInServiceRef.componentInstance.setAccessForEdit(authAccess);
   }
 }

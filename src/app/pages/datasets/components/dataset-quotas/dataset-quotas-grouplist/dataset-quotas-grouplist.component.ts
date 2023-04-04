@@ -245,13 +245,13 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   doAdd(): void {
-    const form = this.slideIn.open(DatasetQuotaAddFormComponent);
-    form.setupAddQuotaForm(DatasetQuotaType.Group, this.datasetId);
+    const slideInServiceRef = this.slideIn.open(DatasetQuotaAddFormComponent);
+    slideInServiceRef.componentInstance.setupAddQuotaForm(DatasetQuotaType.Group, this.datasetId);
   }
 
   doEdit(row: DatasetQuota): void {
-    const form = this.slideIn.open(DatasetQuotaEditFormComponent);
-    form.setupEditQuotaForm(DatasetQuotaType.Group, this.datasetId, row.id);
+    const slideInServiceRef = this.slideIn.open(DatasetQuotaEditFormComponent);
+    slideInServiceRef.componentInstance.setupEditQuotaForm(DatasetQuotaType.Group, this.datasetId, row.id);
   }
 
   doDelete(row: DatasetQuota): void {

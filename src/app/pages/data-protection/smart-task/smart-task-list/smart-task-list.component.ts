@@ -109,8 +109,8 @@ export class SmartTaskListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: SmartTestTaskUi) => {
-        const slideIn = this.slideInService.open(SmartTaskFormComponent);
-        slideIn.setTestForEdit(row);
+        const slideInServiceRef = this.slideInService.open(SmartTaskFormComponent);
+        slideInServiceRef.componentInstance.setTestForEdit(row);
       },
     }, {
       id: 'delete',

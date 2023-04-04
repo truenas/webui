@@ -74,8 +74,8 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         name: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (row: VmwareSnapshot) => {
-          const form = this.slideInService.open(VmwareSnapshotFormComponent);
-          form.setSnapshotForEdit(row);
+          const slideInServiceRef = this.slideInService.open(VmwareSnapshotFormComponent);
+          slideInServiceRef.componentInstance.setSnapshotForEdit(row);
         },
       },
     ] as EntityTableAction[];

@@ -91,8 +91,8 @@ export class ScrubListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: ScrubTaskUi) => {
-        const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-        slideIn.setTaskForEdit(row);
+        const slideInServiceRef = this.slideInService.open(ScrubTaskFormComponent);
+        slideInServiceRef.componentInstance.setTaskForEdit(row);
       },
     }, {
       id: 'delete',

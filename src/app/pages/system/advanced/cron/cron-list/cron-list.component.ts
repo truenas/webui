@@ -89,8 +89,8 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   }
 
   openEditForm(row: CronjobRow): void {
-    const cronForm = this.slideInService.open(CronFormComponent);
-    cronForm.setCronForEdit(row);
+    const cronFormSlide = this.slideInService.open(CronFormComponent);
+    cronFormSlide.componentInstance.setCronForEdit(row);
   }
 
   getActions(tableRow: CronjobRow): EntityTableAction<CronjobRow>[] {

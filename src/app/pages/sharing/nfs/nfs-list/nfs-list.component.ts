@@ -83,8 +83,8 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
 
   doEdit(id: number): void {
     const nfsShare = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(NfsFormComponent);
-    form.setNfsShareForEdit(nfsShare);
+    const slideInServiceRef = this.slideInService.open(NfsFormComponent);
+    slideInServiceRef.componentInstance.setNfsShareForEdit(nfsShare);
   }
 
   onCheckboxChange(row: NfsShare, loader$: Subject<boolean>): void {

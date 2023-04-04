@@ -75,8 +75,8 @@ export class CertificateEditComponent {
 
   onCreateAcmePressed(): void {
     this.slideInService.close();
-    const acmeForm = this.slideInService.open(CertificateAcmeAddComponent);
-    acmeForm.setCsr(this.certificate);
+    const acmeFormSlide = this.slideInService.open(CertificateAcmeAddComponent);
+    acmeFormSlide.componentInstance.setCsr(this.certificate);
   }
 
   onSubmit(): void {

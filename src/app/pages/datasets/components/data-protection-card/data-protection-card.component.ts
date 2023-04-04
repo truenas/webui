@@ -34,7 +34,7 @@ export class DataProtectionCardComponent implements OnInit {
   }
 
   addSnapshot(): void {
-    const addForm = this.slideIn.open(SnapshotAddFormComponent);
-    addForm.setDataset(this.dataset.id);
+    const addFormSlide = this.slideIn.open(SnapshotAddFormComponent);
+    addFormSlide.componentInstance.setDataset(this.dataset.id);
   }
 }

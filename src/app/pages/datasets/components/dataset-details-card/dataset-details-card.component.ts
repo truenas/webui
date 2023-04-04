@@ -106,7 +106,7 @@ export class DatasetDetailsCardComponent {
   }
 
   editZvol(): void {
-    const editZvolComponent = this.slideIn.open(ZvolFormComponent);
-    editZvolComponent.zvolFormInit(false, this.dataset.id);
+    const editZvolSlide = this.slideIn.open(ZvolFormComponent);
+    editZvolSlide.componentInstance.zvolFormInit(false, this.dataset.id);
   }
 }

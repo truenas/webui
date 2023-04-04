@@ -59,8 +59,8 @@ export class InitshutdownListComponent implements EntityTableConfig {
         name: 'edit',
         actionName: 'edit',
         onClick: (rowToEdit: InitShutdownScript) => {
-          const modal = this.slideInService.open(InitShutdownFormComponent);
-          modal.setScriptForEdit(rowToEdit);
+          const slideInServiceRef = this.slideInService.open(InitShutdownFormComponent);
+          slideInServiceRef.componentInstance.setScriptForEdit(rowToEdit);
         },
       },
       {

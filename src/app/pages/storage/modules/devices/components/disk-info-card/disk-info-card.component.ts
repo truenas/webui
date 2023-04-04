@@ -52,8 +52,8 @@ export class DiskInfoCardComponent implements OnInit {
   }
 
   onEdit(): void {
-    const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-    editForm.setFormDisk(this.disk);
+    const editFormSlide = this.slideInService.open(DiskFormComponent, { wide: true });
+    editFormSlide.componentInstance.setFormDisk(this.disk);
   }
 
   onReplace(): void {

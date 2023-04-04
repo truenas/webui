@@ -73,8 +73,8 @@ export class WebdavListComponent implements EntityTableConfig<WebDavShare>, OnIn
 
   doEdit(rowId: number, tableComponent: EntityTableComponent<WebDavShare>): void {
     this.tableComponent = tableComponent;
-    const webdavForm = this.slideInService.open(WebdavFormComponent);
-    webdavForm.setWebdavForEdit(tableComponent.rows.find((row) => row.id === rowId));
+    const webdavFormSlide = this.slideInService.open(WebdavFormComponent);
+    webdavFormSlide.componentInstance.setWebdavForEdit(tableComponent.rows.find((row) => row.id === rowId));
   }
 
   onCheckboxChange(row: WebDavShare): void {

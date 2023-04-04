@@ -136,8 +136,8 @@ export class IdmapListComponent implements EntityTableConfig {
       label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
       onClick: (rowToEdit: IdmapRow) => {
-        const form = this.slideIn.open(IdmapFormComponent);
-        form.setIdmapForEdit(rowToEdit);
+        const slideInServiceRef = this.slideIn.open(IdmapFormComponent);
+        slideInServiceRef.componentInstance.setIdmapForEdit(rowToEdit);
       },
     });
     if (!requiredIdmapDomains.includes(row.name as IdmapName)) {

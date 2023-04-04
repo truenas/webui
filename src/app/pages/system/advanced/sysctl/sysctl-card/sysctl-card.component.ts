@@ -38,8 +38,8 @@ export class SysctlCardComponent implements OnInit {
     },
     edit: async (tunable: Tunable) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
-      const dialog = this.slideIn.open(TunableFormComponent);
-      dialog.setTunableForEdit(tunable);
+      const slideInServiceRef = this.slideIn.open(TunableFormComponent);
+      slideInServiceRef.componentInstance.setTunableForEdit(tunable);
     },
   };
 

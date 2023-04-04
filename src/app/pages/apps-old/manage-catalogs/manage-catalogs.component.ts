@@ -163,8 +163,8 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   edit(catalog: Catalog): void {
-    const modal = this.slideInService.open(CatalogEditFormComponent);
-    modal.setCatalogForEdit(catalog);
+    const slideInServiceRef = this.slideInService.open(CatalogEditFormComponent);
+    slideInServiceRef.componentInstance.setCatalogForEdit(catalog);
   }
 
   refreshRow(row: Catalog): void {

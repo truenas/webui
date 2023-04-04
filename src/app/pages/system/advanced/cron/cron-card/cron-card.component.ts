@@ -79,8 +79,8 @@ export class CronCardComponent implements OnInit {
     edit: async (cron: CronjobRow) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const modal = this.slideIn.open(CronFormComponent);
-      modal.setCronForEdit(cron);
+      const slideInServiceRef = this.slideIn.open(CronFormComponent);
+      slideInServiceRef.componentInstance.setCronForEdit(cron);
     },
   };
 

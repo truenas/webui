@@ -357,8 +357,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (vm: VirtualMachineRow) => {
-        const slideIn = this.slideIn.open(VmEditFormComponent);
-        slideIn.setVmForEdit(vm);
+        const slideInServiceRef = this.slideIn.open(VmEditFormComponent);
+        slideInServiceRef.componentInstance.setVmForEdit(vm);
       },
     },
     {

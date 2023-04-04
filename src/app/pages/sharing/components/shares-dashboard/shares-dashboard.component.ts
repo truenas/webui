@@ -228,8 +228,8 @@ export class SharesDashboardComponent implements AfterViewInit {
             this.slideInService.open(NfsFormComponent);
           },
           edit: (row: NfsShare): void => {
-            const form = this.slideInService.open(NfsFormComponent);
-            form.setNfsShareForEdit(row);
+            const slideInServiceRef = this.slideInService.open(NfsFormComponent);
+            slideInServiceRef.componentInstance.setNfsShareForEdit(row);
           },
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
@@ -272,8 +272,8 @@ export class SharesDashboardComponent implements AfterViewInit {
           },
           addButtonLabel: this.translate.instant('Wizard'),
           edit: (row: IscsiTarget) => {
-            const targetForm = this.slideInService.open(TargetFormComponent, { wide: true });
-            targetForm.setTargetForEdit(row);
+            const targetFormSlide = this.slideInService.open(TargetFormComponent, { wide: true });
+            targetFormSlide.componentInstance.setTargetForEdit(row);
           },
           afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
@@ -333,8 +333,8 @@ export class SharesDashboardComponent implements AfterViewInit {
           },
           limitRowsByMaxHeight: true,
           edit: (row: WebDavShare) => {
-            const form = this.slideInService.open(WebdavFormComponent);
-            form.setWebdavForEdit(row);
+            const slideInServiceRef = this.slideInService.open(WebdavFormComponent);
+            slideInServiceRef.componentInstance.setWebdavForEdit(row);
           },
           afterGetData: (data: WebDavShare[]) => {
             this.webdavHasItems = 0;
@@ -385,8 +385,8 @@ export class SharesDashboardComponent implements AfterViewInit {
                 this.translate.instant('This share is configured through TrueCommand'),
               );
             } else {
-              const form = this.slideInService.open(SmbFormComponent);
-              form.setSmbShareForEdit(row);
+              const slideInServiceRef = this.slideInService.open(SmbFormComponent);
+              slideInServiceRef.componentInstance.setSmbShareForEdit(row);
             }
           },
           afterGetData: (data: SmbShare[]) => {
@@ -423,8 +423,8 @@ export class SharesDashboardComponent implements AfterViewInit {
                         const searchName = row.home ? 'homes' : row.name;
                         this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                           (sharesecs) => {
-                            const form = this.slideInService.open(SmbAclComponent);
-                            form.setSmbShareName(sharesecs[0].share_name);
+                            const slideInServiceRef = this.slideInService.open(SmbAclComponent);
+                            slideInServiceRef.componentInstance.setSmbShareName(sharesecs[0].share_name);
                           },
                         );
                       }

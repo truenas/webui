@@ -183,8 +183,8 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.slideInService.open(ScrubTaskFormComponent);
           },
           edit: (task: ScrubTaskUi) => {
-            const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-            slideIn.setTaskForEdit(task);
+            const slideInServiceRef = this.slideInService.open(ScrubTaskFormComponent);
+            slideInServiceRef.componentInstance.setTaskForEdit(task);
           },
           tableActions: [
             {
@@ -232,8 +232,8 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.slideInService.open(SnapshotTaskComponent, { wide: true });
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            slideIn.setTaskForEdit(row);
+            const slideInServiceRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+            slideInServiceRef.componentInstance.setTaskForEdit(row);
           },
           tableFooterActions: [
             {
@@ -336,8 +336,8 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.slideInService.open(CloudsyncFormComponent, { wide: true });
           },
           edit: (row: CloudSyncTaskUi) => {
-            const form = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-            form.setTaskForEdit(row);
+            const slideInServiceRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+            slideInServiceRef.componentInstance.setTaskForEdit(row);
           },
           onButtonClick: (row: CloudSyncTaskUi) => {
             this.stateButton(row);
@@ -381,8 +381,8 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.slideInService.open(RsyncTaskFormComponent, { wide: true });
           },
           edit: (row: RsyncTaskUi) => {
-            const form = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-            form.setTaskForEdit(row);
+            const slideInServiceRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+            slideInServiceRef.componentInstance.setTaskForEdit(row);
           },
           onButtonClick: (row: RsyncTaskUi) => {
             this.stateButton(row as TaskTableRow);
@@ -426,8 +426,8 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.slideInService.open(SmartTaskFormComponent);
           },
           edit: (row: SmartTestTaskUi) => {
-            const slideIn = this.slideInService.open(SmartTaskFormComponent);
-            slideIn.setTestForEdit(row);
+            const slideInServiceRef = this.slideInService.open(SmartTaskFormComponent);
+            slideInServiceRef.componentInstance.setTestForEdit(row);
           },
         },
       },

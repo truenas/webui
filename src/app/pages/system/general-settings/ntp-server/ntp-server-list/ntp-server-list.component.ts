@@ -92,8 +92,8 @@ export class NtpServerListComponent implements OnInit {
   }
 
   doEdit(server: NtpServer): void {
-    const modal = this.slideInService.open(NtpServerFormComponent);
-    modal.setupForm(server);
+    const slideInServiceRef = this.slideInService.open(NtpServerFormComponent);
+    slideInServiceRef.componentInstance.setupForm(server);
   }
 
   doDelete(server: NtpServer): void {

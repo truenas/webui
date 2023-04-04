@@ -77,8 +77,8 @@ export class BackupCredentialsComponent implements OnInit {
             this.slideInService.open(CloudCredentialsFormComponent);
           },
           edit: (credential: CloudsyncCredential) => {
-            const form = this.slideInService.open(CloudCredentialsFormComponent);
-            form.setCredentialsForEdit(credential);
+            const slideInServiceRef = this.slideInService.open(CloudCredentialsFormComponent);
+            slideInServiceRef.componentInstance.setCredentialsForEdit(credential);
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
           afterGetData: (credentials: CloudsyncCredential[]) => {
@@ -92,8 +92,8 @@ export class BackupCredentialsComponent implements OnInit {
               return;
             }
 
-            const form = this.slideInService.open(CloudCredentialsFormComponent);
-            form.setCredentialsForEdit(credentialToEdit);
+            const slideInServiceRef = this.slideInService.open(CloudCredentialsFormComponent);
+            slideInServiceRef.componentInstance.setCredentialsForEdit(credentialToEdit);
             this.isFirstCredentialsLoad = false;
           },
         },
@@ -114,8 +114,8 @@ export class BackupCredentialsComponent implements OnInit {
             this.slideInService.open(SshConnectionFormComponent);
           },
           edit: (row: KeychainSshCredentials) => {
-            const form = this.slideInService.open(SshConnectionFormComponent);
-            form.setConnectionForEdit(row);
+            const slideInServiceRef = this.slideInService.open(SshConnectionFormComponent);
+            slideInServiceRef.componentInstance.setConnectionForEdit(row);
           },
         },
       }, {
@@ -136,8 +136,8 @@ export class BackupCredentialsComponent implements OnInit {
             this.slideInService.open(SshKeypairFormComponent);
           },
           edit: (row: KeychainSshKeyPair) => {
-            const modal = this.slideInService.open(SshKeypairFormComponent);
-            modal.setKeypairForEditing(row);
+            const slideInServiceRef = this.slideInService.open(SshKeypairFormComponent);
+            slideInServiceRef.componentInstance.setKeypairForEditing(row);
           },
         },
       },

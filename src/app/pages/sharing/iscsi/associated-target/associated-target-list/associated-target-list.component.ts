@@ -99,8 +99,8 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (extent: IscsiTargetExtent) => {
-        const form = this.slideInService.open(AssociatedTargetFormComponent);
-        form.setTargetForEdit(extent);
+        const slideInServiceRef = this.slideInService.open(AssociatedTargetFormComponent);
+        slideInServiceRef.componentInstance.setTargetForEdit(extent);
       },
     }, {
       id: row.target,

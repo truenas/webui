@@ -1,7 +1,7 @@
 import {
   Component,
   ElementRef,
-  HostListener,
+  HostListener, Injector,
   Input,
   OnDestroy,
   OnInit,
@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, timer } from 'rxjs';
+import { SLIDEIN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -77,7 +78,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     });
   }
 
-  openSlideIn<T>(componentType: Type<T>, params?: { wide: boolean }): T {
+  openSlideIn<T>(componentType: Type<T>, params?: { wide: boolean; data?: { [key: string]: unknown } }): T {
     this.isSlideInOpen = true;
     this.wide = !!params?.wide;
 
@@ -87,7 +88,9 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInBody.clear();
     this.wasBodyCleared = false;
 
-    const componentRef = this.slideInBody.createComponent<T>(componentType);
+    const injector = Injector.create({ providers: [{ provide: SLIDEIN_DATA, useValue: params?.data }] });
+    const componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
+
     return componentRef.instance;
   }
 

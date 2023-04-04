@@ -88,8 +88,8 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
       };
     });
 
-    const form = this.slideInService.open(PortalFormComponent);
-    form.setupForm({
+    const slideInServiceRef = this.slideInService.open(PortalFormComponent);
+    slideInServiceRef.componentInstance.setupForm({
       ...portal,
       listen,
     });

@@ -73,8 +73,8 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
         id: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (realm: KerberosRealmRow) => {
-          const modal = this.slideInService.open(KerberosRealmsFormComponent);
-          modal.setRealmForEdit(realm);
+          const slideInServiceRef = this.slideInService.open(KerberosRealmsFormComponent);
+          slideInServiceRef.componentInstance.setRealmForEdit(realm);
         },
       },
       {
