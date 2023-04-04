@@ -1,9 +1,3 @@
-
-CHECKBOX = '//mat-checkbox'
-TOGGLE = '//mat-slide-toggle'
-BUTTON = '//button'
-
-
 def mat_Option(option):
     return f'//mat-option[contains(.,"{option}")]'
 
@@ -180,6 +174,7 @@ class checkbox:
     enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     old_Confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
+    new_Confirm = '//mat-checkbox[@data-test="checkbox-confirm"]'
     confirm = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
     sudo = '//ix-checkbox[@formcontrolname="sudo_commands_all"]//mat-checkbox'
     force = '//ix-checkbox[@formcontrolname="force"]//mat-checkbox'
@@ -467,6 +462,9 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
+    CHECKBOX = '//mat-checkbox'
+    TOGGLE = '//button[@role="switch"]'
+    BUTTON = '//button[@aria-label="Edit"]'
 
     def service_Tr(serivce):
         return f'//tr[contains(.,"{serivce}")]'
