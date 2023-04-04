@@ -509,21 +509,27 @@ class sharing:
 
 
 class side_Menu:
+    def menu_Anchor(menu_Item):
+        return f'//a[@name="{menu_Item}-menu"]'
+
+    def submenu_Anchor(menu_Item):
+        return f'//div[contains(@class,"lidein-nav-md")]//a[normalize-space(text())="{menu_Item}"]'
+
     """xpath for the menu on the left side"""
-    dashboard = '//mat-list-item[@ix-auto="option__Dashboard"]'
-    datasets = '//mat-list-item[@ix-auto="option__Datasets"]'
-    shares = '//mat-list-item[@ix-auto="option__Shares"]'
-    system_Setting = '//mat-list-item[@ix-auto="option__System Settings"]'
-    advanced = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]'
-    services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
-    credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
-    local_Group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
-    local_User = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
-    certificates = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]'
-    directory_Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
-    network = '//mat-list-item[@ix-auto="option__Network"]'
-    storage = '//mat-list-item[@ix-auto="option__Storage"]'
-    apps = '//mat-list-item[@ix-auto="option__Apps"]'
+    dashboard = menu_Anchor('Dashboard')
+    storage = menu_Anchor('Storage')
+    datasets = menu_Anchor('Datasets')
+    shares = menu_Anchor('Shares')
+    network = menu_Anchor('Network')
+    credentials = menu_Anchor('Credentials')
+    local_User = submenu_Anchor('Local Users')
+    local_Group = submenu_Anchor('Local Groups')
+    certificates = submenu_Anchor('Certificates')
+    directory_Services = submenu_Anchor('Directory Services')
+    apps = menu_Anchor('Apps')
+    system_Setting = menu_Anchor('System_Settings')
+    advanced = submenu_Anchor('Advanced')
+    services = submenu_Anchor('Services')
 
 
 class smb:
