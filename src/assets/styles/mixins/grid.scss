@@ -1,7 +1,0 @@
-@mixin grid-row($columns: 4) {
-  display: grid;
-  grid-gap: 8px;
-  grid-template-columns: minmax(150px, 5fr) repeat($columns - 1, minmax(150px, 1fr));
-  min-width: fit-content;
-  width: 100%;
-}

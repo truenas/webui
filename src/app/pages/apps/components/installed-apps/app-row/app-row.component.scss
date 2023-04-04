@@ -1,4 +1,3 @@
-@import 'mixins/grid';
 @import 'scss-imports/splitview';
 
 :host {
@@ -42,11 +41,6 @@
     }
   }
 
-  .app-name {
-    font-size: 18px;
-    line-height: 1.2;
-  }
-
   .app-catalog {
     font-size: 10px;
     line-height: 1.2;
@@ -69,15 +63,15 @@
 }
 
 .row-grid {
-  @include grid-row(7);
   align-items: center;
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: auto 125px 40px 40px 40px 100px 60px;
+  min-width: fit-content;
+  width: 100%;
 
-
-  // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 150px 40px 40px 40px 125px 50px;
 
   @media (max-width: $breakpoint-tablet) {
-    // Override default fraction based values to avoid misaligned columns
     grid-template-columns: auto 0 0 0 0 0 0;
     width: 100%;
   }
