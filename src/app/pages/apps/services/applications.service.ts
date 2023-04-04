@@ -35,12 +35,16 @@ export class ApplicationsService {
   }
 
   getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
-    const firstOption: QueryFilter<AvailableApp>[] = [
+    const queryFilters: QueryFilter<AvailableApp>[] = [
       ['name', '=', name],
       ['catalog', '=', catalog],
       ['train', '=', train],
     ];
-    return this.ws.call('app.available', [firstOption]).pipe(switchMap((app) => of(app[0])));
+    return this.ws.call('app.available', [queryFilters]).pipe(switchMap((app) => of(app[0])));
+  }
+
+  getLatestApps(amount = 20): Observable<AvailableApp[]> {
+    return this.ws.call('app.latest', [amount]);
   }
 
   getAvailableApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {

@@ -353,6 +353,7 @@ export type ApiDirectory = {
   // App
   'app.categories': { params: void; response: string[] };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+  'app.latest': { params: [amount: number]; response: AvailableApp[] };
 
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };

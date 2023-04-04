@@ -76,13 +76,17 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   private loadApplications(filters?: AppsFiltersValues): void {
     this.loader.open();
-    combineLatest([this.appService.getAvailableApps(filters), this.appService.getAllAppsCategories()])
+    combineLatest([
+      this.appService.getAvailableApps(filters),
+      this.appService.getAllAppsCategories(),
+      this.appService.getLatestApps(),
+    ])
       .pipe(untilDestroyed(this))
-      .subscribe(([apps, appCategories]) => {
+      .subscribe(([apps, appCategories, latestApps]) => {
         this.apps = apps;
+        this.allNewAndUpdatedApps = latestApps;
         this.filterApps(apps);
         this.setupApps(apps, appCategories);
-
         this.loader.close();
         this.cdr.markForCheck();
       });
@@ -95,9 +99,6 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   private setupApps(apps: AvailableApp[], appCategories: string[]): void {
     this.allRecommendedApps = apps.filter((app) => app.recommended);
-    this.allNewAndUpdatedApps = apps
-      .sort((a, b) => new Date(a.last_update).getTime() - new Date(b.last_update).getTime());
-
     this.recommendedApps$.next(this.allRecommendedApps.slice(0, this.sliceAmount));
     this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps.slice(0, this.sliceAmount));
 
@@ -106,7 +107,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
       {
         title: this.translate.instant('Recommended Apps'),
         apps$: this.recommendedApps$,
-        totalApps: this.allNewAndUpdatedApps.length,
+        totalApps: this.allRecommendedApps.length,
         fetchMore: () => this.recommendedApps$.next(this.allRecommendedApps),
       },
       {
