@@ -586,6 +586,7 @@ button.mat-menu-trigger.menu-toggle.mat-button {
 /* Material Cards*/
 .mat-card {
   border: solid 1px var(--contrast-lighter);
+  font-family: var(--mdc-dialog-subhead-font);
   padding: 0 !important;
   position: relative;
 }
