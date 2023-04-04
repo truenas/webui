@@ -39,7 +39,6 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { FormSelectOption } from 'app/modules/entity/entity-form/models/form-select-option.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/datasets/components/dataset-form/dataset-form-data.interface';
@@ -51,6 +50,7 @@ import {
   NameValidationService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -884,6 +884,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected dialogService: DialogService,
     protected storageService: StorageService,
     protected modalService: ModalService,
+    private errorHandler: ErrorHandlerService,
     protected translate: TranslateService,
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
@@ -1051,7 +1052,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    new EntityUtils().handleWsError(this.entityForm, error, this.dialogService);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   paramMap: {

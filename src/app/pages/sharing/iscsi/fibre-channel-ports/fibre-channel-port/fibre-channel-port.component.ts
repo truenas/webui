@@ -10,9 +10,9 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IscsiService, AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -87,6 +87,7 @@ export class FibreChannelPortComponent implements OnInit {
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -101,8 +102,8 @@ export class FibreChannelPortComponent implements OnInit {
           };
         });
       },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -157,7 +158,7 @@ export class FibreChannelPortComponent implements OnInit {
       },
       error: (error: WebsocketError) => {
         this.loader.close();
-        this.dialogService.errorReport(error.trace.class, error.reason, error.trace.formatted);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

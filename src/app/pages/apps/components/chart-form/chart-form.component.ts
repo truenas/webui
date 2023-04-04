@@ -20,10 +20,10 @@ import {
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
@@ -54,6 +54,7 @@ export class ChartFormComponent implements OnDestroy {
     private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private appSchemaService: AppSchemaService,
     private mdDialog: MatDialog,
     private validatorsService: IxValidatorsService,
@@ -161,7 +162,10 @@ export class ChartFormComponent implements OnDestroy {
       }
     } catch (error: unknown) {
       console.error(error);
-      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+      this.dialogService.error({
+        title: helptext.chartForm.parseError.title,
+        message: helptext.chartForm.parseError.message,
+      });
     }
   }
 
@@ -275,11 +279,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   onFailure(failedJob: Job): void {
-    if (failedJob.exc_info && failedJob.exc_info.extra) {
-      new EntityUtils().handleWsError(this, failedJob);
-    } else {
-      this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
-    }
+    this.dialogService.error(this.errorHandler.parseJobError(failedJob));
   }
 
   onSuccess(): void {

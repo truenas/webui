@@ -7,6 +7,7 @@ import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   FieldConfig,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -14,12 +15,12 @@ import { RelationGroup } from 'app/modules/entity/entity-form/models/field-relat
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DynamicListComponent,
 } from 'app/pages/sharing/iscsi/initiator/initiator-form/dynamic-list/dynamic-list.component';
 import { DialogService, NetworkService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -79,11 +80,12 @@ export class InitiatorFormComponent implements OnInit {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
+    private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
-    protected dialog: DialogService,
+    protected dialogService: DialogService,
   ) { }
 
   getConnectedInitiators(): void {
@@ -91,8 +93,8 @@ export class InitiatorFormComponent implements OnInit {
       next: (sessions) => {
         this.connectedInitiators = _.unionBy(sessions, (item) => item.initiator && item.initiator_addr);
       },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -138,8 +140,8 @@ export class InitiatorFormComponent implements OnInit {
               this.formGroup.controls.all.setValue(true);
             }
           },
-          error: (err) => {
-            new EntityUtils().handleWsError(this, err);
+          error: (error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         });
     }
@@ -167,9 +169,9 @@ export class InitiatorFormComponent implements OnInit {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

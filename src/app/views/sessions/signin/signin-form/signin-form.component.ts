@@ -1,6 +1,6 @@
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +20,7 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 export class SigninFormComponent implements OnInit {
   @ViewChild('usernameField', { static: true, read: ElementRef }) usernameField: ElementRef<HTMLElement>;
 
-  @Input() isLoading: boolean;
+  isLoading$ = this.signinStore.isLoading$;
 
   form = this.formBuilder.group({
     username: ['', Validators.required],

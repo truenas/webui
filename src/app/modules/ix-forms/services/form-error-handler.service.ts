@@ -4,14 +4,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
   constructor(
     private dialog: DialogService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   /**
@@ -36,7 +37,7 @@ export class FormErrorHandlerService {
     }
 
     // Fallback to old error handling
-    (new EntityUtils()).errorReport(error, this.dialog);
+    this.dialog.error(this.errorHandler.parseError(error));
   }
 
   private handleValidationError(
@@ -53,7 +54,7 @@ export class FormErrorHandlerService {
       if (!control) {
         console.error(`Could not find control ${field}.`);
         // Fallback to default modal error message.
-        (new EntityUtils()).errorReport(error, this.dialog);
+        this.dialog.error(this.errorHandler.parseError(error));
         return;
       }
 

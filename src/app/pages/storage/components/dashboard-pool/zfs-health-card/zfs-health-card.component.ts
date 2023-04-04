@@ -19,11 +19,13 @@ import { secondsToDuration } from 'app/helpers/time.helpters';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -49,6 +51,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private dialog: MatDialog,
     private store: PoolsDashboardStore,
   ) { }
@@ -136,8 +139,8 @@ export class ZfsHealthCardComponent implements OnChanges {
       .pipe(
         filter(Boolean),
         switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
-        catchError((error) => {
-          this.dialogService.errorReportMiddleware(error);
+        catchError((error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           return EMPTY;
         }),
         untilDestroyed(this),
@@ -154,8 +157,8 @@ export class ZfsHealthCardComponent implements OnChanges {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
-      catchError((error) => {
-        this.dialogService.errorReportMiddleware(error);
+      catchError((error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -185,8 +188,8 @@ export class ZfsHealthCardComponent implements OnChanges {
           this.scan = scan.scan;
           this.cdr.markForCheck();
         },
-        error: (error) => {
-          this.dialogService.errorReportMiddleware(error);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

@@ -9,10 +9,10 @@ import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -34,6 +34,7 @@ export class SelectPoolDialogComponent implements OnInit {
     private dialogService: DialogService,
     private appService: ApplicationsService,
     private router: Router,
+    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -103,7 +104,7 @@ export class SelectPoolDialogComponent implements OnInit {
         },
         error: (error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.dialogRef.close(false);
         },
       });

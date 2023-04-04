@@ -22,9 +22,9 @@ import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
@@ -92,7 +92,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
       if (this.isHaEnabled) {
-        this.dialog.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+        this.dialogService.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
         this.tableService.delete(table, row as unknown as Record<string, unknown>, deleteAction);
       }
@@ -194,7 +194,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private ws: WebSocketService,
     private router: Router,
-    private dialog: DialogService,
+    private dialogService: DialogService,
     private storageService: StorageService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -345,7 +345,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           });
         }
-        this.dialog
+        this.dialogService
           .confirm({
             title: helptext.commit_changes_title,
             message: helptext.commit_changes_warning,
@@ -370,9 +370,9 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.loader.close();
                     this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
                   },
-                  error: (err) => {
+                  error: (error: WebsocketError) => {
                     this.loader.close();
-                    new EntityUtils().handleWsError(this, err, this.dialog);
+                    this.dialogService.error(this.errorHandler.parseWsError(error));
                   },
                 });
             }
@@ -382,7 +382,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   checkInNow(): void {
     if (this.affectedServices.length > 0) {
-      this.dialog
+      this.dialogService
         .confirm({
           title: helptext.services_restarted.title,
           message: this.translate.instant(helptext.services_restarted.message, {
@@ -397,7 +397,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           this.finishCheckin();
         });
     } else {
-      this.dialog
+      this.dialogService
         .confirm({
           title: helptext.checkin_title,
           message: helptext.checkin_message,
@@ -428,15 +428,15 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           clearInterval(this.checkinInterval);
           this.checkinRemaining = null;
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialog);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
 
   rollbackPendingChanges(): void {
-    this.dialog
+    this.dialogService
       .confirm({
         title: helptext.rollback_changes_title,
         message: helptext.rollback_changes_warning,
@@ -461,9 +461,9 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.translate.instant(helptext.changes_rolled_back),
                 );
               },
-              error: (err) => {
+              error: (error: WebsocketError) => {
                 this.loader.close();
-                new EntityUtils().handleWsError(this, err, this.dialog);
+                this.dialogService.error(this.errorHandler.parseWsError(error));
               },
             });
         }
@@ -599,7 +599,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe({
             next: (wasStopped) => {
               if (wasStopped) {
-                this.dialog.info(
+                this.dialogService.info(
                   this.translate.instant('Service failed to stop'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to stop.', {
                     serviceLabel: row.service_label,
@@ -614,7 +614,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             error: (err) => {
               row.onChanging = false;
-              this.dialog.error({
+              this.dialogService.error({
                 ...this.errorHandler.parseWsError(err),
                 title: this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
@@ -639,7 +639,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
                 row.state = ServiceStatus.Running;
                 row.onChanging = false;
               } else {
-                this.dialog.warn(
+                this.dialogService.warn(
                   this.translate.instant('Service failed to start'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to start.', {
                     serviceLabel: row.service_label,
@@ -651,7 +651,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             error: (err) => {
               row.onChanging = false;
-              this.dialog.error({
+              this.dialogService.error({
                 ...this.errorHandler.parseWsError(err),
                 title: this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
@@ -699,9 +699,9 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           const form = this.slideInService.open(InterfaceFormComponent);
           form.setInterfaceForEdit(interfaces[0]);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

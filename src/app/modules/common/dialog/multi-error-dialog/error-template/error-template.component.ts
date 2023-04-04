@@ -1,8 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -64,13 +66,13 @@ export class ErrorTemplateComponent {
           next: (file) => {
             this.storage.downloadBlob(file, `${this.logs.id}.log`);
           },
-          error: (err) => {
-            this.dialogService.error(this.errorHandler.parseWsError(err));
+          error: (error: HttpErrorResponse) => {
+            this.dialogService.error(this.errorHandler.parseHttpError(error));
           },
         });
       },
-      error: (err) => {
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

@@ -7,10 +7,11 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Group } from 'app/interfaces/group.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -32,6 +33,7 @@ export class DeleteGroupDialogComponent {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<DeleteGroupDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public group: Group,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   get deleteUsersMessage(): string {
@@ -51,8 +53,8 @@ export class DeleteGroupDialogComponent {
           this.dialogRef.close(true);
           this.loader.close();
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.loader.close();
         },
       });
