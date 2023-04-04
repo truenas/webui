@@ -7,8 +7,9 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface DockerImagesState {
@@ -26,6 +27,7 @@ const initialState: DockerImagesState = {
 @Injectable({ providedIn: 'root' })
 export class DockerImagesComponentStore extends ComponentStore<DockerImagesState> {
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
   ) {
@@ -47,8 +49,8 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
       switchMap(() => {
         return this.ws.call('container.image.query').pipe(
           tap((entities) => this.patchState({ entities })),
-          catchError((error) => {
-            new EntityUtils().errorReport(error, this.dialog);
+          catchError((error: WebsocketError) => {
+            this.dialog.error(this.errorHandler.parseWsError(error));
 
             this.patchState({
               isLoading: false,

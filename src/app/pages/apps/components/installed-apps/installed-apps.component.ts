@@ -14,12 +14,12 @@ import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -47,6 +47,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
+    private errorHandler: ErrorHandlerService,
     private router: Router,
     private layoutService: LayoutService,
     private matDialog: MatDialog,
@@ -269,7 +270,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       dialogRef.close();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWsError(this, error, this.dialogService);
+      this.dialogService.error(this.errorHandler.parseJobError(error));
     });
   }
 
@@ -320,7 +321,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
           if (message !== '') {
             message = '<ul>' + message + '</ul>';
-            this.dialogService.errorReport(helptext.bulkActions.title, message);
+            this.dialogService.error({ title: helptext.bulkActions.title, message });
           }
           this.updateChartReleases();
         },

@@ -9,10 +9,10 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
@@ -62,7 +62,7 @@ export class SessionsCardComponent implements OnInit {
             return row.current;
           },
           onClick: (row: AuthSessionRow): void => {
-            this.dialog
+            this.dialogService
               .confirm({
                 title: this.translate.instant('Terminate session'),
                 message: this.translate.instant('Are you sure you want to terminate the session?'),
@@ -72,7 +72,7 @@ export class SessionsCardComponent implements OnInit {
                 untilDestroyed(this),
               ).subscribe({
                 next: () => this.terminateSession(row.id),
-                error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+                error: (err: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(err)),
               });
           },
         },
@@ -82,7 +82,7 @@ export class SessionsCardComponent implements OnInit {
       {
         label: this.translate.instant('Terminate Other Sessions'),
         onClick: () => {
-          this.dialog
+          this.dialogService
             .confirm({
               title: this.translate.instant('Terminate session'),
               message: this.translate.instant('Are you sure you want to terminate all other sessions?'),
@@ -92,7 +92,7 @@ export class SessionsCardComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               next: () => this.terminateOtherSessions(),
-              error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+              error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
             });
         },
       },
@@ -102,7 +102,8 @@ export class SessionsCardComponent implements OnInit {
   constructor(
     private store$: Store<AppState>,
     private slideIn: IxSlideInService,
-    private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private ws: WebSocketService,
@@ -129,7 +130,7 @@ export class SessionsCardComponent implements OnInit {
       },
       error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -161,7 +162,7 @@ export class SessionsCardComponent implements OnInit {
       },
       error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

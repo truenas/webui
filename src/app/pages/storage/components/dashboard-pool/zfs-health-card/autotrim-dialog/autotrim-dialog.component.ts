@@ -8,8 +8,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { OnOff } from 'app/enums/on-off.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,6 +27,7 @@ export class AutotrimDialogComponent implements OnInit {
 
   constructor(
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogRef: MatDialogRef<AutotrimDialogComponent>,
     private dialogService: DialogService,
@@ -50,9 +53,9 @@ export class AutotrimDialogComponent implements OnInit {
           this.loader.close();
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

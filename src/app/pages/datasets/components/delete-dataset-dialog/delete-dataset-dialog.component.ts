@@ -17,6 +17,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -39,6 +40,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   constructor(
     private loader: AppLoaderService,
     private fb: FormBuilder,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
@@ -100,13 +102,13 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
-    this.dialog.errorReport(
-      this.translate.instant(
+    this.dialog.error({
+      title: this.translate.instant(
         'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
       ),
-      error.reason,
-      error.stack,
-    );
+      message: error.reason,
+      backtrace: error.stack,
+    });
     this.loader.close();
     this.dialogRef.close(true);
     return EMPTY;
@@ -126,10 +128,10 @@ export class DeleteDatasetDialogComponent implements OnInit {
           this.cdr.markForCheck();
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
           this.dialogRef.close(false);
-          this.dialog.errorReportMiddleware(error);
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
   }

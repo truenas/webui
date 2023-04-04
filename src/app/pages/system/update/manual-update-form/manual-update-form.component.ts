@@ -20,9 +20,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -61,6 +61,7 @@ export class ManualUpdateFormComponent implements OnInit {
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private translate: TranslateService,
     private store$: Store<AppState>,
@@ -151,7 +152,7 @@ export class ManualUpdateFormComponent implements OnInit {
       this.router.navigate(['/others/reboot']);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWsError(this, err, this.dialogService);
+      this.dialogService.error(this.errorHandler.parseJobError(err));
     });
     this.cdr.markForCheck();
   }
@@ -259,16 +260,16 @@ export class ManualUpdateFormComponent implements OnInit {
 
   handleUpdatePreFailure(prefailure: HttpErrorResponse): void {
     this.isFormLoading$.next(false);
-    this.dialogService.errorReport(
-      helptext.manual_update_error_dialog.message,
-      `${prefailure.status.toString()} ${prefailure.statusText}`,
-    );
+    this.dialogService.error({
+      title: helptext.manual_update_error_dialog.message,
+      message: `${prefailure.status.toString()} ${prefailure.statusText}`,
+    });
     this.cdr.markForCheck();
   }
 
   handleUpdateFailure = (failure: Job): void => {
     this.isFormLoading$.next(false);
-    this.dialogService.errorReport(failure.error, failure.state, failure.exception);
+    this.dialogService.error(this.errorHandler.parseJobError(failure));
     this.cdr.markForCheck();
   };
 }

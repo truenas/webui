@@ -8,6 +8,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
@@ -20,6 +21,7 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 export class FailoverComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
@@ -51,7 +53,7 @@ export class FailoverComponent implements OnInit {
     this.dialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (error: WebsocketError) => { // error on reboot
-        this.dialogService.errorReport(String(error.error), error.reason, error.trace.formatted)
+        this.dialogService.error(this.errorHandler.parseWsError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);

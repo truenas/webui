@@ -7,10 +7,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -71,9 +72,10 @@ export class ServiceSnmpComponent implements OnInit {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private validation: IxValidatorsService,
   ) {}
 
@@ -100,7 +102,7 @@ export class ServiceSnmpComponent implements OnInit {
       },
       error: (error) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -114,8 +116,8 @@ export class ServiceSnmpComponent implements OnInit {
         this.form.patchValue(config);
         this.cdr.markForCheck();
       },
-      error: (error) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },

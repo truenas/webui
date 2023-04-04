@@ -11,6 +11,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -33,6 +34,7 @@ export class FormUploadComponent {
   constructor(
     protected ws: WebSocketService,
     protected http: HttpClient,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     public dialog: DialogService,
     public translate: TranslateService,
@@ -87,7 +89,7 @@ export class FormUploadComponent {
         },
         error: (error: HttpErrorResponse) => {
           this.loader.close();
-          this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
+          this.dialog.error(this.errorHandler.parseHttpError(error));
         },
       });
     } else {

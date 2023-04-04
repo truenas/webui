@@ -7,6 +7,7 @@ import { untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap, catchError, EMPTY } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Component({
   templateUrl: './show-logs-dialog.component.html',
@@ -16,6 +17,7 @@ import { WebSocketService, DialogService, StorageService } from 'app/services';
 export class ShowLogsDialogComponent {
   constructor(
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private storage: StorageService,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public job: Job,
@@ -25,7 +27,7 @@ export class ShowLogsDialogComponent {
     this.ws.call('core.download', ['filesystem.get', [this.job.logs_path], `${this.job.id}.log`]).pipe(
       switchMap(([_, url]) => this.storage.downloadUrl(url, `${this.job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse) => {
-        this.dialogService.errorReport(error.name, error.message);
+        this.dialogService.error(this.errorHandler.parseHttpError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

@@ -5,8 +5,9 @@ import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -25,6 +26,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
   };
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
@@ -42,9 +44,9 @@ export class ReplicationSettingsFormComponent implements OnInit {
           this.form.patchValue(config);
           this.isFormLoading = false;
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -69,9 +71,9 @@ export class ReplicationSettingsFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInService.close();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
