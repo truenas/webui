@@ -98,7 +98,7 @@ def click_a_drive_checkbox_and_press_the_right_arrow(driver):
 @then('click create confirm the warning checkbox and click CREATE POOL')
 def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
     """click create confirm the warning checkbox and click CREATE POOL."""
-    rsc.Confirm_Single_Disk(driver)
+    # rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_Button).click()
     rsc.Confirm_Creating_Pool(driver)

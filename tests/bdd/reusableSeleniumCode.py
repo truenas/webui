@@ -30,8 +30,8 @@ def Combobox_Input_And_Select(driver, xpath, value):
 
 def Confirm_Creating_Pool(driver):
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.new_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 7, xpaths.pool_manager.create_Pool_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_Pool_Button).click()
 
@@ -47,8 +47,8 @@ def Confirm_Failover(driver):
 
 def Confirm_Single_Disk(driver):
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.new_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
 

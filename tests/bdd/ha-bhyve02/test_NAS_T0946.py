@@ -371,7 +371,7 @@ def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_crea
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
-    rsc.Confirm_Single_Disk(driver)
+    # rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 7, '//button[@name="create-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
     rsc.Confirm_Creating_Pool(driver)

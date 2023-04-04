@@ -434,7 +434,7 @@ class pool_manager:
     vdev_Add_Button = '//button[@id="vdev__add-button"]'
     force_Checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
     create_Button = '//button[@name="create-button"]'
-    create_Pool_Button = '//button[@ix-auto="button__CREATE POOL"]'
+    create_Pool_Button = '//button[@data-test="button-dialog-confirm"]'
     create_Pool_Popup = '//h1[contains(.,"Create Pool")]'
     encryption_Checkbox = '//mat-checkbox[@id="pool-manager__encryption-checkbox"]'
 
