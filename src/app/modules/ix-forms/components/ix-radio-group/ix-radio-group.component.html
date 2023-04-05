@@ -21,11 +21,18 @@
     [fxFlex.gt-md]="fieldFlex"
   >
     <mat-radio-button
+      *ngIf="!altView"
       [value]="option.value"
       [ixTest]="[controlDirective.name, option.label]"
     >
       {{ option.label }}
     </mat-radio-button>
+
+    <div *ngIf="altView" class="alt-radio-button" (click)="onAltRadioChange(option)">
+      <ix-icon *ngIf="value === option.value" name="check_circle"></ix-icon>
+      <ix-icon *ngIf="value !== option.value" name="radio_button_unchecked"></ix-icon>
+      {{ option.label }}
+    </div>
 
     <ix-tooltip
       *ngIf="option.tooltip"

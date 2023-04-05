@@ -28,8 +28,19 @@
       display: flex;
       gap: 18px;
 
-      ix-select {
+      .catalogs,
+      .sort {
+        margin-top: 12px;
         width: 30%;
+
+        ::ng-deep .alt-radio-button {
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: space-between;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+        }
       }
   
       .filter {
@@ -37,6 +48,7 @@
         
         ix-chips {
           margin-top: 12px;
+          padding-top: 0;
         }
       }
   

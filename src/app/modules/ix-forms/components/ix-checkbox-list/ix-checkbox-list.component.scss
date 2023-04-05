@@ -7,3 +7,15 @@
   margin: 0;
   padding: 4px 4px 4px 0;
 }
+
+.alt-radio-button {
+  align-items: center;
+  display: flex;
+  margin: 0;
+  padding: 4px 4px 4px 0;
+
+  ix-icon {
+    height: 40px;
+    width: 40px;
+  }
+}
