@@ -23,6 +23,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   app: AvailableApp;
   appId: string;
   isLoading$ = new BehaviorSubject<boolean>(false);
+  wasPoolSet = false;
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
@@ -58,6 +59,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.listenForRouteChanges();
+    this.loadIfPoolSet();
   }
 
   ngAfterViewInit(): void {
@@ -116,6 +118,13 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadScreenshots(): void {
     console.warn('The Screenshot section is under construction.');
+  }
+
+  private loadIfPoolSet(): void {
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
+      this.wasPoolSet = Boolean(config.pool);
+      this.cdr.markForCheck();
+    });
   }
 
   installButtonPressed(): void {

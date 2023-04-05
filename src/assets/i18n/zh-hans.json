@@ -148,6 +148,7 @@
   "Selected": "",
   "Selected SSH connection uses non-root user. Would you like to use sudo with <i>/usr/sbin/zfs</i> commands? Passwordless sudo must be enabled on the remote system.\nIf not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
   "Set new password:": "",
+  "Setup pool first": "",
   "Sign In": "",
   "Similar Apps": "",
   "Some of the disks are attached to the exported pools   mentioned in this list. Checking a pool name means you want to   allow reallocation of the disks attached to that pool.": "",

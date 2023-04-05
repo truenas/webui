@@ -1470,6 +1470,7 @@
   "Setting this option changes the destination dataset to be read-only. To continue using the default or existing dataset read permissions, leave this option unset.": "",
   "Setting up LDAP": "",
   "Settings Requiring Re-Initialization": "",
+  "Setup pool first": "",
   "Share ACL for {share}": "",
   "Share Attached": "",
   "Share Path updated": "",

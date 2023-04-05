@@ -13,11 +13,11 @@
         </div>
         <a
           mat-button
-          color="primary"
+          [color]="wasPoolSet ? 'primary' : 'accent'"
           [ixTest]="[app?.name, 'install']"
-          [disabled]="!app"
+          [disabled]="!app || !wasPoolSet"
           (click)="installButtonPressed()"
-        >{{ 'Install' | translate }}</a>
+        >{{ wasPoolSet ? 'Install' : 'Setup pool first' | translate }}</a>
       </div>
 
       <div class="app-info" fxFlex="240px">
