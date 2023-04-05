@@ -42,8 +42,8 @@ import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/a
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
-import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
+import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';

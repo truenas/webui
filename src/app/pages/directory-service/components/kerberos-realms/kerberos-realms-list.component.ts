@@ -5,8 +5,8 @@ import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
+import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
