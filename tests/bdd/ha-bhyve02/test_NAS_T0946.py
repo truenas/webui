@@ -88,8 +88,8 @@ def the_reload_the_page_for_the_license_to_take_effect_should_appear(driver):
 @then(parsers.parse('click reload now and "{agreement}" should appear'))
 def click_reload_now_and_end_user_license_agreement__truenas_should_appear(driver, agreement):
     """click reload now and "End User License Agreement - TrueNAS" should appear."""
-    assert wait_on_element(driver, 7, xpaths.button.new_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.new_Confirm).click()
+    assert wait_on_element(driver, 7, xpaths.button.reload_Now, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.reload_Now).click()
     assert wait_on_element(driver, 10, f'//h1[contains(.,"{agreement}")]')
 
 
@@ -154,6 +154,10 @@ def enter_domain_nameserver1_nameserver2_nameserver3(driver, domain, nameserver1
 @then('click save when finished')
 def click_save_when_finished(driver):
     """click save when finished."""
+    element = driver.find_element_by_xpath(xpaths.button.save)
+    # Scroll to SSH service
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -292,8 +296,8 @@ def on_the_virtual_hostname_dashboard_save_the_network_interface_changes(driver)
 @then('navigate to Storage then click the gear icon and click Disks')
 def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):
     """navigate to Storage then click the gear icon and click Disks."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
+    driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
+    assert wait_on_element(driver, 7, xpaths.storage.title)
     assert wait_on_element(driver, 7, '//a[*/text()=" Disks "]', 'clickable')
     driver.find_element_by_xpath('//a[*/text()=" Disks "]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Disks"]')
@@ -318,7 +322,7 @@ def wipe_all_disk_without_a_pool(driver):
 @then('navigate to Storage click Create')
 def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
     assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()

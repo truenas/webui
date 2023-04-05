@@ -160,6 +160,7 @@ class button:
     launch_Docker_Image = '//span[contains(.,"Launch Docker Image")]'
     initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
     leave_Domain = '//button[contains(.,"Leave Domain")]'
+    reload_Now = '//button[@data-test="button-dialog-confirm"]'
 
 
 class certificates:
