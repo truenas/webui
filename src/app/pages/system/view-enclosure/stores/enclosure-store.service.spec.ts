@@ -213,6 +213,7 @@ describe('EnclosureStore', () => {
           return;
         }
 
+        // No rear slots and should be marked as rackmount
         expect(data.enclosures).toHaveLength(1);
         expect(data.enclosureViews[0].isRackmount).toBeTruthy();
       });
