@@ -95,7 +95,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
 
   doAdd(): void {
     const slideInServiceRef = this.slideInService.open(SmbFormComponent);
-    slideInServiceRef.afterClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+    slideInServiceRef.afterClosed$().pipe(take(1), untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

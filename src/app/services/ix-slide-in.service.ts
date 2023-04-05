@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { bindCallback, merge, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import {
   IxSlideInComponent,
 } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
@@ -12,12 +13,6 @@ export interface ResponseOnClose {
   response?: unknown;
   error?: unknown;
   modalType: Type<unknown>;
-}
-
-export interface SlideInServiceRef<T> {
-  componentInstance: T;
-  close: (error?: Error, response?: unknown) => void;
-  afterClosed$: Subject<ResponseOnClose>;
 }
 
 @UntilDestroy()
@@ -40,16 +35,13 @@ export class IxSlideInService {
     this.slideInComponent = modal;
   }
 
-  open<T>(modal: Type<T>, params?: { wide: boolean; data?: { [key: string]: unknown } }): SlideInServiceRef<T> {
+  open<T>(modal: Type<T>, params?: { wide?: boolean; data?: { [key: string]: unknown } }): IxSlideInRef<T> {
     this.modalType = modal;
-    return {
-      componentInstance: this.slideInComponent.openSlideIn(modal, params),
-      close: this.close,
-      afterClosed$: this.onClose$,
-    };
+
+    return this.slideInComponent.openSlideIn<T>(modal, params);
   }
 
-  close(error?: Error, response?: unknown): void {
+  close(error?: Error, response?: unknown): void { // remove parameters
     if (!this.slideInComponent?.isSlideInOpen) {
       return;
     }
