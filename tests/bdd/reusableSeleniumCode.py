@@ -6,6 +6,7 @@ from function import (
     wait_on_element,
     wait_on_element_disappear
 )
+from selenium.common.exceptions import ElementClickInterceptedException
 
 
 def Click_Clear_Input(driver, xpath, value):
@@ -80,6 +81,30 @@ def Input_Value(driver, xpath, value):
     driver.find_element_by_xpath(xpath).send_keys(value)
 
 
+def Leave_Domain(driver, user, password):
+    assert wait_on_element(driver, 5, '//h1[text()="Leave Domain"]')
+    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="username"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys(user)
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys(password)
+
+    driver.find_element_by_xpath('//mat-dialog-container//button[contains(.,"Leave Domain")]').click()
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
+
+
+def License_Agrement(driver):
+    if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
+        try:
+            assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
+            driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
+            if wait_on_element(driver, 2, xpaths.button.close, 'clickable'):
+                driver.find_element_by_xpath(xpaths.button.close).click()
+        except ElementClickInterceptedException:
+            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
+            driver.find_element_by_xpath(xpaths.button.close).click()
+            assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
+            driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
+
+
 def Login(driver, user, password):
     driver.find_element_by_xpath(xpaths.login.user_Input).clear()
     driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
@@ -101,16 +126,6 @@ def Login_If_Not_On_Dashboard(driver, user, password):
     else:
         assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
-
-
-def Leave_Domain(driver, user, password):
-    assert wait_on_element(driver, 5, '//h1[text()="Leave Domain"]')
-    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="username"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys(user)
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys(password)
-
-    driver.find_element_by_xpath('//mat-dialog-container//button[contains(.,"Leave Domain")]').click()
-    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
 
 
 def Restart_SMB_Service(driver):

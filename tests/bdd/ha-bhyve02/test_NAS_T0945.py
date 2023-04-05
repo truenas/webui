@@ -5,7 +5,6 @@ import pytest
 import reusableSeleniumCode as rsc
 import time
 import xpaths
-from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
     wait_on_element,
     wait_for_attribute_value,
@@ -51,17 +50,8 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     rsc.Verify_The_Dashboard(driver)
-    if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
-        try:
-            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-            if wait_on_element(driver, 2, xpaths.button.close, 'clickable'):
-                driver.find_element_by_xpath(xpaths.button.close).click()
-        except ElementClickInterceptedException:
-            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
-            driver.find_element_by_xpath(xpaths.button.close).click()
-            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+
+    rsc.License_Agrement(driver)
 
 
 @then('go to System Settings, click Services')

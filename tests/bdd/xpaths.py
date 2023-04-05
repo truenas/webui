@@ -526,7 +526,9 @@ class side_Menu:
     directory_Services = submenu_Anchor('Directory Services')
     apps = menu_Anchor('Apps')
     system_Setting = menu_Anchor('System_Settings')
+    general = submenu_Anchor('General')
     advanced = submenu_Anchor('Advanced')
+    failover = submenu_Anchor('Failover')
     services = submenu_Anchor('Services')
 
 

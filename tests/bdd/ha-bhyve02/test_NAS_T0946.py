@@ -49,8 +49,8 @@ def navigate_to_system_settings_and_click_general(driver):
     """navigate to System Settings and click General."""
     assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.general, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.general).click()
 
 
 @then('the General page should load')
@@ -96,16 +96,14 @@ def click_reload_now_and_end_user_license_agreement__truenas_should_appear(drive
 @then('click Agree we should be returned to the General page')
 def click_agree_we_should_be_returned_to_the_general_page(driver):
     """click Agree we should be returned to the General page."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    if wait_on_element(driver, 1, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 5, xpaths.button.close)
-        driver.find_element_by_xpath(xpaths.button.close).click()
+    rsc.License_Agrement(driver)
+
     if is_element_present(driver, xpaths.dashboard.title):
         assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
         driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
-        assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
-        driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
+        assert wait_on_element(driver, 7, xpaths.side_Menu.general, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.general).click()
+
     assert wait_on_element(driver, 7, '//h1[contains(.,"General")]')
 
 
@@ -172,8 +170,8 @@ def navigate_to_system_then_click_failover(driver):
     """navigate to System then click Failover"""
     assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]').click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.failover).click()
 
 
 @then('the Failover page should open')
