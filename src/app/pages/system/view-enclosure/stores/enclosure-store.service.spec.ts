@@ -8,7 +8,7 @@ import {
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import {
-  EnclosureElement,
+  EnclosureElement, EnclosureElementsGroup,
   EnclosureSlot,
   EnclosureView,
 } from 'app/interfaces/enclosure.interface';
@@ -216,6 +216,39 @@ describe('EnclosureStore', () => {
         // No shelves or rear slots and should be marked as rackmount
         expect(data.enclosures).toHaveLength(1);
         expect(data.enclosureViews[0].isRackmount).toBeTruthy();
+      });
+    });
+
+    it('should have exactly 12 slots', () => {
+      spectator.service.loadData();
+      spectator.service.data$.subscribe((data: EnclosureState) => {
+        if (
+          data.areDisksLoading
+          && data.arePoolsLoading
+          && data.areEnclosuresLoading
+        ) {
+          return;
+        }
+
+        // Make sure there is only one enclosure with 12 slots
+        const slots = (data.enclosures[0].elements as EnclosureElementsGroup[])[0].elements;
+        expect(data.enclosures).toHaveLength(1);
+        expect(slots).toHaveLength(12);
+        expect(data.enclosureViews).toHaveLength(1);
+        expect(data.enclosureViews[0].slots).toHaveLength(12);
+      });
+    });
+
+    it('should have the correct amount of empty slots', () => {
+      spectator.service.loadData();
+      spectator.service.data$.subscribe((data: EnclosureState) => {
+        const emptySlots = (data.enclosures[0].elements[0] as EnclosureElementsGroup).elements
+          .filter((element: EnclosureElement) => element.status === 'Not installed');
+        const emptyViewSlots = data.enclosureViews[0].slots
+          .filter((slot: EnclosureSlot) => slot.slotStatus === 'Not installed');
+
+        expect(emptySlots).toHaveLength(4);
+        expect(emptyViewSlots).toHaveLength(4);
       });
     });
   });

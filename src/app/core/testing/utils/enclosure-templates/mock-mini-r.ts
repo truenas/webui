@@ -2,7 +2,7 @@ import { Enclosure, EnclosureElement } from 'app/interfaces/enclosure.interface'
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockMiniR extends MockEnclosure {
-  readonly totalSlotsFront: number = 24;
+  readonly totalSlotsFront: number = 12;
   readonly totalSlotsRear: number = 0;
   readonly totalSlotsInternal: number = 0;
 
