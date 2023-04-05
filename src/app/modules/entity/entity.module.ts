@@ -71,8 +71,8 @@ import { FormSelectionListComponent } from 'app/modules/entity/entity-form/compo
 import { FormSliderComponent } from 'app/modules/entity/entity-form/components/form-slider/form-slider.component';
 import { FormStatusComponent } from 'app/modules/entity/entity-form/components/form-status/form-status.component';
 import { FormTaskComponent } from 'app/modules/entity/entity-form/components/form-task/form-task.component';
-import { FormTextareaButtonComponent } from 'app/modules/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FormTextareaComponent } from 'app/modules/entity/entity-form/components/form-textarea/form-textarea.component';
+import { FormTextareaButtonComponent } from 'app/modules/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FormToggleButtonComponent } from 'app/modules/entity/entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';

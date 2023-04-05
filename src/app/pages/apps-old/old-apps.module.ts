@@ -38,10 +38,10 @@ import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk
 import { ChartEventsDialogComponent } from 'app/pages/apps-old/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/apps-old/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ManageCatalogSummaryDialogComponent } from 'app/pages/apps-old/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
 import {
   PodSelectLogsDialogComponent,
 } from 'app/pages/apps-old/dialogs/pod-select-logs/pod-select-logs-dialog.component';
-import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps-old/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/apps-old/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
 import { DockerImagesListComponent } from 'app/pages/apps-old/docker-images/docker-images-list/docker-images-list.component';
