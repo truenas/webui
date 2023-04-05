@@ -921,11 +921,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     }).start({
       update: (valuesUpdate: { opacity: number; x: number }) => { el.set(valuesUpdate); },
       complete: () => {
-        if (this.exitingView === 'details' && this.currentView !== 'details') {
-          // this.selectedDisk = null;
-          // this.labels = null;
-          // this.selectedVdev = null;
-        }
         this.exitingView = null;
         el.set({ x: 0 });
       },
@@ -979,13 +974,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     selectedEnclosure.slots.forEach((enclosureSlot: EnclosureSlot) => {
       this.setDiskHealthState(enclosureSlot);
     });
-
-    /* if (selectedEnclosure.siblings.length) {
-      const sibling = this.system.profile[selectedEnclosure.siblings[0]];
-      sibling.disks.forEach((disk) => {
-        this.setDiskHealthState(disk);
-      });
-    } */
   }
 
   // Visualization Colors
@@ -1050,12 +1038,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       }
     }
 
-    // Also check slot status
-    /* const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
-      ? this.system.enclosures[disk.enclosure.number].elements as EnclosureElement[]
-      : (this.system.enclosures[disk.enclosure.number].elements[0] as EnclosureElementsGroup).elements;
-    const slot = elements.find((element) => element.slot === disk.enclosure.slot); */
-
     if (!failed && enclosureSlot.fault) {
       failed = true;
     }
@@ -1106,9 +1088,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     };
 
     paintSlots(selectedEnclosure);
-    /* if (selectedEnclosure.siblings.length) {
-      paintSlots(this.system.profile[selectedEnclosure.siblings[0]]);
-    } */
   }
 
   findDiskBySlotNumber(slot: number): Disk {
