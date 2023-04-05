@@ -29,7 +29,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
-import { CompoundChassisView } from 'app/pages/system/view-enclosure/classes/compound-chassis-view';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
 import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
@@ -552,10 +551,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.chassis = new Es12();
         break;
       case 'TRUENAS-MINI-R':
-        this.chassis = new MINIR(
-          enclosure.number,
-          (enclosure.number + 1),
-        );
+        this.chassis = new MINIR();
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
@@ -695,10 +691,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         extractedChassis = new Es12();
         break;
       case 'TRUENAS-MINI-R':
-        extractedChassis = new MINIR(
-          enclosureView.number,
-          (enclosureView.number + 1),
-        );
+        extractedChassis = new MINIR();
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
@@ -928,7 +921,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Fine tuning visualizations.
-  optimizeChassisOpacity(extractedEnclosure?: ChassisView | CompoundChassisView): void {
+  optimizeChassisOpacity(extractedEnclosure?: ChassisView): void {
     const css = document.documentElement.style.getPropertyValue('--contrast-darkest');
     const hsl = this.themeUtils.hslToArray(css);
 
