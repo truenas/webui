@@ -101,19 +101,21 @@ def the_user_edit_page_should_open(driver):
 def change_the_permissions_for_the_users_home_directory_invert_them_and_click_save(driver):
     """Change the permissions for the Users Home Directory (invert them) and click save."""
     assert wait_on_element(driver, 7, '//span[text()="Home Directory Permissions"]')
-    assert wait_on_element(driver, 5, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"Group")]//mat-checkbox)[2]').click()
-    driver.find_element_by_xpath('(//tr[contains(.,"Group")]//mat-checkbox)[3]').click()
-    driver.find_element_by_xpath('(//tr[contains(.,"Other")]//mat-checkbox)[2]').click()
-    driver.find_element_by_xpath('(//tr[contains(.,"Other")]//mat-checkbox)[3]').click()
+    assert wait_on_element(driver, 2, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Exec_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Exec_Checkbox).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
+
+    rsc.Confirm_Warning(driver)
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User)
 
@@ -134,24 +136,28 @@ def reopen_the_user_edit_page_and_ensure_that_the_additional_aux_group_was_saved
 def the_changed_permissions_should_be_what_they_were_changed_to(driver):
     """The changed permissions should be what they were changed to."""
     assert wait_on_element(driver, 7, '//span[text()="Home Directory Permissions"]')
-    assert wait_on_element(driver, 5, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'clickable')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[1]', 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[2]', 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"User")]//mat-checkbox)[3]', 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[1]', 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Group")]//mat-checkbox)[3]', 'class', 'mat-mdc-checkbox-checked') is False
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[1]', 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[2]', 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, '(//tr[contains(.,"Other")]//mat-checkbox)[3]', 'class', 'mat-mdc-checkbox-checked') is False
+    assert wait_on_element(driver, 2, xpaths.add_User.home_Mode_Group_Write_Checkbox)
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
     # setting back the original permission for future test
-    assert wait_on_element(driver, 5, '(//tr[contains(.,"Group")]//mat-checkbox)[2]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"Group")]//mat-checkbox)[2]').click()
-    driver.find_element_by_xpath('(//tr[contains(.,"Group")]//mat-checkbox)[3]').click()
-    driver.find_element_by_xpath('(//tr[contains(.,"Other")]//mat-checkbox)[2]').click()
-    driver.find_element_by_xpath('(//tr[contains(.,"Other")]//mat-checkbox)[3]').click()
+    assert wait_on_element(driver, 2, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Exec_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Exec_Checkbox).click()
+
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
+
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User)

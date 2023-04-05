@@ -3,6 +3,7 @@
 
 import time
 import xpaths
+import reusableSeleniumCode as rsc
 from function import (
     wait_on_element,
     is_element_present,
@@ -26,7 +27,7 @@ def test_change_the_permissions_of_a_user_home_directory():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['First_User', 'First_User_Home'], scope='session')
+    #depends(request, ['First_User', 'First_User_Home'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -84,6 +85,8 @@ def the_user_edit_page_should_open_change_some_permissions_for_the_home_director
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
+    rsc.Confirm_Warning(driver)
+
 
 @then('reopen the user edit page and verify all permissions are save properly')
 def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(driver):
@@ -120,5 +123,9 @@ def revert_your_changes_click_save_and_return_to_dashboard(driver):
     time.sleep(0.5)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
+    rsc.Confirm_Warning(driver)
+
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.users.eric_User)
