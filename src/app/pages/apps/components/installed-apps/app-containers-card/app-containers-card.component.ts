@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
@@ -23,6 +24,7 @@ import { getPorts } from 'app/pages/apps/utils/get-ports';
 export class AppContainersCardComponent implements OnInit, OnChanges {
   @Input() app: ChartRelease;
   isLoading = false;
+  readonly chartReleaseStatus = ChartReleaseStatus;
 
   constructor(
     private appService: ApplicationsService,
