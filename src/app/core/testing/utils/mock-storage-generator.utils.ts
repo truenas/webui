@@ -18,6 +18,7 @@ import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
 import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
 import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
+import { MockMiniR } from './enclosure-templates/mock-mini-r';
 
 export enum MockStorageScenario {
   Default = 'default',
@@ -590,6 +591,9 @@ export class MockStorageGenerator {
   ): MockEnclosure {
     let chassis: MockEnclosure;
     switch (model) {
+      case 'MINI-R':
+        chassis = new MockMiniR(enclosureNumber);
+        break;
       case 'MINI-3.0-XL+':
         chassis = new MockMini30Xl(enclosureNumber);
         break;

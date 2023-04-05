@@ -12,13 +12,13 @@ export class MockMini30Xl extends MockEnclosure {
   readonly emptySlotTemplate: EnclosureElement = {
     slot: 2,
     data: {
-      Descriptor: 'Disk #2',
+      Descriptor: '',
       Status: 'Not installed',
       Value: 'None',
       Device: '',
     },
     name: 'Array Device Slot',
-    descriptor: 'Disk #2',
+    descriptor: '',
     status: 'Not installed',
     value: 'None',
     value_raw: '0x5000000',

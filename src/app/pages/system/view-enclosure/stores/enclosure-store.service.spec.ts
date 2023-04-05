@@ -137,8 +137,6 @@ describe('EnclosureStore', () => {
     });
 
     it('should properly merge M50/M60 enclosures into single enclosure view', () => {
-      expect(1).toBe(1);
-
       spectator.service.loadData();
       spectator.service.data$.subscribe((data: EnclosureState) => {
         if (
@@ -161,6 +159,62 @@ describe('EnclosureStore', () => {
         expect(views).toHaveLength(2);
         expect(views[0].slots).toHaveLength(28);
         expect(views[1].slots).toHaveLength(24);
+      });
+    });
+  });
+
+  describe('scenarios with MINI-R data', () => {
+    const mockStorage = new MockStorageGenerator();
+    const mockModel = 'MINI-R';
+
+    mockStorage.addDataTopology({
+      scenario: MockStorageScenario.MixedVdevLayout,
+      layout: TopologyItemType.Mirror,
+      diskSize: 4,
+      width: 2,
+      repeats: 3,
+    }).addSpecialTopology({
+      scenario: MockStorageScenario.Uniform,
+      layout: TopologyItemType.Mirror,
+      diskSize: 4,
+      width: 2,
+      repeats: 0,
+    }).addEnclosures({
+      controllerModel: mockModel,
+      expansionModels: [],
+      dispersal: EnclosureDispersalStrategy.Default,
+    });
+
+    const createService = createServiceFactory({
+      service: EnclosureStore,
+      providers: [
+        StorageService,
+        mockWebsocket([
+          mockCall('enclosure.query', mockStorage.enclosures),
+          mockCall('pool.query', [mockStorage.poolState]),
+          mockCall('disk.query', mockStorage.disks),
+        ]),
+        mockProvider(DialogService),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createService();
+    });
+
+    it('should be treated as rackmount server', () => {
+      spectator.service.loadData();
+      spectator.service.data$.subscribe((data: EnclosureState) => {
+        if (
+          data.areDisksLoading
+          && data.arePoolsLoading
+          && data.areEnclosuresLoading
+        ) {
+          return;
+        }
+
+        expect(data.enclosures).toHaveLength(1);
+        expect(data.enclosureViews[0].isRackmount).toBeTruthy();
       });
     });
   });
