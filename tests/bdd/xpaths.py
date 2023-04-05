@@ -261,10 +261,10 @@ class disks:
     wipe_Button = '//mat-dialog-container//button[contains(.,"Wipe")]'
 
     def disk_Expander(disk):
-        return f'//tr[@ix-auto="expander__{disk}"]/td[2]'
+        return f'//tr[@data-test="row-{disk}"]/td[2]'
 
     def wipe_Disk_Button(disk):
-        return f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]'
+        return f'//button[@data-test="button-{disk}-wipe"]'
 
     def confirm_Box_Title(disk):
         return f'//h1[contains(.,"Wipe Disk {disk}")]'

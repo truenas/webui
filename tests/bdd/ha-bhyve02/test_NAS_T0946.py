@@ -312,31 +312,7 @@ def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver)
 @then('wipe all disk without a pool')
 def wipe_all_disk_without_a_pool(driver):
     """wipe all disk without a pool."""
-    disk_list = []
-    disk_elements = driver.find_elements_by_xpath('//div[contains(text(),"sd")]')
-    for disk_element in disk_elements:
-        if is_element_present(driver, f'//tr[contains(.,"{disk_element.text}")]//div[contains(text(),"N/A") or contains(text(),"Exported")]'):
-            disk_list.append(disk_element.text)
-
-    for disk in disk_list:
-        assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
-        driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
-        assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
-        driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
-        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//div[@class="form-actions"]//button[contains(.,"Wipe")]', 'clickable')
-        driver.find_element_by_xpath('//div[@class="form-actions"]//button[contains(.,"Wipe")]').click()
-        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-        assert wait_on_element(driver, 10, '//mat-progress-bar')
-        assert wait_on_element_disappear(driver, 60, '//mat-progress-bar')
-        assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
-        assert wait_on_element(driver, 5, '//button[contains(.,"Close")]', 'clickable')
-        driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
-        assert wait_on_element_disappear(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
+    rsc.Wiped_Unused_Disk(driver)
 
 
 @then('navigate to Storage click Create')
