@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
-import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { Observable } from 'rxjs';
@@ -29,16 +28,17 @@ export class ErrorHandlerService implements ErrorHandler {
     }
     return this.dialogService;
   }
+
   constructor(private injector: Injector) { }
 
   handleError(error: unknown): void {
     console.error(error);
     const parsedError = this.parseError(error);
     if (parsedError) {
+      error = parsedError;
       this.dialog?.error(parsedError);
-    } else {
-      this.logToSentry(error);
     }
+    this.logToSentry(error);
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
@@ -207,10 +207,5 @@ export class ErrorHandlerService implements ErrorHandler {
         || `Error (${error.status})`,
       message: this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
     };
-  }
-
-  private getFormField(formGroup: UntypedFormGroup, field: string, fieldsMap: Record<string, string>): AbstractControl {
-    const fieldName = fieldsMap[field] ?? field;
-    return formGroup.get(fieldName);
   }
 }
