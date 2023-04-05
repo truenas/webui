@@ -11,7 +11,7 @@ import {
   combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap,
+  filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -119,7 +119,7 @@ export class UserFormComponent {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  shellOptions$: Observable<Option[]>;
+  shellOptions$: Observable<Option[]> = of([]);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
@@ -445,13 +445,16 @@ export class UserFormComponent {
   }
 
   private updateShellOptions(group: number, groups: number[]): void {
-    let ids: number[] = [];
-    ids = ids.concat(groups);
-    if (group && !ids.find((id) => id === group)) {
-      ids.push(group);
+    const ids = new Set<number>();
+    groups.forEach(ids.add, ids);
+    if (group) {
+      ids.add(group);
     }
-    this.ws.call('user.shell_choices', [ids]).pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
-      this.shellOptions$ = of(options);
-    });
+
+    this.ws.call('user.shell_choices', [Array.from(ids)])
+      .pipe(choicesToOptions(), take(1), untilDestroyed(this))
+      .subscribe((options) => {
+        this.shellOptions$ = of(options);
+      });
   }
 }
