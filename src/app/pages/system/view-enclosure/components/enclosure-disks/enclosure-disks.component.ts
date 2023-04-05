@@ -1006,7 +1006,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         : (this.system.enclosures[disk.enclosure.number].elements[0] as EnclosureElementsGroup).elements;
       const slot = elements.find((element) => element.slot === disk.enclosure.slot);
 
-      if (!failed && slot.fault) {
+      if (!failed && slot?.fault) {
         failed = true;
       }
 
