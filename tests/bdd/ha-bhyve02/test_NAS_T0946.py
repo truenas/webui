@@ -88,8 +88,8 @@ def the_reload_the_page_for_the_license_to_take_effect_should_appear(driver):
 @then(parsers.parse('click reload now and "{agreement}" should appear'))
 def click_reload_now_and_end_user_license_agreement__truenas_should_appear(driver, agreement):
     """click reload now and "End User License Agreement - TrueNAS" should appear."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__RELOAD NOW"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__RELOAD NOW"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.new_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.new_Confirm).click()
     assert wait_on_element(driver, 10, f'//h1[contains(.,"{agreement}")]')
 
 
