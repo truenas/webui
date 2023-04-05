@@ -88,7 +88,7 @@ class add_Zvol:
 
 class advanced:
     title = '//h1[contains(.,"Advanced")]'
-    system_Dataset_Pool_Card = '//h3[text()="System Dataset Pool"]'
+    system_Dataset_Pool_Card = '//h3[text()="Storage"]'
     system_Dataset_Pool_Configure_Button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
 
     def system_Dataset_Pool_Pool(pool_name):
@@ -555,9 +555,9 @@ class storage:
         return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
 
 
-class systemDataset:
-    title = '//h3[text()="System Dataset Pool" and @class="ix-formtitle"]'
-    pool_Select = '//mat-select'
+class system_Dataset:
+    title = '//h3[text()="Storage Settings" and @class="ix-formtitle"]'
+    pool_Select = '//mat-select[@data-test="select-pool"]'
 
     def pool_Option(pool_name):
         return f'//mat-option[contains(.,"{pool_name}")]'
