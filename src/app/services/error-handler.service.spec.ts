@@ -135,6 +135,14 @@ describe('ErrorHandlerService', () => {
       expect(errorReport).toEqual([{ message: 'This error', title: 'Error' }]);
     });
 
+    it('returns correct error object with 409 error with object', () => {
+      const errorReport = spectator.service.parseHttpError({
+        ...httpError,
+        error: { name: ['This error'] },
+      });
+      expect(errorReport).toEqual([{ message: 'This error', title: 'Error' }]);
+    });
+
     it('returns correct object with 400 error', () => {
       const errorReport = spectator.service.parseHttpError({
         ...httpError,
