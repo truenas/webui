@@ -620,9 +620,10 @@ export class MockStorageGenerator {
     let populated: Enclosure[] = [];
 
     if (dispersal === EnclosureDispersalStrategy.Min) {
-      //
+      // TODO: Add support for minimum dispersal (keep all vdev members on same chassis)
     } else if (dispersal === EnclosureDispersalStrategy.Max) {
-      //
+      // TODO: Add support for maximum dispersal (spread out all vdev members across all enclosures. eg. every disk on
+      //  a different enclosure)
     } else if (dispersal === EnclosureDispersalStrategy.Default) {
       populated = this.defaultDispersal(mockEnclosures);
     }
