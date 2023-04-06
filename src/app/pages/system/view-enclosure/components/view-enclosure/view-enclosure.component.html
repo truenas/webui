@@ -21,7 +21,7 @@
 </ng-template>A
 
 <ng-template #multispinner>
-  <div *ngIf="spinner" class="loader-dialog mat-mdc-card">
+  <div class="loader-dialog mat-mdc-card">
     <div class="loader-dialog-inner">
       <h3>Loading Data</h3>
       <ul>
@@ -81,6 +81,10 @@
 </ng-template>
 
 <ng-container *ngIf="errors.length === 0">
+
+  <!-- Loading indicator -->
+  <ng-container *ngIf="spinner; then multispinner;"></ng-container>
+
   <!-- Main Content Wrapper -->
   <div
     *ngIf="showVisualizer && systemManufacturer && systemManufacturer === 'ixsystems'"
@@ -99,8 +103,6 @@
           *ngIf="isRackmount; else mini"
           class="enclosure-disks-wrapper"
         >
-          <!-- Loading indicator -->
-          <ng-container *ngIf="spinner; then multispinner"></ng-container>
 
           <ix-enclosure-disks
             *ngIf="events"
@@ -114,8 +116,6 @@
         <!-- Mini -->
         <ng-template #mini>
           <div class="mini-container">
-            <!-- Loading indicator -->
-            <ng-container *ngIf="spinner; then simplespinner"></ng-container>
             <ix-enclosure-disks-mini
               *ngIf="events && systemState?.pools && systemState?.enclosureViews "
               [controller-events]="events"

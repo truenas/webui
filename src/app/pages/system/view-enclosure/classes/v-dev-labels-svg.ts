@@ -36,9 +36,8 @@ export class VDevLabelsSvg {
   constructor(
     private chassis: ChassisView,
     private app: Application,
-    private selectedDisk: Disk, // EnclosureDisk,
+    private selectedDisk: Disk,
     theme: Theme,
-    // private enclosureViews: EnclosureView[],
   ) {
     this.color = 'var(--cyan)';
     this.selectedDiskColor = 'var(--yellow)';
@@ -65,14 +64,6 @@ export class VDevLabelsSvg {
         case 'LabelDrives':
           this.createVdevLabels((evt as LabelDrivesEvent).data);
           break;
-        /* case 'OverlayReady':
-          break;
-        case 'ShowPath':
-          break;
-        case 'HidePath':
-          break;
-        case 'EnableHighlightMode':
-          break; */
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile');
           this.showAllTiles(tiles as NodeListOf<HTMLElement>);
@@ -151,23 +142,8 @@ export class VDevLabelsSvg {
   createVdevLabels(data: SelectedEnclosureSlot): void {
     const vdevSlots = data.vdevSlots.length ? data.vdevSlots : [data.selected];
     vdevSlots.forEach((enclosureSlot: EnclosureSlot) => {
-      // Adjust slot number for siblings (CompoundChassis mini-R)
-      /* if (this.chassis.className === 'CompoundChassisView' && !isOnController) {
-        isSibling = true;
-        const offset = (this.chassis as CompoundChassisView).siblingOffset;
-        // TODO: Figure out how to make this work for siblings
-        const slotAlias = this.system.getSiblingSlotAlias(diskName, this.chassis.totalDriveTrays, offset);
-        slot = slotAlias;
-      } else if (this.chassis.className === 'CompoundChassisView' && isOnController) {
-        slot = !defaultSlot ? enclosureSlot.slot : defaultSlot;
-      } else {
-        slot = defaultSlot;
-      } */
-
       // Ignore slots on non-selected enclosure
       if (enclosureSlot.enclosure !== data.selected.enclosure) return;
-
-      const isSibling = false; // TODO: implement sibling logic for compound chassis
 
       // The Actual creating of labels
       // Requirements: diskNames, isOnController
@@ -176,7 +152,7 @@ export class VDevLabelsSvg {
         && enclosureSlot.slot >= this.chassis.slotRange.start
         && enclosureSlot.slot <= this.chassis.slotRange.end
       );
-      if (isSibling || isInRange) {
+      if (isInRange) {
         // Create tile if the disk is in the current enclosure
         const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) === enclosureSlot.slot);
         const src = dt.container;

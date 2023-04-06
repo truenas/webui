@@ -78,9 +78,10 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   delayPending = true;
   get spinner(): boolean {
     const dataPending = (
-      this.systemState?.areEnclosuresLoading
-      || this.systemState?.areDisksLoading
-      || this.systemState?.arePoolsLoading
+      !this.systemState
+      || this.systemState.areEnclosuresLoading
+      || this.systemState.areDisksLoading
+      || this.systemState.arePoolsLoading
     );
 
     if (dataPending && !this.delayPending) {
