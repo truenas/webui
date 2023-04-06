@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
@@ -38,6 +39,18 @@ const failedJob = {
   },
   state: 'FAILED',
 } as Job;
+
+const httpError: HttpErrorResponse = {
+  error: { name: 'This error' },
+  name: 'HttpErrorResponse',
+  message: 'This error occurred',
+  headers: new HttpHeaders(),
+  ok: false,
+  status: 409,
+  statusText: 'Conflict',
+  type: HttpEventType.Response,
+  url: '',
+};
 
 describe('ErrorHandlerService', () => {
   let spectator: SpectatorService<ErrorHandlerService>;
@@ -113,6 +126,65 @@ describe('ErrorHandlerService', () => {
         message: 'DUMMY_ERROR',
         title: 'Error: path',
       }]);
+    });
+  });
+
+  describe('parseHttpError', () => {
+    it('returns correct error object with 409 error', () => {
+      const errorReport = spectator.service.parseHttpError(httpError);
+      expect(errorReport).toEqual([{ message: 'This error', title: 'Error' }]);
+    });
+
+    it('returns correct object with 400 error', () => {
+      const errorReport = spectator.service.parseHttpError({
+        ...httpError,
+        status: 400,
+        statusText: 'Bad Request',
+      });
+      expect(errorReport).toEqual([{ message: 'This error', title: 'Error' }]);
+    });
+
+    it('returns correct object with 400 error without error object', () => {
+      const errorReport = spectator.service.parseHttpError({
+        ...httpError,
+        status: 400,
+        statusText: 'Bad Request',
+        error: 'That error',
+      });
+      expect(errorReport).toEqual({ message: 'That error', title: 'Error (400)' });
+    });
+
+    it('returns correct object with 500 error', () => {
+      const errorReport = spectator.service.parseHttpError({
+        ...httpError,
+        status: 500,
+        statusText: 'Bad Request',
+        error: { error_message: 'Even error' },
+      });
+      expect(errorReport).toEqual({ message: 'Even error', title: 'Error (500)' });
+    });
+
+    it('returns correct object with 500 error and string', () => {
+      const errorReport = spectator.service.parseHttpError({
+        ...httpError,
+        status: 500,
+        statusText: 'Bad Request',
+        error: 'Odd error',
+      });
+      expect(errorReport).toEqual({ message: 'Server error: Odd error', title: 'Error (500)' });
+    });
+
+    it('returns proper object when unknown error', () => {
+      const errorReport = spectator.service.parseHttpError({
+        ...httpError,
+        status: 510,
+        statusText: 'Bad Request',
+        error: 'Odd error',
+      });
+
+      expect(console.error).toHaveBeenCalledWith('Unknown error code', 510);
+
+      expect(errorReport).toEqual({ message: 'Fatal error! Check logs.', title: 'Error (510)' });
     });
   });
 });

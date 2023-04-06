@@ -152,17 +152,17 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  private handleObjError(error: HttpErrorResponse): ErrorReport[] {
+  private parseHttpErrorObject(error: HttpErrorResponse): ErrorReport[] {
     const errors: ErrorReport[] = [];
-    Object.keys(error.error).forEach((i) => {
-      const field = error.error[i];
-      if (typeof field === 'string') {
+    Object.keys(error.error).forEach((fieldKey) => {
+      const errorEntity = error.error[fieldKey];
+      if (typeof errorEntity === 'string') {
         errors.push({
           title: this.translate?.instant('Error') || 'Error',
-          message: field,
+          message: errorEntity,
         });
       } else {
-        (field as string[]).forEach((item: string) => {
+        (errorEntity as string[]).forEach((item: string) => {
           errors.push({
             title: this.translate?.instant('Error') || 'Error',
             message: item,
@@ -174,38 +174,43 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseHttpError(error: HttpErrorResponse): ErrorReport | ErrorReport[] {
-    if (error.status === 409) {
-      this.handleObjError(error);
-    } else if (error.status === 400) {
-      if (typeof error.error === 'object') {
-        this.handleObjError(error);
-      } else {
+    switch (error.status) {
+      case 409: {
+        return this.parseHttpErrorObject(error);
+      }
+      case 400: {
+        if (typeof error.error === 'object') {
+          return this.parseHttpErrorObject(error);
+        }
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
-            || `Error (${error.status})`,
+              || `Error (${error.status})`,
           message: error.error,
         };
       }
-    } else if (error.status === 500) {
-      if (error.error.error_message) {
+      case 500: {
+        if (error.error.error_message) {
+          return {
+            title: this.translate?.instant('Error ({code})', { code: error.status })
+              || `Error (${error.status})`,
+            message: error.error.error_message,
+          };
+        }
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
             || `Error (${error.status})`,
-          message: error.error.error_message,
+          message: this.translate?.instant('Server error: {error}', { error: error.error })
+            || `Server error: ${error.error}`,
         };
       }
-      return {
-        title: this.translate?.instant('Error ({code})', { code: error.status })
-          || `Error (${error.status})`,
-        message: this.translate?.instant('Server error: {error}', { error: error.error })
-          || `Server error: ${error.error}`,
-      };
+      default: {
+        console.error(this.translate?.instant('Unknown error code') || 'Unknown error code', error.status);
+        return {
+          title: this.translate?.instant('Error ({code})', { code: error.status })
+            || `Error (${error.status})`,
+          message: this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
+        };
+      }
     }
-    console.error(this.translate?.instant('Unknown error code') || 'Unknown error code', error.status);
-    return {
-      title: this.translate?.instant('Error ({code})', { code: error.status })
-        || `Error (${error.status})`,
-      message: this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
-    };
   }
 }
