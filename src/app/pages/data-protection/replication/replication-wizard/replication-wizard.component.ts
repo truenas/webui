@@ -8,8 +8,11 @@ import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { lastValueFrom, merge } from 'rxjs';
-import { take } from 'rxjs/operators';
+import {
+  EMPTY,
+  lastValueFrom, merge, throwError,
+} from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -1407,7 +1410,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         recursive: data.recursive ? data.recursive : false,
       };
       snapshotPromises.push(
-        lastValueFrom(this.ws.call('zfs.snapshot.create', [payload])),
+        lastValueFrom(this.ws.call('zfs.snapshot.create', [payload]).pipe(
+          catchError((error) => {
+            if (error.error === 17) {
+              return EMPTY;
+            }
+            return throwError(() => error);
+          }),
+        )),
       );
     }
     return Promise.all(snapshotPromises);
