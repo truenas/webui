@@ -436,7 +436,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     domChanges.observe(this.overview?.nativeElement, observerOptions);
   }
 
-  // TODO: Do we need to clean up store subscriptions here or in parent?
   // Component Cleanup
   ngOnDestroy(): void {
     this.core.emit({ name: 'DiskTemperaturesUnsubscribe', sender: this });
