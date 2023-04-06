@@ -1342,7 +1342,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         snapshotPromises.push(
           lastValueFrom(this.ws.call(this.createCalls[item], [payload]).pipe(
             catchError((error) => {
-              if (error.error === 17) {
+              if (error.errname === MiddlewareError.Eexist) {
                 return EMPTY;
               }
               return throwError(() => error);
