@@ -90,43 +90,7 @@ export class ErrorHandlerService implements ErrorHandler {
     }
 
     if (errorJob.extra && Array.isArray(errorJob.extra)) {
-      const errors: ErrorReport[] = [];
-      errorJob.extra.forEach((extraItem: [string, unknown]) => {
-        const field = extraItem[0].split('.')[1];
-        const extractedError = extraItem[1] as string | WebsocketError | Job;
-
-        let parsedError: ErrorReport | ErrorReport[];
-        if (this.isTypeOfWebsocketError(extractedError)) {
-          parsedError = this.parseWsError(extractedError);
-        } else if (this.isTypeOfJobError(extractedError)) {
-          parsedError = this.parseJobError(extractedError);
-        } else if (typeof extractedError === 'string') {
-          parsedError = {
-            title: (this.translate?.instant('Error') || 'Error'),
-            message: extractedError,
-            backtrace: errorJob.exception,
-          };
-        }
-
-        if (Array.isArray(parsedError)) {
-          for (const err of parsedError) {
-            if (err.title === (this.translate?.instant('Error') || 'Error')) {
-              err.title = err.title + ': ' + field;
-            } else {
-              err.title = field + ': ' + err.title;
-            }
-            errors.push(err);
-          }
-        } else {
-          if (parsedError.title === (this.translate?.instant('Error') || 'Error')) {
-            parsedError.title = parsedError.title + ': ' + field;
-          } else {
-            parsedError.title = field + ': ' + parsedError.title;
-          }
-          errors.push(parsedError);
-        }
-      });
-      return errors;
+      return this.parseJobWithArrayExtra(errorJob);
     }
 
     return {
@@ -134,6 +98,54 @@ export class ErrorHandlerService implements ErrorHandler {
       message: errorJob.error,
       backtrace: errorJob.exception,
     };
+  }
+
+  private parseJobWithArrayExtra(errorJob: Job): ErrorReport | ErrorReport[] {
+    const errors: ErrorReport[] = [];
+    (errorJob.extra as unknown as unknown[]).forEach((extraItem: [string, unknown]) => {
+      const field = extraItem[0].split('.')[1];
+      const extractedError = extraItem[1] as string | WebsocketError | Job;
+
+      const parsedError = this.parseJobExtractedError(errorJob, extractedError);
+
+      if (Array.isArray(parsedError)) {
+        for (const err of parsedError) {
+          if (err.title === (this.translate?.instant('Error') || 'Error')) {
+            err.title = err.title + ': ' + field;
+          } else {
+            err.title = field + ': ' + err.title;
+          }
+          errors.push(err);
+        }
+      } else {
+        if (parsedError.title === (this.translate?.instant('Error') || 'Error')) {
+          parsedError.title = parsedError.title + ': ' + field;
+        } else {
+          parsedError.title = field + ': ' + parsedError.title;
+        }
+        errors.push(parsedError);
+      }
+    });
+    return errors;
+  }
+
+  private parseJobExtractedError(
+    errorJob: Job,
+    extractedError: string | WebsocketError | Job,
+  ): ErrorReport | ErrorReport[] {
+    let parsedError: ErrorReport | ErrorReport[];
+    if (this.isTypeOfWebsocketError(extractedError)) {
+      parsedError = this.parseWsError(extractedError);
+    } else if (this.isTypeOfJobError(extractedError)) {
+      parsedError = this.parseJobError(extractedError);
+    } else if (typeof extractedError === 'string') {
+      parsedError = {
+        title: (this.translate?.instant('Error') || 'Error'),
+        message: extractedError,
+        backtrace: errorJob.exception,
+      };
+    }
+    return parsedError;
   }
 
   private parseErrorOrJob(errorOrJob: WebsocketError | Job | string): ErrorReport | ErrorReport[] {
