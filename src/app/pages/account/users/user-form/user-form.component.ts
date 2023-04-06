@@ -119,7 +119,7 @@ export class UserFormComponent {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  shellOptions$: Observable<Option[]> = of([]);
+  shellOptions$: Observable<Option[]> = this.ws.call('user.shell_choices').pipe(choicesToOptions(), take(1));
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
@@ -445,8 +445,7 @@ export class UserFormComponent {
   }
 
   private updateShellOptions(group: number, groups: number[]): void {
-    const ids = new Set<number>();
-    groups.forEach(ids.add, ids);
+    const ids = new Set<number>(groups);
     if (group) {
       ids.add(group);
     }
