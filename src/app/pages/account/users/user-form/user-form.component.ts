@@ -11,11 +11,12 @@ import {
   combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap,
+  debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
+import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
@@ -118,9 +119,8 @@ export class UserFormComponent {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  readonly shellOptions$ = this.ws.call('user.shell_choices').pipe(choicesToOptions());
+  shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
-  readonly shellProvider = new SimpleAsyncComboboxProvider(this.shellOptions$);
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
   get homeCreateWarning(): string {
@@ -191,6 +191,14 @@ export class UserFormComponent {
       untilDestroyed(this),
     ).subscribe((key) => {
       this.form.controls.sshpubkey.setValue(key);
+    });
+
+    this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
+      this.updateShellOptions(group, this.form.value.groups);
+    });
+
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
+      this.updateShellOptions(this.form.value.group, groups);
     });
 
     this.form.controls.password_conf.addValidators(
@@ -402,7 +410,8 @@ export class UserFormComponent {
   }
 
   private setFirstShellOption(): void {
-    this.shellOptions$.pipe(
+    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
+      choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
       untilDestroyed(this),
@@ -434,5 +443,19 @@ export class UserFormComponent {
     }
 
     return username.toLocaleLowerCase();
+  }
+
+  private updateShellOptions(group: number, groups: number[]): void {
+    const ids = new Set<number>(groups);
+    if (group) {
+      ids.add(group);
+    }
+
+    this.ws.call('user.shell_choices', [Array.from(ids)])
+      .pipe(choicesToOptions(), take(1), untilDestroyed(this))
+      .subscribe((options) => {
+        this.shellOptions$ = of(options);
+        this.cdr.markForCheck();
+      });
   }
 }
