@@ -46,6 +46,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly hasMultipleEnclosures$ = this.select((state) => state.enclosures.length > 1);
   readonly formValue$ = this.select((state) => state.formValue);
   readonly disksSelectedManually$ = this.select((state) => state.disksSelectedManually);
+  readonly dataVdevs$ = this.select((state) => state.vdevs.data);
 
   constructor(
     private errorHandler: ErrorHandlerService,

@@ -7,8 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
 import { of, take, takeWhile } from 'rxjs';
+import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
+import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManualDiskSelectionComponent, ManualDiskSelectionLayout,
@@ -29,6 +31,7 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
 export class CreateDataWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['data'];
 
+  readonly manualDiskSelectionMessage = helptext.manual_disk_selection_message;
   unusedDisks: UnusedDisk[] = [];
   sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
 
@@ -41,6 +44,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
 
+  dataVdevs: PoolManagerVdev[];
   diskSizeOptions$ = of([]);
   widthOptions$ = of([]);
   numberOptions$ = of([]);
@@ -74,6 +78,10 @@ export class CreateDataWizardStepComponent implements OnInit {
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();
+    });
+
+    this.poolManagerStore.dataVdevs$.pipe(untilDestroyed(this)).subscribe((dataVdevs) => {
+      this.dataVdevs = dataVdevs;
     });
 
     this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe(([size, type]) => {
@@ -210,5 +218,22 @@ export class CreateDataWizardStepComponent implements OnInit {
 
   resetLayout(): void {
     this.poolManagerStore.resetLayout();
+  }
+
+  getVdevsCountString(): string {
+    const vdevLayoutCounter: { [key in CreateVdevLayout]?: number } = {};
+    for (const vdev of this.dataVdevs) {
+      if (!vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout]) {
+        vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout] = 1;
+      } else {
+        vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout] += 1;
+      }
+    }
+    let description = '';
+    for (const type of Object.keys(vdevLayoutCounter)) {
+      description += description ? ', ' : '';
+      description += this.translate.instant(`${vdevLayoutCounter[type as CreateVdevLayout]} x ${type.toUpperCase()}`);
+    }
+    return description;
   }
 }

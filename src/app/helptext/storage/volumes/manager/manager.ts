@@ -41,6 +41,10 @@ export default {
   the encryption at the time you create the child dataset. For more information on encryption please\
   refer to the <a href="http://TrueNAS.com/docs/" target="_blank">TrueNAS Documentation hub</a>.'),
 
+  manual_disk_selection_message: T('VDEVs have been created through manual disk selection. To view or\
+  edit your selections, press the "Edit Manula Disk Selection" button below. To start again with the\
+  automated disk selection, hit the "Reset" button.'),
+
   manager_duplicate_vdevs_tooltip: T('Create more data vdevs like the first.'),
 
   force_title: T('Warning'),
