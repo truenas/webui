@@ -46,8 +46,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
           this.router.navigate(['/datasets', dataset.id]).then(() => {
             this.snackbar.success(
               value.modalType === ZvolFormComponent
-                ? this.translate.instant('Switched to zvol «{name}».', { name: getDatasetLabel(dataset) })
-                : this.translate.instant('Switched to dataset «{name}».', { name: getDatasetLabel(dataset) }),
+                ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
+                : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
             );
           });
         }

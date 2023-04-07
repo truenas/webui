@@ -1,0 +1,13 @@
+.ix-form-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+
+  > * {
+    width: 100%;
+  }
+}
+
+.divider {
+  margin: 16px 0 !important;
+}
