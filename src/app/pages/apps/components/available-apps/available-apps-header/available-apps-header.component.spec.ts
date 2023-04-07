@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatChipInputHarness } from '@angular/material/chips/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
-import { MatSelectHarness } from '@angular/material/select/testing';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory } from '@ngneat/spectator/jest';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
@@ -13,13 +12,14 @@ import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
+import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: SpectatorHost<AvailableAppsHeaderComponent>;
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
-  let catalogsSelect: MatSelectHarness;
-  let sortSelect: MatSelectHarness;
+  let catalogsItems: HTMLElement[];
+  let sortItems: HTMLElement[];
   let categoriesSelect: MatChipInputHarness;
   let applyButton: MatButtonHarness;
   let resetButton: MatButtonHarness;
@@ -31,6 +31,7 @@ describe('AvailableAppsHeaderComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      CustomFormsModule,
     ],
     providers: [
       mockWebsocket([
@@ -62,8 +63,8 @@ describe('AvailableAppsHeaderComponent', () => {
     await filtersButton.click();
 
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
-    catalogsSelect = (await loader.getAllHarnesses(MatSelectHarness))[0];
-    sortSelect = (await loader.getAllHarnesses(MatSelectHarness))[1];
+    catalogsItems = spectator.queryAll('.catalogs .item');
+    sortItems = spectator.queryAll('.sort .item');
     categoriesSelect = await loader.getHarness(MatChipInputHarness);
     applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
     resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
@@ -83,7 +84,9 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('emits (filters) when user selects catalogs', async () => {
-    await catalogsSelect.clickOptions({ text: 'TEST' });
+    catalogsItems[1].click();
+    spectator.detectChanges();
+
     await applyButton.click();
 
     expect(changeFilters).toHaveBeenLastCalledWith({
@@ -94,7 +97,9 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('emits (filters) when user selects sort', async () => {
-    await sortSelect.clickOptions({ text: 'Updated Date' });
+    sortItems[2].click();
+    spectator.detectChanges();
+
     await applyButton.click();
 
     expect(changeFilters).toHaveBeenLastCalledWith({
@@ -117,11 +122,19 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('emits (filters) when reset button is pressed', async () => {
-    await catalogsSelect.clickOptions({ text: 'TEST' });
-    await sortSelect.clickOptions({ text: 'Updated Date' });
+    catalogsItems[1].click();
+    sortItems[2].click();
+    spectator.detectChanges();
     await categoriesSelect.setValue('storage');
     await categoriesSelect.blur();
     await applyButton.click();
+
+    expect(changeFilters).toHaveBeenLastCalledWith({
+      catalogs: ['OFFICIAL'],
+      sort: AppsFiltersSort.LastUpdate,
+      categories: ['storage'],
+    });
+
     await resetButton.click();
     expect(changeFilters).toHaveBeenLastCalledWith(undefined);
 
