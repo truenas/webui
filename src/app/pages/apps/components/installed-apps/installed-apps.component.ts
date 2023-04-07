@@ -43,6 +43,18 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     title: helptext.message.loading,
   };
 
+  emptySearchResultsConf: EmptyConfig = {
+    type: EmptyType.NoSearchResults,
+    title: helptext.message.no_search_result,
+    button: {
+      label: this.translate.instant('Reset Search'),
+      action: () => {
+        this.resetSearch();
+        this.cdr.markForCheck();
+      },
+    },
+  };
+
   constructor(
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
@@ -150,14 +162,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         this.entityEmptyConf.message = undefined;
         this.entityEmptyConf.button = undefined;
         // TODO: Button to check available apps or open advanced settings?
-        break;
-      case EmptyType.NoSearchResults:
-        this.entityEmptyConf.title = helptext.message.no_search_result;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = {
-          label: this.translate.instant('Reset Search'),
-          action: () => this.resetSearch(),
-        };
         break;
       case EmptyType.NoPageData:
         this.entityEmptyConf.title = helptext.message.no_installed;
@@ -361,7 +365,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   private resetSearch(): void {
     this.onSearch('');
-    this.cdr.markForCheck();
   }
 
   private redirectToAvailableApps(): void {

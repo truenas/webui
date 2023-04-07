@@ -134,6 +134,10 @@
             <div *ngIf="!dataSource.length" class="no-apps">
               <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
             </div>
+            <!-- TODO: Merge into one flow. This is temporary solution -->
+            <div *ngIf="dataSource.length && !filteredApps.length" class="no-apps">
+              <ix-entity-empty [conf]="emptySearchResultsConf"></ix-entity-empty>
+            </div>
           </div>
         </div>
       </div>
