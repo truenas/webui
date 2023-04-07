@@ -130,6 +130,11 @@
           [label]="'Upload SSH Key' | translate"
         ></ix-file-input>
 
+        <ix-checkbox
+          formControlName="ssh_password_enabled"
+          [label]="'SSH password login enabled' | translate"
+        ></ix-checkbox>
+
         <ix-combobox
           formControlName="shell"
           [label]="'Shell' | translate"
