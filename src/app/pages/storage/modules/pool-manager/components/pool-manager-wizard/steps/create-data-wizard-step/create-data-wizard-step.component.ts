@@ -29,7 +29,10 @@ export class CreateDataWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['data'];
 
   unusedDisks: UnusedDisk[] = [];
-  sizeDisksMap: SizeDisksMap = { hdd: {}, ssd: {} };
+  sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
+
+  selectedDiskType: DiskType = null;
+  selectedSize: string = null;
 
   vdevLayoutOptions$ = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
@@ -65,11 +68,9 @@ export class CreateDataWizardStepComponent implements OnInit {
     });
 
     this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe(([size, type]) => {
-      if (type === DiskType.Hdd) {
-        this.updateWidthOptions(this.sizeDisksMap.hdd[size]);
-      } else {
-        this.updateWidthOptions(this.sizeDisksMap.ssd[size]);
-      }
+      this.selectedDiskType = type as DiskType;
+      this.selectedSize = size;
+      this.updateWidthOptions();
     });
 
     this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedWidth) => {
@@ -80,16 +81,16 @@ export class CreateDataWizardStepComponent implements OnInit {
   updateDiskSizeOptions(): void {
     this.form.controls.sizeAndType.setValue([null, null]);
     this.sizeDisksMap = {
-      hdd: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
-      ssd: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
+      [DiskType.Hdd]: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
+      [DiskType.Ssd]: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
     };
 
-    const hddOptions = Object.keys(this.sizeDisksMap.hdd).map((size) => ({
+    const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd]).map((size) => ({
       label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Hdd})`,
       value: [size, DiskType.Hdd],
     }));
 
-    const ssdOptions = Object.keys(this.sizeDisksMap.ssd).map((size) => ({
+    const ssdOptions = Object.keys(this.sizeDisksMap[DiskType.Ssd]).map((size) => ({
       label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Ssd})`,
       value: [size, DiskType.Ssd],
     }));
@@ -97,7 +98,11 @@ export class CreateDataWizardStepComponent implements OnInit {
     this.diskSizeOptions$ = of(hddOptions.concat(ssdOptions));
   }
 
-  updateWidthOptions(length: number): void {
+  updateWidthOptions(): void {
+    const length: number = this.selectedDiskType === DiskType.Hdd
+      ? this.sizeDisksMap[DiskType.Hdd][this.selectedSize]
+      : this.sizeDisksMap[DiskType.Ssd][this.selectedSize];
+
     this.form.controls.width.setValue(null);
     if (length) {
       // eslint-disable-next-line sonarjs/no-small-switch
@@ -109,6 +114,7 @@ export class CreateDataWizardStepComponent implements OnInit {
               value: item,
             })),
           );
+
         // TODO: Add other cases
       }
       this.form.controls.width.setValue(length);
@@ -118,20 +124,24 @@ export class CreateDataWizardStepComponent implements OnInit {
   }
 
   updateNumberOptions(width: number): void {
+    const length: number = this.selectedDiskType === DiskType.Hdd
+      ? this.sizeDisksMap[DiskType.Hdd][this.selectedSize]
+      : this.sizeDisksMap[DiskType.Ssd][this.selectedSize];
+
     this.form.controls.vdevsNumber.setValue(null);
     if (width) {
       // eslint-disable-next-line sonarjs/no-small-switch
       switch (this.form.value.type) {
         case CreateVdevLayout.Stripe:
           this.numberOptions$ = of(
-            _.range(1, width + 1).map((item) => ({
+            _.range(1, (length / width) + 1).map((item) => ({
               label: item,
               value: item,
             })),
           );
         // TODO: Add other cases
       }
-      this.form.controls.vdevsNumber.setValue(width);
+      this.form.controls.vdevsNumber.setValue(Math.ceil((length / width)));
     } else {
       this.numberOptions$ = of([]);
     }

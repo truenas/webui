@@ -17,9 +17,10 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryComponent implements OnInit {
-  sizeDisksMap: SizeDisksMap = { hdd: {}, ssd: {} };
-  inventory: SizeDisksMap = { hdd: {}, ssd: {} };
+  sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
+  inventory: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   formValue: PoolManagerWizardFormValue;
+  DiskType = DiskType;
 
   constructor(
     private poolManagerStore: PoolManagerStore,
@@ -29,8 +30,8 @@ export class InventoryComponent implements OnInit {
   ngOnInit(): void {
     this.poolManagerStore.unusedDisks$.pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.sizeDisksMap = {
-        hdd: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
-        ssd: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
+        [DiskType.Hdd]: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
+        [DiskType.Ssd]: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
       };
       this.cdr.markForCheck();
     });
@@ -45,20 +46,15 @@ export class InventoryComponent implements OnInit {
   }
 
   updateInventory(): void {
-    const isHdd = this.formValue.data.sizeAndType[1] === DiskType.Hdd;
+    const type = this.formValue.data.sizeAndType[1] as DiskType;
     const selectedSize = this.formValue.data.sizeAndType[0];
+    const disksSelected = this.formValue.data.width * this.formValue.data.vdevsNumber;
 
-    this.inventory = {
-      hdd: !isHdd ? this.sizeDisksMap.hdd : {},
-      ssd: isHdd ? this.sizeDisksMap.ssd : {},
-    };
+    this.inventory[type] = {};
 
-    Object.entries(isHdd ? this.sizeDisksMap.hdd : this.sizeDisksMap.ssd).forEach(([size, number]) => {
-      if (isHdd) {
-        this.inventory.hdd[size] = size === selectedSize ? number - this.formValue.data.vdevsNumber : number;
-      } else {
-        this.inventory.ssd[size] = size === selectedSize ? number - this.formValue.data.vdevsNumber : number;
-      }
+    Object.entries(this.sizeDisksMap[type]).forEach(([size, number]) => {
+      const remainingCount = number > disksSelected ? number - disksSelected : 0;
+      this.inventory[type][size] = size === selectedSize ? remainingCount : number;
     });
   }
 
