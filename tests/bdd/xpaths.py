@@ -23,9 +23,9 @@ class add_Catalog:
 class add_Dataset:
     title = '//h3[text()="Add Dataset"]'
     name_Textarea = '//div[@id="name"]//textarea'
-    share_Type_Select = '//mat-select[@ix-auto="select__Share Type"]'
-    share_Type_Select_Text = '//mat-select[@ix-auto="select__Share Type"]//span[contains(@class,"mat-select-min-line")]'
-    share_Type_SMB_Option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
+    share_Type_Select = '//mat-select[@data-test="select-share-type"]'
+    share_Type_Select_Text = '//mat-select[@data-test="select-share-type"]//span[contains(@class,"mat-select-min-line")]'
+    share_Type_SMB_Option = '//mat-option[contains(.,"SMB")]'
 
 
 class add_Group:
@@ -450,7 +450,7 @@ class popup:
     active_Directory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
     saving_Permissions = '//h1[text()="Saving Permissions"]'
-    updatin_Acl = '//h1[text()="Updating ACL"]'
+    updating_Acl = '//h1[text()="Updating ACL"]'
     setting_Ldap = '//h1[text()="Setting up LDAP"]'
     configuring = '//h1[contains(.,"Configuring...")]'
     installing = '//h1[contains(.,"Installing")]'
