@@ -24,7 +24,6 @@ from pytest_bdd import (
 from pytest_dependency import depends
 
 
-
 @pytest.mark.dependency(name='AD_SMB')
 @scenario('features/NAS-T1120.feature', 'Verify an smb share with  AD dataset from a system pool works')
 def test_verify_an_smb_share_with__ad_dataset_from_a_system_pool_works(driver):
