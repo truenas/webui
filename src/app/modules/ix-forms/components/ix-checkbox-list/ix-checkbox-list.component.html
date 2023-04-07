@@ -5,7 +5,7 @@
   [required]="required"
 ></ix-label>
 
-<div *ngIf="!altView" class="checkbox-list" [fxLayout]="containerLayout">
+<div class="checkbox-list" [fxLayout]="containerLayout">
   <mat-checkbox
     *ngFor="let option of options | async"
     class="checkbox"
@@ -20,20 +20,6 @@
   >
     {{ option.label }}
   </mat-checkbox>
-</div>
-
-<div *ngIf="altView" class="checkbox-list" [fxLayout]="containerLayout">
-  <div
-    *ngFor="let option of options | async"
-    class="alt-radio-button"
-    fxFlex="100%"
-    [fxFlex.gt-md]="fieldFlex"
-    (click)="onCheckboxChanged(option.value)"
-  >
-    <ix-icon *ngIf="isChecked(option.value)" name="check_circle"></ix-icon>
-    <ix-icon *ngIf="!isChecked(option.value)" name="radio_button_unchecked"></ix-icon>
-    {{ option.label }}
-  </div>
 </div>
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

@@ -21,7 +21,6 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
   @Input() options: Observable<Option[]>;
   @Input() inlineFields: boolean;
   @Input() inlineFieldFlex: string;
-  @Input() altView: boolean;
 
   isDisabled = false;
   value: (string | number)[];

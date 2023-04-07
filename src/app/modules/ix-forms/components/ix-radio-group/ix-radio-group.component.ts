@@ -24,7 +24,6 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   @Input() options: Observable<RadioOption[]>;
   @Input() inlineFields: boolean;
   @Input() inlineFieldFlex: string;
-  @Input() altView: boolean;
 
   isDisabled = false;
   value: string;
@@ -76,10 +75,5 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   onRadiosChanged(event: MatRadioChange): void {
     this.value = event.value;
     this.onChange(event.value);
-  }
-
-  onAltRadioChange(option: RadioOption): void {
-    this.value = option.value as string;
-    this.onChange(option.value as string);
   }
 }
