@@ -20,18 +20,7 @@
     </div>
   </div>
   <div class="cell cell-status">
-    <ng-container [ngSwitch]="app.status">
-      <div *ngSwitchCase="chartReleaseStatus.Active" class="status active">
-        {{ 'Running' | translate }}
-      </div>
-      <div *ngSwitchCase="chartReleaseStatus.Deploying" class="status deploying">
-        <mat-spinner [diameter]="20"></mat-spinner>
-        {{ 'Deploying' | translate }}
-      </div>
-      <div *ngSwitchCase="chartReleaseStatus.Stopped" class="status stopped">
-        {{ 'Stopped' | translate }}
-      </div>
-    </ng-container>
+    <ix-app-status-cell [app]="app"></ix-app-status-cell>
   </div>
   <div class="cell cell-cpu">
     <span [ngTemplateOutlet]="notAvailable"></span>

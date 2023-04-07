@@ -16,7 +16,7 @@ export class AppRowComponent {
   @Output() stopApp = new EventEmitter<void>();
 
   readonly imagePlaceholder = appImagePlaceholder;
-  readonly chartReleaseStatus = ChartReleaseStatus;
+  readonly appStatus = ChartReleaseStatus;
 
   get hasUpdates(): boolean {
     return this.app.update_available || this.app.container_images_update_available;

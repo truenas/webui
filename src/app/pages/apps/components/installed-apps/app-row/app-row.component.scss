@@ -108,36 +108,6 @@
     }
   }
 
-  .cell-status {
-    .status {
-      border: 2px solid;
-      border-radius: 20px;
-      display: flex;
-      font-weight: bold;
-      gap: 6px;
-      padding: 3px 16px;
-    }
-
-    .active {
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    .deploying {
-      border-color: var(--yellow);
-      color: var(--yellow);
-
-      mat-spinner::ng-deep circle {
-        stroke: var(--yellow);
-      }
-    }
-
-    .stopped {
-      border-color: var(--red);
-      color: var(--red);
-    }
-  }
-
   .cell-update {
     gap: 4px;
 

@@ -256,7 +256,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         item.status = releases[0].status;
         this.cdr.markForCheck();
         if (item.status === ChartReleaseStatus.Deploying) {
-          setTimeout(() => this.refreshStatus(name), 3000);
+          setTimeout(() => {
+            this.refreshStatus(name);
+            this.cdr.markForCheck();
+          }, 3000);
         }
       }
     });
@@ -274,8 +277,16 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title } });
     dialogRef.componentInstance.setCall('chart.release.scale', [chartName, { replica_count: newReplicaCount }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+
+    dialogRef.componentInstance.progress.pipe(untilDestroyed(this)).subscribe((value) => {
+      console.info('progress', value);
       this.refreshStatus(chartName);
+      this.cdr.markForCheck();
+    });
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((value) => {
+      console.info('success', value);
+      this.refreshStatus(chartName);
+      this.cdr.markForCheck();
       dialogRef.close();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
