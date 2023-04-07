@@ -3,8 +3,9 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ManagerVdev } from 'app/classes/manager-vdev.class';
+import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -42,7 +43,7 @@ export class ManualDiskSelectionComponent implements OnInit {
   trackVdevById = (_: number, vdev: ManagerVdev): string => vdev.uuid;
 
   addVdev(): void {
-    const vdev = new ManagerVdev(this.data.type, 'data');
+    const vdev = new PoolManagerVdev(this.data.type, 'data');
     this.store$.addDataVdev(vdev);
   }
 }

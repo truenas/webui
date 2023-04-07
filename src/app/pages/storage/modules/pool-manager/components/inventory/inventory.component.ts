@@ -49,6 +49,9 @@ export class InventoryComponent implements OnInit {
     const type = this.formValue.data.sizeAndType[1] as DiskType;
     const selectedSize = this.formValue.data.sizeAndType[0];
     const disksSelected = this.formValue.data.width * this.formValue.data.vdevsNumber;
+    if (!type || !selectedSize || !disksSelected) {
+      return;
+    }
 
     this.inventory[type] = {};
 

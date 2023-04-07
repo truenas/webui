@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { of } from 'rxjs';
+import { of, takeWhile } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -33,6 +33,8 @@ export class CreateDataWizardStepComponent implements OnInit {
 
   selectedDiskType: DiskType = null;
   selectedSize: string = null;
+  selectedWidth: number = null;
+  selectedVdevsCount: number = null;
 
   vdevLayoutOptions$ = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
@@ -61,7 +63,12 @@ export class CreateDataWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.unusedDisks$.pipe(untilDestroyed(this)).subscribe((disks) => {
+    this.poolManagerStore.unusedDisks$.pipe(
+      takeWhile((unusedDisks) => {
+        return !unusedDisks?.length;
+      }, true),
+      untilDestroyed(this),
+    ).subscribe((disks) => {
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();
@@ -71,10 +78,27 @@ export class CreateDataWizardStepComponent implements OnInit {
       this.selectedDiskType = type as DiskType;
       this.selectedSize = size;
       this.updateWidthOptions();
+      this.createVdevsAutomatically();
     });
 
     this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedWidth) => {
+      this.selectedWidth = selectedWidth;
       this.updateNumberOptions(selectedWidth);
+      this.createVdevsAutomatically();
+    });
+
+    this.form.controls.vdevsNumber.valueChanges.pipe(untilDestroyed(this)).subscribe((vdevNumber) => {
+      this.selectedVdevsCount = vdevNumber;
+      this.createVdevsAutomatically();
+    });
+  }
+
+  createVdevsAutomatically(): void {
+    this.poolManagerStore.createDataVdevsAutomatically({
+      size: +this.selectedSize,
+      type: this.selectedDiskType,
+      width: this.selectedWidth,
+      count: this.selectedVdevsCount,
     });
   }
 
@@ -99,9 +123,10 @@ export class CreateDataWizardStepComponent implements OnInit {
   }
 
   updateWidthOptions(): void {
-    const length: number = this.selectedDiskType === DiskType.Hdd
-      ? this.sizeDisksMap[DiskType.Hdd][this.selectedSize]
-      : this.sizeDisksMap[DiskType.Ssd][this.selectedSize];
+    if (!this.selectedDiskType || !this.selectedSize) {
+      return;
+    }
+    const length: number = this.sizeDisksMap[this.selectedDiskType][this.selectedSize];
 
     this.form.controls.width.setValue(null);
     if (length) {
