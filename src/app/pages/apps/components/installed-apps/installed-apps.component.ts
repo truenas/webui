@@ -66,6 +66,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       });
   }
 
+  get filteredApps(): ChartRelease[] {
+    return this.dataSource
+      .filter((app) => app.name.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
+  }
+
   get allAppsChecked(): boolean {
     return this.dataSource.every((app) => app.selected);
   }

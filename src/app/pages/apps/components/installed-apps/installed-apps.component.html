@@ -120,7 +120,7 @@
             <div>{{ 'Action' | translate }}</div>
           </div>
           <div class="apps-rows">
-            <ng-container *ngFor="let app of dataSource">
+            <ng-container *ngFor="let app of filteredApps">
               <ix-app-row
                 routerLinkActive="selected"
                 [app]="app"
