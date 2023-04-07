@@ -144,7 +144,9 @@ export class WebSocketService {
       this.connected = true;
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
-    } else if (data.msg === IncomingApiMessageType.Changed || data.msg === IncomingApiMessageType.Added) {
+    } else if (
+      [IncomingApiMessageType.Changed, IncomingApiMessageType.Added, IncomingApiMessageType.Removed].includes(data.msg)
+    ) {
       this.subscriptions.forEach((observers, name) => {
         if (name === '*' || name === (data as ApiEvent).collection) {
           observers.forEach((item) => item.next(data));
