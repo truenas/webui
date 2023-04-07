@@ -1,20 +1,16 @@
 import { FormControl, ValidatorFn } from '@angular/forms';
+import { maxDatasetPath } from 'app/constants/dataset.constants';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 
 export function datasetNameTooLong(parentPath: string): ValidatorFn {
-  const maxLengthAllowed = 200;
-  let thisControl: FormControl<string>;
+  const maxLengthAllowed = maxDatasetPath;
 
   return function datasetNameTooLongValidate(control: FormControl<string>) {
-    if (!control.parent || !control.value || !parentPath) {
+    if (!control.value || !parentPath) {
       return null;
     }
 
-    if (!thisControl) {
-      thisControl = control;
-    }
-
-    if (parentPath.length + thisControl.value.length >= maxLengthAllowed) {
+    if (parentPath.length + control.value.length >= maxLengthAllowed) {
       return {
         [DefaultValidationError.MaxLength]: { requiredLength: maxLengthAllowed - parentPath.length },
       };

@@ -1,0 +1,24 @@
+.columns {
+  column-gap: 15px;
+  display: flex;
+  flex-direction: row;
+
+  > * {
+    flex: 1;
+  }
+}
+
+.with-inherit-field {
+  align-items: center;
+  column-gap: 15px;
+  display: flex;
+  flex-direction: row;
+
+  > * {
+    flex: 1;
+  }
+
+  ix-checkbox {
+    margin-top: 25px;
+  }
+}

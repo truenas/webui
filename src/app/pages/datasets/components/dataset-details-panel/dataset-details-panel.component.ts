@@ -13,7 +13,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import {
   isDatasetHasShares, isIocageMounted, isRootDataset, ixApplications,
 } from 'app/pages/datasets/utils/dataset.utils';
-import { ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -29,7 +28,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(
-    private modalService: ModalService,
     private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
     private router: Router,
@@ -37,9 +35,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.datasetStore.datasetUpdated();
-    });
+    // TODO: Replace with different approach once slideIn is refactored
     this.slideIn.onClose$
       .pipe(
         filter((value) => value.response === true),
@@ -94,10 +90,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
   }
 
   onAddDataset(): void {
-    const addDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent);
-    addDatasetComponent.setParent(this.dataset.id);
-    addDatasetComponent.setVolId(this.dataset.pool);
-    addDatasetComponent.setTitle(this.translate.instant('Add Dataset'));
+    const addDataset = this.slideIn.open(DatasetFormComponent, { wide: true });
+    addDataset.setForNew(this.dataset.id);
   }
 
   onAddZvol(): void {

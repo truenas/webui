@@ -29,6 +29,7 @@ import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
+import { NameAndOptionsSectionComponent } from 'app/pages/datasets/components/dataset-form/sections/name-and-options-section/name-and-options-section.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
@@ -46,6 +47,9 @@ import { SnapshotsModule } from 'app/pages/datasets/modules/snapshots/snapshots.
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from './components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
+import { EncryptionSectionComponent } from './components/dataset-form/sections/encryption-section/encryption-section.component';
+import { OtherOptionsSectionComponent } from './components/dataset-form/sections/other-options-section/other-options-section.component';
+import { QuotasSectionComponent } from './components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
 import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from './components/dataset-node/dataset-node.component';
@@ -106,6 +110,10 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     SpaceManagementChartComponent,
     DatasetCapacitySettingsComponent,
     ImportDataComponent,
+    NameAndOptionsSectionComponent,
+    EncryptionSectionComponent,
+    QuotasSectionComponent,
+    OtherOptionsSectionComponent,
   ],
   providers: [],
 })
