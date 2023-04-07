@@ -10,7 +10,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { AngularResizeEventModule } from 'angular-resize-event';
 import { ChartsModule } from 'ng2-charts';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -86,7 +85,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     CoreComponents,
     AppLoaderModule,
     SnapshotsModule,
-    AngularResizeEventModule,
     TestIdModule,
   ],
   declarations: [

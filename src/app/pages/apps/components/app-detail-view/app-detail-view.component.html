@@ -119,64 +119,9 @@
   <div fxFlex fxLayoutAlign="end">
 
     <section class="app-info-cards">
-      <ix-app-info-card>
-        <h3>{{ 'Available Resources' | translate }}</h3>
-
-        <div class="app-list-item">
-          {{ 'CPU Usage' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Memory Usage' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Pool' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Available Space' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-      </ix-app-info-card>
-
-      <ix-app-info-card>
-        <h3>{{ 'Helm Chart Info' | translate }}</h3>
-
-        <div class="app-list-item">
-          {{ 'Catalog' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Train' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Chart Version' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Maintainer' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-      </ix-app-info-card>
-
-      <ix-app-info-card>
-        <h3>{{ 'Application Info' | translate }}</h3>
-
-        <div class="app-list-item">
-          {{ 'Version' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'App Source' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-        <div class="app-list-item">
-          {{ 'Last App Updated' }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
-        </div>
-      </ix-app-info-card>
+      <ix-app-resources-card [isLoading$]="isLoading$"></ix-app-resources-card>
+      <ix-app-helm-chart-card [isLoading$]="isLoading$"></ix-app-helm-chart-card>
+      <ix-app-available-info-card [isLoading$]="isLoading$"></ix-app-available-info-card>
     </section>
 
   </div>

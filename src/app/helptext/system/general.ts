@@ -166,5 +166,4 @@ export const helptextSystemGeneral = {
   guiTitle: T('GUI'),
   guiPageTitle: T('GUI Settings'),
   ntpTitle: T('NTP Servers'),
-  supportTitle: T('Support'),
 };

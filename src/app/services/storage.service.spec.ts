@@ -405,10 +405,10 @@ describe('StorageService', () => {
 
       storage.addDataTopology({
         scenario: MockStorageScenario.Uniform,
-        layout: TopologyItemType.Mirror,
+        layout: TopologyItemType.Raidz3,
         diskSize: 4,
-        width: 2,
-        repeats: 4,
+        width: 7,
+        repeats: 2,
       }).addSpecialTopology({
         scenario: MockStorageScenario.Uniform,
         layout: TopologyItemType.Mirror,

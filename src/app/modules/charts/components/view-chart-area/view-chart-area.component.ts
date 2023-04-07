@@ -1,7 +1,8 @@
 import {
-  Component, Input, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
+  Component, Input, OnDestroy, OnChanges, ViewChild, ElementRef,
 } from '@angular/core';
 import { Chart, ChartData, ChartOptions } from 'chart.js';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 @Component({
   selector: 'ix-view-chart-area',
@@ -39,7 +40,7 @@ export class ViewChartAreaComponent implements OnDestroy, OnChanges {
     );
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.options || !this.chart) {
       this.render();
     }

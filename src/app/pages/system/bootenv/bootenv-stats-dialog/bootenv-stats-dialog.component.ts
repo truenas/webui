@@ -6,12 +6,13 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { getPoolStatusLabels, PoolStatus } from 'app/enums/pool-status.enum';
+import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -29,7 +30,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   state: PoolInstance;
 
   readonly PoolStatus = PoolStatus;
-  readonly poolStatusLabels = getPoolStatusLabels(this.translate);
+  readonly poolStatusLabels = poolStatusLabels;
 
   constructor(
     private ws: WebSocketService,
@@ -38,8 +39,9 @@ export class BootenvStatsDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,
     private translate: TranslateService,
     private fb: FormBuilder,
-    private dialog: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) {}
@@ -68,7 +70,7 @@ export class BootenvStatsDialogComponent implements OnInit {
         },
         error: (error) => {
           this.loader.close();
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
   }
@@ -89,9 +91,9 @@ export class BootenvStatsDialogComponent implements OnInit {
           this.loader.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.dialogRef.close();
-          (new EntityUtils()).errorReport(error, this.dialog);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

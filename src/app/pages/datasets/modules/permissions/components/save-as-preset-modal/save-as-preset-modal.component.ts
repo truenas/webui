@@ -7,10 +7,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath, AclTemplateCreateParams } from 'app/interfaces/acl.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -30,6 +31,7 @@ export class SaveAsPresetModalComponent implements OnInit {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<SaveAsPresetModalComponent>,
@@ -69,9 +71,9 @@ export class SaveAsPresetModalComponent implements OnInit {
           this.cdr.markForCheck();
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -97,9 +99,9 @@ export class SaveAsPresetModalComponent implements OnInit {
         this.loader.close();
         this.dialogRef.close();
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -111,9 +113,9 @@ export class SaveAsPresetModalComponent implements OnInit {
         this.loadOptions();
         this.loader.close();
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

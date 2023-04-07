@@ -4,7 +4,7 @@ import {
   Component,
   Input,
   OnChanges,
-  OnInit, SimpleChanges,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
@@ -16,6 +16,7 @@ import { lastValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -84,7 +85,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.setInitialNode();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('multiple' in changes) {
       this.treeOptions.useCheckbox = this.multiple;
     }

@@ -120,6 +120,15 @@
         >
           {{ 'Save' | translate }}
         </button>
+        <button
+          *ngIf="lastSavedCertificate !== null || lastSavedRootCertificate !== null"
+          ixTest="unset-certs"
+          mat-button
+          type="button"
+          (click)="unsetCertificates()"
+        >
+          {{ 'Unset Certificates' | translate }}
+        </button>
       </ix-form-actions>
     </form>
   </mat-card-content>

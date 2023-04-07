@@ -7,12 +7,12 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -54,7 +54,7 @@ export class AllowedAddressesCardComponent implements OnInit {
                 untilDestroyed(this),
               ).subscribe({
                 next: () => this.deleteAllowedAddress(row),
-                error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+                error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
               });
           },
         },
@@ -76,6 +76,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     private store$: Store<AppState>,
     private dialog: DialogService,
     private slideIn: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
@@ -98,7 +99,7 @@ export class AllowedAddressesCardComponent implements OnInit {
           this.store$.dispatch(generalConfigUpdated());
           this.tableConfig.tableComponent?.getData();
         },
-        error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+        error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
       });
     });
   }

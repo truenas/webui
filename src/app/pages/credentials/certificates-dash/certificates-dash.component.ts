@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,11 +10,12 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
-import { EntityUtils } from 'app/modules/entity/utils';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -31,6 +33,7 @@ import {
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
 
@@ -50,6 +53,7 @@ export class CertificatesDashComponent implements OnInit {
     private dialog: MatDialog,
     private dialogService: DialogService,
     private storage: StorageService,
+    private errorHandler: ErrorHandlerService,
     private tableService: TableService,
     private translate: TranslateService,
   ) { }
@@ -129,7 +133,7 @@ export class CertificatesDashComponent implements OnInit {
                 });
                 this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
                   table.loaderOpen = false;
-                  new EntityUtils().handleWsError(this, err, this.dialogService);
+                  this.dialogService.error(this.errorHandler.parseJobError(err));
                 });
               });
           },
@@ -282,14 +286,17 @@ export class CertificatesDashComponent implements OnInit {
                   next: (file) => {
                     this.storage.downloadBlob(file, fileName);
                   },
-                  error: (err) => {
-                    this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
-                      helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                  error: (error: HttpErrorResponse) => {
+                    this.dialogService.error({
+                      title: helptextSystemCertificates.list.download_error_dialog.title,
+                      message: helptextSystemCertificates.list.download_error_dialog.cert_message,
+                      backtrace: `${error.status} - ${error.statusText}`,
+                    });
                   },
                 });
             },
-            error: (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
+            error: (err: WebsocketError | Job) => {
+              this.dialogService.error(this.errorHandler.parseError(err));
             },
           });
           const keyName = rowinner.name + '.key';
@@ -302,14 +309,17 @@ export class CertificatesDashComponent implements OnInit {
                   next: (file) => {
                     this.storage.downloadBlob(file, keyName);
                   },
-                  error: (err) => {
-                    this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
-                      helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                  error: (error: HttpErrorResponse) => {
+                    this.dialogService.error({
+                      title: helptextSystemCertificates.list.download_error_dialog.title,
+                      message: helptextSystemCertificates.list.download_error_dialog.key_message,
+                      backtrace: `${error.status} - ${error.statusText}`,
+                    });
                   },
                 });
             },
-            error: (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
+            error: (err: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(err));
             },
           });
         },
@@ -337,7 +347,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(this, failedJob, this.dialogService);
+              this.dialogService.error(this.errorHandler.parseJobError(failedJob));
             });
           });
       },
@@ -399,7 +409,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(this, failedJob, this.dialogService);
+              this.dialogService.error(this.errorHandler.parseJobError(failedJob));
             });
           });
       },

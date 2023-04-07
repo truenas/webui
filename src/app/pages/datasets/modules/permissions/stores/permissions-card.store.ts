@@ -4,10 +4,12 @@ import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const initialState: PermissionsCardState = {
   isLoading: false,
@@ -19,7 +21,8 @@ const initialState: PermissionsCardState = {
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
   constructor(
     private ws: WebSocketService,
-    private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
   ) {
     super(initialState);
   }
@@ -44,8 +47,8 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
               isLoading: false,
             });
           }),
-          catchError((error) => {
-            this.dialog.errorReportMiddleware(error);
+          catchError((error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
 
             this.patchState({
               isLoading: false,

@@ -6,18 +6,21 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   HostBinding,
   Input,
   IterableDiffers,
   OnChanges,
-  SimpleChanges,
+  Output,
   TrackByFunction,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { ResizedEvent } from 'angular-resize-event';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
@@ -47,6 +50,10 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   @Input() ixMinBufferPx = defaultSize * 4;
   @Input() ixMaxBufferPx = defaultSize * 8;
   @Input() override trackBy!: TrackByFunction<T>;
+
+  @Output() viewportScrolled = new EventEmitter<number>();
+  @Output() viewportResized = new EventEmitter<ResizedEvent>();
+
   nodes$ = new BehaviorSubject<TreeVirtualNodeData<T>[]>([]);
   innerTrackBy: TrackByFunction<TreeVirtualNodeData<T>> = (index: number) => index;
   private renderNodeChanges$ = new BehaviorSubject<T[] | readonly T[]>([]);
@@ -63,7 +70,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     this.listenForNodeChanges();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.trackBy) {
       if (typeof changes.trackBy.currentValue === 'function') {
         this.innerTrackBy = (index: number, node) => this.trackBy(index, node.data);
@@ -76,6 +83,14 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   scrollToTop(): void {
     this.virtualScrollViewport.scrollToIndex(0, 'smooth');
     this.changeDetectorRef.markForCheck();
+  }
+
+  scrolled(viewport: CdkVirtualScrollViewport): void {
+    this.viewportScrolled.emit(viewport.elementRef.nativeElement.scrollLeft);
+  }
+
+  resized(event: ResizedEvent): void {
+    this.viewportResized.emit(event);
   }
 
   override renderNodeChanges(data: T[] | readonly T[]): void {

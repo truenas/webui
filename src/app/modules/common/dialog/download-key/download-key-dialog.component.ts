@@ -1,13 +1,15 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/volumes/download-key';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   WebSocketService,
   StorageService, DialogService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -28,6 +30,7 @@ export class DownloadKeyDialogComponent {
     private storage: StorageService,
     public dialog: DialogService,
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   downloadKey(): void {
@@ -44,14 +47,19 @@ export class DownloadKeyDialogComponent {
           this.loader.close();
           this.storage.streamDownloadFile(url, this.fileName, mimetype)
             .pipe(untilDestroyed(this))
-            .subscribe((file) => {
-              this.storage.downloadBlob(file, this.fileName);
-              this.isDownloaded = true;
+            .subscribe({
+              next: (file) => {
+                this.storage.downloadBlob(file, this.fileName);
+                this.isDownloaded = true;
+              },
+              error: (error: HttpErrorResponse) => {
+                this.dialog.error(this.errorHandler.parseHttpError(error));
+              },
             });
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
     } else {
@@ -61,11 +69,16 @@ export class DownloadKeyDialogComponent {
           this.loader.close();
           this.storage.streamDownloadFile(encryptionKey, this.fileName, mimetype)
             .pipe(untilDestroyed(this))
-            .subscribe((file) => {
-              if (encryptionKey !== null && encryptionKey !== '') {
-                this.storage.downloadBlob(file, this.fileName);
-                this.isDownloaded = true;
-              }
+            .subscribe({
+              next: (file) => {
+                if (encryptionKey !== null && encryptionKey !== '') {
+                  this.storage.downloadBlob(file, this.fileName);
+                  this.isDownloaded = true;
+                }
+              },
+              error: (error: HttpErrorResponse) => {
+                this.dialog.error(this.errorHandler.parseHttpError(error));
+              },
             });
         },
         error: () => {

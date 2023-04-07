@@ -11,11 +11,12 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -54,11 +55,12 @@ export class CertificateAcmeAddComponent {
     private formBuilder: FormBuilder,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideIn: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private mdDialog: MatDialog,
   ) { }
 
@@ -101,7 +103,7 @@ export class CertificateAcmeAddComponent {
       this.isLoading = false;
       this.mdDialog.closeAll();
       this.cdr.markForCheck();
-      this.errorHandler.handleWsFormError(error, this.form);
+      this.formErrorHandler.handleWsFormError(error, this.form);
     });
   }
 
@@ -118,10 +120,10 @@ export class CertificateAcmeAddComponent {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
