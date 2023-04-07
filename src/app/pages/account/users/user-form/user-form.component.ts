@@ -11,7 +11,7 @@ import {
   combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap, take,
+  debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -119,7 +119,7 @@ export class UserFormComponent {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  shellOptions$: Observable<Option[]> = this.ws.call('user.shell_choices').pipe(choicesToOptions(), take(1));
+  shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
@@ -193,11 +193,11 @@ export class UserFormComponent {
       this.form.controls.sshpubkey.setValue(key);
     });
 
-    this.form.controls.group.valueChanges.pipe(untilDestroyed(this)).subscribe((group) => {
+    this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
       this.updateShellOptions(group, this.form.value.groups);
     });
 
-    this.form.controls.groups.valueChanges.pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
       this.updateShellOptions(this.form.value.group, groups);
     });
 
@@ -410,7 +410,8 @@ export class UserFormComponent {
   }
 
   private setFirstShellOption(): void {
-    this.shellOptions$.pipe(
+    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
+      choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
       untilDestroyed(this),
@@ -454,6 +455,7 @@ export class UserFormComponent {
       .pipe(choicesToOptions(), take(1), untilDestroyed(this))
       .subscribe((options) => {
         this.shellOptions$ = of(options);
+        this.cdr.markForCheck();
       });
   }
 }
