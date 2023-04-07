@@ -135,12 +135,13 @@
           [label]="'SSH password login enabled' | translate"
         ></ix-checkbox>
 
-        <ix-combobox
+        <ix-select
           formControlName="shell"
           [label]="'Shell' | translate"
           [tooltip]="tooltips.shell | translate"
-          [provider]="shellProvider"
-        ></ix-combobox>
+          [options]="shellOptions$"
+          [required]="true"
+        ></ix-select>
 
         <ix-checkbox
           formControlName="locked"
