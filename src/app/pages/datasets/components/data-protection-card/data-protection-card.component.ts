@@ -27,7 +27,7 @@ export class DataProtectionCardComponent {
     const addFormSlide = this.slideIn.open(SnapshotAddFormComponent);
     addFormSlide.componentInstance.setDataset(this.dataset.id);
     addFormSlide.afterClosed$().pipe(
-      filter((value) => value.modalType === SnapshotAddFormComponent && value.response === true),
+      filter((value) => value.response === true),
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));

@@ -5,7 +5,7 @@
 >
   <h3 class="ix-formtitle">{{ title | translate }}</h3>
   <ng-container *ngIf="!disableClose">
-    <ix-icon name="cancel" id="ix-close-icon" (click)="slideInService.close()"></ix-icon>
+    <ix-icon name="cancel" id="ix-close-icon" (click)="slideInRef.closeThisSlide()"></ix-icon>
   </ng-container>
 </div>
 

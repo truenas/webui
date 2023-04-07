@@ -17,6 +17,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
@@ -182,6 +183,7 @@ export class ZvolFormComponent {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
+    private slideInRef: IxSlideInRef<ZvolFormComponent>,
     private slideInService: IxSlideInService,
     private formatter: IxFormatterService,
     protected storageService: StorageService,
@@ -557,7 +559,7 @@ export class ZvolFormComponent {
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => {
         this.isLoading = false;
-        this.slideInService.close(null, dataset);
+        this.slideInRef.closeThisSlide(null, dataset);
       },
       error: (error) => {
         this.isLoading = false;
@@ -620,7 +622,7 @@ export class ZvolFormComponent {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: () => {
               this.isLoading = false;
-              this.slideInService.close(null, true);
+              this.slideInRef.closeThisSlide(null, true);
             },
             error: (error) => {
               this.isLoading = false;
@@ -634,7 +636,7 @@ export class ZvolFormComponent {
             title: helptext.zvol_save_errDialog.title,
             message: helptext.zvol_save_errDialog.msg,
           });
-          this.slideInService.close(null, false);
+          this.slideInRef.closeThisSlide(null, false);
         }
       },
       error: (error: WebsocketError): void => {

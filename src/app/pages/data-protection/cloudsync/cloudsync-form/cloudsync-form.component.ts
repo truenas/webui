@@ -23,6 +23,7 @@ import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -31,7 +32,6 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { CloudCredentialService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const newStorjBucket = 'new_storj_bucket';
@@ -173,7 +173,7 @@ export class CloudsyncFormComponent {
     private errorHandler: FormErrorHandlerService,
     protected dialog: DialogService,
     protected matDialog: MatDialog,
-    protected slideInService: IxSlideInService,
+    public slideInRef: IxSlideInRef<CloudsyncFormComponent>,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
   ) {
@@ -748,7 +748,7 @@ export class CloudsyncFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close(null, true);
+        this.slideInRef.closeThisSlide(null, true);
       },
       error: (error) => {
         this.isLoading = false;

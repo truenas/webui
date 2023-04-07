@@ -91,12 +91,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         this.store.loadDashboard();
       });
 
-    this.slideIn.onClose$
-      .pipe(
-        filter((value) => value.response === true),
-        untilDestroyed(this),
-      ).subscribe(() => this.store.loadDashboard());
-
     this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
       for (const disk of disks) {
         if (!this.allDisksByPool[disk.pool]) {
@@ -112,7 +106,12 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   }
 
   onImportPool(): void {
-    this.slideIn.open(ImportPoolComponent);
+    const slideInRef = this.slideIn.open(ImportPoolComponent);
+    slideInRef.afterClosed$()
+      .pipe(
+        filter((value) => value.response === true),
+        untilDestroyed(this),
+      ).subscribe(() => this.store.loadDashboard());
   }
 
   createPool(): void {

@@ -10,6 +10,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UUID } from 'angular2-uuid';
 import { Subscription, timer } from 'rxjs';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -36,6 +37,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   private element: HTMLElement;
   timeOutOfClear: Subscription;
   wasBodyCleared = false;
+  createdSlideInRef: IxSlideInRef<unknown>[] = [];
 
   constructor(
     private el: ElementRef,
@@ -67,9 +69,13 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInService.setModal(this);
   }
 
-  closeSlideIn(): void {
+  closeSlideIn(id?: string): void {
     this.isSlideInOpen = false;
     this.wasBodyCleared = true;
+
+    if (id) {
+      this.createdSlideInRef = this.createdSlideInRef.filter((ref) => ref.uuid !== id);
+    }
 
     this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
       // Destroying child component later improves performance a little bit.
@@ -91,8 +97,24 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     }
     this.slideInBody.clear();
     this.wasBodyCleared = false;
+    // clear body and close all slides
+    this.createdSlideInRef.forEach((ref) => ref.closeThisSlide());
+    this.createdSlideInRef = [];
+    // the componentType will be removed
+    return this.createSlideInRef(componentType, params);
+  }
 
+  ngOnDestroy(): void {
+    this.element.remove();
+    this.slideInService.close();
+  }
+
+  createSlideInRef<T>(
+    componentType: Type<T>,
+    params?: { wide?: boolean; data?: { [key: string]: unknown } },
+  ): IxSlideInRef<T> {
     const slideInRef = new IxSlideInRef<T>(this, componentType);
+    this.createdSlideInRef.push(slideInRef);
 
     const injector = Injector.create({
       providers: [
@@ -102,11 +124,8 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     });
     const componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
     slideInRef.componentInstance = componentRef.instance;
-    return slideInRef;
-  }
+    slideInRef.uuid = UUID.UUID();
 
-  ngOnDestroy(): void {
-    this.element.remove();
-    this.slideInService.close();
+    return slideInRef;
   }
 }

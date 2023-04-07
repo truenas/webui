@@ -6,6 +6,7 @@ import { ResponseOnClose } from 'app/services/ix-slide-in.service';
 export class IxSlideInRef<T> {
   private slideInClosed$ = new Subject<ResponseOnClose>();
   componentInstance: T;
+  uuid: string;
   constructor(
     private slideInComponent: IxSlideInComponent,
     private modalType: Type<T>,
@@ -25,7 +26,7 @@ export class IxSlideInRef<T> {
     });
 
     this.slideInClosed$.complete();
-    this.slideInComponent.closeSlideIn();
+    this.slideInComponent.closeSlideIn(this.uuid);
   }
 
   afterClosed$(): Observable<ResponseOnClose> {

@@ -40,8 +40,9 @@ export class IxSlideInService {
 
     return this.slideInComponent.openSlideIn<T>(modal, params);
   }
-
-  close(error?: Error, response?: unknown): void { // remove parameters
+  // will be renamed to closeAllSlides
+  // params error and response will be removed
+  close(error?: Error, response?: unknown): void {
     if (!this.slideInComponent?.isSlideInOpen) {
       return;
     }
@@ -57,8 +58,11 @@ export class IxSlideInService {
       response: response === undefined ? null : response,
       modalType: this.modalType,
     });
+    // close all created slides
+    this.slideInComponent.createdSlideInRef.forEach((ref) => ref.closeThisSlide());
+    this.slideInComponent.createdSlideInRef = [];
 
-    this.slideInComponent.closeSlideIn();
+    // this.slideInComponent.closeSlideIn();
   }
 
   get onClose$(): Subject<ResponseOnClose> {

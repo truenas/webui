@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, merge } from 'rxjs';
+import {
+  EMPTY, merge, mergeMap, Observable, Subject,
+} from 'rxjs';
 import {
   filter, switchMap, tap, catchError,
 } from 'rxjs/operators';
@@ -47,7 +49,7 @@ import {
   TaskService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -85,6 +87,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   dataCards: TaskCard[] = [];
   disks: Disk[] = [];
   jobStates = new Map<number, string>();
+  afterClosedSlideIn$ = new Subject<Observable<ResponseOnClose>>();
 
   constructor(
     private ws: WebSocketService,
@@ -115,7 +118,7 @@ export class DataProtectionDashboardComponent implements OnInit {
 
     merge(
       this.modalService.onClose$,
-      this.slideInService.onClose$,
+      this.afterClosedSlideIn$.pipe(mergeMap((afterClosed$) => afterClosed$)),
     )
       .pipe(untilDestroyed(this))
       .subscribe(({ modalType }) => {
@@ -182,11 +185,13 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           parent: this,
           add: () => {
-            this.slideInService.open(ScrubTaskFormComponent);
+            const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
           },
           edit: (task: ScrubTaskUi) => {
-            const slideInServiceRef = this.slideInService.open(ScrubTaskFormComponent);
-            slideInServiceRef.componentInstance.setTaskForEdit(task);
+            const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.componentInstance.setTaskForEdit(task);
           },
           tableActions: [
             {
@@ -231,11 +236,13 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            this.slideInService.open(SnapshotTaskComponent, { wide: true });
+            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideInServiceRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            slideInServiceRef.componentInstance.setTaskForEdit(row);
+            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.componentInstance.setTaskForEdit(row);
           },
           tableFooterActions: [
             {
@@ -335,11 +342,13 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.slideInService.open(CloudsyncFormComponent, { wide: true });
+            const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
           },
           edit: (row: CloudSyncTaskUi) => {
-            const slideInServiceRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-            slideInServiceRef.componentInstance.setTaskForEdit(row);
+            const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.componentInstance.setTaskForEdit(row);
           },
           onButtonClick: (row: CloudSyncTaskUi) => {
             this.stateButton(row);
@@ -380,11 +389,13 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
           },
           edit: (row: RsyncTaskUi) => {
-            const slideInServiceRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-            slideInServiceRef.componentInstance.setTaskForEdit(row);
+            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.componentInstance.setTaskForEdit(row);
           },
           onButtonClick: (row: RsyncTaskUi) => {
             this.stateButton(row as TaskTableRow);
@@ -425,11 +436,13 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
           ],
           add: () => {
-            this.slideInService.open(SmartTaskFormComponent);
+            const slideInRef = this.slideInService.open(SmartTaskFormComponent);
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
           },
           edit: (row: SmartTestTaskUi) => {
-            const slideInServiceRef = this.slideInService.open(SmartTaskFormComponent);
-            slideInServiceRef.componentInstance.setTestForEdit(row);
+            const slideInRef = this.slideInService.open(SmartTaskFormComponent);
+            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.componentInstance.setTestForEdit(row);
           },
         },
       },

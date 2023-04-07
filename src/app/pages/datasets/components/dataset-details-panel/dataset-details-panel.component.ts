@@ -4,6 +4,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -50,19 +51,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
         });
       }
     });
-    this.slideIn.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        const zvol = value.response as Dataset;
-        if (value.modalType === ZvolFormComponent && zvol?.id) {
-          this.datasetStore.datasetUpdated();
-          this.router.navigate(['/datasets', zvol.id]).then(() => {
-            this.snackbar.success(
-              this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(zvol) }),
-            );
-          });
-        }
-      });
   }
 
   get datasetHasRoles(): boolean {
@@ -118,6 +106,18 @@ export class DatasetDetailsPanelComponent implements OnInit {
   onAddZvol(): void {
     const addZvolSlide = this.slideIn.open(ZvolFormComponent);
     addZvolSlide.componentInstance.zvolFormInit(true, this.dataset.id);
+    addZvolSlide.afterClosed$().pipe(
+      filter(({ response }) => Boolean((response as Dataset)?.id)),
+      untilDestroyed(this),
+    ).subscribe(({ response }) => {
+      const zvol = response as Dataset;
+      this.datasetStore.datasetUpdated();
+      this.router.navigate(['/datasets', zvol.id]).then(() => {
+        this.snackbar.success(
+          this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(zvol) }),
+        );
+      });
+    });
   }
 
   onCloseMobileDetails(): void {
