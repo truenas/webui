@@ -121,6 +121,7 @@ export default {
     passphrase_tooltip: T('User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br> \
      WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a \
      memorable passphrase or physically secure the passphrase.'),
+    confirm_passphrase_placeholder: T('Confirm Passphrase'),
     pbkdf2iters_tooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
      to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
      <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),
