@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { of, takeWhile } from 'rxjs';
+import { of, take, takeWhile } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -15,7 +15,8 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
+import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/pool-manager.utils';
 
 @UntilDestroy()
@@ -60,6 +61,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     private dialog: MatDialog,
     private translate: TranslateService,
     public poolManagerStore: PoolManagerStore,
+    private manualDiskSelectionStore: ManualDiskSelectionStore,
   ) {}
 
   ngOnInit(): void {
@@ -183,6 +185,30 @@ export class CreateDataWizardStepComponent implements OnInit {
         type: this.form.controls.type.value,
       } as ManualDiskSelectionLayout,
       panelClass: 'manual-selection-dialog',
+    }).afterClosed().pipe(untilDestroyed(this)).subscribe((saved: boolean) => {
+      if (!saved) {
+        return;
+      }
+
+      this.manualDiskSelectionStore.state$
+        .pipe(
+          take(1),
+          untilDestroyed(this),
+        )
+        .subscribe((manualDiskSelectionState: ManualDiskSelectionState) => {
+          this.poolManagerStore.patchState((state: PoolManagerState) => {
+            return {
+              ...state,
+              vdevs: manualDiskSelectionState.vdevs,
+              unusedDisks: manualDiskSelectionState.unusedDisks,
+              disksSelectedManually: true,
+            };
+          });
+        });
     });
+  }
+
+  resetLayout(): void {
+    this.poolManagerStore.resetLayout();
   }
 }

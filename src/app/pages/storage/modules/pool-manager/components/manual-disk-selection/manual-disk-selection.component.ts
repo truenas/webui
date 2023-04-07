@@ -7,6 +7,7 @@ import { ManagerVdev } from 'app/classes/manager-vdev.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
+import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ManualDiskSelectionLayout {
@@ -26,24 +27,41 @@ export class ManualDiskSelectionComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ManualDiskSelectionLayout,
     private dialogRef: MatDialogRef<ManualDiskSelectionComponent>,
-    public store$: ManualDiskSelectionStore,
+    public manualDiskSelectionStore: ManualDiskSelectionStore,
+    public poolManagerStore: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
     this.dialogRef.updateSize('80vw', '80vh');
-    this.store$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+    this.manualDiskSelectionStore.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.manualSelectionState = state;
+    });
+    this.poolManagerStore.select((state: PoolManagerState) => {
+      return {
+        vdevs: state.vdevs,
+        allUnusedDisks: state.allUnusedDisks,
+        unusedDisks: state.unusedDisks,
+      };
+    }).pipe(untilDestroyed(this)).subscribe(({ vdevs, allUnusedDisks, unusedDisks }) => {
+      this.manualDiskSelectionStore.patchState((state: ManualDiskSelectionState) => {
+        return {
+          ...state,
+          vdevs: { ...vdevs },
+          unusedDisks: [...unusedDisks],
+          allUnusedDisks: [...allUnusedDisks],
+        };
+      });
     });
   }
 
   onSaveSelection(): void {
-    this.dialogRef.close(this.manualSelectionState);
+    this.dialogRef.close(true);
   }
 
   trackVdevById = (_: number, vdev: ManagerVdev): string => vdev.uuid;
 
   addVdev(): void {
     const vdev = new PoolManagerVdev(this.data.type, 'data');
-    this.store$.addDataVdev(vdev);
+    this.manualDiskSelectionStore.addDataVdev(vdev);
   }
 }

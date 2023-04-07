@@ -25,6 +25,7 @@ export interface PoolManagerState {
   vdevs: { data: PoolManagerVdev[] };
   formValue: PoolManagerWizardFormValue;
   dragActive: boolean;
+  disksSelectedManually: boolean;
 }
 
 const initialState: PoolManagerState = {
@@ -35,6 +36,7 @@ const initialState: PoolManagerState = {
   enclosures: [],
   dragActive: false,
   formValue: null,
+  disksSelectedManually: false,
 };
 
 @Injectable()
@@ -43,6 +45,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly hasMultipleEnclosures$ = this.select((state) => state.enclosures.length > 1);
   readonly formValue$ = this.select((state) => state.formValue);
+  readonly disksSelectedManually$ = this.select((state) => state.disksSelectedManually);
 
   constructor(
     private errorHandler: ErrorHandlerService,
@@ -163,4 +166,13 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       } as PoolManagerDisk;
     });
   }
+
+  resetLayout = this.updater((state) => {
+    return {
+      ...state,
+      vdevs: { data: [] },
+      unusedDisks: [...state.allUnusedDisks],
+      disksSelectedManually: false,
+    };
+  });
 }

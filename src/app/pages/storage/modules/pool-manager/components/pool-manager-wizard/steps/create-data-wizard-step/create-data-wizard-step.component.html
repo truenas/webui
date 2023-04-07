@@ -7,7 +7,10 @@
     [required]="true"
   ></ix-select>
   <div class="content-container">
-    <div class="automated-disk-selection-container">
+    <div
+      *ngIf="!(poolManagerStore.disksSelectedManually$ | async)" 
+      class="automated-disk-selection-container"
+    >
       <h3>{{'Automated Disk Selection' | translate}}</h3>
       <ix-select
         formControlName="sizeAndType"
@@ -54,6 +57,16 @@
         (click)="openManualDiskSelection()"
       >
         {{ 'Manual Disk Selection' | translate }}
+      </button>
+      <button
+        *ngIf="poolManagerStore.disksSelectedManually$ | async"
+        mat-button
+        type="button"
+        class="reset-layout"
+        ixTest="reset"
+        (click)="resetLayout()"
+      >
+        {{ 'Reset Layout' | translate }}
       </button>
     </div>
   </div>
