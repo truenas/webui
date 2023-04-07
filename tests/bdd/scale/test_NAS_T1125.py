@@ -17,6 +17,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @pytest.mark.dependency(name='LDAP_SETUP')

@@ -198,7 +198,7 @@ class dataset:
     add_Dataset_Button = '//button[contains(*/text(),"Add Dataset")]'
     permission_Title = '//h3[text()="Permissions"]'
     permission_Edit_Button = '//mat-card-header[contains(.,"Permissions")]//a[normalize-space(*/text())="Edit"]'
-    add_Zvol_Button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
+    add_Zvol_Button = '//button[normalize-space(span/text())="Add Zvol"]'
     zfs_Encryption_Title = '//h3[text()="ZFS Encryption"]'
     zfs_Encryption_Edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
     lock_Button = '//button[contains(.,"Lock")]'
