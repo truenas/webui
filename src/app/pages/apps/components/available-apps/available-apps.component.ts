@@ -16,7 +16,6 @@ interface AppSection {
   title: string;
   totalApps: number;
   apps$: BehaviorSubject<AvailableApp[]>;
-  fetchMore?: () => void;
   category: string;
 }
 
@@ -129,7 +128,6 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
         title: this.translate.instant('Recommended Apps'),
         apps$: this.recommendedApps$,
         totalApps: this.allRecommendedApps.length,
-        fetchMore: () => this.recommendedApps$.next(this.allRecommendedApps),
         category: 'recommended',
       },
 
@@ -142,7 +140,6 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
         title: this.translate.instant('New & Updated Apps'),
         apps$: this.newAndUpdatedApps$,
         totalApps: this.allNewAndUpdatedApps.length,
-        fetchMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
         category: 'latest',
       });
     }
@@ -156,7 +153,6 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
           apps$: new BehaviorSubject(categorizedApps.slice(0, this.sliceAmount)),
           totalApps: categorizedApps.length,
           // TODO: Implement logic to show all apps page per category
-          fetchMore: () => {},
           category,
         },
       );
