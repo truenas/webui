@@ -32,7 +32,7 @@ export class BootPoolDeleteDialogComponent {
   get failedCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
-  readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<Bootenv>>> = (_, entry) => entry.key;
+  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<Bootenv>>> = (_, entry) => entry.key;
 
   constructor(
     private fb: FormBuilder,

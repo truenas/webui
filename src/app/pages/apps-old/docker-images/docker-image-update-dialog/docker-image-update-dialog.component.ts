@@ -37,7 +37,7 @@ export class DockerImageUpdateDialogComponent {
   };
   options = new Map<string, Observable<Option[]>>();
   bulkItems = new Map<string, BulkListItem<ContainerImage>>();
-  readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<ContainerImage>>> = (_, entry) => entry.key;
+  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ContainerImage>>> = (_, entry) => entry.key;
   readonly JobState = JobState;
 
   get successCount(): number {
