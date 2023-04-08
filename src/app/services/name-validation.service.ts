@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-// TODO: Just make a constant.
+// TODO: Replace with a constant.
 @Injectable({ providedIn: 'root' })
 export class NameValidationService {
   nameRegex = /^[^/ *'"?@!#$%^&()+=~<>;`\\]+$/;
