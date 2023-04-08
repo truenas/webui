@@ -52,8 +52,6 @@
   "Custom ({customTransfers})": "",
   "Custom App": "",
   "Custom Transfers": "",
-  "Dataset created.": "",
-  "Dataset updated.": "",
   "Define a length of time to retain the snapshot on this system. After the   time expires, the snapshot is removed. Snapshots which have been replicated   to other systems are not affected.": "",
   "Degraded": "",
   "Delete All Selected": "",

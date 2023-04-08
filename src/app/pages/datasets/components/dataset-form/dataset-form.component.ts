@@ -10,7 +10,6 @@ import {
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   EncryptionSectionComponent,
@@ -26,6 +25,7 @@ import {
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -56,6 +56,7 @@ export class DatasetFormComponent {
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
     private router: Router,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   get isNew(): boolean {
@@ -110,7 +111,7 @@ export class DatasetFormComponent {
         error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -138,7 +139,7 @@ export class DatasetFormComponent {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialog.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -162,23 +163,21 @@ export class DatasetFormComponent {
       : this.ws.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
-      switchMap((dataset) => this.checkForAclOnParent(dataset)),
+      switchMap(
+        (dataset) => this.checkForAclOnParent(dataset),
+        (dataset) => dataset,
+      ),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close(null, true);
-        this.snackbar.success(
-          this.isNew
-            ? this.translate.instant('Dataset created.')
-            : this.translate.instant('Dataset updated.'),
-        );
+        this.slideIn.close(null, createdDataset);
       },
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialog.error(this.errorHandler.parseWsError(error));
       },
     });
   }

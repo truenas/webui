@@ -13,7 +13,9 @@ import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import {
+  forbiddenValues,
+} from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
@@ -33,7 +35,6 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     name: ['', [
       Validators.required,
       Validators.pattern(this.nameValidationService.nameRegex),
-      // TODO: Missing forbiddenValues validator
     ]],
     comments: [''],
     sync: [inherit as WithInherit<DatasetSync>],
@@ -103,7 +104,6 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     });
   }
 
-  // TODO: cache responses
   private setSelectOptions(): void {
     if (!this.parent) {
       this.syncOptions$ = this.defaultSyncOptions$;

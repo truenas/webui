@@ -25,7 +25,7 @@ export class EncryptionSectionComponent implements OnChanges {
 
   inheritEncryptionLabel: string;
 
-  // TODO: Check if I need to add validators.
+  // TODO: Add conditional validators
   readonly form = this.formBuilder.group({
     inherit_encryption: [true],
     encryption: [true],

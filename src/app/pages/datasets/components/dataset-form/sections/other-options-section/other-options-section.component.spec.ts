@@ -10,7 +10,6 @@ import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity, DatasetChecksum, DatasetRecordSize,
-  DatasetShareType,
   DatasetSnapdev,
   DatasetSnapdir,
 } from 'app/enums/dataset.enum';
@@ -222,7 +221,6 @@ describe('OtherOptionsSectionComponent', () => {
         exec: inherit,
         readonly: OnOff.Off,
         recordsize: inherit,
-        share_type: DatasetShareType.Generic,
         snapdev: DatasetSnapdev.Hidden,
         snapdir: DatasetSnapdir.Visible,
         special_small_block_size: 0,

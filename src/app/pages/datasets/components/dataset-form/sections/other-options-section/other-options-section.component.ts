@@ -7,7 +7,6 @@ import {
   OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -40,6 +39,7 @@ import { choicesToOptions, mapToOptions, singleArrayToOptions } from 'app/helper
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import {
@@ -142,7 +142,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!changes.existing?.currentValue && !changes.parent?.currentValue) {
       return;
     }
@@ -167,6 +167,14 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       payload.aclmode = AclMode.Discard;
     } else if (values.acltype === DatasetAclType.Inherit) {
       payload.aclmode = AclMode.Inherit;
+    }
+
+    if (!values.snapdir) {
+      delete payload.snapdir;
+    }
+
+    if (this.existing) {
+      delete payload.share_type;
     }
 
     return payload;
@@ -372,8 +380,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(([recordsizeAsString, recommendedAsString]) => {
-        // TODO: Fix 512B
+      .subscribe(([recordsizeValue, recommendedAsString]) => {
+        const recordsizeAsString = recordsizeValue === '512' ? '512B' : recordsizeValue;
         const recordsize = this.formatter.memorySizeParsing(recordsizeAsString);
         const recommended = this.formatter.memorySizeParsing(recommendedAsString);
 
