@@ -63,6 +63,11 @@ export class FormatDateTimePipe implements PipeTransform {
       .replace('DD', 'dd')
       .replace('D', 'd')
       .replace(' A', ' aa');
+
+    if (this.timeFormat) {
+      this.timeFormat = this.timeFormat.replace(' A', ' aa');
+    }
+
     return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
   }
 }
