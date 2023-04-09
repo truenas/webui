@@ -20,7 +20,11 @@
     </div>
   </div>
   <div class="cell cell-status">
-    <ix-app-status-cell [app]="app"></ix-app-status-cell>
+    <ix-app-status-cell
+      [app]="app"
+      [job]="job"
+      (statusChanged)="appStatusChanged($event)"
+    ></ix-app-status-cell>
   </div>
   <div class="cell cell-cpu">
     <span [ngTemplateOutlet]="notAvailable"></span>
@@ -43,7 +47,7 @@
   </div>
   <div class="cell cell-action">
     <button
-      *ngIf="isAppStopped"
+      *ngIf="isAppStopped && !inProgress"
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app.name, 'start']"
@@ -53,7 +57,7 @@
       <ix-icon name="mdi-play"></ix-icon>
     </button>
     <button
-      *ngIf="!isAppStopped"
+      *ngIf="!isAppStopped && !inProgress"
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app.name, 'stop']"

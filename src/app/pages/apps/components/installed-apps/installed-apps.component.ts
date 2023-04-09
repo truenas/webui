@@ -8,7 +8,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
+import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -36,6 +38,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   selectedApp: ChartRelease;
   isLoading = false;
   filterString = '';
+  appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -266,11 +269,38 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   start(name: string): void {
-    this.changeReplicaCountJob(name, helptext.starting, 1);
+    // this.changeReplicaCountJob(name, helptext.starting, 1);
+    this.appService.startApplication(name).pipe(
+      untilDestroyed(this),
+    ).subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+      this.appJobs.set(name, job);
+      console.info('startApplication', name, job, this.appJobs.entries());
+      if (job.state === JobState.Success) {
+        const startedApp = this.dataSource.find((app) => app.name === name);
+        if (startedApp) {
+          startedApp.status = ChartReleaseStatus.Active;
+        }
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   stop(name: string): void {
-    this.changeReplicaCountJob(name, helptext.stopping, 0);
+    // this.changeReplicaCountJob(name, helptext.stopping, 0);
+    // this.ws.call('chart.release.scale', [name, { replica_count: 0 });
+    this.appService.stopApplication(name).pipe(
+      untilDestroyed(this),
+    ).subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+      this.appJobs.set(name, job);
+      if (job.state === JobState.Success) {
+        const stoppedApp = this.dataSource.find((app) => app.name === name);
+        if (stoppedApp) {
+          stoppedApp.status = ChartReleaseStatus.Stopped;
+        }
+      }
+      console.info('stopApplication', name, job, this.appJobs.entries());
+      this.cdr.markForCheck();
+    });
   }
 
   changeReplicaCountJob(chartName: string, title: string, newReplicaCount: number): void {

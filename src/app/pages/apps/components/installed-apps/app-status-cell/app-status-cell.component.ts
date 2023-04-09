@@ -1,6 +1,11 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import {
+  Component, EventEmitter, HostBinding, Input, Output,
+} from '@angular/core';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { AppStatus, appStatusLabels } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({
@@ -10,6 +15,8 @@ import { AppStatus, appStatusLabels } from 'app/pages/apps/enum/app-status.enum'
 })
 export class AppStatusCellComponent {
   @Input() app: ChartRelease;
+  @Input() job: Job<ChartScaleResult, ChartScaleQueryParams>;
+  @Output() statusChanged = new EventEmitter<AppStatus>();
   @HostBinding('class') get hostClasses(): string[] {
     return ['status', this.appStatus.toLowerCase()];
   }
@@ -29,10 +36,32 @@ export class AppStatusCellComponent {
       case ChartReleaseStatus.Stopped:
         status = AppStatus.Stopped;
         break;
-      default:
-        console.info('Unknown app status');
+    }
+
+    if (this.job) {
+      const [, params] = this.job.arguments;
+      if (this.job.state === JobState.Running && params.replica_count === 1) {
+        status = AppStatus.Starting;
+      }
+      if (this.job.state === JobState.Running && params.replica_count === 0) {
+        status = AppStatus.Stopping;
+      }
+      if (this.job.state === JobState.Success && params.replica_count === 1) {
+        status = AppStatus.Started;
+      }
+      if (this.job.state === JobState.Success && params.replica_count === 0) {
+        status = AppStatus.Stopped;
+      }
     }
 
     return status;
+  }
+
+  get inProgress(): boolean {
+    return [
+      AppStatus.Deploying,
+      AppStatus.Starting,
+      AppStatus.Stopping,
+    ].includes(this.appStatus);
   }
 }

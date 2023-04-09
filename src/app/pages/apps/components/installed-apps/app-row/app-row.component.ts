@@ -3,7 +3,10 @@ import {
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({
   selector: 'ix-app-row',
@@ -12,8 +15,10 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 })
 export class AppRowComponent {
   @Input() app: ChartRelease;
+  @Input() job: Job<ChartScaleResult, ChartScaleQueryParams>;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
+  inProgress = false;
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly appStatus = ChartReleaseStatus;
@@ -24,6 +29,14 @@ export class AppRowComponent {
 
   get isAppStopped(): boolean {
     return this.app.status === ChartReleaseStatus.Stopped;
+  }
+
+  appStatusChanged(status: AppStatus): void {
+    this.inProgress = [
+      AppStatus.Deploying,
+      AppStatus.Starting,
+      AppStatus.Stopping,
+    ].includes(status);
   }
 
   toggleAppChecked(checked: boolean): void {
