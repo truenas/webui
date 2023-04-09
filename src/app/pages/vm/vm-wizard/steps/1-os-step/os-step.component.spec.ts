@@ -22,6 +22,7 @@ describe('OsStepComponent', () => {
     ],
     providers: [
       mockWebsocket([
+        mockCall('vm.query', []),
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
           UEFI_CSM: 'UEFI_CSM',
