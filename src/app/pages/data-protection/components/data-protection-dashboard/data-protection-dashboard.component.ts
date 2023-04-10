@@ -147,7 +147,8 @@ export class DataProtectionDashboardComponent implements OnInit {
         this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
       }
       if (message.action === 'open' && message.component === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
+        const wizard = this.slideInService.open(ReplicationWizardComponent, { wide: true });
+        wizard.setRowId(message.row);
       }
     });
   }
@@ -288,7 +289,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(ReplicationWizardComponent);
+            this.slideInService.open(ReplicationWizardComponent, { wide: true });
           },
           edit: (row: ReplicationTaskUi) => {
             this.modalService.openInSlideIn(ReplicationFormComponent, row.id);

@@ -6,8 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatStepperModule } from '@angular/material/stepper';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -24,6 +26,8 @@ import {
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
+import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import {
@@ -61,6 +65,8 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     MatDialogModule,
     IxIconModule,
     TestIdModule,
+    MatStepperModule,
+    AppCommonModule,
   ],
   declarations: [
     SnapshotListComponent,
@@ -74,6 +80,8 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     ReplicationListComponent,
     ReplicationFormComponent,
     ReplicationWizardComponent,
+    ReplicationWhatAndWhereComponent,
+    ReplicationWhenComponent,
     ScrubListComponent,
     CreateStorjBucketDialogComponent,
     ScrubTaskFormComponent,

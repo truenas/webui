@@ -34,6 +34,7 @@ import {
   ReplicationService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService, ModalServiceMessage } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -90,6 +91,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     private dialog: DialogService,
     protected modalService: ModalService,
     protected loader: AppLoaderService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
@@ -115,7 +117,8 @@ export class ReplicationListComponent implements EntityTableConfig {
         this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
       }
       if (message.action === 'open' && message.component === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
+        const wizard = this.slideInService.open(ReplicationWizardComponent, { wide: true });
+        wizard.setRowId(message.row);
       }
     });
   }
@@ -261,7 +264,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(ReplicationWizardComponent);
+    this.slideInService.open(ReplicationWizardComponent, { wide: true });
   }
 
   doEdit(id: number): void {

@@ -1,0 +1,43 @@
+<ix-modal-header
+  [title]="'Replication Task Wizard' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <mat-vertical-stepper [linear]="true" (selectionChange)="updateSummary()">
+      <mat-step [stepControl]="whatAndWhere?.form">
+        <ng-template matStepLabel>{{ 'What and Where' | translate }}</ng-template>
+        <ix-replication-what-and-where></ix-replication-what-and-where>
+      </mat-step>
+
+      <mat-step [stepControl]="when?.form">
+        <ng-template matStepLabel>{{ 'When' | translate }}</ng-template>
+        <ix-replication-when></ix-replication-when>
+      </mat-step>
+
+      <mat-step>
+        <ng-template matStepLabel>{{ 'Confirm Options' | translate }}</ng-template>
+
+        <ix-summary [summary]="summary"></ix-summary>
+
+        <p class="confirm-line">{{ 'Confirm these settings.' | translate }}</p>
+
+        <ix-form-actions>
+          <button
+            mat-button
+            matStepperPrevious
+            ixTest="back"
+          >{{ 'Back' | translate }}</button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            ixTest="save"
+            (click)="onSubmit()"
+          >{{ 'Save' | translate }}</button>
+        </ix-form-actions>
+      </mat-step>
+    </mat-vertical-stepper>
+  </mat-card-content>
+</mat-card>
