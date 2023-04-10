@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from selenium.webdriver.common.keys import Keys
@@ -123,11 +124,7 @@ def apply_acl_with_both_recursive_and_transverse_set_to_rtacltest1(driver, datas
     assert wait_on_element(driver, 7, xpaths.edit_Acl.recursive_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.recursive_Checkbox).click()
 
-    assert wait_on_element(driver, 7, xpaths.popup.warning, 'inputable')
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
-    assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.Continue).click()
+    rsc.Confirm_Warning(driver)
 
     assert wait_on_element(driver, 7, xpaths.edit_Acl.traverse_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.traverse_Checkbox).click()
@@ -242,11 +239,9 @@ def apply_acl_to_rtacltest1_with_recusrive_checked(driver, dataset1_name):
     ActionChains(driver).send_keys(Keys.TAB).perform()
     assert wait_on_element(driver, 7, xpaths.edit_Acl.recursive_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.recursive_Checkbox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.warning, 'inputable')
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
-    assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.Continue).click()
+
+    rsc.Confirm_Warning(driver)
+
     assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
     assert wait_on_element(driver, 7, xpaths.popup.updating_Acl)
