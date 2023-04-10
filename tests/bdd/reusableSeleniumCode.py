@@ -74,6 +74,12 @@ def Dismiss_All_Alerts(driver):
         driver.find_element_by_xpath('//ix-icon[contains(.,"clear")]').click()
 
 
+def Encyrpted_Key_Waring(driver):
+    assert wait_on_element(driver, 10, '//h1[contains(text(),"WARNING!")]')
+    assert wait_on_element(driver, 7, xpaths.button.done, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.done).click()
+
+
 def Go_To_Service(driver):
     driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
     assert wait_on_element(driver, 5, xpaths.side_Menu.services, 'clickable')

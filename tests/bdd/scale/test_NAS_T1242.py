@@ -27,7 +27,7 @@ def test_verify_an_encrypted_pool_can_be_created():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['tank_pool'], scope='session')
+    #depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -99,14 +99,15 @@ def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
     # rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_Button).click()
+
     rsc.Confirm_Creating_Pool(driver)
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 30, '//button[contains(text(),"Done")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(text(),"Done")]').click()
-    assert wait_on_element(driver, 10, xpaths.storage.title)
+
+    rsc.Encyrpted_Key_Waring(driver)
 
 
 @then('the pool should appear on the storage page')
 def the_pool_should_appear_on_the_storage_page(driver):
     """the pool should appear on the storage page."""
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 7, xpaths.storage.encrypted_Pool)

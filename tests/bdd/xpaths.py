@@ -140,6 +140,7 @@ class button:
     cancel = '//button[normalize-space(span/text())="Cancel"]'
     choose = '//button[normalize-space(span/text())="Choose"]'
     delete = '//button[contains(.,"Delete")]'
+    done = '//*[@data-test="button-done"]'
     edit = '//button[contains(.,"Edit")]'
     save = '//button[normalize-space(span/text())="Save"]'
     settings = '//button[contains(.,"Settings")]'
