@@ -69,36 +69,48 @@ export class LocaleService {
   }
 
   formatDateTime(date: Date | number, tz?: string): string {
-    if (tz) {
-      date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timezone) {
-      date = utcToZonedTime(date.valueOf(), this.timezone);
-    }
+    try {
+      if (Number.isNaN(date)) {
+        return date.toString();
+      }
 
-    return format(date, `${this.dateFormat} ${this.timeFormat}`);
+      if (tz) {
+        date = utcToZonedTime(date.valueOf(), tz);
+      } else if (this.timezone) {
+        date = utcToZonedTime(date.valueOf(), this.timezone);
+      }
+
+      return format(date, `${this.dateFormat} ${this.timeFormat}`);
+    } catch {
+      return 'Invalid date';
+    }
   }
 
   formatDateTimeWithNoTz(date: Date): string {
     try {
       return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
-    } catch (error: unknown) {
+    } catch {
       return 'Invalid date';
     }
   }
 
   getTimeOnly(date: Date | number, seconds = true, tz?: string): string {
-    if (tz) {
-      date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timezone) {
-      date = utcToZonedTime(date.valueOf(), this.timezone);
-    }
-    let formatStr: string;
-    formatStr = this.timeFormat;
-    if (!seconds) {
-      formatStr = formatStr.replace(':ss', '');
-    }
+    try {
+      if (tz) {
+        date = utcToZonedTime(date.valueOf(), tz);
+      } else if (this.timezone) {
+        date = utcToZonedTime(date.valueOf(), this.timezone);
+      }
+      let formatStr: string;
+      formatStr = this.timeFormat;
+      if (!seconds) {
+        formatStr = formatStr.replace(':ss', '');
+      }
 
-    return format(date, formatStr);
+      return format(date, formatStr);
+    } catch {
+      return 'Invalid date';
+    }
   }
 
   getPreferredDateFormat(): string {
@@ -120,16 +132,20 @@ export class LocaleService {
   }
 
   formatDateTimeToDateFns(dateTimeFormat: string): string {
-    let dateFnsFormat = dateTimeFormat
-      .replace('YYYY', 'yyyy')
-      .replace('YY', 'y')
-      .replace('DD', 'dd')
-      .replace('D', 'd')
-      .replace(' A', ' aa');
-    if (dateFnsFormat && !dateFnsFormat.includes('aa')) {
-      dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
+    try {
+      let dateFnsFormat = dateTimeFormat
+        .replace('YYYY', 'yyyy')
+        .replace('YY', 'y')
+        .replace('DD', 'dd')
+        .replace('D', 'd')
+        .replace(' A', ' aa');
+      if (dateFnsFormat && !dateFnsFormat.includes('aa')) {
+        dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
+      }
+      return dateFnsFormat;
+    } catch {
+      return 'Invalid date';
     }
-    return dateFnsFormat;
   }
 
   getPreferredDateFormatForChart(): string {
@@ -142,12 +158,16 @@ export class LocaleService {
 
   /** Revert DateFns for Chart DateTime format */
   formatDateTimeToChart(dateTimeFormat: string): string {
-    return dateTimeFormat
-      .replace('yyyy', 'YYYY')
-      .replace('y', 'YY')
-      .replace('dd', 'DD')
-      .replace('d', 'D')
-      .replace(' aaaaa\'m\'', ' a')
-      .replace(' aa', ' A');
+    try {
+      return dateTimeFormat
+        .replace('yyyy', 'YYYY')
+        .replace('y', 'YY')
+        .replace('dd', 'DD')
+        .replace('d', 'D')
+        .replace(' aaaaa\'m\'', ' a')
+        .replace(' aa', ' A');
+    } catch {
+      return 'Invalid date';
+    }
   }
 }

@@ -47,25 +47,29 @@ export class FormatDateTimePipe implements PipeTransform {
   }
 
   formatDateTime(date: Date | number, tz?: string): string {
-    let localDate = date;
-    if (tz !== null) {
-      if (tz) {
-        localDate = utcToZonedTime(date.valueOf(), tz);
-      } else if (this.timezone) {
-        localDate = utcToZonedTime(date.valueOf(), this.timezone);
+    try {
+      let localDate = date;
+      if (tz !== null) {
+        if (tz) {
+          localDate = utcToZonedTime(date.valueOf(), tz);
+        } else if (this.timezone) {
+          localDate = utcToZonedTime(date.valueOf(), this.timezone);
+        }
       }
-    }
 
-    // Reason for below replacements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
-    this.dateFormat = this.dateFormat
-      .replace('YYYY', 'yyyy')
-      .replace('YY', 'y')
-      .replace('DD', 'dd')
-      .replace('D', 'd')
-      .replace(' A', ' aa');
-    if (this.timeFormat) {
-      this.timeFormat = this.timeFormat.replace(' A', ' aa');
+      // Reason for below replacements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
+      this.dateFormat = this.dateFormat
+        .replace('YYYY', 'yyyy')
+        .replace('YY', 'y')
+        .replace('DD', 'dd')
+        .replace('D', 'd')
+        .replace(' A', ' aa');
+      if (this.timeFormat) {
+        this.timeFormat = this.timeFormat.replace(' A', ' aa');
+      }
+      return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
+    } catch {
+      return 'Invalid date';
     }
-    return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
   }
 }
