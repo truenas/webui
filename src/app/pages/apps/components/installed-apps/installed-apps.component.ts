@@ -240,32 +240,22 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  syncAll(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.refreshing },
-    });
-    dialogRef.componentInstance.setCall('catalog.sync_all');
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.updateChartReleases();
-    });
-  }
-
   refreshStatus(name: string): void {
-    this.appService.getChartReleases(name).pipe(filter(Boolean), untilDestroyed(this)).subscribe((releases) => {
-      const item = this.dataSource.find((app) => app.name === name);
-      if (item) {
-        item.status = releases[0].status;
-        this.cdr.markForCheck();
-        if (item.status === ChartReleaseStatus.Deploying) {
-          setTimeout(() => {
-            this.refreshStatus(name);
-            this.cdr.markForCheck();
-          }, 3000);
+    this.appService.getChartReleases(name)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((releases) => {
+        const item = this.dataSource.find((app) => app.name === name);
+        if (item) {
+          item.status = releases[0].status;
+          this.cdr.markForCheck();
+          if (item.status === ChartReleaseStatus.Deploying) {
+            setTimeout(() => {
+              this.refreshStatus(name);
+              this.cdr.markForCheck();
+            }, 3000);
+          }
         }
-      }
-    });
+      });
   }
 
   start(name: string): void {
