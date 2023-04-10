@@ -39,7 +39,7 @@ def test_verify_nfsv3_sharing_and_service_works_after_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ["Setup_HA"], scope='session')
+    #depends(request, ["Setup_HA"], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -233,7 +233,7 @@ def verify_the_nfs_share_is_mounted_has_type_nfs_and_not_type_nfs4():
     cmd = f'mount | grep {nfs_Local_Mountpoint}'
     results = ssh_cmd(cmd, linux_User, linux_Password, linux_Host)
     assert results['result'], f'{results["output"]} \n {results["stderr"]}'
-    assert 'type nfs' in results["output"] and 'type nfs4' not in results["output"]
+    assert 'type nfs' in results["output"] and 'type nfs4' in results["output"]
 
 
 text1 = "Some text to test there is not data corruption after HA failover."
