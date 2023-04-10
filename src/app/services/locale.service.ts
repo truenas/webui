@@ -141,6 +141,7 @@ export class LocaleService {
     if (dateFnsFormat && !dateFnsFormat.includes('aa')) {
       dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
     }
+    return dateFnsFormat;
   }
 
   getPreferredDateFormatForChart(): string {
