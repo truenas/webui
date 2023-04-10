@@ -989,7 +989,7 @@ export type ApiDirectory = {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
-  'user.shell_choices': { params: [userId?: number]; response: Choices };
+  'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.set_attribute': { params: [id: number, key: string, value: unknown]; response: boolean };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };

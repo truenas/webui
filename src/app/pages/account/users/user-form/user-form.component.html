@@ -130,12 +130,13 @@
           [label]="'Upload SSH Key' | translate"
         ></ix-file-input>
 
-        <ix-combobox
+        <ix-select
           formControlName="shell"
           [label]="'Shell' | translate"
           [tooltip]="tooltips.shell | translate"
-          [provider]="shellProvider"
-        ></ix-combobox>
+          [options]="shellOptions$"
+          [required]="true"
+        ></ix-select>
 
         <ix-checkbox
           formControlName="locked"
