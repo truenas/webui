@@ -5,8 +5,9 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { VirtualMachine, VmCloneParams } from 'app/interfaces/virtual-machine.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -18,6 +19,7 @@ export class CloneVmDialogComponent {
   nameControl = new FormControl('');
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
@@ -39,9 +41,9 @@ export class CloneVmDialogComponent {
           this.loader.close();
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

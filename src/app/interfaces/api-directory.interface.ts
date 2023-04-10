@@ -6,6 +6,7 @@ import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -32,6 +33,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -112,7 +114,7 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
-import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
+import { FilesystemPutParams, FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
@@ -124,7 +126,7 @@ import {
   InitShutdownScript,
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
-import { Ipmi, IpmiIdentify, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiChassis, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import {
   IscsiGlobalConfig,
   IscsiGlobalConfigUpdate,
@@ -348,6 +350,10 @@ export type ApiDirectory = {
   'bootenv.delete': { params: [string]; response: boolean };
   'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
 
+  // App
+  'app.categories': { params: void; response: string[] };
+  'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
   'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
@@ -486,6 +492,7 @@ export type ApiDirectory = {
   'filesystem.statfs': { params: [path: string]; response: Statfs };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.setacl': { params: [SetAcl]; response: void };
+  'filesystem.put': { params: FilesystemPutParams; response: boolean };
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
   'filesystem.acltemplate.create': { params: [AclTemplateCreateParams]; response: AclTemplateCreateResponse };
   'filesystem.acltemplate.delete': { params: [id: number]; response: boolean };
@@ -609,9 +616,12 @@ export type ApiDirectory = {
 
   // IPMI
   'ipmi.is_loaded': { params: void; response: boolean };
-  'ipmi.identify': { params: [IpmiIdentify]; response: void };
   'ipmi.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
   'ipmi.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
+
+  // IPMI Chassis
+  'ipmi.chassis.identify': { params: [OnOff]; response: void };
+  'ipmi.chassis.query': { params: void; response: IpmiChassis };
 
   // Group
   'group.query': { params: QueryParams<Group>; response: Group[] };
@@ -981,7 +991,7 @@ export type ApiDirectory = {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
-  'user.shell_choices': { params: void; response: Choices };
+  'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
 

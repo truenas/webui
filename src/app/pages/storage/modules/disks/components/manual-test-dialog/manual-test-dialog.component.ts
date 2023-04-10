@@ -13,7 +13,9 @@ import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -65,6 +67,7 @@ export class ManualTestDialogComponent {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
   ) {
@@ -105,8 +108,8 @@ export class ManualTestDialogComponent {
 
           this.cdr.markForCheck();
         },
-        error: (error) => {
-          this.dialogService.errorReportMiddleware(error);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable, Optional } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,8 +8,8 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableConfirmDeleteDialog, TableComponent } from 'app/modules/entity/table/table.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, AppLoaderService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -23,6 +23,8 @@ export class TableService {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private errorHandler: ErrorHandlerService,
+    @Optional() private cdr: ChangeDetectorRef,
   ) { }
 
   // get table data source
@@ -68,6 +70,7 @@ export class TableService {
         }
 
         table.afterGetDataHook$.next();
+        this.cdr?.markForCheck();
       });
   }
 
@@ -146,7 +149,7 @@ export class TableService {
           }
         },
         error: (error: WebsocketError) => {
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.error(this.errorHandler.parseWsError(error));
           this.loader.close();
           table.loaderOpen = false;
         },
@@ -165,7 +168,7 @@ export class TableService {
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
         this.loader.close();
         table.loaderOpen = false;
-        new EntityUtils().handleWsError(this, err, this.dialog);
+        this.dialog.error(this.errorHandler.parseJobError(err));
       });
     }
   }

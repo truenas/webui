@@ -27,19 +27,21 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FormExplorerConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   TaskService,
   KeychainCredentialService,
   ReplicationService,
   StorageService,
+  DialogService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -1003,6 +1005,8 @@ export class ReplicationFormComponent implements FormConfiguration {
     protected keychainCredentialService: KeychainCredentialService,
     protected replicationService: ReplicationService,
     protected modalService: ModalService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     protected translate: TranslateService,
   ) {
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
@@ -1080,9 +1084,9 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
           );
         },
-        error: (err) => {
+        error: (err: WebsocketError) => {
           this.formMessage.content = '';
-          new EntityUtils().handleWsError(this, err);
+          this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
   }
@@ -1469,7 +1473,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
 
     return new Promise((resolve) => {
-      resolve(this.replicationService.getRemoteDataset(transport, sshCredentials, this));
+      resolve(this.replicationService.getRemoteDataset(transport, sshCredentials));
     });
   }
 

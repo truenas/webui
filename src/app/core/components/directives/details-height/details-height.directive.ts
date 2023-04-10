@@ -1,9 +1,10 @@
 import {
-  Directive, ElementRef, Inject, OnChanges, OnDestroy, OnInit, SimpleChanges,
+  Directive, ElementRef, Inject, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { headerHeight, footerHeight } from 'app/modules/layout/components/admin-layout/admin-layout.component.const';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -32,7 +33,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     @Inject(WINDOW) private window: Window,
-    private element: ElementRef,
+    private element: ElementRef<HTMLElement>,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
   ) {}
@@ -49,7 +50,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     this.window.addEventListener('scroll', this.onScrollHandler, true);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('hasConsoleFooter' in changes) {
       delete this.heightBaseOffset;
     }

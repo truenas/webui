@@ -12,12 +12,12 @@ import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -33,7 +33,8 @@ import {
   KeychainCredentialService,
   ReplicationService,
 } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ModalService, ModalServiceMessage } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
@@ -57,7 +58,6 @@ export class ReplicationListComponent implements EntityTableConfig {
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
   entityList: EntityTableComponent;
-  asyncView = true;
   filterValue = '';
 
   columns = [
@@ -92,6 +92,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     protected loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private errorHandler: ErrorHandlerService,
     private route: ActivatedRoute,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
@@ -102,8 +103,20 @@ export class ReplicationListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(
+      filter((value) => !!value.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.entityList.getData();
+    });
+
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
+      if (message.action === 'open' && message.component === 'replicationForm') {
+        this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
+      }
+      if (message.action === 'open' && message.component === 'replicationWizard') {
+        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
+      }
     });
   }
 
@@ -144,8 +157,8 @@ export class ReplicationListComponent implements EntityTableConfig {
               row.job = { ...job };
               this.cdr.markForCheck();
             },
-            error: (err) => {
-              new EntityUtils().handleWsError(this.entityList, err);
+            error: (err: WebsocketError) => {
+              this.dialog.error(this.errorHandler.parseWsError(err));
             },
           });
         },
@@ -221,9 +234,9 @@ export class ReplicationListComponent implements EntityTableConfig {
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialog.errorReport(row.state.state, `<pre>${list}</pre>`);
+        this.dialog.error({ title: row.state.state, message: `<pre>${list}</pre>` });
       } else if (row.state.error) {
-        this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
+        this.dialog.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
       } else if (row.job) {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
@@ -240,9 +253,9 @@ export class ReplicationListComponent implements EntityTableConfig {
           row.enabled = !row.enabled;
         }
       },
-      error: (err) => {
+      error: (err: WebsocketError) => {
         row.enabled = !row.enabled;
-        new EntityUtils().handleWsError(this, err, this.dialog);
+        this.dialog.error(this.errorHandler.parseWsError(err));
       },
     });
   }

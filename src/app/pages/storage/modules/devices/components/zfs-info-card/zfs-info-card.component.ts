@@ -7,6 +7,7 @@ import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -14,6 +15,9 @@ import {
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { WebSocketService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+
+const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
 @UntilDestroy()
 @Component({
@@ -28,16 +32,14 @@ export class ZfsInfoCardComponent {
   @Input() disk: Disk;
   @Input() topologyCategory: PoolTopologyCategory;
   @Input() poolId: number;
+  @Input() hasTopLevelRaidz: boolean;
 
   get isMirror(): boolean {
     return this.topologyItem.type === TopologyItemType.Mirror;
   }
 
   get isRaidzParent(): boolean {
-    return this.topologyParentItem.type === TopologyItemType.Raidz
-      || this.topologyParentItem.type === TopologyItemType.Raidz1
-      || this.topologyParentItem.type === TopologyItemType.Raidz2
-      || this.topologyParentItem.type === TopologyItemType.Raidz3;
+    return raidzItems.includes(this.topologyItem.type);
   }
 
   get isDisk(): boolean {
@@ -46,14 +48,22 @@ export class ZfsInfoCardComponent {
 
   get canExtendDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
+      && !this.isRaidzParent
       && this.topologyItem.type === TopologyItemType.Disk
-      && this.topologyCategory === PoolTopologyCategory.Data
-      && this.topologyItem.status !== TopologyItemStatus.Unavail;
+      && (this.topologyCategory === PoolTopologyCategory.Data
+        || this.topologyCategory === PoolTopologyCategory.Dedup
+        || this.topologyCategory === PoolTopologyCategory.Special
+      ) && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
-      && this.topologyCategory !== PoolTopologyCategory.Data;
+      && !this.isRaidzParent
+      && !this.hasTopLevelRaidz;
+  }
+
+  get canRemoveVDEV(): boolean {
+    return !this.hasTopLevelRaidz;
   }
 
   get canDetachDisk(): boolean {
@@ -77,6 +87,7 @@ export class ZfsInfoCardComponent {
   }
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private dialogService: DialogService,
@@ -102,9 +113,9 @@ export class ZfsInfoCardComponent {
           this.devicesStore.reloadList();
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     });
@@ -127,9 +138,9 @@ export class ZfsInfoCardComponent {
           this.devicesStore.reloadList();
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     });
@@ -152,9 +163,9 @@ export class ZfsInfoCardComponent {
           this.devicesStore.reloadList();
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     });
@@ -183,8 +194,8 @@ export class ZfsInfoCardComponent {
           this.devicesStore.reloadList();
           this.dialogService.closeAllDialogs();
         },
-        error: (error) => {
-          this.dialogService.errorReportMiddleware(error);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     });

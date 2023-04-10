@@ -84,7 +84,7 @@ rm yarn.lock
 yarn cache clean --force
 yarn install
 ```
-This should bring the yarn environment back to a useable state.
+This should bring the yarn environment back to a usable state.
 
 # Translating Text to Other Languages
 
@@ -112,4 +112,4 @@ Full license details can be found at https://pixabay.com/service/license/.
 
 # Contributing
 
-Learn how you can contribute to our project and help us maintain it [on our Contribution guide](https://github.com/truenas/webui/blob/NAS-112459/CONTRIBUTING.md).
+Learn how you can contribute to our project and help us maintain it [on our Contribution guide](https://github.com/truenas/webui/blob/master/CONTRIBUTING.md).

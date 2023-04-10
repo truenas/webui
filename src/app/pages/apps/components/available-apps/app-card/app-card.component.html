@@ -1,13 +1,13 @@
 <div class="left-column">
-  <div *ngIf="installed" class="installed-badge">{{ 'Installed' | translate }}</div>
+  <div *ngIf="app.installed" class="installed-badge">{{ 'Installed' | translate }}</div>
 
   <ix-app-card-logo [url]="app.icon_url"></ix-app-card-logo>
 
   <div
     class="catalog"
-    [class.catalog-official]="app.catalog.id === officialCatalog"
+    [class.catalog-official]="app.catalog === officialCatalog"
   >
-    {{ app.catalog.label | titlecase }}
+    {{ app.catalog | titlecase }}
   </div>
 </div>
 
@@ -20,6 +20,6 @@
   <div class="description">{{ description }}</div>
 
   <div class="meta">
-    <div class="train">{{ 'Train: {train}' | translate: { train: app.catalog.train } }}</div>
+    <div class="train">{{ 'Train: {train}' | translate: { train: app.train || ('N/A' | translate) } }}</div>
   </div>
 </div>

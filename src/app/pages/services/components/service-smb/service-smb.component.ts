@@ -12,11 +12,12 @@ import { LogLevel } from 'app/enums/log-level.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -56,6 +57,7 @@ export class ServiceSmbComponent implements OnInit {
     admin_group: ['', [Validators.maxLength(120)]],
     bindip: [[] as string[], []],
     aapl_extensions: [false, []],
+    multichannel: [false, []],
   });
 
   readonly helptext = helptext;
@@ -76,6 +78,7 @@ export class ServiceSmbComponent implements OnInit {
     admin_group: helptext.cifs_srv_admin_group_tooltip,
     bindip: helptext.cifs_srv_bindip_tooltip,
     aapl_extensions: helptext.cifs_srv_aapl_extensions_tooltip,
+    multichannel: helptext.cifs_srv_multichannel_tooltip,
   };
 
   readonly logLevelOptions$ = of([
@@ -98,8 +101,9 @@ export class ServiceSmbComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private router: Router,
     private dialogService: DialogService,
@@ -117,9 +121,9 @@ export class ServiceSmbComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -143,7 +147,7 @@ export class ServiceSmbComponent implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

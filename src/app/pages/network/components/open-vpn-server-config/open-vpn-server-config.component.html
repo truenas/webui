@@ -125,6 +125,15 @@
         <button mat-button type="button" ixTest="download-client-config" (click)="onDownloadClientConfig()">
           {{ 'Download Client Config' | translate }}
         </button>
+        <button
+          *ngIf="lastSavedServerCertificate !== null || lastSavedRootCertificate !== null"
+          mat-button
+          ixTest="unset-certs"
+          type="button"
+          (click)="unsetCertificates()"
+        >
+          {{ 'Unset Certificates' | translate }}
+        </button>
       </ix-form-actions>
     </form>
   </mat-card-content>

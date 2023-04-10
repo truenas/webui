@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ComboboxOption } from 'app/interfaces/option.interface';
+import { Option } from 'app/interfaces/option.interface';
 
 export interface IxComboboxProvider {
 
@@ -9,7 +9,7 @@ export interface IxComboboxProvider {
    * @param value The query string
    * @returns An observable of options that will replace the current list
    */
-  fetch(filterValue: string): Observable<ComboboxOption[]>;
+  fetch(filterValue: string): Observable<Option[]>;
 
   /**
     * Takes the filterValue (which can be empty) and fetches the next page of options
@@ -17,5 +17,5 @@ export interface IxComboboxProvider {
     * (total items, items per page, number of pages etc)
     * @returns Should return a list of option to be concatenated to the current list
     */
-  nextPage(filterValue: string): Observable<ComboboxOption[]>;
+  nextPage(filterValue: string): Observable<Option[]>;
 }

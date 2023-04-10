@@ -33,7 +33,7 @@
   <mat-card-content fxLayout="column" fxFlex="100">
     <div class="details-item">
       <div class="label">{{ 'Pool Status' | translate }}:</div>
-      <div class="value">{{ pool.status | mapValue: poolStatusLabels }}</div>
+      <div class="value">{{ pool.status | mapValue: poolStatusLabels | translate }}</div>
     </div>
 
     <div class="details-item">
@@ -41,19 +41,10 @@
       <div class="value">{{ totalZfsErrors | number }}</div>
     </div>
 
-    <div *ngIf="hasScrubTask$ | async as hasScrubTask" class="details-item">
+    <div class="details-item">
       <div class="label">{{ 'Scheduled Scrub Task' | translate }}:</div>
-      <div class="value">
-        <ngx-skeleton-loader
-          *ngIf="hasScrubTask.isLoading"
-        ></ngx-skeleton-loader>
-        <ng-container *ngIf="hasScrubTask.value !== undefined">
-          {{ hasScrubTask.value ? ('Set' | translate) : ('Not Set' | translate) }}
-        </ng-container>
-        <ng-container *ngIf="hasScrubTask.error">
-          <!-- TODO: Handle error -->
-          Error
-        </ng-container>
+      <div *ixWithLoadingState="hasScrubTask$ as hasScrubTask" class="value">
+        {{ hasScrubTask ? ('Set' | translate) : ('Not Set' | translate) }}
       </div>
       <a ixTest="view-all-scrub-tasks" [routerLink]="['/data-protection/scrub']">
         {{ 'View All Scrub Tasks' | translate }}

@@ -96,13 +96,17 @@ def the_user_edit_page_should_open(driver):
     time.sleep(0.5)
 
 
-@then('Change the path of the users Home Directory')
-def change_the_path_of_the_users_home_directory(driver):
-    """Change the path of the users Home Directory."""
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
-    assert wait_on_element(driver, 7, '//ix-explorer[@formcontrolname="home"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-explorer[@formcontrolname="home"]//input').clear()
-    driver.find_element_by_xpath('//ix-explorer[@formcontrolname="home"]//input').send_keys('/mnt/tank/ericbsd')
+@then('Change the Home Directory with the pool path and click "Create Home Directory" checkbox')
+def change_the_home_directory_with_the_pool_path_and_click_create_home_directory_checkbox(driver):
+    """Change the Home Directory with the pool path and click "Create Home Directory" checkbox."""
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
+    assert wait_on_element(driver, 7, xpaths.add_User.home_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank')
+
+    assert wait_on_element(driver, 10, xpaths.add_User.create_Home_Directory_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.create_Home_Directory_Checkbox).click()
 
 
 @then('Change should be saved')
@@ -110,6 +114,7 @@ def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.users.title)
 

@@ -1,20 +1,50 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <button mat-button ixTest="apps-settings" (click)="onSettingsPressed()">
-      {{ 'Settings' | translate }}
-    </button>
-    <button mat-button color="primary" ixTest="custom-app" (click)="onCustomAppPressed()">
-      {{ 'Custom App' | translate }}
-    </button>
+    <ix-apps-toolbar-buttons></ix-apps-toolbar-buttons>
   </ix-page-title-header>
 </ng-template>
 
-<ix-available-apps-header></ix-available-apps-header>
+<ix-available-apps-header
+  (filters)="changeFilters($event)"
+  (search)="changeSearchQuery($event)"
+></ix-available-apps-header>
 
-<div class="apps">
-  <ix-app-card
-    *ngFor="let app of apps; trackBy: trackByAppId"
-    [app]="app"
-    [routerLink]="['/apps', 'available', app.name]"
-  ></ix-app-card>
+<h3 *ngIf="searchQuery" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}</h3>
+<div *ngIf="isFilterOrSearch" class="available-apps-list">
+  <div class="filtered-apps">
+    <ix-app-card
+      *ngFor="let app of filteredApps; trackBy: trackByAppId"
+      [app]="app"
+      [routerLink]="['/apps', 'available', app.name]"
+    ></ix-app-card>
+  </div>
+</div>
+<div *ngIf="!isFilterOrSearch" class="available-apps-list">
+  <ng-container *ngFor="let appSection of appSections; trackBy: trackByAppSectionTitle">
+    <section *ngIf="appSection.apps$ | async as apps">
+      <ng-container *ngIf="apps.length">
+        <h3 class="apps-section-title">
+          {{ appSection.title }}
+        </h3>
+
+        <div class="apps">
+          <ix-app-card
+            *ngFor="let app of apps; trackBy: trackByAppId"
+            [app]="app"
+            [routerLink]="['/apps', 'available', app.name]"
+          ></ix-app-card>
+        </div>
+
+        <p
+          *ngIf="appSection.totalApps > sliceAmount"
+          class="view-all"
+          (click)="appSection.fetchMore()"
+        >
+          <b>
+            {{ 'View All' | translate }} {{ appSection.title | translate }}
+          </b>
+        </p>
+      </ng-container>
+    </section>
+  </ng-container>
 </div>

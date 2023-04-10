@@ -7,8 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   CertificateIdentifierAndTypeComponent,
@@ -17,15 +17,16 @@ import {
   CertificateImportComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
 import {
-  CertificateOptionsComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
-import {
   CertificateConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+import {
+  CertificateOptionsComponent,
+} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -54,12 +55,13 @@ export class CertificateAddComponent {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private slideIn: IxSlideInService,
     private snackbar: SnackbarService,
   ) {}
 
   get isImport(): boolean {
-    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.CreateImported;
+    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.Import;
   }
 
   getNewCertificateSteps(): [
@@ -88,12 +90,12 @@ export class CertificateAddComponent {
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
           this.slideIn.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
 
           // TODO: Need to update error handler to open step with an error.
-          new EntityUtils().errorReport(error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

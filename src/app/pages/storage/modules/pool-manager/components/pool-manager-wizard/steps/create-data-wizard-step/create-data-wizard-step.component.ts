@@ -54,11 +54,11 @@ export class CreateDataWizardStepComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private translate: TranslateService,
-    public store: PoolManagerStore,
+    public poolManagerStore: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
-    this.store.unusedDisks$.pipe(untilDestroyed(this)).subscribe((disks) => {
+    this.poolManagerStore.unusedDisks$.pipe(untilDestroyed(this)).subscribe((disks) => {
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();
@@ -144,7 +144,10 @@ export class CreateDataWizardStepComponent implements OnInit {
     // TODO: Also keep in mind that user set custom layout in dialog, save and then press this button again.
 
     this.dialog.open(ManualDiskSelectionComponent, {
-      data: {} as ManualDiskSelectionLayout,
+      data: {
+        type: this.form.controls.type.value,
+      } as ManualDiskSelectionLayout,
+      panelClass: 'manual-selection-dialog',
     });
   }
 }

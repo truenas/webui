@@ -1,8 +1,9 @@
 import {
-  Component, AfterViewInit, Input, OnChanges, SimpleChanges,
+  Component, AfterViewInit, Input, OnChanges,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 export type GaugeDataItem = string | number;
 
@@ -37,7 +38,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
 
   @Input() config: GaugeConfig;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.config) {
       if (changes.config.currentValue && changes.config.currentValue.subtitle) {
         this.subtitle = changes.config.currentValue.subtitle;

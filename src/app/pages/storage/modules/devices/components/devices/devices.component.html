@@ -152,6 +152,7 @@
       [topologyParentItem]="selectedParentNode$ | async | cast"
       [disk]="getDisk(selectedNode.children[0] || selectedNode)"
       [poolId]="poolId"
+      [hasTopLevelRaidz]="hasTopLevelRaidz$ | async"
       [topologyCategory]="selectedTopologyCategory$ | async"
       (closeMobileDetails)="closeMobileDetails()"
     ></ix-disk-details-panel>

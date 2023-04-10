@@ -32,6 +32,7 @@ import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
 import { JobTab } from './job-tab.enum';
 
@@ -91,6 +92,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<JobSlice>,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     private emptyService: EmptyService,
@@ -167,7 +169,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
       switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse) => {
-        this.dialogService.errorReport(error.name, error.message);
+        this.dialogService.error(this.errorHandler.parseHttpError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

@@ -36,20 +36,43 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
-import { AllowedAddressesComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses.component';
-import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
+import {
+  AllowedAddressesCardComponent,
+} from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
+import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
+import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
+import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
-import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
-import { InitshutdownListComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-list/initshutdown-list.component';
-import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
-import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
-import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
+import {
+  InitShutdownCardComponent,
+} from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
+import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
+import { InitshutdownListComponent } from 'app/pages/system/advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
+import {
+  IsolatedGpusCardComponent,
+} from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
+import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
+import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
+import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
+import {
+  ReplicationSettingsCardComponent,
+} from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
+import { ReplicationSettingsFormComponent } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
-import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
-import { StorageSettingsComponent } from 'app/pages/system/advanced/storage-settings/storage-settings.component';
-import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/token-settings/token-settings.component';
+import {
+  SelfEncryptingDriveCardComponent,
+} from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
+import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
+import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessions-card/sessions-card.component';
+import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
+import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
+import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
+import { SysctlCardComponent } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.component';
+import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
+import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
+import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
+import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -75,31 +98,32 @@ import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status
 import { EmailComponent } from 'app/pages/system/email/email.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
-import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
-import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
+import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
+import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
+import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
+import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import {
   ManageConfigurationMenuComponent,
 } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
+import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eula.component';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
-import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
+import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
-import { TunableListComponent } from 'app/pages/system/tunable/tunable-list/tunable-list.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
+import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { SetProductionStatusDialogComponent } from './general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
@@ -167,31 +191,37 @@ import { routing } from './system.routing';
     FailoverSettingsComponent,
     GeneralSettingsComponent,
     GuiFormComponent,
+    GuiCardComponent,
+    LocalizationCardComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
-    IsolatedGpuPcisFormComponent,
+    InitShutdownCardComponent,
+    IsolatedGpusFormComponent,
     KernelFormComponent,
     LicenseComponent,
     LocalizationFormComponent,
     ManualUpdateFormComponent,
     NtpServerFormComponent,
-    NtpServerListComponent,
+    NtpServerCardComponent,
     ProactiveComponent,
     QrDialogComponent,
-    ReplicationSettingsComponent,
+    ReplicationSettingsFormComponent,
     TokenSettingsComponent,
-    AllowedAddressesComponent,
-    SupportComponent,
+    AllowedAddressesFormComponent,
     SysInfoComponent,
+    SyslogCardComponent,
     SyslogFormComponent,
-    StorageSettingsComponent,
-    SedFormComponent,
+    StorageSettingsFormComponent,
+    StorageCardComponent,
+    SelfEncryptingDriveFormComponent,
+    SysctlCardComponent,
     TunableFormComponent,
     TunableListComponent,
     TwoFactorComponent,
     UpdateComponent,
     BootenvStatsDialogComponent,
     CronFormComponent,
+    CronCardComponent,
     SaveConfigDialogComponent,
     UploadConfigDialogComponent,
     ManageConfigurationMenuComponent,
@@ -200,6 +230,7 @@ import { routing } from './system.routing';
     InfluxDbServiceComponent,
     MattermostServiceComponent,
     OpsGenieServiceComponent,
+    ReplicationSettingsCardComponent,
     PagerDutyServiceComponent,
     SlackServiceComponent,
     SnmpTrapServiceComponent,
@@ -218,6 +249,13 @@ import { routing } from './system.routing';
     BootenvNodeItemComponent,
     BootPoolDeleteDialogComponent,
     SetProductionStatusDialogComponent,
+    ConsoleCardComponent,
+    SessionsCardComponent,
+    AllowedAddressesCardComponent,
+    SelfEncryptingDriveCardComponent,
+    IsolatedGpusCardComponent,
+    KernelCardComponent,
+    SupportCardComponent,
   ],
   providers: [
     TranslateService,
