@@ -143,7 +143,7 @@ class button:
     edit = '//button[contains(.,"Edit")]'
     save = '//button[normalize-space(span/text())="Save"]'
     settings = '//button[contains(.,"Settings")]'
-    Continue = '//button[contains(*/text(),"Continue")]'
+    Continue = '//button[@data-test="button-dialog-confirm"]'
     CONTINUE = '//button[contains(*/text(),"CONTINUE")]'
     close = '//button[contains(.,"Close")]'
     CLOSE = '//button[contains(.,"CLOSE")]'
