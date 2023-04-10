@@ -593,3 +593,4 @@ class users:
     eric_Allowed_Sudo_Commands = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Allowed Sudo Commands:")]/../dd'
     root_User = '//tr[contains(.,"root")]/td'
     root_Edit_Button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    user_Bash_Shell = '//dd[contains(.,"/usr/bin/bash")]'
