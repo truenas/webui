@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { preparePayload } from 'app/pages/data-protection/replication/replication-form/utils/prepare-payload.utils';
 import _ from 'lodash';
 import { merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -269,7 +270,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const payload = this.preparePayload();
+    const payload = preparePayload(this.form.value);
 
     const operation$ = this.isNew
       ? this.ws.call('replication.create', [payload])
@@ -481,13 +482,5 @@ export class ReplicationFormComponent implements OnInit {
     } else {
       controls.target_dataset.disable();
     }
-  }
-
-  private getPropertiesOverrideForSubmit(): Record<string, string | number | boolean> {
-    return (this.form.value.properties_override as string[]).reduce((overrides, property) => {
-      const [key, value] = property.split('=');
-      overrides[key] = value;
-      return overrides;
-    }, {} as ReplicationCreate['properties_override']);
   }
 }

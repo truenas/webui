@@ -203,7 +203,6 @@ to determine snapshots creation order.'),
  <code>readonly</code> property during replication.'),
 
   encryption_placeholder: T('Encryption'),
-  // TODO: Check
   encryption_tooltip: repwizardhelptext.encryption_tooltip,
 
   encryption_key_format_placeholder: T('Encryption Key Format'),

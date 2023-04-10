@@ -72,14 +72,14 @@
             ></ix-input>
             <ix-input
               formControlName="netcat_active_side_port_min"
-              [label]="'Netcat Active Side Min Port' | translate"
               type="number"
+              [label]="'Netcat Active Side Min Port' | translate"
               [tooltip]="helptext.netcat_active_side_port_min_tooltip | translate"
             ></ix-input>
             <ix-input
               formControlName="netcat_active_side_port_max"
-              [label]="'Netcat Active Side Max Port' | translate"
               type="number"
+              [label]="'Netcat Active Side Max Port' | translate"
               [tooltip]="helptext.netcat_active_side_port_max_tooltip | translate"
             ></ix-input>
             <ix-input
@@ -118,8 +118,8 @@
 
         <ix-fieldset [title]="'Source' | translate">
           <ix-explorer
-            [label]="'Source' | translate"
             formControlName="source_datasets"
+            [label]="'Source' | translate"
             [root]="''"
             [required]="true"
             [multiple]="true"
@@ -233,8 +233,8 @@
 
         <ix-fieldset [title]="'Destination' | translate">
           <ix-explorer
-            [label]="'Destination' | translate"
             formControlName="target_dataset"
+            [label]="'Destination' | translate"
             [required]="true"
             [root]="''"
             [tooltip]="helptext.target_dataset_tooltip"
@@ -275,9 +275,9 @@
           <ix-input
             *ngIf="form.value.encryption && form.value.encryption_key_format === EncryptionKeyFormat.Passphrase"
             formControlName="encryption_key"
+            type="password"
             [label]="'Passphrase' | translate"
             [tooltip]="helptext.encryption_key_passphrase_tooltip | translate"
-            type="password"
           ></ix-input>
           <ix-checkbox
             *ngIf="form.value.encryption"
@@ -285,7 +285,6 @@
             [label]="'Store Encryption key in Sending TrueNAS database' | translate"
             [tooltip]="helptext.encryption_key_location_truenasdb_tooltip | translate"
           ></ix-checkbox>
-          <!-- TODO: why input -->
           <ix-input
             *ngIf="form.value.encryption && !form.value.encryption_key_location_truenasdb"
             formControlName="encryption_key_location"
@@ -307,14 +306,14 @@
           <div *ngIf="form.value.retention_policy === RetentionPolicy.Custom" class="retention-policy">
             <ix-input
               formControlName="lifetime_value"
-              [label]="'Snapshot Lifetime' | translate"
               type="number"
+              [label]="'Snapshot Lifetime' | translate"
               [tooltip]="helptext.lifetime_value_tooltip | translate"
             ></ix-input>
             <ix-select
               *ngIf="form.value.retention_policy === RetentionPolicy.Custom"
-              [label]="'Unit' | translate"
               formControlName="lifetime_unit"
+              [label]="'Unit' | translate"
               [options]="lifetimeUnits$"
               [required]="true"
             ></ix-select>

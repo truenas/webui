@@ -3,13 +3,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
-import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -17,9 +16,12 @@ import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import {
-  expectedNewReplication
+  expectedNewReplication,
 } from 'app/pages/data-protection/replication/replication-form/tests/replication-form-test-data';
-import { KeychainCredentialService, LanguageService, ModalService, WebSocketService } from 'app/services';
+import {
+  KeychainCredentialService, LanguageService, ModalService, WebSocketService,
+} from 'app/services';
+import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 
@@ -76,12 +78,12 @@ describe('ReplicationFormComponent', () => {
         getDatasetNodeProvider(): TreeNodeProvider {
           return () => of([
             {
-              name: 'local1',
-              path: '/local1',
+              name: 'dataset1',
+              path: '/dataset1',
             },
             {
-              name: 'local2',
-              path: '/local2',
+              name: 'dataset2',
+              path: '/dataset2',
             },
           ] as ExplorerNodeData[]);
         },
@@ -98,34 +100,25 @@ describe('ReplicationFormComponent', () => {
 
   describe('general form functionality', () => {
     it('shows values for an existing replication task', async () => {
-
       const formValues = await form.getValues();
-      expect(formValues).toEqual(2);
+      expect(formValues).toBe(2);
     });
 
     it('creates a new replication task when new form is saved', async () => {
       await form.fillForm({
-        Name: 'test',
-        Transport: 'LOCAL',
-        'Allow Blocks Larger than 128KB': false,
-        Source: ['/local1', '/local2'],
-        Destination: '/local2',
-        'Properties Override': ['override=true'],
+        Name: 'My new replication',
+        'SSH Connection': 'remotehost.com',
+        'Limit(Examples: 500 KiB, 500M, 2 TB)': '500mb',
         'Properties Exclude': ['exclude'],
-        'Also Include Naming Schema': '%Y%m%d%H%M',
-        Schedule: true,
-      });
-      await form.fillForm({
-        Frequency: '0 * * * *',
-      });
-      await form.fillForm({
-        Begin: '11:00:00',
-        End: '22:00:00',
+        'Also Include Naming Schema': ['%Y%m%d%H%M'],
+        'Run Automatically': false,
+        Source: ['dataset1', 'dataset2'],
+        Destination: 'dataset2',
       });
 
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.create', expectedNewReplication);
+      expect(spectator.inject(WebSocketService).call.mock.lastCall).toEqual(['replication.create', [expectedNewReplication]]);
     });
 
     it('updates an existing replication task when update form is saved', async () => {
@@ -134,6 +127,7 @@ describe('ReplicationFormComponent', () => {
   });
 
   describe('specific fields', () => {
-
+    // TODO: Non default compression
+    // TODO: 'Properties Override': 'property=override',
   });
 });

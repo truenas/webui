@@ -1407,29 +1407,29 @@ export class ReplicationFormComponent implements FormConfiguration {
   // }
 
   beforeSubmit(data: any): void {
-    // if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
-    //   delete data['naming_schema'];
-    //   delete data['also_include_naming_schema'];
-    // } else {
-    //   delete data['name_regex'];
-    // }
-    // delete data['schema_or_regex'];
-    // if (data['replicate']) {
-    //   data['recursive'] = true;
-    //   data['properties'] = true;
-    //   data['exclude'] = [];
-    // }
-    // const propertiesExcludeObj: any = {};
-    // if (data['properties_override']) {
-    //   for (let item of data['properties_override']) {
-    //     item = item.split('=');
-    //     propertiesExcludeObj[item[0]] = item[1];
-    //   }
-    // }
-    // data['properties_override'] = propertiesExcludeObj;
-    // if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
-    //   data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
-    // }
+    if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
+      delete data['naming_schema'];
+      delete data['also_include_naming_schema'];
+    } else {
+      delete data['name_regex'];
+    }
+    delete data['schema_or_regex'];
+    if (data['replicate']) {
+      data['recursive'] = true;
+      data['properties'] = true;
+      data['exclude'] = [];
+    }
+    const propertiesExcludeObj: any = {};
+    if (data['properties_override']) {
+      for (let item of data['properties_override']) {
+        item = item.split('=');
+        propertiesExcludeObj[item[0]] = item[1];
+      }
+    }
+    data['properties_override'] = propertiesExcludeObj;
+    if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
+      data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
+    }
     // TODO: Why?
     if (data['transport'] === TransportMode.Local) {
       data['direction'] = Direction.Push;
