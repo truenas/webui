@@ -23,7 +23,8 @@
     <ix-app-status-cell
       [app]="app"
       [job]="job"
-      (statusChanged)="appStatusChanged($event)"
+      (click)="statusPressed(); $event.stopPropagation()"
+      (statusChanged)="statusChanged($event)"
     ></ix-app-status-cell>
   </div>
   <div class="cell cell-cpu">

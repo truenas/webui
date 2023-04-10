@@ -269,59 +269,43 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   start(name: string): void {
-    // this.changeReplicaCountJob(name, helptext.starting, 1);
-    this.appService.startApplication(name).pipe(
-      untilDestroyed(this),
-    ).subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
-      this.appJobs.set(name, job);
-      console.info('startApplication', name, job, this.appJobs.entries());
-      if (job.state === JobState.Success) {
-        const startedApp = this.dataSource.find((app) => app.name === name);
-        if (startedApp) {
-          startedApp.status = ChartReleaseStatus.Active;
+    this.appService.startApplication(name)
+      .pipe(untilDestroyed(this))
+      .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+        this.appJobs.set(name, job);
+        if (job.state === JobState.Success) {
+          const startedApp = this.dataSource.find((app) => app.name === name);
+          if (startedApp) {
+            startedApp.status = ChartReleaseStatus.Active;
+          }
         }
-      }
-      this.cdr.markForCheck();
-    });
+        this.cdr.markForCheck();
+      });
   }
 
   stop(name: string): void {
-    // this.changeReplicaCountJob(name, helptext.stopping, 0);
-    // this.ws.call('chart.release.scale', [name, { replica_count: 0 });
-    this.appService.stopApplication(name).pipe(
-      untilDestroyed(this),
-    ).subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
-      this.appJobs.set(name, job);
-      if (job.state === JobState.Success) {
-        const stoppedApp = this.dataSource.find((app) => app.name === name);
-        if (stoppedApp) {
-          stoppedApp.status = ChartReleaseStatus.Stopped;
+    this.appService.stopApplication(name)
+      .pipe(untilDestroyed(this))
+      .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+        this.appJobs.set(name, job);
+        if (job.state === JobState.Success) {
+          const stoppedApp = this.dataSource.find((app) => app.name === name);
+          if (stoppedApp) {
+            stoppedApp.status = ChartReleaseStatus.Stopped;
+          }
         }
-      }
-      console.info('stopApplication', name, job, this.appJobs.entries());
-      this.cdr.markForCheck();
-    });
+        this.cdr.markForCheck();
+      });
   }
 
-  changeReplicaCountJob(chartName: string, title: string, newReplicaCount: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title } });
-    dialogRef.componentInstance.setCall('chart.release.scale', [chartName, { replica_count: newReplicaCount }]);
-    dialogRef.componentInstance.submit();
+  openStatusDialog(name: string): void {
+    if (!this.appJobs.has(name)) {
+      return;
+    }
 
-    dialogRef.componentInstance.progress.pipe(untilDestroyed(this)).subscribe((value) => {
-      console.info('progress', value);
-      this.refreshStatus(chartName);
-      this.cdr.markForCheck();
-    });
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((value) => {
-      console.info('success', value);
-      this.refreshStatus(chartName);
-      this.cdr.markForCheck();
-      dialogRef.close();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseJobError(error));
-    });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: name } });
+    dialogRef.componentInstance.jobId = this.appJobs.get(name).id;
+    dialogRef.componentInstance.wsshow();
   }
 
   onBulkStart(): void {

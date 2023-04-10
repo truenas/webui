@@ -18,6 +18,7 @@ export class AppRowComponent {
   @Input() job: Job<ChartScaleResult, ChartScaleQueryParams>;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
+  @Output() clickStatus = new EventEmitter<void>();
   inProgress = false;
 
   readonly imagePlaceholder = appImagePlaceholder;
@@ -31,14 +32,6 @@ export class AppRowComponent {
     return this.app.status === ChartReleaseStatus.Stopped;
   }
 
-  appStatusChanged(status: AppStatus): void {
-    this.inProgress = [
-      AppStatus.Deploying,
-      AppStatus.Starting,
-      AppStatus.Stopping,
-    ].includes(status);
-  }
-
   toggleAppChecked(checked: boolean): void {
     this.app.selected = checked;
   }
@@ -49,5 +42,17 @@ export class AppRowComponent {
 
   stop(): void {
     this.stopApp.emit();
+  }
+
+  statusChanged(status: AppStatus): void {
+    this.inProgress = [
+      AppStatus.Deploying,
+      AppStatus.Starting,
+      AppStatus.Stopping,
+    ].includes(status);
+  }
+
+  statusPressed(): void {
+    this.clickStatus.emit();
   }
 }

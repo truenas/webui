@@ -128,6 +128,7 @@
                 [routerLink]="['/apps/installed', app.id]"
                 (startApp)="start(app.name)"
                 (stopApp)="stop(app.name)"
+                (clickStatus)="openStatusDialog(app.name)"
                 (click)="selectApp(app)"
                 (keydown.enter)="selectApp(app)"
               ></ix-app-row>

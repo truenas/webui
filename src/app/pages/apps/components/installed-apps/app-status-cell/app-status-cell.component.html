@@ -1,8 +1,6 @@
 <mat-spinner
   *ngIf="inProgress"
   [diameter]="20"
-  [mode]="job?.progress?.percent ? 'determinate' : 'indeterminate'"
-  [value]="job?.progress?.percent"
   [matTooltip]="job?.progress?.description"
 ></mat-spinner>
 {{ appStatus | mapValue: appStatusLabels | translate }}
