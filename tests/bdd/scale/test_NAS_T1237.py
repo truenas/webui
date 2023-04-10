@@ -135,22 +135,22 @@ def apply_acl_with_both_recursive_and_transverse_set_to_rtacltest1(driver, datas
     assert wait_on_element(driver, 7, xpaths.dataset.title)
 
 
-@then(parsers.parse('verify that the ACL was set to {dataset1_name}'))
-def verify_that_the_acl_was_set_to_rtacltest1(driver, dataset1_name):
+@then('verify that the ACL was set to rt-acl-test-1')
+def verify_that_the_acl_was_set_to_rtacltest1(driver):
     """verify that the ACL was set to rt-acl-test-1."""
-    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset1_name))
-    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset1_name))
-    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset1_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name('rt-acl-test-1'))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree('rt-acl-test-1'))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree('rt-acl-test-1')).click()
     assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
     assert is_element_present(driver, xpaths.dataset.permission_User('ericbsd'))
 
 
-@then(parsers.parse('verify that the ACL was set to {dataset2_name}'))
-def verify_that_the_acl_was_set_to_rtacltest2(driver, dataset2_name):
+@then(parsers.parse('verify that the ACL was set to rt-acl-test-2'))
+def verify_that_the_acl_was_set_to_rtacltest2(driver):
     """verify that the ACL was set to rt-acl-test-2."""
-    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset2_name))
-    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset2_name))
-    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset2_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name('rt-acl-test-2'))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree('rt-acl-test-2'))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree('rt-acl-test-2')).click()
     assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
     assert is_element_present(driver, xpaths.dataset.permission_User('ericbsd'))
 
