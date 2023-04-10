@@ -10,7 +10,7 @@
         fxLayout="row wrap"
         fxLayoutAlign="start start"
         fxFlex="100%"
-        fxFlex.gt-xs="calc({{ fieldSets[i].width }} - 16px)"
+        [fxFlex.gt-xs]="'calc(' + fieldSets[i].width + ' - 16px)'"
         [class]="'fieldset divider-' + fieldSet.divider"
         [ngClass]="fieldSet.class"
       >
@@ -21,7 +21,7 @@
         <div
           *ngFor="let field of fieldSet.config; let ii = index"
           fxFlex="100%"
-          fxFlex.gt-xs="calc({{ field.width }} - 16px)"
+          [fxFlex.gt-xs]="'calc(' + field.width + ' - 16px)'"
           [id]="fieldSet.name + '-' + ii"
           [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
         >
@@ -52,6 +52,7 @@
       type="submit"
       mat-button
       color="primary"
+      ixTest="save"
       [disabled]="!entityForm.form.valid"
     >
       {{ 'Save' | translate }}

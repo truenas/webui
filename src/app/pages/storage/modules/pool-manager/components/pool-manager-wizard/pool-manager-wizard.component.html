@@ -1,0 +1,155 @@
+<mat-card class="card">
+  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+    <mat-vertical-stepper #stepper>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
+        <ix-general-wizard-step
+          [form]="form.controls.general"
+        ></ix-general-wizard-step>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+            [disabled]="!form.controls.general.valid"
+          >
+            {{ 'Next' | translate }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Create Data VDEVs' | translate }}</ng-template>
+        <ix-create-data-wizard-step [form]="form.controls.data"></ix-create-data-wizard-step>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >
+            {{ 'Back' | translate }}
+          </button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+            [disabled]="form.controls.data.invalid"
+          >
+            {{ 'Next' | translate }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Log' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >
+            {{ 'Back' | translate }}
+          </button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+          >
+            {{ 'Next' | translate }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Spare' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >
+            {{ 'Back' | translate }}
+          </button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+          >
+            {{ 'Next' | translate }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Cache' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >
+            {{ 'Back' | translate }}
+          </button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+          >
+            {{ 'Next' | translate }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >
+            {{ 'Back' | translate }}
+          </button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+          >
+            {{ 'Next' | translate }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >
+            {{ 'Back' | translate }}
+          </button>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </form>
+</mat-card>

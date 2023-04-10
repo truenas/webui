@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -10,7 +10,8 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { SignCsrDialogComponent } from './sign-csr-dialog.component';
 
 describe('SignCsrDialogComponent', () => {
@@ -28,6 +29,7 @@ describe('SignCsrDialogComponent', () => {
         mockCall('certificateauthority.ca_sign_csr'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockProvider(SystemGeneralService, {
         getUnsignedCertificates: () => of([
           { id: 1, name: 'csr-1' },

@@ -124,7 +124,7 @@
           <ix-input
             formControlName="netbiosname"
             [label]="'Netbios Name' | translate"
-            [tooltip]="helptext.activedirectory_dns_timeout_tooltip | translate"
+            [tooltip]="helptext.activedirectory_netbiosname_tooltip | translate"
             [required]="true"
           ></ix-input>
 
@@ -136,31 +136,33 @@
         </ix-fieldset>
       </div>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onAdvancedModeToggled()">
+        <button mat-button type="button" ixTest="toggle-advanced" (click)="onAdvancedModeToggled()">
           {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>
-        <button mat-button type="button" (click)="onRebuildCachePressed()">
+        <button mat-button type="button" ixTest="rebuild-cache" (click)="onRebuildCachePressed()">
           {{ 'Rebuild Directory Service Cache' | translate }}
         </button>
         <button
           *ngIf="canLeaveDomain"
           mat-button
           type="button"
+          ixTest="leave-domain"
           (click)="onLeaveDomainPressed()"
         >
           {{ 'Leave Domain' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

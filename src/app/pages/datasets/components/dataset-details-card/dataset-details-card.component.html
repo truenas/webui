@@ -4,12 +4,17 @@
       <h3 *ngIf="isFilesystem" mat-card-title>
         {{ 'Dataset Details' | translate }}
       </h3>
-      <button *ngIf="isFilesystem" mat-button (click)="editDataset()">
+      <button
+        *ngIf="isFilesystem"
+        mat-button
+        ixTest="edit-dataset"
+        (click)="editDataset()"
+      >
         {{ 'Edit' | translate }}
       </button>
 
       <h3 *ngIf="isZvol" mat-card-title>{{ 'Zvol Details' | translate }}</h3>
-      <button *ngIf="isZvol" mat-button (click)="editZvol()">
+      <button *ngIf="isZvol" mat-button ixTest="edit-zvol" (click)="editZvol()">
         {{ 'Edit Zvol' | translate }}
       </button>
     </mat-card-header>
@@ -38,7 +43,7 @@
           </ng-container>
         </span>
       </div>
-      <div class="details-item">
+      <div *ngIf="!isZvol" class="details-item">
         <span class="label">{{ 'Enable Atime' | translate }}:</span>
         <span class="value">
           {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
@@ -79,12 +84,13 @@
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">
       <button
         *ngIf="canBePromoted"
-        mat-stroked-button
+        mat-button
+        ixTest="promote-dataset"
         (click)="promoteDataset()"
       >
         {{ 'Promote' | translate }}
       </button>
-      <button mat-stroked-button (click)="deleteDataset()">
+      <button mat-button ixTest="delete-dataset" (click)="deleteDataset()">
         {{ 'Delete' | translate }}
       </button>
     </mat-card-actions>

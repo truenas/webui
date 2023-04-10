@@ -41,3 +41,14 @@ export function tagArrayToOptions(): OperatorFunction<{ tag: number }[], Option[
     return options.map((option) => ({ label: String(option.tag), value: option.tag }));
   });
 }
+
+/**
+ * @usage
+ * valueToLabel(options)(value)
+ */
+export function valueToLabel(options: Option[]): (value: string) => string {
+  return (value: string): string => {
+    const selectedOption = options.find((option) => option.value === value);
+    return selectedOption?.label;
+  };
+}

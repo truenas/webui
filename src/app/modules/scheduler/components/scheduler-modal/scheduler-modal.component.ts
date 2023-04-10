@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -133,7 +133,7 @@ export class SchedulerModalComponent implements OnInit {
   }
 
   private setupFormSubscriptions(): void {
-    this.form.controls['preset'].valueChanges.pipe(untilDestroyed(this)).subscribe((preset) => {
+    this.form.controls.preset.valueChanges.pipe(untilDestroyed(this)).subscribe((preset) => {
       this.setValuesFromCrontab(preset);
     });
 
@@ -148,7 +148,7 @@ export class SchedulerModalComponent implements OnInit {
 
   private generateMonthControls(): void {
     this.months.forEach((month) => {
-      this.form.controls['months'].addControl(month.value as string, new FormControl(false));
+      this.form.controls.months.addControl(month.value as string, new FormControl(false));
     });
   }
 

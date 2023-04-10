@@ -2,13 +2,16 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { AclType } from 'app/enums/acl-type.enum';
-import { AclTemplateByPath } from 'app/interfaces/acl.interface';
+import { Acl, AclTemplateByPath, AclTemplateCreateParams } from 'app/interfaces/acl.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
+import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -22,19 +25,30 @@ export class SaveAsPresetModalComponent implements OnInit {
   });
   presets: AclTemplateByPath[] = [];
   isFormLoading = false;
+  acl: Acl;
 
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<SaveAsPresetModalComponent>,
+    private store: DatasetAclEditorStore,
     @Inject(MAT_DIALOG_DATA) public data: SaveAsPresetModalConfig,
   ) {}
 
   ngOnInit(): void {
     this.loadOptions();
+
+    this.store.state$
+      .pipe(untilDestroyed(this))
+      .subscribe((state) => {
+        this.isFormLoading = state.isLoading;
+        this.acl = state.acl;
+        this.cdr.markForCheck();
+      });
   }
 
   isCurrentAclType(aclType: AclType): boolean {
@@ -57,9 +71,9 @@ export class SaveAsPresetModalComponent implements OnInit {
           this.cdr.markForCheck();
           this.loader.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -72,7 +86,37 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // TODO: Save new preset
-    this.dialogRef.close();
+    this.acl.acl.forEach((acl) => delete acl.who);
+    const payload: AclTemplateCreateParams = {
+      name: this.form.value.presetName,
+      acltype: this.acl.acltype,
+      acl: this.acl.acl,
+    };
+
+    this.loader.open();
+    this.ws.call('filesystem.acltemplate.create', [payload]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loader.close();
+        this.dialogRef.close();
+      },
+      error: (error: WebsocketError) => {
+        this.loader.close();
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+      },
+    });
+  }
+
+  onRemovePreset(preset: AclTemplateByPath): void {
+    this.loader.open();
+    this.ws.call('filesystem.acltemplate.delete', [preset.id]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loadOptions();
+        this.loader.close();
+      },
+      error: (error: WebsocketError) => {
+        this.loader.close();
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+      },
+    });
   }
 }

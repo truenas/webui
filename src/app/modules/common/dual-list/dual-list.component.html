@@ -38,9 +38,10 @@
         <button
           mat-flat-button
           class="dual-list-action-btn"
+          ixTest="add-to-list"
           [disabled]="!availableItems.selectedItems.length"
         >
-          <mat-icon class="arrow">arrow_forward</mat-icon>
+          <ix-icon name="arrow_forward" class="arrow"></ix-icon>
         </button>
       </ng-template>
     </div>
@@ -52,9 +53,10 @@
         <button
           mat-flat-button
           class="dual-list-action-btn"
+          ixTest="remove-from-list"
           [disabled]="!selectedItems.selectedItems.length"
         >
-          <mat-icon class="arrow">arrow_back</mat-icon>
+          <ix-icon name="arrow_back" class="arrow"></ix-icon>
         </button>
       </ng-template>
     </div>

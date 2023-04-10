@@ -24,7 +24,7 @@ describe('S3ProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       access_key_id: '12345678',
       endpoint: 'https://kms-fips.us-west-2.amazonaws.com',
       max_upload_parts: 10000,

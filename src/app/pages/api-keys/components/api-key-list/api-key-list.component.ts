@@ -1,9 +1,9 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -31,7 +31,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['name', 'created_at', 'actions'];
-  dataSource: MatTableDataSource<ApiKey> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ApiKey>([]);
   defaultSort: Sort = { active: 'name', direction: 'asc' };
   filterValue = '';
   loadingConfig: EmptyConfig = {
@@ -114,8 +114,8 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     this.dialog.confirm({
       title: this.translate.instant('Delete API Key'),
       message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> API Key?', { name: apiKey.name }),
-      buttonMsg: this.translate.instant('Delete'),
-      cancelMsg: this.translate.instant('Cancel'),
+      buttonText: this.translate.instant('Delete'),
+      cancelText: this.translate.instant('Cancel'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('api_key.delete', [String(apiKey.id)])),
@@ -128,13 +128,12 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   private createDataSource(apiKeys: ApiKey[] = []): void {
     this.dataSource = new MatTableDataSource(apiKeys);
     this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      switch (property) {
-        case 'name':
-          return item.name;
-        case 'created_at':
-          return item.created_at.$date;
+    this.dataSource.sortingDataAccessor = (item, property: 'name' | 'created_at') => {
+      if (property === 'name') {
+        return item.name;
       }
+
+      return item.created_at.$date;
     };
     this.store.patchState({ isLoading: false });
     this.cdr.markForCheck();

@@ -2,19 +2,16 @@
   mat-icon-button
   id="task-manager"
   class="topbar-button-right"
-  ix-auto
-  ix-auto-type="button"
-  ix-auto-identifier="taskManager"
+  ixTest="jobs-manager"
   [matTooltip]="tooltips.task_manager | translate"
   (click)="onIndicatorPressed()"
 >
-  <mat-icon
+  <ix-icon
     *appLet="jobBadgeCount$ | async as jobBadgeCount"
+    name="assignment"
     matBadgeSize="small"
     matBadgeColor="warn"
     [matBadge]="jobBadgeCount"
     [matBadgeHidden]="jobBadgeCount === 0"
-  >
-    assignment
-  </mat-icon>
+  ></ix-icon>
 </button>

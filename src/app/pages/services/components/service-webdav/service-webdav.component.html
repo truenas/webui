@@ -28,19 +28,14 @@
           [tooltip]="tcpportssl.tooltip | translate"
         ></ix-input>
 
-        <div *ngIf="!certssl.hidden" class="linked-select">
-          <div class="link-wrapper">
-            <a class="link" (click)="certificatesLinkClicked()">
-              {{ 'Manage Certificates' | translate }}
-            </a>
-          </div>
+        <ix-with-manage-certificates-link *ngIf="!certssl.hidden">
           <ix-select
             [formControlName]="certssl.fcName"
             [label]="certssl.label | translate"
             [tooltip]="certssl.tooltip | translate"
             [options]="certssl.options"
           ></ix-select>
-        </div>
+        </ix-with-manage-certificates-link>
 
         <ix-select
           [formControlName]="htauth.fcName"
@@ -63,22 +58,23 @@
           [formControlName]="password2.fcName"
           [label]="password2.label | translate"
         ></ix-input>
+
+        <ix-form-actions class="form-actions">
+          <button
+            mat-button
+            type="submit"
+            color="primary"
+            ixTest="save"
+            [disabled]="form.invalid || isFormLoading"
+          >
+            {{ 'Save' | translate }}
+          </button>
+
+          <button mat-button color="accent" ixTest="cancel" (click)="cancel()">
+            {{ 'Cancel' | translate }}
+          </button>
+        </ix-form-actions>
       </ix-fieldset>
-
-      <div class="form-actions">
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          [disabled]="form.invalid || isFormLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
-
-        <button mat-button color="accent" (click)="cancel()">
-          {{ 'Cancel' | translate }}
-        </button>
-      </div>
     </form>
   </mat-card-content>
 </mat-card>

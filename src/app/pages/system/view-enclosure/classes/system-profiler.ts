@@ -8,13 +8,20 @@ import {
 import { Pool } from 'app/interfaces/pool.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import {
-  Disk, isTopologyDisk, TopologyItem, TopologyItemStats,
+  Disk, isTopologyDisk, TopologyItemStats,
 } from 'app/interfaces/storage.interface';
+
+export enum EnclosureRelation {
+  Controller = 'controller',
+  RearSlots = 'rearSlots',
+  FrontSlots = 'frontSlots',
+  Shelf = 'shelf',
+}
 
 export interface EnclosureDisk extends Disk {
   vdev: VDevMetadata;
   stats: TopologyItemStats;
-  status: string;
+  status: string; // Taken from TopologyDisk type
 }
 
 export interface EnclosureMetadata {
@@ -23,6 +30,8 @@ export interface EnclosureMetadata {
   diskKeys?: { [diskName: string]: number };
   poolKeys?: { [pool: string]: number };
   enclosureKey?: number;
+  relationship: EnclosureRelation;
+  siblings?: number[];
 }
 
 export interface VDevMetadata {
@@ -81,6 +90,30 @@ export class SystemProfiler {
     this.parseSensorData(this._sensorData);
   }
 
+  get isRackmount(): boolean {
+    switch (this.platform) {
+      case 'mini':
+      case 'mini-x':
+      case 'mini-xl':
+      case 'mini-xl-plus':
+      case 'FREENAS-MINI-3.0':
+      case 'TRUENAS-MINI-3.0':
+      case 'FREENAS-MINI-3.0-E':
+      case 'TRUENAS-MINI-3.0-E':
+      case 'FREENAS-MINI-3.0-E+':
+      case 'TRUENAS-MINI-3.0-E+':
+      case 'FREENAS-MINI-3.0-X':
+      case 'TRUENAS-MINI-3.0-X':
+      case 'FREENAS-MINI-3.0-X+':
+      case 'TRUENAS-MINI-3.0-X+':
+      case 'FREENAS-MINI-3.0-XL+':
+      case 'TRUENAS-MINI-3.0-XL+':
+        return false;
+      default:
+        return true;
+    }
+  }
+
   constructor(model: string, enclosures: Enclosure[]) {
     this.platform = model;
     this.enclosures = enclosures;
@@ -89,14 +122,24 @@ export class SystemProfiler {
 
   createProfile(): void {
     // with the enclosure info we set up basic data structure
+    const controllers: number[] = [];
     for (let i = 0; i < this.enclosures.length; i++) {
+      let relationship = EnclosureRelation.Shelf;
       // Detect rear drive bays
       if (this.enclosures[i].controller) {
         if (this.enclosures[i].id.includes('plx_enclosure')) {
           this.enclosures[i].model = this.enclosures[this.headIndex].model + ' Rear Bays';
           this.rearIndex = i;
-        } else {
+          relationship = EnclosureRelation.RearSlots;
+        } else if (!controllers.length) {
           this.headIndex = i;
+          controllers.push(i);
+          relationship = EnclosureRelation.Controller;
+        } else {
+          relationship = EnclosureRelation.FrontSlots;
+          controllers.push(i);
+          const head = this.profile[this.headIndex];
+          head.siblings = head.siblings.concat(controllers.filter((ctl: number) => ctl !== this.headIndex));
         }
       }
 
@@ -106,6 +149,8 @@ export class SystemProfiler {
         disks: [],
         diskKeys: {},
         poolKeys: {},
+        relationship,
+        siblings: [],
       };
 
       this.profile.push(enclosure);
@@ -215,10 +260,6 @@ export class SystemProfiler {
     });
   }
 
-  getVdev(alias: VDevMetadata): TopologyItem {
-    return this.pools[alias.poolIndex].topology.data[alias.vdevIndex];
-  }
-
   storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: TopologyItemStats }): void {
     Object.keys(vdev.disks).forEach((diskName) => {
       this.addVdevToDiskInfo(diskName, vdev, stats[diskName]);
@@ -321,7 +362,9 @@ export class SystemProfiler {
   }
 
   rawCapacity(): number {
-    if (!this.diskData || this.diskData.length === 0) { return; }
+    if (!this.diskData || this.diskData.length === 0) {
+      return undefined;
+    }
     let capacity = 0;
     this.diskData.forEach((disk) => {
       if (disk.vdev && disk.vdev.topology === 'data') {
@@ -329,5 +372,46 @@ export class SystemProfiler {
       }
     });
     return capacity;
+  }
+
+  getShelfCount(): number {
+    const shelves = this.profile.filter((metadata: EnclosureMetadata) => {
+      return metadata.relationship === EnclosureRelation.Shelf;
+    });
+    return shelves.length;
+  }
+
+  getSiblingSlots(enclosure: EnclosureMetadata): EnclosureElement[] {
+    const elements = this.enclosures[enclosure.enclosureKey].elements[0] as EnclosureElementsGroup;
+    return elements.elements;
+  }
+
+  // Returns the slot number the chassis view should use
+  getSiblingSlotAlias(diskName: string, chassisSlotCount: number, offset = 5): number {
+    const disk: EnclosureDisk = this.getDiskByName(diskName);
+    const slot = disk.enclosure.slot;
+    return slot + offset;
+  }
+
+  getController(): EnclosureMetadata {
+    return this.profile.find((metadata: EnclosureMetadata) => {
+      return metadata.relationship === EnclosureRelation.Controller;
+    });
+  }
+
+  isDiskOnController(diskName: string): boolean {
+    const enclosureKey = this.profile.find((metadata: EnclosureMetadata) => {
+      return metadata.disks.find((disk: EnclosureDisk) => disk.name === diskName);
+    }).enclosureKey;
+
+    return enclosureKey === this.getController().enclosureKey;
+  }
+
+  getDiskByName(diskName: string): EnclosureDisk {
+    const enclosure: EnclosureMetadata = this.profile.find((metadata: EnclosureMetadata) => {
+      return metadata.disks.find((disk: EnclosureDisk) => disk.name === diskName);
+    });
+    const enclosureDisk: EnclosureDisk = enclosure.disks.find((disk: EnclosureDisk) => disk.name === diskName);
+    return enclosureDisk;
   }
 }

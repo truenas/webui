@@ -11,10 +11,12 @@ export interface MockWebsocketCallResponse {
   type: MockWebsocketResponseType.Call;
   method: ApiMethod;
   response: unknown;
+  id?: number;
 }
 
 export interface MockWebsocketJobResponse {
   type: MockWebsocketResponseType.Job;
   method: ApiMethod;
   response: Job;
+  id?: number;
 }

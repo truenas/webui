@@ -106,7 +106,7 @@ export class FormInputComponent implements Field {
   hasValue(): boolean {
     return (
       this.group.controls[this.config.name].value
-      && this.group.controls[this.config.name].value.toString().length
+      && String(this.group.controls[this.config.name].value).length > 0
     );
   }
 

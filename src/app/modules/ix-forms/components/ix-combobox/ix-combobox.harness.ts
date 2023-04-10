@@ -1,6 +1,6 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
-import { MatLegacyAutocompleteHarness as MatAutocompleteHarness, LegacyAutocompleteHarnessFilters as AutocompleteHarnessFilters } from '@angular/material/legacy-autocomplete/testing';
-import { MatLegacyInputHarness as MatInputHarness } from '@angular/material/legacy-input/testing';
+import { MatAutocompleteHarness, AutocompleteHarnessFilters } from '@angular/material/autocomplete/testing';
+import { MatInputHarness } from '@angular/material/input/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';

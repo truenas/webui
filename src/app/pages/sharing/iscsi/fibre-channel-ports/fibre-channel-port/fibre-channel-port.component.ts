@@ -6,14 +6,14 @@ import * as _ from 'lodash';
 import { FibreChannelPortMode } from 'app/enums/fibre-channel-port-mode.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import {
-  WebSocketService, IscsiService, AppLoaderService, DialogService,
-} from 'app/services';
+import { IscsiService, AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -87,6 +87,7 @@ export class FibreChannelPortComponent implements OnInit {
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -101,8 +102,8 @@ export class FibreChannelPortComponent implements OnInit {
           };
         });
       },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -116,14 +117,14 @@ export class FibreChannelPortComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
-    this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      targetField.required = res === FibreChannelPortMode.Target;
-      if (res === FibreChannelPortMode.Target) {
-        this.formGroup.controls['target'].setValidators([Validators.required]);
-        this.formGroup.controls['target'].updateValueAndValidity();
+    this.formGroup.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+      targetField.required = mode === FibreChannelPortMode.Target;
+      if (mode === FibreChannelPortMode.Target) {
+        this.formGroup.controls.target.setValidators([Validators.required]);
+        this.formGroup.controls.target.updateValueAndValidity();
       } else {
-        this.formGroup.controls['target'].clearValidators();
-        this.formGroup.controls['target'].updateValueAndValidity();
+        this.formGroup.controls.target.clearValidators();
+        this.formGroup.controls.target.updateValueAndValidity();
       }
     });
     Object.keys(this.config).forEach((i) => {
@@ -135,17 +136,17 @@ export class FibreChannelPortComponent implements OnInit {
 
   isShow(field: string): boolean {
     if (field === 'target' || field === 'initiators') {
-      return this.formGroup.controls['mode'].value === FibreChannelPortMode.Target;
+      return this.formGroup.controls.mode.value === FibreChannelPortMode.Target;
     }
     return true;
   }
 
   onSubmit(): void {
     const value = _.cloneDeep(this.formGroup.value);
-    delete value['initiators'];
+    delete value.initiators;
 
-    if (value['mode'] !== FibreChannelPortMode.Target) {
-      value['target'] = null;
+    if (value.mode !== FibreChannelPortMode.Target) {
+      value.target = null;
     }
     this.loader.open();
     this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe({
@@ -155,9 +156,9 @@ export class FibreChannelPortComponent implements OnInit {
           this.translate.instant('Fibre Channel Port {name} update successful.', { name: this.config.name }),
         );
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

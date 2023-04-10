@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="entity-slider"
-  ix-auto
-  ix-auto-type="slider"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [attr.id]="config.name"
@@ -12,11 +9,16 @@
   <mat-slider
     class="full-width"
     thumbLabel
+    [ixTest]="config.name"
     [min]="config.min"
     [max]="config.max"
-    [formControlName]="config.name"
-    (change)="updateValue($event)"
   >
+    <input
+      matSliderThumb
+      [ixTest]="config.name"
+      [formControlName]="config.name"
+      [(ngModel)]="value"
+    />
   </mat-slider>
   <label>
     <h5>

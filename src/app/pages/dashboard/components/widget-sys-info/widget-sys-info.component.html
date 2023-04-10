@@ -66,30 +66,28 @@
                 class="mat-card-title-text primary-nav"
                 mat-icon-button
                 color="default"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="goBack"
+                [ixTest]="['sysinfo-widget', 'back']"
                 (click)="goBack()"
               >
-                <mat-icon class="back-arrow">chevron_left</mat-icon>
+                <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
               </button>
 
               <div
                 fxFlex="20"
-                [class]="['platform-logo-wrapper', productType.toLowerCase()]"
+                [class]="['platform-logo-wrapper', productType?.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
-                  <mat-icon
-                    svgIcon="ix:truenas_scale_logo_full"
+                  <ix-icon
+                    name="ix:logo_truenas_scale_full"
                     [id]="productModel"
-                  ></mat-icon>
+                  ></ix-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <mat-icon
-                    svgIcon="ix:truenas_scale_logotype"
+                  <ix-icon
+                    name="ix:logo_truenas_scale_type"
                     [id]="productModel"
-                  ></mat-icon>
+                  ></ix-icon>
                 </ng-template>
               </div>
 
@@ -108,8 +106,8 @@
                 >
                   <img
                     *ngIf="productImage; else generic"
-                    matTooltip="View Enclosure"
                     matTooltipPosition="above"
+                    [matTooltip]="'View Enclosure' | translate"
                     [id]="productModel"
                     [class.clickable]="enclosureSupport"
                     [matTooltipDisabled]="!enclosureSupport"
@@ -118,19 +116,19 @@
                   />
 
                   <ng-template #generic>
-                    <mat-icon
+                    <ix-icon
                       *ngIf="!certified && !isHaLicensed"
                       class="generic"
-                      svgIcon="ix:truenas_scale_logomark"
-                    ></mat-icon>
-                    <mat-icon
+                      name="ix:logo_truenas_scale_mark"
+                    ></ix-icon>
+                    <ix-icon
                       *ngIf="certified && !isHaLicensed"
                       class="generic"
-                      svgIcon="ix:freenas_certified"
-                    ></mat-icon>
+                      name="ix:logo_freenas_certified"
+                    ></ix-icon>
                   </ng-template>
                   <div *ngIf="!hasHa && isPassive" class="generic alert">
-                    <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    <ix-icon name="mdi-alert"></ix-icon>
                   </div>
                   <div *ngIf="productImage && isHaLicensed && !isPassive" class="ha-node-status">
                     ({{ 'Active' | translate }})
@@ -155,9 +153,7 @@
                   <button
                     *ngIf="!isPassive"
                     mat-button
-                    ix-auto
-                    ix-auto-type="button"
-                    [ix-auto-identifier]="updateBtnLabel"
+                    [ixTest]="['widget-sysinfo', 'update']"
                     [color]="updateBtnStatus"
                     (click)="router.navigate(['system', 'update'])"
                   >
@@ -165,7 +161,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!hasHa"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -236,7 +232,9 @@
 
                   <mat-list-item *ngIf="data.system_serial && manufacturer === 'ixsystems'">
                     <strong>{{ 'Serial Number' | translate }}:</strong>
-                    <span>{{ data.system_serial }}</span>
+                    <span>
+                      {{ (isPassive ? data.license?.system_serial_ha : data.license?.system_serial) || data.system_serial }}
+                    </span>
                   </mat-list-item>
 
                   <mat-list-item>
@@ -250,18 +248,6 @@
                       {{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}
                     </span>
                   </mat-list-item>
-                  <mat-list-item *ngIf="showTimeDiffWarning" class="time-warning">
-                    <mat-icon class="icon-warning" [matTooltip]="timeDiffWarning">error</mat-icon>
-                    <span>{{ timeDiffWarning }}</span>
-                    <button
-                      class="btn-sync"
-                      mat-icon-button
-                      [matTooltip]="'Synchronize Time' | translate"
-                      (click)="onSynchronizeTime()"
-                    >
-                      <ix-icon class="icon-sync">sync</ix-icon>
-                    </button>
-                  </mat-list-item>
                 </mat-list>
 
                 <div
@@ -273,9 +259,7 @@
                     *ngIf="!isPassive"
                     mat-button
                     color="primary"
-                    ix-auto
-                    ix-auto-type="button"
-                    [ix-auto-identifier]="updateBtnLabel"
+                    [ixTest]="['widget-sysinfo', 'update']"
                     (click)="router.navigate(['system', 'update'])"
                   >
                     {{ updateBtnLabel | translate }}
@@ -283,7 +267,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!hasHa || !data"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </div>
@@ -306,9 +290,7 @@
         <button
           mat-button
           color="primary"
-          ix-auto
-          ix-auto-type="button"
-          ix-auto-identifier="FLIP"
+          [ixTest]="['widget-sysinfo', 'flip']"
           (click)="toggleConfig()"
         >
           {{ 'Flip' | translate }}

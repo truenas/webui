@@ -1,7 +1,9 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl, FormBuilder, Validators,
+} from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
@@ -9,12 +11,12 @@ import {
   Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/entity/entity-form/validators/required-empty-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
@@ -25,7 +27,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './snapshot-add-form.component.html',
-  styleUrls: ['./snapshot-add-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotAddFormComponent implements OnInit {
@@ -54,7 +55,7 @@ export class SnapshotAddFormComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
@@ -75,7 +76,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.datasetOptions$ = of(datasetOptions);
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading = false;
-        this.form.get('name').markAsTouched();
+        this.form.controls.name.markAsTouched();
         this.checkForVmsInDataset();
         this.cdr.markForCheck();
       },
@@ -93,7 +94,7 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   setDataset(datasetId: string): void {
-    this.form.get('dataset').setValue(datasetId);
+    this.form.controls.dataset.setValue(datasetId);
   }
 
   onSubmit(): void {
@@ -146,7 +147,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private getNamingSchemaOptions(): Observable<Option[]> {
     return this.ws.call('replication.list_naming_schemas').pipe(
-      map(new EntityUtils().array1dToLabelValuePair),
+      singleArrayToOptions(),
     );
   }
 

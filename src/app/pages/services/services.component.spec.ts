@@ -1,16 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyCheckboxHarness as MatCheckboxHarness } from '@angular/material/legacy-checkbox/testing';
-import { MatLegacySlideToggleHarness as MatSlideToggleHarness } from '@angular/material/legacy-slide-toggle/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import {
   createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
@@ -18,8 +18,9 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServicesComponent } from 'app/pages/services/services.component';
-import { DialogService, IscsiService, WebSocketService } from 'app/services';
+import { DialogService, IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const hiddenServices = [ServiceName.Gluster, ServiceName.Afp];
 const fakeDataSource: ServiceRow[] = [...serviceNames.entries()]
@@ -72,7 +73,7 @@ describe('ServicesComponent', () => {
     const cells = await table.getCells(true);
     const expectedData = [...serviceNames.keys()]
       .filter((service) => !hiddenServices.includes(service))
-      .map((service) => [serviceNames.get(service), '', '', 'edit']);
+      .map((service) => [serviceNames.get(service), '', '', '']);
 
     expectedData.sort((a, b) => a[0].localeCompare(b[0]));
 
@@ -86,7 +87,7 @@ describe('ServicesComponent', () => {
     const firstRow = await table.getFirstRow();
     const serviceKey = [...serviceNames.entries()].find(([, value]) => value === firstRow.name)[0];
 
-    const editButton = await table.getHarness(MatButtonHarness.with({ text: 'edit' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
     await editButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/services', serviceKey]);
@@ -100,7 +101,6 @@ describe('ServicesComponent', () => {
     const slideToggle = await table.getHarness(MatSlideToggleHarness);
     await slideToggle.toggle();
 
-    expect(await slideToggle.isChecked()).toBeTruthy();
     expect(ws.call).toHaveBeenCalledWith('service.start', [serviceKey, { silent: false }]);
   });
 

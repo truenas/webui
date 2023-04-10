@@ -2,7 +2,7 @@
 <form [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
     <p>{{ 'Save current ACL entries as a preset for future use.' | translate }}</p>
-    
+
     <div class="exist-content">
       <h4 class="label">{{ 'Existing presets' | translate }}:</h4>
       <div class="presets">
@@ -11,14 +11,18 @@
             <div class="preset-name">{{ preset.name }}</div>
             <div class="preset-type">{{ preset.acltype }}</div>
 
-            <span class="preset-remove">
-              <mat-icon>cancel</mat-icon>
+            <span
+              *ngIf="!preset.builtin"
+              class="preset-remove"
+              (click)="onRemovePreset(preset)"
+            >
+              <ix-icon name="cancel"></ix-icon>
             </span>
           </div>
         </ng-container>
       </div>
     </div>
-  
+
     <div class="save-content">
       <h4 class="label">{{ 'Save ACL as preset' | translate }}:</h4>
       <ix-input
@@ -27,13 +31,14 @@
       ></ix-input>
     </div>
   </div>
-  
+
   <div mat-dialog-actions class="buttons">
-    <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
+    <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
     <button
       mat-button
       color="primary"
       type="submit"
+      ixTest="save"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Save' | translate }}

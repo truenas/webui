@@ -7,13 +7,13 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IscsiService, WebSocketService } from 'app/services';
+import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './associated-target-form.component.html',
-  styleUrls: ['./associated-target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AssociatedTargetFormComponent {
@@ -23,8 +23,8 @@ export class AssociatedTargetFormComponent {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant('Add Authorized Target')
-      : this.translate.instant('Edit Authorized Target');
+      ? this.translate.instant('Add Associated Target')
+      : this.translate.instant('Edit Associated Target');
   }
 
   form = this.formBuilder.group({

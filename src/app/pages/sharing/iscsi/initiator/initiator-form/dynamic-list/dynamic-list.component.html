@@ -5,17 +5,15 @@
 >
   <div fxFlexAlign="center" class="move-to-action">
     <button
-      ix-auto
-      ix-auto-type="button"
       mat-flat-button
       color="primary"
       class="move-to-btn"
       type="button"
-      [ix-auto-identifier]="inputConfig.name + '_move_to'"
+      [ixTest]="[inputConfig.name, 'move-to']"
       [disabled]="this.listControl.disabled"
       (click)="drop()"
     >
-      <mat-icon>arrow_forward</mat-icon>
+      <ix-icon name="arrow_forward"></ix-icon>
     </button>
   </div>
   <div fxFlex="100%">
@@ -31,16 +29,14 @@
       </div>
       <div>
         <button
-          ix-auto
-          ix-auto-type="button"
           mat-flat-button
           color="primary"
           type="button"
-          [ix-auto-identifier]="inputConfig.name + '_add'"
+          [ixTest]="[inputConfig.name, 'add']"
           [disabled]="this.listControl.disabled || !this.inputControl.valid"
           (click)="add()"
         >
-          <mat-icon>add</mat-icon>
+          <ix-icon name="add"></ix-icon>
         </button>
       </div>
     </div>
@@ -53,16 +49,14 @@
           >
             <label mat-line class="dynamic-list-item">{{ item }}</label>
             <button
-              ix-auto
-              ix-auto-type="button"
               mat-flat-button
               type="button"
               color="accent"
-              [ix-auto-identifier]="inputConfig.name + '_remove'"
+              [ixTest]="[inputConfig.name, 'remove']"
               [disabled]="this.listControl.disabled"
               (click)="remove(item)"
             >
-              <mat-icon mat-list-icon>remove</mat-icon>
+              <ix-icon name="remove" mat-list-icon></ix-icon>
             </button>
           </mat-list-item>
         </mat-list>

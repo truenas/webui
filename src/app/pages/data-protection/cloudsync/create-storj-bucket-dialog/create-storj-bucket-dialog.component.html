@@ -14,12 +14,14 @@
     <button
       mat-button
       type="button"
+      ixTest="cancel"
       [mat-dialog-close]="false"
     >{{ 'Cancel' | translate }}</button>
     <button
       mat-button
       type="submit"
       color="primary"
+      ixTest="save"
       [disabled]="form.invalid"
     >{{ 'Save' | translate }}</button>
   </div>

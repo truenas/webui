@@ -1,21 +1,23 @@
 <h1 matDialogTitle>
   {{ 'API Key' | translate }}
 </h1>
-<p>
-  {{ 'Success! The API key has been created or reset.' | translate }}
-  <strong>{{ 'This is the only time the key is shown.' | translate }}</strong>
-</p>
+<mat-dialog-content>
+  <p>
+    {{ 'Success! The API key has been created or reset.' | translate }}
+    <strong>{{ 'This is the only time the key is shown.' | translate }}</strong>
+  </p>
 
-<div class="key-section">
-  {{ 'API Key:' | translate }}
+  <div class="key-section">
+    {{ 'API Key:' | translate }}
 
-  <div class="key-value">{{ key }}</div>
-</div>
+    <div class="key-value">{{ key }}</div>
+  </div>
+</mat-dialog-content>
 
-<div class="form-actions">
-  <button mat-button color="primary" (click)="onCopyPressed()">
+<ix-form-actions matDialogActions>
+  <button mat-button ixTest="close" matDialogClose>{{ 'Close' | translate }}</button>
+
+  <button mat-button color="primary" ixTest="copy-to-clipboard" (click)="onCopyPressed()">
     {{ 'Copy to Clipboard' | translate }}
   </button>
-
-  <button mat-button matDialogClose>{{ 'Close' | translate }}</button>
-</div>
+</ix-form-actions>

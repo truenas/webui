@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { IscsiService, WebSocketService } from 'app/services';
+import { DialogService, IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
 
 describe('AssociatedTargetFormComponent', () => {
@@ -42,6 +43,7 @@ describe('AssociatedTargetFormComponent', () => {
         ]),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('iscsi.targetextent.create'),
         mockCall('iscsi.targetextent.update'),

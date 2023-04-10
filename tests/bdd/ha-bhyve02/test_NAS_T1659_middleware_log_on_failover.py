@@ -1,0 +1,90 @@
+"""SCALE High Availability (tn-bhyve06) feature tests."""
+
+import pytest
+import reusableSeleniumCode as rsc
+from function import (
+    ssh_cmd,
+    post
+)
+from pytest_bdd import (
+    given,
+    scenario,
+    then,
+    when,
+    parsers
+)
+from pytest_dependency import depends
+
+
+@pytest.fixture(scope='module')
+def logs_data():
+    return {}
+
+
+@scenario('features/NAS-T1659.feature', 'Verify middleware logs is available after failover')
+def test_verify_middleware_logs_is_available_after_failover():
+    """Verify middleware logs is available after failover."""
+
+
+@given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
+def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
+    """the browser is open to <nas_hostname> login with <user> and <password>."""
+    depends(request, ["Setup_HA"], scope='session')
+    global nas_Hostname, admin_User, admin_Password
+    nas_Hostname = nas_hostname
+    admin_User = user
+    admin_Password = password
+    if nas_hostname not in driver.current_url:
+        driver.get(f"http://{nas_hostname}/ui/sessions/signin")
+
+    rsc.Login_If_Not_On_Dashboard(driver, user, password)
+
+
+@when('on the Dashboard, verify the middleware logs exist')
+def on_the_dashboard_verify_the_middleware_logs_exist(driver, logs_data):
+    """on the Dashboard, verify the middleware logs exist."""
+    rsc.Verify_The_Dashboard(driver)
+
+    results = post(nas_Hostname, '/filesystem/stat/',
+                   (admin_User, admin_Password), '/var/log/middlewared.log')
+    assert results.status_code == 200, results.text
+
+    cmd = "cat /var/log/middlewared.log"
+    middlewared_log = ssh_cmd(cmd, admin_User, admin_Password, nas_Hostname)
+    assert middlewared_log['result'] is True, str(middlewared_log)
+    logs_data['middleware_log_line'] = middlewared_log['output'].splitlines()[-1]
+
+
+@then('click Initiate Failover on the standby controller')
+def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
+    """on the Dashboard, click Initiate Failover on the standby controller."""
+    rsc.Trigger_Failover(driver)
+
+
+@then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
+def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver):
+    """on the Initiate Failover box, check the Confirm checkbox, then click Failover."""
+    rsc.Confirm_Failover(driver)
+
+
+@then(parsers.parse('wait for the login to appear and HA to be enabled, login with {user} and {password}'))
+def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_password(driver, user, password):
+    """wait for the login to appear and HA to be enabled, login with <user> and <password>."""
+    rsc.HA_Login_Status_Enable(driver)
+
+    rsc.Login(driver, user, password)
+
+
+@then('on the Dashboard, verify the middleware logs still exist and contain details from before failover')
+def on_the_dashboard_verify_the_middleware_logs_still_exist_and_contain_details_from_before_failover(driver, logs_data):
+    """on the Dashboard, verify the middleware logs still exist and contain details from before failover."""
+    rsc.Verify_The_Dashboard(driver)
+
+    results = post(nas_Hostname, '/filesystem/stat/',
+                   (admin_User, admin_Password), '/var/log/middlewared.log')
+    assert results.status_code == 200, results.text
+
+    cmd = "cat /var/log/middlewared.log"
+    middlewared_log = ssh_cmd(cmd, admin_User, admin_Password, nas_Hostname)
+    assert middlewared_log['result'] is True, str(middlewared_log)
+    assert logs_data['middleware_log_line'] in middlewared_log['output'], str(middlewared_log['output'])

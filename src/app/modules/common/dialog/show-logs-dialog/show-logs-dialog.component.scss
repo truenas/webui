@@ -13,10 +13,13 @@
 
     pre {
       max-height: 300px;
+      overflow: auto;
 
       code {
         display: flex;
         overflow: auto;
+        padding: 20px;
+        white-space: pre-wrap;
       }
     }
 
@@ -30,7 +33,7 @@
   }
 }
 
-.mat-dialog-actions {
+.mat-mdc-dialog-actions {
   display: flex;
   justify-content: flex-end;
 }

@@ -1,13 +1,15 @@
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -17,6 +19,7 @@ import {
 })
 export class ExportAllKeysDialogComponent {
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<ExportAllKeysDialogComponent>,
@@ -39,9 +42,9 @@ export class ExportAllKeysDialogComponent {
           this.loader.close();
           this.dialogRef.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

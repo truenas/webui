@@ -24,7 +24,7 @@ describe('WebdavProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       url: 'http://10.20.30.40/webdav',
       vendor: 'OWNCLOUD',
       user: 'adam',
@@ -42,7 +42,7 @@ describe('WebdavProviderFormComponent', () => {
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
     await form.fillForm({
-      URL: 'http://10.10.10.1/webdav',
+      URL: '10.10.10.1/webdav',
       'WebDAV Service': 'OTHER',
       Username: 'eve',
       Password: 'apple',

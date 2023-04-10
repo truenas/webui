@@ -8,15 +8,14 @@
   [attr.id]="config.name"
 >
   <div fxLayoutAlign="start start" fxLayoutGap="8px">
-    <mat-icon
+    <ix-icon
       *ngIf="config.paragraphIcon"
       class="paragraph-icon"
+      [name]="config.paragraphIcon"
       [style.width]="config.paragraphIconSize"
       [style.height]="config.paragraphIconSize"
       [style.fontSize]="config.paragraphIconSize"
-    >
-      {{ config.paragraphIcon }}
-    </mat-icon>
+    ></ix-icon>
     <p
       class="full-width"
       [class.large]="config.isLargeText"
@@ -35,6 +34,7 @@
   <mat-form-field class="full-width display-none">
     <input
       matInput
+      ixTest="noop"
       [type]="config.inputType ? config.inputType : 'text'"
       [placeholder]="config.placeholder"
       [attr.value]="config.value"

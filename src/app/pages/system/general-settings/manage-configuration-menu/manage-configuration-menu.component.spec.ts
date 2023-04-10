@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyMenuHarness as MatMenuHarness } from '@angular/material/legacy-menu/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -61,6 +61,6 @@ describe('ManageConfigurationMenuComponent', () => {
     await menu.clickItem({ text: 'Reset to Defaults' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/config-reset']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/config-reset'], { skipLocationChange: true });
   });
 });

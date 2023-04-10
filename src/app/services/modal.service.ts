@@ -54,8 +54,8 @@ export class ModalService {
     return componentRef.instance;
   }
 
-  closeSlideIn(): Promise<boolean> {
-    return this.close(slideInModalId);
+  closeSlideIn(value?: unknown): Promise<boolean> {
+    return this.close(slideInModalId, value);
   }
 
   /**
@@ -71,13 +71,13 @@ export class ModalService {
     modalToOpen.open(conf);
   }
 
-  private close(id: string): Promise<boolean> {
+  private close(id: string, response: unknown = true): Promise<boolean> {
     // close modal specified by id
     const modalToClose = this.modals.find((modal) => modal.id === id);
     if (id === slideInModalId) {
-      this.onClose$.next({ modalType: this.modalTypeOpenedInSlideIn, response: true });
+      this.onClose$.next({ modalType: this.modalTypeOpenedInSlideIn, response });
     } else {
-      this.onClose$.next({ response: true });
+      this.onClose$.next({ response });
     }
     return modalToClose.close();
   }

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
@@ -9,7 +9,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
@@ -18,7 +18,8 @@ import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {

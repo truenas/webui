@@ -72,11 +72,11 @@
       <ng-template #gmailOauth>
         <div class="oauth-message">
           <ng-container *ngIf="hasOauthAuthorization; else logInToGmail">
-            <mat-icon>check_circle</mat-icon>
+            <ix-icon name="check_circle"></ix-icon>
             {{ 'Gmail credentials have been applied.' | translate }}
           </ng-container>
           <ng-template #logInToGmail>
-            <mat-icon>info</mat-icon>
+            <ix-icon name="info"></ix-icon>
             {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
           </ng-template>
         </div>
@@ -84,6 +84,7 @@
           mat-button
           type="button"
           class="oauth-button"
+          ixTest="login-to-gmail"
           (click)="onLoginToGmailPressed()"
         >
           {{ hasOauthAuthorization ? ('Log In To Gmail Again' | translate) : ('Log In To Gmail' | translate) }}
@@ -95,12 +96,13 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="!isValid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onSendTestEmailPressed()">
+        <button mat-button type="button" ixTest="send-test-mail" (click)="onSendTestEmailPressed()">
           {{ 'Send Test Mail' | translate }}
         </button>
       </div>

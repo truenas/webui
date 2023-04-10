@@ -1,0 +1,235 @@
+@import 'scss-imports/splitview';
+@import 'app/modules/page-header/breadcrumb/breadcrumb.component';
+
+$card-width: 609px;
+$singlecolumn-max-width: ($card-width + $gap * 2);
+$scrollbar-offset: 20px;
+
+:host {
+  display: block;
+}
+
+.loader-bar {
+  height: 2px;
+  position: absolute;
+  top: 0;
+  z-index: 10;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100%;
+}
+
+.table-container {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-right: 16px;
+  max-width: $table-width;
+  min-width: $table-min-width;
+  position: relative;
+
+  // Hide Details and stop compressing table width
+  @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+    margin-right: unset;
+    min-width: $breakpoint-min-mobile;
+    width: 100%;
+  }
+
+  // Hide Details and stretch table
+  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
+    margin-right: unset;
+    min-width: 100%;
+  }
+
+  // One Cards Column
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    max-width: calc(100% - $singlecolumn-max-width - 16px);
+    min-width: calc($table-min-width + 0px);
+  }
+
+  .table-header {
+    align-items: flex-end;
+    color: var(--fg1);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    min-height: 56px;
+
+    h2 {
+      align-items: center;
+      display: flex;
+      margin-top: 20px;
+      min-height: 36px;
+    }
+
+    .bulk {
+      align-items: center;
+      display: flex;
+      gap: 6px;
+    }
+  }
+}
+
+.table-body {
+  position: relative;
+}
+
+.app-search {
+  background-color: var(--bg2);
+  padding: 16px;
+  position: sticky;
+  top: -15px;
+  z-index: 1;
+}
+
+.app-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  overflow: auto;
+}
+
+.app-inner {
+  background-color: var(--bg1);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: fit-content;
+
+  @media (max-width: $breakpoint-tablet) {
+    min-height: fit-content;
+    min-width: unset;
+    overflow-x: auto;
+  }
+
+}
+
+.app-header {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  color: var(--fg2);
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) 40px 40px 40px minmax(100px, 115px) 60px;
+  min-height: 48px;
+  min-width: fit-content;
+  padding-left: 8px;
+  width: 100%;
+
+  > div {
+    font-weight: bold;
+    padding: 4px 0;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: block;
+      }
+    }
+
+    &:last-child {
+      text-align: center;
+    }
+  }
+
+  .app-name-header {
+    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
+    padding-left: 8px;
+    padding-right: 15px;
+  }
+
+  .app-update-header {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+
+    ix-icon {
+      color: var(--yellow);
+      font-size: 18px;
+      line-height: 1;
+    }
+  }
+}
+
+.apps-rows {
+  background: var(--bg2);
+  min-height: calc(48px * 5);
+
+  .no-apps {
+    color: var(--fg1);
+    display: flex;
+    justify-content: center;
+    margin: 15px;
+  }
+}
+
+.details-container {
+  color: var(--fg2);
+  display: flex;
+  flex: 1;
+  min-width: inherit;
+  overflow: hidden;
+  padding: 0;
+  position: sticky;
+  top: 0;
+
+  // One Card Column
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    max-width: $singlecolumn-max-width;
+  }
+}
+
+
+.bulk-selected {
+  align-items: center;
+  align-self: flex-end;
+  display: inline-flex;
+  font-size: 16px;
+  gap: 4px;
+  height: 36px;
+}
+
+.bulk-actions-container {
+  align-items: flex-end;
+  display: flex;
+  gap: 12px;
+}
+
+.bulk-button-wrapper {
+  display: flex;
+  flex-direction: column;
+
+
+  label {
+    color: var(--fg2);
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+
+  button {
+    background-color: var(--bg1);
+    border: 1px solid var(--lines);
+    font-size: 12px;
+  }
+}
+
+.global-update {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  span {
+    font-size: 16px;
+  }
+}

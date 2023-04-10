@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
@@ -15,8 +14,8 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
-import { IxTreeHarness } from 'app/modules/ix-tree/testing/ix-tree.harness';
+import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
+import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
@@ -69,9 +68,8 @@ describe('BootStatusListComponent', () => {
     component: BootStatusListComponent,
     imports: [
       AppLoaderModule,
-      TranslateModule,
       CoreComponents,
-      IxTreeModule,
+      TreeModule,
       IxIconModule,
       MatIconTestingModule,
     ],
@@ -98,7 +96,7 @@ describe('BootStatusListComponent', () => {
   it('loads boot pool state and shows it when one disk', async () => {
     expect(websocket.call).toHaveBeenCalledWith('boot.get_state');
 
-    const tree = await loader.getHarness(IxTreeHarness);
+    const tree = await loader.getHarness(TreeHarness);
     const nodes = await tree.getNodes();
     expect(nodes).toHaveLength(2);
 

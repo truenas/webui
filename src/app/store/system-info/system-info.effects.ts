@@ -8,12 +8,14 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { systemFeaturesLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
+import {
+  systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded, systemInfoUpdated,
+} from 'app/store/system-info/system-info.actions';
 
 @Injectable()
 export class SystemInfoEffects {
   loadSystemInfo = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
+    ofType(adminUiInitialized, systemInfoUpdated),
     mergeMap(() => {
       return this.ws.call('system.info').pipe(
         map((systemInfo) => systemInfoLoaded({ systemInfo })),
@@ -29,7 +31,6 @@ export class SystemInfoEffects {
   loadSystemFeatures = createEffect(() => this.actions$.pipe(
     ofType(systemInfoLoaded),
     switchMap(({ systemInfo }) => {
-      this.window.sessionStorage.setItem('systemInfoLoaded', Date.now().toString());
       const features: SystemFeatures = {
         HA: false,
         enclosure: false,
@@ -51,6 +52,15 @@ export class SystemInfoEffects {
         return of(systemFeaturesLoaded({ systemFeatures: features }));
       }
       return of(systemFeaturesLoaded({ systemFeatures: features }));
+    }),
+  ));
+
+  loadIsSystemHaCapable = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('system.is_ha_capable').pipe(
+        map((isSystemHaCapable: boolean) => systemHaCapabilityLoaded({ isSystemHaCapable })),
+      );
     }),
   ));
 

@@ -17,7 +17,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-quota-add-form.component.html',
-  styleUrls: ['./dataset-quota-add-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotaAddFormComponent {

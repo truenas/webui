@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { tap } from 'rxjs';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -20,13 +21,21 @@ export class UploadConfigDialogComponent {
   });
 
   readonly helptext = helptext;
+  private apiEndPoint: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private mdDialog: MatDialog,
-    private ws: WebSocketService,
-  ) {}
+    private authService: AuthService,
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   onSubmit(): void {
     const formData: FormData = new FormData();
@@ -42,9 +51,9 @@ export class UploadConfigDialogComponent {
       dialogRef.close();
       this.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-      dialogRef.componentInstance.setDescription(res.error);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
+      dialogRef.componentInstance.setDescription(job.error);
     });
-    dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.ws.token, formData);
+    dialogRef.componentInstance.wspost(this.apiEndPoint, formData);
   }
 }

@@ -1,4 +1,3 @@
-@import 'mixins/grid';
 @import 'scss-imports/splitview';
 @import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
@@ -22,6 +21,12 @@ $scrollbar-offset: 20px;
   flex-direction: row;
   min-height: 100%;
   width: 100%;
+}
+
+.spacer {
+  display: block;
+  flex-grow: 0;
+  width: 40px;
 }
 
 .table-container {
@@ -183,7 +188,6 @@ ix-dataset-details-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-bottom: 1.5rem;
   overflow: auto;
 }
 
@@ -201,15 +205,18 @@ ix-dataset-details-panel {
 }
 
 .dataset-tree-header {
-  @include grid-row();
-
   align-items: center;
   background: var(--bg1);
   border-bottom: 2px solid var(--lines);
   color: var(--fg2);
+  display: grid;
+  grid-gap: 8px;
   grid-template-columns: auto 125px 125px 125px 40px;
   min-height: 48px;
+  min-width: fit-content;
+  min-width: 100%;
   padding-left: 48px;
+  width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0;
@@ -283,7 +290,7 @@ ix-dataset-details-panel {
 
   @media (max-width: $breakpoint-hidden) {
     display: flex;
-    margin: 12px;
+    margin: 8px 12px;
     position: relative;
     right: 8px;
   }
@@ -297,20 +304,11 @@ ix-dataset-details-panel {
   }
 }
 
-$level-offset: 40px;
-$padding-left: 8px;
+ix-tree-virtual-scroll-view {
+  background-color: var(--bg2);
+  min-height: calc(100vh - 320px);
+}
 
-:host ::ng-deep {
-  @for $i from 1 through 10 {
-    ix-tree-node[aria-level="#{$i}"],
-    ix-nested-tree-node[aria-level="#{$i}"] {
-      .mat-icon-button:first-child {
-        left: $padding-left + $level-offset * ($i - 1);
-      }
-
-      ix-dataset-node {
-        padding-left: $padding-left + $level-offset * ($i - 1);
-      }
-    }
-  }
+ix-tree-node {
+  color: var(--fg1);
 }

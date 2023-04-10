@@ -3,7 +3,7 @@
 <form [formGroup]="form" (submit)="onSubmit()">
   <ix-input
     formControlName="label"
-    [label]="'Enclosure Label' | translate"
+    [label]="enclosureLabel | translate"
     [required]="!form.value.resetToDefault"
   ></ix-input>
 
@@ -12,17 +12,19 @@
     [label]="'Reset to default' | translate"
   ></ix-checkbox>
 
-  <div class="form-actions">
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
+
     <button
       mat-button
       type="submit"
       color="primary"
+      ixTest="save"
+      [disabled]="form.invalid"
     >
       {{ 'Save' | translate }}
     </button>
-
-    <button mat-button type="button" matDialogClose>
-      {{ 'Cancel' | translate }}
-    </button>
-  </div>
+  </ix-form-actions>
 </form>

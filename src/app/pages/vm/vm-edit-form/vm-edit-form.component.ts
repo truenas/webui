@@ -1,10 +1,11 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
@@ -12,7 +13,7 @@ import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -21,20 +22,20 @@ import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-const mbs = 1024 * 1024;
-
 @UntilDestroy()
 @Component({
   templateUrl: './vm-edit-form.component.html',
-  styleUrls: ['./vm-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CpuValidatorService, VmGpuService],
+  providers: [CpuValidatorService],
 })
-export class VmEditFormComponent {
+export class VmEditFormComponent implements OnInit {
+  showCpuModelField = true;
+
   form = this.formBuilder.group({
     name: ['', Validators.required],
     description: [''],
@@ -51,9 +52,10 @@ export class VmEditFormComponent {
     cpu_mode: [null as VmCpuMode],
     cpu_model: [''],
     memory: [null as number, this.validators.withMessage(
-      Validators.min(256 * mbs),
+      Validators.min(256 * MiB),
       this.translate.instant(helptext.memory_size_err),
     )],
+    min_memory: [null as number],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
     hide_from_msr: [false],
     ensure_display_device: [false],
@@ -77,6 +79,7 @@ export class VmEditFormComponent {
     private slideIn: IxSlideInService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private cpuValidator: CpuValidatorService,
     private validators: IxValidatorsService,
@@ -87,11 +90,20 @@ export class VmEditFormComponent {
     private snackbar: SnackbarService,
   ) {}
 
+  ngOnInit(): void {
+    this.listenForFormValueChanges();
+  }
+
   setVmForEdit(vm: VirtualMachine): void {
+    if (vm.cpu_mode !== VmCpuMode.Custom) {
+      this.showCpuModelField = false;
+    }
+
     this.existingVm = vm;
     this.form.patchValue({
       ...vm,
-      memory: vm.memory * mbs,
+      memory: vm.memory * MiB,
+      min_memory: vm.min_memory ? vm.min_memory * MiB : null,
     });
 
     this.setupGpuControl(vm);
@@ -103,12 +115,15 @@ export class VmEditFormComponent {
 
     const vmPayload = {
       ...this.form.value,
-      memory: Math.round(this.form.value.memory / mbs),
+      memory: Math.round(this.form.value.memory / MiB),
+      min_memory: this.form.value.min_memory
+        ? Math.round(this.form.value.min_memory / MiB)
+        : null,
     };
     delete vmPayload.gpus;
 
     const gpusIds = this.form.value.gpus;
-    combineLatest([
+    forkJoin([
       this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
       this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
       this.gpuService.addIsolatedGpuPciIds(gpusIds),
@@ -121,10 +136,10 @@ export class VmEditFormComponent {
           this.snackbar.success(this.translate.instant('VM updated successfully.'));
           this.slideIn.close();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -138,7 +153,13 @@ export class VmEditFormComponent {
       const vmGpus = allGpus.filter(byVmPciSlots(vmPciSlots));
 
       const vmGpuPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
-      this.form.controls['gpus'].setValue(vmGpuPciSlots, { emitEvent: false });
+      this.form.controls.gpus.setValue(vmGpuPciSlots, { emitEvent: false });
+    });
+  }
+
+  private listenForFormValueChanges(): void {
+    this.form.controls.cpu_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.showCpuModelField = value === VmCpuMode.Custom;
     });
   }
 }

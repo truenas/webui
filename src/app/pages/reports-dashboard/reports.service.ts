@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { addSeconds, differenceInDays, differenceInSeconds } from 'date-fns';
+import { addSeconds } from 'date-fns';
 import {
   map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
@@ -37,9 +37,8 @@ export enum ReportingDatabaseError {
 })
 export class ReportsService implements OnDestroy {
   serverTime: Date;
-  showTimeDiffWarning = false;
-  private reportingGraphs$ = new BehaviorSubject([]);
-  private diskMetrics$ = new BehaviorSubject([]);
+  private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
+  private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private reportsUtils: Worker;
   private hasUps = false;
   private hasDiskTemperature = false;
@@ -61,17 +60,17 @@ export class ReportsService implements OnDestroy {
         const chartId = (evt.sender as ReportComponent).chartId;
         this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
           next: (reportingData) => {
-            const res = [...reportingData];
+            const processedData = [...reportingData];
 
             const truncateTrailingNullValues = evt.data.truncate;
             if (truncateTrailingNullValues) {
-              res[0].data = this.truncateData(reportingData[0].data as number[][]);
+              processedData[0].data = this.truncateData(reportingData[0].data as number[][]);
             }
 
             const commands = [
               {
                 command: 'optimizeLegend',
-                input: res[0],
+                input: processedData[0],
               },
               {
                 command: 'convertAggregations',
@@ -109,11 +108,7 @@ export class ReportsService implements OnDestroy {
         waitForSystemInfo,
         map((systemInfo) => systemInfo.datetime.$date),
         switchMap((timestamp) => {
-          const now = Date.now();
           this.serverTime = new Date(timestamp);
-          if (differenceInSeconds(timestamp, now) > 300 || differenceInDays(timestamp, now) > 0) {
-            this.showTimeDiffWarning = true;
-          }
           return interval(1000);
         }),
       )

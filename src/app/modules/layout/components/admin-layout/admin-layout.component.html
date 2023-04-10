@@ -14,32 +14,27 @@
     [fxFlex]="sidenavWidth"
     [opened]="isSidenavOpen"
     [mode]="sidenavMode"
+    [disableClose]="sidenavMode !== 'over'"
     (closedStart)="onMenuClosed()"
   >
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
-      <div
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="logo"
-        [class]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]"
-      >
-        <a routerLink="/dashboard" class="logo">
-          <mat-icon
-            alt="TrueNAS SCALE"
+      <div [class]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
+        <a routerLink="/dashboard" class="logo" ixTest="main-logo">
+          <ix-icon
             class="app-logo"
-            [svgIcon]="themeService.isDefaultTheme ? 'ix:truenas_scale_logomark_color': 'ix:truenas_scale_logomark'"
-          ></mat-icon>
+            [name]="themeService.isDefaultTheme ? 'ix:logo_truenas_scale_mark_color': 'ix:logo_truenas_scale_mark'"
+          ></ix-icon>
         </a>
-        <a routerLink="/dashboard" class="logo-text">
-          <mat-icon
-            alt="TrueNAS SCALE"
+        <a routerLink="/dashboard" class="logo-text" ixTest="main-logo">
+          <ix-icon
             class="app-logo-text"
-            [svgIcon]="themeService.isDefaultTheme? 'ix:truenas_scale_logotype_color': 'ix:truenas_scale_logotype'"
-          ></mat-icon>
+            [name]="themeService.isDefaultTheme? 'ix:logo_truenas_scale_type_color': 'ix:logo_truenas_scale_type'"
+          ></ix-icon>
         </a>
       </div>
 
       <ix-navigation
+        [isSidenavCollapsed]="isSidenavCollapsed"
         (menuToggled)="toggleMenu($event)"
         (menuClosed)="toggleMenu()"
       ></ix-navigation>
@@ -66,20 +61,20 @@
         *ngIf="isSidenavCollapsed"
         class="sidenav-copyright-icon"
         matTooltipPosition="right"
-        matTooltip="TrueNAS {{productType$ | async | mapValue: productTypeLabels}}® © {{ copyrightYear$ | async }} by iXsystems Inc."
+        [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + (copyrightYear$ | async) + ' by iXsystems Inc.'"
       >
-        <mat-icon>copyright</mat-icon>
+        <ix-icon name="copyright"></ix-icon>
       </div>
     </div>
   </mat-sidenav>
 
   <mat-sidenav-content
     class="fn-maincontent"
-    fxFlex="calc(100% - {{ sidenavWidth }})"
+    [fxFlex]="'calc(100% - ' + sidenavWidth + ')'"
     [style.margin-left]="sidenavWidth"
   >
     <!-- Top Bar -->
-    <ix-topbar [sidenav]="sidenav"></ix-topbar>
+    <ix-topbar [sidenav]="sidenav" (sidenavStatusChange)="onSidenavStatusChange($event)"></ix-topbar>
 
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
       <ix-secondary-menu

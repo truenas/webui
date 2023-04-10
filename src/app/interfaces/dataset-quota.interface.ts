@@ -6,7 +6,6 @@ export interface DatasetQuota {
   name: string;
   obj_quota: number;
   obj_used: number;
-  obj_used_percent: number;
   quota: number;
   quota_type: DatasetQuotaType;
   used_bytes: number;

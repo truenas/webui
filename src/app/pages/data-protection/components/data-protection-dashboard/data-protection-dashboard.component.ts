@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -21,10 +21,10 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -45,10 +45,11 @@ import {
   DialogService,
   StorageService,
   TaskService,
-  WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -89,10 +90,11 @@ export class DataProtectionDashboardComponent implements OnInit {
     private ws: WebSocketService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
-    private dialog: DialogService,
+    private dialogService: DialogService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,
     private router: Router,
+    private errorHandler: ErrorHandlerService,
     private taskService: TaskService,
     private storage: StorageService,
     private translate: TranslateService,
@@ -156,11 +158,11 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Pool'), prop: 'pool_name' },
             { name: this.translate.instant('Description'), prop: 'description', hiddenIfEmpty: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', width: '80px' },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', width: '110px' },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
-              width: '50px',
+              width: '80px',
               checkbox: true,
               onChange: (row: ScrubTaskUi) => this.onCheckboxToggle(TaskCardId.Scrub, row, 'enabled'),
             },
@@ -206,7 +208,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
-              width: '50px',
+              width: '80px',
               checkbox: true,
               onChange: (row: PeriodicSnapshotTaskUi) => this.onCheckboxToggle(TaskCardId.Snapshot, row, 'enabled'),
             },
@@ -265,7 +267,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
-              width: '50px',
+              width: '80px',
               checkbox: true,
               onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row as TaskTableRow, 'enabled'),
             },
@@ -312,7 +314,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
             {
               name: this.translate.instant('Enabled'),
-              width: '50px',
+              width: '80px',
               prop: 'enabled',
               checkbox: true,
               onChange: (row: CloudSyncTaskUi) => this.onCheckboxToggle(TaskCardId.CloudSync, row, 'enabled'),
@@ -355,7 +357,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
-              width: '50px',
+              width: '80px',
               checkbox: true,
               onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row as TaskTableRow, 'enabled'),
             },
@@ -504,18 +506,15 @@ export class DataProtectionDashboardComponent implements OnInit {
         : this.translate.instant(helptext.no_snapshot_sent_yet);
 
       if (task.job !== null) {
-        task.state.state = task.job.state;
         this.store$.select(selectJob(task.job.id)).pipe(
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
-          task.state.state = job.state;
           task.job = job;
           if (this.jobStates.get(job.id) !== job.state) {
             this.refreshTable(TaskCardId.Replication);
           }
           this.jobStates.set(job.id, job.state);
-          console.info('replication', job.id, job.state, job);
         });
       }
       tasks.push(task);
@@ -602,10 +601,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         name: 'run',
         matTooltip: this.translate.instant('Run Now'),
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state.state = JobState.Running),
@@ -616,8 +615,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               );
             }),
             switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -655,10 +654,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Run this cloud sync now?'),
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
@@ -667,8 +666,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -687,11 +686,11 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Stop'),
         name: 'stop',
         onClick: (row) => {
-          this.dialog
+          this.dialogService
             .confirm({
               title: this.translate.instant('Stop'),
               message: this.translate.instant('Stop this cloud sync?'),
-              hideCheckBox: true,
+              hideCheckbox: true,
             })
             .pipe(
               filter(Boolean),
@@ -700,14 +699,14 @@ export class DataProtectionDashboardComponent implements OnInit {
             )
             .subscribe({
               next: () => {
-                this.dialog.info(
+                this.dialogService.info(
                   this.translate.instant('Task Stopped'),
                   this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
                   true,
                 );
               },
-              error: (err) => {
-                new EntityUtils().handleWsError(this, err);
+              error: (error: WebsocketError) => {
+                this.dialogService.error(this.errorHandler.parseWsError(error));
               },
             });
         },
@@ -717,10 +716,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: helptext_cloudsync.action_button_dry_run,
         name: 'dry_run',
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: helptext_cloudsync.dry_run_title,
             message: helptext_cloudsync.dry_run_dialog,
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
@@ -728,8 +727,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -767,10 +766,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Run this rsync now?'),
-            hideCheckBox: true,
+            hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
@@ -781,8 +780,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -819,7 +818,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       dialogRef.close();
     });
     dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialog.info(helptext.task_aborted, '', true);
+      this.dialogService.info(helptext.task_aborted, '', true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
@@ -832,42 +831,34 @@ export class DataProtectionDashboardComponent implements OnInit {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
         dialogRef.componentInstance.jobId = row.job.id;
         dialogRef.componentInstance.job = row.job;
-        let subId: string = null;
         if (row.job.logs_path) {
           dialogRef.componentInstance.enableRealtimeLogs(true);
-          subId = dialogRef.componentInstance.getRealtimeLogs();
         }
         dialogRef.componentInstance.wsshow();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.dialog.info(this.translate.instant('Task Aborted'), '');
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
+          this.dialogService.info(this.translate.instant('Task Aborted'), '');
         });
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialog.errorReport(this.translate.instant('Warning'), `<pre>${list}</pre>`);
+        this.dialogService.error({
+          title: this.translate.instant('Warning'),
+          message: `<pre>${list}</pre>`,
+        });
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
-      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialogService.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 
@@ -904,9 +895,9 @@ export class DataProtectionDashboardComponent implements OnInit {
         next: (updatedEntity) => {
           row[param] = updatedEntity[param];
         },
-        error: (err) => {
+        error: (err: WebsocketError) => {
           row[param] = !row[param];
-          new EntityUtils().handleWsError(this, err, this.dialog);
+          this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
   }

@@ -6,11 +6,20 @@ import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
-  Acl, AclQueryParams, AclTemplateByPath, AclTemplateByPathParams, NfsAclItem, PosixAclItem, SetAcl,
+  Acl,
+  AclQueryParams,
+  AclTemplateByPath,
+  AclTemplateByPathParams,
+  AclTemplateCreateParams,
+  AclTemplateCreateResponse,
+  NfsAclItem,
+  PosixAclItem,
+  SetAcl,
 } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -22,7 +31,9 @@ import {
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -45,7 +56,9 @@ import {
   CertificateProfiles, CertificateUpdate,
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
-import { ChartReleaseEvent, ChartRollbackParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import {
+  ChartReleaseEvent, ChartRollbackParams, ChartScaleQueryParams, ChartScaleResult,
+} from 'app/interfaces/chart-release-event.interface';
 import {
   ChartRelease,
   ChartReleaseCreate,
@@ -103,7 +116,7 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
-import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
+import { FilesystemPutParams, FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
@@ -115,7 +128,7 @@ import {
   InitShutdownScript,
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
-import { Ipmi, IpmiIdentify, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiChassis, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import {
   IscsiGlobalConfig,
   IscsiGlobalConfigUpdate,
@@ -310,19 +323,18 @@ export type ApiDirectory = {
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
 
   // Auth
-  'auth.generate_token': { params: [number]; response: string };
   'auth.check_user': { params: CheckUserQuery; response: boolean };
-  'auth.login': {
-    params: LoginParams;
-    response: boolean;
-  };
-  'auth.token': { params: [token: string]; response: boolean };
-  'auth.logout': { params: void; response: void };
+  'auth.me': { params: void; response: DsUncachedUser };
+  'auth.set_attribute': { params: [key: string, value: unknown]; response: boolean };
+
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: void; response: boolean };
   'auth.twofactor.renew_secret': { params: void; response: boolean };
   'auth.twofactor.config': { params: void; response: TwoFactorConfig };
+  'auth.sessions': { params: void; response: AuthSession[] };
+  'auth.terminate_session': { params: [id: string]; response: void };
+  'auth.terminate_other_sessions': { params: void; response: void };
 
   // Boot
   'boot.set_scrub_interval': { params: [number]; response: number };
@@ -339,6 +351,10 @@ export type ApiDirectory = {
   'bootenv.activate': { params: [string]; response: boolean };
   'bootenv.delete': { params: [string]; response: boolean };
   'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
+
+  // App
+  'app.categories': { params: void; response: string[] };
+  'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
 
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
@@ -378,7 +394,7 @@ export type ApiDirectory = {
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
-  'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };
+  'chart.release.scale': { params: ChartScaleQueryParams; response: ChartScaleResult };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.nic_choices': { params: void; response: Choices };
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
@@ -478,7 +494,10 @@ export type ApiDirectory = {
   'filesystem.statfs': { params: [path: string]; response: Statfs };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.setacl': { params: [SetAcl]; response: void };
+  'filesystem.put': { params: FilesystemPutParams; response: boolean };
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
+  'filesystem.acltemplate.create': { params: [AclTemplateCreateParams]; response: AclTemplateCreateResponse };
+  'filesystem.acltemplate.delete': { params: [id: number]; response: boolean };
 
   // Failover
   'failover.become_passive': { params: void; response: void };
@@ -577,6 +596,7 @@ export type ApiDirectory = {
   'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
   'iscsi.global.update': { params: [IscsiGlobalConfigUpdate]; response: IscsiGlobalConfig };
   'iscsi.targetextent.create': { params: [IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
+  'iscsi.target.validate_name': { params: [string]; response: string };
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
   'iscsi.targetextent.delete': { params: [id: number, force?: boolean]; response: boolean };
@@ -598,9 +618,12 @@ export type ApiDirectory = {
 
   // IPMI
   'ipmi.is_loaded': { params: void; response: boolean };
-  'ipmi.identify': { params: [IpmiIdentify]; response: void };
   'ipmi.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
   'ipmi.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
+
+  // IPMI Chassis
+  'ipmi.chassis.identify': { params: [OnOff]; response: void };
+  'ipmi.chassis.query': { params: void; response: IpmiChassis };
 
   // Group
   'group.query': { params: QueryParams<Group>; response: Group[] };
@@ -804,6 +827,7 @@ export type ApiDirectory = {
   'system.shutdown': { params: { delay?: number }; response: void };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.info': { params: void; response: SystemInfo };
+  'system.is_ha_capable': { params: void; response: boolean };
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
@@ -969,8 +993,7 @@ export type ApiDirectory = {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
-  'user.shell_choices': { params: [userId?: number]; response: Choices };
-  'user.set_attribute': { params: [id: number, key: string, value: unknown]; response: boolean };
+  'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
 
@@ -1021,6 +1044,18 @@ export type ApiDirectory = {
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
 };
 
+/**
+ * API definitions for `call` and `job` methods for auth apis.
+ */
+export type AuthApiDirectory = {
+  'auth.login': {
+    params: LoginParams;
+    response: boolean;
+  };
+  'auth.login_with_token': { params: [token: string]; response: boolean };
+  'auth.logout': { params: void; response: void };
+  'auth.generate_token': { params: [number]; response: string };
+};
 /**
  * Prefer typing like this:
  * ```

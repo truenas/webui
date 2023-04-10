@@ -1,4 +1,4 @@
-<div #tooltip class="tooltip">
+<div class="tooltip">
   <popper-content #popperTooltip class="fn-theme-tooltip">
     <div class="tooltip-header">
       <div class="title-wrapper">
@@ -10,36 +10,28 @@
         </div>
       </div>
       <div>
-        <mat-icon
+        <ix-icon
           class="close-icon"
-          fontSet="mdi-set"
-          fontIcon="mdi-close"
-          ix-auto
-          ix-auto-type="tooltip-close"
-          [ix-auto-identifier]="header"
+          name="mdi-close"
+          ixTest="close-tooltip"
           (click)="popperTooltip.hide()"
-        ></mat-icon>
+        ></ix-icon>
       </div>
     </div>
     <div
       class="tooltip-message"
-      ix-auto
-      ix-auto-type="tooltip-message"
-      [ix-auto-identifier]="header"
+      ixTest="tooltip-message"
       [innerHTML]="message | translate"
     ></div>
   </popper-content>
 
-  <img />
-
-  <i
-    class="material-icons tooltip-icon"
+  <ix-icon
+    class="tooltip-icon"
+    name="help_outline"
     popperAppendTo="body"
-    ix-auto
-    ix-auto-type="tooltip-icon"
-    [ix-auto-identifier]="header"
+    [ixTest]="['tooltip', header]"
     [popperTrigger]="'click' | cast"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"
-  >help_outline</i>
+  ></ix-icon>
 </div>

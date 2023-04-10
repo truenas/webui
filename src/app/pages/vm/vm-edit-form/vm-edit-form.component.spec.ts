@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -15,7 +15,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -41,6 +41,7 @@ describe('VmEditFormComponent', () => {
     cpu_mode: VmCpuMode.Custom,
     cpu_model: 'EPYC',
     memory: 257,
+    min_memory: 256,
     nodeset: '0-1',
     hide_from_msr: false,
     ensure_display_device: true,
@@ -74,7 +75,7 @@ describe('VmEditFormComponent', () => {
         }),
         mockCall('vm.update'),
       ]),
-
+      mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
           { label: 'GeForce', value: '0000:02:00.0' },
@@ -151,11 +152,12 @@ describe('VmEditFormComponent', () => {
       'CPU Mode': 'Custom',
       'CPU Model': 'EPYC',
       'Memory Size': '257 MiB',
+      'Minimum Memory Size': '256 MiB',
       'Optional: NUMA nodeset (Example: 0-1)': '0-1',
 
       'Hide from MSR': false,
       'Ensure Display Device': true,
-      "GPU's": ['GeForce'],
+      GPUs: ['GeForce'],
     });
   });
 
@@ -163,6 +165,8 @@ describe('VmEditFormComponent', () => {
     await form.fillForm({
       Name: 'Edited',
       Description: 'New description',
+      'Memory Size': '258 mb',
+      'Minimum Memory Size': '257 mb',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -179,7 +183,8 @@ describe('VmEditFormComponent', () => {
       ensure_display_device: true,
       hide_from_msr: false,
       hyperv_enlightenments: false,
-      memory: 257,
+      memory: 258,
+      min_memory: 257,
       name: 'Edited',
       nodeset: '0-1',
       pin_vcpus: false,
@@ -193,7 +198,7 @@ describe('VmEditFormComponent', () => {
 
   it('updates GPU devices when form is edited and saved', async () => {
     await form.fillForm({
-      "GPU's": ['Intel Arc'],
+      GPUs: ['Intel Arc'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

@@ -4,6 +4,7 @@
       <a
         tabindex="0"
         class="mobile-back-button"
+        ixTest="disk-details-back"
         (click)="onCloseMobileDetails()"
         (keydown.enter)="onCloseMobileDetails()"
       >
@@ -33,6 +34,7 @@
       [topologyParentItem]="topologyParentItem"
       [poolId]="poolId"
       [topologyCategory]="topologyCategory"
+      [hasTopLevelRaidz]="hasTopLevelRaidz"
     ></ix-zfs-info-card>
 
     <ng-container *ngIf="isTopologyDisk && hasTopologyItemDisk">

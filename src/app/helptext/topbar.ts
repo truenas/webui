@@ -22,6 +22,7 @@ export default {
     [FailoverDisabledReason.NoJournalSync]: T('Thread responsible for syncing db transactions not running on this node.'),
     [FailoverDisabledReason.RemNoJournalSync]: T('Thread responsible for syncing db transactions not running on other node.'),
     [FailoverDisabledReason.RemFailoverOngoing]: T('Other node is currently processing a failover event.'),
+    [FailoverDisabledReason.LocFailoverOngoing]: T('This node is currently processing a failover event.'),
     [FailoverDisabledReason.NoHeartbeatIface]: T('Local heartbeat interface does not exist.'),
     [FailoverDisabledReason.NoCarrierOnHeartbeat]: T('Local heartbeat interface is down.'),
   },

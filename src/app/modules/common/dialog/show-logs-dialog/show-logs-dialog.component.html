@@ -9,10 +9,16 @@
   <button
     mat-button
     matDialogClose
-  >{{ 'Close' | translate }}</button>
+    ixTest="close"
+  >
+    {{ 'Close' | translate }}
+  </button>
   <button
     mat-button
     color="primary"
+    ixTest="download-logs"
     (click)="downloadLogs()"
-  >{{ 'Download Logs' | translate }}</button>
+  >
+    {{ 'Download Logs' | translate }}
+  </button>
 </div>

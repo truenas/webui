@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -12,8 +12,9 @@ import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExtentFormComponent', () => {
   let spectator: Spectator<ExtentFormComponent>;
@@ -49,6 +50,7 @@ describe('ExtentFormComponent', () => {
     providers: [
       mockProvider(IxSlideInService),
       mockProvider(StorageService),
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('iscsi.extent.create'),
         mockCall('iscsi.extent.update'),

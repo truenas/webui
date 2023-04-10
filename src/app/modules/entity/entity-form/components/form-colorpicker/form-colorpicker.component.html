@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="dynamic-field form-input colorpicker"
-  ix-auto
-  ix-auto-type="colorpicker"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [id]="config.name"
   [ngClass]="fieldShow"
@@ -18,6 +15,7 @@
     <input
       #input
       matInput
+      [ixTest]="config.name"
       [placeholder]="config.placeholder | translate"
       [value]="colorProxy"
       (input)="colorProxy = input.value"
@@ -29,6 +27,7 @@
       cpPosition="bottom"
       cpWidth="180px"
       class="picker-input"
+      [ixTest]="['color-picker', config.name]"
       [cpToggle]="picker"
       [cpPositionRelativeToArrow]="true"
       [formControlName]="config.name"

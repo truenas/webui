@@ -1,13 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface DeviceDeleteModalState {
   row: VmDevice;
@@ -33,8 +34,9 @@ export class DeviceDeleteModalComponent implements OnInit {
   constructor(
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public data: DeviceDeleteModalState,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private dialogRef: MatDialogRef<DeviceDeleteModalComponent>,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
@@ -56,7 +58,7 @@ export class DeviceDeleteModalComponent implements OnInit {
       this.translate.instant('Name of the zvol must be correct'),
     );
 
-    this.form.controls['zvolConfirm'].setValidators([
+    this.form.controls.zvolConfirm.setValidators([
       this.validatorsService.validateOnCondition(
         (control: AbstractControl) => control.parent.get('zvol').value,
         Validators.compose([
@@ -72,7 +74,7 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls['zvol'].valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.zvol.valueChanges.pipe(untilDestroyed(this)).subscribe(
       ($event) => this.onDestroyCheckedStateChanged($event),
     );
   }
@@ -98,8 +100,8 @@ export class DeviceDeleteModalComponent implements OnInit {
           this.dialogRef.close(true);
           this.loader.close();
         },
-        error: (err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.loader.close();
         },
       });
@@ -112,8 +114,8 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   private resetZvolConfirmValidState(): void {
-    this.form.get('zvolConfirm').reset();
-    this.form.get('zvolConfirm').setErrors(null);
+    this.form.controls.zvolConfirm.reset();
+    this.form.controls.zvolConfirm.setErrors(null);
   }
 
   private getZvolName(disk: VmDiskDevice): string {

@@ -1,19 +1,20 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import {
+  AbstractControl, UntypedFormArray, UntypedFormGroup, Validators,
+} from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, merge } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
-import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
@@ -24,16 +25,12 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import {
-  KeychainCredential,
-  KeychainCredentialCreate,
-  KeychainSshCredentials,
-} from 'app/interfaces/keychain-credential.interface';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { SshSemiAutomaticSetup } from 'app/interfaces/ssh-connection-setup.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
   FieldConfig,
@@ -46,9 +43,8 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   SshConnectionFormComponent,
@@ -57,22 +53,30 @@ import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import {
+  ReplicationWizardData,
+} from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
+import {
   AppLoaderService,
   DialogService,
   KeychainCredentialService,
   ReplicationService,
   TaskService,
-  WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
+
+interface CreatedPayloads {
+  periodic_snapshot_tasks?: PeriodicSnapshotTask[];
+  snapshot?: ZfsSnapshot[];
+  replication?: ReplicationTask;
+}
 
 interface CreatedItems {
   periodic_snapshot_tasks?: number[];
   snapshot?: ZfsSnapshot[];
   replication?: number;
-  private_key?: number;
-  ssh_credentials?: number;
 }
 
 @UntilDestroy()
@@ -272,6 +276,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               value: this.defaultNamingSchema,
               parent: this,
               blurStatus: true,
+              required: true,
+              validation: [Validators.required],
               blurEvent: () => {
                 this.getSnapshots();
               },
@@ -283,6 +289,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
+              required: true,
+              validation: [Validators.required],
               blurEvent: () => {
                 this.getSnapshots();
               },
@@ -520,6 +528,23 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }],
             },
             {
+              type: 'checkbox',
+              name: 'sudo',
+              placeholder: this.translate.instant('Use Sudo For Zfs Commands'),
+              tooltip: helptext.sudo_tooltip,
+              relation: [{
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
+                when: [{
+                  name: 'source_datasets_from',
+                  value: DatasetSource.Remote,
+                }, {
+                  name: 'target_dataset_from',
+                  value: DatasetSource.Remote,
+                }],
+              }],
+            },
+            {
               type: 'input',
               name: 'name',
               placeholder: helptext.name_placeholder,
@@ -649,26 +674,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ],
     },
   ];
-  private sshCredentials: { label: string; value: number }[];
+  private sshCredentials: KeychainSshCredentials[];
+  private sshCredentialOptions: { label: string; value: number }[];
 
   protected selectedReplicationTask: ReplicationTask;
-  protected semiSshFieldGroup = [
-    'url',
-    'password',
-  ] as const;
-
-  protected createCalls = {
-    private_key: 'keychaincredential.create',
-    ssh_credentials_semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
-    ssh_credentials_manual: 'keychaincredential.create',
-    periodic_snapshot_tasks: 'pool.snapshottask.create',
-    replication: 'replication.create',
-    snapshot: 'zfs.snapshot.create',
-  } as const;
 
   protected deleteCalls = {
-    private_key: 'keychaincredential.delete',
-    ssh_credentials: 'keychaincredential.delete',
     periodic_snapshot_tasks: 'pool.snapshottask.delete',
     replication: 'replication.delete',
   } as const;
@@ -686,6 +697,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private replicationService: ReplicationService,
+    private errorHandler: ErrorHandlerService,
     private datePipe: DatePipe,
     private entityFormService: EntityFormService,
     private modalService: ModalService,
@@ -746,12 +758,36 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     const sshCredentialsSourceField = _.find(this.sourceFieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
     const sshCredentialsTargetField = _.find(this.targetFieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
     this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
-      this.sshCredentials = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
-      sshCredentialsSourceField.options = [...this.sshCredentials];
-      sshCredentialsTargetField.options = [...this.sshCredentials];
+      this.sshCredentials = credentials;
+      this.sshCredentialOptions = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
+      sshCredentialsSourceField.options = [...this.sshCredentialOptions];
+      sshCredentialsTargetField.options = [...this.sshCredentialOptions];
       sshCredentialsSourceField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
       sshCredentialsTargetField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
     });
+
+    merge(
+      this.entityWizard.formArray.get([0]).get('ssh_credentials_source').valueChanges,
+      this.entityWizard.formArray.get([0]).get('ssh_credentials_target').valueChanges,
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe((credentialId: number) => {
+        const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
+        if (!selectedCredential || selectedCredential.attributes.username === 'root') {
+          return;
+        }
+
+        this.dialogService.confirm({
+          title: this.translate.instant('Sudo Enabled'),
+          message: helptext.sudo_warning,
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Use Sudo for Zfs Commands'),
+        })
+          .pipe(untilDestroyed(this))
+          .subscribe((useSudo) => {
+            this.entityWizard.formArray.get([0]).get('sudo').setValue(useSudo);
+          });
+      });
 
     this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: ReplicationTask) => {
       if (value !== null) {
@@ -830,6 +866,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     });
 
+    this.entityWizard.formArray.get([1]).get('schedule_method').valueChanges
+      .pipe(untilDestroyed(this)).subscribe((value: ScheduleMethod) => {
+        const customSnapshotsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'custom_snapshots' });
+        customSnapshotsFieldConfig.required = value === ScheduleMethod.Once;
+        customSnapshotsFieldConfig.validation = value === ScheduleMethod.Once ? [Validators.required] : undefined;
+      });
+
     this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       this.toggleNamingSchemaOrRegex();
       if (!value) {
@@ -848,6 +891,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   setSchemaOrRegexForObject(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any,
     schemaOrRegex: SnapshotNamingOption,
     schema: string = null,
@@ -893,8 +937,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
-        (res) => {
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials).then(
+        (listing) => {
           const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
           const prevErrors = sourceDatasetsFormControl.errors;
           delete prevErrors.failedToLoadChildren;
@@ -906,7 +950,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
           sourceDatasetsFieldConfig.warnings = null;
 
-          resolve(res);
+          resolve(listing);
         },
         () => {
           node.collapse();
@@ -938,8 +982,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
-        (res) => {
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials).then(
+        (listing) => {
           const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
           const prevErrors = targetDatasetFormControl.errors;
           delete prevErrors.failedToLoadChildren;
@@ -951,7 +995,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
           targetDatasetFieldConfig.warnings = null;
 
-          resolve(res);
+          resolve(listing);
         },
         () => {
           node.collapse();
@@ -970,7 +1014,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   setDisable(field: string, disabled: boolean, isHidden: boolean, stepIndex: number): void {
     const control: FieldConfig = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
-    control['isHidden'] = isHidden;
+    control.isHidden = isHidden;
     control.disabled = disabled;
     if (disabled) {
       this.entityWizard.formArray.get([stepIndex]).get(field).disable();
@@ -979,21 +1023,22 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loadReplicationTask(task: any): void {
     // TODO: Update logic to use ReplicationTask as a type
     // Add something similar to resourceTransformIncomingRestData for EntityWizard
     // 'task.periodic_snapshot_tasks' should be type of number[] currently PeriodicSnapshotTask[]
     // 'task.ssh_credentials' should be type of number[], currently SshCredentials[]
     if (task.direction === Direction.Push) {
-      task['source_datasets_from'] = DatasetSource.Local;
-      task['target_dataset_from'] = task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local;
+      task.source_datasets_from = DatasetSource.Local;
+      task.target_dataset_from = task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local;
       if (task.ssh_credentials) {
-        task['ssh_credentials_target'] = task.ssh_credentials.id;
+        task.ssh_credentials_target = task.ssh_credentials.id;
       }
     } else {
-      task['source_datasets_from'] = DatasetSource.Remote;
-      task['target_dataset_from'] = DatasetSource.Local;
-      task['ssh_credentials_source'] = task.ssh_credentials.id;
+      task.source_datasets_from = DatasetSource.Remote;
+      task.target_dataset_from = DatasetSource.Local;
+      task.ssh_credentials_source = task.ssh_credentials.id;
     }
 
     const controls = [
@@ -1014,18 +1059,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (task.schedule || task.periodic_snapshot_tasks.length > 0) {
       const taskData = task.periodic_snapshot_tasks[0] || task;
-      task['schedule_method'] = ScheduleMethod.Cron;
-      task['schedule_picker'] = taskData.schedule ? `${taskData.schedule.minute} ${taskData.schedule.hour} ${taskData.schedule.dom} ${taskData.schedule.month} ${taskData.schedule.dow}` : null;
+      task.schedule_method = ScheduleMethod.Cron;
+      task.schedule_picker = taskData.schedule ? `${taskData.schedule.minute} ${taskData.schedule.hour} ${taskData.schedule.dom} ${taskData.schedule.month} ${taskData.schedule.dow}` : null;
 
-      if (taskData['lifetime_value'] === null && taskData['lifetime_unit'] === null) {
-        task['retention_policy'] = RetentionPolicy.None;
+      if (taskData.lifetime_value === null && taskData.lifetime_unit === null) {
+        task.retention_policy = RetentionPolicy.None;
       } else {
-        task['lifetime_value'] = taskData['lifetime_value'];
-        task['lifetime_unit'] = taskData['lifetime_unit'];
-        task['retention_policy'] = task.schedule !== null ? RetentionPolicy.Custom : RetentionPolicy.Source;
+        task.lifetime_value = taskData.lifetime_value;
+        task.lifetime_unit = taskData.lifetime_unit;
+        task.retention_policy = task.schedule !== null ? RetentionPolicy.Custom : RetentionPolicy.Source;
       }
     } else {
-      task['schedule_method'] = ScheduleMethod.Once;
+      task.schedule_method = ScheduleMethod.Once;
     }
     // periodic_snapshot_tasks
     for (const i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
@@ -1059,181 +1104,25 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     };
   }
 
-  async doCreate(
-    data: any, item: keyof CreatedItems,
-  ): Promise<KeychainCredential | KeychainSshCredentials | PeriodicSnapshotTask[] | ReplicationTask | ZfsSnapshot[]> {
-    if (item === 'private_key') {
-      const payload = {
-        name: data['name'] + ' Key',
-        type: KeychainCredentialType.SshKeyPair,
-        attributes: data['sshkeypair'],
-      };
-      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
-    }
-
-    if (item === 'ssh_credentials') {
-      let payload: SshSemiAutomaticSetup | KeychainCredentialCreate;
-      const sshCreateItem = `${item}_${data['setup_method']}` as 'ssh_credentials_semiautomatic' | 'ssh_credentials_manual';
-      if (data['setup_method'] === 'manual') {
-        payload = {
-          name: data['name'],
-          type: KeychainCredentialType.SshCredentials,
-          attributes: {
-            cipher: data['cipher'],
-            host: data['host'],
-            port: data['port'],
-            private_key: data['private_key'],
-            remote_host_key: data['remote_host_key'],
-            username: data['username'],
-          },
-        } as KeychainCredentialCreate;
-        return this.ws.call(this.createCalls[sshCreateItem], [payload]).toPromise();
-      }
-
-      payload = {
-        name: data['name'],
-        private_key: data['private_key'],
-        cipher: data['cipher'],
-      } as SshSemiAutomaticSetup;
-      for (const i of this.semiSshFieldGroup) {
-        payload[i] = data[i];
-      }
-      return lastValueFrom(this.ws.call(this.createCalls[sshCreateItem], [payload]));
-    }
-
-    if (item === 'periodic_snapshot_tasks') {
-      let payload: PeriodicSnapshotTaskCreate;
-      this.existSnapshotTasks = [];
-      const snapshotPromises: Promise<PeriodicSnapshotTask>[] = [];
-      for (const dataset of data['source_datasets']) {
-        payload = {
-          dataset,
-          recursive: data['recursive'],
-          schedule: this.parsePickerTime(data['schedule_picker']),
-          lifetime_value: 2,
-          lifetime_unit: LifetimeUnit.Week,
-          naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
-          enabled: true,
-        };
-        await this.isSnapshotTaskExist(payload).then((tasks) => {
-          if (tasks.length === 0) {
-            snapshotPromises.push(
-              lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
-            );
-          } else {
-            this.existSnapshotTasks.push(...tasks.map((task) => task.id));
-          }
-        });
-      }
-      return Promise.all(snapshotPromises);
-    }
-
-    if (item === 'snapshot') {
-      const snapshotPromises = [];
-      for (const dataset of data['source_datasets']) {
-        const payload = {
-          dataset,
-          naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
-          recursive: data['recursive'] ? data['recursive'] : false,
-        };
-        snapshotPromises.push(
-          lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
-        );
-      }
-      return Promise.all(snapshotPromises);
-    }
-
-    if (item === 'replication') {
-      let payload = {
-        name: data['name'],
-        direction: data['source_datasets_from'] === DatasetSource.Remote ? Direction.Pull : Direction.Push,
-        source_datasets: data['source_datasets'],
-        target_dataset: data['target_dataset'],
-        ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
-        transport: data['transport'] ? data['transport'] : TransportMode.Local,
-        retention_policy: data['retention_policy'],
-        recursive: data['recursive'],
-        encryption: data['encryption'],
-      } as ReplicationCreate;
-      if (payload.encryption) {
-        payload['encryption_key_format'] = data['encryption_key_format'];
-        if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
-          payload['encryption_key'] = data['encryption_key_passphrase'];
-        } else {
-          payload['encryption_key'] = data['encryption_key_generate']
-            ? this.replicationService.generateEncryptionHexKey(64)
-            : data['encryption_key_hex'];
-        }
-
-        payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? truenasDbKeyLocation : data['encryption_key_location'];
-      }
-
-      // schedule option
-      if (data['schedule_method'] === ScheduleMethod.Cron) {
-        payload['auto'] = true;
-        if (payload['direction'] === Direction.Pull) {
-          payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
-        } else {
-          payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
-        }
-      } else {
-        payload['auto'] = false;
-        if (payload['direction'] === Direction.Pull) {
-          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
-        } else if (data['schema_or_regex'] === SnapshotNamingOption.NamingSchema) {
-          payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
-        } else {
-          payload.name_regex = data['name_regex'];
-        }
-      }
-
-      if (data['retention_policy'] === RetentionPolicy.Custom) {
-        payload['lifetime_value'] = data['lifetime_value'];
-        payload['lifetime_unit'] = data['lifetime_unit'];
-      }
-
-      if (payload['transport'] === TransportMode.Netcat) {
-        payload['netcat_active_side'] = NetcatMode.Remote; // default?
-      }
-
-      payload['readonly'] = data['schedule_method'] === ScheduleMethod.Cron || data['readonly']
-        ? ReadOnlyMode.Set
-        : ReadOnlyMode.Ignore;
-
-      return this.ws.call('replication.target_unmatched_snapshots', [
-        payload['direction'],
-        payload['source_datasets'],
-        payload['target_dataset'],
-        payload['transport'],
-        payload['ssh_credentials'],
-      ]).toPromise().then(
-        (res) => {
-          const hasBadSnapshots = Object.values(res).some((snapshots) => snapshots.length > 0);
-          if (hasBadSnapshots) {
-            return this.dialogService.confirm({
-              title: helptext.clearSnapshotDialog_title,
-              message: helptext.clearSnapshotDialog_content,
-            }).toPromise().then(
-              (dialogResult) => {
-                payload['allow_from_scratch'] = dialogResult;
-                return this.ws.call(this.createCalls[item], [payload]).toPromise();
-              },
-            );
-          }
-          return this.ws.call(this.createCalls[item], [payload]).toPromise();
-        },
-        () => {
-          // show error ?
-          this.ws.call(this.createCalls[item], [payload]).toPromise();
-        },
-      ) as Promise<ReplicationTask>;
+  async doCreate<T extends keyof CreatedPayloads>(
+    data: ReplicationWizardData, item: T,
+  ): Promise<CreatedPayloads[T]> {
+    switch (item) {
+      case 'periodic_snapshot_tasks':
+        return this.createPeriodicSnapshotTasks(data) as Promise<CreatedPayloads[T]>;
+      case 'snapshot':
+        return this.createSnapshots(data) as Promise<CreatedPayloads[T]>;
+      case 'replication':
+        return this.createReplicationTask(data) as Promise<CreatedPayloads[T]>;
+      default:
+        throw new Error(`Unknown item: ${item}`);
     }
   }
 
-  async customSubmit(value: any): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async customSubmit(value: Record<string, any>): Promise<void> {
     if (typeof (value.source_datasets) === 'string') {
-      value.source_datasets = _.filter(value.source_datasets.split(',').map(_.trim));
+      value.source_datasets = _.filter((value.source_datasets).split(',').map(_.trim));
     }
     this.loader.open();
     let toStop = false;
@@ -1244,33 +1133,33 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       replication: null,
     };
 
-    // eslint-disable-next-line no-restricted-syntax,guard-for-in
-    for (const createdItem in createdItems) {
-      const item = createdItem as 'periodic_snapshot_tasks' | 'snapshot' | 'replication';
+    for (const createdItemName of Object.keys(createdItems)) {
+      const item = createdItemName as 'periodic_snapshot_tasks' | 'snapshot' | 'replication';
       // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
-        if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== DatasetSource.Local))
-                && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== DatasetSource.Local))) {
-          await this.doCreate(value, item).then(
-            (res: PeriodicSnapshotTask[] | ReplicationTask | ZfsSnapshot[]) => {
+        if (!(item === 'periodic_snapshot_tasks' && (value.schedule_method !== ScheduleMethod.Cron || value.source_datasets_from !== DatasetSource.Local))
+                && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value.source_datasets_from !== DatasetSource.Local))) {
+          await this.doCreate(value as ReplicationWizardData, item).then(
+            (createdItem) => {
               if (item === 'snapshot') {
-                createdItems[item] = res as ZfsSnapshot[];
+                createdItems[item] = createdItem as ZfsSnapshot[];
               } else {
-                value[item] = ('id' in res && res.id)
-                  || (res as PeriodicSnapshotTask[]).map((snapshot: { id: number }) => snapshot.id);
+                value[item] = Array.isArray(createdItem)
+                  ? createdItem.map((resItem) => resItem.id)
+                  : createdItem?.id;
                 if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
-                  value[item].push(...this.existSnapshotTasks);
+                  (value[item] as number[]).push(...this.existSnapshotTasks);
                 }
-                if ('id' in res && res.id) {
-                  createdItems[item as 'replication'] = res.id;
-                } else {
-                  createdItems[item as 'periodic_snapshot_tasks'] = (res as PeriodicSnapshotTask[])
+                if (Array.isArray(createdItem)) {
+                  createdItems[item as 'periodic_snapshot_tasks'] = (createdItem as PeriodicSnapshotTask[])
                     .map((snapshot: { id: number }) => snapshot.id);
+                } else {
+                  createdItems[item as 'replication'] = createdItem.id;
                 }
               }
             },
-            (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
+            (error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               toStop = true;
               this.rollBack(createdItems);
             },
@@ -1279,12 +1168,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     }
 
-    if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] !== undefined) {
-      await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
+    if (value.schedule_method === ScheduleMethod.Once && createdItems.replication) {
+      await this.ws.call('replication.run', [createdItems.replication]).toPromise().then(
         () => {
           this.dialogService.info(
             this.translate.instant('Task started'),
-            this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
+            this.translate.instant('Replication <i>{name}</i> has started.', { name: value.name }),
             true,
           );
         },
@@ -1313,6 +1202,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
 
       if (key === 'snapshot') {
+        if (!items[key]?.length) {
+          continue;
+        }
+        for (const task of items[key]) {
+          await this.ws.call('zfs.snapshot.delete', [task.name]).toPromise();
+        }
         continue;
       }
 
@@ -1335,7 +1230,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
         const newCredential = credentials.find((credential) => {
-          return !this.sshCredentials.find((existingCredential) => existingCredential.value === credential.id);
+          return !this.sshCredentialOptions.find((existingCredential) => existingCredential.value === credential.id);
         });
 
         if (!newCredential) {
@@ -1344,16 +1239,17 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }
         const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
         const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-        sshCredentialsSourceField.options.push({ label: newCredential.name + ' (New Created)', value: newCredential.id });
-        sshCredentialsTargetField.options.push({ label: newCredential.name + ' (New Created)', value: newCredential.id });
+        sshCredentialsSourceField.options.push({ label: newCredential.name + ' (Newly Created)', value: newCredential.id });
+        sshCredentialsTargetField.options.push({ label: newCredential.name + ' (Newly Created)', value: newCredential.id });
+        this.sshCredentials = credentials;
+        this.sshCredentialOptions = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
         this.entityWizard.formArray.get([0]).get([activatedField]).setValue(newCredential.id);
-        this.sshCredentials = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
       });
     });
   }
 
   genTaskName(): void {
-    const source = this.entityWizard.formArray.get([0]).get('source_datasets').value || [];
+    const source: string[] = this.entityWizard.formArray.get([0]).get('source_datasets').value || [];
     const target = this.entityWizard.formArray.get([0]).get('target_dataset').value;
     let suggestName = '';
     if (source.length > 3) {
@@ -1372,9 +1268,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value) {
       transport = TransportMode.Local;
     }
-    const namingSchemaFormControl = this.entityWizard.formArray.get([0]).get('naming_schema');
+    const namingSchemaFormControl: AbstractControl<string> = this.entityWizard.formArray.get([0]).get('naming_schema');
     const namingSchema = namingSchemaFormControl.enabled && namingSchemaFormControl.value
-      ? namingSchemaFormControl.value.split(' ') : [this.defaultNamingSchema];
+      ? namingSchemaFormControl.value.split(' ')
+      : [this.defaultNamingSchema];
 
     const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
 
@@ -1394,24 +1291,24 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (payload[0].datasets.length > 0) {
       this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe({
-        next: (res) => {
-          this.eligibleSnapshots = res.eligible;
+        next: (snapshotCount) => {
+          this.eligibleSnapshots = snapshotCount.eligible;
           const isPush = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
           let spanClass = 'info-paragraph';
           let snapexpl = '';
-          if (res.eligible === 0) {
+          if (snapshotCount.eligible === 0) {
             if (isPush) {
               snapexpl = 'Snapshots will be created automatically.';
             } else {
               spanClass = 'warning-paragraph';
             }
           }
-          this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${res.eligible}</b> snapshots found. ${snapexpl}</span>`;
+          this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${snapshotCount.eligible}</b> snapshots found. ${snapexpl}</span>`;
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           this.eligibleSnapshots = 0;
           this.snapshotsCountField.paraText = '';
-          new EntityUtils().handleWsError(this, err);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     } else {
@@ -1427,13 +1324,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }): Promise<PeriodicSnapshotTask[]> {
     return lastValueFrom(
       this.ws.call('pool.snapshottask.query', [[
-        ['dataset', '=', payload['dataset']],
-        ['schedule.minute', '=', payload['schedule']['minute']],
-        ['schedule.hour', '=', payload['schedule']['hour']],
-        ['schedule.dom', '=', payload['schedule']['dom']],
-        ['schedule.month', '=', payload['schedule']['month']],
-        ['schedule.dow', '=', payload['schedule']['dow']],
-        ['naming_schema', '=', payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema],
+        ['dataset', '=', payload.dataset],
+        ['schedule.minute', '=', payload.schedule.minute],
+        ['schedule.hour', '=', payload.schedule.hour],
+        ['schedule.dom', '=', payload.schedule.dom],
+        ['schedule.month', '=', payload.schedule.month],
+        ['schedule.dow', '=', payload.schedule.dow],
+        ['naming_schema', '=', payload.naming_schema ? payload.naming_schema : this.defaultNamingSchema],
       ]]),
     );
   }
@@ -1476,5 +1373,137 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
       this.setDisable('name_regex', true, true, 0);
     }
+  }
+
+  private async createPeriodicSnapshotTasks(data: ReplicationWizardData): Promise<PeriodicSnapshotTask[]> {
+    let payload: PeriodicSnapshotTaskCreate;
+    this.existSnapshotTasks = [];
+    const snapshotPromises: Promise<PeriodicSnapshotTask>[] = [];
+    for (const dataset of data.source_datasets) {
+      payload = {
+        dataset,
+        recursive: data.recursive,
+        schedule: this.parsePickerTime(data.schedule_picker),
+        lifetime_value: 2,
+        lifetime_unit: LifetimeUnit.Week,
+        naming_schema: data.naming_schema ? data.naming_schema : this.defaultNamingSchema,
+        enabled: true,
+      };
+      await this.isSnapshotTaskExist(payload).then((tasks) => {
+        if (tasks.length === 0) {
+          snapshotPromises.push(
+            lastValueFrom(this.ws.call('pool.snapshottask.create', [payload])),
+          );
+        } else {
+          this.existSnapshotTasks.push(...tasks.map((task) => task.id));
+        }
+      });
+    }
+    return Promise.all(snapshotPromises);
+  }
+
+  private createSnapshots(data: ReplicationWizardData): Promise<ZfsSnapshot[]> {
+    const snapshotPromises = [];
+    for (const dataset of data.source_datasets) {
+      const payload = {
+        dataset,
+        naming_schema: data.naming_schema ? data.naming_schema : this.defaultNamingSchema,
+        recursive: data.recursive ? data.recursive : false,
+      };
+      snapshotPromises.push(
+        lastValueFrom(this.ws.call('zfs.snapshot.create', [payload])),
+      );
+    }
+    return Promise.all(snapshotPromises);
+  }
+
+  private createReplicationTask(data: ReplicationWizardData): Promise<ReplicationTask> {
+    let payload = {
+      name: data.name,
+      direction: data.source_datasets_from === DatasetSource.Remote ? Direction.Pull : Direction.Push,
+      source_datasets: data.source_datasets,
+      target_dataset: data.target_dataset,
+      ssh_credentials: data.ssh_credentials_source || data.ssh_credentials_target,
+      transport: data.transport ? data.transport : TransportMode.Local,
+      retention_policy: data.retention_policy,
+      recursive: data.recursive,
+      encryption: data.encryption,
+      sudo: data.sudo,
+    } as ReplicationCreate;
+    if (payload.encryption) {
+      payload.encryption_key_format = data.encryption_key_format;
+      if (data.encryption_key_format === EncryptionKeyFormat.Passphrase) {
+        payload.encryption_key = data.encryption_key_passphrase;
+      } else {
+        payload.encryption_key = data.encryption_key_generate
+          ? this.replicationService.generateEncryptionHexKey(64)
+          : data.encryption_key_hex;
+      }
+
+      payload.encryption_key_location = data.encryption_key_location_truenasdb
+        ? truenasDbKeyLocation
+        : data.encryption_key_location;
+    }
+
+    // schedule option
+    if (data.schedule_method === ScheduleMethod.Cron) {
+      payload.auto = true;
+      if (payload.direction === Direction.Pull) {
+        payload.schedule = this.parsePickerTime(data.schedule_picker);
+        payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
+      } else {
+        payload.periodic_snapshot_tasks = data.periodic_snapshot_tasks;
+      }
+    } else {
+      payload.auto = false;
+      if (payload.direction === Direction.Pull) {
+        payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
+      } else if (data.schema_or_regex === SnapshotNamingOption.NamingSchema) {
+        payload.also_include_naming_schema = data.naming_schema ? [data.naming_schema] : [this.defaultNamingSchema];
+      } else {
+        payload.name_regex = data.name_regex;
+      }
+    }
+
+    if (data.retention_policy === RetentionPolicy.Custom) {
+      payload.lifetime_value = data.lifetime_value;
+      payload.lifetime_unit = data.lifetime_unit;
+    }
+
+    if (payload.transport === TransportMode.Netcat) {
+      payload.netcat_active_side = NetcatMode.Remote; // default?
+    }
+
+    payload.readonly = data.schedule_method === ScheduleMethod.Cron || data.readonly
+      ? ReadOnlyMode.Set
+      : ReadOnlyMode.Ignore;
+
+    return lastValueFrom(this.ws.call('replication.target_unmatched_snapshots', [
+      payload.direction,
+      payload.source_datasets,
+      payload.target_dataset,
+      payload.transport,
+      payload.ssh_credentials,
+    ])).then(
+      (unmatchedSnapshots) => {
+        const hasBadSnapshots = Object.values(unmatchedSnapshots).some((snapshots) => snapshots.length > 0);
+        if (hasBadSnapshots) {
+          return lastValueFrom(this.dialogService.confirm({
+            title: helptext.clearSnapshotDialog_title,
+            message: helptext.clearSnapshotDialog_content,
+          })).then(
+            (dialogResult) => {
+              payload.allow_from_scratch = dialogResult;
+              return lastValueFrom(this.ws.call('replication.create', [payload]));
+            },
+          );
+        }
+        return lastValueFrom(this.ws.call('replication.create', [payload]));
+      },
+      () => {
+        // show error ?
+        return lastValueFrom(this.ws.call('replication.create', [payload]));
+      },
+    );
   }
 }

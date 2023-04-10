@@ -66,6 +66,7 @@
           *ngFor="let weekday of weekdays"
           color="primary"
           class="weekend"
+          [ixTest]="['scheduler', weekday.label]"
           [formControlName]="weekday.value"
         >
           {{ weekday.label }}
@@ -81,6 +82,7 @@
           *ngFor="let month of months"
           color="primary"
           class="month"
+          [ixTest]="['scheduler', month.label]"
           [formControlName]="month.value"
         >
           {{ month.label }}
@@ -92,6 +94,7 @@
       <button
         mat-button
         color="primary"
+        ixTest="done"
         [disabled]="form.invalid"
         (click)="onDone()"
       >

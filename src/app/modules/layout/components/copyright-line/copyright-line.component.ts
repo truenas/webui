@@ -11,7 +11,7 @@ import { SystemGeneralService } from 'app/services';
 export class CopyrightLineComponent {
   @Input() withIxLogo = false;
 
-  productType = this.systemGeneral.getProductType();
+  productType$ = this.systemGeneral.getProductType$;
   copyrightYear$ = this.systemGeneral.getCopyrightYear$;
 
   readonly ProductType = ProductType;

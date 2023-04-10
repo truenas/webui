@@ -1,0 +1,87 @@
+<div class="filter-container">
+  <form [formGroup]="filterForm">
+    <ix-input
+      formControlName="search"
+      prefixIcon="search"
+      [placeholder]="'Search' | translate"
+    ></ix-input>
+    <div class="select-container">
+      <ix-select
+        formControlName="diskType"
+        [label]="'Filter by Disk Type' | translate"
+        [options]="typeOptions$"
+      ></ix-select>
+      <ix-select
+        formControlName="diskSize"
+        [label]="'Filter by Disk Size' | translate"
+        [options]="sizeOptions$"
+      ></ix-select>
+    </div>
+  </form>
+</div>
+
+<div
+  class="tree-container"
+  dndDropzone
+  [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
+  (dndDrop)="onDrop($event)"
+>
+  <ix-tree-view
+    [ixDataSource]="dataSource"
+    [ixTreeControl]="treeControl"
+  >
+    <ix-tree-node
+      *treeNodeDef="let disk; dataSource: dataSource"
+      treeNodeToggle
+      routerLinkActive="selected"
+    >
+      <div
+        class="unused-disk drag-handle"
+        [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+        [dndDraggable]="asDisk(disk)"
+        [dndEffectAllowed]="'move'"
+        (dndStart)="onDragStart()"
+        (dndCanceled)="onDragCanceled()"
+        (dndEnd)="onDragEnd()"
+      >
+        <ix-disk-icon
+          class="disk-icon"
+          dndDragImageRef
+          [disk]="asDisk(disk)"
+          
+        ></ix-disk-icon>
+
+        <ix-disk-info
+          class="disk-info"
+          [disk]="asDisk(disk)"
+        ></ix-disk-info>
+      </div>
+    </ix-tree-node>
+
+    <ix-nested-tree-node
+      *treeNodeDef="let group; dataSource: dataSource; when: isGroup"
+      [treeNodeDefDataSource]="dataSource"
+    >
+      <div
+        treeNodeToggle
+        class="group-row"
+        [class.group-row-empty]="!group.children.length"
+      >
+        <ix-icon name="ix:enclosure" [title]="'Enclosure' | translate"></ix-icon>
+        <span class="group-name">{{ asEnclosureGroup(group).group }}</span>
+        <ix-icon
+          *ngIf="group.children.length"
+          [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
+        ></ix-icon>
+      </div>
+
+      <ng-container
+        *ngIf="isExpanded(group)"
+        treeNodeOutlet
+      ></ng-container>
+    </ix-nested-tree-node>
+  </ix-tree-view>
+  <div *ngIf="!dataSource.data.length" class="empty-tree">
+    {{ 'No unused disks' | translate }}
+  </div>
+</div>

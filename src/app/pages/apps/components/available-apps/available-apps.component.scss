@@ -1,0 +1,53 @@
+.available-apps-list {
+  section {
+    .apps {
+      column-gap: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+      margin-bottom: 20px;
+      row-gap: 16px;
+    }
+
+    .apps-section-title {
+      background: var(--bg1);
+      color: var(--primary-txt);
+      margin: 0;
+      padding: 15px 0;
+      position: sticky;
+      text-transform: capitalize;
+      top: -15px;
+      z-index: 1;
+    }
+
+    .view-all {
+      align-items: center;
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      justify-content: flex-end;
+      margin: 0;
+    }
+  }
+
+  .filtered-apps {
+    column-gap: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    margin-bottom: 20px;
+    margin-top: 20px;
+    row-gap: 16px;
+  }
+}
+
+.apps-title {
+  color: var(--primary-txt);
+  margin-top: 15px;
+}
+
+.loader-bar {
+  height: 2px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  z-index: 10;
+}

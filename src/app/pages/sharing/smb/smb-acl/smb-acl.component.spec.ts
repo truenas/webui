@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { SmbAclComponent } from './smb-acl.component';
 
 describe('SmbAclComponent', () => {
@@ -51,6 +52,7 @@ describe('SmbAclComponent', () => {
         mockCall('smb.sharesec.update'),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
     ],
   });
 

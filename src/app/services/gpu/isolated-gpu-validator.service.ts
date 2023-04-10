@@ -3,9 +3,7 @@ import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  forkJoin, Observable, of, switchMap,
-} from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -21,22 +19,15 @@ export class IsolatedGpuValidatorService {
   ) { }
 
   validateGpu = (control: AbstractControl): Observable<ValidationErrors | null> => {
-    return forkJoin([
-      this.gpuService.getIsolatedGpuPciIds(),
-      this.gpuService.getAllGpus(),
-    ]).pipe(
-      switchMap(([oldIsolatedGpuIds, allGpus]) => {
+    return this.gpuService.getAllGpus().pipe(
+      switchMap((allGpus) => {
         const selectedGpus: string[] = control.value || [];
-        const newIsolatedGpuIds = new Set<string>([
-          ...oldIsolatedGpuIds,
-          ...selectedGpus,
-        ]);
 
-        if (!newIsolatedGpuIds.size || !selectedGpus.length) {
+        if (!selectedGpus.length) {
           return of(null);
         }
 
-        if (newIsolatedGpuIds.size < allGpus.length) {
+        if (selectedGpus.length < allGpus.length) {
           return of(null);
         }
 
@@ -48,7 +39,7 @@ export class IsolatedGpuValidatorService {
   private makeErrorMessage(): Observable<ValidationErrors> {
     return this.gpuService.getIsolatedGpus().pipe(
       map((isolatedGpus) => {
-        let errorMessage = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
+        let errorMessage = this.translate.instant('At least 1 GPU is required by the host for its functions.');
 
         if (isolatedGpus.length) {
           const gpuListItems = isolatedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);

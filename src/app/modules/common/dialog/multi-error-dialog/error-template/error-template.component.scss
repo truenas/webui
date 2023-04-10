@@ -1,0 +1,50 @@
+
+$opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
+.warning-icon {
+  color: var(--orange);
+  margin-right: 10px;
+  position: relative;
+}
+
+.backtrace-panel {
+  border: 0;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0;
+  transition: max-height 0.25s linear;
+
+  &.open {
+    margin-bottom: 24px;
+    max-height: $opened-scroll-container-height;
+    padding: 2px;
+  }
+
+  .textarea {
+    background: var(--contrast-darker);
+    border: 1px solid var(--lines);
+    color: var(--fg2);
+    font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
+    max-height: $opened-scroll-container-height;
+    min-height: 100px;
+    overflow: auto;
+    padding: 1rem;
+    white-space: pre-wrap;
+  }
+}
+
+#err-message-wrapper {
+  margin-left: 40px;
+}
+
+.scrolled-down {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#err-md-content {
+  overflow-y: auto !important;
+}
+
+.err-title {
+  align-items: center;
+}

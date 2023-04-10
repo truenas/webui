@@ -8,7 +8,11 @@
         {{ 'Zvol Space Management' | translate }}
       </ng-container>
     </h3>
-    <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+    <button
+      mat-button
+      ixTest="edit-quotas"
+      (click)="editDataset()"
+    >{{ 'Edit' | translate }}</button>
   </mat-card-header>
   <mat-card-content>
     <ix-space-management-chart [dataset]="dataset"></ix-space-management-chart>
@@ -93,7 +97,10 @@
             }
           }}
         </span>
-        <a [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]">
+        <a
+          [ixTest]="[inheritedQuotasDataset.id, 'go-to-dataset']"
+          [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]"
+        >
           {{ 'Go To Dataset' }}
         </a>
       </div>
@@ -110,6 +117,7 @@
         </ng-container>
         <a
           *ngIf="checkQuotas"
+          [ixTest]="[dataset.id, 'manage-user-quotas']"
           [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']"
         >
           {{ 'Manage User Quotas' | translate }}
@@ -124,6 +132,7 @@
         </ng-container>
         <a
           *ngIf="checkQuotas"
+          [ixTest]="[dataset.id, 'manage-group-quotas']"
           [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']"
         >
           {{ 'Manage Group Quotas' | translate }}

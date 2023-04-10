@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -21,8 +21,9 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { ModalService, WebSocketService } from 'app/services';
+import { DialogService, ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit.component';
 
 describe('CertificateEditComponent', () => {
@@ -47,6 +48,7 @@ describe('CertificateEditComponent', () => {
       mockProvider(MatDialog),
       mockProvider(IxSlideInService),
       mockProvider(ModalService),
+      mockProvider(DialogService),
     ],
     declarations: [
       MockComponent(ViewCertificateDialogComponent),

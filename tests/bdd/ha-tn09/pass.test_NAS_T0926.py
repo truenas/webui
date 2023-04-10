@@ -255,8 +255,8 @@ def the_pools_page_should_open(driver):
 @then('Click on the dozer 3 dots button, select Add Dataset')
 def click_on_the_dozer_3_dots_button_select_add_dataset(driver):
     """Click on the dozer 3 dots button, select Add Dataset."""
-    assert wait_on_element(driver, 1, 5, '//mat-icon[@id="actions_menu_button__dozer"]')
-    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__dozer"]').click()
+    assert wait_on_element(driver, 1, 5, '//ix-icon[@id="actions_menu_button__dozer"]')
+    driver.find_element_by_xpath('//ix-icon[@id="actions_menu_button__dozer"]').click()
     assert wait_on_element(driver, 1, 5, '//button[@ix-auto="action__dozer_Add Dataset"]')
     driver.find_element_by_xpath('//button[@ix-auto="action__dozer_Add Dataset"]').click()
 
@@ -286,8 +286,8 @@ def my_acl_dataset_should_be_created(driver, dataset_name):
 @then('Click on "my_acl_dataset" 3 dots button, select Edit Permissions')
 def click_on_my_acl_dataset_3_dots_button_select_edit_permissions(driver):
     """Click on "my_acl_dataset" 3 dots button, select Edit Permissions."""
-    assert wait_on_element(driver, 1, 5, '//mat-icon[@id="actions_menu_button__my_acl_dataset"]')
-    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__my_acl_dataset"]').click()
+    assert wait_on_element(driver, 1, 5, '//ix-icon[@id="actions_menu_button__my_acl_dataset"]')
+    driver.find_element_by_xpath('//ix-icon[@id="actions_menu_button__my_acl_dataset"]').click()
     assert wait_on_element(driver, 1, 5, '//button[@ix-auto="action__my_acl_dataset_Edit Permissions"]')
     driver.find_element_by_xpath('//button[@ix-auto="action__my_acl_dataset_Edit Permissions"]').click()
 

@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from '@angular/material/legacy-autocomplete';
-import { MatLegacyMenu as MatMenu, MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { fromEvent, Subject } from 'rxjs';
@@ -74,7 +74,12 @@ export class FormComboboxComponent implements Field {
             takeUntil(this.autocompleteTrigger.panelClosingActions),
           )
           .pipe(untilDestroyed(this)).subscribe(() => {
-            const { scrollTop, scrollHeight, clientHeight: elementHeight } = this.autoCompleteRef.panel.nativeElement;
+            const {
+              scrollTop,
+              scrollHeight,
+              clientHeight: elementHeight,
+            } = this.autoCompleteRef.panel.nativeElement as HTMLElement;
+
             const atBottom = scrollHeight === scrollTop + elementHeight;
             if (atBottom) {
               this.loadMoreSearchOptions();
@@ -123,7 +128,8 @@ export class FormComboboxComponent implements Field {
   }
 
   hasValue(): boolean {
-    return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
+    return this.group.controls[this.config.name].value
+      && String(this.group.controls[this.config.name].value).length > 0;
   }
 
   resetInput(): void {

@@ -9,13 +9,15 @@
 <div mat-dialog-actions class="buttons">
   <button
     mat-button
-    [matDialogClose]="false"
+    ixTest="cancel"
+    [matDialogClose]="{ wasStopped: false }"
   >
     {{ 'Cancel' | translate }}
   </button>
   <button
     mat-button
     color="primary"
+    ixTest="stop-vm"
     (click)="onStop()"
   >
     {{ 'Stop' | translate }}

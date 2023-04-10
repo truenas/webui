@@ -20,6 +20,7 @@ export interface SshConnectionSetup {
     cipher: CipherType;
     token?: string;
     otp_token?: string;
+    sudo?: boolean;
   };
 }
 

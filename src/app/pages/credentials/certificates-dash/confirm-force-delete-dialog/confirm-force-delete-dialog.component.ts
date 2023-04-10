@@ -1,12 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Certificate } from 'app/interfaces/certificate.interface';
 
 @Component({
   selector: 'ix-force-delete-certificate',
   templateUrl: './confirm-force-delete-dialog.component.html',
-  styleUrls: ['./confirm-force-delete-dialog.component.scss'],
 })
 export class ConfirmForceDeleteCertificateComponent {
   form = this.formBuilder.group({
@@ -19,6 +18,6 @@ export class ConfirmForceDeleteCertificateComponent {
   ) { }
 
   onSubmit(): void {
-    this.dialogRef.close({ force: this.form.get('force').value });
+    this.dialogRef.close({ force: this.form.controls.force.value });
   }
 }

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -15,9 +15,10 @@ import {
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
-  DialogService, ServicesService, StorageService, WebSocketService,
+  DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('OpenVpnClientConfigComponent', () => {
   let spectator: Spectator<OpenVpnClientConfigComponent>;
@@ -30,7 +31,6 @@ describe('OpenVpnClientConfigComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      DialogService,
       mockWebsocket([
         mockCall('openvpn.client.update'),
         mockCall('openvpn.client.config', {
@@ -75,6 +75,9 @@ describe('OpenVpnClientConfigComponent', () => {
       }),
       mockProvider(StorageService, {
         downloadBlob: jest.fn(),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
       }),
     ],
     declarations: [
@@ -145,5 +148,12 @@ describe('OpenVpnClientConfigComponent', () => {
       tls_crypt_auth: 'Key 2',
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+  });
+
+  it('unsets certificates when unset button is clicked', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Unset Certificates' }));
+    await button.click();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('openvpn.client.update', [{ remove_certificates: true }]);
   });
 });

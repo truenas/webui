@@ -1,18 +1,20 @@
 import { Component, OnDestroy } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
+import { MatDialog } from '@angular/material/dialog';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import {
-  forkJoin, lastValueFrom, of, Subject,
+  forkJoin, lastValueFrom, of, Subject, switchMap,
 } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, debounceTime, map } from 'rxjs/operators';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import {
@@ -26,8 +28,8 @@ import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -102,9 +104,9 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   protected unusedDisks: UnusedDisk[] = [];
   constructor(
     protected ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     protected router: Router,
     private matDialog: MatDialog,
-    private core: CoreService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
@@ -142,9 +144,9 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         id: parentRow.name,
         icon: 'format_list_bulleted',
         name: 'smartresults',
-        label: this.translate.instant('S.M.A.R.T Test Results'),
+        label: this.translate.instant('S.M.A.R.T. Test Results'),
         onClick: (row) => {
-          this.router.navigate(['/storage', 'disks', 'smartresults', row.name]);
+          this.router.navigate(['/storage', 'disks', 'smartresults', SmartTestResultPageType.Disk, row.name]);
         },
       });
     }
@@ -184,8 +186,8 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
           this.smartDiskChoices = disksThatSupportSmart;
           return true;
         }),
-        catchError((error) => {
-          this.dialogService.errorReportMiddleware(error);
+        catchError((error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           return of(false);
         }),
       ),
@@ -194,7 +196,12 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
 
   afterInit(entityList: EntityTableComponent<Disk>): void {
     const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
-    disksUpdateTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
+    disksUpdateTrigger$.pipe(
+      debounceTime(50),
+      switchMap(() => this.ws.call('disk.get_unused')),
+      untilDestroyed(this),
+    ).subscribe((unusedDisks) => {
+      this.unusedDisks = unusedDisks;
       entityList.getData();
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
@@ -209,8 +216,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       ...disk,
       pool: this.getPoolColumn(disk),
       readable_size: filesize(disk.size, { standard: 'iec' }),
-      togglesmart: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.togglesmart : null,
-      smartoptions: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.smartoptions : null,
     }));
   }
 

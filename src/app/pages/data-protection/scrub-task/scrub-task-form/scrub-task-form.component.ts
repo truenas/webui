@@ -11,13 +11,12 @@ import {
   crontabToSchedule,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './scrub-task-form.component.html',
-  styleUrls: ['./scrub-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskFormComponent {

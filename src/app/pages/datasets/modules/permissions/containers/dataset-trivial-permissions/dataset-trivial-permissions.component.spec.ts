@@ -1,19 +1,22 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  DialogService, StorageService, UserService, WebSocketService,
+  DialogService, StorageService, UserService,
 } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
 
 describe('DatasetTrivialPermissionsComponent', () => {
@@ -75,7 +78,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   it('shows path of the dataset being edited', () => {
     const datasetPath = spectator.query('.dataset-path');
 
-    expect(datasetPath).toHaveText('Dataset:/mnt/pool/trivial');
+    expect(datasetPath).toHaveText('Dataset: /mnt/pool/trivial');
   });
 
   it('shows current setting owner and access information', async () => {

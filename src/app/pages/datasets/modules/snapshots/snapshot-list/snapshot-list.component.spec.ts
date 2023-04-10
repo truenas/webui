@@ -136,8 +136,8 @@ describe('SnapshotListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const expectedRows = [
       ['', 'Dataset', 'Snapshot', ''],
-      ['', 'test-dataset', 'second-snapshot', 'expand_more'],
-      ['', 'test-dataset', 'first-snapshot', 'expand_more'],
+      ['', 'test-dataset', 'second-snapshot', ''],
+      ['', 'test-dataset', 'first-snapshot', ''],
     ];
     const tableData = await table.getCells(true);
     expect(tableData).toEqual(expectedRows);
@@ -156,8 +156,8 @@ describe('SnapshotListComponent', () => {
     const tableData = await table.getCells(true);
     const expectedRows = [
       ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced', ''],
-      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'expand_more'],
-      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'expand_more'],
+      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', ''],
+      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', ''],
     ];
     expect(tableData).toEqual(expectedRows);
   });

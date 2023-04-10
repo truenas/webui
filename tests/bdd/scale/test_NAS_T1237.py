@@ -2,11 +2,13 @@
 """SCALE UI: feature tests."""
 
 import time
+import xpaths
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear
 )
 from pytest_bdd import (
@@ -16,6 +18,7 @@ from pytest_bdd import (
     when,
     parsers,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1237.feature', 'Verify Recursive and Transverse ACL Options')
@@ -23,252 +26,254 @@ def test_verify_recursive_and_transverse_acl_options():
     """Verify Recursive and Transverse ACL Options."""
 
 
-@given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
-    """the browser is open, the FreeNAS URL and logged in."""
+@given('the browser is open, the TrueNAS URL and logged in')
+def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
+    """the browser is open, the TrueNAS URL and logged in."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
-@when('you are on the dashboard click on storage in the side menu')
-def you_are_on_the_dashboard_click_on_storage_in_the_side_menu(driver):
-    """you are on the dashboard click on storage in the side menu."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+@when('you are on the dashboard click on Datasets in the side menu')
+def you_are_on_the_dashboard_click_on_datasets_in_the_side_menu(driver):
+    """you are on the dashboard click on Datasets in the side menu."""
+    assert wait_on_element(driver, 7, xpaths.dashboard.title)
+    assert wait_on_element(driver, 5, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 5, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
 
 
-@then(parsers.parse('Create 1st dataset {dataset_name}'))
-def create_1st_dataset_rtacltest1(driver, dataset_name):
-    """Create 1st dataset rt-acl-test-1."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()  
-    assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+@then(parsers.parse('on the Datasets page create a SMB dataset {dataset1_name} with tank'))
+def on_the_datasets_page_create_a_smb_dataset_rtacltest1_with_tank(driver, dataset1_name):
+    """on the Datasets page create a SMB dataset rt-acl-test-1 with tank."""
+    assert wait_on_element(driver, 7, xpaths.dataset.title)
+    assert wait_on_element(driver, 5, xpaths.dataset.pool_Tree_Name('tank'))
+    driver.find_element_by_xpath(xpaths.dataset.pool_Tree('tank')).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.pool_Selected('tank'))
+    assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset1_name)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
+    assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset1_name))
 
 
-@then(parsers.parse('Create 2nd dataset {dataset_name} under rt-acl-test-1'))
-def create_2nd_dataset_rtacltest2_under_rtacltest1(driver, dataset_name):
-    """Create 2nd dataset rt-acl-test-2 under rt-acl-test-1."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()  
-    assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"RETURN TO POOL LIST")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"RETURN TO POOL LIST")]').click()
+@then(parsers.parse('create a second SMB dataset {dataset2_name} under {dataset1_name}'))
+def create_a_second_smb_dataset_rtacltest2_under_rtacltest1(driver, dataset2_name, dataset1_name):
+    """create a second SMB dataset rt-acl-test-2 under rt-acl-test-1."""
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset1_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset1_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset1_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset2_name)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
+    assert wait_on_element(driver, 5, '//button[contains(.,"Return to pool list")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Return to pool list")]').click()
+    assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset2_name))
 
 
-@then('Apply ACL with both recusrive and transverse set to rt-acl-test-1')
-def apply_acl_with_both_recusrive_and_transverse_set_to_rtacltest1(driver):
-    """Apply ACL with both recusrive and transverse set to rt-acl-test-1."""
-    assert wait_on_element(driver, 10, f'//div[contains(text(),"rt-acl-test-1")]')
-    time.sleep(1)
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Add Item")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Add Item")]').click()
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]/div/div/span[contains(.,"User")]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]/div/div/span[contains(.,"User")]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Who_User"]')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Who_User"]').click()
-    assert wait_on_element(driver, 5, '(//div[@ix-auto="combobox__User"]//mat-form-field//input[@data-placeholder="User"])')
-    driver.find_element_by_xpath('(//div[@ix-auto="combobox__User"]//mat-form-field//input[@data-placeholder="User"])').send_keys("ericbsd")
-    time.sleep(1)
-    driver.find_element_by_xpath('(//div[@ix-auto="combobox__User"]//mat-form-field//input[@data-placeholder="User"])').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply permissions recursively"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply permissions recursively"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply permissions to child datasets"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply permissions to child datasets"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element_disappear(driver, 15, '//h1[contains(.,"Updating Dataset ACL")]')
+@then(parsers.parse('apply ACL with both recursive and transverse set to {dataset1_name}'))
+def apply_acl_with_both_recursive_and_transverse_set_to_rtacltest1(driver, dataset1_name):
+    """apply ACL with both recursive and transverse set to rt-acl-test-1."""
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset1_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset1_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset1_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_Edit_Button)
+    driver.find_element_by_xpath(xpaths.dataset.permission_Edit_Button).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.title)
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.add_Item_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.add_Item_Button).click()
+    assert wait_on_element(driver, 7, xpaths.edit_Acl.who_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.who_Select).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.who_User_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.who_User_Option).click()
+    assert wait_on_element(driver, 7, xpaths.edit_Acl.user_Combobox, 'inputable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.user_Combobox).send_keys('ericbsd')
+    ActionChains(driver).send_keys(Keys.TAB).perform()
+
+    assert wait_on_element(driver, 7, xpaths.edit_Acl.recursive_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.recursive_Checkbox).click()
+
+    assert wait_on_element(driver, 7, xpaths.popup.warning, 'inputable')
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
+    assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
+
+    assert wait_on_element(driver, 7, xpaths.edit_Acl.traverse_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.traverse_Checkbox).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.updating_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
+    assert wait_on_element(driver, 7, xpaths.dataset.title)
 
 
-@then('Verify that the ACL was set to rt-acl-test-1')
-def verify_that_the_acl_was_set_to_rtacltest1(driver):
-    """Verify that the ACL was set to rt-acl-test-1."""
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"User - ericbsd")]')
+@then(parsers.parse('verify that the ACL was set to {dataset1_name}'))
+def verify_that_the_acl_was_set_to_rtacltest1(driver, dataset1_name):
+    """verify that the ACL was set to rt-acl-test-1."""
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset1_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset1_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset1_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
+    assert is_element_present(driver, xpaths.dataset.permission_User('ericbsd'))
 
 
-@then('Verify that the ACL was set to rt-acl-test-2')
-def verify_that_the_acl_was_set_to_rtacltest2(driver):
-    """Verify that the ACL was set to rt-acl-test-2."""
-    assert wait_on_element(driver, 5, f'//div[contains(text(),"rt-acl-test-1")]//button', 'clickable')
-    driver.find_element_by_xpath(f'//div[contains(text(),"rt-acl-test-1")]//button').click()
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"User - ericbsd")]')
+@then(parsers.parse('verify that the ACL was set to {dataset2_name}'))
+def verify_that_the_acl_was_set_to_rtacltest2(driver, dataset2_name):
+    """verify that the ACL was set to rt-acl-test-2."""
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset2_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset2_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset2_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
+    assert is_element_present(driver, xpaths.dataset.permission_User('ericbsd'))
 
 
-@then(parsers.parse('Create 3rd dataset {dataset_name}'))
-def create_3rd_dataset_rtacltest3(driver, dataset_name):
-    """Create 3rd dataset rt-acl-test-3."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()  
-    assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"RETURN TO POOL LIST")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"RETURN TO POOL LIST")]').click()
+@then(parsers.parse('create a third SMB dataset {dataset3_name} under {dataset1_name}'))
+def create_a_third_smb_dataset_rtacltest3(driver, dataset3_name, dataset1_name):
+    """create a third SMB dataset rt-acl-test-3."""
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset1_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset1_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset1_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset3_name)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
+    assert wait_on_element(driver, 5, '//button[contains(.,"Return to pool list")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Return to pool list")]').click()
+    assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset3_name))
 
 
-@then(parsers.parse('Create SMB share with path {path}'))
-def create_smb_share_with_path_tankrtacltest1share(driver, path):
-    """Create SMB share with path tank/rt-acl-test-1/share."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
-    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
-    assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
+@then(parsers.parse('create an SMB share with path {dataset1_path}'))
+def create_an_smb_share_with_path_mnttankrtacltest1share(driver, dataset1_path):
+    """create an SMB share with path /mnt/tank/rt-acl-test-1/share."""
+    assert wait_on_element(driver, 10, xpaths.side_Menu.shares, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
+    assert wait_on_element(driver, 5, xpaths.sharing.title)
+    assert wait_on_element(driver, 7, xpaths.sharing.smb_Add_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.sharing.smb_Add_Button).click()
+    assert wait_on_element(driver, 5, xpaths.smb.addTitle)
     global smb_path
-    smb_path = path
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys("rt-test")
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'clickable')
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+    smb_path = dataset1_path
+    assert wait_on_element(driver, 5, xpaths.smb.path_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.path_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.path_Input).send_keys(dataset1_path)
+    assert wait_on_element(driver, 5, xpaths.smb.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.name_Input).click()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys('rt-test')
+    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
+    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+        driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
+    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys("rt-test")
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    if is_element_present(driver, '//h1[contains(., "Enable service")]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
-        assert wait_on_element(driver, 5, '//h1[contains(., "SMB Service")]')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 5, xpaths.smb.description_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.description_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.description_Input).send_keys('rt-test')
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
+    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name('rt-test'))
 
 
-@then('Apply ACL to rt-acl-test-1 with recusrive checked')
-def apply_acl_to_rtacltest1_with_recusrive_checked(driver):
-    """Apply ACL to rt-acl-test-1 with recusrive checked."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 10, f'//div[contains(text(),"rt-acl-test-1")]')
-    time.sleep(1)
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Add Item")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Add Item")]').click()
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]/div/div/span[contains(.,"User")]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]/div/div/span[contains(.,"User")]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Who_User"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Who_User"]').click()
-    assert wait_on_element(driver, 5, '(//div[@ix-auto="combobox__User"]//mat-form-field//input[@data-placeholder="User"])')
-    driver.find_element_by_xpath('(//div[@ix-auto="combobox__User"]//mat-form-field//input[@data-placeholder="User"])').send_keys("games")
-    time.sleep(1)
-    driver.find_element_by_xpath('(//div[@ix-auto="combobox__User"]//mat-form-field//input[@data-placeholder="User"])').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply permissions recursively"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply permissions recursively"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element_disappear(driver, 15, '//h1[contains(.,"Updating Dataset ACL")]')
+@then(parsers.parse('apply ACL to {dataset1_name} with recursive checked'))
+def apply_acl_to_rtacltest1_with_recusrive_checked(driver, dataset1_name):
+    """apply ACL to rt-acl-test-1 with recursive checked."""
+    assert wait_on_element(driver, 10, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
+    assert wait_on_element(driver, 10, xpaths.dataset.title)
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset1_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset1_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset1_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_Edit_Button)
+    driver.find_element_by_xpath(xpaths.dataset.permission_Edit_Button).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.title)
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.add_Item_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.add_Item_Button).click()
+    assert wait_on_element(driver, 7, xpaths.edit_Acl.who_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.who_Select).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.who_User_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.who_User_Option).click()
+    assert wait_on_element(driver, 7, xpaths.edit_Acl.user_Combobox, 'inputable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.user_Combobox).send_keys('games')
+    ActionChains(driver).send_keys(Keys.TAB).perform()
+    assert wait_on_element(driver, 7, xpaths.edit_Acl.recursive_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.recursive_Checkbox).click()
+    assert wait_on_element(driver, 7, xpaths.popup.warning, 'inputable')
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
+    assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.updating_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
+    assert wait_on_element(driver, 7, xpaths.dataset.title)
 
 
-
-@then('Verify that the ACL was not set to rt-acl-test-3')
-def verify_that_the_acl_was_not_set_to_rtacltest3(driver):
-    """Verify that the ACL was not set to rt-acl-test-3."""
-    assert wait_on_element(driver, 5, f'//div[contains(text(),"rt-acl-test-1")]//button', 'clickable')
-    driver.find_element_by_xpath(f'//div[contains(text(),"rt-acl-test-1")]//button').click()
-    time.sleep(3)
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-3")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-3")]//mat-icon[text()="more_vert"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element_disappear(driver, 5, '//div[contains(text(),"User - games")]')
+@then(parsers.parse('verify that the ACL was not set to {dataset3_name}'))
+def verify_that_the_acl_was_not_set_to_rtacltest3(driver, dataset3_name):
+    """verify that the ACL was not set to rt-acl-test-3."""
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset3_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset3_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset3_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
+    assert is_element_present(driver, xpaths.dataset.permission_User('games')) is False
 
 
-@then('Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1')
+@then('verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1')
 def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(driver):
-    """Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
-    assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]', 'clickable')
-    driver.find_element_by_xpath('//mat-panel-title//h5//a[contains(.,"(SMB)")]').click()
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-test")]//button[@aria-label="Actionable Options"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"rt-test")]//button[@aria-label="Actionable Options"]').click()
-    assert wait_on_element(driver, 5, f'//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]', 'clickable')
-    driver.find_element_by_xpath(f'//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Edit POSIX.1e ACL")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"/mnt/tank/rt-acl-test-1/share")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"User - games")]')
-
+    """verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1."""
+    driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
+    assert wait_on_element(driver, 5, xpaths.sharing.title)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Panel_Title)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name('rt-test'))
+    assert wait_on_element(driver, 5, '//tr[contains(.,"rt-test")]//button[contains(.,"security")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"rt-test")]//button[contains(.,"security")]').click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.title)
+    assert wait_on_element(driver, 5, f'//div[contains(text(),"{smb_path}")]')
+    assert is_element_present(driver, xpaths.edit_Acl.user_In_Acl('games'))

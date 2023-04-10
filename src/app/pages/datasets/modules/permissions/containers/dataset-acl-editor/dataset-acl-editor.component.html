@@ -59,8 +59,13 @@
           ></ix-acl-editor-list>
 
           <div class="add-item">
-            <button mat-button class="action" (click)="onAddItemPressed()">
-              <mat-icon>add</mat-icon>
+            <button
+              mat-button
+              class="action"
+              ixTest="add-acl-item"
+              (click)="onAddItemPressed()"
+            >
+              <ix-icon name="add"></ix-icon>
               {{ 'Add Item' | translate }}
             </button>
           </div>
@@ -88,6 +93,7 @@
                   mat-button
                   color="primary"
                   class="action"
+                  ixTest="save-acl"
                   [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
                   (click)="onSavePressed()"
                 >
@@ -100,6 +106,7 @@
                   *ngIf="acl.trivial; else stripButton"
                   mat-button
                   class="action"
+                  ixTest="edit-permissions"
                   [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
                 >
                   {{ 'Permissions Editor' | translate }}
@@ -109,6 +116,7 @@
                     mat-button
                     color="warn"
                     class="action"
+                    ixTest="strip-acl"
                     (click)="onStripAclPressed()"
                   >
                     {{ 'Strip ACL' | translate }}
@@ -121,6 +129,7 @@
                 <button
                   mat-button
                   class="action"
+                  ixTest="use-preset"
                   (click)="onUsePresetPressed()"
                 >
                   {{ 'Use Preset' | translate }}
@@ -128,6 +137,7 @@
                 <button
                   mat-button
                   class="action"
+                  ixTest="save-as-preset"
                   (click)="onSavePreset()"
                 >
                   {{ 'Save As Preset' | translate }}

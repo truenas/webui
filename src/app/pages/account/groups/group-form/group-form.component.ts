@@ -8,19 +8,20 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { allCommands } from 'app/constants/all-commands.constant';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
-import { UserService, WebSocketService } from 'app/services';
+import { UserService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './group-form.component.html',
-  styleUrls: ['./group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupFormComponent {
@@ -36,7 +37,10 @@ export class GroupFormComponent {
   form = this.fb.group({
     gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
-    sudo: [false],
+    sudo_commands: [[] as string[]],
+    sudo_commands_all: [false],
+    sudo_commands_nopasswd: [[] as string[]],
+    sudo_commands_nopasswd_all: [false],
     smb: [false],
     allowDuplicateGid: [false],
   });
@@ -63,6 +67,8 @@ export class GroupFormComponent {
    * @param group Skip argument to add new group.
    */
   setupForm(group?: Group): void {
+    this.setFormRelations();
+
     this.editingGroup = group;
     if (this.isNew) {
       this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
@@ -73,12 +79,15 @@ export class GroupFormComponent {
       });
       this.setNamesInUseValidator();
     } else {
-      this.form.get('gid').disable();
+      this.form.controls.gid.disable();
       this.form.patchValue({
-        gid: this.editingGroup.gid,
-        name: this.editingGroup.group,
-        sudo: this.editingGroup.sudo,
-        smb: this.editingGroup.smb,
+        gid: group.gid,
+        name: group.group,
+        sudo_commands: group.sudo_commands.includes(allCommands) ? [] : group.sudo_commands,
+        sudo_commands_all: group.sudo_commands.includes(allCommands),
+        sudo_commands_nopasswd: group.sudo_commands_nopasswd?.includes(allCommands) ? [] : group.sudo_commands_nopasswd,
+        sudo_commands_nopasswd_all: group.sudo_commands_nopasswd?.includes(allCommands),
+        smb: group.smb,
         allowDuplicateGid: true,
       });
       this.setNamesInUseValidator(this.editingGroup.group);
@@ -91,7 +100,7 @@ export class GroupFormComponent {
       if (currentName) {
         forbiddenNames = _.remove(forbiddenNames, currentName);
       }
-      this.form.get('name').addValidators(forbiddenValues(forbiddenNames));
+      this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
     });
   }
 
@@ -100,7 +109,8 @@ export class GroupFormComponent {
     const commonBody = {
       name: values.name,
       smb: values.smb,
-      sudo: values.sudo,
+      sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
+      sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       allow_duplicate_gid: values.allowDuplicateGid,
     };
 
@@ -138,6 +148,24 @@ export class GroupFormComponent {
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
+    });
+  }
+
+  private setFormRelations(): void {
+    this.form.controls.sudo_commands_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
+      if (isAll) {
+        this.form.controls.sudo_commands.disable();
+      } else {
+        this.form.controls.sudo_commands.enable();
+      }
+    });
+
+    this.form.controls.sudo_commands_nopasswd_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
+      if (isAll) {
+        this.form.controls.sudo_commands_nopasswd.disable();
+      } else {
+        this.form.controls.sudo_commands_nopasswd.enable();
+      }
     });
   }
 }

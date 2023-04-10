@@ -26,6 +26,7 @@
                   type="text"
                   name="poolname"
                   id="pool-manager__name-input-field"
+                  ixTest="name"
                   [formControl]="nameControl"
                   (input)="checkPoolName()"
                 />
@@ -38,6 +39,7 @@
                 color="primary"
                 id="pool-manager__encryption-checkbox"
                 class="form-control"
+                ixTest="encryption"
                 [formControl]="isEncryptedControl"
                 (change)="isEncryptedChecked()"
               >
@@ -64,6 +66,7 @@
                 <mat-select
                   id="pool-manager__encryption_algorithm-select"
                   class="form-control"
+                  ixTest="encryption-algorithm"
                   [formControl]="encryptionAlgorithmControl"
                   [placeholder]="'Encryption Algorithm' | translate"
                 >
@@ -71,6 +74,7 @@
                     *ngFor="let option of encryptionAlgorithmOptions"
                     [id]="'encryption_algorithm_option_' + option.label"
                     [value]="option.value"
+                    [ixTest]="['encryption', option.label]"
                   >
                     {{ option.label | translate }}
                   </mat-option>
@@ -92,6 +96,7 @@
                 id="pool-manager__reset-layout-button"
                 mat-button
                 class="btn btn-accent mat-accent"
+                ixTest="reset-layout"
                 [disabled]="!dirty"
                 (click)="resetLayout()"
               >
@@ -104,6 +109,7 @@
                 id="pool-manager__suggest-layout-button"
                 mat-button
                 class="btn btn-accent mat-accent"
+                ixTest="suggest-layout"
                 [disabled]="dirty"
                 (click)="suggestLayout()"
               >
@@ -123,14 +129,12 @@
                 mat-button
                 color="primary"
                 class="menu-toggle"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="add_vdev_type"
+                ixTest="add-vdev"
                 [disabled]="disks.length === 0"
                 [matMenuTriggerFor]="menu"
               >
                 {{ 'Add Vdev' | translate }}
-                <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+                <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
               </button>
             </div>
             <mat-menu #menu="matMenu" multiple overlapTrigger="false">
@@ -138,15 +142,13 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-data-button"
+                ixTest="add-data-vdev"
                 [disabled]="!canAddData()"
                 (click)="addVdev('data')"
               >
                 <div class="tr">
                   <div class="td icon">
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-database"
-                    ></mat-icon>
+                    <ix-icon name="mdi-database"></ix-icon>
                   </div>
                   <div class="td">
                     <h3>{{ help.data_vdev_title | translate }}</h3>
@@ -163,15 +165,13 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-cache-button"
+                ixTest="add-cache-vdev"
                 [disabled]="vdevs.cache.length > 0"
                 (click)="addVdev('cache')"
               >
                 <div class="tr">
                   <div class="td icon">
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-clock-fast"
-                    ></mat-icon>
+                    <ix-icon name="mdi-clock-fast"></ix-icon>
                   </div>
                   <div class="td">
                     <h3>{{ help.cache_vdev_title | translate }}</h3>
@@ -186,15 +186,13 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-log-button"
+                ixTest="add-log-vdev"
                 [disabled]="vdevs.log.length > 0"
                 (click)="addVdev('log')"
               >
                 <div class="tr">
                   <div class="td icon">
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-clipboard-outline"
-                    ></mat-icon>
+                    <ix-icon name="mdi-clipboard-outline"></ix-icon>
                   </div>
                   <div class="td">
                     <h3>{{ help.log_vdev_title | translate }}</h3>
@@ -209,12 +207,13 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-spare-button"
+                ixTest="add-spares-vdev"
                 [disabled]="vdevs.spares.length > 0"
                 (click)="addVdev('spares')"
               >
                 <div class="tr">
                   <div class="td icon">
-                    <mat-icon>local_hospital</mat-icon>
+                    <ix-icon name="local_hospital"></ix-icon>
                   </div>
                   <div class="td">
                     <h3>{{ help.spare_vdev_title | translate }}</h3>
@@ -229,12 +228,13 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-special-button"
+                ixTest="add-special-vdev"
                 [disabled]="vdevs.special.length > 0"
                 (click)="addVdev('special')"
               >
                 <div class="tr">
                   <div class="td icon">
-                    <mat-icon>favorite_border</mat-icon>
+                    <ix-icon name="favorite_border"></ix-icon>
                   </div>
                   <div class="td">
                     <h3>{{ help.special_vdev_title | translate }}</h3>
@@ -249,12 +249,13 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-dedup-button"
+                ixTest="add-dedup-vdev"
                 [disabled]="vdevs.dedup.length > 0"
                 (click)="addVdev('dedup')"
               >
                 <div class="tr">
                   <div class="td icon">
-                    <mat-icon>share</mat-icon>
+                    <ix-icon name="share"></ix-icon>
                   </div>
                   <div class="td">
                     <h3>{{ help.dedup_vdev_title | translate }}</h3>
@@ -276,6 +277,7 @@
                 id="pool-manager__extend-name-input-field"
                 matInput
                 disabled
+                ixTest="name"
                 [placeholder]="'Name' | translate"
                 [value]="nameControl.value"
               />
@@ -290,6 +292,7 @@
                     id="pool-manager__reset-layout-button"
                     mat-button
                     class="btn btn-accent mat-accent"
+                    ixTest="reset-layout"
                     [disabled]="!dirty"
                     (click)="resetLayout()"
                   >
@@ -301,16 +304,12 @@
                     mat-button
                     color="primary"
                     class="menu-toggle"
-                    ix-auto
-                    ix-auto-type="button"
-                    ix-auto-identifier="add_vdev_type"
+                    ixTest="add-vdev"
                     [matMenuTriggerFor]="menu"
                     [disabled]="this.disks.length === 0"
                   >
-                    <span>
-                      {{ 'Add Vdev' | translate }}
-                      <mat-icon class="menu-caret"> arrow_drop_down </mat-icon>
-                    </span>
+                    {{ 'Add Vdev' | translate }}
+                    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
                   </button>
                 </div>
               </div>
@@ -319,15 +318,13 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-data-button"
+                  ixTest="add-data-vdev"
                   [disabled]="!canAddData()"
                   (click)="addVdev('data')"
                 >
                   <div class="tr">
                     <div class="td icon">
-                      <mat-icon
-                        fontSet="mdi-set"
-                        fontIcon="mdi-database"
-                      ></mat-icon>
+                      <ix-icon name="mdi-database"></ix-icon>
                     </div>
                     <div class="td">
                       <h3>{{ help.data_vdev_title | translate }}</h3>
@@ -344,15 +341,13 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-cache-button"
+                  ixTest="add-cache-vdev"
                   [disabled]="vdevs.cache.length > 0"
                   (click)="addVdev('cache')"
                 >
                   <div class="tr">
                     <div class="td icon">
-                      <mat-icon
-                        fontSet="mdi-set"
-                        fontIcon="mdi-clock-fast"
-                      ></mat-icon>
+                      <ix-icon name="mdi-clock-fast"></ix-icon>
                     </div>
                     <div class="td">
                       <h3>{{ help.cache_vdev_title | translate }}</h3>
@@ -367,15 +362,13 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-log-button"
+                  ixTest="add-log-vdev"
                   [disabled]="vdevs.log.length > 0"
                   (click)="addVdev('log')"
                 >
                   <div class="tr">
                     <div class="td icon">
-                      <mat-icon
-                        fontSet="mdi-set"
-                        fontIcon="mdi-clipboard-outline"
-                      ></mat-icon>
+                      <ix-icon name="mdi-clipboard-outline"></ix-icon>
                     </div>
                     <div class="td">
                       <h3>{{ help.log_vdev_title | translate }}</h3>
@@ -390,12 +383,13 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-spare-button"
+                  ixTest="add-spares-vdev"
                   [disabled]="vdevs.spares.length > 0"
                   (click)="addVdev('spares')"
                 >
                   <div class="tr">
                     <div class="td icon">
-                      <mat-icon>local_hospital</mat-icon>
+                      <ix-icon name="local_hospital"></ix-icon>
                     </div>
                     <div class="td">
                       <h3>{{ help.spare_vdev_title | translate }}</h3>
@@ -410,12 +404,13 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-special-button"
+                  ixTest="add-special-vdev"
                   [disabled]="vdevs.special.length > 0"
                   (click)="addVdev('special')"
                 >
                   <div class="tr">
                     <div class="td icon">
-                      <mat-icon>favorite_border</mat-icon>
+                      <ix-icon name="favorite_border"></ix-icon>
                     </div>
                     <div class="td">
                       <h3>{{ help.special_vdev_title | translate }}</h3>
@@ -430,12 +425,13 @@
                   mat-menu-item
                   class="tbl vdev-option"
                   id="pool-manager__add-dedup-button"
+                  ixTest="add-dedup-vdev"
                   [disabled]="vdevs.dedup.length > 0"
                   (click)="addVdev('dedup')"
                 >
                   <div class="tr">
                     <div class="td icon">
-                      <mat-icon>share</mat-icon>
+                      <ix-icon name="share"></ix-icon>
                     </div>
                     <div class="td">
                       <h3>{{ help.dedup_vdev_title | translate }}</h3>
@@ -498,6 +494,7 @@
                   <mat-checkbox
                     color="primary"
                     id="pool-manager__disks-table-checkall"
+                    ixTest="select-all-disks"
                     [checked]="allRowsSelected"
                     (change)="handleSelectAll(selectFn, !allRowsSelected)"
                   ></mat-checkbox>
@@ -516,6 +513,7 @@
                     *ngIf="disks[rowIndex]"
                     color="primary"
                     [id]="'pool-manager__disks-' + disks[rowIndex].devname"
+                    [ixTest]="['select-disk', disks[rowIndex].devname]"
                     [name]="'disk_' + rowIndex + '_checkbox'"
                     [checked]="isSelected"
                     (change)="onCheckboxChangeFn($event)"
@@ -559,6 +557,7 @@
                 <a
                   href="javascript:void(0)"
                   title="Expand/Collapse Row"
+                  ixTest="expand-collapse-row"
                   [class.datatable-icon-right]="!expanded"
                   [class.datatable-icon-down]="expanded"
                   (click)="toggleExpandRow(row)"
@@ -586,6 +585,7 @@
                     <mat-checkbox
                       color="primary"
                       class="non-unique-serial-disks-checkbox"
+                      ixTest="show-disks-with-non-unique-serial-numbers"
                       [checked]="includeNonUniqueSerialDisks"
                       (change)="toggleNonUniqueSerialDisks()"
                     >
@@ -624,6 +624,7 @@
                 matInput
                 id="pool-manager__nameFilter"
                 type="text"
+                ixTest="name-filter"
                 [formControl]="nameFilterControl"
                 [placeholder]="'Filter disks by name' | translate"
                 (keyup)="updateFilter($event)"
@@ -636,6 +637,7 @@
                 matInput
                 id="pool-manager__capacityFilter"
                 type="text"
+                ixTest="capacity-filter"
                 [formControl]="capacityFilterControl"
                 [placeholder]="'Filter disks by capacity' | translate"
                 (keyup)="updateFilter($event)"
@@ -657,6 +659,7 @@
                   id="pool-manager__create-data-vdevs-button"
                   mat-button
                   class="btn btn-accent mat-accent"
+                  ixTest="repeat-first-vdev"
                   [disabled]="!canDuplicate"
                   (click)="showRepeatDialog()"
                 >
@@ -665,7 +668,7 @@
               </div>
             </div>
             <ix-vdev
-              *ngFor="let vdev of shownDataVdevs; let i = index; trackBy: vdevsTracker"
+              *ngFor="let vdev of shownDataVdevs; let i = index"
               class="vdev"
               [group]="'data'"
               [manager]="this"
@@ -777,6 +780,7 @@
         <mat-checkbox
           color="primary"
           id="pool-manager__force-submit-checkbox"
+          ixTest="force"
           [formControl]="forceControl"
           (click)="forceCheckboxChecked()"
         >
@@ -790,6 +794,7 @@
           name="create-button"
           class="btn btn-primary"
           color="primary"
+          ixTest="create"
           [disabled]="!canSave()"
           (click)="checkSubmit()"
         >
@@ -801,6 +806,7 @@
           class="btn btn-block btn-lg btn-primary"
           type="button"
           color="accent"
+          ixTest="cancel"
           (click)="goBack()"
         >
           {{ 'Cancel' | translate }}

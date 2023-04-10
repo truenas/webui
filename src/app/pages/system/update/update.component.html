@@ -29,12 +29,10 @@
         color="primary"
         id="refresh-button"
         matTooltip="Refresh"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="refresh"
+        ixTest="refresh"
         (click)="check()"
       >
-        <mat-icon>refresh</mat-icon>
+        <ix-icon name="refresh"></ix-icon>
       </button>
     </div>
     <ng-template #trainName>
@@ -47,14 +45,12 @@
           mat-mini-fab
           color="primary"
           id="single-train-refresh-button"
-          matTooltip="Refresh"
-          ix-auto
-          ix-auto-type="button"
-          ix-auto-identifier="refresh"
+          ixTest="refresh"
+          [matTooltip]="'Refresh' | translate"
           [disabled]="!checkable || isUpdateRunning"
           (click)="check()"
         >
-          <mat-icon>refresh</mat-icon>
+          <ix-icon name="refresh"></ix-icon>
         </button>
       </div>
     </ng-template>
@@ -94,17 +90,17 @@
   <mat-card-content id="upgrades-card-scrollbox">
     <table class="table table-striped table-sm">
       <thead>
-        <tr>
+        <tr ixTest="table-header">
           <th>{{ 'Operation' | translate }}</th>
           <th>{{ 'Name' | translate }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let p of packages">
-          <td>{{ p.operation }}</td>
-          <td>{{ p.name }}</td>
+        <tr *ngFor="let package of packages" [ixTest]="package.name">
+          <td>{{ package.operation }}</td>
+          <td>{{ package.name }}</td>
         </tr>
-        <tr *ngIf="packages.length === 0">
+        <tr *ngIf="packages.length === 0" ixTest="no-update-found">
           <td>{{ 'No update found.' | translate }}</td>
         </tr>
       </tbody>
@@ -119,7 +115,7 @@
     </div>
   </mat-card-title>
   <mat-card-content>
-    <a mat-button target="_blank" [href]="releaseNotes">
+    <a mat-button target="_blank" ixTest="check-release-notes" [href]="releaseNotes">
       {{ 'Check Release Notes' | translate }}
     </a>
   </mat-card-content>
@@ -139,10 +135,11 @@
   class="train-info-card"
 >
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
+      ixTest="release-notes"
     >
       {{ 'Before updating, please read the release notes.' | translate }}
     </a>
@@ -154,10 +151,11 @@
   class="train-info-card"
 >
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <a
       href="https://www.truenas.com/docs/hub/intro/release-notes/"
       target="_blank"
+      ixTest="release-notes"
     >
       {{ 'Before updating, please read the release notes.' | translate }}
     </a>
@@ -169,7 +167,7 @@
   class="train-info-card"
 >
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <strong>
       {{ 'This is not a production release, and should only be used for testing.' | translate }}
     </strong>
@@ -178,7 +176,7 @@
 
 <mat-card *ngIf="updatesAvailable && nightlyTrain" class="train-info-card">
   <h4 class="stable-warning">
-    <i class="material-icons">info</i>
+    <ix-icon name="info"></ix-icon>
     <strong>
       {{ 'This is not a production release, and should only be used for testing.' | translate }}
     </strong>
@@ -192,9 +190,7 @@
         *ngIf="updatesAvailable"
         mat-button
         class="btn btn-success update-button mat-basic"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="DOWNLOAD UPDATES"
+        ixTest="download-updates"
         [disabled]="status === SystemUpdateStatus.RebootRequired"
         (click)="downloadUpdate()"
       >
@@ -204,9 +200,7 @@
         *ngIf="updateDownloaded && status !== SystemUpdateStatus.Unavailable"
         mat-button
         class="btn btn-success update-button mat-basic"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="APPLY PENDING UPDATE"
+        ixTest="apply-pending-update"
         (click)="applyPendingUpdate()"
       >
         {{ 'Apply Pending update' | translate }}
@@ -214,9 +208,7 @@
       <button
         mat-button
         class="btn btn-success update-button mat-basic"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="INSTALL MANUAL UPDATE FILE"
+        ixTest="install-manual-update"
         (click)="manualUpdate()"
       >
         {{ 'Install Manual Update File' | translate }}
@@ -231,7 +223,7 @@
   <div class="row">
     <div class="col-md-12">
       <p>
-        <i class="material-icons">warning</i>
+        <ix-icon name="warning"></ix-icon>
         <span id="update-running-msg">
           {{ isHa ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
         </span>

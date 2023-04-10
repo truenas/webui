@@ -1,0 +1,74 @@
+<ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="comment"
+          [label]="'Description' | translate"
+          [tooltip]="tooltips.comment | translate"
+        ></ix-input>
+
+        <ix-select
+          formControlName="type"
+          [required]="true"
+          [label]="'Type' | translate"
+          [tooltip]="tooltips.type | translate"
+          [options]="typeOptions$"
+        ></ix-select>
+
+        <ix-input
+          *ngIf="isCommand$ | async; else selectScript"
+          formControlName="command"
+          [label]="'Command' | translate"
+          [required]="true"
+          [tooltip]="tooltips.command | translate"
+        ></ix-input>
+
+        <ng-template #selectScript>
+          <ix-explorer
+            formControlName="script"
+            [label]="'Script' | translate"
+            [required]="true"
+            [tooltip]="tooltips.script | translate"
+            [nodeProvider]="treeNodeProvider"
+          ></ix-explorer>
+        </ng-template>
+
+        <ix-select
+          formControlName="when"
+          [label]="'When' | translate"
+          [required]="true"
+          [tooltip]="tooltips.when | translate"
+          [options]="whenOptions$"
+        ></ix-select>
+
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enabled' | translate"
+          [tooltip]="tooltips.enabled | translate"
+        ></ix-checkbox>
+
+        <ix-input
+          formControlName="timeout"
+          type="number"
+          [label]="'Timeout' | translate"
+          [tooltip]="tooltips.timeout | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

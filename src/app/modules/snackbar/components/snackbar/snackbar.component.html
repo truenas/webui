@@ -1,5 +1,5 @@
-<mat-icon *ngIf="config.icon" class="icon" [style.color]="iconColor">
-  {{ config.icon }}
-</mat-icon>
+<ng-container *ngIf="config.icon">
+  <ix-icon class="icon" [name]="config.icon" [style.color]="iconColor"></ix-icon>
+</ng-container>
 
 <div class="message">{{ config.message }}</div>

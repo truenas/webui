@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="dynamic-field form-input form-element"
-  ix-auto
-  ix-auto-type="file-uploader"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -25,6 +22,7 @@
       mat-button
       color="accent"
       class="btn-default"
+      [ixTest]="[config.name, 'choose-file']"
       (click)="fileBtnClick()"
     >
       {{ 'Choose File' | translate }}
@@ -43,6 +41,7 @@
         #fileInput
         id="fb"
         type="file"
+        [ixTest]="config.name"
         [accept]="config.acceptedFiles"
         [formControlName]="config.name"
         (change)="upload(config.fileLocation)"
@@ -53,6 +52,7 @@
           id="fb"
           type="file"
           multiple
+          [ixTest]="config.name"
           [accept]="config.acceptedFiles"
           [formControlName]="config.name"
           (change)="upload(config.fileLocation)"
@@ -72,6 +72,7 @@
         #fileInput
         id="fb"
         type="file"
+        [ixTest]="config.name"
         [accept]="config.acceptedFiles"
         [formControlName]="config.name"
       />
@@ -81,9 +82,7 @@
         mat-button
         type="button"
         color="primary"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="UPLOAD"
+        [ixTest]="[config.name, 'upload']"
         (click)="upload(config.fileLocation)"
       >
         {{ 'Upload' | translate }}

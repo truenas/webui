@@ -1,14 +1,23 @@
 <h1 matDialogTitle>{{ 'Keys for {id} datasets' | translate: { id: '\'' + dataset.id + '\'' } }}</h1>
-<p>
-  {{ 'WARNING: Keys for all nested datasets with encryption applied will be downloaded.' | translate }}
-</p>
 
-<div class="form-actions">
-  <button mat-button type="submit" color="primary" (click)="onDownload()">
-    {{ 'Download Keys' | translate }}
-  </button>
+<mat-dialog-content>
+  <p>
+    {{ 'WARNING: Keys for all nested datasets with encryption applied will be downloaded.' | translate }}
+  </p>
+</mat-dialog-content>
 
-  <button mat-button type="button" [matDialogClose]="false">
+<ix-form-actions matDialogActions>
+  <button mat-button type="button" ixTest="close" [matDialogClose]="false">
     {{ 'Close' | translate }}
   </button>
-</div>
+
+  <button
+    mat-button
+    type="submit"
+    color="primary"
+    ixTest="download-keys"
+    (click)="onDownload()"
+  >
+    {{ 'Download Keys' | translate }}
+  </button>
+</ix-form-actions>

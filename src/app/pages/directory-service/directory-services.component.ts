@@ -181,7 +181,7 @@ export class DirectoryServicesComponent implements OnInit {
   ngOnInit(): void {
     this.refreshCards();
     merge(
-      this.slideInService.onClose$.pipe(filter((res) => !!res)),
+      this.slideInService.onClose$.pipe(filter((slideInResult) => !!slideInResult)),
       this.modalService.refreshTable$,
     )
       .pipe(untilDestroyed(this))
@@ -277,7 +277,7 @@ export class DirectoryServicesComponent implements OnInit {
     expansionPanel.open();
     this.dialog.confirm({
       title: helptext.advancedEdit.title,
-      hideCheckBox: true,
+      hideCheckbox: true,
       message: helptext.advancedEdit.message,
     })
       .pipe(filter((confirmed) => !confirmed), untilDestroyed(this))
@@ -324,8 +324,8 @@ export class DirectoryServicesComponent implements OnInit {
         return this.dialog.confirm({
           title: idmapHelptext.idmap.enable_ad_dialog.title,
           message: idmapHelptext.idmap.enable_ad_dialog.message,
-          hideCheckBox: true,
-          buttonMsg: idmapHelptext.idmap.enable_ad_dialog.button,
+          hideCheckbox: true,
+          buttonText: idmapHelptext.idmap.enable_ad_dialog.button,
         })
           .pipe(
             filter((confirmed) => confirmed),

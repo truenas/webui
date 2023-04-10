@@ -1,0 +1,48 @@
+<mat-card class="container">
+  <mat-card-content class="card-content">
+    <div class="inner-container">
+      <div class="left-pane">
+        <div class="header dialog-header"><h3>{{ 'Manual Selection' | translate }}</h3></div>
+        <ix-manual-selection-disks></ix-manual-selection-disks>
+      </div>
+      <mat-divider class="divider" [vertical]="true"></mat-divider>
+      <div class="right-pane">
+        <div class="header vdevs-header">
+          <h3>{{ 'Data VDevs' | translate }}</h3>
+          <div class="header-actions">
+            <button
+              mat-button
+              class="mat-button"
+              ixTest="add"
+              (click)="addVdev()"
+            >{{ 'Add' | translate }}</button>
+          </div>
+        </div>
+
+        <mat-divider class="header-divider"></mat-divider>
+        <div class="vdevs-container">
+          <!-- TODO: see <ix-manual-selection-vdev> -->
+          <ix-manual-selection-vdev
+            *ngFor="let vdev of store$.dataVdevs$ | async; trackBy: trackVdevById"
+            [vdev]="vdev"
+          ></ix-manual-selection-vdev>
+        </div>
+        <mat-divider class="divider actions-divider"></mat-divider>
+        <div class="actions">
+          <button
+            mat-button
+            color="primary"
+            ixTest="save-selection"
+            (click)="onSaveSelection()"
+          >{{ 'Save Selection' | translate }}</button>
+          <button
+            mat-button
+            ixTest="cancel"
+            [matDialogClose]="undefined"
+          >{{ 'Cancel' | translate }}</button>
+        </div>
+      </div>
+
+    </div>
+  </mat-card-content>
+</mat-card>

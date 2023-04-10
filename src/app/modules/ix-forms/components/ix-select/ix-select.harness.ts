@@ -1,6 +1,7 @@
 import { ComponentHarness, HarnessPredicate, parallel } from '@angular/cdk/testing';
-import { MatLegacySelectHarness as MatSelectHarness, LegacySelectHarnessFilters as SelectHarnessFilters } from '@angular/material/legacy-select/testing';
+import { SelectHarnessFilters } from '@angular/material/select/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
+import { SelectHarness } from 'app/modules/ix-forms/components/ix-select/select.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
 
@@ -17,7 +18,7 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
         (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
-  getSelectHarness = this.locatorFor(MatSelectHarness);
+  getSelectHarness = this.locatorFor(SelectHarness);
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {

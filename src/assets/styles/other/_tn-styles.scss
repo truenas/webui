@@ -4,6 +4,10 @@ $standard-height: 40px;
 @import '@angular/material/theming';
 @include mat.all-legacy-component-typographies();
 @include mat.legacy-core();
+@include mat.slide-toggle-density(-1);
+@include mat.radio-density(-1);
+@include mat.checkbox-density(-1);
+@import 'angular15';
 
 // mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
@@ -29,25 +33,20 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-color-primary,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-mdc-list-item.selected a {
     color: map-get($md-primary, 500) !important;
   }
 
-  .sidebar-panel .mat-nav-list .mat-list-item {
+  .sidebar-panel .mat-nav-list .mat-mdc-list-item {
     color: rgba(0, 0, 0, 0.94);
   }
 
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-mdc-list-item-unscoped-content > .sub-menu {
     @include variable(border-left, --primary, $primary, !important);
   }
 
   .breadcrumb-bar {
     @include variable(color, --fg1, $fg1, !important);
-  }
-
-  .mat-checkbox-label {
-    color: var(--fg1);
-    white-space: initial;
   }
 
   .mat-bg-accent {
@@ -100,14 +99,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   /////////////////// SpecSelectors: Selectors not originally in ix-dark theme
-  .mat-tab-label,
-  .mat-tab-link {
+  .mdc-tab__text-label {
     @include variable(color, --fg1, $fg1);
   }
 
-  .mat-menu-item .mat-icon:not([color]),
-  .mat-menu-item .theme-picker-swatch .mat-icon:not([color]),
-  .mat-menu-item-submenu-trigger::after {
+  .mat-mdc-menu-item .mat-icon:not([color]),
+  .mat-mdc-menu-item .theme-picker-swatch .mat-icon:not([color]),
+  .mat-mdc-menu-item-submenu-trigger::after {
     @include variable(color, --fg1, $fg1);
   }
 
@@ -155,9 +153,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-raised-button.mat-accent,
   .mat-fab.mat-accent,
   .mat-mini-fab.mat-accent,
-  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
-  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
-  .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a {
     @include variable(background, --accent, $accent, !important);
     @include variable(color, #000, #000, !important);
     background-color: map-get($md-accent, 500);
@@ -166,13 +162,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-drawer,
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
-  .mat-card,
-  .mat-paginator,
-  .mat-select-content,
-  .mat-select-panel,
-  .mat-select-panel-done-animating,
+  .mat-mdc-card,
+  .mat-mdc-option,
+  .mat-mdc-paginator,
+  .mat-mdc-select-content,
+  .mat-mdc-select-panel,
+  .mat-mdc-select-panel,
+  .mat-mdc-select-panel-done-animating,
   .mat-expansion-panel,
-  .mat-dialog-container,
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-container .mat-mdc-dialog-surface,
   .mat-stepper-horizontal,
   .mat-stepper-vertical,
   .dx-treelist-container {
@@ -185,85 +184,75 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: rgba(0, 0, 0, 0.1);
   }
 
-  .mat-card .mat-divider {
+  .mat-mdc-card .mat-divider {
     @include variable(background, --alt-fg1, $alt-fg1);
     opacity: 0.15;
   }
 
-
-  .sidebar-panel .mat-nav-list .mat-list-item,
+  .sidebar-panel .mat-nav-list .mat-mdc-list-item,
   .app-user .app-user-name,
   .text-muted,
   .mat-expansion-panel-header-title,
   .mat-expansion-panel-header-description,
+  .mat-mdc-list .mat-mdc-list-item,
+  .mat-mdc-menu-panel button,
+  .mat-mdc-menu-panel a,
+  .mat-mdc-paginator-navigation-next,
+  .mat-mdc-paginator-navigation-previous,
 
-  .mat-list .mat-list-item,
-  .mat-menu-panel button,
-  .mat-menu-panel a,
-  .mat-paginator-navigation-next,
-  .mat-paginator-navigation-previous,
-
-  .mat-nav-list .mat-list-item,
-  .mat-form-field-label,
-  .mat-selection-list .mat-list-item,
-  .mat-option,
-  .mat-select-arrow,
-  .mat-select-value {
+  .mat-nav-list .mat-mdc-list-item,
+  .mat-mdc-form-field-label,
+  .mat-mdc-selection-list .mat-mdc-list-item,
+  .mat-mdc-option,
+  .mat-mdc-select-arrow,
+  .mat-mdc-select-value {
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
-  .mat-select-disabled .mat-select-value {
+  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled .mat-mdc-select-arrow,
+  .mat-mdc-select-disabled .mat-mdc-select-value {
     @include variable(color, --fg2, $fg2);
     cursor: not-allowed;
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
-  .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+  .mat-mdc-form-field.mat-focused.mat-primary .mat-mdc-select-arrow {
     @include variable(color, --primary, $primary, !important);
   }
 
-  .mat-checkbox-disabled .mat-checkbox-label {
-    @include variable(color, --grey, #4d4d4d);
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
-  .mat-checkbox-disabled .mat-checkbox-frame,
-  .mat-checkbox-disabled .mat-checkbox-inner-container {
+  .mat-mdc-checkbox-disabled {
     opacity: 0.7;
-  }
+    pointer-events: all;
 
-  .menu-toggle {
-    .mat-icon {
-      position: relative;
-      right: -10px;
-      vertical-align: middle;
+    label {
+      @include variable(color, --grey, #4d4d4d);
+      cursor: not-allowed;
+      opacity: 0.6;
     }
   }
 
-  .mat-menu-panel,
-  .mat-option.mat-active,
+  .mat-mdc-menu-panel,
+  .mat-mdc-option.mat-active,
   .mat-nav-list a {
     @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-option.mat-option-disabled {
+  .mat-mdc-option.mat-mdc-option-disabled {
     cursor: not-allowed;
     opacity: 0.5;
   }
 
-  .mat-form-field-underline {
+  .mat-mdc-form-field-underline {
     @include variable(background-color, --fg2, $fg2, !important);
     opacity: 0.35;
   }
 
-  .mat-warn .mat-form-field-underline {
+  .mat-warn .mat-mdc-form-field-underline {
     opacity: 0.85;
   }
 
-  .mat-form-field.mat-focused .mat-form-field-ripple {
+  .mat-mdc-form-field.mat-focused .mat-mdc-form-field-ripple {
     @include variable(background-color, --primary, $primary, !important);
   }
 
@@ -271,24 +260,25 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --fg2, $fg2);
   }
 
-  .mat-form-field.mat-focused.mat-primary {
+  .mat-mdc-form-field.mat-focused.mat-primary {
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-form-field-invalid .mat-form-field-label {
+  .mat-mdc-form-field-invalid .mat-mdc-form-field-label {
     color: #f44336 !important;
   }
 
-  .mat-form-field-disabled .mat-form-field-label {
-    opacity: 0.38;
+  .mat-mdc-form-field-disabled .mat-mdc-form-field-label {
+    opacity: var(--disabled-opacity);
   }
 
-  .mat-button:disabled {
+  .mat-mdc-button:disabled {
     cursor: not-allowed;
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
+    pointer-events: all;
   }
 
-  .mat-form-field-ripple {
+  .mat-mdc-form-field-ripple {
     @include variable(background-color, --primary, $primary);
   }
 
@@ -298,7 +288,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-input-element:disabled {
     @include variable(color, --fg2, $fg2);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .mat-calendar-table-header,
@@ -327,18 +317,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mini-fab.mat-warn[disabled],
   .mat-mini-fab[disabled][disabled] {
     @include variable(background-color, #999, #999);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .egret-swatch,
-  .mat-checkbox-frame,
   .mat-radio-outer-circle {
     @include variable(border-color, --primary, $primary);
-  }
-
-  .headerCheckBox .mat-checkbox-frame,
-  .ngx-datatable .datatable-body .mat-checkbox-frame {
-    @include variable(border-color, --alt-fg1, $alt-fg1, !important);
   }
 
   .mat-expansion-indicator::after,
@@ -353,9 +337,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     top: 5px;
   }
 
-  .mat-menu-item[disabled] {
+  .mat-mdc-menu-item[disabled] {
     @include variable(color, --primary-txt, $primary-txt);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .spacer {
@@ -363,29 +347,29 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // System wide hover effects
-  .mat-select-panel .mat-option:focus,
-  .mat-select-panel .mat-option:focus-visible,
-  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
+  .mat-mdc-select-panel .mat-mdc-option:focus,
+  .mat-mdc-select-panel .mat-mdc-option:focus,
+  .mat-mdc-select-panel .mat-mdc-option:focus-visible,
+  .mat-mdc-select-panel .mat-mdc-option:focus-visible,
+  .mat-mdc-select-panel .mat-mdc-option.mat-mdc-selected:not(.mat-mdc-option-multiple),
+  .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
 
-  .mat-menu-content button.mat-menu-item:hover,
-  .mat-menu-content button.mat-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
+  .mat-mdc-select-panel .mat-mdc-option:hover,
+  .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
+  .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-buttons,
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-icons,
-  .mat-menu-content button.mat-menu-item:focus,
-  .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
+  .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
+  .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     background-color: var(--hover-bg);
   }
 
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
-    @include variable(border-color, --primary-txt, $primary-txt, !important);
-  }
-
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-slide-toggle:not(.mat-checked) .mat-slide-toggle-bar {
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-mdc-slide-toggle:not(.mat-checked) .mat-mdc-slide-toggle-bar {
     @include variable(background, --bg1, $bg1, !important);
   }
 
@@ -423,18 +407,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   //Entity Module Overrides
 
-  ix-device-edit .form-card.mat-card,
-  ix-entity-form .form-card.mat-card {
+  ix-device-edit .form-card.mat-mdc-card,
+  ix-entity-form .form-card.mat-mdc-card {
     margin: 0 auto;
     max-width: 960px;
   }
 
-  .mat-card-actions .mat-button {
+  .mat-mdc-card-actions .mat-mdc-button {
     margin-left: 1px !important;
     margin-right: 3px !important;
   }
 
-  .form-card.mat-card {
+  .form-card.mat-mdc-card {
     font-size: 12px;
   }
 
@@ -443,50 +427,59 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     min-width: 100%;
   }
 
-  .combo-box-menu.mat-menu-panel {
+  .combo-box-menu.mat-mdc-menu-panel {
     max-height: 256px;
   }
 
-  .mat-checkbox {
-    margin: 4px 8px;
-  }
-
-  .form-line .mat-checkbox {
-    margin-left: 0;
-  }
-
-  .ngx-datatable .mat-checkbox-inner-container {
-    margin-left: 4px;
-  }
-
-  .mat-checkbox-inner-container {
-    height: 16px;
-    overflow: visible;
-    width: 16px;
-  }
-
-  .mat-checkbox-ripple {
-    left: -17px;
-    top: -17px;
-  }
   /////////////////// END SpecSelectors
 
   .mat-dialog-container {
-    max-width: 800px;
+    max-width: 80vw;
   }
 
-  .overflow-dialog .mat-dialog-container {
+  .mat-mdc-dialog-container {
+    border-radius: var(--mdc-dialog-container-shape);
+    max-width: 700px;
+
+    :not(.mat-mdc-dialog-content) {
+      > form {
+        padding: 0 24px 24px;
+
+        .mat-mdc-dialog-content,
+        .mat-mdc-dialog-actions {
+          padding: 0;
+        }
+      }
+    }
+
+    .mat-mdc-dialog-actions {
+      justify-content: end;
+    }
+  }
+
+  .mat-mdc-dialog-title {
+    display: flex;
+    margin: 0 0 15px;
+    padding: 24px 24px 0;
+  }
+
+  .mdc-dialog__actions {
+    min-height: inherit;
+    padding: 0 24px 20px;
+  }
+
+  .overflow-dialog .mat-mdc-dialog-container {
     max-height: calc(100vh - 100px);
     overflow: auto !important;
   }
 
-  .ix-overflow-dialog .mat-dialog-container {
+  .ix-overflow-dialog .mat-mdc-dialog-container {
     max-height: calc(100vh - 100px);
     overflow: auto !important;
     padding-top: 0;
   }
 
-  .mat-dialog-title {
+  .mat-mdc-dialog-title {
     .warning-icon {
       color: var(--orange);
       margin-right: 10px;
@@ -495,7 +488,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .mat-dialog-content {
+  .mat-mdc-dialog-content {
     overflow: hidden;
     padding-bottom: 0;
 
@@ -507,7 +500,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       min-height: 40px;
     }
 
-    .more-info .mat-icon {
+    .more-info .ix-icon {
       margin: 0 4px;
     }
 
@@ -539,7 +532,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // To fix alignment issues w/checkboxes on Create Pool page
   .headerCheckBox {
     left: 16px;
-    margin-top: 7px;
     position: relative;
   }
 
@@ -595,7 +587,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-step-header .mat-step-label {
     @include variable(color, --fg2, $fg2);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   // Style file trees to be highlighted with a theme color
@@ -619,12 +611,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 36px;
   }
 
-  ix-dual-listbox .chosen .mat-list-item-content {
+  ix-dual-listbox .chosen .mat-mdc-list-item-unscoped-content {
     color: var(--fg2);
   }
 
   .vdev-action-btn:disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   #vdev__close-button {
@@ -632,15 +624,15 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // style nav chevrons on datatable pager w/regard to theme
-  .mat-button-wrapper .mat-paginator-decrement,
-  .mat-button-wrapper .mat-paginator-increment {
+  .mdc-button__label .mat-mdc-paginator-decrement,
+  .mdc-button__label .mat-mdc-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
   }
 
-  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-decrement,
-  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-increment {
+  .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-decrement,
+  .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   // style to make sure all radio buttons catch the theme color
@@ -672,8 +664,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  ix-iscsi .mat-tab-label-active,
-  ix-reports-dashboard .mat-tab-label-active {
+  ix-iscsi .mat-mdc-tab-label-active,
+  ix-reports-dashboard .mat-mdc-tab-label-active {
     @include variable(border-color, --primary, $primary);
     border-bottom: 2px solid;
   }
@@ -761,88 +753,79 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg2);
   }
 
-  .mat-button {
+  .mat-mdc-button,
+  .mdc-button {
     @include variable(font-family, --font-family-body, $font-family-body, !important);
     background: var(--btn-default-bg);
     font-weight: 700 !important;
     text-transform: capitalize !important;
   }
 
-  .mat-stroked-button {
+  .mdc-button--outlined {
     background-color: transparent !important;
     border: 1px solid currentColor !important;
-    border-radius: 25px;
-    line-height: 28px;
+    border-radius: 25px !important;
+    height: 30px;
+    line-height: 30px;
 
     &.fn-theme-primary {
-      @include variable(color, --primary, $primary);
+      @include variable(color, --primary, $primary, !important);
     }
 
     &.fn-theme-grey {
-      @include variable(color, --grey, #4d4d4d);
+      @include variable(color, --grey, #4d4d4d, !important);
     }
 
     &.fn-theme-red {
-      @include variable(color, --red, $red);
+      @include variable(color, --red, $red, !important);
     }
 
     &.fn-theme-blue {
-      @include variable(color, --blue, $blue);
+      @include variable(color, --blue, $blue, !important);
     }
 
     &.fn-theme-green {
-      @include variable(color, --green, $green);
+      @include variable(color, --green, $green, !important);
     }
 
     &.fn-theme-cyan {
-      @include variable(color, --cyan, $cyan);
+      @include variable(color, --cyan, $cyan, !important);
     }
 
     &.fn-theme-orange {
-      @include variable(color, --orange, $orange);
+      @include variable(color, --orange, $orange, !important);
     }
 
     &.fn-theme-magenta {
-      @include variable(color, --magenta, $magenta);
+      @include variable(color, --magenta, $magenta, !important);
     }
 
     &.fn-theme-violet {
-      @include variable(color, --violet, $violet);
+      @include variable(color, --violet, $violet, !important);
     }
 
     &.fn-theme-yellow {
-      @include variable(color, --yellow, $yellow);
+      @include variable(color, --yellow, $yellow, !important);
     }
   }
 
-  .mat-button[color='default'] {
+  .mat-mdc-button[color='default'] {
     @include variable(color, --fg2, $fg2, !important);
   }
 
   // Gets checkboxes in SMART tests to pick up theme color
-  .mat-checkbox-checked .mat-checkbox-background,
   .mat-primary .mat-pseudo-checkbox-checked,
-  .mat-primary .mat-pseudo-checkbox-indeterminate,
-  .mat-primary.mat-checkbox-indeterminate .mat-checkbox-background {
+  .mat-primary .mat-pseudo-checkbox-indeterminate {
     @include variable(background, --primary, $primary, !important);
     border: none;
   }
 
-  .mat-checkbox .mat-checkbox-background {
-    @include variable(border-color, --primary, $primary, !important);
-    border: solid 2px;
+  .mat-mdc-checkbox .mdc-checkbox__ripple {
+    background-color: var(--primary);
   }
 
-  .mat-checkbox.mat-checkbox-disabled,
-  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled {
+  .mat-mdc-checkbox.mat-mdc-checkbox-disabled * {
     cursor: not-allowed;
-  }
-
-  .mat-checkbox.mat-checkbox-disabled .mat-checkbox-background,
-  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled .mat-checkbox-background {
-    @include variable(background, --grey, #4d4d4d, !important);
-    @include variable(border-color, --grey, #4d4d4d, !important);
-    border: solid 2px;
   }
 
   .form-selection-list {
@@ -857,19 +840,19 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       }
     }
 
-    .mat-list-text {
+    .mat-mdc-list-text {
       opacity: 0.75;
     }
   }
 
   // for multi-selection only
-  .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
+  .mat-mdc-option-pseudo-checkbox.mat-pseudo-checkbox {
     display: none;
   }
 
   // Bring tooltips to the front in dialogs
-  .mat-dialog-container,
-  .mat-dialog-content {
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-content {
     overflow: visible !important;
   }
 
@@ -887,13 +870,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Bring theme colors to rollover effect for standard primary buttons
-  .mat-button.mat-primary .mat-button-focus-overlay {
+  .mat-mdc-button.mat-primary .mat-mdc-button-focus-overlay {
     @include variable(background-color, --primary, $primary);
     opacity: 0.12;
   }
 
   // Bring theme colors to rollover effect for standard accent buttons
-  .mat-button.mat-accent .mat-button-focus-overlay {
+  .mat-mdc-button.mat-accent .mat-mdc-button-focus-overlay {
     @include variable(background-color, --accent, $accent);
     opacity: 0.12;
   }
@@ -913,8 +896,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Make room for checkbox ripple effect in datatables
-  .datatable-header-cell .mat-checkbox,
-  .datatable-body-cell .mat-checkbox {
+  .datatable-header-cell .mat-mdc-checkbox,
+  .datatable-body-cell .mat-mdc-checkbox {
     margin-left: 5px;
   }
 
@@ -923,7 +906,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Adjustments to checkboxes and header labels on unique tables
-  ix-services .datatable-body-cell .mat-checkbox {
+  ix-services .datatable-body-cell .mat-mdc-checkbox {
     bottom: 7px !important;
   }
 
@@ -931,26 +914,22 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-left: 15px;
   }
 
-  .mat-progress-bar-fill::after {
+  .mat-mdc-progress-bar-fill::after {
     @include variable(background-color, --primary, $primary);
   }
 
-  .mat-progress-bar-buffer {
+  .mat-mdc-progress-bar-buffer {
     @include variable(background-color, --primary, $primary);
     opacity: 0.5;
   }
 
-  .mat-progress-bar .mat-progress-bar-background {
+  .mat-mdc-progress-bar .mat-mdc-progress-bar-background {
     display: none;
   }
 
-  .mat-tab-nav-bar,
-  .mat-tab-header {
+  .mat-mdc-tab-nav-bar,
+  .mat-mdc-tab-header {
     border-bottom: 1px solid var(--lines);
-  }
-
-  .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
   }
 
   datatable-selection > .empty-row {
@@ -977,12 +956,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--bg2) !important;
   }
 
-  .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover),
-  .mat-autocomplete-panel .mat-option:hover {
+  .mat-autocomplete-panel .mat-mdc-option.mat-mdc-selected:not(.mat-active):not(:hover),
+  .mat-autocomplete-panel .mat-mdc-option:hover {
     background-color: var(--primary) !important;
   }
 
-  .mat-autocomplete-panel .mat-option-text {
+  .mat-autocomplete-panel .mat-mdc-option-text {
     color: var(--fg2) !important;
   }
 
@@ -1020,8 +999,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: auto;
   }
 
-  ix-select-dialog .mat-select-placeholder,
-  ix-ipmi .mat-select-placeholder {
+  ix-select-dialog .mat-mdc-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
 
@@ -1081,7 +1059,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding-left: 3px;
   }
 
-  tree-node-content .mat-icon {
+  tree-node-content .ix-icon {
     vertical-align: top;
   }
 
@@ -1091,10 +1069,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     vertical-align: top;
   }
 
-  .mat-card {
+  .mat-mdc-card {
     border-radius: 6px;
   }
-
 
   // Scrollbars need separate rules for firefox and webkit
   ix-confirm-dialog .warning-box {
@@ -1119,8 +1096,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .fieldset-container {
-    .disabled-select .mat-select-arrow {
-      opacity: 0.38;
+    .disabled-select .mat-mdc-select-arrow {
+      opacity: var(--disabled-opacity);
     }
 
     ix-entity-form-list .form-list .form-list-item > div.form-line {
@@ -1134,7 +1111,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   }
 
-  ix-iscsi .mat-tab-links {
+  ix-iscsi .mat-mdc-tab-links {
     flex-wrap: wrap;
   }
 
@@ -1151,11 +1128,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  mat-error a {
-    text-decoration: underline;
+  mat-error {
+    color: var(--error);
+
+    a {
+      text-decoration: underline;
+    }
   }
 
-  .mat-select-panel {
+  .mat-mdc-select-panel,
+  .mat-mdc-select-panel {
     max-height: 50vh !important; // values over 50vh will push last visible element out the screen
   }
 
@@ -1191,7 +1173,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--red) !important;
     color: white !important;
 
-    .mat-icon {
+    .ix-icon {
       color: white !important;
       opacity: 0.8 !important;
     }
@@ -1211,7 +1193,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .sidebar-panel.mat-sidenav .sidebar-list-item {
     border-bottom: 1px solid var(--lines);
     border-left: 6px solid rgba(0, 0, 0, 0);
-    width: calc(100% - 6px);
+    padding: 0;
   }
 
   .sidebar-panel.mat-sidenav .sidebar-list-item:hover {
@@ -1220,7 +1202,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .sidenav-link:hover,
   .slide-in-nav-item:hover,
-  .mat-button.mat-default:hover {
+  .mat-mdc-button.mat-default:hover {
     background: var(--hover-bg) !important;
   }
 
@@ -1233,7 +1215,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--bg2);
     border-left: 6px solid var(--primary);
 
-    .mat-list-item-content > a {
+    .mat-mdc-list-item-unscoped-content > a {
       background-color: var(--bg2);
 
       ix-icon {
@@ -1241,7 +1223,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       }
     }
 
-    .mat-list-item-content > a:focus-visible {
+    .mat-mdc-list-item-unscoped-content > a:focus-visible {
       background: var(--hover-bg);
     }
   }
@@ -1272,11 +1254,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     z-index: 3;
   }
 
-  .slidein-nav .mat-list {
+  .slidein-nav .mat-mdc-list {
     padding: 0;
   }
 
-  .slidein-nav .mat-list-item {
+  .slidein-nav .mat-mdc-list-item {
     border-bottom: solid 1px var(--lines);
   }
 
@@ -1311,51 +1293,51 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   button.menu-toggle {
-    .mat-button-wrapper {
+    .mdc-button__label {
       align-items: center;
       display: inline-flex;
-    }
-
-    .mat-icon {
-      position: relative;
-      right: -10px;
     }
   }
 
   .topbar-panel {
-    .mat-dialog-container {
+    .mat-mdc-dialog-container {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
-      padding-bottom: 8px;
-      padding-top: 8px;
     }
 
-    .mat-dialog-content {
+    .mat-mdc-dialog-content {
       overflow: auto !important;
     }
 
-    .mat-dialog-actions {
+    .mat-mdc-dialog-actions {
       padding-bottom: 24px;
     }
   }
 
   // Disabled form fields
-  .form-element.form-combobox .mat-form-field[disabled],
-  .form-element.form-combobox .mat-menu-trigger[disabled]
-  .form-element.form-ip-netmask .mat-form-field[disabled],
-  .form-element .mat-form-field-wrapper[disabled],
+  .form-element.form-combobox .mat-mdc-form-field[disabled],
+  .form-element.form-combobox .mat-mdc-menu-trigger[disabled]
+  .form-element.form-ip-netmask .mat-mdc-form-field[disabled],
+  .form-element .mat-mdc-text-field-wrapper[disabled],
   .form-element input[type=email][disabled],
   .form-element input[type=number][disabled],
   .form-element input[type=password][disabled],
   .form-element input[type=text][disabled],
   .form-element select[disabled],
   .form-element textarea[disabled] {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 
   .search-icon-wrapper {
     cursor: default;
     user-select: none;
+
+    .mat-icon {
+      align-items: center;
+      display: flex;
+      font-size: 150%;
+      justify-content: center;
+    }
   }
 
   .reset-icon-wrapper {
@@ -1363,8 +1345,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.5;
     user-select: none;
 
+    .ix-icon,
     .mat-icon {
+      align-items: center;
+      display: flex;
       font-size: 150%;
+      justify-content: center;
     }
 
     &.invisible {
@@ -1375,7 +1361,95 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // focus state styles for mat-form-field
-  .mat-form-field.mat-focused:focus-within {
+  .mat-mdc-form-field.mat-focused:focus-within {
     outline: 1px solid var(--primary);
   }
+
+  .error-warning-icon {
+    color: var(--orange);
+    margin-right: 10px;
+  }
 } // end of ix theme
+
+
+.mdc-list-item__primary-text {
+  align-items: center;
+  display: flex;
+
+  > span {
+    align-items: center;
+    display: flex;
+  }
+}
+
+ix-tree-node[aria-level='2'],
+ix-nested-tree-node[aria-level='2'] {
+  ix-bootenv-node-item {
+    padding-left: 33px;
+  }
+}
+
+.input-container {
+  font-size: 12px;
+}
+
+.mdc-menu-surface.mat-mdc-select-panel {
+  box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f;
+  margin-top: 5px !important;
+  padding: 0 !important;
+}
+
+.mat-mdc-select-arrow-wrapper {
+  width: 21px;
+}
+
+mat-select {
+  box-sizing: border-box;
+
+  .mat-mdc-select-value {
+    padding: 8px;
+  }
+}
+
+input {
+  padding: 8px;
+}
+
+textarea {
+  padding: 8px !important;
+}
+
+mat-autocomplete,
+ix-combobox {
+  box-sizing: border-box;
+
+  input {
+    padding: 3px 8px;
+  }
+}
+
+mat-option {
+  padding: 0 8px !important;
+}
+
+mat-form-field {
+  .mat-mdc-text-field-wrapper {
+    padding: 0;
+  }
+}
+
+.mdc-line-ripple::before,
+.mdc-line-ripple::after {
+  border: 0 !important;
+}
+
+.manual-selection-dialog {
+  .mat-mdc-dialog-container {
+    max-width: inherit;
+  }
+}
+
+.multi-error-dialog.mat-mdc-dialog-container,
+.multi-error-dialog.mat-mdc-dialog-content {
+  overflow: auto !important;
+}

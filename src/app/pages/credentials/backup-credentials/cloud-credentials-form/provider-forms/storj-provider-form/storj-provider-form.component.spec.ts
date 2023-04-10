@@ -24,7 +24,7 @@ describe('StorjProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       access_key_id: 'my-key-id',
       secret_access_key: 'my-secret-key',
     });

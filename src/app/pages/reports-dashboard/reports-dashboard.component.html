@@ -14,19 +14,6 @@
   fxLayout="row wrap"
   fxLayoutAlign="space-evenly"
 >
-  <div *ngIf="timeDiffWarning" class="time-warning">
-    <div>
-      <ix-icon name="warning" class="icon-warning"></ix-icon>
-    </div>
-    <div>
-      <span>{{ timeDiffWarning }}</span>
-      <span>{{ 'NAS/browser time mismatch can lead to the reporting data display misbehavior.' | translate }}</span>
-    </div>
-    <button mat-icon-button [matTooltip]="'Synchronize Time' | translate" (click)="onSynchronizeTime()">
-      <ix-icon>sync</ix-icon>
-    </button>
-  </div>
-
   <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
     <div *cdkVirtualFor="let key of visibleReports; let i = index" class="report-container">
       <ix-report

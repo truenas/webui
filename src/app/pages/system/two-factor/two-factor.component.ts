@@ -6,16 +6,17 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/2fa';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -70,9 +71,10 @@ export class TwoFactorComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     protected ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     protected mdDialog: MatDialog,
   ) {}
 
@@ -93,9 +95,9 @@ export class TwoFactorComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -127,8 +129,8 @@ export class TwoFactorComponent implements OnInit {
       this.dialogService.confirm({
         title: helptext.two_factor.submitDialog.title,
         message: helptext.two_factor.submitDialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptext.two_factor.submitDialog.btn,
+        hideCheckbox: true,
+        buttonText: helptext.two_factor.submitDialog.btn,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.intervalOnLoad = params.interval;
         this.digitsOnLoad = params.otp_digits;
@@ -150,7 +152,7 @@ export class TwoFactorComponent implements OnInit {
       },
       error: (err) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(err, this.form);
+        this.formErrorHandler.handleWsFormError(err, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -176,19 +178,22 @@ export class TwoFactorComponent implements OnInit {
           next: () => {
             this.isFormLoading = false;
           },
-          error: (err) => {
+          error: (error: WebsocketError) => {
             this.isFormLoading = false;
             this.twoFactorEnabled = true;
-            this.dialogService.errorReport(helptext.two_factor.error,
-              err.reason, err.trace.formatted);
+            this.dialogService.error({
+              title: helptext.two_factor.error,
+              message: error.reason,
+              backtrace: error.trace.formatted,
+            });
           },
         });
     } else {
       this.dialogService.confirm({
         title: helptext.two_factor.confirm_dialog.title,
         message: helptext.two_factor.confirm_dialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptext.two_factor.confirm_dialog.btn,
+        hideCheckbox: true,
+        buttonText: helptext.two_factor.confirm_dialog.btn,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.isFormLoading = true;
 
@@ -199,10 +204,13 @@ export class TwoFactorComponent implements OnInit {
               this.twoFactorEnabled = true;
               this.updateSecretAndUri();
             },
-            error: (err) => {
+            error: (err: WebsocketError) => {
               this.isFormLoading = false;
-              this.dialogService.errorReport(helptext.two_factor.error,
-                err.reason, err.trace.formatted);
+              this.dialogService.error({
+                title: helptext.two_factor.error,
+                message: err.reason,
+                backtrace: err.trace.formatted,
+              });
             },
           });
       });
@@ -220,8 +228,8 @@ export class TwoFactorComponent implements OnInit {
     this.dialogService.confirm({
       title: helptext.two_factor.renewSecret.title,
       message: helptext.two_factor.renewSecret.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.two_factor.renewSecret.btn,
+      hideCheckbox: true,
+      buttonText: helptext.two_factor.renewSecret.btn,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = true;
 
@@ -230,10 +238,13 @@ export class TwoFactorComponent implements OnInit {
           this.isFormLoading = false;
           this.updateSecretAndUri();
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           this.isFormLoading = false;
-          this.dialogService.errorReport(helptext.two_factor.error,
-            err.reason, err.trace.formatted);
+          this.dialogService.error({
+            title: helptext.two_factor.error,
+            message: error.reason,
+            backtrace: error.trace.formatted,
+          });
         },
       });
     });
@@ -250,10 +261,13 @@ export class TwoFactorComponent implements OnInit {
         this.secret = config.secret;
         this.getUri();
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        this.dialogService.errorReport(helptext.two_factor.error,
-          err.reason, err.trace.formatted);
+        this.dialogService.error({
+          title: helptext.two_factor.error,
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        });
       },
     });
   }
@@ -270,10 +284,13 @@ export class TwoFactorComponent implements OnInit {
           this.openQrDialog();
         }
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        this.dialogService.errorReport(helptext.two_factor.error,
-          err.reason, err.trace.formatted);
+        this.dialogService.error({
+          title: helptext.two_factor.error,
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        });
       },
     });
   }

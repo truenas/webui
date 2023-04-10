@@ -80,18 +80,24 @@
           [label]="'CPU Mode' | translate"
           [options]="cpuModeOptions$"
           [required]="true"
-          [tooltip]="helptext.cpu_mode.tooltip | translate"
         ></ix-select>
         <ix-select
+          *ngIf="showCpuModelField"
           formControlName="cpu_model"
           [label]="'CPU Model' | translate"
           [options]="cpuModelOptions$"
-          [tooltip]="helptext.cpu_model.tooltip | translate"
         ></ix-select>
         <ix-input
           formControlName="memory"
           [label]="'Memory Size' | translate"
           [tooltip]="helptext.memory_tooltip | translate"
+          [format]="formatter.memorySizeFormatting"
+          [parse]="formatter.memorySizeParsing"
+        ></ix-input>
+        <ix-input
+          formControlName="min_memory"
+          [label]="'Minimum Memory Size' | translate"
+          [tooltip]="helptext.min_memory_tooltip | translate"
           [format]="formatter.memorySizeFormatting"
           [parse]="formatter.memorySizeParsing"
         ></ix-input>
@@ -114,20 +120,21 @@
           formControlName="gpus"
           [multiple]="true"
           [options]="gpuOptions$"
-          [label]="'GPU\'s' | translate"
+          [label]="'GPUs' | translate"
         ></ix-select>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           type="submit"
           mat-button
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

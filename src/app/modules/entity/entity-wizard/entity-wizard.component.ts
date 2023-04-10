@@ -18,7 +18,9 @@ import { FieldRelationService } from 'app/modules/entity/entity-form/services/fi
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -43,6 +45,7 @@ export class EntityWizardComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private formBuilder: UntypedFormBuilder,
     private entityFormService: EntityFormService,
     public loader: AppLoaderService,
@@ -51,6 +54,7 @@ export class EntityWizardComponent implements OnInit {
     protected aroute: ActivatedRoute,
     private dialog: DialogService,
     protected translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -150,7 +154,7 @@ export class EntityWizardComponent implements OnInit {
       config.fieldConfig = config.fieldConfig.map((item) => {
         if (item.name === name) {
           item.disabled = disable;
-          item['isHidden'] = hide;
+          item.isHidden = hide;
         }
         return item;
       });
@@ -180,22 +184,24 @@ export class EntityWizardComponent implements OnInit {
     } else {
       this.loader.open();
 
-      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe({
-        next: (res) => {
-          this.loader.close();
-          if (res.error) {
-            this.dialog.errorReport(res.error, (res as any).reason, res.exception);
-          } else if (this.conf.routeSuccess) {
-            this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
-          } else {
-            this.snackbar.success(this.translate.instant('Settings saved.'));
-          }
-        },
-        error: (res) => {
-          this.loader.close();
-          new EntityUtils().handleError(this, res);
-        },
-      });
+      this.ws.job(this.conf.addWsCall, [value])
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (result) => {
+            this.loader.close();
+            if (result.error) {
+              this.dialog.error(this.errorHandler.parseJobError(result));
+            } else if (this.conf.routeSuccess) {
+              this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
+            } else {
+              this.snackbar.success(this.translate.instant('Settings saved.'));
+            }
+          },
+          error: (error) => {
+            this.loader.close();
+            this.dialog.error(this.errorHandler.parseError(error));
+          },
+        });
     }
   }
 
@@ -230,8 +236,8 @@ export class EntityWizardComponent implements OnInit {
   clearErrors(): void {
     this.conf.wizardConfig.forEach((wizardConfig) => {
       wizardConfig.fieldConfig.forEach((config) => {
-        config['errors'] = '';
-        config['hasErrors'] = false;
+        config.errors = '';
+        config.hasErrors = false;
       });
     });
   }

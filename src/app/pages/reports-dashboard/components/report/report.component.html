@@ -24,17 +24,11 @@
           <div *ngIf="localControls && !report?.errorConf" class="line-chart-tools">
             <mat-button-toggle-group aria-label="Steps">
               <mat-button-toggle
-                ix-auto
-                ix-auto-type="button"
-                [ix-auto-identifier]="reportTitle + '_stepBack'"
                 [matTooltip]="'Step Back' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="stepBack()"
               ><ix-icon name="mdi-rewind"></ix-icon></mat-button-toggle>
               <mat-button-toggle
-                ix-auto
-                ix-auto-type="button"
-                [ix-auto-identifier]="reportTitle + '_stepForward'"
                 [disabled]="stepForwardDisabled"
                 [matTooltip]="'Step Forward' | translate"
                 [matTooltipShowDelay]="1000"
@@ -44,9 +38,6 @@
 
             <mat-button-toggle-group aria-label="Zoom Level">
               <mat-button-toggle
-                ix-auto
-                ix-auto-type="button"
-                [ix-auto-identifier]="reportTitle + '_zoomOut'"
                 [disabled]="zoomLevelIndex === zoomLevelMin"
                 [matTooltip]="'Zoom Out' | translate"
                 [matTooltipShowDelay]="1000"
@@ -54,19 +45,13 @@
               ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
 
               <mat-button-toggle
-                ix-auto
-                ix-auto-type="button"
-                [ix-auto-identifier]="reportTitle + '_zoomReset'"
                 [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled"
                 [matTooltip]="'Reset Zoom' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="timeZoomReset()"
-              >{{ currentZoomLevel | mapValue: zoomLevelLabels }}</mat-button-toggle>
+              >{{ currentZoomLevel | mapValue: zoomLevelLabels | translate }}</mat-button-toggle>
 
               <mat-button-toggle
-                ix-auto
-                ix-auto-type="button"
-                [ix-auto-identifier]="reportTitle + '_zoomIn'"
                 [disabled]="zoomLevelIndex === zoomLevelMax"
                 [matTooltip]="'Zoom In' | translate"
                 [matTooltipShowDelay]="1000"
@@ -125,7 +110,7 @@
           <div *ngIf="report && data?.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)">
             <table class="legend-table">
               <!-- Table Header-->
-              <tr class="legend-group header">
+              <tr class="legend-group header" ixTest="table-header">
                 <th class="legend-label">
                   <strong>{{ 'Key' | translate }}</strong>
                 </th>
@@ -137,7 +122,7 @@
               </tr>
 
               <!-- Table Rows -->
-              <tr *ngFor="let legendItem of data.legend; let i = index" class="legend-group">
+              <tr *ngFor="let legendItem of data.legend; let i = index" class="legend-group" [ixTest]="legendItem">
                 <td class="legend-label">
                   <!--Legend Label-->
                   <div
@@ -150,7 +135,7 @@
                     <strong>{{ legendItem }}</strong>
                   </span>
 
-                  <span *ngIf="legendData?.series[i]?.yHTML" class="font-normal">:
+                  <span *ngIf="legendData?.series?.[i]?.yHTML" class="font-normal">:
                     {{ legendData.series[i].yHTML }}
                   </span>
                 </td>

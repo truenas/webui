@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="dynamic-field form-explorer form-element"
-  ix-auto
-  ix-auto-type="explorer"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -33,6 +30,7 @@
             cdkTextareaAutosize
             cdkAutosizeMinRows="1"
             cdkAutosizeMaxRows="4"
+            [ixTest]="config.name"
             [placeholder]="config.placeholder | translate"
             [formControlName]="config.name"
             [required]="config.required"
@@ -42,9 +40,7 @@
             <input
               matInput
               type="text"
-              ix-auto
-              ix-auto-type="input"
-              [ix-auto-identifier]="config.name"
+              [ixTest]="config.name"
               [placeholder]="config.placeholder | translate"
               [formControlName]="config.name"
               [required]="config.required"
@@ -80,11 +76,11 @@
         #treeNodeTemplate
         let-node
       >
-        <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">
-          folder
-        </mat-icon>
+        <ng-container *ngIf="node.data.hasChildren || node.data.children; else fileIcon">
+          <ix-icon name="folder"></ix-icon>
+        </ng-container>
         <ng-template #fileIcon>
-          <mat-icon>insert_drive_file</mat-icon>
+          <ix-icon name="insert_drive_file"></ix-icon>
         </ng-template>
         <span [title]="node.data.name">
           {{ node.data.subTitle }}

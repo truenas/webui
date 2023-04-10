@@ -17,10 +17,8 @@
   </div>
 
   <mat-radio-group
-    ix-auto
-    ix-auto-type="radio-group"
     [id]="config.name + '_radiogroup'"
-    [ix-auto-identifier]="config.name"
+    [ixTest]="config.name"
     [formControlName]="config.name"
     [fxLayout]="radioLayout"
     (change)="onChangeRadio($event)"
@@ -33,10 +31,8 @@
     >
       <mat-radio-button
         *ngIf="!option.hiddenFromDisplay"
-        ix-auto
-        ix-auto-type="radio"
+        [ixTest]="[config.name, option.label]"
         [id]="config.name + '_' + option.value + '_radiobutton'"
-        [ix-auto-identifier]="config.name + '_' + option.label"
         [checked]="option.value === radioValue"
         [value]="option.value"
       >

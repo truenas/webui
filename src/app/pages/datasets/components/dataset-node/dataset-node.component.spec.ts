@@ -6,6 +6,7 @@ import {
   DatasetEncryptionCellComponent,
 } from 'app/pages/datasets/components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
+import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.tokens';
 import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 
 describe('DatasetNodeComponent', () => {
@@ -28,6 +29,10 @@ describe('DatasetNodeComponent', () => {
       DatasetIconComponent,
       DatasetEncryptionCellComponent,
       DatasetRolesCellComponent,
+    ],
+    providers: [
+      { provide: datasetToken, useValue: dataset },
+      { provide: isSystemDatasetToken, useValue: false },
     ],
   });
 

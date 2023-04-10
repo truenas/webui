@@ -1,34 +1,29 @@
 import {
-  Component, Inject, Input, OnDestroy, OnInit,
+  Component, Inject, Input, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  differenceInSeconds, differenceInDays, addSeconds, format,
-} from 'date-fns';
 import { filter, take } from 'rxjs/operators';
+import { GiB, MiB } from 'app/constants/bytes.constant';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { Timeout } from 'app/interfaces/timeout.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+  AppLoaderService, DialogService, SystemGeneralService,
 } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
-import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
+import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -40,7 +35,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     './widget-sys-info.component.scss',
   ],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   // HA
   @Input() isHaLicensed = false;
   @Input() isPassive = false;
@@ -48,11 +43,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   @Input() showReorderHandle = false;
   @Input() systemInfo: SystemInfo;
 
-  showTimeDiffWarning = false;
-  timeInterval: Timeout;
-  timeDiffInSeconds: number;
-  timeDiffInDays: number;
-  nasDateTime: Date;
+  hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
+
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
   memory: string;
@@ -63,7 +55,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   certified = false;
   updateAvailable = false;
   manufacturer = '';
-  buildDate: string;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
   hasHa: boolean;
@@ -87,15 +78,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private productImgServ: ProductImageService,
-    private serverTimeService: ServerTimeService,
     public loader: AppLoaderService,
     public dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
     this.configurable = false;
-    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.isUpdateRunning = res === 'true';
+    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdateRunning: string) => {
+      this.isUpdateRunning = isUpdateRunning === 'true';
     });
 
     mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
@@ -161,12 +151,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.timeInterval) {
-      clearInterval(this.timeInterval);
-    }
-  }
-
   get updateBtnStatus(): string {
     if (this.updateAvailable) {
       this._updateBtnStatus = 'default';
@@ -181,11 +165,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     return this.translate.instant('Check for Updates');
   }
 
-  get timeDiffWarning(): string {
-    const nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss, OOOO');
-    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
-  }
-
   addTimeDiff(timestamp: number): number {
     if (sessionStorage.systemInfoLoaded) {
       const now = Date.now();
@@ -196,36 +175,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
-    const now = Date.now();
     const datetime = this.addTimeDiff(this.data.datetime.$date);
-    this.nasDateTime = new Date(datetime);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
-
-    this.timeDiffInSeconds = Math.abs(differenceInSeconds(datetime, now));
-    this.timeDiffInDays = Math.abs(differenceInDays(datetime, now));
-
-    if (this.timeDiffInSeconds > 300 || this.timeDiffInDays > 0) {
-      this.showTimeDiffWarning = true;
-    } else {
-      this.showTimeDiffWarning = false;
-    }
-
-    if (this.timeInterval) {
-      clearInterval(this.timeInterval);
-    }
-
-    this.timeInterval = setInterval(() => {
-      this.nasDateTime = addSeconds(this.nasDateTime, 1);
-    }, 1000);
-
-    const build = new Date(this.data.buildtime['$date']);
-    const year = build.getUTCFullYear();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const month = months[build.getUTCMonth()];
-    const day = build.getUTCDate();
-    const hours = build.getUTCHours();
-    const minutes = build.getUTCMinutes();
-    this.buildDate = `${month} ${day}, ${year} ${hours}:${minutes}`;
 
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
 
@@ -258,11 +209,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       pmin = '0' + pmin;
     }
 
+    // TODO: Replace with ICU strings
     if (days > 0) {
       if (days === 1) {
-        this.uptimeString += days + this.translate.instant(' day, ');
+        this.uptimeString += `${days}${this.translate.instant(' day, ')}`;
       } else {
-        this.uptimeString += days + this.translate.instant(' days, ') + `${hrs}:${pmin}`;
+        this.uptimeString += `${days}${this.translate.instant(' days, ')}${hrs}:${pmin}`;
       }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;
@@ -274,9 +226,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   formatMemory(physmem: number, units: string): string {
     let result: string;
     if (units === 'MiB') {
-      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MiB';
+      result = Number(physmem / MiB).toFixed(0) + ' MiB';
     } else if (units === 'GiB') {
-      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
+      result = Number(physmem / GiB).toFixed(0) + ' GiB';
     }
     return result;
   }
@@ -305,27 +257,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       return;
     }
     this.productImage = this.productImgServ.getMiniImagePath(sysProduct) || '';
-  }
-
-  onSynchronizeTime(): void {
-    this.serverTimeService.confirmSetSystemTime().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.loader.open();
-      const currentTime = Date.now();
-      this.serverTimeService.setSystemTime(currentTime).pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.loader.close();
-          sessionStorage.setItem('systemInfoLoaded', currentTime.toString());
-          this.store$.dispatch(
-            systemInfoDatetimeUpdated({ datetime: { $date: currentTime } }),
-          );
-          this.processSysInfo({ ...this.data, datetime: { $date: currentTime } });
-        },
-        error: (err) => {
-          this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
-      });
-    });
   }
 
   goToEnclosure(): void {

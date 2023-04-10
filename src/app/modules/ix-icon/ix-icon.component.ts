@@ -1,6 +1,16 @@
 import {
-  Attribute, ChangeDetectionStrategy, Component, ElementRef,
-  ErrorHandler, Inject, Input, OnChanges, OnInit, Optional, ViewEncapsulation,
+  AfterContentInit,
+  Attribute,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ErrorHandler,
+  Inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Optional,
+  ViewEncapsulation,
 } from '@angular/core';
 import {
   MatIcon, MatIconDefaultOptions, MatIconLocation, MatIconRegistry, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
@@ -29,16 +39,18 @@ import {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
+export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
   @Input() name: string;
 
-  private get iconName(): string {
-    if (this.iconLigature) {
-      return this.iconLigature;
-    }
+  _elementRef: ElementRef<HTMLElement>;
 
+  private get iconName(): string {
     if (this.name) {
       return this.name;
+    }
+
+    if (this.iconLigature) {
+      return this.iconLigature;
     }
 
     if (this.svgIcon) {
@@ -61,10 +73,10 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    private iconRegistry: MatIconRegistry,
+    iconRegistry: MatIconRegistry,
     @Attribute('aria-hidden') ariaHidden: string,
-    @Inject(MAT_ICON_LOCATION) private location: MatIconLocation,
-    private readonly errorHandler: ErrorHandler,
+    @Inject(MAT_ICON_LOCATION) location: MatIconLocation,
+    readonly errorHandler: ErrorHandler,
     @Optional() @Inject(MAT_ICON_DEFAULT_OPTIONS)
     defaults?: MatIconDefaultOptions,
   ) {
@@ -78,6 +90,10 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.updateIcon(this.name);
+  }
+
+  ngAfterContentInit(): void {
+    this.updateIcon(this.iconName);
   }
 
   private updateIcon(iconName: string): void {

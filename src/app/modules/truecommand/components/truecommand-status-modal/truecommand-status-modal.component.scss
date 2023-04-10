@@ -3,25 +3,25 @@
   margin-top: 10px;
 }
 
-.mat-icon.status-connected {
+.ix-icon.status-connected {
   color: var(--blue);
 }
 
-.mat-icon.status-failed {
+.ix-icon.status-failed {
   color: var(--red);
 }
 
-.mat-icon.status-disabled {
+.ix-icon.status-disabled {
   color: var(--grey);
 }
 
-.mat-icon.tc-icon {
+.ix-icon.tc-icon {
   height: 21px;
   padding: 2px 0 2px 2px;
   width: 21px;
 }
 
-div.tc-dialog-content .mat-icon {
+div.tc-dialog-content .ix-icon {
   margin-right: 10px;
   position: relative;
   top: 5px;

@@ -97,15 +97,27 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Apps'),
       icon: 'apps',
+      state: 'apps-old',
+      isVisible$: this.hasApps$,
+    },
+    {
+      name: T('Apps (WIP)'),
+      type: MenuItemType.SlideOut,
+      tooltip: T('Apps'),
+      icon: 'apps',
       state: 'apps',
       isVisible$: this.hasApps$,
+      sub: [
+        { name: T('Installed'), state: 'installed' },
+        { name: T('Available'), state: 'available' },
+      ],
     },
     {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),
       icon: 'insert_chart',
-      state: 'reportsdashboard',
+      state: 'reportsdashboard/cpu',
     },
     {
       name: T('System Settings'),

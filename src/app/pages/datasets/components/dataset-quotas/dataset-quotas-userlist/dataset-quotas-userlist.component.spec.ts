@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TemplateRef } from '@angular/core';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
@@ -27,7 +27,6 @@ const fakeUserQuotas: DatasetQuota[] = [{
   name: 'daemon',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
   used_bytes: 0,
@@ -37,7 +36,6 @@ const fakeUserQuotas: DatasetQuota[] = [{
   name: 'bin',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
   used_bytes: 0,
@@ -91,7 +89,7 @@ describe('DatasetQuotasUserlistComponent', () => {
   it('should show table rows', async () => {
     expect(ws.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.User, [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]]],
+      ['Test', DatasetQuotaType.User, []],
     );
 
     expect(ws.call).toHaveBeenCalledWith(
@@ -103,15 +101,15 @@ describe('DatasetQuotasUserlistComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
-      ['bin', '2', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
+      ['daemon', '1', '500 KiB', '0', '0%', '—', '0', '—', ''],
+      ['bin', '2', '500 KiB', '0', '0%', '—', '0', '—', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
   });
 
   it('should delete user quota when click delete button', async () => {
-    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'delete' }));
+    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await firstDeleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -135,7 +133,7 @@ describe('DatasetQuotasUserlistComponent', () => {
 
   it('should open slide to edit user quota when click a row', async () => {
     const element = await spectator.fixture.nativeElement as HTMLElement;
-    const [, secondRow] = element.querySelectorAll('.mat-row');
+    const [, secondRow] = element.querySelectorAll('.mat-mdc-row');
     (secondRow as HTMLElement).click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetQuotaEditFormComponent);

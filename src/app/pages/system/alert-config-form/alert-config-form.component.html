@@ -3,20 +3,17 @@
   <div class="mat-title">
     <div *ngIf="selectedCategory"> {{ 'Category' | translate }}: </div>
     <div class="categories">
-      <button mat-button [matMenuTriggerFor]="categoriesMenu">
+      <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
         {{ selectedCategory.title }}
-        <mat-icon>arrow_drop_down</mat-icon>
+        <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
       </button>
       <mat-menu #categoriesMenu="matMenu">
         <button
           *ngFor="let category of categories; let i = index"
           mat-menu-item
+          [ixTest]="['category', category.id]"
           (click)="onCategoryChanged(category)"
         >
-          <span>
-            <mat-icon *ngIf="category === selectedCategory">check_circle</mat-icon>
-            <mat-icon *ngIf="category !== selectedCategory">remove</mat-icon>
-          </span>
           <span>{{ category.title }}</span>
         </button>
       </mat-menu>
@@ -47,6 +44,7 @@
         mat-button
         type="submit"
         color="primary"
+        ixTest="save"
         [disabled]="form.invalid || isFormLoading || !selectedCategory"
       >{{ 'Save' | translate }}</button>
     </div>

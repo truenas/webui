@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -15,7 +15,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
-import { StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('SaveConfigDialogComponent', () => {
@@ -50,6 +50,7 @@ describe('SaveConfigDialogComponent', () => {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
     ],
   });
 

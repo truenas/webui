@@ -7,6 +7,7 @@ import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   FieldConfig,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -14,12 +15,13 @@ import { RelationGroup } from 'app/modules/entity/entity-form/models/field-relat
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DynamicListComponent,
 } from 'app/pages/sharing/iscsi/initiator/initiator-form/dynamic-list/dynamic-list.component';
-import { WebSocketService, DialogService, NetworkService } from 'app/services';
+import { DialogService, NetworkService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -78,20 +80,21 @@ export class InitiatorFormComponent implements OnInit {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
+    private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
-    protected dialog: DialogService,
+    protected dialogService: DialogService,
   ) { }
 
   getConnectedInitiators(): void {
     this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
+      next: (sessions) => {
+        this.connectedInitiators = _.unionBy(sessions, (item) => item.initiator && item.initiator_addr);
       },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -100,9 +103,9 @@ export class InitiatorFormComponent implements OnInit {
     this.getConnectedInitiators();
 
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['pk']) {
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
+      if (params.pk) {
+        this.pk = params.pk;
+        this.customFilter[0][0].push(parseInt(params.pk, 10));
       }
     });
 
@@ -114,8 +117,8 @@ export class InitiatorFormComponent implements OnInit {
       }
     });
 
-    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.connectedInitiatorsDisabled = res === 'DISABLED';
+    this.formGroup.controls.initiators.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.connectedInitiatorsDisabled = status === 'DISABLED';
     });
 
     if (this.pk) {
@@ -133,12 +136,12 @@ export class InitiatorFormComponent implements OnInit {
                 }
               }
             });
-            if (groups[0]['initiators'].length === 0) {
-              this.formGroup.controls['all'].setValue(true);
+            if (groups[0].initiators.length === 0) {
+              this.formGroup.controls.all.setValue(true);
             }
           },
-          error: (err) => {
-            new EntityUtils().handleWsError(this, err);
+          error: (error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         });
     }
@@ -148,10 +151,10 @@ export class InitiatorFormComponent implements OnInit {
     this.error = null;
     const value = _.cloneDeep(this.formGroup.value);
 
-    value['initiators'] = value['all'] ? [] : Array.from(value['initiators']);
-    delete value['initiators_input'];
-    delete value['auth_network_input'];
-    delete value['all'];
+    value.initiators = value.all ? [] : Array.from(value.initiators);
+    delete value.initiators_input;
+    delete value.auth_network_input;
+    delete value.all;
 
     let submitFunction;
     if (this.pk === undefined) {
@@ -166,9 +169,9 @@ export class InitiatorFormComponent implements OnInit {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -220,7 +223,7 @@ export class InitiatorFormComponent implements OnInit {
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
-        item['isHidden'] = hide;
+        item.isHidden = hide;
       }
       return item;
     });

@@ -33,11 +33,17 @@
   </div>
 
   <div mat-dialog-actions>
-    <button mat-button type="button" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
 
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="add-disks"
+      [disabled]="form.invalid"
+    >
       {{ 'Add Disks' | translate }}
     </button>
   </div>

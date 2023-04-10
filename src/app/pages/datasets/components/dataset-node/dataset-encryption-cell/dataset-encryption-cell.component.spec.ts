@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   DatasetEncryptionCellComponent,
 } from 'app/pages/datasets/components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
@@ -37,7 +38,7 @@ describe('DatasetEncryptionCellComponent', () => {
 
     expect(spectator.component.isEncryptionRoot).toBe(true);
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
-    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-open-variant');
+    expect(spectator.query(IxIconComponent).name).toBe('mdi-lock-open-variant');
   });
 
   it('shows "Unlocked by ancestor" and an icon when ancestor dataset is unlocked and encryption is inherited', () => {
@@ -56,7 +57,7 @@ describe('DatasetEncryptionCellComponent', () => {
     expect(spectator.component.isEncryptionRoot).toBe(false);
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
     expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
-    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-open-variant-outline');
+    expect(spectator.query(IxIconComponent).name).toBe('mdi-lock-open-variant-outline');
   });
 
   it('shows "Locked" and an icon when dataset is locked', () => {
@@ -74,7 +75,7 @@ describe('DatasetEncryptionCellComponent', () => {
 
     expect(spectator.component.isEncryptionRoot).toBe(true);
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
-    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock');
+    expect(spectator.query(IxIconComponent).name).toBe('mdi-lock');
   });
 
   it('shows "Locked by ancestor" and an icon when ancestor dataset is locked and encryption is inherited', () => {
@@ -93,6 +94,6 @@ describe('DatasetEncryptionCellComponent', () => {
     expect(spectator.component.isEncryptionRoot).toBe(false);
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
     expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
-    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-outline');
+    expect(spectator.query(IxIconComponent).name).toBe('mdi-lock-outline');
   });
 });

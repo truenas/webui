@@ -63,10 +63,10 @@ export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRo
     const rows = entityTable.rows;
     rows.forEach((row) => {
       row.details = [];
-      row.details.push({ label: this.translate.instant('Maximum connections'), value: row['maxconn'] },
-        { label: this.translate.instant('Host Allow'), value: row['hostsallow'] },
-        { label: this.translate.instant('Host Deny'), value: row['hostsdeny'] },
-        { label: this.translate.instant('Auxiliary parameters'), value: row['auxiliary'] });
+      row.details.push({ label: this.translate.instant('Maximum connections'), value: row.maxconn },
+        { label: this.translate.instant('Host Allow'), value: row.hostsallow },
+        { label: this.translate.instant('Host Deny'), value: row.hostsdeny },
+        { label: this.translate.instant('Auxiliary parameters'), value: row.auxiliary });
     });
   }
 

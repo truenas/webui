@@ -48,6 +48,7 @@ export class EntityFormService {
     duration: 'MINUTE',
   };
   constructor(
+    // eslint-disable-next-line @typescript-eslint/ban-types
     @Inject(UntypedFormBuilder) private formBuilder: UntypedFormBuilder,
     protected ws: WebSocketService,
   ) {}
@@ -161,8 +162,8 @@ export class EntityFormService {
    */
   getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
     const nodes: ListdirChild[] = [];
-    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((res) => {
-      res.forEach((filesystem) => {
+    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((filesystems) => {
+      filesystems.forEach((filesystem) => {
         const pathArr = filesystem.split('/');
         if (pathArr.length === 1) {
           const node: ListdirChild = {
@@ -257,6 +258,8 @@ export class EntityFormService {
     if (type === UnitType.Size) {
       return unit[0] + 'iB';
     }
+
+    return undefined;
   }
 
   /**

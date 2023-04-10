@@ -1,13 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyMenuHarness as MatMenuHarness } from '@angular/material/legacy-menu/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -15,7 +15,8 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import { ApiKeyComponentStore, ApiKeysState } from 'app/pages/api-keys/store/api-key.store';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyListComponent', () => {
   let spectator: Spectator<ApiKeyListComponent>;
@@ -34,7 +35,6 @@ describe('ApiKeyListComponent', () => {
     ],
     providers: [
       ApiKeyComponentStore,
-      mockProvider(WebSocketService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -75,8 +75,8 @@ describe('ApiKeyListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'Created Date', ''],
-      ['first-api-key', 'Jan 10 2022 10:36', 'more_vert'],
-      ['second-api-key', 'Jan 10 2022 10:36', 'more_vert'],
+      ['first-api-key', 'Jan 10 2022 10:36', ''],
+      ['second-api-key', 'Jan 10 2022 10:36', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -113,7 +113,7 @@ describe('ApiKeyListComponent', () => {
 
     const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="API Key Actions"]' }));
     await actionsMenu.open();
-    await actionsMenu.clickItem({ text: 'editEdit' });
+    await actionsMenu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ApiKeyFormDialogComponent, {
       data: {
@@ -140,7 +140,7 @@ describe('ApiKeyListComponent', () => {
 
     const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="API Key Actions"]' }));
     await actionsMenu.open();
-    await actionsMenu.clickItem({ text: 'deleteDelete' });
+    await actionsMenu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', ['1']);

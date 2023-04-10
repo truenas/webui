@@ -5,15 +5,24 @@
       [value]="datasetFilter"
       (search)="onSearch($event)"
     ></ix-search-input>
-    <mat-slide-toggle
-      color="primary"
-      [checked]="showExtraColumns"
-      [disabled]="isLoading$ | async"
-      (click)="toggleExtraColumns($event)"
-    >
-      <label>{{ 'Show extra columns' | translate }}</label>
-    </mat-slide-toggle>
-    <button mat-button color="primary" (click)="doAdd()">
+
+    <mat-spinner
+      *ngIf="loadingExtraColumns; else slider"
+      [diameter]="30"
+    ></mat-spinner>
+
+    <ng-template #slider>
+      <mat-slide-toggle
+        color="primary"
+        [checked]="showExtraColumns"
+        [disabled]="isLoading$ | async"
+        (click)="toggleExtraColumns($event)"
+      >
+        <label>{{ 'Show extra columns' | translate }}</label>
+      </mat-slide-toggle>
+    </ng-template>
+
+    <button mat-button color="primary" ixTest="add-snapshot" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -31,10 +40,11 @@
     <button
       mat-button
       matTooltipPosition="below"
+      ixTest="delete-selected"
       [matTooltip]="'Delete selections' | translate"
       (click)="doBatchDelete(checkboxColumn?.selection.selected)"
     >
-      <mat-icon>delete</mat-icon>
+      <ix-icon name="delete"></ix-icon>
       {{ 'Delete' | translate }}
     </button>
   </div>
@@ -108,10 +118,7 @@
       <ng-container
         *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable"
       >
-        {{
-          +snapshot.properties.referenced.parsed
-            | filesize: { standard: 'iec' }
-        }}
+        {{ +snapshot.properties.referenced.parsed | filesize: { standard: 'iec' } }}
       </ng-container>
     </td>
   </ng-container>
@@ -121,7 +128,7 @@
     (toggle)="onToggle($event)"
   ></ix-expand-toggle-column>
 
-  <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
   <tr
     *matRowDef="
       let snapshot;
@@ -129,6 +136,7 @@
       dataSource: dataSource
     "
     mat-row
+    [ixTest]="snapshot.snapshot_name"
     [ixDetailRow]="snapshot"
     [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
     [ixDetailRowTemplate]="expandedRowTemplate"

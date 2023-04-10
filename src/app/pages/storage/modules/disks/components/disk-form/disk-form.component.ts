@@ -15,7 +15,7 @@ import helptext from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -50,7 +50,6 @@ export class DiskFormComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private fb: FormBuilder,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
@@ -68,11 +67,11 @@ export class DiskFormComponent implements OnInit {
   }
 
   private clearPasswordField(): void {
-    this.form.controls['clear_pw'].valueChanges
+    this.form.controls.clear_pw.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(
         (state) => {
-          const controlPasswd = this.form.controls['passwd'];
+          const controlPasswd = this.form.controls.passwd;
           if (state) {
             controlPasswd.disable();
           } else {

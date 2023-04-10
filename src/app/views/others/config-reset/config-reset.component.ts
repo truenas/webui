@@ -1,13 +1,14 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Component({
@@ -16,9 +17,10 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class ConfigResetComponent implements OnInit {
   constructor(
-    protected ws: WebSocketService,
+    private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     public translate: TranslateService,
     protected dialogService: DialogService,
     protected dialog: MatDialog,
@@ -26,15 +28,18 @@ export class ConfigResetComponent implements OnInit {
   ) {}
 
   isWsConnected(): void {
-    if (this.ws.connected) {
-      this.loader.close();
-      // ws is connected
-      this.router.navigate(['/session/signin']);
-    } else {
-      setTimeout(() => {
-        this.isWsConnected();
-      }, 1000);
-    }
+    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe({
+      next: (isConnected) => {
+        if (isConnected) {
+          this.loader.close();
+          this.router.navigate(['/session/signin']);
+        } else {
+          setTimeout(() => {
+            this.isWsConnected();
+          }, 1000);
+        }
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -52,7 +57,7 @@ export class ConfigResetComponent implements OnInit {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.ws.prepareShutdown();
+      this.wsManager.prepareShutdown();
       this.loader.open();
       setTimeout(() => {
         this.isWsConnected();
@@ -60,7 +65,7 @@ export class ConfigResetComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       dialogRef.close();
-      this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+      this.dialogService.error(this.errorHandler.parseJobError(failedJob));
     });
   }
 }

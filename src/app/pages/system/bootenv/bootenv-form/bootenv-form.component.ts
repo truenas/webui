@@ -15,7 +15,7 @@ import {
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { BootEnvService, WebSocketService } from 'app/services';
+import { NameValidationService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -31,7 +31,7 @@ export class BootEnvironmentFormComponent {
   title: string;
 
   formGroup = this.formBuilder.group({
-    name: ['', [Validators.required, Validators.pattern(this.bootEnvService.bootenvNameRegex)]],
+    name: ['', [Validators.required, Validators.pattern(this.nameValidationService.nameRegex)]],
   });
 
   isFormLoading = false;
@@ -44,7 +44,7 @@ export class BootEnvironmentFormComponent {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private bootEnvService: BootEnvService,
+    private nameValidationService: NameValidationService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,

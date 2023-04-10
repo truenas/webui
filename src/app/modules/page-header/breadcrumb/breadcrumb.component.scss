@@ -18,9 +18,10 @@
         padding: 0 8px;
       }
 
-      a {
+      a,
+      span {
         color: var(--primary);
-        font-size: smaller;
+        font-size: 10px;
         font-weight: 600;
         text-transform: uppercase;
 

@@ -1,15 +1,18 @@
 import {
-  HttpClient, HttpRequest, HttpEventType, HttpResponse,
+  HttpClient, HttpRequest, HttpEventType, HttpResponse, HttpErrorResponse,
 } from '@angular/common/http';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -24,18 +27,27 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  apiEndPoint = '/_upload?auth_token=' + this.ws.token;
+  private apiEndPoint: string;
   fileList: FileList;
   fbrowser: HTMLInputElement;
 
   constructor(
     protected ws: WebSocketService,
     protected http: HttpClient,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     public dialog: DialogService,
     public translate: TranslateService,
     private snackbar: SnackbarService,
-  ) {}
+    private authService: AuthService,
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   fileBtnClick(): void {
     this.fileInput.nativeElement.click();
@@ -75,9 +87,9 @@ export class FormUploadComponent {
             this.snackbar.success(this.translate.instant('File upload complete'));
           }
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           this.loader.close();
-          this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
+          this.dialog.error(this.errorHandler.parseHttpError(error));
         },
       });
     } else {

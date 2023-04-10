@@ -9,9 +9,9 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -75,7 +75,8 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ZfsSnapshot>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
+  loadingExtraColumns = false;
+  dataSource = new MatTableDataSource<ZfsSnapshot>([]);
   defaultSort: Sort = { active: 'snapshot_name', direction: 'desc' };
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -159,16 +160,16 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       return {
         title: this.translate.instant(helptext.extra_cols.title_hide),
         message: this.translate.instant(helptext.extra_cols.message_hide),
-        buttonMsg: this.translate.instant(helptext.extra_cols.button_hide),
-        hideCheckBox: true,
+        buttonText: this.translate.instant(helptext.extra_cols.button_hide),
+        hideCheckbox: true,
       };
     }
 
     return {
       title: this.translate.instant(helptext.extra_cols.title_show),
       message: this.translate.instant(helptext.extra_cols.message_show),
-      buttonMsg: this.translate.instant(helptext.extra_cols.button_show),
-      hideCheckBox: true,
+      buttonText: this.translate.instant(helptext.extra_cols.button_show),
+      hideCheckbox: true,
     };
   }
 
@@ -181,11 +182,13 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
         case 'dataset':
           return item.dataset;
         case 'used':
-          return item.properties ? item.properties.used.parsed.toString() : '';
+          return item.properties ? +item.properties.used.parsed : '';
         case 'created':
           return item.properties ? item.properties.creation.parsed.$date.toString() : '';
         case 'referenced':
-          return item.properties ? item.properties.referenced.parsed.toString() : '';
+          return item.properties ? +item.properties.referenced.parsed : '';
+        default:
+          return undefined;
       }
     };
     setTimeout(() => {
@@ -199,8 +202,20 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   toggleExtraColumns(event: MouseEvent): void {
     event.preventDefault();
     this.dialogService.confirm(this.getConfirmOptions())
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.store$.dispatch(snapshotExtraColumnsToggled()));
+      .pipe(untilDestroyed(this))
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.showExtraColumns = !this.showExtraColumns;
+          this.store$.dispatch(snapshotExtraColumnsToggled());
+        }
+
+        this.loadingExtraColumns = true;
+
+        setTimeout(() => {
+          this.loadingExtraColumns = false;
+          this.cdr.markForCheck();
+        });
+      });
   }
 
   doAdd(): void {

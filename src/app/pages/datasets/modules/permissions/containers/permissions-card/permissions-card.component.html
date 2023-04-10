@@ -2,7 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
 
-    <a *ngIf="canEditPermissions" mat-button (click)="redirectToEditPermissions()">
+    <a *ngIf="canEditPermissions" mat-button ixTest="edit-permissions" (click)="redirectToEditPermissions()">
       {{ 'Edit' | translate }}
     </a>
   </mat-card-header>

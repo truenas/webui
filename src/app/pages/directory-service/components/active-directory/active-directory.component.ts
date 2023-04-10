@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,8 +12,8 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -22,6 +22,7 @@ import {
 import {
   DialogService, ModalService, SystemGeneralService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -74,7 +75,8 @@ export class ActiveDirectoryComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
@@ -103,9 +105,9 @@ export class ActiveDirectoryComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -144,7 +146,7 @@ export class ActiveDirectoryComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -163,10 +165,10 @@ export class ActiveDirectoryComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -208,7 +210,7 @@ export class ActiveDirectoryComponent implements OnInit {
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWsError(this, error, this.dialogService);
+      this.dialogService.error(this.errorHandler.parseJobError(error));
       this.modalService.refreshTable();
       dialogRef.close();
     });

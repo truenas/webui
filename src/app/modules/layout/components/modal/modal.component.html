@@ -1,10 +1,16 @@
-<div cdkScrollable class={{id}} [ngClass]="id !== slideInModalId ? 'jw-modal' : ''">
+<div cdkScrollable [ngClass]="[id, id !== slideInModalId ? 'jw-modal' : '']">
   <div class="jw-modal-body">
     <div class="slidein-title-bar" fxLayout="row">
       <div fxFlex="90%" fxLayout="row" fxLayoutAlign="start center">
         <h3 class="formtitle">{{ title | translate }}</h3>
       </div>
-      <mat-icon fxFlex="10%" id="close-icon" (click)="close()">cancel</mat-icon>
+      <ix-icon
+        name="cancel"
+        ixTest="close-modal"
+        fxFlex="10%"
+        id="close-icon"
+        (click)="close()"
+      ></ix-icon>
     </div>
     <ng-container *ngIf="!wizard; else wizardBlock">
       <ng-container *appLet="asFormConfig(conf) as formConf">

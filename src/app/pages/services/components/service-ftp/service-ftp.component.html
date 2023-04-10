@@ -121,12 +121,7 @@
             ></ix-checkbox>
 
             <ng-container *ngIf="isTlsEnabled$ | async">
-              <div class="linked-select">
-                <div class="link-wrapper">
-                  <a class="link" (click)="onLinkClicked()">
-                    {{ 'Manage Certificates' | translate }}
-                  </a>
-                </div>
+              <ix-with-manage-certificates-link>
                 <ix-select
                   formControlName="ssltls_certificate"
                   [label]="'Certificate' | translate"
@@ -134,7 +129,7 @@
                   [required]="true"
                   [options]="certificates$"
                 ></ix-select>
-              </div>
+              </ix-with-manage-certificates-link>
 
               <ix-select
                 formControlName="tls_policy"
@@ -310,12 +305,13 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" [routerLink]="['/services']">
+        <button mat-button type="button" ixTest="cancel" [routerLink]="['/services']">
           {{ 'Cancel' | translate }}
         </button>
 
@@ -323,13 +319,14 @@
           *ngIf="isAdvancedMode; else basicModeButton"
           mat-button
           type="button"
+          ixTest="toggle-advanced-options"
           (click)="onToggleAdvancedOptions()"
         >
           {{ 'Basic Options' | translate }}
         </button>
 
         <ng-template #basicModeButton>
-          <button mat-button type="button" (click)="onToggleAdvancedOptions()">
+          <button mat-button type="button" ixTest="toggle-advanced-options" (click)="onToggleAdvancedOptions()">
             {{ 'Advanced Options' | translate }}
           </button>
         </ng-template>

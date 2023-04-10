@@ -1,0 +1,55 @@
+<mat-card class="container">
+  <mat-card-content>
+    <div
+      dndDropzone
+      class="drag-container"
+      [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
+      (dndDrop)="onDrop($event)"
+    >
+      <div
+        class="outer-container"
+      >
+        <div class="type-container">
+          <h3>{{vdev.type}}</h3>
+          <p>{{ vdev.rawSize | filesize: { standard: 'iec' } }}{{' Est. Usable Capacity' | translate }}</p>
+          <ix-warning *ngIf="spansEnclosures" [message]="'Vdevs spans enclosure' | translate"></ix-warning>
+        </div>
+        <div class="vdev-container">
+          <ix-enclosure-wrapper *ngFor="let enclosureDisks of enclosuresDisks | keyvalue"
+            [enclosure]="enclosureDisks.key"[vdev]="vdev"
+          >
+            <div class="disk-icons">
+              <ix-disk-icon *ngFor="let disk of enclosureDisks.value"
+                class="disk-icon drag-handle"
+                [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+                [dndDraggable]="getMovableDisk(disk)"
+                [dndEffectAllowed]="'move'"
+                [disk]="disk"
+                (dndStart)="onDragStart()"
+                (dndCanceled)="onDragCanceled()"
+                (dndEnd)="onDragEnd()"
+              ></ix-disk-icon>
+            </div>
+          </ix-enclosure-wrapper>
+          <div class="disk-icons">
+            <ix-disk-icon *ngFor="let disk of nonEnclosureDisks"
+              class="disk-icon drag-handle"
+              [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+              [dndDraggable]="getMovableDisk(disk)"
+              [dndEffectAllowed]="'move'"
+              [disk]="disk"
+              (dndStart)="onDragStart()"
+              (dndCanceled)="onDragCanceled()"
+              (dndEnd)="onDragEnd()"
+            ></ix-disk-icon>
+          </div>
+
+        </div>
+        <div class="delete-container" (click)="deleteVdev()">
+          <ix-icon name="delete"></ix-icon>
+        </div>
+      </div>
+      <ix-label class="drag-hint" [label]="'Drag & drop disks to add or remove them' | translate"></ix-label>
+    </div>
+  </mat-card-content>
+</mat-card>

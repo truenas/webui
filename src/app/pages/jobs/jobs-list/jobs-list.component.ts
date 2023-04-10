@@ -10,8 +10,8 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,6 +32,7 @@ import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
 import { JobTab } from './job-tab.enum';
 
@@ -49,7 +50,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
-  dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<Job>([]);
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs', 'actions'];
   expandedRow: Job;
   selectedIndex: JobTab = 0;
@@ -91,6 +92,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<JobSlice>,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     private emptyService: EmptyService,
@@ -101,9 +103,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
       .confirm({
         title: this.translate.instant('Abort'),
         message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Abort'),
-        cancelMsg: this.translate.instant('Cancel'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Abort'),
+        cancelText: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -167,7 +169,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
       switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse) => {
-        this.dialogService.errorReport(error.name, error.message);
+        this.dialogService.error(this.errorHandler.parseHttpError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

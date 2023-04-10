@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Optional,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +19,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, KeychainCredentialService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -57,6 +58,7 @@ export class SshConnectionFormComponent {
       (control) => control.parent && !this.isManualSetup,
       Validators.required,
     )],
+    sudo: [false],
     otp_token: [''],
     private_key: [null as (number | typeof generateNewKeyValue), Validators.required],
 
@@ -75,7 +77,7 @@ export class SshConnectionFormComponent {
   }
 
   get isManualSetup(): boolean {
-    return this.form.get('setup_method').value === SshConnectionsSetupMethod.Manual;
+    return this.form.controls.setup_method.value === SshConnectionsSetupMethod.Manual;
   }
 
   isLoading = false;
@@ -120,6 +122,10 @@ export class SshConnectionFormComponent {
     },
   ]);
 
+  readonly isNotRootUsername$ = this.form.controls.username.valueChanges.pipe(
+    map((username) => username !== 'root'),
+  );
+
   readonly helptext = helptext;
 
   private existingConnection: KeychainSshCredentials;
@@ -134,14 +140,15 @@ export class SshConnectionFormComponent {
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private slideIn: IxSlideInService,
+    public formatter: IxFormatterService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
   ) {}
 
   get isManualAuthFormValid(): boolean {
-    return this.form.controls['host'].valid
-      && this.form.controls['private_key'].valid
-      && this.form.controls['username'].valid;
+    return this.form.controls.host.valid
+      && this.form.controls.private_key.valid
+      && this.form.controls.username.valid;
   }
 
   setConnectionForEdit(connection: KeychainSshCredentials): void {
@@ -157,9 +164,9 @@ export class SshConnectionFormComponent {
   onDiscoverRemoteHostKeyPressed(): void {
     this.loader.open();
     const requestParams = {
-      host: this.form.get('host').value,
-      port: this.form.get('port').value,
-      connect_timeout: this.form.get('connect_timeout').value,
+      host: this.form.controls.host.value,
+      port: this.form.controls.port.value,
+      connect_timeout: this.form.controls.connect_timeout.value,
     };
 
     this.ws.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
@@ -236,6 +243,7 @@ export class SshConnectionFormComponent {
         otp_token: values.otp_token,
         connect_timeout: values.connect_timeout,
         cipher: values.cipher,
+        sudo: values.sudo,
       };
     }
 

@@ -3,11 +3,7 @@
   width: 340px;
 }
 
-.form-actions {
-  display: flex;
-  flex-direction: row-reverse;
-
-  > button {
-    margin-left: 10px;
-  }
+.warning-wrapper {
+  padding: 0 24px;
 }
+

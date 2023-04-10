@@ -83,4 +83,8 @@
   <mat-error *ngIf="control.hasError('email')">
     {{ 'Value must be a valid email address' | translate }}
   </mat-error>
+
+  <mat-error *ngIf="control.hasError('cron')">
+    {{ 'Invalid cron expression' | translate }}
+  </mat-error>
 </div>

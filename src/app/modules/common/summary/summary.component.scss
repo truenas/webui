@@ -1,0 +1,30 @@
+:host {
+  font-size: 12px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.summary-line {
+  .summary-line-label {
+    padding-left: 0;
+    padding-right: 8px;
+    vertical-align: top;
+  }
+
+  .summary-line-value {
+    vertical-align: top;
+    word-break: break-all;
+  }
+
+  &.section-start {
+    &:first-of-type td {
+      padding-top: 0;
+    }
+
+    td {
+      padding-top: 10px;
+    }
+  }
+}

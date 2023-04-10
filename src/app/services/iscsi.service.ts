@@ -8,7 +8,7 @@ import {
   IscsiPortal,
   IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',

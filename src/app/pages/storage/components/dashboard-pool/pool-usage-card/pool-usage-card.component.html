@@ -5,7 +5,7 @@
       <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
-    <a mat-button [routerLink]="['/', 'datasets', poolState.name]">
+    <a mat-button [ixTest]="[poolState.name, 'manage-datasets']" [routerLink]="['/', 'datasets', poolState.name]">
       {{ 'Manage Datasets' | translate }}
     </a>
   </mat-card-header>
@@ -65,7 +65,8 @@
       </div>
       <a
         class="link"
-        [routerLink]="['/reportsdashboard', 'disk']"
+        [ixTest]="[poolState.name, 'view-disk-space-reports']"
+        [routerLink]="['/reportsdashboard', 'partition']"
         [queryParams]="{ disks }"
       >
         {{ 'View Disk Space Reports' | translate }}

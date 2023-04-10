@@ -1,16 +1,20 @@
 import {
-  Component, ViewChild, ElementRef, ChangeDetectorRef,
+  ChangeDetectorRef, Component, ElementRef, ViewChild,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { EnclosureSlot, EnclosureView } from 'app/interfaces/enclosure.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
 import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
 import { MiniXlPlus } from 'app/pages/system/view-enclosure/classes/hardware/mini-xl-plus';
-import { EnclosureMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
-import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
+import {
+  EnclosureDisksComponent,
+} from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -27,6 +31,11 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   @ViewChild('cardcontent', { static: true }) cardContent: ElementRef;
 
   temperatureScales = false;
+  emptySlotView = this.defaultView;
+
+  get enclosurePools(): string[] {
+    return this.selectedEnclosureView?.pools;
+  }
 
   constructor(
     protected core: CoreService,
@@ -44,14 +53,45 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
+  getPoolByName(poolName: string): Pool {
+    return this.systemState.pools.find((pool: Pool) => pool.name === poolName);
+  }
+
+  findEnclosureSlotFromSlotNumber(slot: number): EnclosureSlot {
+    const enclosureSlot: EnclosureSlot = this.selectedEnclosureView.slots.find((enclosure: EnclosureSlot) => {
+      return enclosure.slot === slot;
+    });
+
+    return enclosureSlot;
+  }
+
+  rawCapacity(view: EnclosureView): number {
+    if (!view) {
+      return undefined;
+    }
+    let capacity = 0;
+    view.slots.forEach((slot: EnclosureSlot) => {
+      if (slot.vdev && slot.topologyCategory === PoolTopologyCategory.Data) {
+        capacity += slot.disk.size;
+      }
+    });
+    return capacity;
+  }
+
   createExtractedEnclosure(): void {
     // MINIs have no support for expansion shelves
     // therefore we will never need to create
     // any enclosure selection UI. Leave this
     // empty or the base class will throw errors
+    console.error('Cannot create extracted enclosure for selector UI. MINI products do not support expansion shelves');
   }
 
-  createEnclosure(enclosure: EnclosureMetadata = this.selectedEnclosure): void {
+  createEnclosure(enclosure: EnclosureView = this.selectedEnclosureView): void {
+    if (!this.enclosureViews || !this.selectedEnclosureView) {
+      console.warn('CANNOT CREATE MINI ENCLOSURE');
+      return;
+    }
+
     switch (enclosure.model) {
       case 'FREENAS-MINI-3.0-E':
       case 'TRUENAS-MINI-3.0-E':
@@ -85,7 +125,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       return;
     }
 
-    this.setupEnclosureEvents();
+    this.setupChassisViewEvents();
 
     // Slight adjustment to align with external html elements
     this.container.setTransform(0);
@@ -101,7 +141,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   }
 
   stackPositions(log = false): Point[] {
-    const result = this.enclosure.driveTrayObjects.map((dt) => dt.container.getGlobalPosition());
+    const result = this.chassisView.driveTrayObjects.map((dt) => dt.container.getGlobalPosition());
 
     if (log) {
       console.warn(result);

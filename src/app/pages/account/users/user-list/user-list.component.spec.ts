@@ -1,8 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CoreComponents } from 'app/core/core-components.module';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -28,9 +29,8 @@ const fakeUserDataSource: User[] = [{
   smb: false,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: 'root@root.root',
   group: {
     id: 41,
@@ -49,9 +49,8 @@ const fakeUserDataSource: User[] = [{
   smb: true,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: null,
   group: {
     id: 101,
@@ -73,6 +72,7 @@ describe('UserListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
+      CoreComponents,
     ],
     declarations: [
       UserDetailsRowComponent,
@@ -120,8 +120,8 @@ describe('UserListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Username', 'UID', 'Builtin', 'Full Name', ''],
-      ['root', '0', 'true', 'root', 'expand_more'],
-      ['test', '1004', 'false', 'test', 'expand_more'],
+      ['root', '0', 'Yes', 'root', ''],
+      ['test', '1004', 'No', 'test', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -158,7 +158,7 @@ describe('UserListComponent', () => {
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'expand_more' }));
+    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
     await firstExpandButton.click();
     await secondExpandButton.click();
 

@@ -2,23 +2,23 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
-import {
-  UnlockDialogComponent,
-} from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
+import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import {
   ZfsEncryptionCardComponent,
 } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
@@ -39,6 +39,8 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     MatDialogModule,
     CommonDirectivesModule,
     FlexModule,
+    TestIdModule,
+    IxIconModule,
   ],
   exports: [
     ZfsEncryptionCardComponent,
@@ -46,7 +48,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
   declarations: [
     ZfsEncryptionCardComponent,
     EncryptionOptionsDialogComponent,
-    UnlockDialogComponent,
+    UnlockSummaryDialogComponent,
     DatasetUnlockComponent,
     ExportDatasetKeyDialogComponent,
     ExportAllKeysDialogComponent,

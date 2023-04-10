@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,11 +28,14 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
-import { CloudCredentialService, DialogService, WebSocketService } from 'app/services';
+import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
+import { CloudCredentialService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const newStorjBucket = 'new_storj_bucket';
+const customOptionValue = -1;
 
 type FormValue = CloudsyncFormComponent['form']['value'];
 
@@ -53,6 +56,8 @@ export class CloudsyncFormComponent {
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
   }
+
+  googleDriveProviderId: number;
 
   form = this.formBuilder.group({
     description: ['' as string, Validators.required],
@@ -86,15 +91,15 @@ export class CloudsyncFormComponent {
     filename_encryption: [true],
     encryption_password: [''],
     encryption_salt: [''],
-    transfers: [null as number],
+    transfers: [4],
     bwlimit: [[] as string[]],
   });
 
   isLoading = false;
-  bucketPlaceholder = helptext.bucket_placeholder;
-  bucketTooltip = helptext.bucket_tooltip;
-  bucketInputPlaceholder = helptext.bucket_input_placeholder;
-  bucketInputTooltip = helptext.bucket_input_tooltip;
+  bucketPlaceholder: string = helptext.bucket_placeholder;
+  bucketTooltip: string = helptext.bucket_tooltip;
+  bucketInputPlaceholder: string = helptext.bucket_input_placeholder;
+  bucketInputTooltip: string = helptext.bucket_input_tooltip;
 
   readonly transferModeTooltip = `
     ${helptext.transfer_mode_warning_sync}<br><br>
@@ -118,9 +123,12 @@ export class CloudsyncFormComponent {
   credentialsList: CloudsyncCredential[] = [];
   readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
     map((options) => {
-      return options.map((option) => (
-        { label: `${option.name} (${option.provider})`, value: option.id }
-      ));
+      return options.map((option) => {
+        if (option.provider === CloudsyncProviderName.GoogleDrive) {
+          this.googleDriveProviderId = option.id;
+        }
+        return { label: `${option.name} (${option.provider})`, value: option.id };
+      });
     }),
     untilDestroyed(this),
   );
@@ -139,7 +147,17 @@ export class CloudsyncFormComponent {
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
 
-  bucketOptions$: Observable<SelectOption[]> = of([]);
+  transfersDefaultOptions = [
+    { label: this.translate.instant('Low Bandwidth (4)'), value: 4 },
+    { label: this.translate.instant('Medium Bandwidth (8)'), value: 8 },
+    { label: this.translate.instant('High Bandwidth (16)'), value: 16 },
+  ];
+
+  transfersCustomOption = { label: this.translate.instant('Custom'), value: customOptionValue };
+
+  transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
+
+  bucketOptions$ = of<SelectOption[]>([]);
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
@@ -401,6 +419,20 @@ export class CloudsyncFormComponent {
         }
       }
     });
+
+    this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+      if (value === customOptionValue) {
+        const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
+          if (this.isCustomTransfers(transfers)) {
+            this.setTransfersOptions(true, transfers);
+          }
+          this.form.controls.transfers.setValue(transfers || null);
+        });
+      } else if (!this.isCustomTransfers(value)) {
+        this.setTransfersOptions(false, value);
+      }
+    });
   }
 
   loadBucketOptions(): void {
@@ -426,16 +458,16 @@ export class CloudsyncFormComponent {
         this.form.controls.bucket_input.disable();
         this.cdr.markForCheck();
       },
-      error: (err) => {
+      error: (error) => {
         this.isLoading = false;
         this.form.controls.bucket.disable();
         this.form.controls.bucket_input.enable();
         this.dialog.closeAllDialogs();
         this.dialog.confirm({
-          title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
-          message: err.reason,
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Fix Credential'),
+          title: error.extra ? error.extra.excerpt : (this.translate.instant('Error: ') + error.error),
+          message: error.reason,
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Fix Credential'),
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
           this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
@@ -494,8 +526,27 @@ export class CloudsyncFormComponent {
     };
   }
 
+  isCustomTransfers(transfers: number): boolean {
+    const transfersDefaultValues = this.transfersDefaultOptions.map((option) => option.value);
+    return transfers && !transfersDefaultValues.includes(transfers);
+  }
+
+  setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
+    if (isCustomTransfersSelected) {
+      const customOption = { label: this.translate.instant('Custom ({customTransfers})', { customTransfers }), value: customTransfers };
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption, this.transfersCustomOption]);
+    } else {
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
+    }
+  }
+
   setTaskForEdit(task: CloudSyncTaskUi): void {
     this.editingTask = task;
+
+    const transfers = task.transfers;
+    if (this.isCustomTransfers(transfers)) {
+      this.setTransfersOptions(true, transfers);
+    }
 
     this.form.patchValue({
       ...task,
@@ -504,7 +555,7 @@ export class CloudsyncFormComponent {
       encryption: task.encryption,
       bwlimit: task.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth)}`
+          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth, { standard: 'iec' })}`
           : `${bwlimit.time}, off`;
       }),
     });
@@ -697,7 +748,7 @@ export class CloudsyncFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;

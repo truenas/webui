@@ -1,13 +1,19 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { MockStorageGenerator, MockStorageScenario } from 'app/core/testing/utils/mock-storage-generator.utils';
+import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
-import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
-import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
+import {
+  PoolCardIconComponent,
+} from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
+import {
+  TopologyCardComponent,
+} from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 
 describe('TopologyCardComponent', () => {
   let spectator: Spectator<TopologyCardComponent>;
@@ -21,65 +27,36 @@ describe('TopologyCardComponent', () => {
     declarations: [
       MockComponent(PoolCardIconComponent),
     ],
+    providers: [
+      mockWebsocket([]),
+    ],
   });
 
   beforeEach(() => {
+    // Create storage object with empty topologies
+    const storage = new MockStorageGenerator();
+
+    // Add Topologies to Storage
+    storage.addDataTopology({
+      scenario: MockStorageScenario.Uniform,
+      layout: TopologyItemType.Raidz3,
+      diskSize: 4,
+      width: 7,
+      repeats: 2,
+    }).addSpecialTopology({
+      scenario: MockStorageScenario.Uniform,
+      layout: TopologyItemType.Mirror,
+      diskSize: 4,
+      width: 3,
+      repeats: 1,
+    }).addLogTopology(2, true, 2)
+      .addCacheTopology(2, 2)
+      .addSpareTopology(3, 8);
+
     spectator = createComponent({
       props: {
-        poolState: {
-          id: 1,
-          name: 'test pool',
-          healthy: true,
-          status: 'ONLINE',
-          topology: {
-            data: [
-              {
-                type: CreateVdevLayout.Raidz1,
-                children: [{ type: 'DISK', disk: 'sda' }, { type: 'DISK', disk: 'sdb' }, { type: 'DISK', disk: 'sdc' }],
-              },
-              {
-                type: CreateVdevLayout.Raidz1,
-                children: [{ type: 'DISK', disk: 'sdd' }, { type: 'DISK', disk: 'sde' }],
-              },
-            ],
-            log: [
-              {
-                type: CreateVdevLayout.Mirror,
-                children: [{ type: 'DISK', disk: 'sdf' }, { type: 'DISK', disk: 'sdg' }],
-              },
-            ],
-            cache: [
-              { type: 'DISK', disk: 'sdh', children: [] },
-              { type: 'DISK', disk: 'sdi', children: [] },
-            ],
-            spare: [
-              { type: 'DISK', disk: 'sdj', children: [] },
-              { type: 'DISK', disk: 'sdk', children: [] },
-            ],
-            special: [
-              {
-                type: CreateVdevLayout.Mirror,
-                children: [{ type: 'DISK', disk: 'sdl' }, { type: 'DISK', disk: 'sdm' }],
-              },
-            ],
-            dedup: [],
-          },
-        } as unknown as Pool,
-        disks: [
-          { name: 'sda', devname: 'sda', size: 1073741824 * 2 },
-          { name: 'sdb', devname: 'sdb', size: 1073741824 * 2 },
-          { name: 'sdc', devname: 'sdc', size: 1073741824 * 2 },
-          { name: 'sdd', devname: 'sdd', size: 1073741824 * 2 },
-          { name: 'sde', devname: 'sde', size: 1073741824 * 2 },
-          { name: 'sdf', devname: 'sdf', size: 1048576 * 5 },
-          { name: 'sdg', devname: 'sdg', size: 1048576 * 5 },
-          { name: 'sdh', devname: 'sdh', size: 1048576 * 6 },
-          { name: 'sdi', devname: 'sdi', size: 1048576 * 6 },
-          { name: 'sdj', devname: 'sdj', size: 1048576 * 4 },
-          { name: 'sdk', devname: 'sdk', size: 1048576 * 3 },
-          { name: 'sdl', devname: 'sdl', size: 1073741824 * 2 },
-          { name: 'sdm', devname: 'sdm', size: 1073741824 * 1 },
-        ] as StorageDashboardDisk[],
+        poolState: storage.poolState as Pool,
+        disks: storage.disks,
       },
     });
   });
@@ -87,20 +64,28 @@ describe('TopologyCardComponent', () => {
   it('rendering VDEVs rows', () => {
     const captions = spectator.queryAll('.vdev-line b');
     const values = spectator.queryAll('.vdev-line .vdev-value');
-    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(2);
+    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
     expect(captions).toHaveLength(6);
     expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2 GiB');
-    expect(captions[1]).toHaveText('Metadata');
-    expect(values[1]).toHaveText('Mixed Capacity VDEVs');
+    expect(values[0]).toHaveText('2 x RAIDZ3 | 7 wide | 4 TiB');
+
+    // Can be Disk or MIRROR
     expect(captions[2]).toHaveText('Log VDEVs');
-    expect(values[2]).toHaveText('1 x MIRROR | 2 wide | 5 MiB');
+    expect(values[2]).toHaveText('2 x MIRROR | 2 wide | 2 TiB');
+
+    // Can be DISK Only
     expect(captions[3]).toHaveText('Cache VDEVs');
-    expect(values[3]).toHaveText('2 x 6 MiB');
+    expect(values[3]).toHaveText('2 x 2 TiB');
+
+    // Can be DISK only but should also be same size or larger than disk sizes used in data VDEVs
     expect(captions[4]).toHaveText('Spare VDEVs');
-    expect(values[4]).toHaveText('Mixed Capacity VDEVs');
+    expect(values[4]).toHaveText('3 x 8 TiB');
+
+    // Redundancy level should match data VDEVs
+    expect(captions[1]).toHaveText('Metadata');
+    expect(values[1]).toHaveText('Redundancy Mismatch');
     expect(captions[5]).toHaveText('Dedup VDEVs');
     expect(values[5]).toHaveText('VDEVs not assigned');
   });
@@ -109,19 +94,19 @@ describe('TopologyCardComponent', () => {
     expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Safe);
     expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Everything is fine');
 
-    spectator.setInput('poolState', { healthy: false, status: 'ONLINE' } as unknown as Pool);
+    spectator.setInput('poolState', { healthy: false, status: PoolStatus.Online } as Pool);
     expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
     expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool is not healthy');
 
-    spectator.setInput('poolState', { healthy: true, status: 'OFFLINE' } as unknown as Pool);
+    spectator.setInput('poolState', { healthy: true, status: PoolStatus.Offline } as Pool);
     expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
     expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains OFFLINE Data VDEVs');
 
-    spectator.setInput('poolState', { healthy: true, status: 'REMOVED' } as unknown as Pool);
+    spectator.setInput('poolState', { healthy: true, status: PoolStatus.Removed } as Pool);
     expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
     expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains REMOVED Data VDEVs');
 
-    spectator.setInput('poolState', { healthy: true, status: 'FAULTED' } as unknown as Pool);
+    spectator.setInput('poolState', { healthy: true, status: PoolStatus.Faulted } as Pool);
     expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
     expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains FAULTED Data VDEVs');
   });

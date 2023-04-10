@@ -15,7 +15,7 @@
       fxFlex
       class="icon-div"
     >
-      <mat-icon fontSet="mdi-set" [fontIcon]="'mdi-' + getIcon()"></mat-icon>
+      <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
     </div>
     <div
       *ngIf="isLoading()"
@@ -37,6 +37,7 @@
         *ngIf="conf.button && !conf.compact"
         class="empty-action"
         mat-button
+        [ixTest]="[conf.button.label]"
         (click)="doAction()"
       >
         {{ conf.button.label | translate }}

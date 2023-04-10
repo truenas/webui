@@ -23,33 +23,36 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="isDisk">
-    <button *ngIf="canExtendDisk" mat-stroked-button (click)="onExtend()">
-      {{ 'Extend' | translate }}
-    </button>
+    <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
+    <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
 
-    <button *ngIf="canRemoveDisk" mat-stroked-button (click)="onRemove()">
-      {{ 'Remove' | translate }}
-    </button>
-
-    <button *ngIf="canDetachDisk" mat-stroked-button (click)="onDetach()">
+    <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
       {{ 'Detach' | translate }}
     </button>
 
-    <button *ngIf="canOfflineDisk" mat-stroked-button (click)="onOffline()">
+    <button *ngIf="canOfflineDisk" mat-button ixTest="offline" (click)="onOffline()">
       {{ 'Offline' | translate }}
     </button>
 
-    <button *ngIf="canOnlineDisk" mat-stroked-button (click)="onOnline()">
+    <button *ngIf="canOnlineDisk" mat-button ixTest="online" (click)="onOnline()">
       {{ 'Online' | translate }}
     </button>
   </mat-card-actions>
   <mat-card-actions *ngIf="isMirror">
-    <button mat-stroked-button (click)="onExtend()">
-      {{ 'Extend' | translate }}
-    </button>
-    <!-- TODO: May have conditions when removing a mirror is not allowed -->
-    <button mat-stroked-button (click)="onRemove()">
-      {{ 'Remove' | translate }}
-    </button>
+    <ng-container [ngTemplateOutlet]="extend"></ng-container>
+    <ng-container *ngIf="canRemoveVDEV" [ngTemplateOutlet]="remove"></ng-container>
   </mat-card-actions>
 </mat-card>
+
+<ng-template #extend>
+  <button mat-button ixTest="extend" (click)="onExtend()">
+    {{ 'Extend' | translate }}
+  </button>
+</ng-template>
+
+<ng-template #remove>
+  <!-- TODO: May have conditions when removing a mirror is not allowed -->
+  <button mat-button ixTest="remove" (click)="onRemove()">
+    {{ 'Remove' | translate }}
+  </button>
+</ng-template>

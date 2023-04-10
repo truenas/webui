@@ -1,5 +1,6 @@
 .description-panel {
   .actions {
+    align-items: center;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -8,7 +9,6 @@
 }
 
 .actions-row {
-  align-items: center;
   align-items: flex-end;
   display: flex;
   flex-direction: row;
@@ -48,11 +48,17 @@
   vertical-align: middle;
 }
 
-.title a:focus-visible {
-  background: var(--hover-bg);
+.title {
+  a {
+    white-space: nowrap;
+
+    &:focus-visible {
+      background: var(--hover-bg);
+    }
+  }
 }
 
-::ng-deep .tooltip .material-icons {
+:host ::ng-deep .tooltip .material-icons {
   align-items: center;
   display: flex;
   font-size: 24px !important;

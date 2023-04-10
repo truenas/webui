@@ -9,7 +9,7 @@
     <ng-container
       *ngTemplateOutlet="
         webdavServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: webdavServiceStatus, count: webdavHasItems }
+        context: { status: webdavServiceStatus, count: webdavHasItems, service: 'webdav' }
       "
       headerCustomContent
     ></ng-container>
@@ -17,7 +17,7 @@
     <ng-container
       *ngTemplateOutlet="
         extraAction;
-        context: { tableExtraActions: webdavTableConf?.tableExtraActions }
+        context: { tableExtraActions: webdavTableConf?.tableExtraActions, service: 'webdav' }
       "
       headerCustomActions
     ></ng-container>
@@ -33,7 +33,7 @@
     <ng-container
       *ngTemplateOutlet="
         nfsServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: nfsServiceStatus, count: nfsHasItems }
+        context: { status: nfsServiceStatus, count: nfsHasItems, service: 'nfs' }
       "
       headerCustomContent
     ></ng-container>
@@ -41,7 +41,7 @@
     <ng-container
       *ngTemplateOutlet="
         extraAction;
-        context: { tableExtraActions: nfsTableConf?.tableExtraActions }
+        context: { tableExtraActions: nfsTableConf?.tableExtraActions, service: 'nfs' }
       "
       headerCustomActions
     ></ng-container>
@@ -57,7 +57,7 @@
     <ng-container
       *ngTemplateOutlet="
         smbServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: smbServiceStatus, count: smbHasItems }
+        context: { status: smbServiceStatus, count: smbHasItems, service: 'smb' }
       "
       headerCustomContent
     ></ng-container>
@@ -65,7 +65,7 @@
     <ng-container
       *ngTemplateOutlet="
         extraAction;
-        context: { tableExtraActions: smbTableConf?.tableExtraActions }
+        context: { tableExtraActions: smbTableConf?.tableExtraActions, service: 'smb' }
       "
       headerCustomActions
     ></ng-container>
@@ -81,7 +81,7 @@
     <ng-container
       *ngTemplateOutlet="
         iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: iscsiServiceStatus, count: iscsiHasItems }
+        context: { status: iscsiServiceStatus, count: iscsiHasItems, service: 'iscsi' }
       "
       headerCustomContent
     ></ng-container>
@@ -89,7 +89,7 @@
     <ng-container
       *ngTemplateOutlet="
         extraAction;
-        context: { tableExtraActions: iscsiTableConf?.tableExtraActions }
+        context: { tableExtraActions: iscsiTableConf?.tableExtraActions, service: 'iscsi' }
       "
       headerCustomActions
     ></ng-container>
@@ -99,12 +99,10 @@
     <mat-spinner [diameter]="24"></mat-spinner>
   </ng-template>
 
-  <ng-template #statusButton let-status="status" let-count="count">
+  <ng-template #statusButton let-status="status" let-count="count" let-service="service">
     <button
       mat-stroked-button
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="share-service-status-button"
+      [ixTest]="['service-status', service]"
       [matTooltip]="'Service Status' | translate"
       [ngClass]="getStatusClass(status, count)"
     >
@@ -112,19 +110,21 @@
     </button>
   </ng-template>
 
-  <ng-template #extraAction let-tableExtraActions="tableExtraActions">
+  <ng-template #extraAction let-tableExtraActions="tableExtraActions" let-service="service">
     <div *ngIf="tableExtraActions" id="customActions">
       <button
         mat-icon-button
         aria-label="Table Actions of Expandable Table"
+        [ixTest]="[service, 'actions-menu']"
         [matMenuTriggerFor]="rowActions"
       >
-        <mat-icon>more_vert</mat-icon>
+        <ix-icon name="more_vert"></ix-icon>
       </button>
       <mat-menu #rowActions="matMenu">
         <button
           *ngFor="let action of tableExtraActions"
           mat-menu-item
+          [ixTest]="[service, 'actions-menu', action.label]"
           (click)="action.onClick()"
         >
           {{ action.label | translate }}

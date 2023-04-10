@@ -2,7 +2,7 @@ import {
   Component, AfterViewInit, OnInit, ViewChild,
 } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
-import { MatLegacyTabGroup as MatTabGroup } from '@angular/material/legacy-tabs';
+import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import {
@@ -23,7 +23,7 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   fieldShow: string;
 
   tabFormGroup: UntypedFormGroup;
-  protected control: AbstractControl;
+  protected control: AbstractControl<string>;
   protected activeTabField: FieldConfig;
   protected value: string | number | string[] | number[];
   protected init: boolean;
@@ -47,8 +47,8 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
       });
     });
 
-    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (this.init && res) {
+    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (this.init && value) {
         this.init = false;
         if (_.startsWith(this.control.value, '*/')) {
           this.tabGroup.selectedIndex = 0;
@@ -77,6 +77,6 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
     if (this.activeTabField.type === 'togglebutton' && this.value) {
       this.value = (this.value as unknown[]).join();
     }
-    this.control.setValue(this.value);
+    this.control.setValue(this.value as string);
   }
 }

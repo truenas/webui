@@ -138,14 +138,35 @@ export interface AclTemplateByPathParams {
 
 export type AclTemplateByPath = NfsAclTemplateByPath | PosixAclTemplateByPath;
 
-export interface NfsAclTemplateByPath {
+export interface BaseAclTemplateByPath {
+  id: number;
   name: string;
+  builtin: boolean;
+  comment: string;
+}
+
+export interface NfsAclTemplateByPath extends BaseAclTemplateByPath{
   acltype: AclType.Nfs4;
   acl: NfsAclItem[];
 }
 
-export interface PosixAclTemplateByPath {
-  name: string;
+export interface PosixAclTemplateByPath extends BaseAclTemplateByPath {
   acltype: AclType.Posix1e;
   acl: PosixAclItem[];
+}
+
+export interface AclTemplateCreateParams {
+  name: string;
+  acltype: AclType.Nfs4 | AclType.Posix1e;
+  acl: NfsAclItem[] | PosixAclItem[];
+  comment?: string;
+}
+
+export interface AclTemplateCreateResponse {
+  name: string;
+  acltype: AclType.Nfs4 | AclType.Posix1e;
+  acl: NfsAclItem[] | PosixAclItem[];
+  comment: string;
+  id: number;
+  builtin: boolean;
 }

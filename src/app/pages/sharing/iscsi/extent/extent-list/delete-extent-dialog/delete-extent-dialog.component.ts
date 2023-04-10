@@ -2,12 +2,14 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -24,6 +26,7 @@ export class DeleteExtentDialogComponent {
   constructor(
     private ws: WebSocketService,
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public extent: IscsiExtent,
     private dialogRef: MatDialogRef<DeleteExtentDialogComponent>,
@@ -45,9 +48,9 @@ export class DeleteExtentDialogComponent {
           this.loader.close();
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

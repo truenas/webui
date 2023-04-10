@@ -1,0 +1,60 @@
+<ng-container [formGroup]="form">
+  <ix-select
+    formControlName="type"
+    [label]="'Type' | translate"
+    [tooltip]="'Select a VDEV layout' | translate"
+    [options]="vdevLayoutOptions$"
+    [required]="true"
+  ></ix-select>
+  <div class="content-container">
+    <div class="automated-disk-selection-container">
+      <h3>{{'Automated Disk Selection' | translate}}</h3>
+      <ix-select
+        formControlName="sizeAndType"
+        [label]="'Disk Size' | translate"
+        [tooltip]="'Select a disk size from inventory' | translate"
+        [options]="diskSizeOptions$"
+        [required]="true"
+      ></ix-select>
+      <ix-select
+        formControlName="width"
+        [label]="'Width' | translate"
+        [tooltip]="'Select VDEV width' | translate"
+        [options]="widthOptions$"
+        [required]="true"
+      ></ix-select>
+      <ix-select
+        formControlName="vdevsNumber"
+        [label]="'Number of VDEVs' | translate"
+        [tooltip]="'Number of VDEVs to create' | translate"
+        [options]="numberOptions$"
+        [required]="true"
+      ></ix-select>
+    </div>
+    <div class="advanced-options-container">
+      <h3>{{'Advanced Options' | translate}}</h3>
+
+      <ix-radio-group
+        *ngIf="poolManagerStore.hasMultipleEnclosures$ | async"
+        formControlName="minimizeEnclosureDispersal"
+        [options]="dispersalOptions$"
+        [required]="true"
+      ></ix-radio-group>
+
+      <ix-checkbox
+        formControlName="treatDiskSizeAsMinimum"
+        [label]="'Treat Disk Size as Minimum' | translate"
+      ></ix-checkbox>
+
+      <button
+        mat-button
+        type="button"
+        class="manual-disk-selection"
+        ixTest="manual"
+        (click)="openManualDiskSelection()"
+      >
+        {{ 'Manual Disk Selection' | translate }}
+      </button>
+    </div>
+  </div>
+</ng-container>

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -94,7 +94,7 @@ export class DeviceListComponent implements EntityTableConfig {
           details = `${attribute}: ${attributeValue} \n` + details;
         });
         this.dialogService.info(
-          this.translate.instant('Change order for <b>{vmDevice}</b>', { vmDevice: `${row.dtype} ${row.id}` }),
+          this.translate.instant('Details for <b>{vmDevice}</b>', { vmDevice: `${row.dtype} ${row.id}` }),
           details,
           true,
         );
@@ -123,8 +123,8 @@ export class DeviceListComponent implements EntityTableConfig {
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params['pk'];
-      this.vm = params['name'];
+      this.pk = params.pk;
+      this.vm = params.name;
       this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
       this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM

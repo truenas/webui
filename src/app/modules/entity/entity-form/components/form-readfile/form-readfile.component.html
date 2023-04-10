@@ -1,15 +1,12 @@
 <div
   *ngIf="!config['isHidden']"
-  ix-auto
-  ix-auto-type="readfile"
   class="dynamic-field form-readfile"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
   [attr.id]="config.name"
 >
-  <input type="file" id="input" (change)="changeListener($event)" />
+  <input type="file" id="input" [ixTest]="config.name" (change)="changeListener($event)" />
 
   <ix-tooltip
     *ngIf="config.tooltip"

@@ -1,7 +1,7 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
 } from '@angular/cdk/testing';
-import { MatLegacyCheckboxHarness as MatCheckboxHarness } from '@angular/material/legacy-checkbox/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';

@@ -1,0 +1,103 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.filter-container {
+  padding: 0 24px;
+
+  form {
+    padding: 0;
+  }
+
+  ix-input {
+    padding: 0;
+  }
+}
+
+.select-container {
+  column-gap: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  ix-select {
+    flex: 1;
+    padding: 0;
+  }
+}
+
+.group-row {
+  align-items: center;
+  background: var(--bg1);
+  border: 1px solid var(--alt-bg1);
+  cursor: pointer;
+  display: flex;
+  height: 36px;
+  justify-content: space-between;
+  padding-left: 26px;
+  padding-right: 10px;
+
+  &.group-row-empty {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .group-name {
+    flex-grow: 1;
+    margin-left: 5px;
+  }
+}
+
+.unused-disk {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  padding: 6px 6px 6px 24px;
+
+  .disk-icon {
+    display: block;
+    margin-top: 6px;
+  }
+
+  .disk-info {
+    display: block;
+    flex-grow: 1;
+    margin-left: 18px;
+    width: 100%;
+  }
+
+  &:last-child {
+    flex-grow: 1;
+  }
+}
+
+.tree-container {
+  border: 1px solid transparent;
+  overflow-y: auto;
+}
+
+.drag-active {
+  border: 1px dotted #999;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+
+  &.dndDragover {
+    ix-tree-view {
+      background-color: var(--alt-bg2);
+    }
+  }
+}
+
+.empty-tree {
+  margin: 16px 20px;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.grabbed {
+  cursor: grabbing;
+}

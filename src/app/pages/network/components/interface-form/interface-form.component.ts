@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
@@ -40,10 +39,10 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
-import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
+import { NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppState } from 'app/store/index';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -139,7 +138,6 @@ export class InterfaceFormComponent implements OnInit {
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
   ) {}
 
   get isNew(): boolean {
@@ -147,27 +145,27 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   get isVlan(): boolean {
-    return this.form.get('type').value === NetworkInterfaceType.Vlan;
+    return this.form.controls.type.value === NetworkInterfaceType.Vlan;
   }
 
   get isBridge(): boolean {
-    return this.form.get('type').value === NetworkInterfaceType.Bridge;
+    return this.form.controls.type.value === NetworkInterfaceType.Bridge;
   }
 
   get isLag(): boolean {
-    return this.form.get('type').value === NetworkInterfaceType.LinkAggregation;
+    return this.form.controls.type.value === NetworkInterfaceType.LinkAggregation;
   }
 
   get isLacpLag(): boolean {
-    return this.form.get('lag_protocol').value === LinkAggregationProtocol.Lacp;
+    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.Lacp;
   }
 
   get isFailover(): boolean {
-    return this.form.get('lag_protocol').value === LinkAggregationProtocol.Failover;
+    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.Failover;
   }
 
   get isLoadBalanceLag(): boolean {
-    return this.form.get('lag_protocol').value === LinkAggregationProtocol.LoadBalance;
+    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.LoadBalance;
   }
 
   get canHaveAliases(): boolean {

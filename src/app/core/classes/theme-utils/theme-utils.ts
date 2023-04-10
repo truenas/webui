@@ -121,8 +121,9 @@ export class ThemeUtils {
       console.error('Cannot convert hsl. Please provide hex or rgb value');
     } else {
       rgb = valueType === 'hex' ? this.hexToRgb(value).rgb : this.rgbToArray(value);
-      return rgb;
     }
+
+    return rgb;
   }
 
   darken(value: string, pc: number): string {

@@ -4,28 +4,31 @@ import {
   ChangeDetectorRef,
   Component,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import {
+  NavigationEnd, NavigationStart, Router,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { filter, take } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
+import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService, SystemGeneralService, LanguageService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
+import { SystemGeneralService, LanguageService, WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -38,13 +41,12 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })
-export class AdminLayoutComponent implements OnInit, AfterViewInit {
+export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
   sidenavMode: MatDrawerMode = 'over';
   hostname: string;
-  currentTheme = '';
   isOpen = false;
   menuName: string;
   subs: SubMenuItem[];
@@ -58,12 +60,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
   hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
-  themes: Theme[];
   productType$ = this.sysGeneralService.getProductType$;
 
   constructor(
     private router: Router,
-    public core: CoreService,
+    private authService: AuthService,
     public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     private media: MediaObserver,
@@ -75,6 +76,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
     private languageService: LanguageService,
+    private tokenLifetimeService: TokenLifetimeService,
     @Inject(WINDOW) private window: Window,
   ) {
     // Close sidenav after route change in mobile
@@ -88,29 +90,18 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     });
 
     // Watches screen size and open/close sidenav
-    this.media.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+    this.media.asObservable().pipe(untilDestroyed(this)).subscribe(() => {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
-      core.emit({ name: 'MediaChange', data: changes, sender: this });
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
     });
-
-    this.core.register({
-      observerClass: this,
-      eventName: 'SidenavStatus',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SidenavStatusEvent) => {
-      this.isSidenavOpen = evt.data.isOpen;
-      this.sidenavMode = evt.data.mode;
-      this.isSidenavCollapsed = evt.data.isCollapsed;
-    });
   }
 
   ngOnInit(): void {
-    this.themes = this.themeService.allThemes;
-    this.currentTheme = this.themeService.currentTheme().name;
+    this.themeService.loadTheme$.next('');
     const navigationHold = document.getElementById('scroll-area');
 
     // Allows for one-page-at-a-time scrolling in sidenav on Windows
@@ -134,11 +125,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
-    this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.core.emit({ name: 'Authenticated', data: evt, sender: this });
-    });
-
     this.store$.dispatch(adminUiInitialized());
+
+    this.tokenLifetimeService.start();
+  }
+
+  ngOnDestroy(): void {
+    this.tokenLifetimeService.stop();
   }
 
   ngAfterViewInit(): void {
@@ -158,6 +151,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
           this.headerPortalOutlet = null;
         }
       });
+  }
+
+  onSidenavStatusChange(sidenav: SidenavStatusData): void {
+    this.isSidenavOpen = sidenav.isOpen;
+    this.sidenavMode = sidenav.mode;
+    this.isSidenavCollapsed = sidenav.isCollapsed;
   }
 
   updateSidenav(): void {
@@ -196,12 +195,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
 
   // For the slide-in menu
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
-    if ((this.isOpen && !menuInfo) || (this.isOpen && menuInfo[0] === this.menuName)) {
+    const [state, subItems] = menuInfo || [];
+    if ((this.isOpen && !menuInfo) || (this.isOpen && state === this.menuName)) {
       this.isOpen = false;
       this.subs = [];
     } else if (menuInfo) {
-      this.menuName = menuInfo[0];
-      this.subs = menuInfo[1];
+      this.menuName = state;
+      this.subs = subItems;
       this.isOpen = true;
     }
   }

@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -14,6 +14,7 @@ import { DialogService } from 'app/services';
 describe('StopVmDialogComponent', () => {
   let spectator: Spectator<StopVmDialogComponent>;
   let loader: HarnessLoader;
+
   const createComponent = createComponentFactory({
     component: StopVmDialogComponent,
     imports: [
@@ -48,14 +49,6 @@ describe('StopVmDialogComponent', () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-      'vm.stop',
-      [1, { force: false, force_after_timeout: true }],
-    );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
-    expect(spectator.inject(DialogService).info).toHaveBeenCalled();
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ wasStopped: true, forceAfterTimeout: true });
   });
 });

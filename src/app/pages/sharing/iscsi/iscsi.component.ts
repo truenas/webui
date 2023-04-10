@@ -4,7 +4,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { WebSocketService, IscsiService } from 'app/services';
+import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
+import { IscsiService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -17,31 +20,31 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class IscsiComponent implements OnInit {
   activeTab = 'configuration';
   navLinks = [{
-    label: this.translate.instant('Target Global Configuration') as string,
+    label: this.translate.instant('Target Global Configuration'),
     path: '/sharing/iscsi/configuration',
   },
   {
-    label: this.translate.instant('Portals') as string,
+    label: this.translate.instant('Portals'),
     path: '/sharing/iscsi/portals',
   },
   {
-    label: this.translate.instant('Initiators Groups') as string,
+    label: this.translate.instant('Initiators Groups'),
     path: '/sharing/iscsi/initiator',
   },
   {
-    label: this.translate.instant('Authorized Access') as string,
+    label: this.translate.instant('Authorized Access'),
     path: '/sharing/iscsi/auth',
   },
   {
-    label: this.translate.instant('Targets') as string,
+    label: this.translate.instant('Targets'),
     path: '/sharing/iscsi/target',
   },
   {
-    label: this.translate.instant('Extents') as string,
+    label: this.translate.instant('Extents'),
     path: '/sharing/iscsi/extent',
   },
   {
-    label: this.translate.instant('Associated Targets') as string,
+    label: this.translate.instant('Associated Targets'),
     path: '/sharing/iscsi/associatedtarget',
   },
   ];
@@ -54,6 +57,7 @@ export class IscsiComponent implements OnInit {
     protected ws: WebSocketService,
     protected translate: TranslateService,
     private store$: Store<AppState>,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -69,11 +73,11 @@ export class IscsiComponent implements OnInit {
       },
     );
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.activeTab = params['pk'];
+      this.activeTab = params.pk;
     });
   }
 
   gotoWizard(): void {
-    this.router.navigate(new Array('/').concat(this.wizardRoute));
+    this.slideInService.open(IscsiWizardComponent);
   }
 }

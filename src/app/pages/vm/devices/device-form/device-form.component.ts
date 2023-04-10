@@ -132,7 +132,7 @@ export class DeviceFormComponent implements OnInit {
       map((passthroughDevices) => {
         return Object.keys(passthroughDevices).map((id) => {
           return {
-            label: id,
+            label: passthroughDevices[id].description || id,
             value: id,
           };
         });
@@ -209,6 +209,7 @@ export class DeviceFormComponent implements OnInit {
         return this.displayForm;
       default:
         assertUnreachable(this.typeControl.value);
+        return undefined;
     }
   }
 
@@ -316,7 +317,7 @@ export class DeviceFormComponent implements OnInit {
           this.dialogService.confirm({
             title: this.translate.instant('Warning'),
             message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
-          }).pipe(untilDestroyed(this)).subscribe((res) => res && this.onSend());
+          }).pipe(untilDestroyed(this)).subscribe((confirmed) => confirmed && this.onSend());
         } else {
           this.onSend();
         }

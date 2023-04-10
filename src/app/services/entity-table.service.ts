@@ -6,7 +6,7 @@ import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.
   providedIn: 'root',
 })
 export class EntityTableService {
-  private addActionsUpdaterSubject$: Subject<EntityTableAction[]> = new Subject();
+  private addActionsUpdaterSubject$ = new Subject<EntityTableAction[]>();
 
   get addActionsUpdater$(): Observable<EntityTableAction[]> {
     return this.addActionsUpdaterSubject$.asObservable();

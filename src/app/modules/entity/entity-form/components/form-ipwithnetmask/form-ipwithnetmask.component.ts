@@ -2,7 +2,7 @@ import {
   Component, OnInit,
 } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
+import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { FormIpWithNetmaskConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -33,8 +33,8 @@ export class FormIpWithNetmaskComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.setAddressAndNetmask(res);
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((addressAndNetmask: string) => {
+      this.setAddressAndNetmask(addressAndNetmask);
     });
     if (this.control.value) {
       this.setAddressAndNetmask(this.control.value);

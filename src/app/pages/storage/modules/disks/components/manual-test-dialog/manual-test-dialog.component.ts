@@ -2,14 +2,20 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  map, of, takeWhile,
+} from 'rxjs';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -49,6 +55,8 @@ export class ManualTestDialogComponent {
   supportedDisks: Disk[] = [];
   unsupportedDisks: Disk[] = [];
   startedTests: ManualSmartTest[] = [];
+  endedTests = false;
+  progressTotalPercent = 0;
 
   get hasStartedTests(): boolean {
     return Boolean(this.startedTests.length);
@@ -59,6 +67,7 @@ export class ManualTestDialogComponent {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
   ) {
@@ -76,10 +85,31 @@ export class ManualTestDialogComponent {
       .subscribe({
         next: (startedTests) => {
           this.startedTests = startedTests;
+          this.ws.subscribe('smart.test.progress').pipe(
+            map((event) => event.fields),
+            takeWhile((result) => {
+              const condition = result
+                && (result as unknown as IncomingWebsocketMessage).msg === IncomingApiMessageType.NoSub;
+              this.endedTests = condition;
+              return !condition;
+            }),
+            untilDestroyed(this),
+          ).subscribe({
+            next: (result) => {
+              if (result && result.progress) {
+                this.progressTotalPercent = result.progress.percent / 100;
+              }
+              this.cdr.markForCheck();
+            },
+            complete: () => {
+              this.cdr.markForCheck();
+            },
+          });
+
           this.cdr.markForCheck();
         },
-        error: (error) => {
-          this.dialogService.errorReportMiddleware(error);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });

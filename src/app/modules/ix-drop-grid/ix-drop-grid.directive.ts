@@ -18,7 +18,7 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
 @Directive({
   selector: '[ixDropGrid]',
   providers: [
-    { provide: ixDropGridDirectiveToken, useValue: IxDropGridDirective },
+    { provide: ixDropGridDirectiveToken, useExisting: this },
   ],
 })
 export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
@@ -32,7 +32,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
   sourceIndex: number;
 
   constructor(
-    private viewContainerRef: ViewContainerRef,
+    public viewContainerRef: ViewContainerRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
     super();

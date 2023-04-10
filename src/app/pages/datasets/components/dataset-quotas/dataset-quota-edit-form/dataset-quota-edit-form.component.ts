@@ -19,7 +19,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-quota-edit-form.component.html',
-  styleUrls: ['./dataset-quota-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotaEditFormComponent {
@@ -113,8 +112,8 @@ export class DatasetQuotaEditFormComponent {
         this.datasetQuota = quotas[0];
         this.isFormLoading = false;
         this.form.patchValue({
-          name: this.datasetQuota.name,
-          data_quota: this.datasetQuota.quota,
+          name: this.datasetQuota.name || '',
+          data_quota: this.datasetQuota.quota || null,
           obj_quota: this.datasetQuota.obj_quota,
         });
         this.cdr.markForCheck();
@@ -140,14 +139,14 @@ export class DatasetQuotaEditFormComponent {
     payload.push({
       quota_type: this.quotaType,
       id: String(this.datasetQuota.id),
-      quota_value: values.data_quota,
+      quota_value: values.data_quota || 0,
     });
     payload.push({
       quota_type: this.quotaType === DatasetQuotaType.User
         ? DatasetQuotaType.UserObj
         : DatasetQuotaType.GroupObj,
       id: String(this.datasetQuota.id),
-      quota_value: values.obj_quota,
+      quota_value: values.obj_quota || 0,
     });
 
     this.submit(values, payload);
@@ -179,7 +178,7 @@ export class DatasetQuotaEditFormComponent {
   }
 
   private isUnsettingQuota(values: typeof this.form.value): boolean {
-    return values.data_quota === 0 && values.obj_quota === 0;
+    return !values.data_quota && !values.obj_quota;
   }
 
   private getConfirmation(name: string): Observable<boolean> {
@@ -190,7 +189,7 @@ export class DatasetQuotaEditFormComponent {
       message: this.quotaType === DatasetQuotaType.User
         ? this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name })
         : this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name }),
-      buttonMsg: this.translate.instant('Delete'),
+      buttonText: this.translate.instant('Delete'),
     });
   }
 }

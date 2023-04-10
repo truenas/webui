@@ -123,7 +123,7 @@ export class TaskService {
   }
 
   /**
-   * Takes a cron expression and returns an array of Moment objects
+   * Takes a cron expression and returns an array of Date objects
    * representing future scheduled runs.
    * @param scheduleExpression A cron expression such as `0 0 * * mon`
    * @param count The desired number of future runs

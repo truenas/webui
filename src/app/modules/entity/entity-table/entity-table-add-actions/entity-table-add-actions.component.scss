@@ -21,8 +21,13 @@ form {
 
     .search-icon-wrapper,
     .reset-icon-wrapper {
+      left: 2px;
       position: relative;
-      top: -6px;
+      top: 1px;
+
+      ix-icon {
+        width: 24px;
+      }
     }
   }
 }

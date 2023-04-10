@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
+  Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +14,7 @@ import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interfac
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
@@ -52,8 +53,8 @@ enum Path {
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() stats: Subject<CoreEvent>;
   @Input() nicState: DashboardNicState;
-  @ViewChild('carousel', { static: true }) carousel: ElementRef;
-  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
+  @ViewChild('carousel', { static: true }) carousel: ElementRef<HTMLElement>;
+  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef<HTMLElement>;
   traffic: NetTraffic;
   currentSlide = '0';
   private utils: WidgetUtils;
@@ -108,7 +109,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     this.utils = new WidgetUtils();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.nicState) {
       this.title = this.currentSlide === '0' ? this.defaultTitle : this.nicState.name;
     }

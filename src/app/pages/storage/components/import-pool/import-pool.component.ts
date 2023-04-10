@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Job } from 'app/interfaces/job.interface';
@@ -15,13 +15,14 @@ import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService, DialogService, ModalService } from 'app/services';
+import { DialogService, ModalService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './import-pool.component.html',
-  styleUrls: ['./import-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportPoolComponent implements OnInit {
@@ -32,17 +33,12 @@ export class ImportPoolComponent implements OnInit {
     guid: ['' as string, Validators.required],
   });
 
-  pool: {
-    readonly fcName: 'guid';
-    label: string;
-    tooltip: string;
-    options: Observable<Option[]>;
-  } = {
-      fcName: 'guid',
-      label: helptext.guid_placeholder,
-      tooltip: helptext.guid_tooltip,
-      options: of([]),
-    };
+  pool = {
+    fcName: 'guid',
+    label: helptext.guid_placeholder,
+    tooltip: helptext.guid_tooltip,
+    options: of<Option[]>([]),
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -50,6 +46,7 @@ export class ImportPoolComponent implements OnInit {
     private modalService: ModalService,
     private ws: WebSocketService,
     private dialog: MatDialog,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -73,8 +70,8 @@ export class ImportPoolComponent implements OnInit {
         this.pool.options = of(opts);
         this.cdr.markForCheck();
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -98,8 +95,8 @@ export class ImportPoolComponent implements OnInit {
         this.slideInService.close(null, true);
         this.modalService.refreshTable();
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
@@ -108,17 +105,25 @@ export class ImportPoolComponent implements OnInit {
         this.isLoading = false;
         this.errorReport(failureData);
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
 
   errorReport(error: Job | WebsocketError): void {
     if ('reason' in error && error.reason && error.trace) {
-      this.dialogService.errorReport(this.translate.instant('Error importing pool'), error.reason, error.trace.formatted);
+      this.dialogService.error({
+        title: this.translate.instant('Error importing pool'),
+        message: error.reason,
+        backtrace: error.trace.formatted,
+      });
     } else if ('exception' in error && error.error && error.exception) {
-      this.dialogService.errorReport(this.translate.instant('Error importing pool'), error.error, error.exception);
+      this.dialogService.error({
+        title: this.translate.instant('Error importing pool'),
+        message: error.error,
+        backtrace: error.exception,
+      });
     } else {
       console.error(error);
     }

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -17,6 +17,7 @@ import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
     MatTooltipModule,
     MatDialogModule,
     MatProgressSpinnerModule,
+    TestIdModule,
   ],
   declarations: [JobItemComponent, JobsPanelComponent],
   exports: [JobItemComponent, JobsPanelComponent],

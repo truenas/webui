@@ -1,21 +1,24 @@
 <h1 matDialogTitle>{{ 'Connect to TrueCommand Cloud' | translate }}</h1>
 
-<p [innerHtml]="helptext.signupDialog.content | translate"></p>
+<mat-dialog-content>
+  <p [innerHtml]="helptext.signupDialog.content | translate"></p>
+</mat-dialog-content>
 
-<div class="form-actions">
+<ix-form-actions mat-dialog-actions class="form-actions">
+  <button mat-button type="button" ixTest="truecommand-signup" (click)="onSignup()">
+    {{ 'Signup' | translate }}
+  </button>
+
+  <button mat-button type="button" ixTest="cancel-truecommand" [matDialogClose]="false">
+    {{ 'Cancel' | translate }}
+  </button>
+
   <button
     mat-button
     color="primary"
+    ixTest="truecommand-connect"
     [matDialogClose]="true"
   >
     {{ 'Connect' | translate }}
   </button>
-
-  <button mat-button type="button" (click)="onSignup()">
-    {{ 'Signup' | translate }}
-  </button>
-
-  <button mat-button type="button" [matDialogClose]="false">
-    {{ 'Cancel' | translate }}
-  </button>
-</div>
+</ix-form-actions>

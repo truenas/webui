@@ -8,6 +8,6 @@
     <td *matCellDef="let element" mat-cell>{{ element.data[header] }}</td>
   </ng-container>
 
-  <tr *matHeaderRowDef="data.header" mat-header-row></tr>
-  <tr *matRowDef="let row; columns: data.header" mat-row></tr>
+  <tr *matHeaderRowDef="data.header" mat-header-row ixTest="table-header"></tr>
+  <tr *matRowDef="let row; columns: data.header" mat-row [ixTest]="row.name"></tr>
 </table>

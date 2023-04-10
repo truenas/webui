@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -13,13 +13,15 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let websocket: WebSocketService;
 
   const existingTarget = {
     id: 123,
@@ -50,6 +52,7 @@ describe('TargetFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
@@ -71,11 +74,11 @@ describe('TargetFormComponent', () => {
         mockCall('iscsi.initiator.query', [{
           id: 3,
           comment: 'comment_3',
-          initiators: 'initiator_1',
+          initiators: ['initiator_1'],
         }, {
           id: 4,
           comment: 'comment_4',
-          initiators: 'initiator_2',
+          initiators: ['initiator_2'],
         }] as IscsiInitiatorGroup[]),
         mockCall('iscsi.auth.query', [{
           id: 5,
@@ -101,6 +104,7 @@ describe('TargetFormComponent', () => {
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    websocket = spectator.inject(WebSocketService);
   });
 
   it('add new target when form is submitted', async () => {
@@ -134,7 +138,7 @@ describe('TargetFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.target.create', [{
+    expect(websocket.call).toHaveBeenCalledWith('iscsi.target.create', [{
       name: 'name_new',
       alias: 'alias_new',
       mode: 'ISCSI',
@@ -169,7 +173,7 @@ describe('TargetFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
+    expect(websocket.call).toHaveBeenLastCalledWith(
       'iscsi.target.update',
       [
         123,
@@ -206,9 +210,9 @@ describe('TargetFormComponent', () => {
     spectator.component.initiators$.subscribe((options) => initiator = options);
     spectator.component.auths$.subscribe((options) => auth = options);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
+    expect(websocket.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
+    expect(websocket.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
+    expect(websocket.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
     expect(portal).toEqual([
       { label: '11 (comment_1)', value: 1 },

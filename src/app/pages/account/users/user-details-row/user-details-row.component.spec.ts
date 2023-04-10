@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -15,7 +15,7 @@ import {
   DeleteUserDialogComponent,
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import { AppLoaderService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserDetailsRowComponent } from './user-details-row.component';
@@ -32,9 +32,8 @@ const dummyUser = {
   smb: false,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: 'test-user@test-user.com',
   group: {
     id: 41,
@@ -69,6 +68,7 @@ describe('UserDetailsRowComponent', () => {
         })),
       }),
       mockProvider(AppLoaderService),
+      mockProvider(DialogService),
       provideMockStore({
         selectors: [
           {

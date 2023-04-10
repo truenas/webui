@@ -1,16 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import helptext from 'app/helptext/network/configuration/configuration';
 import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -40,6 +42,7 @@ export class DefaultGatewayDialogComponent {
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,
     private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
   ) {}
@@ -48,8 +51,8 @@ export class DefaultGatewayDialogComponent {
     this.dialogRef.close();
     const formValues = this.form.value;
     this.ws.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
-      catchError((error) => {
-        new EntityUtils().errorReport(error, this.dialog);
+      catchError((error: WebsocketError) => {
+        this.dialog.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

@@ -3,6 +3,7 @@ import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
 import { ChartData, ChartDataSets } from 'chart.js';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 
 describe('ViewChartAreaComponent', () => {
@@ -82,7 +83,7 @@ describe('ViewChartAreaComponent', () => {
         firstChange: true,
         isFirstChange: () => true,
       },
-    });
+    } as IxSimpleChanges<ViewChartAreaComponent>);
 
     // Make sure expected values are present after input is set
     expect(spectator.component.data).toBeTruthy();

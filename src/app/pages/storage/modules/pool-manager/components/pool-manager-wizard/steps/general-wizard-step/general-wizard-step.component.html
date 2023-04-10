@@ -1,0 +1,35 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+  ></ix-input>
+  <ix-checkbox
+    formControlName="encryption"
+    [label]="'Encryption' | translate"
+  ></ix-checkbox>
+  <ix-radio-group
+    *ngIf="hasNonUniqueSerialDisks"
+    formControlName="allowNonUniqueSerialDisks"
+    [label]="'Allow non-unique serialed disks' | translate"
+    [required]="true"
+    [options]="allowNonUniqueSerialDisksOptions$"
+    [inlineFields]="true"
+  ></ix-radio-group>
+  <ix-checkbox-list
+    *ngIf="exportedPools.length"
+    formControlName="allowDisksFromExportedPools"
+    [label]="'Allow Disks Attached to Exported Pools' | translate"
+    [tooltip]="exportedPoolsTooltip"
+    [options]="exportedPoolsOptions$"
+    [inlineFields]="true"
+  ></ix-checkbox-list>
+  <ix-select
+    *ngIf="form.controls.encryption_standard.enabled"
+    formControlName="encryption_standard"
+    [label]="'Encryption Standard' | translate"
+    [options]="encryptionAlgorithmOptions$"
+    [required]="true"
+  ></ix-select>
+
+</ng-container>

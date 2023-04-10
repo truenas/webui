@@ -2,9 +2,6 @@
   *ngIf="!config['isHidden']"
   fxLayout="column"
   class="dynamic-field form-list"
-  ix-auto
-  ix-auto-type="list"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="{ box: config.box, 'sub-box': !config.box }"
   [attr.id]="config.name"
@@ -17,15 +14,14 @@
   >
     <label class="list-label">
       {{ config.label ? config.label : 'Add ' + config.name }}
+      <span *ngIf="config.required">*</span>
     </label>
     <button
       *ngIf="!config.hideButton"
       mat-button
       class="addBtn"
       type="button"
-      ix-auto
-      ix-auto-type="button"
-      [ix-auto-identifier]="'add-box_' + config.name"
+      [ixTest]="[config.name, 'add']"
       (click)="add()"
     >
       {{ 'Add' | translate }}
@@ -34,17 +30,14 @@
   <ng-container *ngIf="listsFromArray?.controls.length > 0; else empty">
     <div
       *ngFor="let liControl of listsFromArray.controls; let i = index"
-      ix-auto
-      ix-auto-type="list-item"
       class="form-list-item"
-      [ix-auto-identifier]="i.toString()"
       [fxLayout]="config.width === '100%' ? 'row wrap' : ''"
     >
       <ng-container *ngFor="let field of config.listFields[i]; let ii = index">
         <div
           *ngIf="!field.isHidden"
           fxFlex="calc(100% - 100px)"
-          fxFlex.gt-xs="calc({{ field.width }} - 100px - 32px)"
+          [fxFlex.gt-xs]="'calc(' + field.width + ' - 100px - 32px)'"
           [ngClass]="{
             'form-inline': field.class === 'inline',
             'form-line': field.class !== 'inline'
@@ -64,14 +57,13 @@
       >
         <div>
           <button
+            *ngIf="!config.required || (config.required && i >= 1)"
             mat-icon-button
             class="top-right"
-            ix-auto
-            ix-auto-type="icon-button"
-            [ix-auto-identifier]="'delete-box_' + (config.name + i)"
+            [ixTest]="[config.name, 'delete']"
             (click)="delete(i)"
           >
-            <mat-icon>clear</mat-icon>
+            <ix-icon name="clear"></ix-icon>
           </button>
         </div>
       </div>

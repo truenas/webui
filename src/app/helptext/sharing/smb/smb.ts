@@ -143,13 +143,6 @@ export const helptextSharingSmb = {
  target=_blank>Shadow Copies</a> for VSS clients.',
   ),
 
-  placeholder_auxsmbconf: T('Auxiliary Parameters'),
-  tooltip_auxsmbconf: T(
-    'Additional \
- <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> \
- parameters.',
-  ),
-
   placeholder_aapl_name_mangling: T('Use Apple-style Character Encoding'),
   tooltip_aapl_name_mangling: T(
     'By default, Samba uses a hashing algorithm for NTFS illegal \

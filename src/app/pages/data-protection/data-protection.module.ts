@@ -2,20 +2,22 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
+import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -58,6 +60,7 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     MatButtonModule,
     MatDialogModule,
     IxIconModule,
+    TestIdModule,
   ],
   declarations: [
     SnapshotListComponent,
@@ -81,6 +84,7 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     CloudsyncRestoreDialogComponent,
     TransferModeExplanationComponent,
     ReplicationRestoreDialogComponent,
+    CustomTransfersDialogComponent,
   ],
 })
 export class DataProtectionModule {}

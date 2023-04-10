@@ -2,11 +2,11 @@
 """High Availability (tn09) feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
-    is_element_present,
     wait_on_element,
     wait_for_attribute_value,
     attribute_value_exist,
@@ -26,7 +26,6 @@ from pytest_bdd import (
 @scenario('features/NAS-T945.feature', 'Verify SSH Access with Root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with Root works."""
-    pass
 
 
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
@@ -34,36 +33,33 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
         driver.get(f"{nas_url}/ui/sessions/signin")
-        time.sleep(1)
 
 
 @when(parsers.parse('login appear enter "{user}" and "{password}"'))
 def login_appear_enter_root_and_password(driver, user, password):
     """login appear enter "{user}" and "{password}"."""
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
+    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
+    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
 
 
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
-    assert wait_on_element(driver, 5, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    rsc.Verify_The_Dashboard(driver)
     if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
             driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-            if wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable'):
-                driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            if wait_on_element(driver, 2, xpaths.button.close, 'clickable'):
+                driver.find_element_by_xpath(xpaths.button.close).click()
         except ElementClickInterceptedException:
-            assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-            driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
+            driver.find_element_by_xpath(xpaths.button.close).click()
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
             driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
 
@@ -71,10 +67,7 @@ def you_should_see_the_dashboard(driver):
 @then('go to System Settings, click Services')
 def go_to_system_settings_click_services(driver):
     """go to System Settings, click Services."""
-    assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.Services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.Services).click()
+    rsc.Go_To_Service(driver)
 
 
 @then('the service page should open')
@@ -87,8 +80,8 @@ def the_service_page_should_open(driver):
 @then('press on configure(pencil) SSH')
 def press_on_configure_ssh(driver):
     """press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//button', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"SSH")]//button').click()
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.services.ssh_Service_Button).click()
 
 
 @then('the SSH General Options page should open')
@@ -113,9 +106,9 @@ def click_the_checkbox_log_in_as_root_with_password(driver):
 @then('click Save')
 def click_save(driver):
     """click Save."""
-    assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
 
 
 @then('click Start Automatically SSH checkbox and enable the SSH service')
@@ -128,7 +121,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-slide-toggle/label', 'clickable')
-    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-slide-toggle/label').click()
     time.sleep(1)
@@ -137,8 +130,8 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    assert wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
-    assert wait_for_attribute_value(driver, 20, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
+    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('run ssh root@"{host}" with root password "{password}"'))

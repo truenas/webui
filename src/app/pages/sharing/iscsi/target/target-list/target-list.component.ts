@@ -6,8 +6,9 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -31,12 +32,12 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
 
   columns = [
     {
-      name: this.translate.instant('Target Name') as string,
+      name: this.translate.instant('Target Name'),
       prop: 'name',
       always_display: true,
     },
     {
-      name: this.translate.instant('Target Alias') as string,
+      name: this.translate.instant('Target Alias'),
       prop: 'alias',
     },
   ];
@@ -53,6 +54,8 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
   constructor(
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
 
@@ -103,7 +106,7 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
             for (const session of sessions) {
               if (session.target.split(':')[1] === rowinner.name) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
-                payload.push(true); // enable force delele
+                payload.push(true); // enable force delete
                 break;
               }
             }
@@ -112,14 +115,14 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
             this.entityList.dialogService.confirm({
               title: this.translate.instant('Delete'),
               message: deleteMsg,
-              buttonMsg: this.translate.instant('Delete'),
+              buttonText: this.translate.instant('Delete'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.entityList.loader.open();
               this.entityList.loaderOpen = true;
               this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
                 next: () => this.entityList.getData(),
                 error: (error: WebsocketError) => {
-                  new EntityUtils().handleWsError(this, error, this.entityList.dialogService);
+                  this.dialogService.error(this.errorHandler.parseWsError(error));
                   this.entityList.loader.close();
                 },
               });

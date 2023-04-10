@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
@@ -24,9 +24,10 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
@@ -64,6 +65,8 @@ describe('InterfaceFormComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
+            isUpgradePending: false,
+            hasOnlyMissmatchVersionsReason: false,
           },
         },
       }),
@@ -110,6 +113,7 @@ describe('InterfaceFormComponent', () => {
         ],
       }),
       mockProvider(CoreService),
+      mockProvider(DialogService),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,

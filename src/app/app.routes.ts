@@ -2,9 +2,9 @@ import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
-import { ApplicationsComponent } from 'app/pages/applications//applications.component';
+import { ApplicationsComponent } from 'app/pages/apps-old/applications.component';
 import { AuthLayoutComponent } from './modules/layout/components/auth-layout/auth-layout.component';
-import { AuthService } from './services/auth/auth.service';
+import { AuthGuardService } from './services/auth/auth-guard.service';
 
 export const rootRouterConfig: Routes = [{
   path: '',
@@ -29,7 +29,7 @@ export const rootRouterConfig: Routes = [{
 {
   path: '',
   component: AdminLayoutComponent,
-  canActivate: [AuthService, TranslationsLoadedGuard],
+  canActivate: [AuthGuardService, TranslationsLoadedGuard],
   children: [{
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
@@ -72,12 +72,17 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'apps',
+    loadChildren: () => import('app/pages/apps/apps.module').then((module) => module.AppsModule),
+    data: { title: T('Applications'), breadcrumb: T('Applications') },
+  },
+  {
+    path: 'apps-old',
     component: ApplicationsComponent,
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },
   {
-    path: 'apps/:tabIndex',
-    loadChildren: () => import('./pages/applications/applications.module').then((module) => module.ApplicationsModule),
+    path: 'apps-old/:tabIndex',
+    loadChildren: () => import('app/pages/apps-old/old-apps.module').then((module) => module.OldAppsModule),
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },
   {

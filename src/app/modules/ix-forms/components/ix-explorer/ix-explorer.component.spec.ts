@@ -1,5 +1,6 @@
+import { EventEmitter } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TreeComponent, TreeModel } from '@circlon/angular-tree-component';
+import { TreeComponent as BaseTreeComponent, TreeModel } from '@circlon/angular-tree-component';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
@@ -9,6 +10,14 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
+
+/**
+ * Provides better typing.
+ */
+class TreeComponent extends BaseTreeComponent {
+  select: EventEmitter<unknown>;
+  deselect: EventEmitter<unknown>;
+}
 
 describe('IxExplorerComponent', () => {
   const mockTreeMock = {

@@ -1,0 +1,15 @@
+.submit-button {
+  margin-top: 16px;
+  width: 100%;
+}
+
+:host ::ng-deep .username-input {
+  .prefix-icon,
+  .reset-input {
+    z-index: 1002;
+  }
+
+  input {
+    z-index: 1001;
+  }
+}

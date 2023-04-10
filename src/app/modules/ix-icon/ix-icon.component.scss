@@ -4,13 +4,16 @@ $size: 24px;
 .ix-icon {
   align-items: center;
   display: inline-flex;
+  fill: currentColor;
   flex-grow: 0;
   flex-shrink: 0;
   justify-content: center;
 
-  svg {
-    height: $size;
-    width: $size;
+  &:not([name^='ix:logo']):not([data-mat-icon-name^='logo_']) {
+    svg {
+      height: $size;
+      width: $size;
+    }
   }
 
   &.mat-ligature-font::before {
@@ -20,8 +23,8 @@ $size: 24px;
   }
 }
 
-.ix-icon,
-.mat-icon {
+.mat-icon,
+.ix-icon {
   &.mdi-set {
     font-size: $size;
   }

@@ -1,0 +1,34 @@
+<ix-modal-header
+  [title]="'Isolated GPU PCI Ids' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form
+      class="ix-form-container"
+      [formGroup]="formGroup"
+      (submit)="onSubmit()"
+    >
+      <ix-fieldset>
+        <ix-select
+          formControlName="isolated_gpu_pci_ids"
+          [label]="'GPUs' | translate"
+          [multiple]="true"
+          [options]="options$"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="formGroup.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

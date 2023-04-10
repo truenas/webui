@@ -6,7 +6,6 @@ import {
   Input,
   OnChanges,
   OnInit,
-  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -21,11 +20,12 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { Pool } from 'app/interfaces/pool.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface Slide {
   name: string;
@@ -59,8 +59,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
 
-  @ViewChild('carousel', { static: true }) carousel: ElementRef;
-  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
+  @ViewChild('carousel', { static: true }) carousel: ElementRef<HTMLElement>;
+  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef<HTMLElement>;
   @ViewChild('overview', { static: false }) overview: TemplateRef<void>;
   @ViewChild('data', { static: false }) data: TemplateRef<void>;
   @ViewChild('disks', { static: false }) disks: TemplateRef<void>;
@@ -157,7 +157,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.tpl = this.overview;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.volumeData) {
       this.getAvailableSpace();
     }
@@ -189,7 +189,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return key;
   }
 
-  getAvailableSpace(): number {
+  getAvailableSpace(): void {
     if (!this.volumeData || typeof this.volumeData.avail === undefined) {
       this.displayValue = 'Unknown';
       return;
@@ -205,7 +205,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (usedValue === 'Locked') {
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
-      return 0;
+      return;
     }
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });

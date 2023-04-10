@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -14,7 +14,7 @@ import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {
@@ -30,6 +30,7 @@ describe('ManualTestDialogComponent', () => {
       MockPipe(FormatDateTimePipe, jest.fn(() => '2022-03-16 14:46:14')),
     ],
     providers: [
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('smart.test.manual_test', [
           { disk: 'sda', expected_result_time: { $date: 1647438105 } },
@@ -67,7 +68,7 @@ describe('ManualTestDialogComponent', () => {
   });
 
   it('shows list of disks that do not support SMART', () => {
-    const unsupportedMessage = spectator.query(byText('These disks do not support SMART tests:'));
+    const unsupportedMessage = spectator.query(byText('These disks do not support S.M.A.R.T. tests:'));
 
     const unsupportedDisks = unsupportedMessage.nextElementSibling;
 

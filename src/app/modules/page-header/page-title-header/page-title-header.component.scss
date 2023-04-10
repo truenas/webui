@@ -8,7 +8,6 @@
   margin: 0 auto 32px;
   padding-bottom: 8px;
   padding-top: 0;
-  width: calc(100% - 16px);
 
   @media (max-width: $breakpoint-tablet) {
     width: 100%;
@@ -72,7 +71,7 @@ ix-breadcrumb {
   }
 }
 
-.actions-container > ::ng-deep .mat-button {
+.actions-container > ::ng-deep .mat-mdc-button {
   @media (max-width: $breakpoint-tablet) {
     min-width: 40%;
   }

@@ -12,7 +12,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   groupPageEntered, groupsLoaded, groupsNotLoaded, groupRemoved,
 } from 'app/pages/account/groups/store/group.actions';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -45,8 +45,8 @@ export class GroupEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(groupsLoaded),
     switchMap(() => {
-      return this.ws.sub('group.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+      return this.ws.subscribe('group.query').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => groupRemoved({ id: event.id })),
       );
     }),

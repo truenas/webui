@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { WebdavConfig, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
@@ -10,8 +10,9 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
 import {
-  AppLoaderService, DialogService, WebSocketService,
+  AppLoaderService, DialogService,
 } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceWebdavComponent', () => {
   let spectator: Spectator<ServiceWebdavComponent>;

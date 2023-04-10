@@ -4,35 +4,53 @@ const program = require('commander');
 const fs = require('fs');
 
 program
-  .option('-i, --ip <ip_address>', 'IP address of your server')
+  .option('-i, --ip <ip_address>', 'Sets IP address of your server')
   .parse(process.argv);
 
 const proxyConfigJson = './proxy.config.json';
 const environmentTs = './src/environments/environment.ts';
-const hostname = (program.ip || '').match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
+const url = normalizeUrl(program.ip);
 
-if (!hostname || !hostname[1]) {
+printCurrentConfig();
+console.log(''); // New line.
+
+if (!url) {
   program.outputHelp();
   process.exit(2);
 }
 
-const copySkel = function(file) {
-  fs.readFile(file + '.skel', 'utf8', function (err,data) {
-    if (err) {
-      return console.log(err);
-    }
-    let url = hostname[1];
-    if (hostname[2]) {
-      url = url + ':' + hostname[2];
-    }
-
-    const result = data.replace(/\$SERVER\$/g, url);
-
-    fs.writeFile(file, result, 'utf8', function (err) {
-       if (err) return console.log(err);
-    });
-  });
-}
-
 copySkel(proxyConfigJson);
 copySkel(environmentTs);
+console.log('Changing to: ' + url);
+
+function normalizeUrl(url = '') {
+  const parts = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
+
+  if (!parts || !parts.length) {
+    return;
+  }
+
+  let normalizedUrl = parts[1];
+  if (parts[2]) {
+    normalizedUrl = normalizedUrl + ':' + parts[2];
+  }
+
+  return normalizedUrl;
+}
+
+function copySkel(file) {
+  const data = fs.readFileSync(file + '.skel', 'utf8');
+  const result = data.replace(/\$SERVER\$/g, url);
+  fs.writeFileSync(file, result, 'utf8');
+}
+
+function printCurrentConfig() {
+  const doesConfigExist = fs.existsSync(proxyConfigJson);
+  if (!doesConfigExist) {
+    console.log('No current config set.');
+    return;
+  }
+  const data = fs.readFileSync(environmentTs, 'utf8');
+  const url = data.match(/remote: '([^']+)'/);
+  console.log('Current server: ' + url[1]);
+}

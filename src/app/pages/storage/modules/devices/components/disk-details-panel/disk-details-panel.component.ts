@@ -20,6 +20,7 @@ export class DiskDetailsPanelComponent {
   @Input() disk: Disk;
   @Input() poolId: number;
   @Input() topologyCategory: PoolTopologyCategory;
+  @Input() hasTopLevelRaidz: boolean;
 
   @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
 
@@ -43,5 +44,7 @@ export class DiskDetailsPanelComponent {
     if (isTopologyDisk(this.topologyItem)) {
       return this.topologyItem.disk !== null;
     }
+
+    return false;
   }
 }

@@ -1,6 +1,3 @@
-import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { Preferences } from './preferences.interface';
-
 export interface User {
   id: number;
   uid: number;
@@ -15,13 +12,8 @@ export interface User {
   smb: boolean;
   password_disabled: boolean;
   locked: boolean;
-  sudo: boolean;
-  sudo_nopasswd: boolean;
+  sudo_commands_nopasswd: string[];
   sudo_commands: string[];
-  attributes: {
-    preferences: Preferences;
-    dashState: DashConfigItem[];
-  };
   email: string;
   group: UserGroup;
   groups: number[];
@@ -59,11 +51,10 @@ export interface UserUpdate {
   password_disabled?: boolean;
   locked?: boolean;
   smb?: boolean;
-  sudo?: boolean;
-  sudo_nopasswd?: boolean;
+  sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];
   sshpubkey?: string;
   groups?: number[];
   group_create?: boolean;
-  attributes?: Record<string, unknown>;
+  home_create?: boolean;
 }

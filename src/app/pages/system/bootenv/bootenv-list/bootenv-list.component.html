@@ -2,19 +2,19 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button (click)="openBootenvStats()">
+    <button mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
       {{ 'Stats/Settings' | translate }}
     </button>
 
-    <button mat-button [routerLink]="['/', 'system', 'boot', 'status']">
+    <button mat-button ixTest="bootenv-status" [routerLink]="['/', 'system', 'boot', 'status']">
       {{ 'Boot Pool Status' | translate }}
     </button>
 
-    <button mat-button (click)="doScrub()">
+    <button mat-button ixTest="bootenv-scrub" (click)="doScrub()">
       {{ 'Scrub Boot Pool' | translate }}
     </button>
 
-    <button mat-button color="primary" (click)="doAdd()">
+    <button mat-button color="primary" ixTest="bootenv-add" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -36,6 +36,7 @@
   <div class="actions">
     <button
       mat-button
+      ixTest="delete"
       [disabled]="!selectionHasItems"
       (click)="doDelete(checkboxColumn?.selection.selected)"
     >
@@ -116,7 +117,7 @@
     </th>
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell class="keep-td">
       <ix-icon [name]="bootenv.keep ? 'bookmark' : 'bookmark_border'"></ix-icon>
-      {{ bootenv.keep ? ('Yes' | translate) : ('No' | translate) }}
+      {{ bootenv.keep | yesNo }}
     </td>
   </ng-container>
 
@@ -125,36 +126,51 @@
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
       <button
         mat-icon-button
+        ixTest="bootenv-actions"
         [title]="'Settings' | translate"
         [matMenuTriggerFor]="actionsMenu"
       >
-        <mat-icon>more_vert</mat-icon>
+        <ix-icon name="more_vert"></ix-icon>
       </button>
       <mat-menu #actionsMenu="matMenu">
         <a
           *ngIf="!bootenv.active.includes('R')"
           mat-menu-item
+          [ixTest]="[bootenv.name, 'activate']"
           (click)="doActivate(bootenv)"
         >
           <ix-icon name="mdi-check-decagram"></ix-icon>
           {{ 'Activate' | translate }}
         </a>
-        <a mat-menu-item (click)="doClone(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'clone']"
+          (click)="doClone(bootenv)"
+        >
           <ix-icon name="mdi-content-copy"></ix-icon>
           {{ 'Clone' | translate }}
         </a>
-        <a mat-menu-item (click)="doRename(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'rename']"
+          (click)="doRename(bootenv)"
+        >
           <ix-icon name="mdi-rename-box"></ix-icon>
           {{ 'Rename' | translate }}
         </a>
         <a
           *ngIf="bootenv.active === '-' || bootenv.active === ''"
           mat-menu-item
+          [ixTest]="[bootenv.name, 'delete']"
           (click)="doDelete([bootenv])"
           ><ix-icon name="mdi-delete"></ix-icon>
           {{ 'Delete' | translate }}
         </a>
-        <a mat-menu-item (click)="toggleKeep(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'toggle-keep']"
+          (click)="toggleKeep(bootenv)"
+        >
           <ix-icon
             [name]="bootenv.keep ? 'bookmark_border' : 'bookmark'"
           ></ix-icon>
@@ -164,13 +180,13 @@
     </td>
   </ng-container>
 
-  <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
   <tr
-    *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"
+    *matRowDef="let bootEnvironment; columns: displayedColumns; dataSource: dataSource"
     mat-row
+    [ixTest]="bootEnvironment.name"
   ></tr>
 
-  
 </table>
 
 <ix-table-paginator

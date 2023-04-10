@@ -41,7 +41,7 @@ describe('PcloudProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       client_id: 'clientid',
       client_secret: 'secret',
       token: 'token',

@@ -2,13 +2,14 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext_replication from 'app/helptext/data-protection/replication/replication';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

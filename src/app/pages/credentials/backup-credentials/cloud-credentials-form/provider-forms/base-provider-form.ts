@@ -1,6 +1,6 @@
 import { FormGroup } from '@angular/forms';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -26,7 +26,5 @@ export abstract class BaseProviderFormComponent<T = CloudCredential['attributes'
     return nonNullAttributes as T;
   }
 
-  setValues(values: T): void {
-    this.form.patchValue(values);
-  }
+  getFormSetter$: () => BehaviorSubject<T>;
 }

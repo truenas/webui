@@ -17,6 +17,7 @@ export enum DatasetEncryptionType {
 
 export enum DatasetQuotaType {
   Dataset = 'DATASET',
+  Project = 'PROJECT',
   User = 'USER',
   Group = 'GROUP',
   UserObj = 'USEROBJ',
@@ -75,6 +76,7 @@ export enum DatasetCaseSensitivity {
 export enum DatasetShareType {
   Generic = 'GENERIC',
   Smb = 'SMB',
+  Apps = 'APPS',
 }
 
 export enum DatasetXattr {

@@ -17,6 +17,7 @@ export interface AppTableAction<Row = unknown> {
   matTooltip?: string;
   onChanging?: boolean;
   disabled?: boolean;
+  disabledCondition?: (row: Row) => boolean;
   onClick: (row: Row) => void;
 }
 
@@ -54,7 +55,7 @@ export interface AppTableColumn {
 
 export interface AppTableConfirmDeleteDialog {
   buildTitle?(args: unknown): string;
-  buttonMsg?(args: unknown): string;
+  buttonMessage?(args: unknown): string;
   title?: string;
   message?: string;
   button?: string;
@@ -86,7 +87,7 @@ export interface AppTableConfig<P = unknown> {
   /**
    * @deprecated Use arrow functions
    */
-  parent: P;
+  parent?: P;
   tableActions?: AppTableHeaderAction[];
   tableFooterActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];

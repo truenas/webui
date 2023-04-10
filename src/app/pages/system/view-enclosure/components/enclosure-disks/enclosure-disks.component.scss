@@ -49,8 +49,9 @@ nav.view-nav-bar {
   height: auto;
 }
 
-.view-card #disks-details {
-  height: 250px;
+.view-card .disks-details {
+  background: var(--bg2);
+  height: 280px;
   padding: 0;
 }
 
@@ -79,6 +80,11 @@ nav.view-nav-bar {
   width: 100%;
 }
 
+#view-selector .tiles,
+.view-card .details-wrapper > .details-section {
+  min-height: 280px;
+}
+
 .view-card .tiles.active {
   background-color: rgba(0, 0, 0, 0.1);
   background-color: var(--contrast-darker);
@@ -102,7 +108,7 @@ nav.view-nav-bar {
   opacity: 0.85;
 }
 
-.view-card .tiles .mat-button {
+.view-card .tiles .mat-mdc-button {
   margin: 16px;
 }
 
@@ -180,6 +186,10 @@ nav.view-nav-bar {
   margin: 0 auto;
   text-align: left;
   width: fit-content;
+
+  ix-icon {
+    font-size: 14px;
+  }
 }
 
 .view-card .dom-overlay.expanders .content {
@@ -270,10 +280,11 @@ div.vdev-disk {
 
 .view-card mat-card-content#Disks-content.Disks {
   display: block;
+  padding: 0 !important;
 }
 
 
-.view-card#Disks .mat-card-content#Disks-content {
+.view-card#Disks .mat-mdc-card-content#Disks-content {
   background: var(--contrast-darkest);
   opacity: 1;
   position: static;
@@ -329,7 +340,7 @@ div.vdev-disk {
     padding: 48px;
     text-align: center;
 
-    .mat-icon {
+    .ix-icon {
       margin: 6px;
       position: relative;
       top: 5px;
@@ -411,23 +422,37 @@ div.vdev-disk {
   }
 }
 
-.mini .header-container .mat-button.back-btn {
+.mini .header-container .mat-mdc-button.back-btn {
   position: absolute;
   right: 0;
   top: -10px;
 }
 
 .mini .legend-item {
-  display: inline-block;
-  margin-right: 12px;
-}
+  display: inline;
+  height: 24px;
+  line-height: 24px;
+  margin: 0 8px;
 
-.mini .legend-item .swatch {
-  border-radius: 6px;
-  float: left;
-  height: 8px;
-  margin: 6px;
-  width: 8px;
+  .swatch {
+    border-radius: 6px;
+    display: inline-block;
+    height: 8px;
+    margin: 12px 6px 0;
+    width: 8px;
+  }
+
+  .legend-label {
+    display: inline;
+    margin: 0 6px;
+    vertical-align: middle;
+  }
+
+  .legend-icon {
+    display: inline;
+    position: relative;
+    top: 4px;
+  }
 }
 
 .mini .disk-basic-details {
@@ -505,13 +530,13 @@ div.vdev-disk {
   padding: 0 6px;
 }
 
-.mini .mat-card-content {
+.mini .mat-mdc-card-content {
   background-color: var(--contrast-color-darker);
   background-color: var(--contrast-darker);
   min-height: 600px;
 }
 
-.mini .mat-card-content #chassis {
+.mini .mat-mdc-card-content #chassis {
   padding-left: 8px;
   padding-top: 0;
 }

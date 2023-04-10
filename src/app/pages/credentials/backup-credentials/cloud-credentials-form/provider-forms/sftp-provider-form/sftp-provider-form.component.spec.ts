@@ -11,7 +11,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SftpProviderFormComponent', () => {
   let spectator: Spectator<SftpProviderFormComponent>;
@@ -50,7 +50,7 @@ describe('SftpProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       host: 'fbi.gov',
       port: 22,
       user: 'mulder',

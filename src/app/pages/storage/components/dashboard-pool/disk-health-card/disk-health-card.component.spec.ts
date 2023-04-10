@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, Spectator, mockProvider, byText,
 } from '@ngneat/spectator/jest';
@@ -49,7 +49,8 @@ const disks: StorageDashboardDisk[] = [
     zfs_guid: '12387051346845729003',
     alerts: [],
     tempAggregates: { min: 10, max: 50, avg: 30 },
-    smartTests: 0,
+    smartTestsRunning: 0,
+    smartTestsFailed: 0,
   },
 ];
 

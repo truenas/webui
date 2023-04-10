@@ -2,6 +2,7 @@
   mat-button
   type="button"
   class="action-button"
+  ixTest="login-to-jira"
   [disabled]="hasValue()"
   [color]="value ? 'accent' : 'primary'"
   (click)="initSession()"
@@ -29,6 +30,7 @@
   >
     <input
       matInput
+      ixTest="token"
       [value]="value"
       [placeholder]="placeholder"
       [readonly]="readonly"
@@ -36,12 +38,11 @@
       (blur)="onTouch()"
     />
     <span *ngIf="shouldShowResetInput()" class="reset-input">
-      <mat-icon
-        fontSet="mdi-set"
-        fontIcon="mdi-close-circle"
+      <ix-icon
+        name="mdi-close-circle"
         [matTooltip]="'Reset the token' | translate"
         (click)="resetInput()"
-      ></mat-icon>
+      ></ix-icon>
     </span>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

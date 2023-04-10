@@ -13,15 +13,16 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import {
   Observable, of, Subscription, EMPTY, Subject, BehaviorSubject,
@@ -48,6 +49,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
@@ -84,7 +86,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSourceStreamer$: Subject<Row[]> = new Subject();
+  dataSourceStreamer$ = new Subject<Row[]>();
   dataSource$: Observable<Row[]> = this.dataSourceStreamer$.asObservable();
 
   // MdPaginator Inputs
@@ -149,9 +151,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     paging: true,
     sorting: { columns: this.columns },
   };
-  asyncView = false; // default table view is not async
   showDefaults = false;
-  showSpinner = false;
+  showSpinner = true;
   cardHeaderReady = false;
   showActions = true;
   hasActions = true;
@@ -164,7 +165,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   excuteDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
-  checkboxLoaders: Map<string, BehaviorSubject<boolean>> = new Map();
+  checkboxLoaders = new Map<string, BehaviorSubject<boolean>>();
 
   get currentColumns(): EntityTableColumn[] {
     const result = this.alwaysDisplayedCols.concat(this.conf.columns);
@@ -207,6 +208,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     protected layoutService: LayoutService,
     protected slideIn: IxSlideInService,
     private snackbar: SnackbarService,
+    private errorHandler: ErrorHandlerService,
   ) {
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
@@ -244,7 +246,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     const showingRows = currentlyShowingRows;
     return this.currentRows.filter((row) => {
       const index = showingRows.findIndex((showingRow) => {
-        return showingRow['multiselect_id'] === row['multiselect_id'];
+        return showingRow.multiselect_id === row.multiselect_id;
       });
       return index >= 0;
     });
@@ -285,11 +287,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
             if (this.conf.afterInit) {
               this.conf.afterInit(this);
             }
-          } else {
-            this.showSpinner = false;
-            if (this.conf.prerequisiteFailedHandler) {
-              this.conf.prerequisiteFailedHandler(this);
-            }
+          } else if (this.conf.prerequisiteFailedHandler) {
+            this.conf.prerequisiteFailedHandler(this);
           }
         },
       );
@@ -302,8 +301,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         this.conf.afterInit(this);
       }
     }
-
-    this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
 
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
@@ -338,11 +335,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (typeof (this.conf.hideTopActions) !== 'undefined') {
       this.hideTopActions = this.conf.hideTopActions;
     }
-
-    // Delay spinner 500ms so it won't show up on a fast-loading page
-    setTimeout(() => {
-      this.setShowSpinner();
-    }, 500);
   }
 
   ngAfterViewInit(): void {
@@ -360,7 +352,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         if (data.length === 0) this.isTableEmpty = true;
 
         this.dataSource.data = data;
-
         this.changeDetectorRef.detectChanges();
       });
 
@@ -383,8 +374,13 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      let emptyType: EmptyType = this.firstUse ? EmptyType.FirstUse : EmptyType.NoPageData;
-      if (this.dataSource.filter) {
+      let emptyType: EmptyType = EmptyType.NoPageData;
+
+      if (this.firstUse && !this.showSpinner) {
+        emptyType = EmptyType.FirstUse;
+      } else if (this.showSpinner) {
+        emptyType = EmptyType.Loading;
+      } else if (this.dataSource.filter) {
         emptyType = EmptyType.NoSearchResults;
       }
 
@@ -475,7 +471,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+            this.emptyTableConf.message += this.translate.instant(' Please click the button below to add {item}.', {
               item: this.title,
             });
           }
@@ -483,7 +479,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
             buttonText = this.conf.emptyTableConfigMessages.buttonText;
           }
-          this.emptyTableConf['button'] = {
+          this.emptyTableConf.button = {
             label: buttonText,
             action: this.doAdd.bind(this),
           };
@@ -508,7 +504,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+            this.emptyTableConf.message += this.translate.instant(' Please click the button below to add {item}.', {
               item: this.title,
             });
           }
@@ -516,7 +512,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
             buttonText = this.conf.emptyTableConfigMessages.buttonText;
           }
-          this.emptyTableConf['button'] = {
+          this.emptyTableConf.button = {
             label: buttonText,
             action: this.doAdd.bind(this),
           };
@@ -525,11 +521,9 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     }
   }
 
-  setShowSpinner(): void {
-    this.showSpinner = true;
-  }
-
   getData(): void {
+    this.showSpinner = true;
+
     if (this.conf.queryCall) {
       if (this.conf.queryCallJob) {
         if (this.conf.queryCallOption) {
@@ -551,73 +545,64 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     } else {
       this.callGetFunction();
     }
-
-    if (this.asyncView) {
-      this.interval = setInterval(() => {
-        if (this.conf.callGetFunction) {
-          this.conf.callGetFunction(this);
-        } else {
-          this.callGetFunction(true);
-        }
-      }, 10000);
-    }
   }
 
   callGetFunction(skipActions = false): void {
     this.getFunction.pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        this.handleData(res, skipActions);
+      next: (response) => {
+        this.handleData(response, skipActions);
       },
-      error: (res: WebsocketError) => {
+      error: (error: WebsocketError) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
+        this.configureEmptyTable(EmptyType.Errors, String(error.error) || error.reason);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
         }
-        if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace') && res.hasOwnProperty('type'))) {
-          this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
+        if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace') && error.hasOwnProperty('type'))) {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         } else {
-          new EntityUtils().handleError(this, res);
+          this.dialogService.error(this.errorHandler.parseError(error));
         }
       },
     });
   }
 
-  handleData(res: any, skipActions = false): Record<string, unknown> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleData(response: any, skipActions = false): Record<string, unknown> {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
     this.expandedElement = this.expandedRows > 0 ? cache : null;
 
-    if (typeof (res) === 'undefined' || typeof (res.data) === 'undefined') {
-      res = {
-        data: res,
+    if (typeof (response) === 'undefined' || typeof (response.data) === 'undefined') {
+      response = {
+        data: response,
       };
     }
 
-    if (res.data) {
+    if (response.data) {
       if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-        res.data = this.conf.resourceTransformIncomingRestData(res.data);
+        response.data = this.conf.resourceTransformIncomingRestData(response.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
-            (res.data as Record<string, string>[]).forEach((row) => {
+          if (response.data.length > 0 && Object.hasOwnProperty.call(response.data[0], prop) && typeof response.data[0][prop] === 'string') {
+            (response.data as Record<string, string>[]).forEach((row) => {
               row[prop] = new EntityUtils().parseDow(row[prop]);
             });
           }
         }
       }
     } else if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-      res = this.conf.resourceTransformIncomingRestData(res);
+      response = this.conf.resourceTransformIncomingRestData(response);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-        if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
-          (res as Record<string, string>[]).forEach((row) => {
+        if (response.length > 0 && Object.hasOwnProperty.call(response[0], prop) && typeof response[0][prop] === 'string') {
+          (response as Record<string, string>[]).forEach((row) => {
             row[prop] = new EntityUtils().parseDow(row[prop]);
           });
         }
       }
     }
 
-    this.rows = this.generateRows(res);
+    this.rows = this.generateRows(response);
     if (!skipActions) {
       this.storageService.tableSorter(this.rows, this.sortKey, 'asc');
     }
@@ -633,7 +618,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.paginationPageIndex = 0;
       this.showDefaults = true;
     }
-    if (this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) {
+    if (this.expandedRows === 0 || this.excuteDeletion || this.needRefreshTable) {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
 
@@ -662,7 +647,9 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     this.dataSourceStreamer$.next(this.currentRows);
 
-    return res;
+    this.showSpinner = false;
+
+    return response;
   }
 
   patchCurrentRows(
@@ -697,21 +684,22 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return hasHorizontalScrollbar;
   }
 
-  generateRows(res: any): Row[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  generateRows(response: any): Row[] {
     let rows: Row[];
     if (this.loaderOpen) {
       this.loader.close();
       this.loaderOpen = false;
     }
 
-    if (res.data) {
-      if (res.data.result) {
-        rows = new EntityUtils().flattenData(res.data.result) as Row[];
+    if (response.data) {
+      if (response.data.result) {
+        rows = new EntityUtils().flattenData(response.data.result) as Row[];
       } else {
-        rows = new EntityUtils().flattenData(res.data) as Row[];
+        rows = new EntityUtils().flattenData(response.data) as Row[];
       }
     } else {
-      rows = new EntityUtils().flattenData(res) as Row[];
+      rows = new EntityUtils().flattenData(response) as Row[];
     }
 
     rows.forEach((row) => {
@@ -843,8 +831,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (dialog.buildTitle) {
       dialog.title = dialog.buildTitle(item);
     }
-    if (dialog.buttonMsg) {
-      dialog.button = dialog.buttonMsg(item);
+    if (dialog.buttonMessage) {
+      dialog.button = dialog.buttonMessage(item);
     }
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
@@ -859,12 +847,12 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         });
     } else {
       this.dialogService.confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : this.translate.instant('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : this.translate.instant('Delete'),
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res) {
+        title: dialog.hasOwnProperty('title') ? dialog.title : this.translate.instant('Delete'),
+        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
+        hideCheckbox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonText: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
+      }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+        if (confirmed) {
           this.toDeleteRow = item;
           this.delete(id);
         }
@@ -887,7 +875,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         }
       },
       error: (error) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.loader.close();
       },
     });
@@ -908,10 +896,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     return this.dialogService
       .confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : this.translate.instant('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : this.translate.instant('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog.title : this.translate.instant('Delete'),
+        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
+        hideCheckbox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonText: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
       })
       .pipe(
         filter(Boolean),
@@ -924,7 +912,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
-              new EntityUtils().handleWsError(this, error, this.dialogService);
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               this.loader.close();
               return of(false);
             }),
@@ -974,7 +962,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getRowIdentifier(row: Row): string {
-    return row.name || row.path || row.id;
+    if (row) {
+      return row.id || row.identifier || row.uuid || row.name || row.path || row.num || UUID.UUID();
+    }
+    return UUID.UUID();
   }
 
   getDisabled(column: string): boolean {
@@ -991,10 +982,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     this.dialogService.confirm({
       title: 'Delete',
       message: multiDeleteMsg,
-      hideCheckBox: false,
-      buttonMsg: this.translate.instant('Delete'),
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
+      hideCheckbox: false,
+      buttonText: this.translate.instant('Delete'),
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
         return;
       }
 
@@ -1027,11 +1018,14 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
                   this.snackbar.success(this.translate.instant('Items deleted'));
                 } else {
                   message = '<ul>' + message + '</ul>';
-                  this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);
+                  this.dialogService.error({
+                    title: this.translate.instant('Items Delete Failed'),
+                    message,
+                  });
                 }
               },
               error: (res1) => {
-                new EntityUtils().handleWsError(this, res1, this.dialogService);
+                this.dialogService.error(this.errorHandler.parseWsError(res1));
                 this.loader.close();
                 this.loaderOpen = false;
               },
@@ -1113,6 +1107,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
+
+    return false;
   }
 
   getButtonClass(row: { warnings: unknown[]; state: JobState }): string {

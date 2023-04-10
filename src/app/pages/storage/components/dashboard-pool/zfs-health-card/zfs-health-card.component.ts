@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, Subscription } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
@@ -14,17 +14,19 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
-import { getPoolStatusLabels, PoolStatus } from 'app/enums/pool-status.enum';
+import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { secondsToDuration } from 'app/helpers/time.helpters';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
-import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -33,22 +35,23 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['./zfs-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
+export class ZfsHealthCardComponent implements OnChanges {
   @Input() pool: Pool;
 
   scan: PoolScanUpdate;
   totalZfsErrors = 0;
-  poolScanSubscriptionId: string;
+  poolScanSubscription: Subscription;
 
   hasScrubTask$: Observable<LoadingState<boolean>>;
 
-  readonly poolStatusLabels = getPoolStatusLabels(this.translate);
+  readonly poolStatusLabels = poolStatusLabels;
 
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private dialog: MatDialog,
     private store: PoolsDashboardStore,
   ) { }
@@ -87,6 +90,8 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
         return this.isScanScrub
           ? T('Canceled Scrub on {date}')
           : T('Canceled Resilver on {date}');
+      default:
+        return '';
     }
   }
 
@@ -129,13 +134,13 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
     this.dialogService.confirm({
       message,
       title: this.translate.instant('Scrub Pool'),
-      buttonMsg: this.translate.instant('Start Scrub'),
+      buttonText: this.translate.instant('Start Scrub'),
     })
       .pipe(
         filter(Boolean),
         switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
-        catchError((error) => {
-          this.dialogService.errorReportMiddleware(error);
+        catchError((error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           return EMPTY;
         }),
         untilDestroyed(this),
@@ -148,12 +153,12 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
     this.dialogService.confirm({
       message,
       title: this.translate.instant('Scrub Pool'),
-      buttonMsg: this.translate.instant('Stop Scrub'),
+      buttonText: this.translate.instant('Stop Scrub'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
-      catchError((error) => {
-        this.dialogService.errorReportMiddleware(error);
+      catchError((error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -168,15 +173,13 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
       .subscribe(() => this.store.loadDashboard());
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribeFromScan();
-  }
-
   private subscribeToScan(): void {
-    this.unsubscribeFromScan();
-    this.poolScanSubscriptionId = `zfs.pool.scan - ${this.pool.name}`;
-    this.ws.sub<PoolScan>('zfs.pool.scan', this.poolScanSubscriptionId)
+    if (this.poolScanSubscription && !this.poolScanSubscription.closed) {
+      this.poolScanSubscription.unsubscribe();
+    }
+    this.poolScanSubscription = this.ws.subscribe('zfs.pool.scan')
       .pipe(
+        map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool.name),
         untilDestroyed(this),
       )
@@ -185,8 +188,8 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
           this.scan = scan.scan;
           this.cdr.markForCheck();
         },
-        error: (error) => {
-          this.dialogService.errorReportMiddleware(error);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -210,13 +213,5 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
           + (vdev.stats?.checksum_errors || 0);
       }, 0);
     }, 0);
-  }
-
-  private unsubscribeFromScan(): void {
-    if (!this.poolScanSubscriptionId) {
-      return;
-    }
-
-    this.ws.unsub('zfs.pool.scan', this.poolScanSubscriptionId);
   }
 }

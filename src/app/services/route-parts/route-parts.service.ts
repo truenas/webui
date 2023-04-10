@@ -54,6 +54,8 @@ export class RoutePartsService {
 
       return this.generateRouteParts(child, url, routeParts);
     }
+
+    return undefined;
   }
 
   get routeParts(): RoutePart[] {

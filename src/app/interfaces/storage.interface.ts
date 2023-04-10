@@ -61,7 +61,7 @@ export interface TopologyItemStats {
 }
 
 // As returned by disk.query
-export interface EnclosureSlot {
+export interface EnclosureAndSlot {
   number: number;
   slot: number;
 }
@@ -74,7 +74,7 @@ export interface Disk {
   devname: string;
   difference: number;
   duplicate_serial: string[];
-  enclosure: EnclosureSlot;
+  enclosure: EnclosureAndSlot;
   expiretime: string;
   hddstandby: DiskStandby;
   identifier: string;
@@ -100,7 +100,8 @@ export interface Disk {
 
 export interface StorageDashboardDisk extends Disk {
   alerts: Alert[];
-  smartTests: number;
+  smartTestsRunning: number;
+  smartTestsFailed: number;
   tempAggregates: TemperatureAgg;
 }
 
@@ -136,7 +137,7 @@ export interface DiskUpdate {
   critical?: number;
   difference?: number;
   informational?: number;
-  enclosure?: EnclosureSlot;
+  enclosure?: EnclosureAndSlot;
   number?: number;
   pool?: string;
 }

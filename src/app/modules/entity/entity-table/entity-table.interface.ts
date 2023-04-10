@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { Observable, Subject } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -9,6 +9,7 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 export interface SomeRow {
   id?: string | number;
   multiselect_id?: string | number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -37,7 +38,6 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   hasDetails?: boolean;
   rowDetailComponent?: Type<unknown>;
   cardHeaderComponent?: Type<unknown>;
-  asyncView?: boolean;
   wsDelete?: ApiMethod;
   wsMultiDelete?: ApiMethod;
   noAdd?: boolean;
@@ -181,5 +181,5 @@ export interface EntityTableConfirmDialog<Row = unknown> {
   button?: string;
   isMessageComplete?: boolean;
   buildTitle?: (row: Row) => string;
-  buttonMsg?: (row: Row) => string;
+  buttonMessage?: (row: Row) => string;
 }

@@ -1,7 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
@@ -72,6 +73,7 @@ describe('JobsListComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
+      mockProvider(MatSnackBar),
       mockWebsocket([
         mockCall('core.download', [1, 'http://localhost/download/log']),
       ]),
@@ -107,8 +109,8 @@ describe('JobsListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'State', 'ID', 'Started', 'Finished', 'Logs', ''],
-      ['cloudsync.sync', 'Failed', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'Download Logs', 'expand_more'],
-      ['cloudsync.sync', 'Success', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', '', 'expand_more'],
+      ['cloudsync.sync', 'Failed', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'Download Logs', ''],
+      ['cloudsync.sync', 'Success', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', '', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -128,7 +130,7 @@ describe('JobsListComponent', () => {
     store$.overrideSelector(selectJobs, fakeJobDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'expand_more' }));
+    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
     await firstExpandButton.click();
     await secondExpandButton.click();
 

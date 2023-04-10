@@ -89,7 +89,7 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
 }
 
 /* Tabbed navigation is fixed too */
-.tab-header-fixed .mat-tab-header {
+.tab-header-fixed .mat-mdc-tab-header {
   background: #efefef;
   flex-shrink: 0;
   overflow: hidden;
@@ -104,16 +104,16 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
   margin-top: -10px;
 }
 
-.mat-tab-body-wrapper {
+.mat-mdc-tab-body-wrapper {
   padding: 16px;
 }
 
 /* Cards & Tables */
-.mat-card-table {
+.mat-mdc-card-table {
   padding: 0 !important;
 }
 
-.mat-card-table .ngx-datatable {
+.mat-mdc-card-table .ngx-datatable {
   margin: 0 !important;
 }
 
@@ -149,7 +149,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 /* side menu*/
-.mat-nav-list .mat-list-item {
+.mat-nav-list .mat-mdc-list-item {
   display: block;
   height: auto !important;
 }

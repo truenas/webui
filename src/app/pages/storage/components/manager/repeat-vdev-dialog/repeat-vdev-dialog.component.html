@@ -10,13 +10,14 @@
 
   <p class="description">{{ description }}</p>
 </div>
-<div mat-dialog-actions class="form-actions">
-  <button mat-button [matDialogClose]="null">{{ 'Cancel' | translate }}</button>
+<ix-form-actions mat-dialog-actions>
+  <button mat-button ixTest="cancel" [matDialogClose]="null">{{ 'Cancel' | translate }}</button>
   <button
     mat-button
     color="primary"
+    ixTest="repeat-vdev"
     (click)="onSubmit()"
   >
     {{ 'Repeat Vdev' | translate }}
   </button>
-</div>
+</ix-form-actions>

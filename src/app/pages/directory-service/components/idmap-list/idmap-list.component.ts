@@ -11,7 +11,6 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
@@ -20,6 +19,7 @@ import {
   IdmapService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -57,6 +57,7 @@ export class IdmapListComponent implements EntityTableConfig {
   constructor(
     protected idmapService: IdmapService,
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private slideIn: IxSlideInService,
     protected dialogService: DialogService,
     protected translate: TranslateService,
@@ -116,8 +117,8 @@ export class IdmapListComponent implements EntityTableConfig {
             this.dialogService.confirm({
               title: helptext.idmap.enable_ad_dialog.title,
               message: helptext.idmap.enable_ad_dialog.message,
-              hideCheckBox: true,
-              buttonMsg: helptext.idmap.enable_ad_dialog.button,
+              hideCheckbox: true,
+              buttonText: helptext.idmap.enable_ad_dialog.button,
             })
               .pipe(filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.showActiveDirectoryForm());
@@ -148,8 +149,8 @@ export class IdmapListComponent implements EntityTableConfig {
         icon: 'delete',
         onClick: (rowToDelete: IdmapRow) => {
           this.entityList.doDeleteJob(rowToDelete).pipe(untilDestroyed(this)).subscribe({
-            error: (err: WebsocketError) => {
-              new EntityUtils().handleWsError(this.entityList, err);
+            error: (error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
             },
             complete: () => {
               this.entityList.getData();

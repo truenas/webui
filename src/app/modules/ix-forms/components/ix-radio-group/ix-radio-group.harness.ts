@@ -1,7 +1,7 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
 } from '@angular/cdk/testing';
-import { MatLegacyRadioGroupHarness as MatRadioGroupHarness } from '@angular/material/legacy-radio/testing';
+import { MatRadioGroupHarness } from '@angular/material/radio/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';

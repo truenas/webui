@@ -14,6 +14,7 @@
     [checked]="isChecked(option.value)"
     [fxFlex.gt-md]="fieldFlex"
     [disabled]="isDisabled"
+    [ixTest]="[controlDirective.name, option.label]"
     (change)="onCheckboxChanged(option.value)"
     (blur)="onTouch()"
   >

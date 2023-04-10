@@ -1,12 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -16,7 +18,8 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
 const fakeData = {
@@ -54,7 +57,6 @@ const expectedProcessLines = [
 describe('ExportDisconnectModalComponent', () => {
   let spectator: Spectator<ExportDisconnectModalComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
 
   function createComponentWithData(
     data: { pool: Pool; attachments: PoolAttachment[]; processes: Process[] },
@@ -69,10 +71,10 @@ describe('ExportDisconnectModalComponent', () => {
       ],
       providers: [
         mockWebsocket([
-          mockJob('pool.export'),
           mockCall('pool.attachments', data.attachments),
           mockCall('pool.processes', data.processes),
           mockCall('systemdataset.config', { pool: 'fakeSystemPool' } as SystemDatasetConfig),
+          mockJob('pool.export'),
         ]),
         mockProvider(DialogService),
         mockProvider(MatDialogRef),
@@ -104,7 +106,6 @@ describe('ExportDisconnectModalComponent', () => {
         beforeEach(() => {
           spectator = createComponent();
           loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-          ws = spectator.inject(WebSocketService);
         });
 
         afterEach(() => {
@@ -132,7 +133,6 @@ describe('ExportDisconnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
     });
 
     afterEach(() => {
@@ -164,7 +164,6 @@ describe('ExportDisconnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
     });
 
     afterEach(() => {
@@ -196,7 +195,7 @@ describe('ExportDisconnectModalComponent', () => {
         const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
         await submitButton.click();
 
-        expect(ws.job).toHaveBeenCalledWith('pool.export', [
+        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.export', [
           fakeData.pool.id,
           {
             cascade: true,

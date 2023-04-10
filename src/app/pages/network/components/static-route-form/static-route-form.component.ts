@@ -7,13 +7,12 @@ import helptext from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './static-route-form.component.html',
-  styleUrls: ['./static-route-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StaticRouteFormComponent {

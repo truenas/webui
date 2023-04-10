@@ -6,7 +6,7 @@
   margin-top: 18px;
   padding: 8px 0;
 
-  .mat-chip-list {
+  .mat-mdc-chip-grid {
     display: block;
     min-height: 23px;
     width: 100%;
@@ -20,7 +20,7 @@
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  padding: 4px 6px;
+  padding: 2px 8px;
   position: relative;
 
   &:focus-within {
@@ -40,7 +40,6 @@
 .chip {
   display: flex;
   font-size: 11px;
-  padding: 1px 16px 0;
 }
 
 .mat-standard-chip {

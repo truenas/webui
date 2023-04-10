@@ -1,0 +1,36 @@
+:host,
+:host-context(mat-dialog-container .ix-form-container) :host {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
+
+  ::ng-deep > {
+    button,
+    a {
+      margin: 0 0 0 8px;
+    }
+  }
+}
+
+:host-context(.ix-form-container) :host {
+  justify-content: flex-start;
+  margin: 0 10px;
+
+  ::ng-deep > {
+    button,
+    a {
+      margin: 0 8px 0 0;
+    }
+  }
+}
+
+:host-context(mat-vertical-stepper) :host {
+  justify-content: flex-start;
+
+  ::ng-deep > {
+    button,
+    a {
+      margin: 0 8px 0 0;
+    }
+  }
+}

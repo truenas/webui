@@ -1,0 +1,56 @@
+<ix-modal-header
+  [title]="'Localization Settings' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
+      <ix-fieldset [title]="fieldsetTitle">
+        <ix-combobox
+          [formControlName]="language.fcName"
+          [label]="language.label | translate"
+          [tooltip]="language.tooltip | translate"
+          [provider]="language.provider"
+          [required]="true"
+        ></ix-combobox>
+        <ix-select
+          [label]="kbdMap.label | translate"
+          [tooltip]="kbdMap.tooltip | translate"
+          [options]="kbdMap.options"
+          [formControlName]="kbdMap.fcName"
+        ></ix-select>
+        <ix-combobox
+          [formControlName]="timezone.fcName"
+          [label]="timezone.label | translate"
+          [tooltip]="timezone.tooltip | translate"
+          [provider]="timezone.provider"
+          [required]="true"
+        ></ix-combobox>
+        <ix-select
+          [label]="dateFormat.label | translate"
+          [tooltip]="dateFormat.tooltip | translate"
+          [options]="dateFormat.options"
+          [formControlName]="dateFormat.fcName"
+        ></ix-select>
+        <ix-select
+          [label]="timeFormat.label | translate"
+          [tooltip]="timeFormat.tooltip | translate"
+          [options]="timeFormat.options"
+          [formControlName]="timeFormat.fcName"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="formGroup.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

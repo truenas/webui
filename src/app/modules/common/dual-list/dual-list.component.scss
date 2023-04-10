@@ -17,12 +17,12 @@
   max-height: 100%;
   place-content: flex-start;
 
-  .mat-list {
+  .mat-mdc-list {
     width: 100%;
   }
 }
 
-.mat-list-item {
+.mat-mdc-list-item {
   min-height: 48px;
 
   &:hover,
@@ -30,7 +30,7 @@
     cursor: pointer;
   }
 
-  &::ng-deep .mat-icon.mat-list-icon {
+  &::ng-deep .mat-icon.mat-mdc-list-icon {
     align-items: center;
     display: inline-flex;
     justify-content: center;

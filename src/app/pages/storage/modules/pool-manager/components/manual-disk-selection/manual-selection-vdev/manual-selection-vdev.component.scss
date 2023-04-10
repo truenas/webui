@@ -1,0 +1,68 @@
+.container {
+  background: var(--alt-bg1);
+  padding: 16px 24px;
+  padding-bottom: 0;
+}
+
+.outer-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.vdev-container {
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.vdev-container {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  margin: 0 10px;
+}
+
+.disk-icons {
+  display: flex;
+  flex-wrap: wrap;
+
+  ix-disk-icon {
+    margin: 1.5px;
+  }
+}
+
+p {
+  margin: 5px 0;
+}
+
+.delete-container {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.grabbed {
+  cursor: grabbing;
+}
+
+.drag-container {
+  border: 1px solid transparent;
+}
+
+.drag-active {
+  border: 1px dotted #999;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+
+  &.dndDragover {
+    background-color: var(--alt-bg2);
+  }
+}
+
+.drag-hint {
+  justify-content: center;
+}

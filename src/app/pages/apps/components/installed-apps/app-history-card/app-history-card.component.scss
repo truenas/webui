@@ -1,0 +1,35 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+
+  ::ng-deep ngx-skeleton-loader {
+    display: flex;
+
+    .loader {
+      margin: 0;
+    }
+  }
+}
+
+.events {
+  h4 {
+    margin-bottom: 8px;
+  }
+}
+
+.event-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow: auto;
+  padding: 12px;
+}
+
+.event-item {
+  display: flex;
+  gap: 12px;
+}
+
+.event-timestamp {
+  white-space: nowrap;
+}

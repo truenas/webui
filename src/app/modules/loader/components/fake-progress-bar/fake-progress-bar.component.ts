@@ -8,10 +8,10 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  SimpleChanges,
 } from '@angular/core';
 import { interval, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 /**
  * Show a bar that will show like it's doing something
@@ -54,7 +54,7 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!('loading' in changes)) {
       return;
     }

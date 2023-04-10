@@ -1,0 +1,124 @@
+@import 'scss-imports/splitview';
+
+:host {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  box-sizing: border-box;
+  color: var(--fg2);
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  font-weight: 500;
+  min-height: 48px;
+  min-width: fit-content;
+  padding: 0;
+  position: relative;
+
+  &:hover {
+    background-color: var(--hover-bg);
+
+    .row-grid .cell-name .name {
+      background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+    }
+  }
+
+  &.selected {
+    background-color: var(--bg1);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+      z-index: 1;
+    }
+
+    .row-grid .cell-name .name {
+      background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 11px), transparent 100%);
+    }
+  }
+
+  .app-catalog {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .app-logo {
+    margin-right: 12px;
+    max-height: 40px;
+    max-width: 40px;
+    min-width: 40px;
+    overflow: hidden;
+
+    img {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+  }
+}
+
+.row-grid {
+  align-items: center;
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) 40px 40px 40px minmax(100px, 115px) 60px;
+  min-width: fit-content;
+  width: 100%;
+
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0 0 0 0;
+    width: 100%;
+  }
+
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+    }
+  }
+
+  .cell-name {
+    align-items: stretch;
+    font-weight: bold;
+
+    .name {
+      align-items: center;
+      background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
+      display: inline-flex;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+
+  .cell-update {
+    gap: 4px;
+
+    .mdi-alert-circle {
+      color: var(--yellow);
+      font-size: 18px;
+      line-height: 1;
+    }
+  }
+
+  .cell-action {
+    justify-content: center;
+  }
+}

@@ -3,14 +3,14 @@ import { NgModule } from '@angular/core';
 import { FlexModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -33,6 +33,7 @@ import { DirectoryServicesIndicatorComponent } from 'app/modules/layout/componen
 import { TopbarComponent } from 'app/modules/layout/components/topbar/topbar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PageTitleHeaderComponent } from 'app/modules/page-header/page-title-header/page-title-header.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { JobsIndicatorComponent } from './components/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from './components/topbar/power-menu/power-menu.component';
@@ -62,6 +63,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatBadgeModule,
     EntityModule,
     PageHeaderModule,
+    TestIdModule,
   ],
   declarations: [
     ChangePasswordDialogComponent,

@@ -30,16 +30,17 @@
     ></ix-input>
   </ix-fieldset>
 
-  <div class="form-actions">
+  <ix-form-actions class="form-actions">
     <button
       mat-button
       type="submit"
       color="primary"
+      ixTest="save"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Save' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
   <div *ngIf="areSettingsSaved" class="saved-message">
     {{ 'Settings saved.' | translate }}
   </div>

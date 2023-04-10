@@ -85,6 +85,11 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
       });
 
     this.store.loadDashboard();
+    this.store.listenForPoolUpdates()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.loadDashboard();
+      });
 
     this.slideIn.onClose$
       .pipe(

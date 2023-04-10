@@ -31,12 +31,12 @@
   margin-bottom: 16px;
 }
 
-:host >>> span.warning-paragraph {
+:host ::ng-deep span.warning-paragraph {
   background-color: var(--red) !important;
   padding: 2px;
 }
 
-:host >>> span.info-paragraph {
+:host ::ng-deep span.info-paragraph {
   background-color: var(--primary) !important;
   padding: 2px;
 }

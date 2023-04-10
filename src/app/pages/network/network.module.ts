@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
@@ -17,6 +17,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
   DefaultGatewayDialogComponent,
@@ -25,9 +26,6 @@ import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import {
-  IpmiIdentifyDialogComponent,
-} from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
 import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
@@ -60,6 +58,7 @@ import { routing } from './network.routing';
     IxFormsModule,
     CastModule,
     MatDialogModule,
+    TestIdModule,
   ],
   declarations: [
     StaticRouteFormComponent,
@@ -71,7 +70,6 @@ import { routing } from './network.routing';
     OpenVpnClientConfigComponent,
     NetworkConfigurationCardComponent,
     DownloadClientConfigModalComponent,
-    IpmiIdentifyDialogComponent,
     DefaultGatewayDialogComponent,
   ],
   providers: [

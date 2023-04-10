@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -20,8 +20,11 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { UpdateService } from 'app/services/update.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
@@ -42,9 +45,8 @@ export class ManualUpdateFormComponent implements OnInit {
     updateFile: [null as FileList],
     rebootAfterManualUpdate: [false],
   });
-  private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
-  }
+
+  private apiEndPoint: string;
 
   readonly helptext = helptext;
   currentVersion = '';
@@ -59,10 +61,20 @@ export class ManualUpdateFormComponent implements OnInit {
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
+    private authService: AuthService,
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
-  ) { }
+    private updateService: UpdateService,
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();
@@ -77,7 +89,7 @@ export class ManualUpdateFormComponent implements OnInit {
         if (userPrefs.rebootAfterManualUpdate === undefined) {
           userPrefs.rebootAfterManualUpdate = false;
         }
-        this.form.get('rebootAfterManualUpdate').setValue(userPrefs.rebootAfterManualUpdate);
+        this.form.controls.rebootAfterManualUpdate.setValue(userPrefs.rebootAfterManualUpdate);
       }),
       untilDestroyed(this),
     ).subscribe(noop);
@@ -140,7 +152,7 @@ export class ManualUpdateFormComponent implements OnInit {
       this.router.navigate(['/others/reboot']);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWsError(this, err, this.dialogService);
+      this.dialogService.error(this.errorHandler.parseJobError(err));
     });
     this.cdr.markForCheck();
   }
@@ -176,6 +188,7 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
+      this.updateService.setForHardRefresh();
       if (this.isHaLicensed) {
         this.finishHaUpdate();
       } else {
@@ -239,24 +252,24 @@ export class ManualUpdateFormComponent implements OnInit {
     this.dialogService.confirm({
       title: helptext.ha_update.complete_title,
       message: helptext.ha_update.complete_msg,
-      hideCheckBox: true,
-      buttonMsg: helptext.ha_update.complete_action,
+      hideCheckbox: true,
+      buttonText: helptext.ha_update.complete_action,
       hideCancel: true,
     }).pipe(untilDestroyed(this)).subscribe(() => {});
   }
 
   handleUpdatePreFailure(prefailure: HttpErrorResponse): void {
     this.isFormLoading$.next(false);
-    this.dialogService.errorReport(
-      helptext.manual_update_error_dialog.message,
-      `${prefailure.status.toString()} ${prefailure.statusText}`,
-    );
+    this.dialogService.error({
+      title: helptext.manual_update_error_dialog.message,
+      message: `${prefailure.status.toString()} ${prefailure.statusText}`,
+    });
     this.cdr.markForCheck();
   }
 
   handleUpdateFailure = (failure: Job): void => {
     this.isFormLoading$.next(false);
-    this.dialogService.errorReport(failure.error, failure.state, failure.exception);
+    this.dialogService.error(this.errorHandler.parseJobError(failure));
     this.cdr.markForCheck();
   };
 }

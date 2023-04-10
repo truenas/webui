@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
   class="dynamic-field form-textarea form-element"
-  ix-auto
-  ix-auto-type="textarea"
-  [ix-auto-identifier]="config.placeholder"
   [class.has-tooltip]="config.tooltip"
   [ngClass]="fieldShow"
   [formGroup]="group"
@@ -28,6 +25,7 @@
       [ngClass]="config.class"
       [required]="config.required"
       [readonly]="config.readonly"
+      [ixTest]="config.name"
       [class.no-rows]="!config.textAreaRows"
       (blur)="blurEvent()"
       (paste)="onPaste($event)"
@@ -40,6 +38,7 @@
         id="fb"
         type="file"
         class="display-none"
+        [ixTest]="config.name"
         (change)="changeListener($event)"
       />
       <div class="textarea-filereader">
@@ -51,6 +50,7 @@
           mat-button
           color="accent"
           class="btn-default"
+          [ixTest]="['choose-file', config.name]"
           (click)="fileBtnClick()"
         >
           {{ 'Choose File' | translate }}

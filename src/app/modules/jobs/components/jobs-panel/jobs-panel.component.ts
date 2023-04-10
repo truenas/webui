@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, TrackByFunction,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -48,9 +48,9 @@ export class JobsPanelComponent {
       .confirm({
         title: this.translate.instant('Abort'),
         message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Abort'),
-        cancelMsg: this.translate.instant('Cancel'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Abort'),
+        cancelText: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))

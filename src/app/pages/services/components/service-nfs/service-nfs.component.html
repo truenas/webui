@@ -26,11 +26,13 @@
 
       <div class="two-columns">
         <ix-fieldset [title]="'NFSv4' | translate">
-          <ix-checkbox
-            formControlName="v4"
-            [label]="'Enable NFSv4' | translate"
-            [tooltip]="tooltips.v4"
-          ></ix-checkbox>
+          <ix-select
+            formControlName="protocols"
+            [label]="'Enabled Protocols' | translate"
+            [options]="protocolOptions$"
+            [multiple]="true"
+            [required]="true"
+          ></ix-select>
 
           <ix-checkbox
             formControlName="v4_v3owner"
@@ -89,18 +91,33 @@
       </ix-fieldset>
 
       <div class="form-actions">
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          [disabled]="form.invalid || isFormLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
+        <div>
+          <button
+            mat-button
+            type="submit"
+            color="primary"
+            ixTest="save"
+            [disabled]="form.invalid || isFormLoading"
+          >
+            {{ 'Save' | translate }}
+          </button>
 
-        <button mat-button color="accent" (click)="onCancel()">
-          {{ 'Cancel' | translate }}
-        </button>
+          <button mat-button color="accent" ixTest="cancel" (click)="onCancel()">
+            {{ 'Cancel' | translate }}
+          </button>
+        </div>
+        <div>
+          <button
+            *ngIf="isAddSpnVisible"
+            mat-button
+            type="button"
+            color="primary"
+            ixTest="add-spn"
+            (click)="addSpn()"
+          >
+            {{ 'Add SPN' | translate }}
+          </button>
+        </div>
       </div>
     </form>
   </mat-card-content>

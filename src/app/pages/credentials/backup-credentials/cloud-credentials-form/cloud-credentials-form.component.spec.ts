@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
@@ -24,8 +24,9 @@ import {
 import {
   TokenProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CloudCredentialsFormComponent } from './cloud-credentials-form.component';
 
 jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => {
@@ -34,7 +35,10 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
       template: '',
     })(class {
       provider: CloudsyncProvider;
-      setValues = jest.fn() as BaseProviderFormComponent['setValues'];
+      formPatcher$ = {
+        next: jest.fn(),
+      };
+      getFormSetter$ = jest.fn(() => this.formPatcher$);
       getSubmitAttributes = jest.fn(() => ({
         s3attribute: 's3 value',
       })) as BaseProviderFormComponent['getSubmitAttributes'];
@@ -175,11 +179,11 @@ describe('CloudCredentialsFormComponent', () => {
       const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
       await verifyButton.click();
 
-      expect(spectator.inject(DialogService).errorReport).toHaveBeenCalledWith(
-        'Error',
-        'Missing some important field',
-        expect.anything(),
-      );
+      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+        title: 'Error',
+        message: 'Missing some important field',
+        backtrace: expect.anything(),
+      });
     });
   });
 
@@ -202,7 +206,7 @@ describe('CloudCredentialsFormComponent', () => {
 
       const providerForm = spectator.query(S3ProviderFormComponent);
       expect(providerForm).toBeTruthy();
-      expect(providerForm.setValues).toHaveBeenCalledWith({
+      expect(providerForm.getFormSetter$().next).toHaveBeenCalledWith({
         hostname: 'backup.com',
       });
     });

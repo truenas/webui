@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { MatLegacyRadioChange as MatRadioChange } from '@angular/material/legacy-radio';
+import { MatRadioChange } from '@angular/material/radio';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -37,7 +37,7 @@ export class FormRadioComponent implements Field, OnInit, OnDestroy {
   ngOnInit(): void {
     this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((res) => this.radioValue = res);
+      .subscribe((value) => this.radioValue = value);
   }
 
   ngOnDestroy(): void {

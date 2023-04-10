@@ -1,8 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext = {
-  cpu_in_percentage_tooltip: T('When set, report CPU usage in percent \
- instead of units of kernel time.'),
   graphite_tooltip: T('Hostname or IP address of a remote  \
  <a href="http://graphiteapp.org/" target="_blank">Graphite</a> server.'),
   graph_age_tooltip: T('Maximum time a graph is stored in months (allowed values are 1-60). \
@@ -19,10 +17,4 @@ export const helptext = {
     message: T('Report history is cleared when <i>Graph Age</i>, or <i>Graph Points</i> are changed.'),
     action: T('Continue'),
   },
-  graphite_separateinstances_tooltip: T('Enabling sends the \
- <i>plugin instance</i> and <i>type instance</i> to Graphite as separate \
- path components: <i>host.cpu.0.cpu.idle</i>.<br><br> Disabling sends \
- the <i>plugin</i> and <i>plugin instance</i> as one path component and \
- <i>type</i> and <i>type instance</i> as another component: \
- <i>host.cpu-0.cpu-idle</i>.'),
 };

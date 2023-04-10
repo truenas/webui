@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -15,7 +15,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 describe('DisplayVmDialogComponent', () => {
   let spectator: Spectator<DisplayVmDialogComponent>;
@@ -32,6 +32,7 @@ describe('DisplayVmDialogComponent', () => {
     providers: [
       { provide: MAT_DIALOG_DATA, useValue: {} },
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockWindow({
         location: {
           host: 'localhost',

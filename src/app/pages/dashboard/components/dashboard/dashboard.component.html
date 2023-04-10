@@ -1,16 +1,27 @@
 <ng-template #pageHeader>
   <ix-page-title-header *ngIf="screenType === ScreenType.Desktop">
     <ng-container *ngIf="isLoaded">
-      <button mat-button [color]="'primary'" (click)="showConfigForm()">
+      <button
+        mat-button
+        ixTest="configure-dashboard"
+        [color]="'primary'"
+        (click)="showConfigForm()"
+      >
         {{ 'Configure' | translate }}
       </button>
-      <button *ngIf="reorderMode" mat-button (click)="onCancel()">
+      <button
+        *ngIf="reorderMode"
+        mat-button
+        ixTest="cancel-reorder"
+        (click)="onCancel()"
+      >
         {{ 'Cancel' | translate }}
       </button>
       <button
         *ngIf="reorderMode"
         mat-button
         color="primary"
+        ixTest="save-new-order"
         (click)="onConfirm()"
       >
         {{ 'Save' | translate }}
@@ -19,6 +30,7 @@
         *ngIf="!reorderMode && !isEmpty"
         mat-button
         color="primary"
+        ixTest="start-reorder"
         (click)="onEnter()"
       >
         {{ 'Reorder' | translate }}

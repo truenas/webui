@@ -1,5 +1,6 @@
 :host {
   display: block;
+  max-width: 100%;
 }
 
 .job-item {
@@ -12,6 +13,7 @@
 
   .job-item-body {
     flex: 1;
+    max-width: 100%;
   }
 
   &.interactive {
@@ -32,6 +34,8 @@
 }
 
 .job-progress-description {
+  display: block;
+  max-width: 100%;
   opacity: 0.75;
   overflow: hidden;
   text-overflow: ellipsis;

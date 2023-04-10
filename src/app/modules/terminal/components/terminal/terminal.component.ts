@@ -1,14 +1,14 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
+  Component, ElementRef, HostListener, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
@@ -16,7 +16,7 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -58,7 +58,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
                   Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
                   <b>Kill Process</b> <br/>
-                  Kill process shortcut is <i>Crtl+C</i>.`);
+                  Kill process shortcut is <i>Ctrl+C</i>.`);
 
   constructor(
     private ws: WebSocketService,
@@ -67,8 +67,8 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     private translate: TranslateService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    public core: CoreService,
   ) {}
 
   ngOnInit(): void {
@@ -95,23 +95,24 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
       }
     });
+  }
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'MediaChange',
-    }).pipe(untilDestroyed(this)).subscribe(() => {
-      if (this.shellConnected) {
-        setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
-      }
-    });
+  @HostListener('window:resize')
+  onWindowResized(): void {
+    if (this.shellConnected) {
+      setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
+    }
   }
 
   initShell(): void {
-    this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe((token) => {
-      this.initializeWebShell(token);
-      this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
-      this.initializeTerminal();
-    });
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.initializeWebShell(token);
+        this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
+        this.initializeTerminal();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   ngAfterViewInit(): void {

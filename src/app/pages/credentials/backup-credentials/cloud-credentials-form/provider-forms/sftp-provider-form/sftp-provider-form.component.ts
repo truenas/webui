@@ -1,24 +1,29 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, Component, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
+import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 const newOption = 'NEW' as const;
 
+@UntilDestroy()
 @Component({
   templateUrl: './sftp-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SftpProviderFormComponent extends BaseProviderFormComponent implements OnInit {
+export class SftpProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
   form = this.formBuilder.group({
     host: ['', Validators.required],
     port: [null as number],
@@ -38,7 +43,17 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   }
 
   readonly helptext = helptext;
+  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
 
+  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
+    return this.formPatcher$;
+  };
+
+  ngAfterViewInit(): void {
+    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.form.patchValue(values);
+    });
+  }
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,

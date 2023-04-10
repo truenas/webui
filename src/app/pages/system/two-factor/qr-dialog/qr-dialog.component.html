@@ -5,7 +5,13 @@
   </div>
 </div>
 <div mat-dialog-actions id="qr-dialog-buttons">
-  <button mat-flat-button cdkFocusInitial color="accent" (click)="onNoClick()">
+  <button
+    mat-flat-button
+    cdkFocusInitial
+    color="accent"
+    ixTest="close-qr"
+    (click)="onNoClick()"
+  >
     {{ 'CLOSE' | translate }}
   </button>
 </div>

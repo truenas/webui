@@ -117,4 +117,5 @@ export interface ReplicationCreate {
   retries?: number;
   logging_level?: LoggingLevel;
   enabled: boolean;
+  sudo?: boolean;
 }

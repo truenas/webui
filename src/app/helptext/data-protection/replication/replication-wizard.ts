@@ -48,6 +48,11 @@ export default {
  <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for \
  snapshot storage.'),
 
+  sudo_warning: T(`Selected SSH connection uses non-root user. Would you like to use sudo with <i>/usr/sbin/zfs</i> commands? Passwordless sudo must be enabled on the remote system.
+If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.`),
+  sudo_tooltip: T('Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.\
+    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
+
   recursive_placeholder: T('Recursive'),
   recursive_tooltip: T('Set to also replicate all snapshots contained \
  within the selected source dataset snapshots. Unset to only replicate \

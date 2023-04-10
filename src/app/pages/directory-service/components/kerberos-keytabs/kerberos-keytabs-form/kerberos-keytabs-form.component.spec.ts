@@ -7,7 +7,7 @@ import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
-import { StorageService } from 'app/services';
+import { DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('KerberosKeytabsFormComponent', () => {
@@ -30,6 +30,7 @@ describe('KerberosKeytabsFormComponent', () => {
     providers: [
       mockProvider(IxSlideInService),
       mockProvider(StorageService),
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('kerberos.keytab.create'),
         mockCall('kerberos.keytab.update'),

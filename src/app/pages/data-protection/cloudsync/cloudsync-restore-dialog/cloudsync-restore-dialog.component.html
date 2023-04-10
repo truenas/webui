@@ -28,13 +28,19 @@
     [nodeProvider]="treeNodeProvider"
   ></ix-explorer>
 
-  <div class="form-actions">
-    <button mat-button color="primary" type="submit" [disabled]="form.invalid">
-      {{ 'Restore' | translate }}
-    </button>
-
-    <button mat-button type="button" matDialogClose>
+  <ix-form-actions>
+    <button mat-button type="button" matDialogClose ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
-  </div>
+
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      ixTest="restore"
+      [disabled]="form.invalid"
+    >
+      {{ 'Restore' | translate }}
+    </button>
+  </ix-form-actions>
 </form>

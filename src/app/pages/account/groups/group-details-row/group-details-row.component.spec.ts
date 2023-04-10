@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
@@ -82,7 +82,7 @@ describe('GroupDetailsRowComponent', () => {
   });
 
   it('should redirect to group members form', async () => {
-    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'peopleMembers' }));
+    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
     await membersButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);

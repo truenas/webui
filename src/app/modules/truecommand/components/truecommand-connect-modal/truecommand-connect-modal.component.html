@@ -7,9 +7,6 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div
     mat-dialog-content
-    ix-auto
-    ix-auto-type="dialog"
-    ix-auto-identifier="title"
     class="truecommand-connect-modal-form-content"
   >
     <ix-input
@@ -31,11 +28,9 @@
     <button
       mat-button
       type="button"
-      class="mat-button mat-accent action-btn"
+      class="mat-mdc-button mat-button mat-accent action-btn"
       name="Cancel_button"
-      ix-auto-type="button"
-      [ix-auto-identifier]="'Cancel' | uppercase"
-      [ix-auto]=""
+      ixTest="cancel"
       (click)="onCancel()"
     >
       {{ 'Cancel' | translate }}
@@ -46,11 +41,9 @@
         *ngIf="isConnected"
         mat-button
         type="button"
-        class="mat-button action-btn"
+        class="mat-mdc-button mat-button action-btn"
         id="cust_button_deregister"
-        ix-auto-type="button"
-        ix-auto
-        [ix-auto-identifier]="helptext.tcDeregisterBtn | uppercase"
+        ixTest="deregister"
         [name]="helptext.tcDeregisterBtn + '_button'"
         (click)="onDeregister()"
       >
@@ -61,10 +54,8 @@
     <button
       mat-button
       type="submit"
-      class="mat-button mat-primary"
-      ix-auto-type="button"
-      ix-auto
-      [ix-auto-identifier]="saveButtonText | uppercase"
+      class="mat-mdc-button mat-button mat-primary"
+      ixTest="save"
       [name]="saveButtonText + '_button'"
       [disabled]="form.invalid"
     >

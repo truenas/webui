@@ -10,6 +10,7 @@
     <mat-select
       [required]="required"
       [disabled]="isDisabled"
+      [ixTest]="[controlDirective.name, 'presets']"
       [(ngModel)]="crontab"
       (blur)="onTouched()"
       (ngModelChange)="onChange($event)"
@@ -17,6 +18,7 @@
       <mat-option
         *ngFor="let preset of defaultPresets"
         class="schedule-option"
+        [ixTest]="[controlDirective.name, 'presets', preset.label]"
         [value]="preset.value"
       >
         {{ preset.label }}
@@ -26,6 +28,7 @@
       <mat-option
         class="schedule-option"
         [value]="customCrontab"
+        [ixTest]="[controlDirective.name, 'presets', 'custom']"
         (click)="onCustomOptionSelected()"
       >
         {{ 'Custom' | translate }}

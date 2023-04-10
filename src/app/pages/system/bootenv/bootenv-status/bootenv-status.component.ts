@@ -2,7 +2,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,12 +12,13 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export enum BootPoolActionType {
@@ -38,7 +39,7 @@ export interface BootPoolActionEvent {
 })
 export class BootStatusListComponent implements OnInit {
   isLoading$ = new BehaviorSubject(false);
-  dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;
+  dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
@@ -57,7 +58,8 @@ export class BootStatusListComponent implements OnInit {
   constructor(
     private router: Router,
     private ws: WebSocketService,
-    private dialog: DialogService,
+    private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private mdDialog: MatDialog,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -80,10 +82,10 @@ export class BootStatusListComponent implements OnInit {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
       },
-      error: (err) => {
+      error: (error: WebsocketError) => {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
-        new EntityUtils().handleError(this, err);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -109,14 +111,14 @@ export class BootStatusListComponent implements OnInit {
       next: () => {
         this.loader.close();
         this.router.navigate(['/', 'system', 'boot']);
-        this.dialog.info(
+        this.dialogService.info(
           this.translate.instant('Device detached'),
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -145,7 +147,7 @@ export class BootStatusListComponent implements OnInit {
       children: poolInstance.topology.data,
     } as DeviceNestedDataNode];
 
-    this.dataSource = new IxNestedTreeDataSource<DeviceNestedDataNode>(dataNodes);
+    this.dataSource = new NestedTreeDataSource<DeviceNestedDataNode>(dataNodes);
     this.treeControl.dataNodes = dataNodes;
   }
 

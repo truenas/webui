@@ -55,7 +55,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './alert-service.component.html',
-  styleUrls: ['./alert-service.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertServiceComponent implements OnInit {

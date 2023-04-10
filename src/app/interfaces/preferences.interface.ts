@@ -28,4 +28,5 @@ export interface Preferences {
   showSnapshotExtraColumns: boolean;
 
   rebootAfterManualUpdate: boolean;
+  lifetime: number;
 }

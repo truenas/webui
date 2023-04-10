@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -21,9 +21,10 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { SmbFormComponent } from './smb-form.component';
 
 describe('SmbFormComponent', () => {
@@ -41,7 +42,6 @@ describe('SmbFormComponent', () => {
     guestok: true,
     hostsallow: ['host1'],
     hostsdeny: ['host2'],
-    auxsmbconf: '',
     aapl_name_mangling: false,
     abe: true,
     acl: true,
@@ -80,29 +80,24 @@ describe('SmbFormComponent', () => {
     durablehandle: 'Enable SMB2/3 Durable Handles',
     fsrvp: 'Enable FSRVP',
     path_suffix: 'Path Suffix',
-    auxsmbconf: 'Auxiliary Parameters',
   };
 
   const presets: SmbPresets = {
     NO_PRESET: {
       verbose_name: 'No presets',
-      params: {
-        auxsmbconf: '',
-      },
+      params: {},
     },
     ENHANCED_TIMEMACHINE: {
       verbose_name: 'Multi-user time machine',
       params: {
         path_suffix: '%U',
         timemachine: true,
-        auxsmbconf: 'zfs_core:zfs_auto_create=true\nzfs_core:base_user_quota=1T',
       },
     },
     PRIVATE_DATASETS: {
       verbose_name: 'Private SMB Datasets and Shares',
       params: {
         path_suffix: '%U',
-        auxsmbconf: 'zfs_core:zfs_auto_create=true',
       },
     },
   };
@@ -204,11 +199,8 @@ describe('SmbFormComponent', () => {
 
     for (let i = 0; i < labels.length; i++) {
       await purposeSelect.setValue(labels[i]);
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
       for (const param in presets[presetKeys[i]].params) {
-        if (param === 'auxsmbconf') {
-          continue;
-        }
         const expectedValue = presets[presetKeys[i]].params[param as keyof SmbShare];
         const value = await fields[formLabels[param]].getValue();
         expect(value).toStrictEqual(expectedValue);
@@ -226,8 +218,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
       title: helptextSharingSmb.afpDialog_title,
       message: helptextSharingSmb.afpDialog_message,
-      hideCheckBox: false,
-      buttonMsg: helptextSharingSmb.afpDialog_button,
+      hideCheckbox: false,
+      buttonText: helptextSharingSmb.afpDialog_button,
       hideCancel: false,
     });
   });
@@ -272,8 +264,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
       title: helptextSharingSmb.manglingDialog.title,
       message: helptextSharingSmb.manglingDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.manglingDialog.action,
+      hideCheckbox: true,
+      buttonText: helptextSharingSmb.manglingDialog.action,
       hideCancel: true,
     });
   });
@@ -292,8 +284,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(3, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.stripACLDialog.button,
+      hideCheckbox: true,
+      buttonText: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -313,8 +305,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(4, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.stripACLDialog.button,
+      hideCheckbox: true,
+      buttonText: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -335,8 +327,8 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(5, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.stripACLDialog.button,
+      hideCheckbox: true,
+      buttonText: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   });
@@ -364,8 +356,8 @@ describe('SmbFormComponent', () => {
       .toHaveBeenNthCalledWith(6, {
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
-        hideCheckBox: true,
-        buttonMsg: helptextSharingSmb.stripACLDialog.button,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
         hideCancel: true,
       });
 
@@ -393,7 +385,6 @@ describe('SmbFormComponent', () => {
       streams: true,
       durablehandle: true,
       fsrvp: false,
-      auxsmbconf: '',
       timemachine_quota: 0,
     }]);
 

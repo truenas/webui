@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
@@ -8,8 +8,8 @@ import { NetworkConfiguration } from 'app/interfaces/network-configuration.inter
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('NetworkConfigurationCardComponent', () => {
   let spectator: Spectator<NetworkConfigurationCardComponent>;

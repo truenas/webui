@@ -6,23 +6,14 @@
       [disabled]="isLoading$ | async"
     >
       <mat-button-toggle
-        ix-auto
-        ix-auto-type="tab"
-        ix-auto-identifier="filter-all"
         [value]="JobTab.All"
         (click)="onTabChange(JobTab.All)"
       >{{ 'All' | translate }}</mat-button-toggle>
       <mat-button-toggle
-        ix-auto
-        ix-auto-type="tab"
-        ix-auto-identifier="filter-active"
         [value]="JobTab.Running"
         (click)="onTabChange(JobTab.Running)"
       >{{ 'Active' | translate }}</mat-button-toggle>
       <mat-button-toggle
-        ix-auto
-        ix-auto-type="tab"
-        ix-auto-identifier="filter-failed"
         [value]="JobTab.Failed"
         (click)="onTabChange(JobTab.Failed)"
       >{{ 'Failed' | translate }}</mat-button-toggle>
@@ -51,9 +42,6 @@
         <th
           *matHeaderCellDef
           mat-header-cell
-          ix-auto
-          ix-auto-type="tab"
-          ix-auto-identifier="name"
         >
           {{ 'Name' | translate }}
         </th>
@@ -121,6 +109,7 @@
               *ngIf="job.state === JobState.Running && job.abortable"
               mat-icon-button
               type="button"
+              [ixTest]="['abort-job', job.description]"
               [matTooltip]="'Abort' | translate"
               (click)="onAborted(job)"
             ><ix-icon name="mdi-close-circle"></ix-icon></button>
@@ -133,9 +122,6 @@
           *matHeaderCellDef
           mat-header-cell
           mat-sort-header
-          ix-auto
-          ix-auto-type="tab"
-          ix-auto-identifier="State"
         >
           {{ 'State' | translate }}
         </th>
@@ -147,9 +133,6 @@
           *matHeaderCellDef
           mat-header-cell
           mat-sort-header
-          ix-auto
-          ix-auto-type="tab"
-          ix-auto-identifier="ID"
         >
           {{ 'ID' | translate }}
         </th>
@@ -162,9 +145,6 @@
         <th
           *matHeaderCellDef
           mat-header-cell
-          ix-auto
-          ix-auto-type="tab"
-          ix-auto-identifier="DateStarted"
         >
           {{ 'Started' | translate }}
         </th>
@@ -177,9 +157,6 @@
         <th
           *matHeaderCellDef
           mat-header-cell
-          ix-auto
-          ix-auto-type="tab"
-          ix-auto-identifier="DateFinished"
         >
           {{ 'Finished' | translate }}
         </th>
@@ -192,15 +169,13 @@
         <th
           *matHeaderCellDef
           mat-header-cell
-          ix-auto
-          ix-auto-type="tab"
-          ix-auto-identifier="Logs"
         >{{ 'Logs' | translate }}</th>
         <td *matCellDef="let job; dataSource: dataSource" mat-cell>
           <button
             *ngIf="job.logs_path && job.logs_excerpt"
             mat-button
             type="button"
+            [ixTest]="['download-logs', job.description]"
             (click)="$event.stopPropagation(); downloadLogs(job)"
           >{{ 'Download Logs' | translate }}</button>
         </td>
@@ -211,11 +186,12 @@
         (toggle)="onToggle($event)"
       ></ix-expand-toggle-column>
 
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
 
       <tr
         *matRowDef="let job; columns: displayedColumns"
         mat-row
+        [ixTest]="job.description || job.method"
         [ixDetailRow]="job"
         [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
         [ixDetailRowTemplate]="expandedRowTemplate"

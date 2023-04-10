@@ -17,13 +17,19 @@
     ></ix-checkbox>
   </ix-fieldset>
 
-  <div class="form-actions">
-    <button mat-button type="button" [matDialogClose]="false">
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
 
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid || isFormLoading">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid || isFormLoading"
+    >
       {{ 'Save' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </form>

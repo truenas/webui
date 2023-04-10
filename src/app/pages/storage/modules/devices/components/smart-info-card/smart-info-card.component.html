@@ -5,7 +5,7 @@
     </h3>
 
     <!-- TODO: Hide for disks with no SMART support after https://ixsystems.atlassian.net/browse/NAS-116969 -->
-    <button mat-button (click)="onManualTest()">
+    <button mat-button ixTest="run-manual-test" (click)="onManualTest()">
       {{ 'Run Manual Test' | translate }}
     </button>
   </mat-card-header>
@@ -13,24 +13,19 @@
   <mat-card-content>
     <div class="details-item">
       <span class="label">{{ 'Completed S.M.A.R.T. Tests' | translate }}:</span>
-      <ng-container *ngIf="totalResults$ | async as totalResults">
-        <ngx-skeleton-loader
-          *ngIf="totalResults.isLoading"
-        ></ngx-skeleton-loader>
-        <span *ngIf="totalResults.value !== undefined" class="value">
-          {{ totalResults.value | number }}
+      <ng-container *ixWithLoadingState="totalResults$ as totalResults">
+        <span class="value">
+          {{ totalResults | number }}
         </span>
-        <ng-container *ngIf="totalResults.error">
-          <!-- TODO: Add error handler -->
-          Error
-        </ng-container>
         <a
-          *ngIf="totalResults.value"
+          *ngIf="totalResults"
           class="action"
+          ixTest="view-all-test-results"
           [routerLink]="[
             '/storage',
             'disks',
             'smartresults',
+            SmartTestResultPageType.Disk,
             topologyDisk.disk
           ]"
         >
@@ -59,18 +54,11 @@
       class="details-item"
     >
       <span class="label">{{ 'S.M.A.R.T. Tasks' | translate }}:</span>
-      <ng-container *ngIf="smartTasksCount$ | async as smartTasksCount">
-        <ngx-skeleton-loader
-          *ngIf="smartTasksCount.isLoading"
-        ></ngx-skeleton-loader>
-        <span *ngIf="smartTasksCount.value !== undefined" class="value">
-          {{ tasksMessage | translate: { n: smartTasksCount.value } }}
+      <ng-container *ixWithLoadingState="smartTasksCount$ as smartTasksCount">
+        <span class="value">
+          {{ tasksMessage | translate: { n: smartTasksCount } }}
         </span>
-        <ng-container *ngIf="smartTasksCount.error">
-          <!-- TODO: Add error handler -->
-          Error
-        </ng-container>
-        <a class="action" [routerLink]="['/data-protection', 'smart']">
+        <a class="action" ixTest="manage-smart-tasks" [routerLink]="['/data-protection', 'smart']">
           {{ 'Manage S.M.A.R.T. Tasks' | translate }}
         </a>
       </ng-container>

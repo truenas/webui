@@ -1,18 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('AcmednsFormComponent', () => {
   let spectator: Spectator<AcmednsFormComponent>;
@@ -33,10 +35,12 @@ describe('AcmednsFormComponent', () => {
     component: AcmednsFormComponent,
     imports: [
       IxFormsModule,
+      IxDynamicFormModule,
       ReactiveFormsModule,
     ],
     providers: [
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),

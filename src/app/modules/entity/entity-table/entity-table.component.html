@@ -7,7 +7,7 @@
 <div
   fxLayout="column"
   id="entity-table-component"
-  class="material mat-card mat-card-table"
+  class="material mat-mdc-card mat-card-table"
   [class.is-empty]="isTableEmpty"
 >
   <ng-container>
@@ -29,19 +29,15 @@
           fxLayout="row wrap"
           fxLayoutGap="16px"
         >
-          <span
-            *ngFor="let maction of conf.multiActions"
-            ix-auto
-            ix-auto-type="button"
-            [ix-auto-identifier]="maction?.id"
-          >
+          <span *ngFor="let maction of conf.multiActions">
             <button
               *ngIf="maction.enable"
               mat-button
+              [ixTest]="['multi-action', maction?.id]"
               [id]="maction?.id"
               (click)="maction.onClick(this.selection.selected)"
             >
-              <mat-icon>{{ maction?.icon }}</mat-icon>
+              <ix-icon [name]="maction?.icon"></ix-icon>
               &nbsp;
               <span>{{ maction?.label | translate }}</span>
             </button>
@@ -50,14 +46,15 @@
         </div>
 
         <div *ngIf="!conf.multiActions || conf.multiActions.length === 0">
-          <span ix-auto ix-auto-type="button" ix-auto-identifier="mdelete">
+          <span>
             <!-- With Labels -->
             <ng-container>
               <button
                 mat-button
+                ixTest="delete-selected"
                 (click)="doMultiDelete(this.selection.selected)"
               >
-                <mat-icon>delete</mat-icon>
+                <ix-icon name="delete"></ix-icon>
                 <br />
                 <span>
                   {{ 'Delete' | translate }}
@@ -70,10 +67,11 @@
               <button
                 mat-button
                 matTooltipPosition="below"
+                ixTest="delete-selected"
                 [matTooltip]="'Delete selections' | translate"
                 (click)="doMultiDelete(this.selection.selected)"
               >
-                <mat-icon>delete</mat-icon>
+                <ix-icon name="delete"></ix-icon>
               </button>
             </ng-container>
           </span>
@@ -166,30 +164,30 @@
               (mouseout)="onHover($event, false)"
             >
               <ng-container *ngIf="hasDetails() === true">
-                <ng-container *ngIf="element?.id === expandedElement?.id">
+                <ng-container *ngIf="getRowIdentifier(element) === getRowIdentifier(expandedElement)">
                   <button
                     class="transparent-btn"
+                    [ixTest]="['collapse-row', getRowIdentifier(element)]"
                     [attr.aria-label]="'Close expanded row' | translate"
                   >
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-chevron-up"
+                    <ix-icon
+                      name="mdi-chevron-up"
                       (mouseover)="onHover($event, true)"
                       (mouseout)="onHover($event, false)"
-                    ></mat-icon>
+                    ></ix-icon>
                   </button>
                 </ng-container>
-                <ng-container *ngIf="element?.id !== expandedElement?.id">
+                <ng-container *ngIf="getRowIdentifier(element) !== getRowIdentifier(expandedElement)">
                   <button
                     class="transparent-btn"
+                    [ixTest]="['expand-row', getRowIdentifier(element)]"
                     [attr.aria-label]="'Expand row' | translate"
                   >
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-chevron-down"
+                    <ix-icon
+                      name="mdi-chevron-down"
                       (mouseover)="onHover($event, true)"
                       (mouseout)="onHover($event, false)"
-                    ></mat-icon>
+                    ></ix-icon>
                   </button>
                 </ng-container>
               </ng-container>
@@ -235,9 +233,7 @@
             <th *matHeaderCellDef class="multiselect-column" mat-header-cell>
               <mat-checkbox
                 color="primary"
-                ix-auto
-                ix-auto-type="checkbox"
-                ix-auto-identifier="title"
+                [ixTest]="[conf.title, 'multiselect']"
                 [indeterminate]="selection.hasValue() && !isAllSelected"
                 [checked]="selection.hasValue() && isAllSelected"
                 (change)="masterToggle($event)"
@@ -253,10 +249,8 @@
             >
               <mat-checkbox
                 color="primary"
-                ix-auto
-                ix-auto-type="checkbox"
                 [checked]="selection.isSelected(element)"
-                [ix-auto-identifier]="element[conf.rowIdentifier || 'name']"
+                [ixTest]="element[conf.rowIdentifier || 'name']"
                 (click)="$event.stopPropagation()"
                 (change)="$event ? toggleSelection(element) : null"
               >
@@ -300,22 +294,16 @@
                 <div
                   *ngIf="currentColumns[i].toggle"
                   class="clickable"
-                  ix-auto
-                  ix-auto-type="overlay"
                   matTooltipPosition="right"
                   [id]="'overlay__' + getRowIdentifier(element) + '_Running'"
                   [matTooltip]="element.state"
-                  [ix-auto-identifier]="column + getRowIdentifier(element)"
                   (click)="$event.stopPropagation(); this.conf.onSliderChange(element)"
                 ></div>
 
                 <mat-slide-toggle
                   *ngIf="currentColumns[i].toggle"
-                  ix-auto
-                  ix-auto-type="slider"
                   color="primary"
                   [id]="'slide-toggle__' + column + '_' + getRowIdentifier(element)"
-                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [checked]="element[column] === EntityJobState.Running"
                 >
                 </mat-slide-toggle>
@@ -324,10 +312,8 @@
                 <button
                   *ngIf="currentColumns[i].button"
                   mat-stroked-button
-                  ix-auto
-                  ix-auto-type="slider"
+                  [ixTest]="[column, getRowIdentifier(element)]"
                   [id]="'interactive-button_' + column + '_' + getRowIdentifier(element)"
-                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [ngClass]="getButtonClass(element[column])"
                   (click)="
                     $event.stopPropagation(); this.conf.onButtonClick(element)
@@ -338,7 +324,7 @@
                     *ngIf="element[column].warnings?.length > 0"
                     class="label-warning-icon"
                   >
-                    <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    <ix-icon name="mdi-alert"></ix-icon>
                   </div>
                 </button>
               </ng-template>
@@ -373,10 +359,8 @@
                 *ngIf="!(checkboxLoaders.get(getRowIdentifier(element)) | async)"
                 color="primary"
                 class="checkbox"
-                ix-auto
-                ix-auto-type="checkbox"
                 [id]="'checkbox__' + getRowIdentifier(element)"
-                [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
+                [ixTest]="getRowIdentifier(element)"
                 [disabled]="getDisabled(column)"
                 [(ngModel)]="element[column]"
                 (change)="checkboxChanged(element)"
@@ -407,13 +391,12 @@
             >
               <div class="path-locked-status">
                 <div class="text-overflow-ellipsis">{{ element[column] }}</div>
-                <mat-icon
+                <ix-icon
                   *ngIf="element.locked"
                   class="append"
+                  name="locked"
                   [matTooltip]="'Dataset is currently locked' | translate"
-                >
-                  locked
-                </mat-icon>
+                ></ix-icon>
               </div>
             </td>
           </ng-container>
@@ -427,7 +410,7 @@
             [attr.colspan]="currentColumns.length"
           >
             <div
-              [@detailExpand]="element?.id === expandedElement?.id ? 'expanded' : 'collapsed'"
+              [@detailExpand]="getRowIdentifier(element) === getRowIdentifier(expandedElement) ? 'expanded' : 'collapsed'"
             >
               <ix-entity-table-row-details
                 [config]="element"
@@ -437,16 +420,14 @@
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="columnsProps" mat-header-row></tr>
+        <tr *matHeaderRowDef="columnsProps" mat-header-row ixTest="table-header"></tr>
         <tr
           *matRowDef="let element; columns: columnsProps; let i = dataIndex"
           mat-row
           class="element-row"
-          ix-auto
-          ix-auto-type="expander"
           [id]="element[getFirstKey()]"
-          [ix-auto-identifier]="element[getFirstKey()]"
-          [ngClass]="{ 'expanded-row': expandedElement?.id === element?.id }"
+          [ixTest]="element[getFirstKey()]"
+          [ngClass]="{ 'expanded-row': getRowIdentifier(expandedElement) === getRowIdentifier(element) }"
           (click)="doRowClick(element)"
         ></tr>
 
@@ -455,6 +436,7 @@
             *matRowDef="let row; columns: ['expandedDetail']"
             mat-row
             class="details-row"
+            [ixTest]="[row[getFirstKey()], 'details']"
           ></tr>
         </ng-container>
       </table>

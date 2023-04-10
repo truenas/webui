@@ -1,0 +1,16 @@
+<div
+  class="logo-container"
+  [class.logo-loaded]="wasLogoLoaded"
+>
+  <img
+    *ngIf="url"
+    class="logo"
+    [offset]="800"
+    [lazyLoad]="url"
+    [defaultImage]="appImagePlaceholder"
+    [scrollTarget]="scrollTarget"
+    (onStateChange)="onLogoLoaded($event)"
+  >
+
+  <div class="logo-placeholder"></div>
+</div>

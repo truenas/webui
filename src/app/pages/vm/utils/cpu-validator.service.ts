@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  AbstractControl, ValidationErrors,
+  AbstractControl, FormGroup, ValidationErrors,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services';
  */
 @Injectable()
 export class CpuValidatorService {
-  maximumCpus$: Observable<number>;
+  private maximumCpus$: Observable<number>;
 
   constructor(
     private validators: IxValidatorsService,
@@ -31,10 +31,10 @@ export class CpuValidatorService {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return maximumCpus$.pipe(
         map((maxVcpus) => {
-          const form = control.parent;
-          const vcpus: number = form.get('vcpus').value;
-          const cores: number = form.get('cores').value;
-          const threads: number = form.get('threads').value;
+          const form = control.parent as FormGroup;
+          const vcpus = form.controls.vcpus.value as number;
+          const cores = form.controls.cores.value as number;
+          const threads = form.controls.threads.value as number;
 
           const hasError = vcpus * cores * threads > maxVcpus;
           if (!hasError) {
@@ -43,7 +43,7 @@ export class CpuValidatorService {
 
           return this.validators.makeErrorMessage(
             'invalidCpus',
-            this.translate.instant(helptext.vcpus_warning, { maxVCPUs: maxVcpus }),
+            this.translate.instant(helptext.vcpus_warning, { maxVcpus }),
           );
         }),
         catchError(() => of(null)),

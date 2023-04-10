@@ -2,7 +2,7 @@ import {
   Component,
   Output, EventEmitter, Input, ViewChild, OnDestroy, OnInit, ChangeDetectorRef, ChangeDetectionStrategy,
 } from '@angular/core';
-import { MatLegacyColumnDef as MatColumnDef } from '@angular/material/legacy-table';
+import { MatColumnDef } from '@angular/material/table';
 import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
 
 @Component({

@@ -6,15 +6,13 @@ import {
 import { FormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { rootUserId } from 'app/constants/root-user-id.constant';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './dashboard-form.component.html',
-  styleUrls: ['./dashboard-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardFormComponent {
@@ -94,15 +92,15 @@ export class DashboardFormComponent {
     this.dashState = clone;
 
     // Save to backend
-    this.ws.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
+    this.ws.call('auth.set_attribute', ['dashState', clone]).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (res) => {
+      next: (wasSet) => {
         this.isFormLoading = false;
         this.onSubmit$.next(this.dashState);
         this.slideInService.close();
 
-        if (!res) {
+        if (!wasSet) {
           throw new Error('Unable to save Dashboard State');
         }
       },

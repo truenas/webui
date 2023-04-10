@@ -1,8 +1,8 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -10,8 +10,9 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
-  DialogService, ServicesService, StorageService, WebSocketService,
+  DialogService, ServicesService, StorageService,
 } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { DownloadClientConfigModalComponent } from './download-client-config-modal.component';
 
 describe('DownloadClientConfigModalComponent', () => {
@@ -25,7 +26,7 @@ describe('DownloadClientConfigModalComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('interface.websocket_local_ip', '127.0.0.1'),
       ]),

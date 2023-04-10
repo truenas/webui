@@ -24,7 +24,7 @@ describe('BackblazeB2ProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       key: '12345678',
       account: 'account-key',
     });

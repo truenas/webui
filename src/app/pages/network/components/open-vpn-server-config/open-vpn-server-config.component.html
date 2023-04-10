@@ -9,27 +9,16 @@
       <ix-fieldset>
         <div class="columns">
           <div class="column">
-            <div class="linked-select">
-              <div class="link-wrapper">
-                <a class="link" (click)="certificatesLinkClicked()">
-                  {{ 'Manage Certificates' | translate }}
-                </a>
-              </div>
-
+            <ix-with-manage-certificates-link>
               <ix-select
                 formControlName="server_certificate"
                 [label]="'Server Certificate' | translate"
                 [required]="true"
                 [options]="serverCertificates$"
               ></ix-select>
-            </div>
+            </ix-with-manage-certificates-link>
 
-            <div class="linked-select">
-              <div class="link-wrapper">
-                <a class="link" (click)="certificatesLinkClicked()">
-                  {{ 'Manage Certificates' | translate }}
-                </a>
-              </div>
+            <ix-with-manage-certificates-link>
               <ix-select
                 formControlName="root_ca"
                 [label]="'Root CA' | translate"
@@ -37,7 +26,7 @@
                 [options]="rootAuthorities$"
                 [tooltip]="tooltips.root_ca | translate"
               ></ix-select>
-            </div>
+            </ix-with-manage-certificates-link>
 
             <ix-ip-input-with-netmask
               formControlName="server"
@@ -118,24 +107,34 @@
         </div>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onRenewStaticKey()">
+        <button mat-button type="button" ixTest="renew-static-key" (click)="onRenewStaticKey()">
           {{ 'Renew Static Key' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onDownloadClientConfig()">
+        <button mat-button type="button" ixTest="download-client-config" (click)="onDownloadClientConfig()">
           {{ 'Download Client Config' | translate }}
         </button>
-      </div>
+        <button
+          *ngIf="lastSavedServerCertificate !== null || lastSavedRootCertificate !== null"
+          mat-button
+          ixTest="unset-certs"
+          type="button"
+          (click)="unsetCertificates()"
+        >
+          {{ 'Unset Certificates' | translate }}
+        </button>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

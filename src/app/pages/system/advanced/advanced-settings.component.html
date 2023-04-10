@@ -4,49 +4,17 @@
   </ix-page-title-header>
 </ng-template>
 
-<div
-  class="wrapper"
-  gdGap="8px"
-  gdRows="fit-content(30vh)"
-  gdColumns="100%"
-  gdColumns.gt-xs="50% 50%"
->
-  <ng-container *ngFor="let card of dataCards; index as i">
-    <mat-card *ngIf="card.items">
-      <mat-toolbar-row>
-        <h3>{{ card.title | translate }}</h3>
-        <div class="actions action-icon">
-          <button
-            mat-button
-            color="default"
-            (click)="onSettingsPressed(card.id)"
-          >
-            {{ 'Configure' | translate }}
-          </button>
-        </div>
-      </mat-toolbar-row>
-
-      <mat-card-content>
-        <ix-entity-empty
-          *ngIf="card.emptyConf; else data"
-          [conf]="card.emptyConf"
-        ></ix-entity-empty>
-        <ng-template #data>
-          <mat-list>
-            <mat-list-item *ngFor="let item of card.items" class="card-list-item">
-              <span class="label">{{ item.label | translate }}:</span>
-              <span class="value text-overflow-ellipsis">
-                {{ item.value | cast | translate }}
-              </span>
-            </mat-list-item>
-          </mat-list>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
-
-    <ix-conf-table
-      *ngIf="card.tableConf"
-      [conf]="card.tableConf"
-    ></ix-conf-table>
-  </ng-container>
+<div class="cards">
+  <ix-console-card></ix-console-card>
+  <ix-syslog-card></ix-syslog-card>
+  <ix-kernel-card></ix-kernel-card>
+  <ix-cron-card></ix-cron-card>
+  <ix-init-shutdown-card></ix-init-shutdown-card>
+  <ix-sysctl-card></ix-sysctl-card>
+  <ix-storage-card></ix-storage-card>
+  <ix-replication-settings-card></ix-replication-settings-card>
+  <ix-sessions-card></ix-sessions-card>
+  <ix-allowed-addresses-card></ix-allowed-addresses-card>
+  <ix-self-encrypting-drive-card></ix-self-encrypting-drive-card>
+  <ix-isolated-gpus-card></ix-isolated-gpus-card>
 </div>

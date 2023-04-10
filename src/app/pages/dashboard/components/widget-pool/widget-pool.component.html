@@ -20,12 +20,10 @@
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="goBack"
+            [ixTest]="[poolState.name, 'widget', 'back']"
             (click)="goBack()"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <!-- Back to previous slide -->
@@ -34,12 +32,10 @@
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="previousSlide"
+            [ixTest]="[poolState.name, 'widget', 'back']"
             (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <h3 class="mat-card-title-text">
@@ -55,35 +51,29 @@
           <div class="controls">
             <a
               mat-icon-button
-              ix-auto-type="button"
-              ix-auto-identifier="poolStatus"
-              [routerLink]="['/storage', 'status', poolState.id]"
-              [ix-auto]="poolState.name"
+              [ixTest]="poolState.name"
+              [routerLink]="['/storage']"
             >
-              <mat-icon
-                fontSet="mdi-set"
-                fontIcon="mdi-database"
+              <ix-icon
+                name="mdi-database"
                 matTooltipPosition="above"
                 aria-label="Configure Pools"
                 [matTooltip]="'Pool Status' | translate"
-              ></mat-icon>
+              ></ix-icon>
             </a>
 
             <a
               mat-icon-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="diskReports"
+              [ixTest]="[poolState.name, 'disk-reports']"
               [routerLink]="['/reportsdashboard', 'disk']"
               [queryParams]="{ disks: poolDisks }"
             >
-              <mat-icon
+              <ix-icon
+                name="insert_chart"
                 matTooltipPosition="above"
                 aria-label="Disk Reports"
                 [matTooltip]="'Disk Reports' | translate"
-              >
-                insert_chart
-              </mat-icon>
+              ></ix-icon>
             </a>
           </div>
         </mat-toolbar-row>
@@ -282,15 +272,11 @@
                       <span *ngIf="poolState.topology.data.length > 1">
                         s
                       </span>
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.data.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
 
                     <mat-list-item
@@ -303,15 +289,11 @@
                         {{ 'Caches' | translate }}:
                       </strong>
                       {{ poolState.topology.cache.length }}
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.cache.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
 
                     <mat-list-item
@@ -324,15 +306,11 @@
                         {{ 'Spares' | translate }}:
                       </strong>
                       {{ poolState.topology.spare.length }}
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.spare.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
 
                     <mat-list-item
@@ -345,15 +323,11 @@
                         {{ 'Logs' | translate }}:
                       </strong>
                       {{ poolState.topology.log.length }}
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.log.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
                   </mat-list>
                 </div>
@@ -431,14 +405,7 @@
                   </span>
                 </span>
 
-                <mat-icon
-                  class="next-slide"
-                  ix-auto
-                  ix-auto-type="button"
-                  ix-auto-identifier="nextSlide"
-                >
-                  chevron_right
-                </mat-icon>
+                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
               </mat-list-item>
             </mat-list>
           </ng-template>
@@ -476,14 +443,7 @@
                 </span>
 
                 <!-- CHEVRON -->
-                <mat-icon
-                  class="next-slide"
-                  ix-auto
-                  ix-auto-type="button"
-                  ix-auto-identifier="nextSlide"
-                >
-                  chevron_right
-                </mat-icon>
+                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
               </mat-list-item>
             </mat-list>
 
@@ -501,14 +461,7 @@
                 <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
                   <ix-icon name="check_circle"></ix-icon>
                 </span>
-                <mat-icon
-                  class="next-slide"
-                  ix-auto
-                  ix-auto-type="button"
-                  ix-auto-identifier="nextSlide"
-                >
-                  chevron_right
-                </mat-icon>
+                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
               </mat-list-item>
             </mat-list>
           </ng-template>

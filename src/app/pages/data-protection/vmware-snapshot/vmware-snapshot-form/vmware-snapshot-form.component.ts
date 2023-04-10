@@ -10,10 +10,12 @@ import helptext from 'app/helptext/storage/vmware-snapshot/vm-ware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -66,11 +68,12 @@ export class VmwareSnapshotFormComponent implements OnInit {
   datastoreOptions$ = of([]);
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     protected dialogService: DialogService,
   ) {}
@@ -108,10 +111,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
       username,
       password,
     }]).pipe(untilDestroyed(this)).subscribe({
-      next: (res: MatchDatastoresWithDatasets) => {
+      next: (matches: MatchDatastoresWithDatasets) => {
         this.isLoading = false;
-        this.filesystemList = res.filesystems;
-        this.datastoreList = res.datastores;
+        this.filesystemList = matches.filesystems;
+        this.datastoreList = matches.datastores;
 
         this.filesystemOptions$ = of(
           this.filesystemList.map((filesystem) => ({
@@ -128,13 +131,16 @@ export class VmwareSnapshotFormComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
-          this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg);
+          this.dialogService.error({
+            title: helptext.connect_err_dialog.title,
+            message: helptext.connect_err_dialog.msg,
+          });
         } else {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         }
         this.cdr.markForCheck();
       },
@@ -171,7 +177,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
               datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
             },
           ),
-          hideCheckBox: true,
+          hideCheckbox: true,
         })
         : of(true)
     ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -182,7 +188,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

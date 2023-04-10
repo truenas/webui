@@ -1,14 +1,16 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
@@ -19,6 +21,8 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 export class FailoverComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
+    private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -28,15 +32,19 @@ export class FailoverComponent implements OnInit {
   ) {}
 
   isWsConnected(): void {
-    if (this.ws.connected) {
-      this.loader.close();
-      // ws is connected
-      this.router.navigate(['/session/signin']);
-    } else {
-      setTimeout(() => {
-        this.isWsConnected();
-      }, 5000);
-    }
+    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe({
+      next: (isConnected) => {
+        if (isConnected) {
+          this.loader.close();
+          // ws is connected
+          this.router.navigate(['/session/signin']);
+        } else {
+          setTimeout(() => {
+            this.isWsConnected();
+          }, 5000);
+        }
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -44,8 +52,8 @@ export class FailoverComponent implements OnInit {
     this.location.replaceState('/session/signin');
     this.dialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
-      error: (res: WebsocketError) => { // error on reboot
-        this.dialogService.errorReport(String(res.error), res.reason, res.trace.formatted)
+      error: (error: WebsocketError) => { // error on reboot
+        this.dialogService.error(this.errorHandler.parseWsError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);
@@ -54,7 +62,7 @@ export class FailoverComponent implements OnInit {
       complete: () => { // show reboot screen
         this.store$.dispatch(passiveNodeReplaced());
 
-        this.ws.prepareShutdown();
+        this.wsManager.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWsConnected();

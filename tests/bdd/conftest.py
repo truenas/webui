@@ -2,8 +2,6 @@
 
 import os
 import pytest
-import random
-import string
 import time
 from configparser import ConfigParser
 from platform import system
@@ -20,8 +18,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 
-# random hostname
-hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
+# To avoid hostname need to be unique so using the PID should avoid this
+pid = str(os.getpid())
+hostname = f'uitest{pid}'
 
 
 @pytest.fixture
@@ -95,8 +94,8 @@ def driver():
 
 
 # Close Firefox after all tests are completed
-def pytest_sessionfinish(session, exitstatus):
-    web_driver.quit()
+# def pytest_sessionfinish(session, exitstatus):
+#     web_driver.quit()
 
 
 @pytest.mark.hookwrapper
@@ -122,18 +121,23 @@ def pytest_runtest_makereport(item):
                 # Press CLOSE if exist
                 if element_exist('//button[@ix-auto="button__CLOSE"]'):
                     web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+
             # take screenshot after looking for error
             save_screenshot(screenshot_name)
-            if wait_on_element(1, '//mat-icon[@id="close-icon" and text()="cancel"]', 'clickable'):
+
+            if element_exist('//h1[contains(text(),"Installing")]') and element_exist('//mat-dialog-content[contains(.,"Error:")]'):
+                web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+
+            if wait_on_element(1, '//ix-icon[@id="ix-close-icon"]', 'clickable'):
                 try:
-                    web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
+                    web_driver.find_element_by_xpath('//ix-icon[@id="ix-close-icon"]').click()
                 except ElementClickInterceptedException:
                     try:
                         # Press Tab in case a dropdown is in the way
                         actions = ActionChains(web_driver)
                         actions.send_keys(Keys.TAB)
                         actions.perform()
-                        web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
+                        web_driver.find_element_by_xpath('//ix-icon[@id="ix-close-icon"]').click()
                     except ElementClickInterceptedException:
                         pass
 

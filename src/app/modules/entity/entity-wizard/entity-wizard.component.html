@@ -30,9 +30,10 @@
                 fxLayout="row wrap"
                 fxLayoutAlign="start start"
                 fxFlex="100%"
-                class="fieldset divider-{{ fieldSet.divider }}"
-                fxFlex.gt-xs="calc({{ fieldSet.width ? fieldSet.width : '100%' }} - 16px)"
+                [fxFlex.gt-xs]="'calc(' + (fieldSet.width ? fieldSet.width : '100%') + ' - 16px)'"
                 [ngClass]="[
+                  'fieldset',
+                  fieldSet.divider ? 'divider-' + fieldSet.divider : '',
                   fieldSet.class ? fieldSet.class : '',
                   isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
                 ]"
@@ -46,7 +47,7 @@
                 <div
                   *ngFor="let field of fieldSet.config; let k = index"
                   fxFlex="100%"
-                  fxFlex.gt-xs="calc({{ field.width ? field.width : '100%'}} - 16px)"
+                  [fxFlex.gt-xs]="'calc(' + (field.width ? field.width : '100%') + ' - 16px)'"
                   [id]="k"
                   [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
                 >
@@ -72,10 +73,8 @@
               mat-button
               color="accent"
               type="button"
-              ix-auto
-              ix-auto-type="button"
+              ixTest="wizard-cancel"
               [id]="'cancel_button_' + i"
-              [ix-auto-identifier]="'CANCEL_' + step.label"
               (click)="goBack()"
             >
               {{ 'Cancel' | translate }}
@@ -87,10 +86,8 @@
               matStepperPrevious
               color="accent"
               type="button"
-              ix-auto
-              ix-auto-type="button"
+              ixTest="wizard-back"
               [id]="'goback_button_' + i"
-              [ix-auto-identifier]="'BACK_' + step.label"
             >
               {{ 'Back' | translate }}
             </button>
@@ -101,10 +98,8 @@
               matStepperNext
               color="primary"
               type="button"
-              ix-auto
-              ix-auto-type="button"
+              ixTest="wizard-next"
               [id]="'goforward_button_' + i"
-              [ix-auto-identifier]="'NEXT_' + step.label"
               [disabled]="showSpinner"
               (click)="handleNext(matStepInstance)"
             >
@@ -116,10 +111,8 @@
               mat-button
               color="primary"
               type="button"
-              ix-auto
-              ix-auto-type="button"
+              [ixTest]="['wizard-next', customNextText]"
               [id]="'custom_button_' + i"
-              [ix-auto-identifier]="customNextText | uppercase"
               (click)="handleNext(matStepInstance)"
             >
               {{ customNextText | translate }}
@@ -131,10 +124,8 @@
                 mat-button
                 color="primary"
                 type="button"
-                ix-auto
-                ix-auto-type="button"
+                [ixTest]="['wizard-action', custBtn.name]"
                 [id]="'cust_button_' + custBtn.name"
-                [ix-auto-identifier]="custBtn.name | uppercase"
                 (click)="custBtn['function']()"
               >
                 {{ custBtn.name | translate }}
@@ -150,9 +141,7 @@
                 class="btn btn-block btn-lg btn-primary"
                 mat-button
                 color="accent"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="CANCEL_secondary"
+                [ixTest]="['wizard-cancel']"
                 (click)="goBack()"
               >
                 {{ 'Cancel' | translate }}
@@ -163,9 +152,7 @@
                 mat-button
                 matStepperPrevious
                 color="accent"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="BACK_noconfirm"
+                [ixTest]="['wizard-back']"
               >
                 {{ 'Back' | translate }}
               </button>
@@ -174,9 +161,7 @@
                 id="confirm_button"
                 mat-button
                 color="primary"
-                ix-auto
-                ix-auto-type="button"
-                [ix-auto-identifier]="saveSubmitText | uppercase"
+                [ixTest]="['wizard-save', saveSubmitText]"
                 [disabled]="!entityForm.form.valid"
                 (click)="onSubmit()"
               >
@@ -210,9 +195,7 @@
             class="btn btn-block btn-lg btn-primary"
             mat-button
             color="accent"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="CANCEL_secondary"
+            [ixTest]="['wizard-cancel']"
             (click)="goBack()"
           >
             {{ 'Cancel' | translate }}
@@ -223,9 +206,7 @@
             mat-button
             matStepperPrevious
             color="accent"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="BACK_noconfirm"
+            [ixTest]="['wizard-back']"
           >
             {{ 'Back' | translate }}
           </button>
@@ -234,9 +215,7 @@
             id="confirm_button"
             mat-button
             color="primary"
-            ix-auto
-            ix-auto-type="button"
-            [ix-auto-identifier]="saveSubmitText | uppercase"
+            [ixTest]="['wizard-save', saveSubmitText]"
             [disabled]="!entityForm.form.valid"
             (click)="onSubmit()"
           >

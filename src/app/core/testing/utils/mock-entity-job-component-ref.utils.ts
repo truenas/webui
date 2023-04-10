@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 

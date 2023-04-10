@@ -17,7 +17,7 @@ export class LocaleService {
   timezone: string;
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
-  target: Subject<CoreEvent> = new Subject();
+  target = new Subject<CoreEvent>();
 
   constructor(
     private store$: Store<AppState>,

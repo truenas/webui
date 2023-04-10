@@ -10,10 +10,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -90,7 +92,8 @@ export class ServiceS3Component implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private systemGeneralService: SystemGeneralService,
@@ -108,14 +111,14 @@ export class ServiceS3Component implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialog.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
 
-    this.form.controls['storage_path'].valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
+    this.form.controls.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
       if (!newPath || newPath === this.initialPath || this.warned) {
         return;
       }
@@ -135,17 +138,13 @@ export class ServiceS3Component implements OnInit {
         });
     });
 
-    this.form.get('certificate').value$.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.certificate.value$.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value !== null) {
-        this.form.get('tls_server_uri').addValidators([this.tlsServerUriRequiredIfCertificateNotNull.validatorFn()]);
+        this.form.controls.tls_server_uri.addValidators([this.tlsServerUriRequiredIfCertificateNotNull.validatorFn()]);
       } else {
-        this.form.get('tls_server_uri').removeValidators(this.tlsServerUriRequiredIfCertificateNotNull.validatorFn());
+        this.form.controls.tls_server_uri.removeValidators(this.tlsServerUriRequiredIfCertificateNotNull.validatorFn());
       }
     });
-  }
-
-  certificatesLinkClicked(): void {
-    this.router.navigate(['/', 'credentials', 'certificates']);
   }
 
   onSubmit(): void {
@@ -166,7 +165,7 @@ export class ServiceS3Component implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

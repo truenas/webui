@@ -13,10 +13,8 @@
   <mat-checkbox
     *ngIf="!config.updater && !config.customEventMethod"
     color="primary"
-    ix-auto
-    ix-auto-type="checkbox"
     class="{ 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
-    [ix-auto-identifier]="config.placeholder"
+    [ixTest]="config.name"
     [formControlName]="config.name"
     [required]="config.required"
     (click)="config.readonly && preventClick($event)"
@@ -30,6 +28,7 @@
     color="primary"
     class="updater { 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
     [formControlName]="config.name"
+    [ixTest]="config.name"
     [required]="config.required"
     (change)="onChangeCheckbox($event)"
     (click)="(config.readonly && preventClick($event)) || checkboxUpdate()"
@@ -42,6 +41,7 @@
     color="primary"
     class="custom-handler { 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
     [formControlName]="config.name"
+    [ixTest]="config.name"
     [required]="config.required"
     (change)="onChangeCheckbox($event)"
     (click)="preventClick($event) && config.customEventMethod()"

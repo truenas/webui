@@ -9,7 +9,7 @@ import {
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
-import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from '@angular/material/legacy-autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   EMPTY,
@@ -38,7 +38,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() allowCustomValue = false;
   @Input() provider: IxComboboxProvider;
 
-  @ViewChild('ixInput') inputElementRef: ElementRef;
+  @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
 
@@ -154,11 +154,16 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       fromEvent(this.autoCompleteRef.panel.nativeElement, 'scroll')
         .pipe(
           debounceTime(300),
-          map(() => this.autoCompleteRef.panel.nativeElement.scrollTop),
+          map(() => (this.autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
           takeUntil(this.autocompleteTrigger.panelClosingActions),
           untilDestroyed(this),
         ).subscribe(() => {
-          const { scrollTop, scrollHeight, clientHeight: elementHeight } = this.autoCompleteRef.panel.nativeElement;
+          const {
+            scrollTop,
+            scrollHeight,
+            clientHeight: elementHeight,
+          } = this.autoCompleteRef.panel.nativeElement as HTMLElement;
+
           const atBottom = scrollHeight === scrollTop + elementHeight;
           if (!atBottom) {
             return;

@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import {
+  GiB, KiB, MiB, TiB,
+} from 'app/constants/bytes.constant';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable()
 export class CloudCredentialService {
   protected credentialProviders = 'cloudsync.providers' as const;
   protected byteMap = {
-    T: 1024 ** 4,
-    G: 1024 ** 3,
-    M: 1024 ** 2,
-    K: 1024 ** 1,
-    B: 1024 ** 0,
+    T: TiB,
+    G: GiB,
+    M: MiB,
+    K: KiB,
+    B: 1,
   };
 
   constructor(protected ws: WebSocketService) {}

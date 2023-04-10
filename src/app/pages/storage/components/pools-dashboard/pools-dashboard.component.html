@@ -1,15 +1,25 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <button mat-button (click)="onImportPool()">
+    <button mat-button ixTest="import-pool" (click)="onImportPool()">
       {{ 'Import Pool' | translate }}
     </button>
 
-    <a mat-button [routerLink]="['/storage', 'disks']">
+    <a mat-button ixTest="disks" [routerLink]="['/storage', 'disks']">
       {{ 'Disks' | translate }}
     </a>
 
-    <a mat-button color="primary" [routerLink]="['/storage', 'create']">
+    <a mat-button color="primary" ixTest="create-pool" [routerLink]="['/storage', 'create']">
       {{ 'Create Pool' | translate }}
+    </a>
+
+    <a
+      *appIfNightly
+      mat-button
+      color="primary"
+      ixTest="create-pool-new"
+      [routerLink]="['/storage', 'create_new']"
+    >
+      {{ 'Create Pool (New)' }}
     </a>
   </ix-page-title-header>
 </ng-template>

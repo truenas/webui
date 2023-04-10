@@ -1,13 +1,17 @@
 <div class="toolbar-slider">
   {{ label | translate }}:
   <mat-slider
-    ix-auto
-    ix-auto-type="slider"
+    [ixTest]="label"
     [min]="min"
     [max]="max"
-    [value]="value"
     [step]="step"
-    [ix-auto-identifier]="label"
-    (change)="onChange($event)"
-  ></mat-slider>
+  >
+    <input
+      #sliderInput
+      matSliderThumb
+      ixTest="toolbar-slider"
+      [value]="value"
+      (change)="onChange(sliderInput.value)"
+    />
+  </mat-slider>
 </div>

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -13,9 +13,10 @@ import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { KeychainCredentialService, UserService, WebSocketService } from 'app/services';
+import { DialogService, KeychainCredentialService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { RsyncTaskFormComponent } from './rsync-task-form.component';
 
@@ -76,6 +77,7 @@ describe('RsyncTaskFormComponent', () => {
           { id: 2, name: 'ssh02' },
         ]),
       }),
+      mockProvider(DialogService),
       provideMockStore({
         selectors: [
           {
@@ -222,7 +224,7 @@ describe('RsyncTaskFormComponent', () => {
     await saveButton.click();
 
     const existingTaskWithoutModule = { ...existingTask };
-    delete existingTaskWithoutModule['remotemodule'];
+    delete existingTaskWithoutModule.remotemodule;
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,
@@ -256,7 +258,7 @@ describe('RsyncTaskFormComponent', () => {
     await saveButton.click();
 
     const existingTaskWithoutModule = { ...existingTask };
-    delete existingTaskWithoutModule['remotemodule'];
+    delete existingTaskWithoutModule.remotemodule;
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,

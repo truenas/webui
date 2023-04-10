@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateAuthoritySignRequest } from 'app/interfaces/certificate-authority.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  AppLoaderService, SystemGeneralService, WebSocketService,
+  AppLoaderService, SystemGeneralService,
 } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

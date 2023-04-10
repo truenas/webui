@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, SimpleChanges, OnInit,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { maxBy } from 'lodash';
@@ -9,9 +9,12 @@ import {
 } from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -39,7 +42,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   }
 
   get checkQuotas(): boolean {
-    return !this.dataset.locked && this.isFilesystem;
+    return !this.dataset.locked && this.isFilesystem && !this.dataset.readonly;
   }
 
   get hasQuota(): boolean {
@@ -56,6 +59,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
 
   constructor(
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,
@@ -87,15 +91,15 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.isLoadingQuotas = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoadingQuotas = false;
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     this.getInheritedQuotas();
     const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
     if (selectedDatasetHasChanged && this.checkQuotas) {
@@ -116,8 +120,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.inheritedQuotasDataset = dataset;
         this.cdr.markForCheck();
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });

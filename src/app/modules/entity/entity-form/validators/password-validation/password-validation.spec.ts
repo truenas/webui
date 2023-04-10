@@ -23,8 +23,8 @@ describe('PasswordValidation', () => {
         other: ['', []],
       });
 
-      thisControl = form.get('this');
-      otherControl = form.get('other');
+      thisControl = form.controls.this;
+      otherControl = form.controls.other;
     });
 
     it('should throw error when no otherControl is given', () => {
@@ -64,8 +64,8 @@ describe('PasswordValidation', () => {
         other: ['', []],
       });
 
-      thisControl = form.get('this');
-      otherControl = form.get('other');
+      thisControl = form.controls.this;
+      otherControl = form.controls.other;
     });
 
     it('should throw error if otherControl is missing', () => {

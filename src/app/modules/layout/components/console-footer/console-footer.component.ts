@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';

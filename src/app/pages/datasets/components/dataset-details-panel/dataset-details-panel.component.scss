@@ -105,7 +105,7 @@
   align-items: center;
   display: flex;
   margin: 0 0.333333rem 16px;
-  overflow: auto;
+  overflow: hidden;
   padding: 12px 0;
   place-content: space-between;
 
@@ -133,6 +133,7 @@
 
     @media (max-width: $breakpoint-hidden) {
       display: inline-block;
+      left: 2px;
       position: relative;
       top: 1px;
     }

@@ -7,18 +7,22 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, UserService, WebSocketService } from 'app/services';
+import { DialogService, UserService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -86,9 +90,10 @@ export class NfsFormComponent implements OnInit {
     private userService: UserService,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) {}
@@ -105,19 +110,19 @@ export class NfsFormComponent implements OnInit {
   }
 
   addNetworkControl(): void {
-    this.form.get('networks').push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
+    this.form.controls.networks.push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
   }
 
   removeNetworkControl(index: number): void {
-    this.form.get('networks').removeAt(index);
+    this.form.controls.networks.removeAt(index);
   }
 
   addHostControl(): void {
-    this.form.get('hosts').push(this.formBuilder.control('', Validators.required));
+    this.form.controls.hosts.push(this.formBuilder.control('', Validators.required));
   }
 
   removeHostControl(index: number): void {
-    this.form.get('hosts').removeAt(index);
+    this.form.controls.hosts.removeAt(index);
   }
 
   toggleAdvancedMode(): void {
@@ -148,7 +153,7 @@ export class NfsFormComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -158,7 +163,7 @@ export class NfsFormComponent implements OnInit {
     this.ws.call('nfs.config')
       .pipe(untilDestroyed(this))
       .subscribe((nfsConfig) => {
-        this.hasNfsSecurityField = nfsConfig.v4;
+        this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);
       });
   }
 
@@ -179,8 +184,8 @@ export class NfsFormComponent implements OnInit {
     return this.dialogService.confirm({
       title: shared.dialog_title,
       message: shared.dialog_message,
-      hideCheckBox: true,
-      buttonMsg: shared.dialog_button,
+      hideCheckbox: true,
+      buttonText: shared.dialog_button,
     }).pipe(
       switchMap((confirmed) => {
         if (!confirmed) {
@@ -196,8 +201,8 @@ export class NfsFormComponent implements OnInit {
 
             return undefined;
           }),
-          catchError((error) => {
-            this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
+          catchError((error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
         );

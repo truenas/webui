@@ -7,7 +7,7 @@
 
     <button
       mat-button
-      ix-auto-type="button"
+      ixTest="manage-devices"
       (click)="router.navigate(['/storage', this.poolState.id, 'devices'])"
     >
       {{ 'Manage Devices' | translate }}
@@ -19,7 +19,7 @@
       <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{ 'Data VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
-          <span *ngIf="topologyState.data === mixedDev" class="warning">
+          <span *ngIf="isTopologyWarning(topologyState.data)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.data }}</span>
@@ -28,7 +28,7 @@
       <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{ 'Metadata VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
-          <span *ngIf="topologyState.metadata === mixedDev" class="warning">
+          <span *ngIf="isTopologyWarning(topologyState.metadata)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.metadata }}</span>
@@ -37,7 +37,7 @@
       <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{ 'Log VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
-          <span *ngIf="topologyState.log === mixedDev" class="warning">
+          <span *ngIf="isTopologyWarning(topologyState.log)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.log }}</span>
@@ -46,7 +46,7 @@
       <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{ 'Cache VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
-          <span *ngIf="topologyState.cache === mixedDev" class="warning">
+          <span *ngIf="isTopologyWarning(topologyState.cache)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.cache }}</span>
@@ -55,7 +55,7 @@
       <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{ 'Spare VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
-          <span *ngIf="topologyState.spare === mixedDev" class="warning">
+          <span *ngIf="isTopologyWarning(topologyState.spare)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.spare }}</span>
@@ -64,7 +64,7 @@
       <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{ 'Dedup VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
-          <span *ngIf="topologyState.dedup === mixedDev" class="warning">
+          <span *ngIf="isTopologyWarning(topologyState.dedup)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.dedup }}</span>

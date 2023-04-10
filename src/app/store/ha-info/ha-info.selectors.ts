@@ -14,3 +14,13 @@ export const selectIsHaLicensed = createSelector(
   selectHaInfoState,
   (state) => state.isHaLicensed,
 );
+
+export const selectIsUpgradePending = createSelector(
+  selectHaInfoState,
+  (state) => state.isUpgradePending,
+);
+
+export const selectHasOnlyMissmatchVersionsReason = createSelector(
+  selectHaInfoState,
+  (state) => state.hasOnlyMissmatchVersionsReason,
+);

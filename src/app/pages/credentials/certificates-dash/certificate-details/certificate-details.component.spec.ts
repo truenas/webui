@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { CertificateDetailsComponent } from './certificate-details.component';
 
@@ -27,7 +28,7 @@ describe('CertificateDetailsComponent', () => {
           root_path: '/etc/certificates/CA',
           digest_algorithm: 'SHA256',
           key_length: 2048,
-          key_type: 'RSA',
+          key_type: CertificateKeyType.Rsa,
           until: 'Sun Apr  4 14:17:59 2032',
           issuer: 'self-signed',
           revoked: false,

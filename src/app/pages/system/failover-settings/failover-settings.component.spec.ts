@@ -1,17 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyCheckboxHarness as MatCheckboxHarness } from '@angular/material/legacy-checkbox/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverSettingsComponent>;
@@ -23,9 +26,7 @@ describe('FailoverComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
-    ],
-    declarations: [
-      ConfirmDialogComponent,
+      AppCommonModule,
     ],
     providers: [
       mockWebsocket([
@@ -40,6 +41,9 @@ describe('FailoverComponent', () => {
         }),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(WebsocketConnectionService, {
+        isConnected$: of(true),
+      }),
     ],
   });
 

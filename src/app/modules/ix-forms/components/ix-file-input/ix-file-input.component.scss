@@ -72,6 +72,6 @@
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
   }
 }

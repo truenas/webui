@@ -67,7 +67,7 @@
                 [tooltip]="helptext.mac_tooltip | translate"
               ></ix-input>
 
-              <button type="button" mat-button (click)="generateMacAddress()">
+              <button type="button" mat-button ixTest="generate" (click)="generateMacAddress()">
                 {{ 'Generate' | translate }}
               </button>
             </div>
@@ -204,16 +204,18 @@
           [label]="'Device Order' | translate"
         ></ix-input>
       </ix-fieldset>
-      <div class="form-actions">
+
+      <ix-form-actions>
         <button
           type="submit"
           mat-button
           color="primary"
+          ixTest="save"
           [disabled]="typeSpecificForm.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

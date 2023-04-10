@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
@@ -94,7 +94,7 @@ describe('DatasetAclEditorComponent', () => {
     providers: [
       StorageService,
       DatasetAclEditorStore,
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('filesystem.getacl', acl),
         mockCall('filesystem.stat', {
@@ -193,7 +193,7 @@ describe('DatasetAclEditorComponent', () => {
     });
 
     it('adds another ace when Add item is pressed', async () => {
-      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'add Add Item' }));
+      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
       await addAceButton.click();
 
       const items = spectator.queryAll('ix-permissions-item');

@@ -38,24 +38,26 @@
         ></ix-explorer>
       </ix-fieldset>
 
-      <div class="form-actions">
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          [disabled]="form.invalid"
-        >
-          {{ 'Import' | translate }}
-        </button>
+      <ix-form-actions>
         <button
           *ngIf="canViewImportLog"
           mat-button
           type="button"
+          ixTest="view-import-log"
           (click)="viewImportLog()"
         >
           {{ 'View Import Log' | translate }}
         </button>
-      </div>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="import"
+          [disabled]="form.invalid"
+        >
+          {{ 'Import' | translate }}
+        </button>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

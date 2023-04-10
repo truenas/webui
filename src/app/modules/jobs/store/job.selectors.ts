@@ -29,7 +29,7 @@ export const selectIsJobPanelOpen = createSelector(
 
 export const selectRunningJobs = createSelector(
   selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Running),
+  (jobs) => jobs.filter((job) => job.state === JobState.Running && !job.transient),
 );
 
 export const selectUpdateJob = createSelector(

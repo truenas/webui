@@ -4,7 +4,7 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class ServicesService {

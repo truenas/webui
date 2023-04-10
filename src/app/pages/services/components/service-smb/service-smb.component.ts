@@ -5,23 +5,21 @@ import { AbstractControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { LogLevel } from 'app/enums/log-level.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { AppState } from 'app/store/index';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -37,10 +35,9 @@ export class ServiceSmbComponent implements OnInit {
 
   form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
-    netbiosname_b: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
-        (control: AbstractControl) => {
+        (control: AbstractControl<string[]>) => {
           return control.value?.every((alias: string) => alias.length <= 15);
         },
         this.translate.instant('Aliases must be 15 characters or less.'),
@@ -59,14 +56,13 @@ export class ServiceSmbComponent implements OnInit {
     dirmask: ['', []],
     admin_group: ['', [Validators.maxLength(120)]],
     bindip: [[] as string[], []],
-    smb_options: ['', []],
     aapl_extensions: [false, []],
+    multichannel: [false, []],
   });
 
   readonly helptext = helptext;
   readonly tooltips = {
     netbiosname: helptext.cifs_srv_netbiosname_tooltip,
-    netbiosname_b: helptext.cifs_srv_netbiosname_b_tooltip,
     netbiosalias: helptext.cifs_srv_netbiosalias_tooltip,
     workgroup: helptext.cifs_srv_workgroup_tooltip,
     description: helptext.cifs_srv_description_tooltip,
@@ -81,8 +77,8 @@ export class ServiceSmbComponent implements OnInit {
     dirmask: helptext.cifs_srv_dirmask_tooltip,
     admin_group: helptext.cifs_srv_admin_group_tooltip,
     bindip: helptext.cifs_srv_bindip_tooltip,
-    smb_options: helptext.cifs_srv_smb_options_tooltip,
     aapl_extensions: helptext.cifs_srv_aapl_extensions_tooltip,
+    multichannel: helptext.cifs_srv_multichannel_tooltip,
   };
 
   readonly logLevelOptions$ = of([
@@ -105,32 +101,19 @@ export class ServiceSmbComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private router: Router,
     private dialogService: DialogService,
     private translate: TranslateService,
     private userService: UserService,
     private validatorsService: IxValidatorsService,
-    private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
-  ) {
-    this.form.get('netbiosname_b').disable();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.isFormLoading = true;
-    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.subscriptions.push(
-        this.form.get('netbiosname_b').disabledWhile(
-          this.store$.select(selectIsHaLicensed).pipe(
-            tap((isHaLicensed) => this.hasSecondController = isHaLicensed),
-            map((isHaLicensed) => !isHaLicensed),
-          ),
-        ),
-      );
-    }
 
     this.ws.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
@@ -138,9 +121,9 @@ export class ServiceSmbComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -164,7 +147,7 @@ export class ServiceSmbComponent implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

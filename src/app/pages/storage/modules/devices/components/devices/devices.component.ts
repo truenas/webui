@@ -16,16 +16,20 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
-  Disk, isTopologyDisk, isVdev, TopologyDisk,
+  Disk, isTopologyDisk, isVdev, TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { LayoutService } from 'app/services/layout.service';
+
+const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
 @UntilDestroy()
 @Component({
@@ -42,7 +46,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
 
   diskDictionary: { [guid: string]: Disk } = {};
-  dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;
+  dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId: number;
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
@@ -50,6 +54,14 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => Boolean(node.children?.length);
   readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
+
+  readonly hasTopLevelRaidz$: Observable<boolean> = this.devicesStore.nodes$.pipe(
+    map((node) => {
+      return node.some((nodeItem) => nodeItem.children.some((child: TopologyItem) => {
+        return raidzItems.includes(child.type);
+      }));
+    }),
+  );
 
   showMobileDetails = false;
   isMobileView = false;
@@ -142,10 +154,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
-    dataNodes.forEach((dataNode) => {
-      this.sortDataNodesByDiskName(dataNode.children);
-    });
-    this.dataSource = new IxNestedTreeDataSource(dataNodes);
+    this.dataSource = new NestedTreeDataSource();
     this.dataSource.filterPredicate = (nodesToFilter, query = '') => {
       return flattenTreeWithFilter(nodesToFilter, (dataNode) => {
         if (isVdevGroup(dataNode)) {
@@ -163,6 +172,21 @@ export class DevicesComponent implements OnInit, AfterViewInit {
         return false;
       });
     };
+    this.dataSource.sortComparer = (nodeA, nodeB) => {
+      const topologyDiskA = nodeA as TopologyDisk;
+      const topologyDiskB = nodeB as TopologyDisk;
+      const collator = new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'accent',
+      });
+
+      if (topologyDiskA?.disk && topologyDiskB.disk) {
+        return collator.compare(topologyDiskA.disk, topologyDiskB.disk);
+      }
+
+      return collator.compare(topologyDiskA.name, topologyDiskB.name);
+    };
+    this.dataSource.data = dataNodes;
   }
 
   private openGroupNodes(): void {
@@ -171,10 +195,10 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   private listenForRouteChanges(): void {
     this.route.params.pipe(
-      map((params) => params.guid),
+      map((params) => params.guid as string),
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe((guid: string) => {
+    ).subscribe((guid) => {
       this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
       this.devicesStore.selectNodeByGuid(guid);
     });
@@ -193,25 +217,5 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
-  }
-
-  // TODO: Likely belongs to DevicesStore
-  private sortDataNodesByDiskName(dataNodes: DeviceNestedDataNode[]): void {
-    dataNodes.forEach((node) => {
-      if (node.children.length === 0) {
-        return;
-      }
-
-      node.children.sort((a: TopologyDisk, b: TopologyDisk) => {
-        if (a.disk && b.disk) {
-          const nameA = a.disk.toLowerCase();
-          const nameB = b.disk.toLowerCase();
-
-          return nameA.localeCompare(nameB);
-        }
-        return undefined;
-      });
-      this.sortDataNodesByDiskName(node.children);
-    });
   }
 }

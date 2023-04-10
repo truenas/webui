@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   FormControl, FormsModule, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
+import { MatSelectHarness } from '@angular/material/select/testing';
 import {
   createHostFactory,
   Spectator,
@@ -15,6 +15,7 @@ import { delay } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxSelectComponent } from './ix-select.component';
 
 describe('IxSelectComponent', () => {
@@ -34,6 +35,7 @@ describe('IxSelectComponent', () => {
     declarations: [
       MockComponent(IxErrorsComponent),
       MockComponent(IxLabelComponent),
+      MockComponent(TooltipComponent),
     ],
   });
 
@@ -53,23 +55,14 @@ describe('IxSelectComponent', () => {
       spectator.fixture.detectChanges();
     });
 
-    it('when called with false, sets \'isDisabled\' to false', () => {
-      spectator.component.setDisabledState(false);
-      expect(spectator.component.isDisabled).toBeFalsy();
-    });
-
-    it('when called with true, sets \'isDisabled\' to true', () => {
-      spectator.component.setDisabledState(true);
-      expect(spectator.component.isDisabled).toBeTruthy();
-    });
-
-    it('disables MatSelect when setDisabledState is true', async () => {
+    it('disables MatSelect when form control is disabled', async () => {
+      control.disable();
       spectator.component.setDisabledState(true);
 
       const select = await loader.getHarness(MatSelectHarness);
       const state = await select.isDisabled();
 
-      expect(state).toBeTruthy();
+      expect(state).toBe(true);
     });
 
     it('renders a label and passes properties to it', () => {
@@ -84,7 +77,7 @@ describe('IxSelectComponent', () => {
       expect(label.tooltip).toBe('Select group to use.');
     });
 
-    it('loader will be rendered only while options are loading', async () => {
+    it('shows loader while options are loading', async () => {
       const opt$ = options$.pipe(delay(100));
       spectator.setInput({ options: opt$ });
 
@@ -158,6 +151,21 @@ describe('IxSelectComponent', () => {
       expect(await options[1].isDisabled()).toBe(false);
       expect(await options[2].getText()).toBe('GRL');
       expect(await options[2].isDisabled()).toBe(true);
+    });
+
+    it('shows options tooltip if it is provided', async () => {
+      spectator.component.options = of([
+        { label: 'GBR', value: 'Great Britain' },
+        { label: 'GRL', value: 'Greenland', tooltip: 'Not really green.' },
+      ]);
+      spectator.component.ngOnChanges();
+
+      const select = await loader.getHarness(MatSelectHarness);
+      await select.open();
+
+      const tooltips = spectator.queryAll(TooltipComponent);
+      expect(tooltips).toHaveLength(1);
+      expect(tooltips[0].message).toBe('Not really green.');
     });
   });
 

@@ -3,7 +3,6 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
@@ -21,7 +20,6 @@ describe('JobItemComponent', () => {
       MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
     ],
     providers: [
-      mockWebsocket(),
       provideMockStore({
         selectors: [
           { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
@@ -47,7 +45,7 @@ describe('JobItemComponent', () => {
 
     expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
     expect(spectator.query('.job-progress-description')).toHaveText('progress description');
-    expect(spectator.query('.job-icon-abort')).toBeTruthy();
+    expect(spectator.query('.job-button-abort ix-icon')).toBeTruthy();
     expect(spectator.query('.job-icon-failed')).toBeFalsy();
   });
 

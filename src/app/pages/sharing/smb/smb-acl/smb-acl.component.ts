@@ -10,8 +10,8 @@ import { helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbSharesecAceUpdate } from 'app/interfaces/smb-share.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface FormAclEntry {
   ae_who_sid: string;
@@ -121,7 +121,7 @@ export class SmbAclComponent {
 
   private requireSidOrDomainAndName = this.validatorService.withMessage(
     (form) => {
-      const values = form.value;
+      const values = form.value as FormAclEntry;
       if (values.ae_who_sid || (values.ae_who_name_domain && values.ae_who_name_name)) {
         return null;
       }

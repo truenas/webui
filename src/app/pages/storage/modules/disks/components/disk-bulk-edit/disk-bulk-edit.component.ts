@@ -11,14 +11,13 @@ import helptext from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: 'disk-bulk-edit.component.html',
-  styleUrls: ['disk-bulk-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskBulkEditComponent {
@@ -89,7 +88,7 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
-    this.form.controls['disknames'].disable();
+    this.form.controls.disknames.disable();
   }
 
   prepareDataSubmit(): [id: string, update: DiskUpdate][] {
@@ -124,7 +123,10 @@ export class DiskBulkEditComponent {
           const isSuccessful = job.result.every((result) => {
             if (result.error !== null) {
               this.slideInService.close();
-              this.dialogService.errorReport(helptext.dialog_error, result.error);
+              this.dialogService.error({
+                title: helptext.dialog_error,
+                message: result.error,
+              });
               return false;
             }
 

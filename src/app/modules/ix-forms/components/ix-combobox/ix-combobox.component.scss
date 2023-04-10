@@ -19,7 +19,6 @@
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  padding: 3px 8px;
   position: relative;
 
   input {
@@ -31,7 +30,7 @@
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
 
     input {
       cursor: not-allowed;
@@ -58,7 +57,7 @@
   user-select: none;
 }
 
-.input-container .mat-icon {
+.input-container .ix-icon {
   font-size: 1rem;
   height: auto;
   margin-left: 4px;
@@ -72,3 +71,14 @@
 .ix-unselected {
   background: var(--bg2) !important;
 }
+
+.has-value {
+  padding-right: 25px;
+}
+
+mat-option.combobox-mat-options {
+  line-height: 1.4;
+  padding-bottom: 3px !important;
+  padding-top: 3px !important;
+}
+

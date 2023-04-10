@@ -12,13 +12,14 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
+  private productType: ProductType;
   protected certificateList = 'certificate.query' as const;
   protected caList = 'certificateauthority.query' as const;
 
@@ -28,6 +29,19 @@ export class SystemGeneralService {
 
   get isEnterprise(): boolean {
     return this.getProductType() === ProductType.ScaleEnterprise;
+  }
+
+  getProductType(): ProductType {
+    return this.productType;
+  }
+
+  loadProductType(): Observable<void> {
+    return this.getProductType$.pipe(
+      map((productType) => {
+        this.productType = productType;
+        return undefined;
+      }),
+    );
   }
 
   toggleSentryInit(): void {
@@ -49,11 +63,7 @@ export class SystemGeneralService {
     });
   }
 
-  getProductType(): ProductType {
-    return this.window.localStorage.getItem('product_type') as ProductType;
-  }
-
-  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: true, bufferSize: 1 }));
+  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
 
   getCopyrightYear$ = this.ws.call('system.build_time').pipe(
     map((buildTime) => {
@@ -72,7 +82,9 @@ export class SystemGeneralService {
     protected ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
-  ) {}
+  ) {
+    this.getProductType$.subscribe();
+  }
 
   getCertificateAuthorities(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, []);

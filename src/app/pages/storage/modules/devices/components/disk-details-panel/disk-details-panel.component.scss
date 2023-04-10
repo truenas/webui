@@ -10,11 +10,11 @@
   flex-wrap: nowrap;
   gap: $title-gap;
   max-width: 70%;
-  place-items: start;
+  place-items: flex-start;
   width: 80%;
 
   @media (max-width: $breakpoint-tablet) {
-    align-items: start;
+    align-items: flex-start;
     flex-direction: column;
     gap: unset;
     max-width: 100%;
@@ -26,7 +26,7 @@
   }
 
   @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-    align-items: start;
+    align-items: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
     max-width: 100%;
@@ -141,6 +141,7 @@
 
     @media (max-width: $breakpoint-hidden) {
       display: inline-block;
+      left: 2px;
       position: relative;
       top: 1px;
     }

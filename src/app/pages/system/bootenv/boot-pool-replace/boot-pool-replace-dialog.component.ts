@@ -5,7 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -31,7 +31,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   });
 
   dev = {
-    fcName: 'dev',
+    fcName: 'dev' as const,
     label: this.translate.instant(helptextSystemBootenv.replace_name_placeholder),
     options: this.ws.call('disk.get_unused').pipe(
       map((unusedDisks) => {
@@ -74,7 +74,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   }
 
   setupWarningForExportedPools(): void {
-    this.form.get(this.dev.fcName).valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls[this.dev.fcName].valueChanges.pipe(untilDestroyed(this)).subscribe(
       this.warnForExportedPools.bind(this),
     );
   }

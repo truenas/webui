@@ -27,7 +27,7 @@ export interface FormConfiguration {
   fieldConfig?: FieldConfig[];
   routeCancel?: string[];
   routeSuccess?: string[];
-  // TODO: Broken
+  // Broken
   routeDelete?: string[];
   customActions?: FormCustomAction[];
   compactCustomActions?: FormCompactCustomAction[];
@@ -58,7 +58,7 @@ export interface FormConfiguration {
   customEditCall?: (value: unknown) => void;
   responseOnSubmit?: (value: unknown) => void;
   clean?: (data: unknown) => unknown;
-  errorReport?: (res: WebsocketError) => void;
+  errorReport?: (error: WebsocketError) => void;
   resourceTransformIncomingRestData?: (data: unknown) => unknown;
   preInit?: (entityForm: EntityFormComponent) => void;
   afterInit?: (entityForm: EntityFormComponent) => void;

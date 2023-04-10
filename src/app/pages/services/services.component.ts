@@ -1,7 +1,7 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
@@ -29,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServicesComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSource: MatTableDataSource<ServiceRow> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ServiceRow>([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
   loading = true;
@@ -138,8 +139,8 @@ export class ServicesComponent implements OnInit, AfterViewInit {
             return this.dialog.confirm({
               title: this.translate.instant('Alert'),
               message,
-              hideCheckBox: true,
-              buttonMsg: this.translate.instant('Stop'),
+              hideCheckbox: true,
+              buttonText: this.translate.instant('Stop'),
             });
           }),
           untilDestroyed(this),
@@ -154,8 +155,8 @@ export class ServicesComponent implements OnInit, AfterViewInit {
         this.dialog.confirm({
           title: this.translate.instant('Alert'),
           message: this.translate.instant('Stop {serviceName}?', { serviceName }),
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Stop'),
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Stop'),
         }).pipe(
           untilDestroyed(this),
         ).subscribe((confirmed) => {
@@ -197,12 +198,16 @@ export class ServicesComponent implements OnInit, AfterViewInit {
           );
         }
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
         if (rpc === 'service.stop') {
           message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
         }
-        this.dialog.errorReport(message, error.reason, error.trace.formatted);
+        this.dialog.error({
+          title: message,
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        });
         this.serviceLoadingMap.set(service.service, false);
         this.cdr.markForCheck();
       },

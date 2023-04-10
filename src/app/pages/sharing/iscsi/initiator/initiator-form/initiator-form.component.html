@@ -39,13 +39,11 @@
             mat-flat-button
             color="primary"
             type="button"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="refresh"
+            ixTest="refresh"
             [disabled]="connectedInitiatorsDisabled"
             (click)="getConnectedInitiators()"
           >
-            <mat-icon>refresh</mat-icon> {{ 'REFRESH' }}
+            <ix-icon name="refresh"></ix-icon> {{ 'REFRESH' }}
           </button>
         </div>
       </div>
@@ -81,9 +79,7 @@
         type="submit"
         mat-button
         color="primary"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="save"
+        ixTest="save"
         [disabled]="!formGroup.valid"
       >
         {{ 'Save' | translate }}
@@ -92,10 +88,8 @@
         *ngIf="routeSuccess"
         type="button"
         mat-button
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="cancel"
         color="accent"
+        ixTest="cancel"
         (click)="goBack()"
       >
         {{ 'Cancel' | translate }}

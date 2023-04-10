@@ -20,7 +20,7 @@
     <div
       *ngIf="!field.isHidden"
       fxFlex="calc(100% - 100px)"
-      fxFlex.gt-xs="calc({{ field.width }} - 100px - 32px)"
+      [fxFlex.gt-xs]="'calc(' + field.width + ' - 100px - 32px)'"
       [class.form-inline]="field.class === 'inline'"
       [class.form-line]="field.class !== 'inline'"
     >

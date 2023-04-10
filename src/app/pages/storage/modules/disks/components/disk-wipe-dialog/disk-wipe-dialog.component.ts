@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { FormBuilder, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import helptext from 'app/helptext/storage/disks/disks';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +20,7 @@ import { DialogService } from 'app/services';
 })
 export class DiskWipeDialogComponent {
   form = this.formBuilder.group({
-    wipe_method: [DiskWipeMethod.Quick],
+    wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
   });
 
   readonly tooltips = {
@@ -42,6 +44,7 @@ export class DiskWipeDialogComponent {
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
@@ -85,8 +88,8 @@ export class DiskWipeDialogComponent {
           hideCancel: true,
         });
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
 

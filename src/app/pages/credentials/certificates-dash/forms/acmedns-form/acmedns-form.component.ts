@@ -13,8 +13,8 @@ import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authen
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface DnsAuthenticatorList {
   key: string;
@@ -24,7 +24,6 @@ interface DnsAuthenticatorList {
 @UntilDestroy()
 @Component({
   templateUrl: './acmedns-form.component.html',
-  styleUrls: ['./acmedns-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcmednsFormComponent implements OnInit {
@@ -45,7 +44,7 @@ export class AcmednsFormComponent implements OnInit {
   });
 
   get formGroup(): UntypedFormGroup {
-    return this.form.controls['attributes'] as UntypedFormGroup;
+    return this.form.controls.attributes as UntypedFormGroup;
   }
 
   isLoading = false;

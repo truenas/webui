@@ -16,12 +16,10 @@
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="goBack"
+            ixTest="memory-back"
             (click)="goBack()"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <span fxHide.gt-xs>&nbsp;&nbsp;</span>
@@ -39,18 +37,15 @@
           <div class="controls">
             <button
               mat-icon-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="memoryReports"
+              ixTest="memory-go-to-reports"
               (click)="router.navigate(['reportsdashboard/memory'])"
             >
-              <mat-icon
-                matTooltipPosition="above"
+              <ix-icon
                 aria-label="Memory Reports"
+                name="insert_chart"
+                matTooltipPosition="above"
                 [matTooltip]="'Memory Reports' | translate"
-              >
-                insert_chart
-              </mat-icon>
+              ></ix-icon>
             </button>
           </div>
         </mat-toolbar-row>

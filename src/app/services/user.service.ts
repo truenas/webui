@@ -5,7 +5,7 @@ import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interfa
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

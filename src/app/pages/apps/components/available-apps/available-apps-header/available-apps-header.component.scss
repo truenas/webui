@@ -1,0 +1,96 @@
+@import 'scss-imports/splitview';
+
+:host {
+  border-bottom: 1px solid var(--lines);
+  color: var(--fg1);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px 25px;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column-reverse;
+  }
+}
+
+::ng-deep .mat-mdc-option {
+  text-transform: capitalize;
+}
+
+.search-filters {
+  max-width: 800px;
+  width: 100%;
+
+  .filters-btn {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .filters-container {
+    .filters {
+      display: flex;
+      gap: 18px;
+
+      .catalogs,
+      .sort {
+        width: 30%;
+      }
+
+      .сategories {
+        width: 40%;
+
+        ix-chips {
+          margin-top: 0;
+          padding-top: 0;
+        }
+      }
+
+      .info-container {
+        align-items: flex-start;
+        column-gap: 5px;
+        display: flex;
+        font-size: x-small;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+  }
+}
+
+.header-numbers {
+  display: flex;
+  gap: 70px;
+  justify-content: flex-end;
+  margin-left: 60px;
+  white-space: nowrap;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 30px 0;
+  }
+}
+
+.header-number {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+
+  .header-number-title {
+    color: var(--primary-txt);
+  }
+
+  h2 {
+    color: var(--primary-txt);
+  }
+
+  .header-link {
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+  }
+}

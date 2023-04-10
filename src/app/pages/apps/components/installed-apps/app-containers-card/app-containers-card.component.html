@@ -1,0 +1,101 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Containers' | translate }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="details-list">
+      <div class="details-item">
+        <span class="label">{{ 'Pods' | translate }}:</span>
+        <span class="value">
+          <ng-container *ngIf="app?.resources?.pods; else notAvailable">
+            {{ app.resources.pods.length }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Used Ports' | translate }}:</span>
+        <span class="value">
+          <ng-container *ngIf="app?.used_ports; else notAvailable">
+            {{ getPorts(app) }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Deployments' | translate }}:</span>
+        <span class="value">
+          <ng-container *ngIf="app?.resources?.deployments; else notAvailable">
+            {{ app.resources.deployments.length }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Stateful Sets' | translate }}:</span>
+        <span class="value">
+          <ng-container *ngIf="app?.resources?.statefulsets; else notAvailable">
+            {{ app.resources.statefulsets.length }}
+          </ng-container>
+        </span>
+      </div>
+    </div>
+    <div class="containers">
+      <h4>{{ 'Containers' | translate }}</h4>
+      <div class="container-list">
+        <ng-container *ngIf="!isLoading; else loader">
+          <ng-container *ngIf="app?.resources?.container_images; else noContainers">
+            <div
+              *ngFor="let containerImage of app.resources.container_images | keyvalue;"
+              class="container-item"
+            >
+              <span class="container-name">{{ containerImage.key }}</span>
+              <span class="container-status">
+                <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
+                  {{ 'Update available' | translate }}
+                </ng-container>
+              </span>
+              <span *ngIf="app.status !== chartReleaseStatus.Stopped" class="container-action">
+                <button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'Shell' | translate"
+                  [ixTest]="[containerImage.key, 'shell']"
+                  [matTooltip]="'Shell' | translate"
+                  (click)="shellButtonPressed()"
+                >
+                  <ix-icon name="mdi-console"></ix-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'View Logs' | translate"
+                  [ixTest]="[containerImage.key, 'view_logs']"
+                  [matTooltip]="'View Logs' | translate"
+                  (click)="viewLogsButtonPressed()"
+                >
+                  <ix-icon name="mdi-text-box"></ix-icon>
+                </button>
+              </span>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #loader>
+  <ngx-skeleton-loader></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #upToDate>
+  {{ 'Up to date' | translate }}
+</ng-template>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>
+
+<ng-template #noContainers>
+  {{ 'No containers are available.' | translate }}
+</ng-template>

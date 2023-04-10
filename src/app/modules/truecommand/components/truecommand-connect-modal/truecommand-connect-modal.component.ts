@@ -1,18 +1,22 @@
 import {
   ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { FormBuilder } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface TruecommandSignupModalState {
   isConnected: boolean;
   config: TrueCommandConfig;
 }
+
+export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 
 @UntilDestroy()
 @Component({
@@ -34,10 +38,11 @@ export class TruecommandConnectModalComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private data: TruecommandSignupModalState,
     private dialogService: DialogService,
-    private dialogRef: MatDialogRef<TruecommandConnectModalComponent>,
-    private fb: UntypedFormBuilder,
+    private dialogRef: MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>,
+    private fb: FormBuilder,
     private loader: AppLoaderService,
     private ws: WebSocketService,
   ) {}
@@ -75,9 +80,9 @@ export class TruecommandConnectModalComponent implements OnInit {
           this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
         }
       },
-      error: (err) => {
+      error: (err: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });
   }
@@ -88,8 +93,8 @@ export class TruecommandConnectModalComponent implements OnInit {
       icon: helptext.tcDeregisterDialog.icon,
       message: helptext.tcDeregisterDialog.message,
       confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
         return;
       }
 
@@ -106,9 +111,9 @@ export class TruecommandConnectModalComponent implements OnInit {
               hideCancel: true,
             });
           },
-          error: (err) => {
+          error: (err: WebsocketError) => {
             this.loader.close();
-            new EntityUtils().handleWsError(this, err, this.dialogService);
+            this.dialogService.error(this.errorHandler.parseWsError(err));
           },
         });
     });

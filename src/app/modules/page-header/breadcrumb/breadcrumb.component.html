@@ -6,16 +6,16 @@
   <ul class="breadcrumb">
     <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index">
       <li *ngIf="i > 0 && i < breadcrumbs.length - 1">&gt;</li>
-      <li ix-auto ix-auto-type="option" [ix-auto-identifier]="breadcrumb.breadcrumb">
+      <li>
         <ng-container *ngIf="i < breadcrumbs.length - 1">
           <span *ngIf="!breadcrumb.disabled; else noclick">
-            <a [routerLink]="breadcrumb.url">
+            <a [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.title]">
               {{ breadcrumb.title | translate }}
             </a>
           </span>
         </ng-container>
         <ng-template #noclick>
-          <a class="no-click">{{ breadcrumb.breadcrumb | translate }}</a>
+          <span class="no-click">{{ breadcrumb.breadcrumb | translate }}</span>
         </ng-template>
       </li>
     </ng-container>

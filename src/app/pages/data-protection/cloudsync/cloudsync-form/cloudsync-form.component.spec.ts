@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -13,9 +13,10 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { DataProtectionModule } from 'app/pages/data-protection/data-protection.module';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudsyncFormComponent', () => {
   const existingTask = {
@@ -77,6 +78,7 @@ describe('CloudsyncFormComponent', () => {
       DataProtectionModule,
     ],
     providers: [
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
@@ -160,7 +162,7 @@ describe('CloudsyncFormComponent', () => {
       },
       snapshot: false,
       transfer_mode: TransferMode.Copy,
-      transfers: null,
+      transfers: 4,
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
@@ -170,7 +172,7 @@ describe('CloudsyncFormComponent', () => {
 
     expect(spectator.component.form.value).toEqual({
       acknowledge_abuse: false,
-      bwlimit: ['13:00, 1 KB', '15:00, off'],
+      bwlimit: ['13:00, 1 KiB', '15:00, off'],
       cloudsync_picker: '0 0 * * 0',
       create_empty_src_dirs: true,
       credentials: 2,

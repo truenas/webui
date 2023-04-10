@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { ChangeDetectorRef, Injectable, Optional } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,8 +8,8 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableConfirmDeleteDialog, TableComponent } from 'app/modules/entity/table/table.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, AppLoaderService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -23,23 +23,26 @@ export class TableService {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private errorHandler: ErrorHandlerService,
+    @Optional() private cdr: ChangeDetectorRef,
   ) { }
 
   // get table data source
   getData(table: TableComponent): void {
     this.ws.call(table.tableConf.queryCall, table.tableConf.queryCallOption)
       .pipe(untilDestroyed(this))
-      .subscribe((res: unknown[]) => {
+      .subscribe((response: unknown[]) => {
         if (table.tableConf.dataSourceHelper) {
-          res = table.tableConf.dataSourceHelper(res);
+          response = table.tableConf.dataSourceHelper(response);
         }
         if (table.tableConf.afterGetDataExpandable) {
-          res = table.tableConf.afterGetDataExpandable(res);
+          response = table.tableConf.afterGetDataExpandable(response);
         }
         if (table.tableConf.getInOutInfo) {
-          table.tableConf.getInOutInfo(res);
+          table.tableConf.getInOutInfo(response);
         }
-        table.dataSource = res as Record<string, unknown>[];
+        table.dataSource = response as Record<string, unknown>[];
+        table.showCollapse = false;
         if (!(table.dataSource?.length > 0)) {
           table.emptyConf = {
             type: EmptyType.NoPageData,
@@ -63,10 +66,11 @@ export class TableService {
         }
 
         if (table.tableConf.afterGetData) {
-          table.tableConf.afterGetData(res);
+          table.tableConf.afterGetData(response);
         }
 
         table.afterGetDataHook$.next();
+        this.cdr?.markForCheck();
       });
   }
 
@@ -79,8 +83,8 @@ export class TableService {
     if (dialog.buildTitle) {
       dialog.title = dialog.buildTitle(item);
     }
-    if (dialog.buttonMsg) {
-      dialog.button = dialog.buttonMsg(item);
+    if (dialog.buttonMessage) {
+      dialog.button = dialog.buttonMessage(item);
     }
 
     if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.doubleConfirm) {
@@ -92,10 +96,10 @@ export class TableService {
       });
     } else {
       this.dialog.confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : T('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog.title : T('Delete'),
+        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
+        hideCheckbox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonText: dialog.hasOwnProperty('button') ? dialog.button : T('Delete'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doDelete(table, item);
       });
@@ -145,7 +149,7 @@ export class TableService {
           }
         },
         error: (error: WebsocketError) => {
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.error(this.errorHandler.parseWsError(error));
           this.loader.close();
           table.loaderOpen = false;
         },
@@ -164,7 +168,7 @@ export class TableService {
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
         this.loader.close();
         table.loaderOpen = false;
-        new EntityUtils().handleWsError(this, err, this.dialog);
+        this.dialog.error(this.errorHandler.parseJobError(err));
       });
     }
   }

@@ -1,0 +1,39 @@
+<form [formGroup]="form" (submit)="onSubmit()">
+  <ix-input
+    #usernameField
+    ixAutofocus
+    formControlName="username"
+    prefixIcon="person"
+    autocomplete="username"
+    class="username-input"
+    [label]="'Username' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <ix-input
+    formControlName="password"
+    type="password"
+    prefixIcon="lock"
+    autocomplete="current-password"
+    [label]="'Password' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <ix-input
+    *ngIf="hasTwoFactor"
+    formControlName="otp"
+    prefixIcon="phonelink"
+    autocomplete="one-time-code"
+    [label]="'Two-Factor Authentication Code' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <button
+    class="submit-button"
+    mat-button
+    type="submit"
+    color="primary"
+    ixTest="log-in"
+    [disabled]="(isLoading$ | async) && !wasFormAutofilled"
+  >{{ 'Log In' | translate }}</button>
+</form>

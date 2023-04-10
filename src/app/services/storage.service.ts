@@ -4,14 +4,19 @@ import { SortDirection } from '@angular/material/sort';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { WebSocketService } from './ws.service';
+import { Disk, StorageDashboardDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { WebSocketService } from 'app/services/ws.service';
 
 function isStringArray(items: unknown[]): items is string[] {
   return typeof items[0] === 'string';
 }
+
+const specialRedundancyCategories = [PoolTopologyCategory.Dedup, PoolTopologyCategory.Special];
+const redundancyCategories = [...specialRedundancyCategories, PoolTopologyCategory.Data];
 
 @Injectable()
 export class StorageService {
@@ -23,7 +28,8 @@ export class StorageService {
   constructor(
     protected ws: WebSocketService,
     private http: HttpClient,
-  ) {}
+  ) {
+  }
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);
@@ -73,8 +79,8 @@ export class StorageService {
     return this.http.post(url, '',
       { responseType: 'blob' }).pipe(
       map(
-        (res) => {
-          return new Blob([res], { type: mimeType });
+        (blob) => {
+          return new Blob([blob], { type: mimeType });
         },
       ),
     );
@@ -112,7 +118,11 @@ export class StorageService {
     // also include bytes unit, which will get from convertBytesToHumanReadable function
     if (isStringArray(tempArr)
       && (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].slice(-6) === ' bytes')) {
-      let bytes = []; let kbytes = []; let mbytes = []; let gbytes = []; let
+      let bytes = [];
+      let kbytes = [];
+      let mbytes = [];
+      let gbytes = [];
+      let
         tbytes = [];
       for (const i of tempArr) {
         if (i) {
@@ -149,7 +159,11 @@ export class StorageService {
     } else if (isStringArray(tempArr)
       && tempArr[n][tempArr[n].length - 1].match(/[KMGTB]/)
       && tempArr[n][tempArr[n].length - 2].match(/[0-9]/)) {
-      let bytes = []; let kiloBytes = []; let megaBytes = []; let gigaBytes = []; let teraBytes = [];
+      let bytes = [];
+      let kiloBytes = [];
+      let megaBytes = [];
+      let gigaBytes = [];
+      let teraBytes = [];
       for (const i of tempArr) {
         switch (i.slice(-1)) {
           case 'B':
@@ -178,7 +192,7 @@ export class StorageService {
 
       sorter = bytes.concat(kiloBytes, megaBytes, gigaBytes, teraBytes);
 
-    // Select strings that Date.parse can turn into a number (ie, that are a legit date)
+      // Select strings that Date.parse can turn into a number (ie, that are a legit date)
     } else if (isStringArray(tempArr)
       && !Number.isNaN(Date.parse(tempArr[n]))) {
       let timeArr = [];
@@ -362,6 +376,9 @@ export class StorageService {
   }
 
   // Converts a number from bytes to the most natural human-readable format
+  /**
+   * @deprecated Use Filesize pipe
+   */
   convertBytesToHumanReadable(
     rawBytes: number | string,
     decimalPlaces?: number,
@@ -385,5 +402,178 @@ export class StorageService {
       units = hideBytes ? '' : 'bytes';
     }
     return `${bytes.toFixed(dec)} ${units}`;
+  }
+
+  getRedundancyLevel(vdev: TopologyItem): number {
+    switch (vdev.type) {
+      case TopologyItemType.Disk:
+      case TopologyItemType.Stripe:
+        return 0;
+      case TopologyItemType.Mirror:
+        return vdev.children.length - 1;
+      case TopologyItemType.Raidz:
+      case TopologyItemType.Raidz1:
+        return 1;
+      case TopologyItemType.Raidz2:
+        return 2;
+      case TopologyItemType.Raidz3:
+        return 3;
+      default:
+        // VDEV type property also includes values unrelated to layout.
+        return -1;
+    }
+  }
+
+  getVdevWidths(vdevs: TopologyItem[]): Set<number> {
+    const allVdevWidths = new Set<number>(); // There should only be one value
+
+    vdevs?.forEach((vdev) => {
+      let vdevWidthCounter = 0;
+
+      if (vdev.type === TopologyItemType.Disk || vdev.type === TopologyItemType.Stripe || vdev.children.length === 0) {
+        // Width of single disk VDEVs should be 1
+        allVdevWidths.add(1);
+      } else {
+        vdev.children.forEach(() => {
+          vdevWidthCounter += 1;
+        });
+        allVdevWidths.add(vdevWidthCounter);
+      }
+    });
+
+    return allVdevWidths;
+  }
+
+  isMixedWidth(allVdevWidths: Set<number>): boolean {
+    return allVdevWidths.size > 1;
+  }
+
+  // Get usable space on VDEV.
+  getVdevCapacities(vdevs: TopologyItem[]): Set<number> {
+    const allVdevCapacities = new Set<number>(); // There should only be one value
+    vdevs?.forEach((vdev) => {
+      allVdevCapacities.add(vdev.stats.size);
+    });
+    return allVdevCapacities;
+  }
+
+  // Check to see if every VDEV has the same capacity. Best practices dictate every vdev should be uniform
+  isMixedVdevCapacity(allVdevCapacities: Set<number>): boolean {
+    return allVdevCapacities.size > 1;
+  }
+
+  getVdevDiskCapacities(vdevs: TopologyItem[], disks: StorageDashboardDisk[]): Set<number>[] {
+    const allDiskCapacities: Set<number>[] = [];
+    vdevs?.forEach((vdev) => {
+      const vdevDiskCapacities = new Set<number>(); // There should only be one value
+      if (vdev.children.length) {
+        vdev.children.forEach((child) => {
+          const diskIndex = disks?.findIndex((disk) => disk.name === child.disk);
+          if (diskIndex >= 0 && disks[diskIndex].size) {
+            vdevDiskCapacities.add(disks[diskIndex].size);
+          }
+        });
+      } else {
+        // Topology items of type DISK will not have children
+        vdevDiskCapacities.add(vdev.stats.size);
+      }
+      allDiskCapacities.push(vdevDiskCapacities);
+    });
+    return allDiskCapacities;
+  }
+
+  // Check to see if any individual VDEVs have non-uniform disk sizes.
+  // Every disk in a VDEV should ideally be the same size
+  isMixedVdevDiskCapacity(allVdevDiskCapacities: Set<number>[]): boolean {
+    const isMixed = allVdevDiskCapacities.filter((vdev) => vdev.size > 1);
+    return isMixed.length > 0;
+  }
+
+  getVdevTypes(vdevs: TopologyItem[]): Set<string> {
+    const vdevTypes = new Set<string>();
+    vdevs?.forEach((vdev) => {
+      vdevTypes.add(vdev.type);
+    });
+    return vdevTypes;
+  }
+
+  isMixedVdevType(vdevTypes: Set<string>): boolean {
+    return vdevTypes.size > 1;
+  }
+
+  validateVdevs(category: PoolTopologyCategory,
+    vdevs: TopologyItem[],
+    disks: StorageDashboardDisk[],
+    dataVdevs?: TopologyItem[]): string[] {
+    const warnings: string[] = [];
+    let isMixedVdevCapacity = false;
+    let isMixedDiskCapacity = false;
+    let isMixedWidth = false;
+    let isMixedLayout = false;
+
+    // Check for non-uniform VDEV Capacities
+    const allVdevCapacities: Set<number> = this.getVdevCapacities(vdevs); // There should only be one value
+    isMixedVdevCapacity = this.isMixedVdevCapacity(allVdevCapacities);
+
+    // Check for non-uniform Disk Capacities within each VDEV
+    const allVdevDiskCapacities: Set<number>[] = this.getVdevDiskCapacities(vdevs, disks);
+    isMixedDiskCapacity = this.isMixedVdevDiskCapacity(allVdevDiskCapacities);
+
+    // Check VDEV Widths
+    const allVdevWidths: Set<number> = this.getVdevWidths(vdevs); // There should only be one value
+    isMixedWidth = this.isMixedWidth(allVdevWidths);
+
+    // While not recommended, ZFS does allow creating a pool with mixed VDEV types.
+    // Even though the UI does not allow such pools to be created,
+    // users might still try to import such a pool.
+    const allVdevLayouts = this.getVdevTypes(vdevs);
+    isMixedLayout = this.isMixedVdevType(allVdevLayouts);
+
+    if (vdevs.length) {
+      if (isMixedLayout) {
+        warnings.push(TopologyWarning.MixedVdevLayout);
+      }
+
+      if (isMixedDiskCapacity) {
+        warnings.push(TopologyWarning.MixedDiskCapacity);
+      }
+
+      if (isMixedVdevCapacity) {
+        warnings.push(TopologyWarning.MixedVdevCapacity);
+      }
+
+      if (isMixedWidth) {
+        warnings.push(TopologyWarning.MixedVdevWidth);
+      }
+
+      // Check Redundancy
+      if (redundancyCategories.includes(category) && this.hasZeroRedundancyLevelVdev(vdevs)) {
+        warnings.push(TopologyWarning.NoRedundancy);
+      }
+
+      // Check that special & dedup VDEVs have same redundancy level as data VDEVs
+      if (specialRedundancyCategories.includes(category) && this.isSpecialRedundancyMismatch(vdevs, dataVdevs)) {
+        warnings.push(TopologyWarning.RedundancyMismatch);
+      }
+    }
+
+    return warnings;
+  }
+
+  private hasZeroRedundancyLevelVdev(vdevs: TopologyItem[]): boolean {
+    return vdevs.filter((vdev) => this.getRedundancyLevel(vdev) === 0).length > 0;
+  }
+
+  private getUniqueRedundancyLevels(vdevs: TopologyItem[]): number[] {
+    return Array.from(new Set(vdevs.map((vdev) => this.getRedundancyLevel(vdev)))).sort((a, b) => a - b);
+  }
+
+  private isSpecialRedundancyMismatch(vdevs: TopologyItem[], dataVdevs: TopologyItem[]): boolean {
+    const uniqueVdevsLevels = this.getUniqueRedundancyLevels(vdevs);
+    const uniqueDataVdevsLevels = this.getUniqueRedundancyLevels(dataVdevs);
+
+    return (
+      (uniqueVdevsLevels.length > 1 || uniqueDataVdevsLevels.length > 1)
+      || (uniqueVdevsLevels[0] < uniqueDataVdevsLevels[0]));
   }
 }

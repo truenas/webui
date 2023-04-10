@@ -1,5 +1,5 @@
 import {
-  Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
+  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -8,6 +8,7 @@ import Dygraph, { dygraphs } from 'dygraphs';
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -218,6 +219,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
       return columns as unknown as dygraphs.DataArray;
     }
+
+    return undefined;
   }
 
   inferUnits(label: string): string {
@@ -322,7 +325,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.render();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.data) {
       this.render();
 

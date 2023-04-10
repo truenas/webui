@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -40,6 +42,8 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     EntityModule,
     MatCardModule,
     MatDividerModule,
+    MatProgressBarModule,
+    TestIdModule,
   ],
   declarations: [
     DiskBulkEditComponent,

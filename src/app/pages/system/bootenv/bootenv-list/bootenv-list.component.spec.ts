@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
@@ -37,6 +38,7 @@ describe('BootEnvironmentListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(MatSnackBar),
       mockProvider(IxSlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(),
@@ -74,7 +76,7 @@ describe('BootEnvironmentListComponent', () => {
 
     const expectedRows = [
       ['', 'Name', 'Active', 'Date Created', 'Space', 'Keep', ''],
-      ['', 'CLONE', '', '2022-08-09 20:52:00', '384 KiB', 'No', 'more_vert'],
+      ['', 'CLONE', '', '2022-08-09 20:52:00', '384 KiB', 'No', ''],
       [
         '',
         '22.12-MASTER-20220808-020013',
@@ -82,7 +84,7 @@ describe('BootEnvironmentListComponent', () => {
         '2022-08-09 20:52:00',
         '3 GiB',
         'No',
-        'more_vert',
+        '',
       ],
     ];
 

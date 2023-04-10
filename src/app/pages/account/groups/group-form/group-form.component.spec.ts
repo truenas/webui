@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { allCommands } from 'app/constants/all-commands.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -11,8 +12,8 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
@@ -68,8 +69,9 @@ describe('GroupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'new',
-        'Permit Sudo': true,
         'Samba Authentication': true,
+        'Allow all sudo commands': true,
+        'Allowed sudo commands with no password': ['ls'],
         'Allow Duplicate GIDs': true,
       });
 
@@ -79,9 +81,10 @@ describe('GroupFormComponent', () => {
       expect(ws.call).toHaveBeenCalledWith('group.create', [{
         gid: 1234,
         name: 'new',
-        sudo: true,
         smb: true,
         allow_duplicate_gid: true,
+        sudo_commands: [allCommands],
+        sudo_commands_nopasswd: ['ls'],
       }]);
     });
   });
@@ -92,7 +95,8 @@ describe('GroupFormComponent', () => {
         id: 13,
         gid: 1111,
         group: 'editing',
-        sudo: true,
+        sudo_commands: [],
+        sudo_commands_nopasswd: [allCommands],
         smb: false,
       } as Group);
     });
@@ -109,7 +113,10 @@ describe('GroupFormComponent', () => {
       expect(values).toEqual({
         GID: '1111',
         Name: 'editing',
-        'Permit Sudo': true,
+        'Allow all sudo commands': false,
+        'Allowed sudo commands': [],
+        'Allow all sudo commands with no password': true,
+        'Allowed sudo commands with no password': [],
         'Samba Authentication': false,
       });
     });
@@ -118,8 +125,8 @@ describe('GroupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'updated',
-        'Permit Sudo': false,
         'Samba Authentication': true,
+        'Allow all sudo commands with no password': false,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -129,9 +136,10 @@ describe('GroupFormComponent', () => {
         13,
         {
           name: 'updated',
-          sudo: false,
           smb: true,
           allow_duplicate_gid: true,
+          sudo_commands: [],
+          sudo_commands_nopasswd: [],
         },
       ]);
     });

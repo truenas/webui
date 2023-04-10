@@ -50,6 +50,7 @@
       *ngIf="!isLoading"
       color="primary"
       [checked]="isHold"
+      [ixTest]="['hold', snapshot.snapshot_name]"
       (change)="doHold()"
     >
       {{ 'Hold' | translate }}
@@ -59,16 +60,16 @@
   <mat-divider></mat-divider>
 
   <ix-table-expandable-row>
-    <button mat-button (click)="doDelete(snapshot)">
-      <mat-icon>delete</mat-icon>
+    <button mat-button [ixTest]="['delete', snapshot.snapshot_name]" (click)="doDelete(snapshot)">
+      <ix-icon name="delete"></ix-icon>
       <span>{{ 'Delete' | translate }}</span>
     </button>
 
-    <button mat-button (click)="doClone(snapshot)">
+    <button mat-button [ixTest]="['clone', snapshot.snapshot_name]" (click)="doClone(snapshot)">
       <span>{{ 'Clone To New Dataset' | translate }}</span>
     </button>
 
-    <button mat-button (click)="doRollback(snapshot)">
+    <button mat-button [ixTest]="['rollback', snapshot.snapshot_name]" (click)="doRollback(snapshot)">
       <span>{{ 'Rollback' | translate }}</span>
     </button>
   </ix-table-expandable-row>

@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { MatLegacyTooltip as MatTooltip } from '@angular/material/legacy-tooltip';
+import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -35,7 +35,7 @@ describe('DatasetRolesCellComponent', () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
     expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('truenas_scale_logomark');
+    expect(await ixIcon.getName()).toBe('logo_truenas_scale_mark');
     expect(spectator.query(MatTooltip).message).toBe('This dataset is used by the system');
   });
 

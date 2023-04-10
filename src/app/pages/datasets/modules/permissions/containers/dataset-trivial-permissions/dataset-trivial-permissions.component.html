@@ -4,7 +4,9 @@
 
     <div class="dataset-path">
       <div class="dataset-path-label">{{ 'Dataset' | translate }}:</div>
-      <div>{{ datasetPath }}</div>
+      <div class="dataset-path-value" [matTooltip]="datasetPath">
+        {{ datasetPath }}
+      </div>
     </div>
   </mat-card-header>
 
@@ -71,6 +73,7 @@
           class="save-button"
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
@@ -78,6 +81,7 @@
         <button
           mat-button
           type="button"
+          ixTest="cancel"
           [routerLink]="['/datasets', datasetId]"
         >
           {{ 'Cancel' | translate }}
@@ -88,6 +92,7 @@
           class="set-acl-button"
           mat-button
           type="button"
+          ixTest="set-acl"
           (click)="onSetAclPressed()"
         >
           {{ 'Set ACL' | translate }}

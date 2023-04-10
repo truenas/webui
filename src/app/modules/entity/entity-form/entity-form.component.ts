@@ -19,6 +19,7 @@ import { filter } from 'rxjs/operators';
 import { ApiDirectory, ApiParams } from 'app/interfaces/api-directory.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import {
   FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig,
@@ -29,6 +30,7 @@ import { FieldRelationService } from 'app/modules/entity/entity-form/services/fi
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -83,6 +85,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private fb: UntypedFormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
@@ -91,6 +94,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     public translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {
     this.loader.callStarted.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = true);
     this.loader.callDone.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = false);
@@ -175,6 +179,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.conf.fieldConfig = this.fieldConfig;
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   async ngOnInit(): Promise<void> {
     if (this.conf.saveButtonEnabled === undefined) {
       this.conf.saveButtonEnabled = true;
@@ -200,9 +205,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (this.conf.isEntity) {
         if (this.conf.rowid) {
           this.pk = this.conf.rowid;
-          // delete this.conf.rowid;
         } else {
-          this.pk = params['pk'];
+          this.pk = params.pk;
         }
 
         if (this.pk && !this.conf.isNew) {
@@ -262,15 +266,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
-        this.getFunction.pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res.data) {
-            this.data = res.data as Record<string, unknown>;
+        this.getFunction.pipe(untilDestroyed(this)).subscribe((response) => {
+          if (response.data) {
+            this.data = response.data as Record<string, unknown>;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.data = this.conf.resourceTransformIncomingRestData(this.data) as Record<string, unknown>;
-              const extraFieldSets = this.data['extra_fieldsets'] as FieldSet[];
+              const extraFieldSets = this.data.extra_fieldsets as FieldSet[];
               if (extraFieldSets) {
                 this.addFormControls(extraFieldSets);
-                delete this.data['extra_fieldsets'];
+                delete this.data.extra_fieldsets;
               }
             }
             Object.keys(this.data).forEach((key) => {
@@ -295,18 +299,18 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               }
             });
           } else {
-            if (res[0]) {
-              this.wsResponse = res[0] as Record<string, unknown>;
+            if (response[0]) {
+              this.wsResponse = response[0] as Record<string, unknown>;
             } else {
-              this.wsResponse = res;
+              this.wsResponse = response;
             }
 
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse) as Record<string, unknown>;
-              const extraFieldSets = this.wsResponse['extra_fieldsets'] as FieldSet[];
+              const extraFieldSets = this.wsResponse.extra_fieldsets as FieldSet[];
               if (extraFieldSets) {
                 this.addFormControls(extraFieldSets);
-                delete this.wsResponse['extra_fieldsets'];
+                delete this.wsResponse.extra_fieldsets;
               }
             }
             if (this.conf.dataHandler) {
@@ -343,7 +347,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           }
 
           if (this.conf.initial) {
-            this.conf.initial.bind(this.conf)(this);
+            this.conf.initial.call(this.conf, this);
           }
           if (!this.keepLoaderOpen) {
             this.loader.close();
@@ -412,13 +416,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   onSubmit(event: Event): void {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
       this.dialog.confirm({
-        title: this.conf.confirmSubmitDialog['title'],
-        message: this.conf.confirmSubmitDialog['message'],
-        hideCheckBox: this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
-          ? this.conf.confirmSubmitDialog['hideCheckbox']
+        title: this.conf.confirmSubmitDialog.title,
+        message: this.conf.confirmSubmitDialog.message,
+        hideCheckbox: this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
+          ? this.conf.confirmSubmitDialog.hideCheckbox
           : false,
-        buttonMsg: this.conf.confirmSubmitDialog.hasOwnProperty('button')
-          ? this.conf.confirmSubmitDialog['button']
+        buttonText: this.conf.confirmSubmitDialog.hasOwnProperty('button')
+          ? this.conf.confirmSubmitDialog.button
           : this.translate.instant('Ok'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit(event);
@@ -437,11 +441,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     let value = _.cloneDeep(this.formGroup.value);
 
     if ('id' in value) {
-      delete value['id'];
+      delete value.id;
     }
 
     if (this.conf.clean) {
-      value = this.conf.clean.bind(this.conf)(value);
+      value = this.conf.clean.call(this.conf, value);
     }
 
     value = new EntityUtils().changeNullString2Null(value);
@@ -461,15 +465,20 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.loaderOpen = true;
       this.submitFunction(value)
         .pipe(untilDestroyed(this)).subscribe({
-          next: (res) => {
+          next: (response) => {
             this.loader.close();
             this.loaderOpen = false;
 
-            if ((this.conf.isEditJob || this.conf.isCreateJob) && (res as Job).error) {
-              if ((res as Job).exc_info && (res as Job).exc_info.extra) {
-                new EntityUtils().handleWsError(this, res as Job);
+            const responseAsJob = response as Job;
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && responseAsJob.error) {
+              if (responseAsJob.exc_info && responseAsJob.exc_info.extra) {
+                this.dialog.error(this.errorHandler.parseJobError(responseAsJob));
               } else {
-                this.dialog.errorReport('Error', (res as Job).error, (res as Job).exception);
+                this.dialog.error({
+                  title: this.translate.instant('Error'),
+                  message: responseAsJob.error,
+                  backtrace: responseAsJob.exception,
+                });
               }
             } else {
               if (this.conf.afterSave) {
@@ -488,7 +497,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   this.conf.afterSubmit(value);
                 }
                 if (this.conf.responseOnSubmit) {
-                  this.conf.responseOnSubmit(res);
+                  this.conf.responseOnSubmit(response);
                 }
               }
               this.modalService.closeSlideIn().then((closed) => {
@@ -498,15 +507,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               });
             }
           },
-          error: (res) => {
+          error: (error: WebsocketError) => {
             this.loader.close();
             this.loaderOpen = false;
             if (this.conf.errorReport) {
-              this.conf.errorReport(res);
-            } else if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace'))) {
-              new EntityUtils().handleWsError(this, res);
+              this.conf.errorReport(error);
+            } else if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace'))) {
+              this.dialog.error(this.errorHandler.parseWsError(error));
             } else {
-              new EntityUtils().handleError(this, res);
+              this.dialog.error(this.errorHandler.parseError(error));
             }
           },
         });
@@ -515,8 +524,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   clearErrors(): void {
     this.fieldConfig.forEach((fieldConfig) => {
-      fieldConfig['errors'] = '';
-      fieldConfig['hasErrors'] = false;
+      fieldConfig.errors = '';
+      fieldConfig.hasErrors = false;
     });
   }
 

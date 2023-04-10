@@ -1,4 +1,4 @@
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -12,7 +12,9 @@ describe('SnackbarService', () => {
     ],
   });
 
-  beforeEach(() => spectator = createService());
+  beforeEach(() => {
+    spectator = createService();
+  });
 
   describe('success', () => {
     it('opens a snackbar with message', () => {

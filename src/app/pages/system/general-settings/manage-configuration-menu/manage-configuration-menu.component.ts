@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
@@ -37,14 +37,14 @@ export class ManageConfigurationMenuComponent {
     this.dialogService.confirm({
       title: helptext.reset_config_form.title,
       message: helptext.reset_config_form.message,
-      buttonMsg: helptext.reset_config_form.button_text,
+      buttonText: helptext.reset_config_form.button_text,
     })
       .pipe(
         filter(Boolean),
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/others/config-reset']);
+        this.router.navigate(['/others/config-reset'], { skipLocationChange: true });
       });
   }
 }

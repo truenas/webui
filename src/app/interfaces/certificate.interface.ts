@@ -1,13 +1,13 @@
-import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
-import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
+import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import {
-  AuthorityKeyIdentifier,
+  AuthorityKeyIdentifiers,
   BasicConstraints,
   CertificateAuthority,
   CertificateExtensions,
   ExtendedKeyUsage,
-  KeyUsage,
+  KeyUsages,
 } from 'app/interfaces/certificate-authority.interface';
 
 export interface Certificate {
@@ -38,7 +38,7 @@ export interface Certificate {
   internal: string;
   issuer: string | { name: string };
   key_length: number;
-  key_type: string; // Enum RSA
+  key_type: CertificateKeyType;
   lifetime: number;
   name: string;
   organization: string;
@@ -72,16 +72,18 @@ export interface CertificateProfile {
   lifetime: number;
 }
 
+export type CertificateExtension = keyof CertificateExtensions;
+
 /**
  * Temporary type for type-safety reasons.
  * @deprecated
  */
-export type CertificateExtension =
+export type SomeCertificateExtension =
   Partial<
   & BasicConstraints
-  & AuthorityKeyIdentifier
+  & AuthorityKeyIdentifiers
   & ExtendedKeyUsage
-  & KeyUsage
+  & KeyUsages
   >;
 
 /**
@@ -89,19 +91,14 @@ export type CertificateExtension =
  */
 export type CertificationExtensionAttribute =
   | keyof BasicConstraints
-  | keyof AuthorityKeyIdentifier
+  | keyof AuthorityKeyIdentifiers
   | keyof ExtendedKeyUsage
-  | keyof KeyUsage;
+  | keyof KeyUsages;
 
 /**
  * @deprecated
  */
-export type Extension = keyof CertificateExtensions;
-
-/**
- * @deprecated
- */
-export type ExtensionProperty = keyof CertificateExtensions[Extension];
+export type ExtensionProperty = keyof CertificateExtensions[CertificateExtension];
 
 export interface ExtendedKeyUsageChoices {
   [key: string]: string;
@@ -134,7 +131,7 @@ export interface CertificateCreate {
   state?: string;
   create_type: CertificateCreateType;
   digest_algorithm?: string;
-  san?: string;
+  san?: string[];
   cert_extensions?: CertificateExtensions;
 }
 

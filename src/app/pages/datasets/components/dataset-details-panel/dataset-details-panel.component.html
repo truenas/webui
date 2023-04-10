@@ -4,6 +4,7 @@
       <a
         tabindex="0"
         class="mobile-back-button"
+        ixTest="details-back-button"
         (click)="onCloseMobileDetails()"
         (keydown.enter)="onCloseMobileDetails()"
       >
@@ -24,10 +25,15 @@
 
   <div class="add-buttons">
     <ng-container *ngIf="!dataset.locked && !isZvol">
-      <button mat-button (click)="onAddZvol()">
+      <button mat-button ixTest="add-zvol" (click)="onAddZvol()">
         {{ 'Add Zvol' | translate }}
       </button>
-      <button mat-button color="primary" (click)="onAddDataset()">
+      <button
+        mat-button
+        color="primary"
+        ixTest="add-dataset"
+        (click)="onAddDataset()"
+      >
         {{ 'Add Dataset' | translate }}
       </button>
     </ng-container>

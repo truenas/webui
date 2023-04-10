@@ -1,14 +1,16 @@
-import { ExistingProvider, FactoryProvider, forwardRef } from '@angular/core';
+import {
+  ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
-import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.
@@ -26,7 +28,7 @@ import { WebSocketService } from 'app/services';
  * If you need more customization, use ordinary mockProvider().
  * @example
  * providers: [
- *   mockProvider(WebSocketService, {
+ *   mockProvider(WebSocketService2, {
  *     call: jest.fn((method) => {
  *       if (method === 'filesystem.stat') {
  *         return of({ user: 'john' } as FileSystemStat);
@@ -35,14 +37,15 @@ import { WebSocketService } from 'app/services';
  *   }),
  * ]
  */
+
 export function mockWebsocket(
   mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
-): (FactoryProvider | ExistingProvider)[] {
+): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
       provide: WebSocketService,
-      useFactory: (router: Router, window: Window) => {
-        const mockWebsocketService = new MockWebsocketService(router, window);
+      useFactory: (router: Router, wsManager: WebsocketConnectionService) => {
+        const mockWebsocketService = new MockWebsocketService(router, wsManager);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
@@ -50,14 +53,17 @@ export function mockWebsocket(
             mockWebsocketService.mockJob(mockResponse.method, mockResponse.response);
           }
         });
-
         return mockWebsocketService;
       },
-      deps: [Router, WINDOW],
+      deps: [Router, WebsocketConnectionService],
     },
     {
       provide: MockWebsocketService,
       useExisting: forwardRef(() => WebSocketService),
+    },
+    {
+      provide: WebsocketConnectionService,
+      useValue: ({ send: jest.fn() } as unknown as WebsocketConnectionService),
     },
   ];
 }

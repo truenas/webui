@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -12,9 +12,10 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import {
-  DialogService, SystemGeneralService, UserService, WebSocketService,
+  DialogService, SystemGeneralService, UserService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
@@ -32,7 +33,6 @@ describe('ServiceSmbComponent', () => {
         mockCall('smb.config', {
           id: 1,
           netbiosname: 'truenas',
-          netbiosname_b: 'truenas-b',
           netbiosalias: [],
           workgroup: 'WORKGROUP',
           description: 'TrueNAS Server',
@@ -44,7 +44,6 @@ describe('ServiceSmbComponent', () => {
           guest: 'nobody',
           filemask: '',
           dirmask: '',
-          smb_options: '',
           bindip: [],
           cifs_SID: 'mockSid',
           ntlmv1_auth: false,
@@ -96,7 +95,6 @@ describe('ServiceSmbComponent', () => {
     expect(values).toEqual({
       'NetBIOS Name': 'truenas',
       'NetBIOS Alias': [],
-      'NetBIOS Name (TrueNAS Controller 2)': 'truenas-b',
       Workgroup: 'WORKGROUP',
       Description: 'TrueNAS Server',
       'Enable SMB1 support': false,
@@ -113,7 +111,6 @@ describe('ServiceSmbComponent', () => {
 
     expect(values).toEqual({
       'Administrators Group': '',
-      'Auxiliary Parameters': '',
       'Bind IP Addresses': [],
       Description: 'TrueNAS Server',
       'Directory Mask': '',
@@ -126,7 +123,7 @@ describe('ServiceSmbComponent', () => {
       'NTLMv1 Auth': false,
       'NetBIOS Alias': [],
       'NetBIOS Name': 'truenas',
-      'NetBIOS Name (TrueNAS Controller 2)': 'truenas-b',
+      Multichannel: false,
       'UNIX Charset': 'UTF-8',
       'Use Syslog Only': false,
       Workgroup: 'WORKGROUP',
@@ -166,8 +163,8 @@ describe('ServiceSmbComponent', () => {
       loglevel: 'MINIMUM',
       localmaster: true,
       syslog: false,
+      multichannel: false,
       unixcharset: 'UTF-8',
-      smb_options: '',
     }]);
   });
 
@@ -186,7 +183,6 @@ describe('ServiceSmbComponent', () => {
       'File Mask': '0666',
       'Directory Mask': '0777',
       'Bind IP Addresses': ['1.1.1.1', '2.2.2.2'],
-      'Auxiliary Parameters': 'new-params',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -211,8 +207,8 @@ describe('ServiceSmbComponent', () => {
       loglevel: 'FULL',
       localmaster: false,
       syslog: true,
+      multichannel: false,
       unixcharset: 'UTF-16',
-      smb_options: 'new-params',
     }]);
   });
 });

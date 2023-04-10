@@ -29,7 +29,7 @@ export class ModalComponent implements OnInit, OnDestroy {
   slideIn: HTMLElement;
   title: string;
 
-  constructor(private modalService: ModalService, private el: ElementRef) {
+  constructor(private modalService: ModalService, private el: ElementRef<HTMLElement>) {
     this.element = el.nativeElement;
   }
 

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -9,7 +9,7 @@ import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-we
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
-import { StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 
 describe('ExportAllKeysDialogComponent', () => {
   let spectator: Spectator<ExportAllKeysDialogComponent>;
@@ -28,6 +28,7 @@ describe('ExportAllKeysDialogComponent', () => {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {

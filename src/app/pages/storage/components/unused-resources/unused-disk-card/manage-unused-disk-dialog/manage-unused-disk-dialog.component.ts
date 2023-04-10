@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,8 +84,8 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
   ngOnInit(): void {
     this.form.controls.toPool.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === AddToPoolType.New) {
-        this.form.get('pool').reset();
-        this.form.get('pool').setErrors(null);
+        this.form.controls.pool.reset();
+        this.form.controls.pool.setErrors(null);
       }
       this.cdr.detectChanges();
     });

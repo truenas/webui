@@ -1,11 +1,17 @@
-$component-header: 42px;
+$component-header: 50px;
 
 :host {
-  .mat-dialog-actions {
+  .mat-mdc-dialog-actions {
+    padding: 14px 24px;
+
     button {
-      display: block;
+      display: flex;
       width: 100%;
     }
+  }
+
+  mat-dialog-content {
+    padding-top: 0;
   }
 }
 
@@ -15,7 +21,10 @@ $component-header: 42px;
   height: $component-header;
   margin-left: -24px;
   margin-right: -24px;
-  padding: 4px 24px 12px;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .job-badge {
@@ -30,7 +39,7 @@ $component-header: 42px;
     font-weight: 500;
   }
 
-  .mat-icon {
+  .ix-icon {
     font-size: 20px;
     height: 20px;
     opacity: 0.65;

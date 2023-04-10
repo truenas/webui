@@ -79,7 +79,7 @@ def test_03_click_on_pool1_operation(browser):
     # Wait for xpath to be available
     element_present = is_element_present(browser, xpaths['poolID'])
     assert element_present, f'XPath Not Found: {xpaths["poolID"]}'
-    pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{pool1}']"
+    pool_xpath = f"//ix-icon[@id='table_actions_menu_button__name_{pool1}']"
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
     browser.find_element_by_xpath(pool_xpath).click()
@@ -141,7 +141,7 @@ def test_08_click_on_pool2_operation(browser):
     # Wait for xpath to be available
     element_present = is_element_present(browser, xpaths['poolID'])
     assert element_present, f'XPath Not Found: {xpaths["poolID"]}'
-    pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{pool2}']"
+    pool_xpath = f"//ix-icon[@id='table_actions_menu_button__name_{pool2}']"
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
     browser.find_element_by_xpath(pool_xpath).click()

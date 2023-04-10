@@ -20,12 +20,12 @@ input {
   &.form-element {
     align-items: center;
     display: flex;
-    margin: 1px 0 22px;
+    margin: 1px 0 0;
     min-height: 24px;
   }
 
   &.expanded-height {
-    margin: 48px 0 22px;
+    margin: 39px 0 22px;
   }
 }
 
@@ -38,7 +38,7 @@ input {
 }
 
 .inline-label div.label.half-width,
-.inline-label .mat-form-field {
+.inline-label .mat-mdc-form-field {
   display: inline-block;
 }
 
@@ -46,7 +46,7 @@ input {
   width: calc(50% - 16px);
 }
 
-.inline-label .mat-form-field {
+.inline-label .mat-mdc-form-field {
   width: calc(40% - 16px);
 }
 

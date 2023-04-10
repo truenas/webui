@@ -1,0 +1,90 @@
+<mat-card class="form-card">
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSave()">
+      <ix-radio-group
+        *ngIf="!hideFileInput"
+        formControlName="use_file"
+        [label]="helptext.unlock_key_file_placeholder | translate"
+        [tooltip]="helptext.unlock_key_file_tooltip | translate"
+        [options]="useFileOptions$"
+      ></ix-radio-group>
+
+      <ng-container *ngIf="useFile">
+        <ix-checkbox
+          formControlName="unlock_children"
+          [label]="helptext.unlock_children_placeholder | translate"
+          [tooltip]="helptext.unlock_children_tooltip | translate"
+        ></ix-checkbox>
+        <ix-file-input
+          formControlName="file"
+          [label]="helptext.upload_key_file_placeholder | translate"
+          [tooltip]="helptext.upload_key_file_tooltip | translate"
+          [required]="true"
+        ></ix-file-input>
+      </ng-container>
+
+      <ng-container *ngIf="!useFile">
+        <ix-list
+          formArrayName="datasets"
+          [empty]="form.controls.datasets.controls.length === 0"
+          [label]="'Datasets' | translate"
+          [canAdd]="false"
+        >
+          <ix-list-item
+            *ngFor="let dataset of form.controls.datasets.controls; let i = index"
+            [formGroupName]="i"
+            [canDelete]="false"
+          >
+            <div>
+              <strong> {{'Dataset' | translate}}: </strong>
+              {{ dataset.value.name }}
+            </div>
+            <ix-textarea
+              *ngIf="!dataset.value.is_passphrase"
+              formControlName="key"
+              [label]="helptext.dataset_key_placeholder | translate"
+              [tooltip]="helptext.dataset_key_placeholder | translate"
+            ></ix-textarea>
+            <ix-file-input
+              *ngIf="!dataset.value.is_passphrase"
+              formControlName="file"
+            ></ix-file-input>
+            <ix-input
+              *ngIf="dataset.value.is_passphrase"
+              formControlName="passphrase"
+              type="password"
+              [label]="helptext.dataset_passphrase_placeholder | translate"
+              [tooltip]="helptext.dataset_passphrase_tooltip | translate"
+            ></ix-input>
+          </ix-list-item>
+        </ix-list>
+      </ng-container>
+
+      <ix-checkbox
+        formControlName="force"
+        [label]="'Force' | translate"
+        [tooltip]="helptext.dataset_force_tooltip"
+      ></ix-checkbox>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+        <button
+          mat-button
+          type="button"
+          ixTest="cancel"
+          (click)="goBack()"
+        >
+          {{ 'Cancel' | translate }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

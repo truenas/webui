@@ -6,7 +6,9 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
+import { Styler } from 'stylefire';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -21,14 +23,13 @@ import {
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
@@ -126,7 +127,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     protected ws: WebSocketService,
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
@@ -198,7 +199,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   optimizeWidgetContainer(): void {
-    const wrapper = document.querySelector<HTMLElement>('.rightside-content-hold');
+    const wrapper = this.layoutService.getContentContainer();
 
     const withMargin = this.widgetWidth + 8;
     const max = Math.floor(wrapper.offsetWidth / withMargin);
@@ -209,12 +210,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onMobileLaunch(evt: DashConfigItem): void {
     this.activeMobileWidget = [evt];
 
-    // Transition
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
-    const vpw = viewport.get('width'); // 600;
+    const { carousel, vpw } = this.getCarouselHtmlData();
 
     const startX = 0;
     const endX = vpw * -1;
@@ -227,12 +223,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileBack(): void {
-    // Transition
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
-    const vpw = viewport.get('width'); // 600;
+    const { carousel, vpw } = this.getCarouselHtmlData();
 
     const startX = vpw * -1;
     const endX = 0;
@@ -253,12 +244,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileResize(evt: Event): void {
     if (this.screenType === ScreenType.Desktop) { return; }
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
+    const { carousel, startX } = this.getCarouselHtmlData();
 
-    const startX = viewport.get('x');
     const endX = this.activeMobileWidget.length > 0 ? (evt.target as Window).innerWidth * -1 : 0;
 
     if (startX !== endX) {
@@ -269,9 +256,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   startListeners(): void {
     this.getDisksData();
     this.getNetworkInterfaces();
+    this.listenForPoolUpdates();
 
-    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
-      if (update.cpu) {
+    this.ws.subscribe('reporting.realtime').pipe(
+      map((event) => event.fields),
+      untilDestroyed(this),
+    ).subscribe((update) => {
+      if (update?.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
 
@@ -408,7 +399,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
     if (!dashboardPool) {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-      return;
+      return undefined;
     }
     return this.volumeData && this.volumeData[dashboardPool.name];
   }
@@ -560,10 +551,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
-    this.ws.call('user.set_attribute', [1, 'dashState', state])
+    this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (!res) {
+      .subscribe((wasSet) => {
+        if (!wasSet) {
           throw new Error('Unable to save Dashboard State');
         }
       });
@@ -673,6 +664,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       // Update NICs array
       this.nics = clone;
       this.isDataReady();
+    });
+  }
+
+  private getCarouselHtmlData(): { carousel: Styler; vpw: number; startX: number } {
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
+    const vpw = viewport.get('width') as number;
+    const startX = viewport.get('x') as number;
+
+    return { carousel, vpw, startX };
+  }
+
+  private listenForPoolUpdates(): void {
+    this.ws.subscribe('pool.query').pipe(
+      filter((event) => event.msg !== IncomingApiMessageType.Removed),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loadPoolData();
     });
   }
 }

@@ -4,17 +4,21 @@ import {
 import {
   FormBuilder, Validators,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -51,11 +55,13 @@ export class CertificateAcmeAddComponent {
     private formBuilder: FormBuilder,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideIn: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private mdDialog: MatDialog,
   ) { }
 
   setCsr(csr: Certificate): void {
@@ -83,20 +89,22 @@ export class CertificateAcmeAddComponent {
 
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.ws.job('certificate.create', [payload])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        complete: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.slideIn.close();
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.errorHandler.handleWsFormError(error, this.form);
-        },
-      });
+
+    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: 'Creating ACME Certificate' }, disableClose: true });
+    dialogRef.componentInstance.setCall('certificate.create', [payload]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.mdDialog.closeAll();
+      this.cdr.markForCheck();
+      this.slideIn.close();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      this.isLoading = false;
+      this.mdDialog.closeAll();
+      this.cdr.markForCheck();
+      this.formErrorHandler.handleWsFormError(error, this.form);
+    });
   }
 
   private loadDomains(): void {
@@ -112,10 +120,10 @@ export class CertificateAcmeAddComponent {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

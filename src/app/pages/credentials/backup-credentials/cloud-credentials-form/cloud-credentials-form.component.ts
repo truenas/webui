@@ -10,14 +10,14 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -68,14 +68,15 @@ import {
 import {
   WebdavProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
 @UntilDestroy()
 @Component({
   templateUrl: './cloud-credentials-form.component.html',
-  styleUrls: ['./cloud-credentials-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudCredentialsFormComponent implements OnInit {
@@ -87,7 +88,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   isLoading = false;
   existingCredential: CloudsyncCredential;
   providers: CloudsyncProvider[] = [];
-  providerOptions: Observable<Option[]> = of([]);
+  providerOptions = of<Option[]>([]);
   providerForm: BaseProviderFormComponent;
 
   @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
@@ -98,9 +99,10 @@ export class CloudCredentialsFormComponent implements OnInit {
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
   ) {
@@ -133,7 +135,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.commonForm.patchValue(credential);
 
     if (this.providerForm) {
-      this.providerForm.setValues(this.existingCredential.attributes);
+      this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
     }
   }
 
@@ -166,7 +168,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         error: (error) => {
         // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.commonForm);
+          this.formErrorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
         },
       });
@@ -193,7 +195,11 @@ export class CloudCredentialsFormComponent implements OnInit {
           if (response.valid) {
             this.snackbarService.success(this.translate.instant('The credentials are valid.'));
           } else {
-            this.dialogService.errorReport('Error', response.excerpt, response.error);
+            this.dialogService.error({
+              title: this.translate.instant('Error'),
+              message: response.excerpt,
+              backtrace: response.error,
+            });
           }
 
           this.isLoading = false;
@@ -201,7 +207,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.commonForm);
+          this.formErrorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
         },
       });
@@ -231,13 +237,13 @@ export class CloudCredentialsFormComponent implements OnInit {
           );
           this.renderProviderForm();
           if (this.existingCredential) {
-            this.providerForm.setValues(this.existingCredential.attributes);
+            this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
           }
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.slideInService.close();
         },
       });

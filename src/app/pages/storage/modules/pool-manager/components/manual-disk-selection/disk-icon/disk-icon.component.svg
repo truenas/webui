@@ -1,0 +1,37 @@
+<svg id="Disk_Icon_Mini" data-name="Disk Icon Mini" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="69" viewBox="0 0 48 69">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Mask_Rounded_Corners" data-name="Mask Rounded Corners" width="48" height="69" rx="4" transform="translate(-0.039)" fill="none" stroke="#414141" stroke-width="1"/>
+    </clipPath>
+    <filter id="BG_Fill" x="-9" y="-6" width="66" height="87" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Normal" transform="translate(-1)">
+    <g id="BG_Masks" data-name="BG Masks" transform="translate(1.039)" clip-path="url(#clip-path)">
+      <g transform="matrix(1, 0, 0, 1, -0.04, 0)" filter="url(#BG_Fill)">
+        <g id="BG_Fill-2" data-name="BG Fill" fill="#1e1e1e" stroke="#8f8f8f" stroke-width="1">
+          <rect width="48" height="69" rx="4" stroke="none"/>
+          <rect x="0.5" y="0.5" width="47" height="68" rx="3.5" fill="none"/>
+        </g>
+      </g>
+      <rect id="BG_Top" data-name="BG Top" width="47" height="15" transform="translate(-0.039)" fill="rgba(255,255,255,0.5)" opacity="0.5"/>
+      <rect id="BG_Bottom" data-name="BG Bottom" width="47" height="15" transform="translate(-0.039 54)" fill="rgba(255,255,255,0.5)" opacity="0.5"/>
+    </g>
+    <g id="harddisk" transform="translate(9 14.345)" opacity="0.5">
+      <path id="harddisk-2" data-name="harddisk" d="M6.856,2H23.989a2.856,2.856,0,0,1,2.856,2.856V27.7a2.856,2.856,0,0,1-2.856,2.856H6.856A2.856,2.856,0,0,1,4,27.7V4.856A2.856,2.856,0,0,1,6.856,2Zm8.567,2.856a8.567,8.567,0,0,0-8.567,8.567,8.474,8.474,0,0,0,8.567,8.567l-1.428-2.856c-.394-.683.745-2.461,1.428-2.856h0c.683-.394,2.461-.683,2.856,0l2.856,4.283c1.963-1.57,2.856-4.43,2.856-7.139A8.567,8.567,0,0,0,15.422,4.856Zm0,7.139a1.428,1.428,0,1,1-1.428,1.428A1.428,1.428,0,0,1,15.422,11.995ZM8.283,24.845a1.428,1.428,0,1,0,1.428,1.428A1.428,1.428,0,0,0,8.283,24.845Zm7.139-7.139L19.706,27.7l2.856-2.856L16.85,17.706Z" transform="translate(0.098 3.322)" fill="#fff"/>
+    </g>
+    <g id="Labels" transform="translate(11.451 1.857)" opacity="0.998">
+      <text id="disk-size" data-name="size" transform="translate(13 62.714)" fill="#fff" font-size="11" font-family="Inter" style="text-anchor: middle">
+        <tspan x="0" y="0">{{ disk.size | filesize: { standard: 'iec' } }}</tspan>
+      </text>
+      <text id="disk-identifier" transform="translate(11.647 10)" fill="#fff" font-size="11" font-family="Inter" style="text-anchor: middle">
+        <tspan x="0" y="0">{{ disk.name }}</tspan>
+      </text>
+    </g>
+  </g>
+</svg>

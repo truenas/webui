@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { MatLegacySliderChange as MatSliderChange } from '@angular/material/legacy-slider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { FormSliderConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -21,12 +20,8 @@ export class FormSliderComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.value = this.config.min;
-    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.value = res;
+    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.value = value;
     });
-  }
-
-  updateValue($event: MatSliderChange): void {
-    this.value = $event.value;
   }
 }

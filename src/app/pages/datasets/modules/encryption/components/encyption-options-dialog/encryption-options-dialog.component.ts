@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,6 +22,7 @@ import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 enum EncryptionType {
@@ -77,7 +78,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private dialog: DialogService,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
     private validatorsService: IxValidatorsService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private mdDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,
@@ -132,7 +134,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.loader.close();
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
   }
@@ -164,12 +166,12 @@ export class EncryptionOptionsDialogComponent implements OnInit {
         this.dialogRef.close(true);
       },
       error: (error: WebsocketError) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
     jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (error) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
     jobDialogRef.componentInstance.submit();
@@ -199,7 +201,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialog.errorReportMiddleware(error);
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -225,11 +227,11 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.form.controls.algorithm.disable();
 
     if (this.hasPassphraseParent || this.hasKeyChild) {
-      this.form.controls['encryption_type'].disable();
+      this.form.controls.encryption_type.disable();
     }
 
     this.subscriptions.push(
-      this.form.controls['key'].disabledWhile(combineLatestIsAny([
+      this.form.controls.key.disabledWhile(combineLatestIsAny([
         this.isSetToGenerateKey$,
         this.isKey$.pipe(map((value) => !value)),
         this.isInheriting$,
@@ -238,9 +240,9 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
     const arePassphraseFieldsDisabled$ = combineLatestIsAny([this.isKey$, this.isInheriting$]);
     this.subscriptions.push(
-      this.form.controls['passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
-      this.form.controls['confirm_passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
-      this.form.controls['pbkdf2iters'].disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.passphrase.disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.confirm_passphrase.disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.pbkdf2iters.disabledWhile(arePassphraseFieldsDisabled$),
     );
   }
 }

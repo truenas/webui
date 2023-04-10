@@ -1,7 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 from selenium.webdriver.common.keys import Keys
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -15,6 +17,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Certificate_Signin')
 @scenario('features/NAS-T1258.feature', 'Verify a Certificate Signing Request can be created')
 def test_verify_a_certificate_signing_request_can_be_created():
     """Verify a Certificate Signing Request can be created."""
@@ -25,33 +28,35 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     """the browser is open, navigate to the SCALE URL, and login."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the Dashboard, click on credentials and certificates')
 def on_the_dashboard_click_on_credentials_and_certificates(driver):
     """on the Dashboard, click on credentials and certificates."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]').click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 7, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.certificates, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.certificates).click()
 
 
 @then('click on CSR add')
 def click_on_csr_add(driver):
     """click on CSR add."""
+    assert wait_on_element(driver, 7, xpaths.certificates.title)
     assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificate Signing Requests")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]').click()
@@ -91,17 +96,14 @@ def set_company_info_and_click_next(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Locality"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Locality"]').send_keys('Maryville')
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Organization"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Organization"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Organization"]').send_keys('iXsystems')
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Organizational Unit"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').send_keys('QE')
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys('qa@ixsystems.com')
+    driver.find_element_by_xpath(xpaths.certificates.email_Input).clear()
+    driver.find_element_by_xpath(xpaths.certificates.email_Input).send_keys('qa@ixsystems.com')
 
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Common Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Common Name"]').clear()
@@ -144,8 +146,8 @@ def set_extra_constraints_and_click_next(driver):
 @then('click save on the confirm options page')
 def click_save_on_the_confirm_options_page(driver):
     """click save on the confirm options page."""
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element(driver, 5, '/*[contains(.,"Creating Certificate")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Creating Certificate")]')
 

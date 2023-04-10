@@ -1,9 +1,6 @@
 <div
   *ngIf="!config['isHidden']"
-  ix-auto
-  ix-auto-type="combobox"
   class="dynamic-field form-select form-element form-combobox"
-  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -26,12 +23,13 @@
     <mat-form-field *ngIf="config.inputType !== 'file'">
       <div class="input-container">
         <span *ngIf="config.searchable" class="searchable">
-          <mat-icon>search</mat-icon>
+          <ix-icon name="search"></ix-icon>
         </span>
         <input
           #input
           matInput
           list="options"
+          [ixTest]="config.name"
           [ngStyle]="{
             'padding-left': config.searchable ? '2rem' : '',
             'padding-right': hasValue() ? '2rem' : ''
@@ -46,11 +44,10 @@
           (keyup)="search(input.value)"
         />
         <span *ngIf="hasValue() && !config.readonly" class="reset-input">
-          <mat-icon
-            fontSet="mdi-set"
-            fontIcon="mdi-close-circle"
+          <ix-icon
+            name="mdi-close-circle"
             (click)="resetInput()"
-          ></mat-icon>
+          ></ix-icon>
         </span>
       </div>
       <mat-autocomplete
@@ -59,9 +56,7 @@
       >
         <mat-option
           *ngFor="let option of config.searchOptions"
-          ix-auto
-          ix-auto-type="option"
-          [ix-auto-identifier]="option.label"
+          [ixTest]="[config.name, option.label]"
           [class]="option.sticky ? 'sticky-' + option.sticky : ''"
           [value]="option.value"
           [class.text-wrap]="config.enableTextWrapForOptions"
@@ -71,23 +66,18 @@
       </mat-autocomplete>
     </mat-form-field>
     <span
-      ix-auto
-      ix-auto-type="button"
       [id]="config.name + '-select'"
-      [ix-auto-identifier]="config.name"
       [matMenuTriggerFor]="options"
       (menuOpened)="onOpenMenu()"
     >
-      <mat-icon>arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </span>
     <mat-menu #options [class]="'combo-box-menu'">
       <ng-container *ngFor="let option of config.options">
         <button
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
+          [ixTest]="[config.name, option.label]"
           [class]="option.sticky ? 'sticky-' + option.sticky : ''"
-          [ix-auto-identifier]="option.label"
           [class.text-wrap]="config.enableTextWrapForOptions"
           (click)="onChangeOption(option.value)"
         >

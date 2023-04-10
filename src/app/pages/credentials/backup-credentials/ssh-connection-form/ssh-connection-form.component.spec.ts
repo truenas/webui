@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -12,14 +12,17 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { KeychainCredentialService, WebSocketService } from 'app/services';
+import { DialogService, KeychainCredentialService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
 
 describe('SshConnectionFormComponent', () => {
   let spectator: Spectator<SshConnectionFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let websocket: WebSocketService;
+
   const existingConnection = {
     id: 11,
     name: 'auto',
@@ -54,6 +57,7 @@ describe('SshConnectionFormComponent', () => {
         ]),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
@@ -66,6 +70,7 @@ describe('SshConnectionFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    websocket = spectator.inject(WebSocketService);
   });
 
   it('shows values for an existing SSH connection', async () => {
@@ -98,7 +103,7 @@ describe('SshConnectionFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.update', [11, {
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.update', [11, {
       name: 'Updated',
       attributes: {
         cipher: CipherType.Fast,
@@ -132,7 +137,7 @@ describe('SshConnectionFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
       setup_type: SshConnectionsSetupMethod.Manual,
       connection_name: 'New',
       private_key: {
@@ -156,7 +161,7 @@ describe('SshConnectionFormComponent', () => {
       Name: 'Update',
       'Setup Method': 'Semi-automatic (TrueNAS only)',
 
-      'TrueNAS URL': 'https://truenas.com',
+      'TrueNAS URL': '10.11.12.13',
       Username: 'john',
       'Admin Username': 'admin',
       'Admin Password': '12345678',
@@ -165,10 +170,14 @@ describe('SshConnectionFormComponent', () => {
 
       Cipher: 'Fast',
     });
+    await form.fillForm({
+      'Enable passwordless sudo for zfs commands': true,
+    });
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
       connection_name: 'Update',
       setup_type: SshConnectionsSetupMethod.SemiAutomatic,
       private_key: {
@@ -180,9 +189,10 @@ describe('SshConnectionFormComponent', () => {
         connect_timeout: 10,
         password: '12345678',
         otp_token: '1234',
-        url: 'https://truenas.com',
+        url: 'http://10.11.12.13',
         username: 'john',
         admin_username: 'admin',
+        sudo: true,
       },
     }]);
   });
@@ -204,7 +214,7 @@ describe('SshConnectionFormComponent', () => {
 
     const values = await form.getValues();
     expect(values['Remote Host Key']).toBe('ssh-rsaAREMOTE');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.remote_ssh_host_key_scan', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.remote_ssh_host_key_scan', [{
       connect_timeout: '30',
       host: 'remote.com',
       port: 24,
@@ -214,7 +224,7 @@ describe('SshConnectionFormComponent', () => {
   it('allows new primary key to be generated when creating a new connection', async () => {
     await form.fillForm({
       Name: 'Test',
-      'TrueNAS URL': 'https://truenas.com',
+      'TrueNAS URL': 'truenas.com',
       'Admin Password': '123456',
       'Private Key': 'Generate New',
     });
@@ -222,7 +232,7 @@ describe('SshConnectionFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
       connection_name: 'Test',
       setup_type: SshConnectionsSetupMethod.SemiAutomatic,
       private_key: {
@@ -234,9 +244,10 @@ describe('SshConnectionFormComponent', () => {
         connect_timeout: 10,
         otp_token: '',
         password: '123456',
-        url: 'https://truenas.com',
+        url: 'http://truenas.com',
         username: 'root',
         admin_username: 'root',
+        sudo: false,
       },
     }]);
   });

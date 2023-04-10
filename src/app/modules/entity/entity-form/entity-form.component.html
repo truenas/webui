@@ -5,6 +5,7 @@
     color="primary"
     class="btn btn-link"
     type="button"
+    ixTest="setup-configuration"
     (click)="goConf()"
   >
     Click here
@@ -36,9 +37,11 @@
             fxLayoutGap.gt-sm="24px"
             fxLayoutAlign="start start"
             fxFlex="100%"
-            class="entity-form fieldset divider-{{ fieldSet.divider }}"
-            fxFlex.gt-xs="calc({{ fieldSets[i].width ? fieldSets[i].width : '100%' }} - 16px)"
+            [fxFlex.gt-xs]="'calc(' + (fieldSets[i].width ? fieldSets[i].width : '100%') + ' - 16px)'"
             [ngClass]="[
+              'entity-form',
+              'fieldset',
+              fieldSet.divider ? 'divider-' + fieldSet.divider : '',
               fieldSet.class ? fieldSet.class : '',
               isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
             ]"
@@ -53,7 +56,7 @@
             <div
               *ngFor="let field of fieldSet.config; let ii = index"
               fxFlex="100%"
-              fxFlex.gt-xs="calc({{field.width ? field.width : '100%'}} - 16px)"
+              [fxFlex.gt-xs]="'calc(' + (field.width ? field.width : '100%') + ' - 16px)'"
               [id]="fieldSet.name + '-' + ii"
               [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
             >
@@ -74,11 +77,9 @@
             class="btn btn-block btn-warning mat-primary"
             type="submit"
             mat-button
-            ix-auto-type="button"
             color="primary"
-            [ix-auto-identifier]="saveSubmitText | uppercase"
+            ixTest="save"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
-            [ix-auto]=""
           >
             {{ saveSubmitText | translate }}
           </button>
@@ -89,9 +90,7 @@
             type="button"
             mat-button
             color="default"
-            ix-auto-type="button"
-            ix-auto-identifier="CANCEL"
-            [ix-auto]=""
+            ixTest="cancel"
             (click)="goBack()"
           >
             {{ 'Cancel' | translate }}
@@ -101,13 +100,11 @@
               *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
               mat-button
               class="mat-basic"
-              ix-auto-type="button"
               [id]="'cust_button_' + custBtn.name"
-              [ix-auto-identifier]="custBtn.name | uppercase"
+              [ixTest]="['custom-button', custBtn.name]"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
               [type]="custBtn.buttonType ? custBtn.buttonType : 'button'"
-              [ix-auto]=""
               (click)="custBtn['function'] ? custBtn['function']() : null"
             >
               {{ custBtn.name | translate }}
@@ -117,13 +114,11 @@
             <button
               name="compactCustomActions"
               mat-icon-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="keymenu"
               type="button"
+              [ixTest]="['compact-custom-actions']"
               [matMenuTriggerFor]="keymenu"
             >
-              <mat-icon>more_vert</mat-icon>
+              <ix-icon name="more_vert"></ix-icon>
             </button>
             <mat-menu #keymenu="matMenu">
               <span *ngFor="let action of conf.compactCustomActions">
@@ -131,9 +126,7 @@
                   *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(action.id)"
                   name="action.id"
                   mat-menu-item
-                  ix-auto
-                  ix-auto-type="option"
-                  ix-auto-identifier="action.name"
+                  [ixTest]="['compact-custom-actions', action.name]"
                   [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(action.id) : action.disabled"
                   (click)="action['function']()"
                 >
@@ -147,13 +140,10 @@
             mat-button
             class="btn btn-block btn-danger"
             type="button"
-            ix-auto-type="button"
-            ix-auto-identifier="DELETE"
-            [ix-auto]=""
+            ixTest="delete"
           >
             {{ 'Delete' | translate }}
           </button>
-          <!-- </div> -->
           <div id="success-msg-wrapper">
             <div
               *ngIf="success && entityForm.form.dirty === false"

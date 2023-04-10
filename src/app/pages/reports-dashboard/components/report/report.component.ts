@@ -4,7 +4,6 @@ import {
   ViewChild,
   OnDestroy,
   OnChanges,
-  SimpleChanges,
   OnInit, Inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -23,6 +22,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -34,11 +34,11 @@ import {
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportingDatabaseError } from 'app/pages/reports-dashboard/reports.service';
 import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
-import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -57,7 +57,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
-  updateReport$ = new BehaviorSubject<SimpleChanges>(null);
+  updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
@@ -205,7 +205,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     const wasReportChanged = changes?.report?.firstChange
       || (changes.report.previousValue && !this.isReady)
       || (changes.report.previousValue.title !== changes.report.currentValue.title);
@@ -407,7 +407,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
             this.dialog.confirm({
               title: this.translate.instant('The reporting database is broken'),
               message,
-              buttonMsg: this.translate.instant('Clear'),
+              buttonText: this.translate.instant('Clear'),
             }).pipe(
               filter(Boolean),
               switchMap(() => this.ws.call('reporting.clear')),
@@ -421,7 +421,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     }
   }
 
-  private applyChanges(changes: SimpleChanges): void {
+  private applyChanges(changes: IxSimpleChanges<this>): void {
     const rrdOptions = this.convertTimespan(this.currentZoomLevel);
     const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: changes.report.currentValue });

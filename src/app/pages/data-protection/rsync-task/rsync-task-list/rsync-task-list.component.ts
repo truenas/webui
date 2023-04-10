@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  catchError, EMPTY, filter, switchMap, tap,
+  catchError, EMPTY, filter, switchMap, take, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -19,9 +20,11 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import {
-  WebSocketService, DialogService, TaskService, UserService,
+  DialogService, TaskService, UserService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -38,7 +41,6 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   routeAddTooltip = this.translate.instant('Add Rsync Task');
   routeEdit: string[] = ['tasks', 'rsync', 'edit'];
   entityList: EntityTableComponent<RsyncTaskUi>;
-  asyncView = true;
   filterValue = '';
 
   columns = [
@@ -83,6 +85,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
     protected dialog: DialogService,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     protected translate: TranslateService,
     private route: ActivatedRoute,
     private store$: Store<AppState>,
@@ -93,7 +96,10 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
 
   afterInit(entityList: EntityTableComponent<RsyncTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(
+      filter((value) => !!value.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -109,7 +115,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
         this.dialog.confirm({
           title: this.translate.instant('Run Now'),
           message: this.translate.instant('Run this rsync now?'),
-          hideCheckBox: true,
+          hideCheckbox: true,
         }).pipe(
           filter(Boolean),
           tap(() => row.state = { state: JobState.Running }),
@@ -120,8 +126,8 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
             }),
           )),
           switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-          catchError((error) => {
-            this.dialog.errorReportMiddleware(error);
+          catchError((error: WebsocketError) => {
+            this.dialog.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
           untilDestroyed(this),
@@ -158,7 +164,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.store$.select(selectTimezone).pipe(take(1), untilDestroyed(this)).subscribe((timezone) => {
         task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
       });
 
@@ -168,6 +174,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
         task.state = { state: task.job.state };
         this.store$.select(selectJob(task.job.id)).pipe(
           filter(Boolean),
+          take(1),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           task.state = { state: job.state };

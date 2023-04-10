@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Validators, UntypedFormBuilder } from '@angular/forms';
+import { Validators, FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -12,7 +12,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './ntp-server-form.component.html',
-  styleUrls: ['./ntp-server-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerFormComponent {
@@ -40,7 +39,7 @@ export class NtpServerFormComponent {
   constructor(
     private slideInService: IxSlideInService,
     private validationService: ValidationService,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,

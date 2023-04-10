@@ -1,0 +1,34 @@
+<h1 matDialogTitle>{{ 'Upload Image File' | translate }}</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-explorer
+    formControlName="path"
+    [required]="true"
+    [label]="'ISO save location' | translate"
+    [nodeProvider]="directoryNodeProvider"
+    [tooltip]="helptext.upload_iso_path_tooltip | translate"
+  ></ix-explorer>
+
+  <ix-file-input
+    formControlName="files"
+    acceptedFiles=".img,.iso"
+    [required]="true"
+    [label]="'Installer image file' | translate"
+    [tooltip]="helptext.upload_iso_tooltip | translate"
+  ></ix-file-input>
+
+  <ix-form-actions>
+    <button mat-button type="button" matDialogClose ixTest="cancel">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid"
+    >
+      {{ 'Upload' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

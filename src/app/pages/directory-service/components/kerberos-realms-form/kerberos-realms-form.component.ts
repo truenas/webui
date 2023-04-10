@@ -12,7 +12,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-realms-form.component.html',
-  styleUrls: ['./kerberos-realms-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosRealmsFormComponent {

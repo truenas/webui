@@ -23,6 +23,7 @@ export interface VmFormValues {
   hide_from_msr: boolean;
   iso_path: string;
   memory: string;
+  min_memory: string;
   memory_warning: string;
   name: string;
   nic_attach: string;

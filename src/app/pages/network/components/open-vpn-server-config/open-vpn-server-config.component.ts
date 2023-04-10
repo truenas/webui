@@ -2,24 +2,31 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { EMPTY, of, Subscription } from 'rxjs';
+import {
+  catchError,
+  filter, map, switchMap,
+} from 'rxjs/operators';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
 import {
-  AppLoaderService, DialogService, ServicesService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -29,6 +36,9 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class OpenVpnServerConfigComponent implements OnInit {
   isLoading = false;
+
+  lastSavedServerCertificate: number = null;
+  lastSavedRootCertificate: number = null;
 
   form = this.formBuilder.group({
     server_certificate: [null as number, Validators.required],
@@ -83,7 +93,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,
     private loader: AppLoaderService,
@@ -93,6 +104,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private dialogService: DialogService,
     private storageService: StorageService,
     private matDialog: MatDialog,
+    private translate: TranslateService,
+    private appLoaderService: AppLoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -117,16 +130,11 @@ export class OpenVpnServerConfigComponent implements OnInit {
           this.slideInService.close();
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
       });
-  }
-
-  certificatesLinkClicked(): void {
-    this.router.navigate(['/', 'credentials', 'certificates']);
-    this.slideInService.close(null, false);
   }
 
   onRenewStaticKey(): void {
@@ -143,9 +151,9 @@ export class OpenVpnServerConfigComponent implements OnInit {
         });
         this.storageService.downloadText(download, 'openVPNStatic.key');
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -160,6 +168,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.lastSavedRootCertificate = config.root_ca;
+          this.lastSavedServerCertificate = config.server_certificate;
           this.form.patchValue({
             ...config,
             server: `${config.server}/${config.netmask}`,
@@ -167,19 +177,46 @@ export class OpenVpnServerConfigComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
 
   private setFormRelations(): void {
-    const topologySubscription = this.form.controls['topology'].disabledWhile(
+    const topologySubscription = this.form.controls.topology.disabledWhile(
       this.form.select((values) => values.device_type === OpenVpnDeviceType.Tap),
     );
 
     this.subscriptions.push(topologySubscription);
+  }
+
+  unsetCertificates(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning'),
+      message: this.translate.instant('This operation will unset any certificates assigned to OpenVPN Server configuration. Are you sure you want to proceed?'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.isLoading = true;
+        this.appLoaderService.open();
+        this.cdr.markForCheck();
+        return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
+      }),
+      catchError((error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      complete: () => {
+        this.isLoading = false;
+        this.appLoaderService.close();
+        this.cdr.markForCheck();
+        this.loadConfig();
+      },
+    });
   }
 }
