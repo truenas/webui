@@ -228,8 +228,8 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
 
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
-    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+
+    rsc.License_Agrement(driver)
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)

@@ -146,6 +146,7 @@ def verify_that_the_file_is_on_host(driver, nas_hostname):
     assert results.status_code == 200, results.text
     time.sleep(5)
 
+
 @then('go to the Dashboard and click Initiate Failover on the System Information standby controller')
 def go_to_the_dashboard_and_click_initiate_failover_on_the_system_information_standby_controller(driver):
     """go to the Dashboard and click Initiate Failover on the System Information standby controller."""
