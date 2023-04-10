@@ -67,7 +67,7 @@
   align-items: center;
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: auto 130px 40px 40px 40px 115px 60px;
+  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) 40px 40px 40px minmax(100px, 115px) 60px;
   min-width: fit-content;
   width: 100%;
 
@@ -105,36 +105,6 @@
       display: inline-flex;
       padding-left: 15px;
       padding-right: 15px;
-    }
-  }
-
-  .cell-status {
-    .status {
-      border: 2px solid;
-      border-radius: 20px;
-      display: flex;
-      font-weight: bold;
-      gap: 6px;
-      padding: 3px 16px;
-    }
-
-    .active {
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    .deploying {
-      border-color: var(--yellow);
-      color: var(--yellow);
-
-      mat-spinner::ng-deep circle {
-        stroke: var(--yellow);
-      }
-    }
-
-    .stopped {
-      border-color: var(--red);
-      color: var(--red);
     }
   }
 

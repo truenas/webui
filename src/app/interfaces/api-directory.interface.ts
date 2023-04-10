@@ -56,7 +56,9 @@ import {
   CertificateProfiles, CertificateUpdate,
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
-import { ChartReleaseEvent, ChartRollbackParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import {
+  ChartReleaseEvent, ChartRollbackParams, ChartScaleQueryParams, ChartScaleResult,
+} from 'app/interfaces/chart-release-event.interface';
 import {
   ChartRelease,
   ChartReleaseCreate,
@@ -392,7 +394,7 @@ export type ApiDirectory = {
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
-  'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };
+  'chart.release.scale': { params: ChartScaleQueryParams; response: ChartScaleResult };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.nic_choices': { params: void; response: Choices };
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
