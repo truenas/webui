@@ -581,7 +581,7 @@ class toolbar:
 
 class unlock_Dataset:
     title = '//h1[contains(.,"Unlock Datasets")]'
-    dataset_Passphrase_Input = '//input[@ix-auto="input__Dataset Passphrase"]'
+    dataset_Passphrase_Input = '//input[@data-test="input-passphrase"]'
     unlock_Datasets_Message1 = '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]'
     unlock_Datasets_Message2 = '//p[contains(.,"These datasets were successfully unlocked.")]'
 
