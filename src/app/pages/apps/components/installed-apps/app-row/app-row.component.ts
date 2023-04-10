@@ -22,7 +22,6 @@ export class AppRowComponent {
   inProgress = false;
 
   readonly imagePlaceholder = appImagePlaceholder;
-  readonly appStatus = ChartReleaseStatus;
 
   get hasUpdates(): boolean {
     return this.app.update_available || this.app.container_images_update_available;

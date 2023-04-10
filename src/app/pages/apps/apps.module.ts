@@ -123,6 +123,5 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatTooltipModule,
     MatMenuModule,
   ],
-  exports: [],
 })
 export class AppsModule { }
