@@ -12,14 +12,15 @@ import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
+import { IxFilterSelectListHarness } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.harness';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: SpectatorHost<AvailableAppsHeaderComponent>;
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
-  let catalogsItems: HTMLElement[];
-  let sortItems: HTMLElement[];
+  let catalogsItems: IxFilterSelectListHarness;
+  let sortItems: IxFilterSelectListHarness;
   let categoriesSelect: MatChipInputHarness;
   let applyButton: MatButtonHarness;
   let resetButton: MatButtonHarness;
@@ -63,8 +64,8 @@ describe('AvailableAppsHeaderComponent', () => {
     await filtersButton.click();
 
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
-    catalogsItems = spectator.queryAll('.catalogs .item');
-    sortItems = spectator.queryAll('.sort .item');
+    catalogsItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
+    sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[1];
     categoriesSelect = await loader.getHarness(MatChipInputHarness);
     applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
     resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
@@ -84,9 +85,7 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('emits (filters) when user selects catalogs', async () => {
-    catalogsItems[1].click();
-    spectator.detectChanges();
-
+    await catalogsItems.setValue(['OFFICIAL']);
     await applyButton.click();
 
     expect(changeFilters).toHaveBeenLastCalledWith({
@@ -97,9 +96,7 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('emits (filters) when user selects sort', async () => {
-    sortItems[2].click();
-    spectator.detectChanges();
-
+    await sortItems.setValue(['Updated Date']);
     await applyButton.click();
 
     expect(changeFilters).toHaveBeenLastCalledWith({
@@ -122,9 +119,8 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('emits (filters) when reset button is pressed', async () => {
-    catalogsItems[1].click();
-    sortItems[2].click();
-    spectator.detectChanges();
+    await catalogsItems.setValue(['OFFICIAL']);
+    await sortItems.setValue(['Updated Date']);
     await categoriesSelect.setValue('storage');
     await categoriesSelect.blur();
     await applyButton.click();
