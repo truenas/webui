@@ -132,19 +132,14 @@ export class LocaleService {
   }
 
   formatDateTimeToDateFns(dateTimeFormat: string): string {
-    try {
-      let dateFnsFormat = dateTimeFormat
-        .replace('YYYY', 'yyyy')
-        .replace('YY', 'y')
-        .replace('DD', 'dd')
-        .replace('D', 'd')
-        .replace(' A', ' aa');
-      if (dateFnsFormat && !dateFnsFormat.includes('aa')) {
-        dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
-      }
-      return dateFnsFormat;
-    } catch {
-      return 'Invalid date';
+    let dateFnsFormat = dateTimeFormat
+      .replace('YYYY', 'yyyy')
+      .replace('YY', 'y')
+      .replace('DD', 'dd')
+      .replace('D', 'd')
+      .replace(' A', ' aa');
+    if (dateFnsFormat && !dateFnsFormat.includes('aa')) {
+      dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
     }
   }
 
@@ -158,16 +153,12 @@ export class LocaleService {
 
   /** Revert DateFns for Chart DateTime format */
   formatDateTimeToChart(dateTimeFormat: string): string {
-    try {
-      return dateTimeFormat
-        .replace('yyyy', 'YYYY')
-        .replace('y', 'YY')
-        .replace('dd', 'DD')
-        .replace('d', 'D')
-        .replace(' aaaaa\'m\'', ' a')
-        .replace(' aa', ' A');
-    } catch {
-      return 'Invalid date';
-    }
+    return dateTimeFormat
+      .replace('yyyy', 'YYYY')
+      .replace('y', 'YY')
+      .replace('dd', 'DD')
+      .replace('d', 'D')
+      .replace(' aaaaa\'m\'', ' a')
+      .replace(' aa', ' A');
   }
 }
