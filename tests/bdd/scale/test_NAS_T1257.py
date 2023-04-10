@@ -68,8 +68,8 @@ def click_on_the_power_button_then_restart(driver):
     assert wait_on_element(driver, 5, xpaths.button.restart, 'clickable')
     driver.find_element_by_xpath(xpaths.button.restart).click()
     assert wait_on_element(driver, 5, '//h1[text()="Restart"]')
-    assert wait_on_element(driver, 5, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
+    assert wait_on_element(driver, 5, xpaths.checkbox.new_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 5, xpaths.button.ok, 'clickable')
     driver.find_element_by_xpath(xpaths.button.ok).click()
 
