@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -31,6 +30,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   filters: AppsFiltersValues = undefined;
   searchQuery = '';
   isFilterOrSearch = false;
+  isLoading = false;
 
   allRecommendedApps: AvailableApp[] = [];
   allNewAndUpdatedApps: AvailableApp[] = [];
@@ -42,7 +42,6 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private layoutService: LayoutService,
-    private loader: AppLoaderService,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -75,7 +74,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   }
 
   private loadApplications(filters?: AppsFiltersValues): void {
-    this.loader.open();
+    this.isLoading = true;
     combineLatest([this.appService.getAvailableApps(filters), this.appService.getAllAppsCategories()])
       .pipe(untilDestroyed(this))
       .subscribe(([apps, appCategories]) => {
@@ -83,7 +82,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
         this.filterApps(apps);
         this.setupApps(apps, appCategories);
 
-        this.loader.close();
+        this.isLoading = false;
         this.cdr.markForCheck();
       });
   }
