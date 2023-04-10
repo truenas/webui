@@ -17,18 +17,20 @@
   </div>
   <div *ngIf="showFilters" class="filters-container">
     <div class="filters">
-      <ix-select
+      <ix-filter-select-list
+        class="catalogs"
         [formControl]="form.controls.catalogs"
         [label]="'Catalogs' | translate"
         [options]="catalogsOptions$"
         [multiple]="true"
-      ></ix-select>
-      <ix-select
+      ></ix-filter-select-list>
+      <ix-filter-select-list
+        class="sort"
         [formControl]="form.controls.sort"
         [label]="'Sort' | translate"
         [options]="sortOptions$"
-      ></ix-select>
-      <div class="filter">
+      ></ix-filter-select-list>
+      <div class="сategories">
         <ix-chips
           [formControl]="form.controls.categories"
           [label]="'Categories' | translate"
