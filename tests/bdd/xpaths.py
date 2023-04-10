@@ -221,6 +221,9 @@ class dataset:
     def dataset_Tree(dataset_name):
         return f'//ix-dataset-node[contains(.,"{dataset_name}")]/div'
 
+    def dataset_expand(pool_name, dataset_name):
+        return f'//*[@data-test="button-toggle-row-{pool_name}-{dataset_name}"]'
+
     def permission_At_Owner(user_name):
         return f'//div[text()="owner@ - {user_name}"]'
 
