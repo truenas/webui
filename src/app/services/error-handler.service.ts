@@ -100,7 +100,7 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  private parseJobWithArrayExtra(errorJob: Job): ErrorReport | ErrorReport[] {
+  private parseJobWithArrayExtra(errorJob: Job): ErrorReport[] {
     const errors: ErrorReport[] = [];
     (errorJob.extra as unknown as unknown[]).forEach((extraItem: [string, unknown]) => {
       const field = extraItem[0].split('.')[1];
