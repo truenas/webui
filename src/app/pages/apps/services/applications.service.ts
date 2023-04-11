@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { format } from 'date-fns-tz';
 import { Observable, of, switchMap } from 'rxjs';
-import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -36,36 +34,53 @@ export class ApplicationsService {
   }
 
   getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
-    const firstOption: QueryFilter<AvailableApp>[] = [
+    const queryFilters: QueryFilter<AvailableApp>[] = [
       ['name', '=', name],
       ['catalog', '=', catalog],
       ['train', '=', train],
     ];
-    return this.ws.call('app.available', [firstOption]).pipe(switchMap((app) => of(app[0])));
+    return this.ws.call('app.available', [queryFilters]).pipe(switchMap((app) => of(app[0])));
+  }
+
+  getLatestApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
+    return this.getAppsFetchCall('app.latest', filters);
   }
 
   getAvailableApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
-    if (!filters) {
-      return this.ws.call('app.available');
+    return this.getAppsFetchCall('app.available', filters);
+  }
+
+  private getAppsFetchCall(
+    endPoint: 'app.available' | 'app.latest',
+    filters?: AppsFiltersValues,
+  ): Observable<AvailableApp[]> {
+    if (filters && !filters.categories?.length) {
+      delete filters.categories;
+    }
+    if (filters && !filters.catalogs?.length) {
+      delete filters.catalogs;
+    }
+    if (filters && !filters.sort?.length) {
+      delete filters.sort;
+    }
+    if (!filters || (filters && !Object.keys(filters).length)) {
+      return this.ws.call(endPoint);
     }
 
-    const firstOption: QueryFilter<AvailableApp>[] = [['catalog', 'in', filters.catalogs]];
-    const datetime = format(new Date().setMonth(new Date().getMonth() - 1), 'yyyy-MM-dd HH-mm-ss');
-    filters.categories.forEach((category) => {
-      switch (category) {
-        case AppExtraCategory.Recommended:
-          firstOption.push(['recommended', '=', true]);
-          break;
-        case AppExtraCategory.NewAndUpdated:
-          firstOption.push(['last_update', '>', datetime]);
-          break;
-        default:
-          firstOption.push(['categories', 'rin', category]);
+    const firstOption: QueryFilter<AvailableApp>[] = [];
+    if (filters.catalogs?.length) {
+      firstOption.push(['catalog', 'in', filters.catalogs]);
+    }
+    filters.categories?.forEach((category) => {
+      if (category === 'recommended') {
+        firstOption.push(['recommended', '=', true]);
+      } else {
+        firstOption.push(['categories', 'rin', category]);
       }
     });
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
-    return this.ws.call('app.available', [firstOption, secondOption]);
+    return this.ws.call(endPoint, [firstOption, secondOption]);
   }
 
   getChartReleases(name?: string): Observable<ChartRelease[]> {
