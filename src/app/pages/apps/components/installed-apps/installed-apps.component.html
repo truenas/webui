@@ -85,6 +85,7 @@
       <div class="app-search">
         <ix-search-input
           [disabled]="!dataSource.length"
+          [value]="filterString"
           (search)="onSearch($event)"
         ></ix-search-input>
       </div>
@@ -124,9 +125,11 @@
               <ix-app-row
                 routerLinkActive="selected"
                 [app]="app"
+                [job]="appJobs.get(app.name)"
                 [routerLink]="['/apps/installed', app.id]"
                 (startApp)="start(app.name)"
                 (stopApp)="stop(app.name)"
+                (clickStatus)="openStatusDialog(app.name)"
                 (click)="selectApp(app)"
                 (keydown.enter)="selectApp(app)"
               ></ix-app-row>

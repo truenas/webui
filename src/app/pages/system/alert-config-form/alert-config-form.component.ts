@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { trackById } from 'app/helpers/track-by.utils';
 import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -26,6 +27,8 @@ export class AlertConfigFormComponent implements OnInit {
   form = this.formBuilder.group({});
   isFormLoading = false;
   readonly helptext = helptext;
+
+  readonly trackById = trackById;
 
   readonly levelOptions$ = of([
     { label: this.translate.instant('INFO'), value: AlertLevel.Info },

@@ -1,6 +1,7 @@
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 
 export interface WebsocketError {
+  errname: string;
   error: number;
   extra: string[][];
   reason: string;

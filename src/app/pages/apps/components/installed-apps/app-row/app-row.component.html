@@ -20,18 +20,12 @@
     </div>
   </div>
   <div class="cell cell-status">
-    <ng-container [ngSwitch]="app.status">
-      <div *ngSwitchCase="chartReleaseStatus.Active" class="status active">
-        {{ 'Running' | translate }}
-      </div>
-      <div *ngSwitchCase="chartReleaseStatus.Deploying" class="status deploying">
-        <mat-spinner [diameter]="20"></mat-spinner>
-        {{ 'Deploying' | translate }}
-      </div>
-      <div *ngSwitchCase="chartReleaseStatus.Stopped" class="status stopped">
-        {{ 'Stopped' | translate }}
-      </div>
-    </ng-container>
+    <ix-app-status-cell
+      [app]="app"
+      [job]="job"
+      (click)="statusPressed(); $event.stopPropagation()"
+      (statusChanged)="statusChanged($event)"
+    ></ix-app-status-cell>
   </div>
   <div class="cell cell-cpu">
     <span [ngTemplateOutlet]="notAvailable"></span>
@@ -54,7 +48,7 @@
   </div>
   <div class="cell cell-action">
     <button
-      *ngIf="isAppStopped"
+      *ngIf="isAppStopped && !inProgress"
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app.name, 'start']"
@@ -64,7 +58,7 @@
       <ix-icon name="mdi-play"></ix-icon>
     </button>
     <button
-      *ngIf="!isAppStopped"
+      *ngIf="!isAppStopped && !inProgress"
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app.name, 'stop']"

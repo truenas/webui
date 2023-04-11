@@ -8,7 +8,7 @@
 
   <mat-accordion displayMode="flat" class="bulk-list">
     <mat-expansion-panel
-      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackById"
+      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackByKey"
       (afterExpand)="onExpand(bulkItem)"
     >
       <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">

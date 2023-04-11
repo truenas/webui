@@ -1,9 +1,11 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 
 describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
@@ -17,6 +19,9 @@ describe('AppRowComponent', () => {
   const createComponent = createComponentFactory({
     component: AppRowComponent,
     imports: [ImgFallbackModule],
+    declarations: [
+      MockComponents(AppStatusCellComponent),
+    ],
   });
 
   beforeEach(() => {
@@ -32,7 +37,9 @@ describe('AppRowComponent', () => {
   });
 
   it('checks app status column', () => {
-    expect(spectator.query('.cell-status .status')).toHaveText('Running');
+    const statusCell = spectator.query(AppStatusCellComponent);
+    expect(statusCell).toBeTruthy();
+    expect(statusCell.app).toBe(app);
   });
 
   it('checks app update column', () => {
