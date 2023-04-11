@@ -33,7 +33,7 @@ def test_verify_ssh_access_with_root_works(driver):
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open navigate to "{nas_url}"."""
     global nas_hostname
-    nas_hostname = nas_url
+    nas_hostname = nas_url.replace('http://', '')
     if nas_url not in driver.current_url:
         driver.get(f"{nas_url}/ui/sessions/signin")
 
