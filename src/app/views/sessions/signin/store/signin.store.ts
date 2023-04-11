@@ -123,6 +123,7 @@ export class SigninStore extends ComponentStore<SigninState> {
           this.disabledReasonsSubscription.unsubscribe();
           this.disabledReasonsSubscription = null;
         }
+        this.setLoadingState(false);
         this.router.navigateByUrl(this.getRedirectUrl());
       },
       (error: WebsocketError) => {
