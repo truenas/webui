@@ -4,6 +4,12 @@
   </ix-page-title-header>
 </ng-template>
 
+<ix-fake-progress-bar
+  *ngIf="isLoading"
+  class="loader-bar"
+  [loading]="isLoading"
+></ix-fake-progress-bar>
+
 <ix-available-apps-header
   [appliedFilters]="appliedFilters"
   (filters)="changeFilters($event)"

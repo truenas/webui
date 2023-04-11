@@ -5,9 +5,10 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
+import { ChartReleaseEvent, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services';
@@ -113,5 +114,13 @@ export class ApplicationsService {
       'chart.release.get_chart_releases_using_chart_release_images',
       [name],
     );
+  }
+
+  startApplication(name: string): Observable<Job<ChartScaleResult>> {
+    return this.ws.job('chart.release.scale', [name, { replica_count: 1 }]);
+  }
+
+  stopApplication(name: string): Observable<Job<ChartScaleResult>> {
+    return this.ws.job('chart.release.scale', [name, { replica_count: 0 }]);
   }
 }

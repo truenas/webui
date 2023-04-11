@@ -1,25 +1,78 @@
-@import 'mixins/grid';
 @import 'scss-imports/splitview';
 
 :host {
   align-items: center;
+  border-bottom: 1px solid var(--lines);
+  box-sizing: border-box;
+  color: var(--fg2);
+  cursor: pointer;
   display: flex;
   flex: 1;
   font-weight: 500;
   min-height: 48px;
+  min-width: fit-content;
   padding: 0;
+  position: relative;
+
+  &:hover {
+    background-color: var(--hover-bg);
+
+    .row-grid .cell-name .name {
+      background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+    }
+  }
+
+  &.selected {
+    background-color: var(--bg1);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+      z-index: 1;
+    }
+
+    .row-grid .cell-name .name {
+      background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 11px), transparent 100%);
+    }
+  }
+
+  .app-catalog {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .app-logo {
+    margin-right: 12px;
+    max-height: 40px;
+    max-width: 40px;
+    min-width: 40px;
+    overflow: hidden;
+
+    img {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+  }
 }
 
 .row-grid {
-  @include grid-row();
   align-items: center;
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) 40px 40px 40px minmax(100px, 115px) 60px;
+  min-width: fit-content;
+  width: 100%;
 
-
-  // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 125px 40px 40px 40px 125px 40px;
 
   @media (max-width: $breakpoint-tablet) {
-    // Override default fraction based values to avoid misaligned columns
     grid-template-columns: auto 0 0 0 0 0 0;
     width: 100%;
   }
@@ -34,7 +87,6 @@
     }
 
     &:first-child {
-      left: 15px;
       position: sticky;
 
       @media (max-width: $breakpoint-tablet) {
@@ -47,53 +99,26 @@
     align-items: stretch;
     font-weight: bold;
 
-    img {
-      margin-right: 10px;
-      width: 42px;
-    }
-
     .name {
       align-items: center;
       background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
       display: inline-flex;
+      padding-left: 15px;
       padding-right: 15px;
     }
   }
 
-  .cell-status {
-    .status {
-      border: 2px solid;
-      border-radius: 20px;
-      display: flex;
-      font-weight: bold;
-      gap: 8px;
-      padding: 1px 20px;
-    }
+  .cell-update {
+    gap: 4px;
 
-    .active {
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    .deploying {
-      border-color: var(--yellow);
+    .mdi-alert-circle {
       color: var(--yellow);
-
-      mat-spinner::ng-deep circle {
-        stroke: var(--yellow);
-      }
-    }
-
-    .stopped {
-      border-color: var(--red);
-      color: var(--red);
+      font-size: 18px;
+      line-height: 1;
     }
   }
-}
 
-:host-context(ix-app-row:hover),
-:host-context(ix-app-row.selected) {
-  .row-grid .cell-name .name {
-    background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  .cell-action {
+    justify-content: center;
   }
 }

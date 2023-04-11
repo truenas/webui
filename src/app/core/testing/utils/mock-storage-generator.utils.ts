@@ -2,6 +2,8 @@ import { TiB } from 'app/constants/bytes.constant';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import {
   StorageDashboardDisk,
@@ -10,6 +12,13 @@ import {
   TopologyItemStats,
   VDev,
 } from 'app/interfaces/storage.interface';
+import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
+import { MockEs24 } from './enclosure-templates/mock-es24';
+import { MockM40 } from './enclosure-templates/mock-m40';
+import { MockM50 } from './enclosure-templates/mock-m50';
+import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
+import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
+import { MockMiniR } from './enclosure-templates/mock-mini-r';
 
 export enum MockStorageScenario {
   Default = 'default',
@@ -25,6 +34,7 @@ export enum MockStorageScenario {
 export interface MockStorage {
   poolState: PoolInstance;
   disks: StorageDashboardDisk[];
+  enclosures?: Enclosure[] | null;
 }
 
 export interface MockTopology {
@@ -40,9 +50,22 @@ export interface AddTopologyOptions {
   repeats: number;
 }
 
+export interface AddEnclosureOptions {
+  controllerModel: string;
+  expansionModels: string[];
+  dispersal: EnclosureDispersalStrategy;
+}
+
+export enum EnclosureDispersalStrategy {
+  Min = 'min',
+  Max = 'max',
+  Default = 'default',
+}
+
 export class MockStorageGenerator {
   poolState: PoolInstance;
   disks: StorageDashboardDisk[];
+  enclosures: Enclosure[] | null = null;
 
   constructor() {
     // Creates a pool with empty topologies
@@ -434,6 +457,7 @@ export class MockStorageGenerator {
           guid: Number(12345).toString(),
           unavail_disk: null,
           stats: { size: null } as TopologyItemStats,
+          status: TopologyItemStatus.Online,
         } as VDev;
       }
       default:
@@ -528,10 +552,117 @@ export class MockStorageGenerator {
       name,
       devname: name,
       size: this.terabytesToBytes(size),
+      enclosure: null,
     } as StorageDashboardDisk;
   }
 
   terabytesToBytes(tb: number): number {
     return tb * TiB;
+  }
+
+  // Generate Enclosures
+  addEnclosures(options: AddEnclosureOptions): void {
+    // First create the enclosures
+    const mockEnclosures: MockEnclosure[] = [];
+    const controller: MockEnclosure = this.generateMockEnclosure(options.controllerModel, 0);
+    mockEnclosures.push(controller);
+
+    options.expansionModels.forEach((model: string, index) => {
+      const shelf: MockEnclosure = this.generateMockEnclosure(model, index + 1);
+      mockEnclosures.push(shelf);
+    });
+
+    // M50/M60 have separate chassis reported for rear drives
+    if (options.controllerModel === 'M50' || options.controllerModel === 'M60') {
+      const rearChassis: MockEnclosure = this.generateMockEnclosure(
+        options.controllerModel + '-REAR',
+        options.expansionModels.length + 1,
+      );
+      mockEnclosures.push(rearChassis);
+    }
+
+    // Next populate enclosures based on dispersal setting
+    this.enclosures = this.populateEnclosures(mockEnclosures, options.dispersal);
+  }
+
+  private generateMockEnclosure(
+    model = 'M40',
+    enclosureNumber = 0,
+  ): MockEnclosure {
+    let chassis: MockEnclosure;
+    switch (model) {
+      case 'MINI-R':
+        chassis = new MockMiniR(enclosureNumber);
+        break;
+      case 'MINI-3.0-XL+':
+        chassis = new MockMini30Xl(enclosureNumber);
+        break;
+      case 'M50':
+        chassis = new MockM50(enclosureNumber);
+        break;
+      case 'M50-REAR':
+        chassis = new MockM50Rear(enclosureNumber);
+        break;
+      case 'ES24':
+        chassis = new MockEs24(enclosureNumber);
+        break;
+      case 'M40':
+        chassis = new MockM40(enclosureNumber);
+        break;
+      default:
+        console.error('Chassis ' + model + ' not found');
+    }
+
+    return chassis;
+  }
+
+  private populateEnclosures(mockEnclosures: MockEnclosure[], dispersal: EnclosureDispersalStrategy): Enclosure[] {
+    let populated: Enclosure[] = [];
+
+    if (dispersal === EnclosureDispersalStrategy.Min) {
+      // TODO: Add support for minimum dispersal (keep all vdev members on same chassis)
+    } else if (dispersal === EnclosureDispersalStrategy.Max) {
+      // TODO: Add support for maximum dispersal (spread out all vdev members across all enclosures. eg. every disk on
+      //  a different enclosure)
+    } else if (dispersal === EnclosureDispersalStrategy.Default) {
+      populated = this.defaultDispersal(mockEnclosures);
+    }
+    return populated;
+  }
+
+  private defaultDispersal(mockEnclosures: MockEnclosure[]): Enclosure[] {
+    let enclosureNumber = 0;
+    let slotNumber = 1;
+
+    this.disks.forEach((disk: StorageDashboardDisk, index: number) => {
+      if (enclosureNumber < mockEnclosures.length) {
+        // Update the enclosure data
+        const mockEnclosure = mockEnclosures[enclosureNumber];
+        mockEnclosure.addDiskToSlot(disk.name, slotNumber);
+
+        // Update the disk data
+        this.disks[index].enclosure = {
+          number: mockEnclosure.data.number,
+          slot: slotNumber,
+        };
+      }
+
+      // Set counters...
+      if (slotNumber >= mockEnclosures[enclosureNumber]?.totalSlots) {
+        enclosureNumber++;
+        slotNumber = 1;
+      } else {
+        slotNumber++;
+      }
+    });
+
+    return mockEnclosures.map((mock: MockEnclosure) => mock.data);
+  }
+
+  getEnclosureSlots(enclosureNumber: number): EnclosureElement[] {
+    const selectedEnclosure = this.enclosures.find((enclosure: Enclosure) => {
+      return enclosure.number === enclosureNumber;
+    });
+    return (selectedEnclosure.elements[0] as EnclosureElementsGroup).elements;
   }
 }
