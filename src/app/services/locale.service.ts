@@ -68,24 +68,6 @@ export class LocaleService {
     ];
   }
 
-  formatDateTime(date: Date | number, tz?: string): string {
-    try {
-      if (Number.isNaN(date)) {
-        return date.toString();
-      }
-
-      if (tz) {
-        date = utcToZonedTime(date.valueOf(), tz);
-      } else if (this.timezone) {
-        date = utcToZonedTime(date.valueOf(), this.timezone);
-      }
-
-      return format(date, `${this.dateFormat} ${this.timeFormat}`);
-    } catch {
-      return 'Invalid date';
-    }
-  }
-
   formatDateTimeWithNoTz(date: Date): string {
     try {
       return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
