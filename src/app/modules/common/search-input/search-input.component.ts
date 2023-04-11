@@ -46,6 +46,10 @@ export class SearchInputComponent implements OnInit, OnChanges {
     if (changes.disabled?.previousValue !== changes.disabled?.currentValue && !!this.searchValue) {
       this.updateSearchValue(this.searchValue);
     }
+
+    if (changes.value.previousValue !== changes.value.currentValue) {
+      this.searchValue = changes.value.currentValue;
+    }
   }
 
   onResetInput(): void {
