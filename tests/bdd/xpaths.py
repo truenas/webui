@@ -169,7 +169,39 @@ class certificates:
     csr_Card_Title = '//h3[contains(text(),"Certificate Signing Requests")]'
     csr_Add_Button = '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]'
     csr_Title = ''
-    email_Input = '//input[@ix-auto="input__Email"]'
+
+    def next_Button(name):
+        return f'//div[contains(.,"{name}") and contains(@class,"mat-step")]//button[@data-test="button-next"]'
+
+    identifier_Next_Button = next_Button('Identifier and Type')
+    cert_Options_Next_Button = next_Button('Certificate Options')
+    cert_Subject_Next_Button = next_Button('Certificate Subject')
+    import_Certificate_Next_Button = '(//div[contains(.,"Import Certificate") and contains(@class,"mat-step")]//button[@data-test="button-next"])[2]'
+    extra_Constraints_Next_Button = next_Button('Extra Constraints')
+    key_Type_Select = '//mat-select[@data-test="select-key-type"]'
+    key_Type_RSA_Option = '//mat-option[@data-test="option-key-type-rsa"]'
+    state_Input = '//input[@data-test="input-state"]'
+    locality_Input = '//input[@data-test="input-city"]'
+    organization_Input = '//input[@data-test="input-organization"]'
+    organizational_Unit_Input = '//input[@data-test="input-organizational-unit"]'
+    email_Input = '//input[@data-test="input-email"]'
+    common_Name_Input = '//input[@data-test="input-common"]'
+    subject_Alternate_Names_Input = '//input[@data-test="input-san"]'
+
+    extended_Key_Usage_Checkbox = '//mat-checkbox[contains(.,"Extended Key Usage")]'
+    usages_Select = '//mat-select[@data-test="select-usages"]'
+    usages_Any_Extended_Key_Usage_Option = '//mat-option[@data-test="option-usages-any-extended-key-usage"]'
+    critical_Extension_Checkbox = '//mat-checkbox[contains(.,"Critical Extension")]'
+    key_Usage_Checkbox = '//mat-checkbox[contains(.,"Key Usage") and not(contains(.,"Extended"))]'
+    key_Usage_Config_Select = '//mat-select[@data-test="select-key-usage"]'
+    Key_Usage_Config_Digital_Signature_Option = '//mat-option[@data-test="option-key-usage-digital-signature"]'
+    type_select = '//mat-select[@data-test="select-create-type"]'
+    type_Internal_CA_Option = '//mat-option[@data-test="option-create-type-internal-ca"]'
+    type_Internal_Certificate_Option = '//mat-option[@data-test="option-create-type-internal-certificate"]'
+    signing_Certificate_Authority_Select = '//mat-select[@data-test="select-signedby"]'
+    ca1_Delete_Button = '//tr[contains(.,"ca1")]//button[@data-test="button-table-delete"]'
+    csr1_Delete_Button = '//tr[contains(.,"csr1")]//button[@data-test="button-table-delete"]'
+    cert1_Delete_Button = '//tr[contains(.,"cert1")]//button[@data-test="button-table-delete"]'
 
 
 class checkbox:
@@ -186,6 +218,13 @@ class chosse_Pool_For_App:
     title = '//h1[contains(.,"Choose a pool for Apps")]'
     pool_Select = '//ix-select[@formcontrolname="pool"]//mat-select'
     tank_Pool_Option = '//mat-option[contains(.,"tank")]'
+
+
+class common_Input():
+    def get_Input(input_name):
+        return f'//*[@data-test="input-{input_name}"]'
+
+    name = get_Input('name')
 
 
 class dashboard:

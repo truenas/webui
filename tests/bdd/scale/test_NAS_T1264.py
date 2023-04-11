@@ -57,8 +57,8 @@ def click_on_the_trash_icon_for_ca1(driver):
     """click on the trash icon for ca1."""
     assert wait_on_element(driver, 7, xpaths.certificates.title)
     assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificate Authorities")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ca1")]//ix-icon[contains(text(),"delete")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ca1")]//ix-icon[contains(text(),"delete")]').click()
+    assert wait_on_element(driver, 5, xpaths.certificates.ca1_Delete_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.certificates.ca1_Delete_Button).click()
 
 
 @then('click the confirm checkbox and click delete')
