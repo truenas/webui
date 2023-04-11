@@ -105,7 +105,9 @@ export class MockEnclosureUtils {
         break;
       }
       case 'disk.query': {
-        if (this.mockStorage.enclosures.length > 0 && data) {
+        // Sometimes response only has two keys "name" and "type" (subscription or middleware bug?)
+        const keys = Object.keys([...data as Disk[]][0]);
+        if (this.mockStorage.enclosures.length > 0 && data && keys.length > 2) {
           const sorted = (data as Disk[]).sort((a, b) => (a.name < b.name ? -1 : 1));
           mockPayload = this.mockStorage.updateDisks(sorted, this.mockConfig.enclosureOptions.dispersal);
         } else {
