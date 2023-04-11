@@ -1,0 +1,8 @@
+{
+  "enclosureOptions": {
+    "controllerModel": "M40",
+    "expansionModels": ["ES24"],
+    "dispersal": "Default"
+  },
+  "systemProduct": "TRUENAS-M40"
+}

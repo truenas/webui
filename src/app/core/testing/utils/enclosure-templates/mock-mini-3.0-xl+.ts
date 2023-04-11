@@ -68,17 +68,24 @@ export class MockMini30Xl extends MockEnclosure {
     (this.data.elements as EnclosureElement[]) = emptySlots;
   }
 
-  protected addSlotToData(slot: EnclosureElement): void {
+  /* protected addSlotToData(slot: EnclosureElement): void {
     const slotElements: EnclosureElement[] = this.data.elements as EnclosureElement[];
     const slotIndex = slotElements.findIndex((element: EnclosureElement) => element.slot === slot.slot);
     slotElements.splice(slotIndex, 1, this.processSlotTemplate(slot));
+  } */
+
+  protected getSlots(): EnclosureElement[] {
+    return this.data.elements as EnclosureElement[];
   }
 
   processSlotTemplate(template: EnclosureElement): EnclosureElement {
-    const original = {
+    // console.warn({...template});
+    /* const original = {
       enclosure_id: '0',
       slot: 0,
-    };
+    }; */
+    const updatedTemplate = { ...template };
+    const original = { ...template.original };
     if (template.slot === 1) {
       original.slot = 6;
       original.enclosure_id = '3000000000000002';
@@ -90,7 +97,7 @@ export class MockMini30Xl extends MockEnclosure {
       original.enclosure_id = '3000000000000001';
     }
 
-    template.original = original;
-    return template;
+    updatedTemplate.original = original;
+    return updatedTemplate;
   }
 }

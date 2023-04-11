@@ -1,4 +1,8 @@
 import { TiB } from 'app/constants/bytes.constant';
+import { DiskBus } from 'app/enums/disk-bus.enum';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -6,7 +10,8 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import {
-  StorageDashboardDisk,
+  Disk,
+  EnclosureAndSlot,
   TopologyDisk,
   TopologyItem,
   TopologyItemStats,
@@ -33,13 +38,13 @@ export enum MockStorageScenario {
 
 export interface MockStorage {
   poolState: PoolInstance;
-  disks: StorageDashboardDisk[];
+  disks: Disk[];
   enclosures?: Enclosure[] | null;
 }
 
 export interface MockTopology {
   topologyItems: TopologyItem[];
-  disks: StorageDashboardDisk[];
+  disks: Disk[];
 }
 
 export interface AddTopologyOptions {
@@ -48,6 +53,11 @@ export interface AddTopologyOptions {
   diskSize: number;
   width: number;
   repeats: number;
+}
+
+export interface DispersedData {
+  enclosures: Enclosure[];
+  disks: Disk[];
 }
 
 export interface AddEnclosureOptions {
@@ -60,12 +70,14 @@ export enum EnclosureDispersalStrategy {
   Min = 'min',
   Max = 'max',
   Default = 'default',
+  Existing = 'existing',
 }
 
 export class MockStorageGenerator {
   poolState: PoolInstance;
-  disks: StorageDashboardDisk[];
+  disks: Disk[];
   enclosures: Enclosure[] | null = null;
+  private mockEnclosures: MockEnclosure[] = [];
 
   constructor() {
     // Creates a pool with empty topologies
@@ -91,7 +103,7 @@ export class MockStorageGenerator {
       },
     } as PoolInstance;
 
-    const disks: StorageDashboardDisk[] = [];
+    const disks: Disk[] = [];
 
     return { poolState: pool, disks };
   }
@@ -250,9 +262,9 @@ export class MockStorageGenerator {
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks): MockTopology {
     const vdevs: TopologyItem[] = [];
-    const disks: StorageDashboardDisk[] = [];
+    const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
       const vdev: VDev = this.generateVdev(layout, width) as VDev;
@@ -276,9 +288,9 @@ export class MockStorageGenerator {
   private generateNoRedundancyTopology(repeats: number,
     diskSize: number,
     width: number,
-    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks): MockTopology {
     const vdevs: TopologyItem[] = [];
-    const disks: StorageDashboardDisk[] = [];
+    const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
       const vdev: TopologyDisk = this.generateVdev(TopologyItemType.Disk, width) as TopologyDisk;
@@ -298,9 +310,9 @@ export class MockStorageGenerator {
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks): MockTopology {
     const vdevs: TopologyItem[] = [];
-    const disks: StorageDashboardDisk[] = [];
+    const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
       const vdev: VDev = this.generateVdev(layout, width) as VDev;
@@ -326,13 +338,13 @@ export class MockStorageGenerator {
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks): MockTopology {
     if (repeats < 2) {
       console.error('ERROR: Minimum 2 VDEVs must be configured to generate mixed VDEV capacity scenario');
     }
 
     const vdevs: TopologyItem[] = [];
-    const disks: StorageDashboardDisk[] = [];
+    const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
       const vdev: VDev = this.generateVdev(layout, width) as VDev;
@@ -358,13 +370,13 @@ export class MockStorageGenerator {
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks): MockTopology {
     if (repeats < 2) {
       console.error('ERROR: Minimum 2 VDEVs must be configured to generate mixed VDEV width scenario');
     }
 
     const vdevs: TopologyItem[] = [];
-    const disks: StorageDashboardDisk[] = [];
+    const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
       const vdevWidth: number = i === 0 ? width + 1 : width;
@@ -391,9 +403,9 @@ export class MockStorageGenerator {
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks): MockTopology {
     const vdevs: TopologyItem[] = [];
-    const disks: StorageDashboardDisk[] = [];
+    const disks: Disk[] = [];
 
     let altLayout: TopologyItemType;
     let altWidth: number;
@@ -545,15 +557,40 @@ export class MockStorageGenerator {
     return diskNames;
   }
 
-  private generateDisk(size: number, offset: number): StorageDashboardDisk {
+  private generateDisk(size: number, offset: number): Disk {
     const name = this.generateDiskName(2 + offset, offset)[0];
 
     return {
+      identifier: '{uuid}d5433b0f-180b-4706-afd0-476915e8925f',
       name,
-      devname: name,
+      subsystem: 'scsi',
+      number: 2080,
+      serial: '',
+      lunid: null,
       size: this.terabytesToBytes(size),
+      description: '',
+      duplicate_serial: [],
+      multipath_member: '',
+      multipath_name: '',
+      transfermode: 'Auto',
+      hddstandby: DiskStandby.AlwaysOn,
+      advpowermgmt: DiskPowerLevel.Disabled,
+      togglesmart: true,
+      smartoptions: '',
+      expiretime: null,
+      critical: null,
+      difference: null,
+      informational: null,
+      model: 'HARDDISK',
+      rotationrate: null,
+      type: DiskType.Hdd,
+      zfs_guid: '594160193876939323',
+      bus: DiskBus.Spi,
+      devname: 'sdc',
       enclosure: null,
-    } as StorageDashboardDisk;
+      supports_smart: null,
+      pool: null,
+    };
   }
 
   terabytesToBytes(tb: number): number {
@@ -562,7 +599,7 @@ export class MockStorageGenerator {
 
   // Generate Enclosures
   addEnclosures(options: AddEnclosureOptions): void {
-    // First create the enclosures
+    // First create the mock enclosures
     const mockEnclosures: MockEnclosure[] = [];
     const controller: MockEnclosure = this.generateMockEnclosure(options.controllerModel, 0);
     mockEnclosures.push(controller);
@@ -571,6 +608,7 @@ export class MockStorageGenerator {
       const shelf: MockEnclosure = this.generateMockEnclosure(model, index + 1);
       mockEnclosures.push(shelf);
     });
+    this.mockEnclosures = mockEnclosures;
 
     // M50/M60 have separate chassis reported for rear drives
     if (options.controllerModel === 'M50' || options.controllerModel === 'M60') {
@@ -582,7 +620,9 @@ export class MockStorageGenerator {
     }
 
     // Next populate enclosures based on dispersal setting
-    this.enclosures = this.populateEnclosures(mockEnclosures, options.dispersal);
+    const populated = this.populateEnclosures(mockEnclosures, options.dispersal);
+    this.enclosures = populated.enclosures;
+    this.disks = populated.disks;
   }
 
   private generateMockEnclosure(
@@ -616,35 +656,101 @@ export class MockStorageGenerator {
     return chassis;
   }
 
-  private populateEnclosures(mockEnclosures: MockEnclosure[], dispersal: EnclosureDispersalStrategy): Enclosure[] {
-    let populated: Enclosure[] = [];
+  private populateEnclosures(
+    mockEnclosures: MockEnclosure[],
+    dispersal: EnclosureDispersalStrategy,
+    disks: Disk[] = this.disks,
+  ): DispersedData {
+    let populated: DispersedData;
 
-    if (dispersal === EnclosureDispersalStrategy.Min) {
+    if (!disks || disks.length === 0) {
+      populated = {
+        enclosures: mockEnclosures.map((mock: MockEnclosure) => mock.data),
+        disks,
+      };
+    } else if (dispersal === EnclosureDispersalStrategy.Existing) {
+      populated = this.existingDispersal(mockEnclosures, disks);
+    } else if (dispersal === EnclosureDispersalStrategy.Min) {
       // TODO: Add support for minimum dispersal (keep all vdev members on same chassis)
     } else if (dispersal === EnclosureDispersalStrategy.Max) {
       // TODO: Add support for maximum dispersal (spread out all vdev members across all enclosures. eg. every disk on
       //  a different enclosure)
     } else if (dispersal === EnclosureDispersalStrategy.Default) {
-      populated = this.defaultDispersal(mockEnclosures);
+      populated = this.defaultDispersal(mockEnclosures, disks);
     }
+
     return populated;
   }
 
-  private defaultDispersal(mockEnclosures: MockEnclosure[]): Enclosure[] {
+  updateDisks(disks: Disk[], dispersal: EnclosureDispersalStrategy = EnclosureDispersalStrategy.Default): Disk[] {
+    if (!this.mockEnclosures || this.mockEnclosures.length === 0) {
+      console.error('No enclosures to populate. Please create enclosures using MockStorageGenerator.addEnclosures()');
+    }
+
+    if (!disks || disks.length === 0) {
+      console.warn('No disks to populate. Please create enclosures using MockStorageGenerator.addEnclosures()');
+      return disks;
+    }
+
+    const addedDisks = [...disks].filter((disk: Disk) => {
+      const found = this.disks.filter((existingDisk: Disk) => existingDisk.name === disk.name);
+      return found.length === 0;
+    });
+
+    const removedDisks = [...this.disks].filter((disk: Disk) => {
+      const found = disks.filter((existingDisk: Disk) => existingDisk.name === disk.name);
+      return found.length === 0;
+    });
+
+    if (this.disks.length > 0) {
+      let dispersedData: DispersedData;
+
+      if (removedDisks.length > 0) {
+        const removalData = this.removeDisksFromEnclosures(removedDisks);
+        dispersedData = removalData;
+      }
+
+      if (addedDisks.length > 0) {
+        const addedData: Disk[] = this.attachNextAvailableSlot(Object.assign([], addedDisks)).concat(this.disks);
+        dispersedData = this.existingDispersal(this.mockEnclosures, addedData);
+      }
+
+      if (dispersedData) {
+        this.enclosures = dispersedData.enclosures;
+        this.disks = dispersedData.disks;
+
+        return dispersedData.disks;
+      }
+      return this.disks;
+    }
+    const populated = this.populateEnclosures(this.mockEnclosures, dispersal, disks);
+    this.enclosures = populated.enclosures;
+    this.disks = populated.disks;
+
+    return populated.disks;
+  }
+
+  // Initial Dispersal Options
+  private defaultDispersal(mockEnclosures: MockEnclosure[], disks: Disk[]): DispersedData {
+    // Puts disks into slots in series
     let enclosureNumber = 0;
     let slotNumber = 1;
+    const updatedDisks: Disk[] = [];
 
-    this.disks.forEach((disk: StorageDashboardDisk, index: number) => {
+    disks.forEach((disk: Disk) => {
       if (enclosureNumber < mockEnclosures.length) {
         // Update the enclosure data
-        const mockEnclosure = mockEnclosures[enclosureNumber];
-        mockEnclosure.addDiskToSlot(disk.name, slotNumber);
+        // const mockEnclosure = mockEnclosures[enclosureNumber];
+        mockEnclosures[enclosureNumber].addDiskToSlot(disk.name, slotNumber);
 
         // Update the disk data
-        this.disks[index].enclosure = {
-          number: mockEnclosure.data.number,
+        const updatedDisk: Disk = { ...disk }; // Object.assign({}, disk)
+        const enclosureAndSlot: EnclosureAndSlot = {
+          number: mockEnclosures[enclosureNumber].data.number,
           slot: slotNumber,
         };
+        updatedDisk.enclosure = enclosureAndSlot;
+        updatedDisks.push(updatedDisk);
       }
 
       // Set counters...
@@ -656,7 +762,38 @@ export class MockStorageGenerator {
       }
     });
 
-    return mockEnclosures.map((mock: MockEnclosure) => mock.data);
+    return {
+      enclosures: mockEnclosures.map((mock: MockEnclosure) => mock.data),
+      disks: updatedDisks,
+    };
+  }
+
+  private existingDispersal(mockEnclosures: MockEnclosure[], disks: Disk[]): DispersedData {
+    // When working with disks with enclosure data already assigned
+    // eg. UI is pointed at a product that already has enclosure support
+    disks.forEach((disk: Disk) => {
+      if (!disk.enclosure) return;
+
+      const mockEnclosure = mockEnclosures[disk.enclosure.number];
+      mockEnclosure.addDiskToSlot(disk.name, disk.enclosure.slot);
+    });
+
+    return {
+      enclosures: mockEnclosures.map((mock: MockEnclosure) => mock.data),
+      disks,
+    };
+  }
+
+  private attachNextAvailableSlot(disks: Disk[]): Disk[] {
+    const emptySlots = this.getAllEmptySlots();
+    if (disks.length > emptySlots.length) return disks;
+
+    return disks.map((disk: Disk, index: number) => {
+      if (disk.enclosure === null || !disk.enclosure) {
+        disk.enclosure = emptySlots[index];
+      }
+      return disk;
+    });
   }
 
   getEnclosureSlots(enclosureNumber: number): EnclosureElement[] {
@@ -664,5 +801,52 @@ export class MockStorageGenerator {
       return enclosure.number === enclosureNumber;
     });
     return (selectedEnclosure.elements[0] as EnclosureElementsGroup).elements;
+  }
+
+  getEmptySlots(enclosureNumber: number): EnclosureElement[] {
+    return this.getEnclosureSlots(enclosureNumber).filter((element: EnclosureElement) => element.status !== 'OK');
+  }
+
+  getAllEmptySlots(): EnclosureAndSlot[] {
+    let allEmptySlots: EnclosureAndSlot[] = [];
+    this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
+      const emptySlots: EnclosureAndSlot[] = mockEnclosure.getEmptySlots().map((element: EnclosureElement) => {
+        return {
+          number: mockEnclosure.data.number,
+          slot: element.slot,
+        };
+      });
+      allEmptySlots = allEmptySlots.concat(emptySlots);
+    });
+
+    return allEmptySlots;
+  }
+
+  private removeDisksFromEnclosures(removedDisks: Disk[]): DispersedData {
+    let updatedDisks = [...this.disks];
+    removedDisks.forEach((disk: Disk) => {
+      this.removeDiskFromEnclosure(disk);
+      updatedDisks = updatedDisks.filter((oldDisk: Disk) => oldDisk.name !== disk.name);
+    });
+
+    return {
+      enclosures: this.mockEnclosures.map((mock: MockEnclosure) => mock.data),
+      disks: updatedDisks, // this.disks,
+    };
+  }
+
+  private removeDiskFromEnclosure(disk: Disk): MockStorageGenerator {
+    const mockEnclosureIndex: number = this.mockEnclosures.findIndex((mockEnclosure: MockEnclosure) => {
+      return mockEnclosure.data.number === disk.enclosure.number;
+    });
+    this.mockEnclosures[mockEnclosureIndex].removeDiskFromSlot(disk.name, disk.enclosure.slot);
+
+    return this;
+  }
+
+  private resetAllSlots(): void {
+    this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
+      mockEnclosure.resetSlotsToEmpty();
+    });
   }
 }

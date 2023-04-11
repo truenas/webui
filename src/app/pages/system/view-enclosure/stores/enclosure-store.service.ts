@@ -128,14 +128,17 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       (views: EnclosureView[]) => {
         this.patchState({
           enclosureViews: [...views],
-          areDisksLoading: false,
         });
       },
       (error: WebsocketError) => {
-        this.patchState({
-          areDisksLoading: false,
-        });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        if (Object.keys(error).length) {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        } else {
+          this.dialogService.warn(
+            'Error with error',
+            'Yo dawg we heard you like errors so we made your error have an error. (Empty websocket error)',
+          );
+        }
       },
     );
   }
@@ -368,7 +371,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     let result: Pool | null = null;
     pools.forEach((pool: Pool) => {
       if (pool.topology) {
-        // console.error('Pool Data Integrity: pool.topology is null');
         const test = this.findVdevByDisk(disk, pool);
         if (test?.category || test?.vdev) result = pool;
       }

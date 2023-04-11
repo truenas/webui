@@ -1,13 +1,17 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import {
   merge, Observable, of, throwError,
 } from 'rxjs';
 import {
   filter, map, share, switchMap, take, takeWhile, tap,
 } from 'rxjs/operators';
+import { MockConfigLoader } from 'app/core/testing/utils/mock-config-loader.utils';
+import { MockEnclosureConfig, MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -24,10 +28,19 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 })
 export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
+  mockUtils: MockEnclosureUtils;
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
-  ) { }
+    protected http: HttpClient,
+  ) {
+    if (environment.mockConfig) {
+      const loader = new MockConfigLoader(this.http);
+      loader.getMockConfig().subscribe((response: MockEnclosureConfig) => {
+        this.mockUtils = new MockEnclosureUtils(response);
+      });
+    }
+  }
 
   private get ws$(): Observable<unknown> {
     return this.wsManager.websocket$;
@@ -48,8 +61,20 @@ export class WebSocketService {
           console.error('Error: ', data.error);
           return throwError(() => data.error);
         }
+
+        // Mock Data Test
+        if (
+          !environment.production
+          && environment.mockConfig !== '$MOCKCONFIG$'
+          && data.msg === IncomingApiMessageType.Result
+        ) {
+          const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
+          return of(mockResultMessage);
+        }
         return of(data);
       }),
+      // END Mock Data Test
+
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
     );

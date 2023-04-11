@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
@@ -44,8 +45,8 @@ export function mockWebsocket(
   return [
     {
       provide: WebSocketService,
-      useFactory: (router: Router, wsManager: WebsocketConnectionService) => {
-        const mockWebsocketService = new MockWebsocketService(router, wsManager);
+      useFactory: (router: Router, wsManager: WebsocketConnectionService, http: HttpClient) => {
+        const mockWebsocketService = new MockWebsocketService(router, wsManager, http);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
