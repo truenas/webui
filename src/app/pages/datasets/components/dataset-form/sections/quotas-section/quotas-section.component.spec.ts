@@ -58,7 +58,6 @@ describe('QuotasSectionComponent', () => {
     await inheritCheckboxes[3].setValue(false);
 
     await currentFieldset.fillForm({
-      'Quota for this dataset': '2G',
       'Reserved space for this dataset': '2G',
       'Quota warning alert at, %': 90,
     });
@@ -72,7 +71,6 @@ describe('QuotasSectionComponent', () => {
     expect(spectator.component.getPayload()).toEqual({
       quota: 3 * GiB,
       quota_critical: 60,
-      refquota: 2 * GiB,
       refquota_warning: 90,
       refreservation: 2 * GiB,
       reservation: 2 * GiB,

@@ -60,12 +60,14 @@ export class QuotasSectionComponent implements OnInit {
 
   getPayload(): Partial<DatasetCreate> {
     const values = this.form.value;
-    const payload: Partial<DatasetCreate> = _.pick(values, [
-      'refquota',
-      'refreservation',
-      'quota',
-      'reservation',
-    ]);
+    const payload: Partial<DatasetCreate> = _.pickBy(values, (value, key) => {
+      return [
+        'refquota',
+        'refreservation',
+        'quota',
+        'reservation',
+      ].includes(key) && value !== null;
+    });
 
     if (!values.refquota_warning_inherit) {
       payload.refquota_warning = values.refquota_warning;

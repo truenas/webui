@@ -41,16 +41,18 @@ export class DatasetDetailsPanelComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
         const dataset = value.response as Dataset;
-        if ((value.modalType === DatasetFormComponent || value.modalType === ZvolFormComponent) && dataset?.id) {
-          this.datasetStore.datasetUpdated();
-          this.router.navigate(['/datasets', dataset.id]).then(() => {
-            this.snackbar.success(
-              value.modalType === ZvolFormComponent
-                ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
-                : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
-            );
-          });
+        if ((value.modalType !== DatasetFormComponent && value.modalType !== ZvolFormComponent) || !dataset?.id) {
+          return;
         }
+
+        this.datasetStore.datasetUpdated();
+        this.router.navigate(['/datasets', dataset.id]).then(() => {
+          this.snackbar.success(
+            value.modalType === ZvolFormComponent
+              ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
+              : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
+          );
+        });
       });
   }
 

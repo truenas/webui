@@ -9,7 +9,7 @@ describe('datasetNameTooLong', () => {
 
     expect(validator(new FormControl(''))).toBeNull();
     expect(validator(new FormControl('a'))).toBeNull();
-    expect(validator(new FormControl('a'.repeat(maxDatasetPath - parentPath.length)))).toEqual({
+    expect(validator(new FormControl('a'.repeat(maxDatasetPath - parentPath.length - 1)))).toEqual({
       maxlength: {
         requiredLength: 191,
       },

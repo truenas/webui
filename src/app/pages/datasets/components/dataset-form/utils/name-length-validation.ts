@@ -10,7 +10,7 @@ export function datasetNameTooLong(parentPath: string): ValidatorFn {
       return null;
     }
 
-    if (parentPath.length + control.value.length >= maxLengthAllowed) {
+    if (parentPath.length + 1 + control.value.length >= maxLengthAllowed) {
       return {
         [DefaultValidationError.MaxLength]: { requiredLength: maxLengthAllowed - parentPath.length },
       };
