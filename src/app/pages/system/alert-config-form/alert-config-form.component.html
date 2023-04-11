@@ -4,12 +4,12 @@
     <div *ngIf="selectedCategory"> {{ 'Category' | translate }}: </div>
     <div class="categories">
       <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
-        {{ selectedCategory.title }}
+        {{ selectedCategory?.title }}
         <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
       </button>
       <mat-menu #categoriesMenu="matMenu">
         <button
-          *ngFor="let category of categories; let i = index"
+          *ngFor="let category of categories; let i = index; trackBy: trackById"
           mat-menu-item
           [ixTest]="['category', category.id]"
           (click)="onCategoryChanged(category)"

@@ -41,7 +41,7 @@ export class ChartBulkUpgradeComponent {
   optionsMap = new Map<string, Observable<Option[]>>();
   upgradeSummaryMap = new Map<string, UpgradeSummary>();
 
-  readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
+  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
   readonly imagePlaceholder = appImagePlaceholder;
 
   constructor(
