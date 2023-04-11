@@ -27,12 +27,22 @@ export class FormatDateTimePipe implements PipeTransform {
       this.timezone = timezone;
       this.cdr.markForCheck();
     });
-    if (this.window.localStorage.dateFormat) {
-      this.dateFormat = this.window.localStorage.getItem('dateFormat');
-    }
-    if (this.window.localStorage.timeFormat) {
-      this.timeFormat = this.window.localStorage.getItem('timeFormat');
-    }
+    ['dateFormat', 'timeFormat'].forEach((value) => {
+      if (this.window.localStorage[value]) {
+        const storedFormat = this.window.localStorage.getItem(value);
+        try {
+          if (format(new Date(), storedFormat)) {
+            if (value === 'dateFormat') {
+              this.dateFormat = storedFormat;
+            } else {
+              this.timeFormat = storedFormat;
+            }
+          }
+        } catch {
+          this.window.localStorage.removeItem(value);
+        }
+      }
+    });
   }
 
   transform(value: Date | number, timezone?: string, dateFormat?: string, timeFormat?: string): string {
