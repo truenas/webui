@@ -218,6 +218,15 @@ export class CreateDataWizardStepComponent implements OnInit {
 
   resetLayout(): void {
     this.poolManagerStore.resetLayout();
+    if (!this.selectedWidth || !this.selectedDiskType || !this.selectedVdevsCount || !this.selectedSize) {
+      return;
+    }
+    this.poolManagerStore.createDataVdevsAutomatically({
+      width: this.selectedWidth,
+      type: this.selectedDiskType,
+      count: this.selectedVdevsCount,
+      size: +this.selectedSize,
+    });
   }
 
   getVdevsCountString(): string {
