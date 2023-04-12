@@ -26,18 +26,22 @@
     [required]="true"
     [options]="retentionPolicyOptions$"
   ></ix-radio-group>
-  <ix-input
-    *ngIf="form.controls.lifetime_value.enabled"
-    formControlName="lifetime_value"
-    type="number"
-    [required]="true"
-  ></ix-input>
-  <ix-select
-    *ngIf="form.controls.lifetime_unit.enabled"
-    formControlName="lifetime_unit"
-    [options]="lifetimeUnitOptions$"
-    [required]="true"
-  ></ix-select>
+  <div class="lifetime">
+    <ix-input
+      *ngIf="form.controls.lifetime_value.enabled"
+      class="value"
+      formControlName="lifetime_value"
+      type="number"
+      [required]="true"
+    ></ix-input>
+    <ix-select
+      *ngIf="form.controls.lifetime_unit.enabled"
+      class="unit"
+      formControlName="lifetime_unit"
+      [options]="lifetimeUnitOptions$"
+      [required]="true"
+    ></ix-select>
+  </div>
 
   <ix-form-actions>
     <button

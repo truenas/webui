@@ -14,6 +14,7 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
 @Component({
   selector: 'ix-replication-when',
   templateUrl: './replication-when.component.html',
+  styleUrls: ['./replication-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationWhenComponent implements OnInit, SummaryProvider {
