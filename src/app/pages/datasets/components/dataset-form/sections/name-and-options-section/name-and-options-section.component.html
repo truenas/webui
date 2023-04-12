@@ -1,0 +1,50 @@
+<ix-fieldset
+  [title]="'Name and Options' | translate"
+  [formGroup]="form"
+>
+  <ix-textarea
+    *ngIf="parent && !existing"
+    formControlName="parent"
+    [rows]="3"
+    [label]="'Parent Path' | translate"
+    [tooltip]="helptext.dataset_parent_name_tooltip | translate"
+  ></ix-textarea>
+
+  <ix-textarea
+    formControlName="name"
+    [rows]="3"
+    [required]="true"
+    [label]="'Name' | translate"
+    [tooltip]="helptext.dataset_form_name_tooltip | translate"
+  ></ix-textarea>
+
+  <ix-input
+    formControlName="comments"
+    [label]="'Comments' | translate"
+    [tooltip]="helptext.dataset_form_comments_tooltip | translate"
+  ></ix-input>
+
+  <ix-select
+    formControlName="sync"
+    [required]="true"
+    [options]="syncOptions$"
+    [label]="'Sync' | translate"
+    [tooltip]="helptext.dataset_form_sync_tooltip | translate"
+  ></ix-select>
+
+  <ix-select
+    formControlName="compression"
+    [required]="true"
+    [options]="compressionOptions$"
+    [label]="'Compression Level' | translate"
+    [tooltip]="helptext.dataset_form_compression_tooltip | translate"
+  ></ix-select>
+
+  <ix-select
+    formControlName="atime"
+    [required]="true"
+    [options]="atimeOptions$"
+    [label]="'Enable Atime' | translate"
+    [tooltip]="helptext.dataset_form_atime_tooltip | translate"
+  ></ix-select>
+</ix-fieldset>

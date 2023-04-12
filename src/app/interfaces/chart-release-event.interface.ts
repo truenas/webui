@@ -33,6 +33,13 @@ export interface ChartReleaseEventObject {
   uid: string;
 }
 
+export type ChartScaleQueryParams = [
+  name: string,
+  params?: {
+    replica_count: number;
+  },
+];
+
 export interface ChartScaleResult {
   before_scale: number;
   after_scale: number;

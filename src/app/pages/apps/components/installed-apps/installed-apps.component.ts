@@ -8,16 +8,21 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
+import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
+import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -33,7 +38,25 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   selectedApp: ChartRelease;
   isLoading = false;
   filterString = '';
-  title = '';
+  appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
+
+  entityEmptyConf: EmptyConfig = {
+    type: EmptyType.Loading,
+    large: false,
+    title: helptext.message.loading,
+  };
+
+  emptySearchResultsConf: EmptyConfig = {
+    type: EmptyType.NoSearchResults,
+    title: helptext.message.no_search_result,
+    button: {
+      label: this.translate.instant('Reset Search'),
+      action: () => {
+        this.resetSearch();
+        this.cdr.markForCheck();
+      },
+    },
+  };
 
   constructor(
     private appService: ApplicationsService,
@@ -46,6 +69,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {
     this.router.events
       .pipe(
@@ -66,18 +90,18 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.dataSource.every((app) => app.selected);
   }
 
-  get isSomethingChecked(): boolean {
+  get hasCheckedApps(): boolean {
     return this.checkedAppsNames.length > 0;
   }
 
-  get hasUpdates(): boolean {
-    if (this.dataSource.length === 0) {
-      return false;
-    }
-
+  get hasSelectionUpdates(): number {
     return this.checkedAppsNames
       .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.update_available || app.container_images_update_available);
+      .filter((app) => app.update_available || app.container_images_update_available).length;
+  }
+
+  get hasUpdates(): boolean {
+    return this.dataSource.some((app) => app.update_available || app.container_images_update_available);
   }
 
   get checkedAppsNames(): string[] {
@@ -90,8 +114,26 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return selectedItems;
   }
 
+  get isBulkStartDisabled(): boolean {
+    return this.dataSource.every((app) => [
+      ChartReleaseStatus.Active,
+      ChartReleaseStatus.Deploying,
+    ].includes(app.status));
+  }
+
+  get isBulkStopDisabled(): boolean {
+    return this.dataSource.every((app) => ChartReleaseStatus.Stopped === app.status);
+  }
+
+  get isBulkUpgradeDisabled(): boolean {
+    return !this.checkedAppsNames
+      .map((name) => this.dataSource.find((app) => app.name === name))
+      .some((app) => app.update_available || app.container_images_update_available);
+  }
+
   ngOnInit(): void {
     this.listenForRouteChanges();
+    this.listenForSlideFormClosed();
     this.updateChartReleases();
   }
 
@@ -109,31 +151,40 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   selectApp(app: ChartRelease): void {
     this.selectedApp = app;
-    this.cdr.markForCheck();
   }
 
   showLoadStatus(type: EmptyType): void {
-    let title = '';
-
     switch (type) {
       case EmptyType.Loading:
-        title = helptext.message.loading;
+        this.entityEmptyConf.title = helptext.message.loading;
+        this.entityEmptyConf.message = undefined;
+        this.entityEmptyConf.button = undefined;
         break;
       case EmptyType.FirstUse:
-        title = helptext.message.not_configured;
-        break;
-      case EmptyType.NoSearchResults:
-        title = helptext.message.no_search_result;
+        this.entityEmptyConf.title = helptext.message.not_configured;
+        this.entityEmptyConf.message = undefined;
+        this.entityEmptyConf.button = undefined;
+        // TODO: Button to check available apps or open advanced settings?
         break;
       case EmptyType.NoPageData:
-        title = helptext.message.no_installed;
+        this.entityEmptyConf.title = helptext.message.no_installed;
+        this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
+        this.entityEmptyConf.button = {
+          label: this.translate.instant('Check Available Apps'),
+          action: () => this.redirectToAvailableApps(),
+        };
         break;
       case EmptyType.Errors:
-        title = helptext.message.not_running;
+        this.entityEmptyConf.title = helptext.message.not_running;
+        this.entityEmptyConf.message = undefined;
+        this.entityEmptyConf.button = {
+          label: this.translate.instant('Open Settings'),
+          action: () => this.openAdvancedSettings(),
+        };
         break;
     }
 
-    this.title = title;
+    this.entityEmptyConf.type = type;
   }
 
   private listenForRouteChanges(): void {
@@ -144,11 +195,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         untilDestroyed(this),
       )
       .subscribe((appId) => {
-        const app = this.dataSource.find((chart) => chart.id === appId);
-        if (app) {
-          this.selectApp(app);
-          this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-        }
+        this.selectAppOnLoad(appId);
       });
   }
 
@@ -156,6 +203,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     this.showLoadStatus(EmptyType.Loading);
     this.cdr.markForCheck();
+
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config.pool) {
         this.dataSource = [];
@@ -178,6 +226,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
                     this.refreshStatus(app.name);
                   }
                 });
+                this.selectAppOnLoad();
               } else {
                 this.dataSource = [];
                 this.showLoadStatus(EmptyType.NoPageData);
@@ -191,50 +240,62 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  syncAll(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.refreshing },
-    });
-    dialogRef.componentInstance.setCall('catalog.sync_all');
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.updateChartReleases();
-    });
-  }
-
   refreshStatus(name: string): void {
-    this.appService.getChartReleases(name).pipe(filter(Boolean), untilDestroyed(this)).subscribe((releases) => {
-      const item = this.dataSource.find((app) => app.name === name);
-      if (item) {
-        item.status = releases[0].status;
-        this.cdr.markForCheck();
-        if (item.status === ChartReleaseStatus.Deploying) {
-          setTimeout(() => this.refreshStatus(name), 3000);
+    this.appService.getChartReleases(name)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((releases) => {
+        const item = this.dataSource.find((app) => app.name === name);
+        if (item) {
+          item.status = releases[0].status;
+          this.cdr.markForCheck();
+          if (item.status === ChartReleaseStatus.Deploying) {
+            setTimeout(() => {
+              this.refreshStatus(name);
+              this.cdr.markForCheck();
+            }, 3000);
+          }
         }
-      }
-    });
+      });
   }
 
   start(name: string): void {
-    this.changeReplicaCountJob(name, helptext.starting, 1);
+    this.appService.startApplication(name)
+      .pipe(untilDestroyed(this))
+      .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+        this.appJobs.set(name, job);
+        if (job.state === JobState.Success) {
+          const startedApp = this.dataSource.find((app) => app.name === name);
+          if (startedApp) {
+            startedApp.status = ChartReleaseStatus.Active;
+          }
+        }
+        this.cdr.markForCheck();
+      });
   }
 
   stop(name: string): void {
-    this.changeReplicaCountJob(name, helptext.stopping, 0);
+    this.appService.stopApplication(name)
+      .pipe(untilDestroyed(this))
+      .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+        this.appJobs.set(name, job);
+        if (job.state === JobState.Success) {
+          const stoppedApp = this.dataSource.find((app) => app.name === name);
+          if (stoppedApp) {
+            stoppedApp.status = ChartReleaseStatus.Stopped;
+          }
+        }
+        this.cdr.markForCheck();
+      });
   }
 
-  changeReplicaCountJob(chartName: string, title: string, newReplicaCount: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title } });
-    dialogRef.componentInstance.setCall('chart.release.scale', [chartName, { replica_count: newReplicaCount }]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshStatus(chartName);
-      dialogRef.close();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseJobError(error));
-    });
+  openStatusDialog(name: string): void {
+    if (!this.appJobs.has(name)) {
+      return;
+    }
+
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: name } });
+    dialogRef.componentInstance.jobId = this.appJobs.get(name).id;
+    dialogRef.componentInstance.wsshow();
   }
 
   onBulkStart(): void {
@@ -290,5 +351,38 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         },
       );
     });
+  }
+
+  private selectAppOnLoad(appId?: string): void {
+    if (!this.dataSource.length) {
+      return;
+    }
+
+    const app = this.dataSource.find((chart) => chart.id === appId);
+    if (app) {
+      this.selectApp(app);
+    } else {
+      this.selectApp(this.dataSource[0]);
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private listenForSlideFormClosed(): void {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateChartReleases();
+    });
+  }
+
+  private openAdvancedSettings(): void {
+    this.slideInService.open(KubernetesSettingsComponent);
+  }
+
+  private resetSearch(): void {
+    this.onSearch('');
+  }
+
+  private redirectToAvailableApps(): void {
+    this.router.navigate(['/apps', 'available']);
   }
 }

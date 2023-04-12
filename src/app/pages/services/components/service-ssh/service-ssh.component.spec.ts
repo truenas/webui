@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
+import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -14,6 +15,15 @@ import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/s
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+const fakeGroupDataSource = [{
+  id: 1,
+  gid: 1000,
+  group: 'dummy-group',
+  builtin: false,
+  smb: true,
+  users: [41],
+}] as Group[];
 
 describe('ServiceSshComponent', () => {
   let spectator: Spectator<ServiceSshComponent>;
@@ -27,9 +37,10 @@ describe('ServiceSshComponent', () => {
     ],
     providers: [
       mockWebsocket([
+        mockCall('group.query', fakeGroupDataSource),
         mockCall('ssh.config', {
           tcpport: 22,
-          rootlogin: true,
+          password_login_groups: ['dummy-group'],
           passwordauth: true,
           kerberosauth: false,
           tcpfwd: false,
@@ -66,7 +77,7 @@ describe('ServiceSshComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('ssh.config');
     expect(values).toEqual({
       'TCP Port': '22',
-      'Log in as Root with Password': true,
+      'Password Login Groups': ['dummy-group'],
       'Allow Password Authentication': true,
       'Allow Kerberos Authentication': false,
       'Allow TCP Port Forwarding': false,
@@ -82,11 +93,10 @@ describe('ServiceSshComponent', () => {
 
     expect(values).toEqual({
       'TCP Port': '22',
-      'Log in as Root with Password': true,
       'Allow Password Authentication': true,
       'Allow Kerberos Authentication': false,
       'Allow TCP Port Forwarding': false,
-
+      'Password Login Groups': ['dummy-group'],
       'Bind Interfaces': ['enp0s3'],
       'Compress Connections': true,
       'SFTP Log Level': 'Error',
@@ -100,8 +110,8 @@ describe('ServiceSshComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'TCP Port': 23,
-      'Log in as Root with Password': false,
       'Allow Password Authentication': false,
+      'Password Login Groups': ['dummy-group'],
       'Allow Kerberos Authentication': true,
       'Allow TCP Port Forwarding': true,
     });
@@ -112,7 +122,7 @@ describe('ServiceSshComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('ssh.update', [{
       // New basic options
       tcpport: 23,
-      rootlogin: false,
+      password_login_groups: ['dummy-group'],
       passwordauth: false,
       kerberosauth: true,
       tcpfwd: true,
@@ -134,6 +144,7 @@ describe('ServiceSshComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Bind Interfaces': ['enp0s3', 'macvtap0'],
+      'Password Login Groups': ['dummy-group'],
       'Compress Connections': false,
       'SFTP Log Level': 'Info',
       'SFTP Log Facility': 'Local 0',
@@ -148,7 +159,7 @@ describe('ServiceSshComponent', () => {
       // Old basic options
       kerberosauth: false,
       passwordauth: true,
-      rootlogin: true,
+      password_login_groups: ['dummy-group'],
       tcpfwd: false,
       tcpport: 22,
 
