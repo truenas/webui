@@ -1,0 +1,73 @@
+<ix-fieldset [title]="'Encryption Options' | translate" [formGroup]="form">
+  <ix-checkbox
+    formControlName="inherit_encryption"
+    [label]="inheritEncryptionLabel"
+    [tooltip]="helptext.dataset_form_encryption.inherit_checkbox_tooltip | translate"
+  ></ix-checkbox>
+
+  <ng-container *ngIf="!isInheritingEncryption">
+    <ix-checkbox
+      formControlName="encryption"
+      [label]="'Encryption' | translate"
+      [tooltip]="helptext.dataset_form_encryption.encryption_checkbox_tooltip | translate"
+    ></ix-checkbox>
+
+    <ng-container *ngIf="hasEncryption">
+      <ix-select
+        *ngIf="!parentHasPassphrase"
+        formControlName="encryption_type"
+        [label]="'Encryption Type' | translate"
+        [required]="true"
+        [options]="encryptionTypeOptions$"
+        [tooltip]="helptext.dataset_form_encryption.encryption_type_tooltip | translate"
+      ></ix-select>
+
+      <ix-checkbox
+        *ngIf="!isPassphrase"
+        formControlName="generate_key"
+        [label]="'Generate Key' | translate"
+        [tooltip]="helptext.dataset_form_encryption.generate_key_checkbox_tooltip | translate"
+      ></ix-checkbox>
+
+      <ix-textarea
+        *ngIf="!isPassphrase && !form.value.generate_key"
+        formControlName="key"
+        [label]="'Key' | translate"
+        [required]="true"
+        [tooltip]="helptext.dataset_form_encryption.key_tooltip | translate"
+      ></ix-textarea>
+
+      <ix-input
+        *ngIf="isPassphrase"
+        formControlName="passphrase"
+        type="password"
+        [label]="'Passphrase' | translate"
+        [tooltip]="helptext.dataset_form_encryption.passphrase_tooltip | translate"
+      ></ix-input>
+
+      <ix-input
+        *ngIf="isPassphrase"
+        formControlName="confirm_passphrase"
+        type="password"
+        [label]="'Confirm Passphrase' | translate"
+        [tooltip]="helptext.dataset_form_encryption.confirm_passphrase_placeholder | translate"
+      ></ix-input>
+
+      <ix-input
+        *ngIf="isPassphrase"
+        formControlName="pbkdf2iters"
+        type="number"
+        label="pbkdf2iters"
+        [tooltip]="helptext.dataset_form_encryption.pbkdf2iters_tooltip | translate"
+      ></ix-input>
+
+      <ix-select
+        formControlName="algorithm"
+        [label]="'Algorithm' | translate"
+        [required]="true"
+        [options]="algorithmOptions$"
+        [tooltip]="helptext.dataset_form_encryption.algorithm_tooltip | translate"
+      ></ix-select>
+    </ng-container>
+  </ng-container>
+</ix-fieldset>

@@ -11,6 +11,7 @@
 ></ix-fake-progress-bar>
 
 <ix-available-apps-header
+  [appliedFilters]="appliedFilters"
   (filters)="changeFilters($event)"
   (search)="changeSearchQuery($event)"
 ></ix-available-apps-header>
@@ -44,7 +45,7 @@
         <p
           *ngIf="appSection.totalApps > sliceAmount"
           class="view-all"
-          (click)="appSection.fetchMore()"
+          (click)="applyCategoryFilter(appSection.category)"
         >
           <b>
             {{ 'View All' | translate }} {{ appSection.title | translate }}

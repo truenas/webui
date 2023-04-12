@@ -18,7 +18,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { DialogService, ModalService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const dataset = {
@@ -43,12 +43,8 @@ const zvol = {
 describe('DatasetDetailsCardComponent', () => {
   let spectator: Spectator<DatasetDetailsCardComponent>;
   let loader: HarnessLoader;
-  const fakeModalRef = {
-    setPk: jest.fn(),
-    setVolId: jest.fn(),
-    setTitle: jest.fn(),
-  };
   const fakeSlideInRef = {
+    setForEdit: jest.fn(),
     zvolFormInit: jest.fn(),
   };
   const createComponent = createComponentFactory({
@@ -64,10 +60,6 @@ describe('DatasetDetailsCardComponent', () => {
       mockProvider(DatasetTreeStore, {
         datasetUpdated: jest.fn(),
         selectedParentDataset$: of({ id: 'pool' }),
-      }),
-      mockProvider(ModalService, {
-        openInSlideIn: jest.fn(() => fakeModalRef),
-        onClose$: of(),
       }),
       mockProvider(MatSnackBar),
       mockProvider(IxSlideInService, {
@@ -131,10 +123,8 @@ describe('DatasetDetailsCardComponent', () => {
       const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
       await editButton.click();
 
-      expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(DatasetFormComponent, dataset.id);
-      expect(fakeModalRef.setPk).toHaveBeenCalledWith('pool/child');
-      expect(fakeModalRef.setVolId).toHaveBeenCalledWith('pool');
-      expect(fakeModalRef.setTitle).toHaveBeenCalledWith('Edit Dataset');
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetFormComponent, { wide: true });
+      expect(fakeSlideInRef.setForEdit).toHaveBeenCalledWith('pool/child');
     });
 
     it('opens delete dataset dialog when Delete button is clicked', async () => {

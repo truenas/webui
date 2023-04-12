@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   VmBootloader,
   VmDisplayType,
@@ -14,6 +15,9 @@ import {
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import {
+  forbiddenAsyncValues,
+} from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -26,8 +30,14 @@ export class OsStepComponent implements SummaryProvider {
   form = this.formBuilder.group({
     os: [null as VmOs],
     hyperv_enlightenments: [false],
-    // TODO: Add validator to ban name in use
-    name: ['', [Validators.required, Validators.pattern(vmNamePattern)]],
+    name: ['',
+      [Validators.required, Validators.pattern(vmNamePattern)],
+      forbiddenAsyncValues(
+        this.ws.call('vm.query').pipe(
+          map((vms) => vms.map((vm) => vm.name)),
+        ),
+      ),
+    ],
     description: [''],
     time: [VmTime.Local],
     bootloader: [VmBootloader.Uefi],
