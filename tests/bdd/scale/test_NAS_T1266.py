@@ -70,7 +70,7 @@ def click_the_confirm_checkbox_and_click_delete(driver):
     assert wait_on_element(driver, 10, xpaths.button.delete, 'clickable')
     driver.find_element_by_xpath(xpaths.button.delete).click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Deleting")]')
-    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Deleteing")]')
+    assert wait_on_element_disappear(driver, 25, '//*[contains(.,"Deleteing")]')
 
 
 @then('verify that the CSR was deleted')

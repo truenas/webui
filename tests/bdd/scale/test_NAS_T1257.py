@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -78,14 +79,9 @@ def click_on_the_power_button_then_restart(driver):
 def wait_for_the_login_ui_to_come_back_and_login(driver, root_password):
     """wait for the login UI to come back and login."""
     assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
-    time.sleep(5)
+    time.sleep(10)
     assert wait_on_element(driver, 300, xpaths.login.user_Input)
-    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
-    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-    assert wait_on_element(driver, 5, xpaths.login.signin_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
+    rsc.Login(driver, 'root', root_password)
 
 
 @then('on the Dashboard click on Systems Settings then Services')

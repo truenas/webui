@@ -121,6 +121,7 @@ def License_Agrement(driver):
 
 
 def Login(driver, user, password):
+    time.sleep(1)
     driver.find_element_by_xpath(xpaths.login.user_Input).clear()
     driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
     driver.find_element_by_xpath(xpaths.login.password_Input).clear()
