@@ -12,6 +12,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
@@ -197,12 +198,16 @@ export class ServicesComponent implements OnInit, AfterViewInit {
           );
         }
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
         if (rpc === 'service.stop') {
           message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
         }
-        this.dialog.errorReport(message, error.reason, error.trace.formatted);
+        this.dialog.error({
+          title: message,
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        });
         this.serviceLoadingMap.set(service.service, false);
         this.cdr.markForCheck();
       },

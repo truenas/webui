@@ -13,12 +13,14 @@ import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -37,6 +39,7 @@ export class DashboardPoolComponent {
   constructor(
     private matDialog: MatDialog,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private ws: WebSocketService,
@@ -80,9 +83,9 @@ export class DashboardPoolComponent {
           );
           this.store.loadDashboard();
         }),
-        catchError((error) => {
+        catchError((error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           return EMPTY;
         }),
         untilDestroyed(this),
@@ -107,9 +110,9 @@ export class DashboardPoolComponent {
         );
         this.store.loadDashboard();
       }),
-      catchError((error) => {
+      catchError((error: WebsocketError) => {
         this.loader.close();
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

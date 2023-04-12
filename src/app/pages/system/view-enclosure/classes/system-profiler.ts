@@ -21,7 +21,7 @@ export enum EnclosureRelation {
 export interface EnclosureDisk extends Disk {
   vdev: VDevMetadata;
   stats: TopologyItemStats;
-  status: string;
+  status: string; // Taken from TopologyDisk type
 }
 
 export interface EnclosureMetadata {

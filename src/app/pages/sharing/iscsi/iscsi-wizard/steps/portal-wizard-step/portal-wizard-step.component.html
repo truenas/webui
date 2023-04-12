@@ -1,0 +1,71 @@
+<ng-container [formGroup]="form">
+  <ix-select
+    formControlName="portal"
+    [label]="helptextSharingIscsi.portal_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.portal_tooltip | translate"
+    [options]="portalOptions$"
+    [required]="true"
+  ></ix-select>
+  <ng-container *ngIf="isNewPortal">
+    <ix-select
+      formControlName="discovery_authmethod"
+      [label]="helptextSharingIscsi.portal_form_placeholder_discovery_authmethod | translate"
+      [tooltip]="helptextSharingIscsi.portal_form_tooltip_discovery_authmethod | translate"
+      [options]="authmethodOptions$"
+      [required]="true"
+    ></ix-select>
+    <ix-select
+      formControlName="discovery_authgroup"
+      [label]="helptextSharingIscsi.portal_form_placeholder_discovery_authgroup | translate"
+      [tooltip]="helptextSharingIscsi.portal_form_tooltip_discovery_authgroup | translate"
+      [options]="authgroupOptions$"
+    ></ix-select>
+    <ng-container *ngIf="isNewAuthgroup">
+      <ix-input
+        formControlName="tag"
+        type="number"
+        [label]="helptextSharingIscsi.authaccess_placeholder_tag | translate"
+        [tooltip]="helptextSharingIscsi.authaccess_tooltip_tag | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        formControlName="user"
+        [label]="helptextSharingIscsi.authaccess_placeholder_user | translate"
+        [tooltip]="helptextSharingIscsi.authaccess_tooltip_user | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        formControlName="secret"
+        type="password"
+        [label]="helptextSharingIscsi.authaccess_placeholder_secret | translate"
+        [tooltip]="helptextSharingIscsi.authaccess_tooltip_secret | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        formControlName="secret_confirm"
+        type="password"
+        [label]="helptextSharingIscsi.authaccess_placeholder_secret_confirm | translate"
+        [required]="true"
+      ></ix-input>
+    </ng-container>
+    <ix-list
+      formArrayName="listen"
+      [empty]="form.controls.listen.controls.length === 0"
+      [label]="helptextSharingIscsi.portal_form_placeholder_ip | translate"
+      [tooltip]="helptextSharingIscsi.portal_form_tooltip_ip | translate"
+      (add)="addAddress()"
+    >
+      <ix-list-item
+        *ngFor="let network of form.controls.listen.controls; let i = index"
+        (delete)="removeAddress(i)"
+      >
+        <ix-select
+          [formControlName]="i"
+          [label]="helptextSharingIscsi.portal_form_placeholder_ip  | translate"
+          [options]="addressOptions$"
+          [required]="true"
+        ></ix-select>
+      </ix-list-item>
+    </ix-list>
+  </ng-container>
+</ng-container>

@@ -38,7 +38,7 @@ module.exports = {
         "sonarjs",
       ],
       "rules": {
-        // TODO: Conflicts with ngx-translate-extract
+        // Conflicts with ngx-translate-extract
         "prefer-template": "off",
 
         // Consciously altered
@@ -236,6 +236,7 @@ module.exports = {
           extendDefaults: true,
           types: {
             UntypedFormBuilder: 'Prefer normal typed FormBuilder.',
+            SimpleChanges: 'Prefer typed IxSimpleChanges<this>.',
           }
         }],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],

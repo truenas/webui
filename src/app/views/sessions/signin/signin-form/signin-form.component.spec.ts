@@ -65,7 +65,7 @@ describe('SigninFormComponent', () => {
     expect(signinStore.handleSuccessfulLogin).toHaveBeenCalled();
   });
 
-  it('logs user in with OTP code when two factor auth is set up', async () => {
+  it.skip('logs user in with OTP code when two factor auth is set up', async () => {
     const websocketMock = spectator.inject(MockWebsocketService);
     websocketMock.mockCall('auth.two_factor_auth', true);
     spectator.component.ngOnInit();

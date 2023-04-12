@@ -14,6 +14,7 @@
       margin: 0;
       padding: 15px 0;
       position: sticky;
+      text-transform: capitalize;
       top: -15px;
       z-index: 1;
     }
@@ -27,12 +28,26 @@
       margin: 0;
     }
   }
+
+  .filtered-apps {
+    column-gap: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    margin-bottom: 20px;
+    margin-top: 20px;
+    row-gap: 16px;
+  }
 }
 
 .apps-title {
-  color: var(--fg1);
-  font-size: 1.6em;
-  font-weight: 700;
-  line-height: 1.6em;
-  margin-top: 10px;
+  color: var(--primary-txt);
+  margin-top: 15px;
+}
+
+.loader-bar {
+  height: 2px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  z-index: 10;
 }

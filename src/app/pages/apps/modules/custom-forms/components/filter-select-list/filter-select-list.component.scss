@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  font-size: 12px;
+}
+
+.label {
+  border-bottom: 1px solid var(--lines);
+  padding: 4px;
+}
+
+.options {
+  padding: 4px;
+
+  .item {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+
+    ix-icon {
+      font-size: 15px;
+      height: 30px;
+      width: 30px;
+    }
+  }
+}

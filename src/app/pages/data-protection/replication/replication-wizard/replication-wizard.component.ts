@@ -8,14 +8,18 @@ import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { lastValueFrom, merge } from 'rxjs';
-import { take } from 'rxjs/operators';
+import {
+  EMPTY,
+  lastValueFrom, merge, throwError,
+} from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { MiddlewareError } from 'app/enums/middleware-error.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -30,6 +34,7 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
   FieldConfig,
@@ -42,9 +47,8 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   SshConnectionFormComponent,
@@ -59,6 +63,7 @@ import {
   ReplicationService,
   TaskService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -272,6 +277,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               value: this.defaultNamingSchema,
               parent: this,
               blurStatus: true,
+              required: true,
+              validation: [Validators.required],
               blurEvent: () => {
                 this.getSnapshots();
               },
@@ -283,6 +290,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
+              required: true,
+              validation: [Validators.required],
               blurEvent: () => {
                 this.getSnapshots();
               },
@@ -689,6 +698,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private replicationService: ReplicationService,
+    private errorHandler: ErrorHandlerService,
     private datePipe: DatePipe,
     private entityFormService: EntityFormService,
     private modalService: ModalService,
@@ -856,6 +866,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     });
 
+    this.entityWizard.formArray.get([1]).get('schedule_method').valueChanges
+      .pipe(untilDestroyed(this)).subscribe((value: ScheduleMethod) => {
+        const customSnapshotsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'custom_snapshots' });
+        customSnapshotsFieldConfig.required = value === ScheduleMethod.Once;
+        customSnapshotsFieldConfig.validation = value === ScheduleMethod.Once ? [Validators.required] : undefined;
+      });
+
     this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       this.toggleNamingSchemaOrRegex();
       if (!value) {
@@ -920,7 +937,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials).then(
         (listing) => {
           const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
           const prevErrors = sourceDatasetsFormControl.errors;
@@ -965,7 +982,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials).then(
         (listing) => {
           const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
           const prevErrors = targetDatasetFormControl.errors;
@@ -1141,8 +1158,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 }
               }
             },
-            (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
+            (error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               toStop = true;
               this.rollBack(createdItems);
             },
@@ -1185,6 +1202,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
 
       if (key === 'snapshot') {
+        if (!items[key]?.length) {
+          continue;
+        }
+        for (const task of items[key]) {
+          await this.ws.call('zfs.snapshot.delete', [task.name]).toPromise();
+        }
         continue;
       }
 
@@ -1282,10 +1305,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           }
           this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${snapshotCount.eligible}</b> snapshots found. ${snapexpl}</span>`;
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           this.eligibleSnapshots = 0;
           this.snapshotsCountField.paraText = '';
-          new EntityUtils().handleWsError(this, err);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     } else {
@@ -1388,7 +1411,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         recursive: data.recursive ? data.recursive : false,
       };
       snapshotPromises.push(
-        lastValueFrom(this.ws.call('zfs.snapshot.create', [payload])),
+        lastValueFrom(this.ws.call('zfs.snapshot.create', [payload]).pipe(
+          catchError((error) => {
+            if (error.errname === MiddlewareError.Eexist) {
+              return EMPTY;
+            }
+            return throwError(() => error);
+          }),
+        )),
       );
     }
     return Promise.all(snapshotPromises);

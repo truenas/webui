@@ -4,13 +4,17 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs/operators';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +35,9 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private websocket: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
     private dialogService: DialogService,
   ) { }
@@ -74,8 +80,8 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
         this.isJobCompleted = true;
         this.cdr.markForCheck();
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

@@ -15,10 +15,10 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface DatasetFormValue {
   key?: string;
@@ -70,6 +70,7 @@ export class DatasetUnlockComponent implements OnInit {
     protected aroute: ActivatedRoute,
     private authService: AuthService,
     protected dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private dialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
@@ -172,7 +173,7 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    new EntityUtils().handleWsError(this, error, this.dialogService);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   unlockSubmit(payload: DatasetUnlockParams): void {
@@ -205,7 +206,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,
@@ -265,7 +266,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,

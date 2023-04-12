@@ -17,6 +17,7 @@ export interface AppTableAction<Row = unknown> {
   matTooltip?: string;
   onChanging?: boolean;
   disabled?: boolean;
+  disabledCondition?: (row: Row) => boolean;
   onClick: (row: Row) => void;
 }
 
@@ -86,7 +87,7 @@ export interface AppTableConfig<P = unknown> {
   /**
    * @deprecated Use arrow functions
    */
-  parent: P;
+  parent?: P;
   tableActions?: AppTableHeaderAction[];
   tableFooterActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];

@@ -12,9 +12,9 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
  *   value: "128K"
  * }
  */
-export interface ZfsProperty<T> {
-  parsed: T;
+export interface ZfsProperty<V, P = unknown> {
+  parsed: P;
   rawvalue: string;
-  value: string;
+  value: V;
   source: ZfsPropertySource;
 }

@@ -5,6 +5,7 @@
     formControlName="username"
     prefixIcon="person"
     autocomplete="username"
+    class="username-input"
     [label]="'Username' | translate"
     [required]="true"
   ></ix-input>
@@ -33,6 +34,8 @@
     type="submit"
     color="primary"
     ixTest="log-in"
-    [disabled]="(form.invalid || (isLoading$ | async)) && !wasFormAutofilled"
-  >{{ 'Log In' | translate }}</button>
+    [disabled]="isLoading$ | async"
+  >
+    {{ 'Log In' | translate }}
+  </button>
 </form>

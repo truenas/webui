@@ -10,15 +10,15 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
@@ -30,14 +30,15 @@ import { ModalService } from 'app/services/modal.service';
 export class DatasetDetailsCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
-  OnOff = OnOff;
+
+  readonly OnOff = OnOff;
 
   constructor(
-    private modalService: ModalService,
     private translate: TranslateService,
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
     private slideIn: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     private router: Router,
     private ws: WebSocketService,
     private dialogService: DialogService,
@@ -92,17 +93,15 @@ export class DatasetDetailsCardComponent {
           this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
           this.datasetStore.datasetUpdated();
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
 
   editDataset(): void {
-    const editDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, this.dataset.id);
-    editDatasetComponent.setPk(this.dataset.id);
-    editDatasetComponent.setVolId(this.dataset.pool);
-    editDatasetComponent.setTitle(this.translate.instant('Edit Dataset'));
+    const editForm = this.slideIn.open(DatasetFormComponent, { wide: true });
+    editForm.setForEdit(this.dataset.id);
   }
 
   editZvol(): void {

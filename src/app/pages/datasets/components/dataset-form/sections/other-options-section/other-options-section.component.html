@@ -1,0 +1,118 @@
+<ix-fieldset [title]="'Other Options' | translate" [formGroup]="form">
+  <ix-select
+    *ngIf="hasDeduplication"
+    formControlName="deduplication"
+    [label]="'ZFS Deduplication' | translate"
+    [required]="true"
+    [options]="deduplicationOptions$"
+    [tooltip]="helptext.dataset_form_deduplication_tooltip | translate"
+  ></ix-select>
+
+  <div
+    *ngIf="hasDedupWarning"
+    class="dedup-warning"
+    [innerHtml]="helptext.dataset_form_deduplication_warning | translate"
+  ></div>
+
+  <ix-select
+    formControlName="casesensitivity"
+    [label]="'Case Sensitivity' | translate"
+    [required]="true"
+    [options]="caseSensitivityOptions$"
+    [tooltip]="helptext.dataset_form_casesensitivity_tooltip | translate"
+  ></ix-select>
+
+  <ix-select
+    *ngIf="!existing"
+    formControlName="share_type"
+    [label]="'Share Type' | translate"
+    [options]="shareTypeOptions$"
+    [required]="true"
+    [tooltip]="helptext.dataset_form_share_type_tooltip | translate"
+  ></ix-select>
+
+  <ng-container *ngIf="advancedMode">
+    <ix-select
+      formControlName="checksum"
+      [required]="true"
+      [options]="checksumOptions$"
+      [label]="'Checksum' | translate"
+    ></ix-select>
+
+    <ix-select
+      formControlName="readonly"
+      [label]="'Read-only' | translate"
+      [required]="true"
+      [options]="readonlyOptions$"
+      [tooltip]="helptext.dataset_form_readonly_tooltip | translate"
+    ></ix-select>
+
+    <ix-select
+      formControlName="exec"
+      [label]="'Exec' | translate"
+      [required]="true"
+      [options]="execOptions$"
+      [tooltip]="helptext.dataset_form_exec_tooltip | translate"
+    ></ix-select>
+
+    <ix-select
+      formControlName="snapdir"
+      [label]="'Snapshot Directory' | translate"
+      [tooltip]="helptext.dataset_form_snapdir_tooltip | translate"
+      [options]="snapdirOptions$"
+    ></ix-select>
+
+    <ix-select
+      formControlName="snapdev"
+      [label]="'Snapdev' | translate"
+      [required]="true"
+      [tooltip]="helptext.dataset_form_snapdev_tooltip | translate"
+      [options]="snapdevOptions$"
+    ></ix-select>
+
+    <ix-select
+      formControlName="copies"
+      [label]="'Copies' | translate"
+      [tooltip]="helptext.dataset_form_copies_tooltip | translate"
+      [options]="copiesOptions$"
+    ></ix-select>
+
+    <ix-select
+      formControlName="recordsize"
+      [label]="'Record Size' | translate"
+      [required]="true"
+      [options]="recordsizeOptions$"
+      [tooltip]="helptext.dataset_form_recordsize_tooltip | translate"
+    ></ix-select>
+
+    <div
+      *ngIf="hasRecordsizeWarning"
+      class="recordsize-warning"
+    >
+      {{ helptext.dataset_form_warning | translate: { size: minimumRecommendedRecordsize } }}
+    </div>
+
+    <ix-select
+      formControlName="acltype"
+      [label]="'ACL Type' | translate"
+      [required]="true"
+      [options]="aclTypeOptions$"
+    ></ix-select>
+
+    <ix-select
+      formControlName="aclmode"
+      [label]="'ACL Mode' | translate"
+      [required]="true"
+      [tooltip]="helptext.dataset_form_aclmode_tooltip | translate"
+      [options]="aclModeOptions$"
+    ></ix-select>
+
+    <ix-select
+      formControlName="special_small_block_size"
+      [label]="'Metadata (Special) Small Block Size' | translate"
+      [required]="true"
+      [options]="specialSmallBlockSizeOptions$"
+      [tooltip]="helptext.dataset_form_special_small_blocks_tooltip | translate"
+    ></ix-select>
+  </ng-container>
+</ix-fieldset>

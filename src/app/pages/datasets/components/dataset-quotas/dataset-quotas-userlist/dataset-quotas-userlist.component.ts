@@ -31,6 +31,7 @@ import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dat
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -65,6 +66,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     protected ws: WebSocketService,
     protected storageService: StorageService,
     protected dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
@@ -161,7 +163,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(error);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   createDataSource(quotas: DatasetQuota[] = []): void {

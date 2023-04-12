@@ -7,9 +7,10 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-rsync';
 import { RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, AppLoaderService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -42,9 +43,10 @@ export class RsyncConfigureComponent implements OnInit {
     protected router: Router,
     private loader: AppLoaderService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -56,9 +58,9 @@ export class RsyncConfigureComponent implements OnInit {
         this.loader.close();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -74,7 +76,7 @@ export class RsyncConfigureComponent implements OnInit {
       },
       error: (error) => {
         this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
     });

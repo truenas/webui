@@ -1,7 +1,7 @@
 <p align="center">
  <a href="https://discord.gg/Q3St5fPETd"><img alt="Join Discord" src="https://badgen.net/discord/members/Q3St5fPETd/?icon=discord&label=Join%20the%20TrueNAS%20Community" /></a>
  <a href="https://www.truenas.com/community/"><img alt="Join Forums" src="https://badgen.net/badge/Forums/Post%20Now//purple" /></a> 
- <a href="https://jira.ixsystems.com"><img alt="File Issue" src="https://badgen.net/badge/Jira/File%20Issue//red?icon=jira" /></a>
+ <a href="https://ixsystems.atlassian.net/browse/NAS/"><img alt="File Issue" src="https://badgen.net/badge/Jira/File%20Issue//red?icon=jira" /></a>
 </p>
 
 TrueNAS WebUI
@@ -84,7 +84,7 @@ rm yarn.lock
 yarn cache clean --force
 yarn install
 ```
-This should bring the yarn environment back to a useable state.
+This should bring the yarn environment back to a usable state.
 
 # Translating Text to Other Languages
 

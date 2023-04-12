@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import {
-  forkJoin, lastValueFrom, of, Subject,
+  forkJoin, lastValueFrom, of, Subject, switchMap,
 } from 'rxjs';
 import { catchError, debounceTime, map } from 'rxjs/operators';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
@@ -14,6 +14,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import {
@@ -28,6 +29,7 @@ import {
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
 import { DisksUpdateService } from 'app/services/disks-update.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -102,6 +104,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   protected unusedDisks: UnusedDisk[] = [];
   constructor(
     protected ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     protected router: Router,
     private matDialog: MatDialog,
     protected translate: TranslateService,
@@ -183,8 +186,8 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
           this.smartDiskChoices = disksThatSupportSmart;
           return true;
         }),
-        catchError((error) => {
-          this.dialogService.errorReportMiddleware(error);
+        catchError((error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           return of(false);
         }),
       ),
@@ -195,8 +198,10 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
     disksUpdateTrigger$.pipe(
       debounceTime(50),
+      switchMap(() => this.ws.call('disk.get_unused')),
       untilDestroyed(this),
-    ).subscribe(() => {
+    ).subscribe((unusedDisks) => {
+      this.unusedDisks = unusedDisks;
       entityList.getData();
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);

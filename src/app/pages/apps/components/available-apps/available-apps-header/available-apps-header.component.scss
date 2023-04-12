@@ -4,6 +4,7 @@
   border-bottom: 1px solid var(--lines);
   color: var(--fg1);
   display: flex;
+  justify-content: space-between;
   padding: 0 10px 25px;
 
   @media (max-width: $breakpoint-sm) {
@@ -11,56 +12,65 @@
   }
 }
 
+::ng-deep .mat-mdc-option {
+  text-transform: capitalize;
+}
+
 .search-filters {
+  max-width: 800px;
   width: 100%;
 
-  @media (min-width: $breakpoint-sm) {
-    max-width: 600px;
-  }
-
   .filters-btn {
-    align-items: center;
-    color: var(--primary);
-    cursor: pointer;
     display: flex;
-    font-weight: 600;
     justify-content: flex-end;
   }
 
   .filters-container {
-    display: flex;
-    gap: 18px;
+    .filters {
+      display: flex;
+      gap: 18px;
 
-    ix-select {
-      width: 30%;
-    }
+      .catalogs,
+      .sort {
+        width: 30%;
+      }
 
-    .filter {
-      width: 40%;
-      
-      ix-chips {
-        margin-top: 12px;
+      .сategories {
+        width: 40%;
+
+        ix-chips {
+          margin-top: 0;
+          padding-top: 0;
+        }
+      }
+
+      .info-container {
+        align-items: flex-start;
+        column-gap: 5px;
+        display: flex;
+        font-size: x-small;
       }
     }
 
-    .info-container {
-      align-items: flex-start;
-      column-gap: 5px;
+    .actions {
       display: flex;
-      font-size: x-small;
+      gap: 12px;
     }
   }
 }
 
 .header-numbers {
-  column-gap: 70px;
   display: flex;
-  justify-content: center;
+  gap: 70px;
+  justify-content: flex-end;
+  margin-left: 60px;
   white-space: nowrap;
-  width: 100%;
 
-  @media (min-width: $breakpoint-sm) {
-    margin-left: 20px;
+  @media (max-width: $breakpoint-sm) {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 30px 0;
   }
 }
 

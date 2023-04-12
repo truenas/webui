@@ -4,10 +4,29 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-available-apps-header (filters)="changeFilters($event)"></ix-available-apps-header>
+<ix-fake-progress-bar
+  *ngIf="isLoading"
+  class="loader-bar"
+  [loading]="isLoading"
+></ix-fake-progress-bar>
 
-<div *ngIf="filters.search" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: filters.search } }}</div>
-<div *ngIf="apps.length" class="available-apps-list">
+<ix-available-apps-header
+  [appliedFilters]="appliedFilters"
+  (filters)="changeFilters($event)"
+  (search)="changeSearchQuery($event)"
+></ix-available-apps-header>
+
+<h3 *ngIf="searchQuery" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}</h3>
+<div *ngIf="isFilterOrSearch" class="available-apps-list">
+  <div class="filtered-apps">
+    <ix-app-card
+      *ngFor="let app of filteredApps; trackBy: trackByAppId"
+      [app]="app"
+      [routerLink]="['/apps', 'available', app.name]"
+    ></ix-app-card>
+  </div>
+</div>
+<div *ngIf="!isFilterOrSearch" class="available-apps-list">
   <ng-container *ngFor="let appSection of appSections; trackBy: trackByAppSectionTitle">
     <section *ngIf="appSection.apps$ | async as apps">
       <ng-container *ngIf="apps.length">
@@ -26,7 +45,7 @@
         <p
           *ngIf="appSection.totalApps > sliceAmount"
           class="view-all"
-          (click)="appSection.fetchMore()"
+          (click)="applyCategoryFilter(appSection.category)"
         >
           <b>
             {{ 'View All' | translate }} {{ appSection.title | translate }}

@@ -22,7 +22,7 @@ export interface SshConfig {
   options: string;
   passwordauth: boolean;
   privatekey: string;
-  rootlogin: boolean;
+  password_login_groups: string[];
   sftp_log_facility: SshSftpLogFacility;
   sftp_log_level: SshSftpLogLevel;
   tcpfwd: boolean;
@@ -36,7 +36,7 @@ export interface SshConfigUpdate {
   kerberosauth: boolean;
   options: string;
   passwordauth: boolean;
-  rootlogin: boolean;
+  password_login_groups: string[];
   sftp_log_facility: SshSftpLogFacility;
   sftp_log_level: SshSftpLogLevel;
   tcpfwd: boolean;

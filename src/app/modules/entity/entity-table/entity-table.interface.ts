@@ -38,7 +38,6 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   hasDetails?: boolean;
   rowDetailComponent?: Type<unknown>;
   cardHeaderComponent?: Type<unknown>;
-  asyncView?: boolean;
   wsDelete?: ApiMethod;
   wsMultiDelete?: ApiMethod;
   noAdd?: boolean;

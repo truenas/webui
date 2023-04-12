@@ -8,7 +8,6 @@ import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
@@ -16,6 +15,7 @@ import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-setti
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AppLoaderService, DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -36,6 +36,7 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
     private matDialog: MatDialog,
     private translate: TranslateService,
     private core: CoreService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) { }
@@ -85,7 +86,7 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseJobError(err));
       });
     });
   }

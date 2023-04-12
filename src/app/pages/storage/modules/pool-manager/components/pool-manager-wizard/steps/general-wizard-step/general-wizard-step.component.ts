@@ -3,10 +3,15 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import {
+  map, Observable, of,
+} from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option } from 'app/interfaces/option.interface';
+import {
+  forbiddenAsyncValues,
+} from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -45,6 +50,9 @@ export class GeneralWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
+    this.form.controls.name.addAsyncValidators(forbiddenAsyncValues(poolNames$));
+
     this.form.controls.encryption_standard.disable();
     this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((isEncrypted) => {
       if (isEncrypted) {
