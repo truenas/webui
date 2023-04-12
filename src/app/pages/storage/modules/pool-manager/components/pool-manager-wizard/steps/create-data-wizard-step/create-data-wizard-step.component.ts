@@ -207,9 +207,13 @@ export class CreateDataWizardStepComponent implements OnInit {
           this.poolManagerStore.patchState((state: PoolManagerState) => {
             return {
               ...state,
-              vdevs: manualDiskSelectionState.vdevs,
+              vdevs: !!manualDiskSelectionState.vdevs.data?.length
+                && !!manualDiskSelectionState.vdevs.data.some((vdev) => vdev.disks?.length)
+                ? { ...state.vdevs, data: manualDiskSelectionState.vdevs.data } : { ...state.vdevs, data: [] },
               unusedDisks: manualDiskSelectionState.unusedDisks,
-              disksSelectedManually: true,
+              disksSelectedManually:
+                !!manualDiskSelectionState.vdevs.data?.length
+                && !!manualDiskSelectionState.vdevs.data.some((vdev) => vdev.disks?.length),
             };
           });
         });
