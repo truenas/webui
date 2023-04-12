@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -111,6 +112,7 @@ export class LocalizationFormComponent {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   setTimeOptions(tz: string): void {
@@ -134,6 +136,9 @@ export class LocalizationFormComponent {
   submit(): void {
     const body = this.formGroup.value;
     this.isFormLoading = true;
+    this.window.localStorage.setItem('language', body.language);
+    this.window.localStorage.setItem('dateFormat', body.date_format);
+    this.window.localStorage.setItem('timeFormat', body.time_format);
     this.store$.dispatch(localizationFormSubmitted({
       dateFormat: body.date_format,
       timeFormat: body.time_format,
