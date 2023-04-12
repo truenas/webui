@@ -197,6 +197,7 @@ def verify_that_the_trust_secret_succeeded(driver):
 @then('after, go to the Dashboard')
 def after_go_to_the_dashboard(driver):
     """after, go to the Dashboard."""
+    assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
 
