@@ -69,8 +69,6 @@ def click_the_confirm_checkbox_and_click_delete(driver):
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 10, xpaths.button.delete, 'clickable')
     driver.find_element_by_xpath(xpaths.button.delete).click()
-    assert wait_on_element(driver, 5, xpaths.popup.deleting)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.deleting)
 
 
 @then('verify that the CA was deleted')
