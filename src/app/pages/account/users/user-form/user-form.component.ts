@@ -93,6 +93,7 @@ export class UserFormComponent {
     sudo_commands_nopasswd: [[] as string[]],
     sudo_commands_nopasswd_all: [false],
     smb: [true],
+    ssh_password_enabled: [false],
   });
 
   readonly tooltips = {
@@ -246,6 +247,7 @@ export class UserFormComponent {
       password_disabled: values.password_disabled,
       shell: values.shell,
       smb: values.smb,
+      ssh_password_enabled: values.ssh_password_enabled,
       sshpubkey: values.sshpubkey,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
