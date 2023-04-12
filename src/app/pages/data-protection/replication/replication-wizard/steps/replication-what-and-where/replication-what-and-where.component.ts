@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge, Observable, of } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
+import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -53,7 +54,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     target_dataset_from: [null as DatasetSource, [Validators.required]],
     ssh_credentials_target: [null as number | SshCredentialsNewOption, [Validators.required]],
-    target_dataset: [[] as string[], [Validators.required]],
+    target_dataset: [null as string, [Validators.required]],
     encryption: [false],
     encryption_key_format: [null as EncryptionKeyFormat, [Validators.required]],
     encryption_key_generate: [true],
@@ -215,6 +216,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
+    this.form.controls.source_datasets.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.genTaskName(value || [], this.form.value.target_dataset || '');
+    });
+
+    this.form.controls.target_dataset.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.genTaskName(this.form.value.source_datasets || [], value || '');
+    });
+
     merge(
       this.form.controls.ssh_credentials_source.valueChanges,
       this.form.controls.ssh_credentials_target.valueChanges,
@@ -254,8 +263,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   getSummary(): SummarySection {
-    const summary: SummarySection = [];
-    return summary;
+    const values = this.form.value;
+
+    return [
+      { label: helptext.source_datasets_placeholder, value: values.source_datasets.join(',') },
+      { label: helptext.target_dataset_placeholder, value: values.target_dataset },
+    ];
   }
 
   getPayload(): ReplicationWhatAndWhereComponent['form']['value'] {
@@ -277,6 +290,15 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         }
         this.existReplicationOptions$ = of(options);
         this.cdr.markForCheck();
+
+        this.form.controls.exist_replication.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+          const selectedTask = tasks.find((task) => task.id === value);
+          if (selectedTask) {
+            this.loadReplicationTask(selectedTask);
+          } else {
+            this.clearReplicationTask();
+          }
+        });
       },
     );
   }
@@ -327,6 +349,16 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
   }
 
+  private genTaskName(source: string[], target: string): void {
+    if (!source.length && !target) {
+      this.form.controls.name.setValue('');
+      return;
+    }
+    const suggestName = source.length > 3
+      ? `${source[0]},...,${source[source.length - 1]} - ${target}` : `${source.join(',')} - ${target}`;
+    this.form.controls.name.setValue(suggestName);
+  }
+
   private disableSource(): void {
     this.form.controls.ssh_credentials_source.disable();
     this.form.controls.source_datasets.disable();
@@ -366,5 +398,50 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       this.form.controls.transport.disable();
       this.form.controls.sudo.disable();
     }
+  }
+
+  loadReplicationTask(task: ReplicationTask): void {
+    if (task.direction === Direction.Push) {
+      this.form.controls.source_datasets_from.setValue(DatasetSource.Local);
+      this.form.controls.target_dataset_from
+        .setValue(task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local);
+      if (task.ssh_credentials) {
+        this.form.controls.ssh_credentials_target.setValue(task.ssh_credentials.id);
+      }
+    } else {
+      this.form.controls.source_datasets_from.setValue(DatasetSource.Remote);
+      this.form.controls.target_dataset_from.setValue(DatasetSource.Local);
+      this.form.controls.ssh_credentials_source.setValue(task.ssh_credentials.id);
+    }
+
+    this.form.controls.source_datasets.setValue(task.source_datasets);
+    this.form.controls.target_dataset.setValue(task.target_dataset);
+    this.form.controls.transport.setValue(task.transport);
+  }
+
+  clearReplicationTask(): void {
+    this.form.controls.source_datasets_from.setValue(null);
+    this.form.controls.ssh_credentials_source.setValue(null);
+    this.form.controls.source_datasets.setValue([]);
+    this.form.controls.recursive.setValue(false);
+    this.form.controls.custom_snapshots.setValue(false);
+    this.form.controls.schema_or_regex.setValue(SnapshotNamingOption.NamingSchema);
+    this.form.controls.naming_schema.setValue('auto-%Y-%m-%d_%H-%M');
+    this.form.controls.name_regex.setValue('');
+
+    this.form.controls.target_dataset_from.setValue(null);
+    this.form.controls.ssh_credentials_target.setValue(null);
+    this.form.controls.target_dataset.setValue(null);
+    this.form.controls.encryption.setValue(false);
+    this.form.controls.encryption_key_format.setValue(null);
+    this.form.controls.encryption_key_generate.setValue(true);
+    this.form.controls.encryption_key_hex.setValue('');
+    this.form.controls.encryption_key_passphrase.setValue('');
+    this.form.controls.encryption_key_location_truenasdb.setValue(true);
+    this.form.controls.encryption_key_location.setValue('');
+
+    this.form.controls.transport.setValue(TransportMode.Ssh);
+    this.form.controls.sudo.setValue(false);
+    this.form.controls.name.setValue('');
   }
 }

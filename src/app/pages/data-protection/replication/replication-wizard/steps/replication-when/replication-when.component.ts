@@ -79,6 +79,14 @@ export class ReplicationWhenComponent implements OnInit, SummaryProvider {
 
   getSummary(): SummarySection {
     const summary: SummarySection = [];
+    const values = this.form.value;
+
+    if (values.schedule_method === ScheduleMethod.Cron) {
+      summary.push({ label: helptext.schedule_method_placeholder, value: this.translate.instant('Run On a Schedule') });
+    } else {
+      summary.push({ label: helptext.schedule_method_placeholder, value: this.translate.instant('Run Once') });
+    }
+
     return summary;
   }
 
