@@ -118,6 +118,9 @@ export class ManualSelectionVdevComponent implements OnInit {
 
   onDrop(event: DndDropEvent): void {
     const disk = event.data as PoolManagerVdevDisk;
+    if (!disk.vdevUuid && disk.vdevUuid === this.vdev.uuid) {
+      return;
+    }
     if (disk.vdevUuid) {
       this.store$.removeDiskFromDataVdev(disk);
     }

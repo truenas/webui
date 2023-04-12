@@ -16,6 +16,7 @@ export interface ManualDiskSelectionState {
   unusedDisks: PoolManagerDisk[];
   allUnusedDisks: PoolManagerDisk[];
   enclosures: Enclosure[];
+  selectionChanged: boolean;
 }
 
 const initialState: ManualDiskSelectionState = {
@@ -26,6 +27,7 @@ const initialState: ManualDiskSelectionState = {
   unusedDisks: [],
   allUnusedDisks: [],
   enclosures: [],
+  selectionChanged: false,
 };
 
 @Injectable()
@@ -72,11 +74,13 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     if (!dataVdevs.length) {
       dataVdevs = [{ ...vdevUpdate.vdev }];
     }
+    let didSelectionChange = false;
     for (const dataVdev of dataVdevs) {
       const diskAlreadyExists = dataVdev.disks.some(
         (vdevDisk) => vdevDisk.identifier === vdevUpdate.disk.identifier,
       );
       if (dataVdev.uuid === vdevUpdate.vdev.uuid && !diskAlreadyExists) {
+        didSelectionChange = true;
         dataVdev.disks.push({ ...vdevUpdate.disk, vdevUuid: dataVdev.uuid });
       }
     }
@@ -87,6 +91,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
       ...state,
       vdevs: { ...state.vdevs, data: dataVdevs },
       unusedDisks,
+      selectionChanged: state.selectionChanged || didSelectionChange,
     };
   });
 
@@ -94,12 +99,19 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     state: ManualDiskSelectionState,
     disk: PoolManagerVdevDisk,
   ) => {
+    let didSelectionChange = false;
     const dataVdevs = [...state.vdevs.data].map((vdev) => {
       if (vdev.uuid === disk.vdevUuid) {
-        vdev.disks = vdev.disks.filter((vdevDisk) => vdevDisk.identifier !== disk.identifier);
+        vdev.disks = vdev.disks.filter((vdevDisk) => {
+          if (vdevDisk.identifier === disk.identifier) {
+            didSelectionChange = true;
+          }
+          return vdevDisk.identifier !== disk.identifier;
+        });
       }
       return vdev;
     });
+    disk.vdevUuid = null;
 
     const unusedDisks = [...state.unusedDisks];
     if (!unusedDisks.some((unusedDisk) => unusedDisk.identifier === disk.identifier)) {
@@ -109,6 +121,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
       ...state,
       vdevs: { ...state.vdevs, data: dataVdevs },
       unusedDisks,
+      selectionChanged: state.selectionChanged || didSelectionChange,
     };
   });
 
@@ -123,6 +136,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     return {
       ...state,
       vdevs: { ...state.vdevs, data: [...state.vdevs.data, { ...vdev }] },
+      selectionChanged: true,
     };
   });
 
@@ -141,6 +155,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
       ...state,
       vdevs: { ...state.vdevs, data: dataVdevs },
       unusedDisks,
+      selectionChanged: true,
     };
   });
 }

@@ -198,25 +198,23 @@ export class CreateDataWizardStepComponent implements OnInit {
         return;
       }
 
-      this.manualDiskSelectionStore.state$
-        .pipe(
-          take(1),
-          untilDestroyed(this),
-        )
-        .subscribe((manualDiskSelectionState: ManualDiskSelectionState) => {
-          this.poolManagerStore.patchState((state: PoolManagerState) => {
-            return {
-              ...state,
-              vdevs: !!manualDiskSelectionState.vdevs.data?.length
-                && !!manualDiskSelectionState.vdevs.data.some((vdev) => vdev.disks?.length)
-                ? { ...state.vdevs, data: manualDiskSelectionState.vdevs.data } : { ...state.vdevs, data: [] },
-              unusedDisks: manualDiskSelectionState.unusedDisks,
-              disksSelectedManually:
-                !!manualDiskSelectionState.vdevs.data?.length
-                && !!manualDiskSelectionState.vdevs.data.some((vdev) => vdev.disks?.length),
-            };
-          });
+      this.manualDiskSelectionStore.state$.pipe(
+        take(1),
+        untilDestroyed(this),
+      ).subscribe((manualDiskSelectionState: ManualDiskSelectionState) => {
+        this.poolManagerStore.patchState((state: PoolManagerState) => {
+          const hasAtleastOneVdevWithDisks = !!manualDiskSelectionState.vdevs.data?.length
+          && !!manualDiskSelectionState.vdevs.data.some((vdev) => vdev.disks?.length);
+          return {
+            ...state,
+            vdevs: hasAtleastOneVdevWithDisks
+              ? { ...state.vdevs, data: manualDiskSelectionState.vdevs.data }
+              : { ...state.vdevs, data: [] },
+            unusedDisks: manualDiskSelectionState.unusedDisks,
+            disksSelectedManually: hasAtleastOneVdevWithDisks && manualDiskSelectionState.selectionChanged,
+          };
         });
+      });
     });
   }
 
