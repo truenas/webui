@@ -10,7 +10,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const error = new Error('Dummy Error');
-const wsError: WebsocketError = {
+const wsError = {
   error: 1,
   extra: [['SOMETHING'], ['SOMETHING ELSE']],
   reason: 'SOME REASON',
@@ -20,7 +20,7 @@ const wsError: WebsocketError = {
     frames: null,
   },
   type: null,
-};
+} as WebsocketError;
 const failedJob = {
   method: 'cloudsync.sync_onetime',
   description: null,

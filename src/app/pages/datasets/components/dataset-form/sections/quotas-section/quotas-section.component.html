@@ -1,0 +1,88 @@
+<div class="columns" [formGroup]="form">
+  <ix-fieldset [title]="'This Dataset' | translate">
+    <ix-input
+      formControlName="refquota"
+      [label]="'Quota for this dataset' | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+      [tooltip]="helptext.dataset_form_refquota_tooltip | translate"
+    ></ix-input>
+
+    <div class="with-inherit-field">
+      <ix-input
+        formControlName="refquota_warning"
+        type="number"
+        [label]="'Quota warning alert at, %' | translate"
+      ></ix-input>
+      <ix-checkbox
+        formControlName="refquota_warning_inherit"
+        [label]="'Inherit' | translate"
+        [tooltip]="helptext.dataset_form_refquota_warning_tooltip | translate"
+      ></ix-checkbox>
+    </div>
+
+    <div class="with-inherit-field">
+      <ix-input
+        formControlName="refquota_critical"
+        type="number"
+        [label]="'Quota critical alert at, %' | translate"
+      ></ix-input>
+      <ix-checkbox
+        formControlName="refquota_critical_inherit"
+        [label]="'Inherit' | translate"
+        [tooltip]="helptext.dataset_form_refquota_critical_tooltip | translate"
+      ></ix-checkbox>
+    </div>
+
+    <ix-input
+      formControlName="refreservation"
+      [label]="'Reserved space for this dataset' | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+      [tooltip]="helptext.dataset_form_refreservation_tooltip | translate"
+    ></ix-input>
+  </ix-fieldset>
+
+  <ix-fieldset [title]="'This Dataset and Child Datasets' | translate">
+    <ix-input
+      formControlName="quota"
+      [label]="'Quota for this dataset and all children' | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+      [tooltip]="helptext.dataset_form_quota_tooltip | translate"
+    ></ix-input>
+
+    <div class="with-inherit-field">
+      <ix-input
+        formControlName="quota_warning"
+        type="number"
+        [label]="'Quota warning alert at, %' | translate"
+      ></ix-input>
+      <ix-checkbox
+        formControlName="quota_warning_inherit"
+        [label]="'Inherit' | translate"
+        [tooltip]="helptext.dataset_form_quota_warning_tooltip | translate"
+      ></ix-checkbox>
+    </div>
+
+    <div class="with-inherit-field">
+      <ix-input
+        formControlName="quota_critical"
+        type="number"
+        [label]="'Quota critical alert at, %' | translate"
+      ></ix-input>
+      <ix-checkbox
+        formControlName="quota_critical_inherit"
+        [label]="'Inherit' | translate"
+        [tooltip]="helptext.dataset_form_quota_critical_tooltip | translate"
+      ></ix-checkbox>
+    </div>
+
+    <ix-input
+      formControlName="reservation"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+      [label]="'Reserved space for this dataset and all children' | translate"
+    ></ix-input>
+  </ix-fieldset>
+</div>
