@@ -106,7 +106,7 @@
           <strong>{{ 'VDEVs' | translate }}: </strong>{{ getVdevsCountString() }}
         </li>
         <li>
-          <strong>{{ 'Total Usable Capacity' | translate }}: </strong>{{ dataVdevs[0].rawSize | filesize: { standard: 'iec' } }}
+          <strong>{{ 'Total Usable Capacity' | translate }}: </strong>{{ dataVdevs[0]?.rawSize | filesize: { standard: 'iec' } }}
         </li>
         <li>
           <strong>{{ 'No warnings' | translate }}</strong>
