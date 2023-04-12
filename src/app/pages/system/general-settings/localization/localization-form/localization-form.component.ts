@@ -140,6 +140,8 @@ export class LocalizationFormComponent {
     const body = this.formGroup.value;
     this.isFormLoading = true;
     this.window.localStorage.setItem('language', body.language);
+    this.window.localStorage.setItem('dateFormat', body.date_format);
+    this.window.localStorage.setItem('timeFormat', body.time_format);
     this.store$.dispatch(localizationFormSubmitted({
       dateFormat: body.date_format,
       timeFormat: body.time_format,
