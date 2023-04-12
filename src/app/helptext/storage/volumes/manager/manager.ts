@@ -42,7 +42,7 @@ export default {
   refer to the <a href="http://TrueNAS.com/docs/" target="_blank">TrueNAS Documentation hub</a>.'),
 
   manual_disk_selection_message: T('VDEVs have been created through manual disk selection. To view or\
-  edit your selections, press the "Edit Manula Disk Selection" button below. To start again with the\
+  edit your selections, press the "Edit Manual Disk Selection" button below. To start again with the\
   automated disk selection, hit the "Reset" button.'),
 
   manager_duplicate_vdevs_tooltip: T('Create more data vdevs like the first.'),
