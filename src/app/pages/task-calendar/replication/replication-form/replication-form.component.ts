@@ -818,6 +818,7 @@ export class ReplicationFormComponent {
           name: 'schedule',
           placeholder: helptext.schedule_placeholder,
           tooltip: helptext.schedule_tooltip,
+          value: false,
         }, {
           type: 'scheduler',
           name: 'schedule_picker',
@@ -1279,6 +1280,8 @@ export class ReplicationFormComponent {
       delete data['schedule_picker'];
       delete data['schedule_begin'];
       delete data['schedule_end'];
+    } else {
+      delete data['schedule'];
     }
     if (data['restrict_schedule']) {
       data['restrict_schedule'] = this.parsePickerTime(data['restrict_schedule_picker'], data['restrict_schedule_begin'], data['restrict_schedule_end']);

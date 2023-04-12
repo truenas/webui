@@ -4,27 +4,22 @@ import { FormControl } from '@angular/forms';
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
   greaterThan(otherControlName: string, fieldPlaceholers: [string]) {
-    let thisControl: FormControl;
-    let otherControl: FormControl;
-
     return function greaterThanValidate(control: FormControl) {
       if (!control.parent) {
         return null;
       }
 
       // Initializing the validator.
-      if (!thisControl) {
-        thisControl = control;
-        otherControl = control.parent.get(otherControlName) as FormControl;
-        if (!otherControl) {
-          throw new Error(
-            'greaterThanValidator(): other control is not found in parent group',
-          );
-        }
-        otherControl.valueChanges.subscribe(
-          () => { thisControl.updateValueAndValidity(); },
+      const thisControl = control;
+      const otherControl = control.parent.get(otherControlName) as FormControl;
+      if (!otherControl) {
+        throw new Error(
+          'greaterThanValidator(): other control is not found in parent group',
         );
       }
+      otherControl.valueChanges.subscribe(
+        () => { thisControl.updateValueAndValidity(); },
+      );
 
       if (!otherControl) {
         return null;
@@ -41,8 +36,6 @@ export class ValidationService {
   }
 
   rangeValidator(min: number, max?: number) {
-    let thisControl: FormControl;
-
     return function rangeValidate(control: FormControl) {
       let regex;
       if (min === 0) {
@@ -56,9 +49,7 @@ export class ValidationService {
       }
 
       // Initializing the validator.
-      if (!thisControl) {
-        thisControl = control;
-      }
+      const thisControl = control;
 
       if (!thisControl.value) {
         return null;
@@ -82,27 +73,22 @@ export class ValidationService {
   }
 
   matchOtherValidator(otherControlName: string) {
-    let thisControl: FormControl;
-    let otherControl: FormControl;
-
     return function matchOtherValidate(control: FormControl) {
       if (!control.parent) {
         return null;
       }
 
       // Initializing the validator.
-      if (!thisControl) {
-        thisControl = control;
-        otherControl = control.parent.get(otherControlName) as FormControl;
-        if (!otherControl) {
-          throw new Error(
-            'matchOtherValidator(): other control is not found in parent group',
-          );
-        }
-        otherControl.valueChanges.subscribe(
-          () => { thisControl.updateValueAndValidity(); },
+      const thisControl = control;
+      const otherControl = control.parent.get(otherControlName) as FormControl;
+      if (!otherControl) {
+        throw new Error(
+          'matchOtherValidator(): other control is not found in parent group',
         );
       }
+      otherControl.valueChanges.subscribe(
+        () => { thisControl.updateValueAndValidity(); },
+      );
 
       if (!otherControl) {
         return null;
