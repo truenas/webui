@@ -497,6 +497,7 @@ class popup:
     setting_Ldap = '//h1[text()="Setting up LDAP"]'
     configuring = '//h1[contains(.,"Configuring...")]'
     installing = '//h1[contains(.,"Installing")]'
+    deleting = '//*[contains(.,"Deleting")]'
 
 
 class progress:
