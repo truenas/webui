@@ -64,13 +64,6 @@ export class MockEnclosureUtils {
   }
 
   overrideMessage<K extends ApiMethod>(data: ResultMessage, method: K): ResultMessage {
-    if (method === 'disk.query' && Object.keys(data.result as Disk[]).length < 3) {
-      console.warn({
-        message: 'DISKS DATA WARNING: Not enough properties',
-        keys: Object.keys(data.result as Disk[]),
-      });
-    }
-    // const uuid = UUID.UUID();
     let mockData: unknown = data.result;
     mockData = this.enclosureOverrides(data.result, method);
     const mockMessage: IncomingWebsocketMessage = {
@@ -105,7 +98,7 @@ export class MockEnclosureUtils {
         break;
       }
       case 'disk.query': {
-        // Sometimes response only has two keys "name" and "type" (subscription or middleware bug?)
+        // Sometimes response only has two keys "name" and "type"
         const keys = Object.keys([...data as Disk[]][0]);
         if (this.mockStorage.enclosures.length > 0 && data && keys.length > 2) {
           const sorted = (data as Disk[]).sort((a, b) => (a.name < b.name ? -1 : 1));

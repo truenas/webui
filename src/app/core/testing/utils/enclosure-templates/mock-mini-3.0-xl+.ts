@@ -52,7 +52,20 @@ export class MockMini30Xl extends MockEnclosure {
     name: 'Drive Bays',
     model: 'FREENAS-MINI-3.0-XL+',
     controller: true,
-    elements: [],
+    elements: [
+      {
+        name: 'Array Device Slot',
+        descriptor: 'Drive Slots',
+        header: [
+          'Descriptor',
+          'Status',
+          'Value',
+          'Device',
+        ],
+        elements: [],
+        has_slot_status: false,
+      },
+    ],
     number: this.enclosureNumber,
     label: 'Drive Bays',
   } as Enclosure;
@@ -61,21 +74,6 @@ export class MockMini30Xl extends MockEnclosure {
     super(number);
     this.enclosureNumber = number;
     this.resetSlotsToEmpty();
-  }
-
-  resetSlotsToEmpty(): void {
-    const emptySlots = this.generateEmptySlots();
-    (this.data.elements as EnclosureElement[]) = emptySlots;
-  }
-
-  /* protected addSlotToData(slot: EnclosureElement): void {
-    const slotElements: EnclosureElement[] = this.data.elements as EnclosureElement[];
-    const slotIndex = slotElements.findIndex((element: EnclosureElement) => element.slot === slot.slot);
-    slotElements.splice(slotIndex, 1, this.processSlotTemplate(slot));
-  } */
-
-  protected getSlots(): EnclosureElement[] {
-    return this.data.elements as EnclosureElement[];
   }
 
   processSlotTemplate(template: EnclosureElement): EnclosureElement {

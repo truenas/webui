@@ -33,13 +33,13 @@ export class MockM50Rear extends MockEnclosure {
     slot: 0,
     data: {
       Descriptor: 'Disk #1',
-      Status: 'Not Installed',
+      Status: 'Not installed',
       Value: 'None',
       Device: null,
     },
     name: 'Array Device Slot',
     descriptor: 'Disk #1',
-    status: 'Not Installed',
+    status: 'Not installed',
     value: 'None',
     value_raw: '0x05000000',
   };

@@ -86,7 +86,8 @@ export class MockMiniR extends MockEnclosure {
       original.enclosure_id = '3000000000000001';
     }
 
-    template.original = original;
-    return template;
+    const element: EnclosureElement = { ...template };
+    element.original = original;
+    return element;
   }
 }
