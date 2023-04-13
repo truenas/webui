@@ -54,7 +54,7 @@ Run the environment configuration script
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./setup_env.js -i <ip address or FQDN of the server where TrueNAS is running>
+$ ./yarn run setup remote -i <ip address or FQDN of the server where TrueNAS is running>
 ```
 
 To start run
