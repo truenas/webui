@@ -1,4 +1,6 @@
 .available-apps-list {
+  position: relative;
+
   section {
     .apps {
       column-gap: 40px;
@@ -21,6 +23,7 @@
 
     .view-all {
       align-items: center;
+      background-color: transparent;
       color: var(--primary);
       cursor: pointer;
       display: flex;
@@ -33,8 +36,8 @@
     column-gap: 40px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-    margin-bottom: 20px;
-    margin-top: 20px;
+    padding-bottom: 15px;
+    padding-top: 15px;
     row-gap: 16px;
   }
 }
@@ -48,6 +51,6 @@
   height: 2px;
   left: 0;
   position: absolute;
-  top: 0;
+  top: -1px;
   z-index: 10;
 }

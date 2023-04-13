@@ -8,6 +8,15 @@
   <div fxFlex="70%">
     <section fxLayout="row">
       <div class="app" fxFlex="200px">
+        <a
+          *ngIf="app?.installed"
+          class="installed-badge"
+          [matTooltip]="'Already installed. Go to Installed Apps' | translate"
+          [ixTest]="[app?.name, 'installed-badge']"
+          [routerLink]="['/apps', 'installed', app.name]"
+        >
+          {{ 'Installed' | translate }}
+        </a>
         <div class="app-image-holder">
           <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
         </div>
@@ -17,7 +26,10 @@
           [ixTest]="[app?.name, 'install']"
           [disabled]="!app"
           (click)="installButtonPressed()"
-        >{{ 'Install' | translate }}</a>
+        >
+          <ng-container *ngIf="!app?.installed">{{ 'Install' | translate }}</ng-container>
+          <ng-container *ngIf="app?.installed">{{ 'Install another instance' | translate }}</ng-container>
+        </a>
       </div>
 
       <div class="app-info" fxFlex="240px">
