@@ -22,7 +22,7 @@ class add_Catalog:
 
 class add_Dataset:
     title = '//h3[text()="Add Dataset"]'
-    name_Textarea = '//div[@id="name"]//textarea'
+    name_Textarea = '//textarea[@data-test="textarea-name"]'
     share_Type_Select = '//mat-select[@data-test="select-share-type"]'
     share_Type_Select_Text = '//mat-select[@data-test="select-share-type"]//span[contains(@class,"mat-mdc-select-min-line")]'
     share_Type_SMB_Option = '//mat-option[contains(.,"SMB")]'
