@@ -20,7 +20,8 @@ interface CommandOptions {
 * Variables
 * */
 const environmentTs = './src/environments/environment.ts';
-const defaultConfig = '$MOCKCONFIG$';
+const skel = './src/environments/environment.ts.skel';
+const defaultMockConfig = '$MOCKCONFIG$';
 const originalEnvironment = {...environment};
 
 /*
@@ -44,17 +45,33 @@ program
   });
 
 program
+  .command('remote')
+  .description('Set the server WebUI communicates with')
+  .option('-i, --ip <ip_address>', 'Sets IP address of your server')
+  .action(() => {
+    const remoteCommand = program.commands.find((command: Command) => command._name === 'remote');
+    const remoteOptions = commandOpts(remoteCommand);
+    remote(remoteCommand, remoteOptions.ip);
+  });
+
+program
+  .command('showremote')
+  .description('Show the server WebUI communicates with')
+  .action(() => {
+    showRemote();
+  });
+
+program
   .command('*')
   .description('Unmatched command')
-  .action(function() {
-    program.outputHelp();
+  .action(() => {
+    program.help();
   });
 
 program.parse(process.argv);
 
 // Show help when no commands and args provided
 if (!process.argv.slice(2).length) {
-  // program.outputHelp();
   program.help();
 }
 
@@ -79,9 +96,8 @@ function commandOpts(command: Command): CommandOptions {
 /*
 * General environment file editing functions
 * */
-function setConfig(file: string = defaultConfig): void {
+function saveEnvironment(): void {
   const prefix = 'export const environment = ';
-  environment.mockConfig = file;
   const result = makePrintable(environment, prefix);
   if (program.debug) debugOutput(result);
   fs.writeFileSync(environmentTs, result, 'utf8');
@@ -137,7 +153,7 @@ function mockConfigReport(file: string): string {
   const configStr = fs.readFileSync( path + file, 'utf8');
   const config = JSON.parse(configStr);
   console.log('Mock config file found √')
-  // console.log(config);
+
   output += `
   ******** MOCK CONFIGURATION DETAILS ********
 
@@ -166,7 +182,8 @@ function mock(command: Command, options: CommandOptions): void {
   if (!options.reset && !options.config) {
     command.help();
   } else if (command.reset) {
-    setConfig(defaultConfig);
+    environment.mockConfig = defaultMockConfig;
+    saveEnvironment();
     outputMessage += mockResetReport();
   } else {
     for (let option in options) {
@@ -185,7 +202,8 @@ function mock(command: Command, options: CommandOptions): void {
           if (!command.reset) {
             let mockConfig = mockConfigReport(command.config);
             console.log(mockConfig);
-            setConfig(command.config);
+            environment.mockConfig = command.config ? command.config : defaultMockConfig;
+            saveEnvironment();
           }
           break;
         }
@@ -194,4 +212,67 @@ function mock(command: Command, options: CommandOptions): void {
   }
 
   console.log(outputMessage);
+}
+
+/*
+* Remote Command
+* */
+function normalizeUrl(url = ''): string {
+  const parts = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
+
+  if (!parts || !parts.length) {
+    return;
+  }
+
+  let normalizedUrl = parts[1];
+  if (parts[2]) {
+    normalizedUrl = normalizedUrl + ':' + parts[2];
+  }
+
+  return normalizedUrl;
+}
+
+function saveProxyConfig(file: string, url: string): void {
+  const data = fs.readFileSync(file + '.skel' , 'utf8');
+  const result = data.replace(/\$SERVER\$/g, url);
+  fs.writeFileSync(file, result, 'utf8');
+}
+
+function printCurrentConfig(proxyConfigJson: string): void {
+  const doesConfigExist = fs.existsSync(proxyConfigJson);
+  if (!doesConfigExist) {
+    console.log('No current config set.');
+    return;
+  }
+}
+
+function showRemote(): void {
+  const output = `
+  ******** REMOTE SERVER DETAILS ********
+
+  * Server URL: ${environment.remote}
+
+  ********************************************
+  `
+
+  console.log(output);
+}
+
+function remote(command: Command, ip: string): void {
+  console.log('Setting remote machine url...');
+
+  const proxyConfigJson = './proxy.config.json';
+  const url = normalizeUrl(ip);
+
+  printCurrentConfig(proxyConfigJson);
+
+  if (!url) {
+    command.help();
+    process.exit(2);
+  }
+
+  saveProxyConfig(proxyConfigJson, url);
+  environment.remote = url;
+  showRemote();
+  saveEnvironment();
 }
