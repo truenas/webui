@@ -2,6 +2,7 @@
 import { environment } from './environment';
 import { Command } from 'commander';
 import * as fs from 'fs';
+const figlet = require("figlet");
 
 export interface WebUiEnvironment {
   remote: string;
@@ -17,10 +18,16 @@ interface CommandOptions {
 
 
 /*
+* Nice Header
+* */
+function showBanner(): void {
+  console.log(figlet.textSync('TrueNAS WebUI'));
+}
+
+/*
 * Variables
 * */
 const environmentTs = './src/environments/environment.ts';
-const skel = './src/environments/environment.ts.skel';
 const defaultMockConfig = '$MOCKCONFIG$';
 const originalEnvironment = {...environment};
 
@@ -65,6 +72,7 @@ program
   .command('*')
   .description('Unmatched command')
   .action(() => {
+    showBanner();
     program.help();
   });
 
@@ -72,6 +80,7 @@ program.parse(process.argv);
 
 // Show help when no commands and args provided
 if (!process.argv.slice(2).length) {
+  showBanner();
   program.help();
 }
 
@@ -180,6 +189,7 @@ function mock(command: Command, options: CommandOptions): void {
   let outputMessage = '';
 
   if (!options.reset && !options.config) {
+    showBanner();
     command.help();
   } else if (command.reset) {
     environment.mockConfig = defaultMockConfig;
@@ -267,6 +277,7 @@ function remote(command: Command, ip: string): void {
   printCurrentConfig(proxyConfigJson);
 
   if (!url) {
+    showBanner();
     command.help();
     process.exit(2);
   }
