@@ -82,7 +82,7 @@ def check_that_the_share_type_is_generic_and_click_submit(driver):
     rsc.Verify_Element_Text(driver, xpaths.add_Dataset.share_Type_Select_Text, "Generic")
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
 
 
 @then(parsers.parse('click on the {dataset_name} tree, click Edit on the Permissions card'))
