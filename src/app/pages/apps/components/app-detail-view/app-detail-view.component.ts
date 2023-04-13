@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,6 +10,7 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -53,6 +55,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private appService: ApplicationsService,
+    private matDialog: MatDialog,
   ) {
 
   }
@@ -129,5 +132,12 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   installButtonPressed(): void {
     this.router.navigate(['/apps', 'available', this.appId, 'install']);
+  }
+
+  onChoosePool(): void {
+    const dialog = this.matDialog.open(SelectPoolDialogComponent);
+    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+      this.loadIfPoolSet();
+    });
   }
 }
