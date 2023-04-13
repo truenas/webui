@@ -2,6 +2,7 @@
 
 .card {
   @include details-card();
+  margin: 0;
 
   .details-list {
     flex: 1;
