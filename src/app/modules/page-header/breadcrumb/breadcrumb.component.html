@@ -5,9 +5,9 @@
 >
   <ul class="breadcrumb">
     <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index">
-      <li *ngIf="i > 0 && i < breadcrumbs.length - 1">&gt;</li>
+      <li *ngIf="i > 0">&gt;</li>
       <li>
-        <ng-container *ngIf="i < breadcrumbs.length - 1">
+        <ng-container>
           <span *ngIf="!breadcrumb.disabled; else noclick">
             <a [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.title]">
               {{ breadcrumb.title | translate }}
