@@ -1,10 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import {
-  EnclosureDispersalStrategy,
-  MockStorageGenerator,
-  MockStorageScenario,
-} from 'app/core/testing/utils/mock-storage-generator.utils';
+import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import {
