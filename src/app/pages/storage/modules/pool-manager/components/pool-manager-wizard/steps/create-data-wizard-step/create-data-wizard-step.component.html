@@ -79,28 +79,30 @@
     >
       <h3>{{'Manually Configured VDEVs' | translate}}</h3>
       <p>{{ manualDiskSelectionMessage }}</p>
-      <button
-        mat-button
-        type="button"
-        class="manual-disk-selection"
-        ixTest="manual"
-        (click)="openManualDiskSelection()"
-      >
-        {{ 'Edit Manual Disk Selection' | translate }}
-      </button>
-      <button
-        *ngIf="poolManagerStore.disksSelectedManually$ | async"
-        mat-button
-        type="button"
-        class="reset-layout"
-        ixTest="reset"
-        (click)="resetLayout()"
-      >
-        {{ 'Reset' | translate }}
-      </button>
+      <div class="selection-actions">
+        <button
+          mat-button
+          type="button"
+          class="manual-disk-selection"
+          ixTest="manual"
+          (click)="openManualDiskSelection()"
+        >
+          {{ 'Edit Manual Disk Selection' | translate }}
+        </button>
+        <button
+          *ngIf="poolManagerStore.disksSelectedManually$ | async"
+          mat-button
+          class="manual-disk-selection"
+          type="button"
+          ixTest="reset"
+          (click)="resetLayout()"
+        >
+          {{ 'Reset' | translate }}
+        </button>
+      </div>
     </div>
     <div class="advanced-options-container">
-      <h3 class="description">{{'Description' | translate}}</h3>
+      <h3>{{'Description' | translate}}</h3>
       <ul class="description-list">
         <li>
           <strong>{{ 'VDEVs' | translate }}: </strong>{{ getVdevsCountString() }}

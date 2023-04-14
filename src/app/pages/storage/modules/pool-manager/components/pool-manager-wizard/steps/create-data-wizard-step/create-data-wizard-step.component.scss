@@ -27,8 +27,11 @@
 
 .description-list {
   list-style: none;
+  padding-left: 0;
 }
 
-.description {
-  padding-left: 40px;
+.selection-actions { 
+  column-gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
 }
