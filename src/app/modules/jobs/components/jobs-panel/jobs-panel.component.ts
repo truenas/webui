@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, TrackByFunction,
+  Component, ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { trackById } from 'app/helpers/track-by.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.actions';
@@ -31,7 +32,7 @@ export class JobsPanelComponent {
   failedJobsCount$ = this.store$.select(selectFailedJobsCount);
   availableJobs$ = this.store$.select(selectJobsPanelSlice);
 
-  readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
+  readonly trackByJobId = trackById;
 
   constructor(
     private router: Router,

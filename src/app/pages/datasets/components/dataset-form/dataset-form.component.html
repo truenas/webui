@@ -1,0 +1,49 @@
+<ix-modal-header
+  [title]="isNew ? ('Add Dataset' | translate) : ('Edit Dataset' | translate)"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-name-and-options
+        [existing]="existingDataset"
+        [parent]="parentDataset"
+      ></ix-name-and-options>
+      <ix-quotas-section
+        *ngIf="isAdvancedMode && isNew"
+        [parent]="parentDataset"
+      ></ix-quotas-section>
+      <ix-encryption-section
+        *ngIf="isNew"
+        [parent]="parentDataset"
+      ></ix-encryption-section>
+      <ix-other-options-section
+        [existing]="existingDataset"
+        [parent]="parentDataset"
+        [advancedMode]="isAdvancedMode"
+        (advancedModeChange)="onSwitchToAdvanced()"
+      ></ix-other-options-section>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+        <button
+          mat-button
+          type="button"
+          ixTest="toggle-advanced"
+          (click)="toggleAdvancedMode()"
+        >
+          {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

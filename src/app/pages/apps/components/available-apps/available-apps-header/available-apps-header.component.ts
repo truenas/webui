@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -45,7 +45,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
   isLoading = false;
   isFirstLoad = true;
   showFilters = false;
-  appliedFilters = false;
+  @Input() appliedFilters = false;
   availableApps: AvailableApp[] = [];
   installedApps: ChartRelease[] = [];
   installedCatalogs: string[] = [];
@@ -106,7 +106,17 @@ export class AvailableAppsHeaderComponent implements OnInit {
     this.filters.emit({
       catalogs: this.form.value.catalogs || [],
       sort: this.form.value.sort || undefined,
-      categories: this.form.value.categories || this.appsCategories,
+      categories: (this.form.value.categories || this.appsCategories).map(
+        (category) => {
+          if (category === AppExtraCategory.NewAndUpdated) {
+            return 'latest';
+          }
+          if (category === AppExtraCategory.Recommended) {
+            return 'recommended';
+          }
+          return category;
+        },
+      ),
     });
     this.appliedFilters = true;
   }
