@@ -1,64 +1,18 @@
+import { MockEnclosureConfig } from 'app/core/testing/interfaces/mock-enclosure-utils.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { AddEnclosureOptions, EnclosureDispersalStrategy, MockStorageGenerator } from './mock-storage-generator.utils';
-
-export interface MockEnclosureConfigItem {
-  enabled: boolean;
-  query?: Enclosure[] | Disk[] | Pool; // A snapshot of the query data from real machine
-}
-
-/*
-* MockEnclosure
-* If overflowShelf is set to true and there are more disks
-* than the controller supports, a mock shelf will be generated
-* and extra disks will be assigned to that shelf
-*
-* Unlike with Pools and Disks, the query property snapshot
-* should be that of an empty chassis
-* */
-export interface MockEnclosure extends MockEnclosureConfigItem {
-  overflowShelf: boolean;
-  overflowShelfModel: string;
-}
-
-export interface MockDisk extends MockEnclosureConfigItem {
-  useRealDisks: boolean;
-}
-
-export interface MockEnclosureConfig {
-  enclosureOptions: AddEnclosureOptions;
-  systemProduct: string;
-}
+import { MockStorageGenerator } from './mock-storage-generator.utils';
 
 export class MockEnclosureUtils {
   mockConfig: MockEnclosureConfig;
-  mockM40: MockEnclosureConfig = {
-    enclosureOptions: {
-      controllerModel: 'M40',
-      expansionModels: [],
-      dispersal: EnclosureDispersalStrategy.Default,
-    },
-    systemProduct: 'TRUENAS-M40',
-  };
-  mockMini: MockEnclosureConfig = {
-    enclosureOptions: {
-      controllerModel: 'MINI-3.0-XL+',
-      expansionModels: [],
-      dispersal: EnclosureDispersalStrategy.Default,
-    },
-    systemProduct: 'FREENAS-MINI-3.0-XL+',
-  };
   mockStorage: MockStorageGenerator;
 
   constructor(config: MockEnclosureConfig) {
     this.mockConfig = config;
-    // this.mockConfig = this.mockMini;
-    // this.mockConfig = this.mockM40;
     this.mockStorage = new MockStorageGenerator();
     this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
   }

@@ -10,8 +10,7 @@ import {
 import {
   filter, map, share, switchMap, take, takeWhile, tap,
 } from 'rxjs/operators';
-import { MockConfigLoader } from 'app/core/testing/utils/mock-config-loader.utils';
-import { MockEnclosureConfig, MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
+import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -34,12 +33,7 @@ export class WebSocketService {
     protected wsManager: WebsocketConnectionService,
     protected http: HttpClient,
   ) {
-    if (environment.mockConfig) {
-      const loader = new MockConfigLoader(this.http);
-      loader.getMockConfig().subscribe((response: MockEnclosureConfig) => {
-        this.mockUtils = new MockEnclosureUtils(response);
-      });
-    }
+    this.mockUtils = new MockEnclosureUtils(environment.mockConfig);
   }
 
   private get ws$(): Observable<unknown> {
@@ -65,7 +59,7 @@ export class WebSocketService {
         // Mock Data Test
         if (
           !environment.production
-          && environment.mockConfig !== '$MOCKCONFIG$'
+          && environment.mockConfig?.enabled
           && data.msg === IncomingApiMessageType.Result
         ) {
           const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);

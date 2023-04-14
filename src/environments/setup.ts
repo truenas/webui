@@ -1,16 +1,11 @@
 /* eslint-disable */
 import { environment } from './environment';
+import { environmentTemplate } from './environment.template';
 import { Command } from 'commander';
 import * as fs from 'fs';
+import {EnclosureDispersalStrategy} from "../app/core/testing/enums/mock-storage.enum";
 const figlet = require("figlet");
-
-export interface WebUiEnvironment {
-  remote: string;
-  port: number;
-  production: boolean;
-  sentryPublicDsn: string;
-  mockConfig: string;
-}
+import { WebUiEnvironment } from "./environment.interface";
 
 interface CommandOptions {
   [p: string]: any;
@@ -28,7 +23,6 @@ function showBanner(): void {
 * Variables
 * */
 const environmentTs = './src/environments/environment.ts';
-const defaultMockConfig = '$MOCKCONFIG$';
 const originalEnvironment = {...environment};
 
 /*
@@ -106,8 +100,14 @@ function commandOpts(command: Command): CommandOptions {
 * General environment file editing functions
 * */
 function saveEnvironment(): void {
-  const prefix = 'export const environment = ';
-  const result = makePrintable(environment, prefix);
+  const imports = `/* eslint-disable no-restricted-imports */
+import { EnclosureDispersalStrategy } from "../app/core/testing/enums/mock-storage.enum";
+import { WebUiEnvironment } from "./environment.interface";\n
+`
+
+  const prefix = 'export const environment: WebUiEnvironment = ';
+  const result = makePrintable(environment, imports + prefix);
+
   if (program.debug) debugOutput(result);
   fs.writeFileSync(environmentTs, result, 'utf8');
 
@@ -128,13 +128,24 @@ function makePrintable(src: WebUiEnvironment, prefix: string) {
 
   keys.forEach((key: keyof WebUiEnvironment) => {
     let value: any = src[key] as unknown;
-
     output += '  ' + key.toString() + ': ' + wrap(key.toString(), value) + ',\n';
   });
 
   output += '}\n';
 
   return output;
+}
+
+function enumAsString(value: string): string | null {
+  const trimmed = value.replace(/\"|\: /g, '');
+  let output: string;
+  for (const key in EnclosureDispersalStrategy) {
+    if (key.toLowerCase() === trimmed) {
+      output =  ': EnclosureDispersalStrategy.' + key;
+    }
+  }
+
+  return output ? output : value.replace(/\"/g, '\'');
 }
 
 function wrap(key:string, value: any): string {
@@ -146,8 +157,21 @@ function wrap(key:string, value: any): string {
     return value.toString();
     case 'undefined':
       console.error('Property not defined');
-    default:
-      console.log('WTF is this');
+    default: {
+      if (key === 'mockConfig') {
+        const regexBefore = /\".*\"\:/g;
+        const regexAfter = /\: \".*\"/g;
+        const pretty = JSON.stringify(value, null, "    ")
+          .replace(regexBefore, (match) => {
+            return match.replace(/\"/g, '');
+        }).replace(regexAfter, (match) => {
+            const converted = enumAsString(match);
+            return converted;
+          }).replace(/\"/g, '\'');
+
+        return pretty;
+      }
+    }
   }
 }
 
@@ -155,21 +179,13 @@ function wrap(key:string, value: any): string {
 * Mock Command
 * */
 function mockConfigReport(file: string): string {
-  const path = 'src/assets/mock/configs/';
-  let output = '';
-
-  console.log('Locating mock configuration file...');
-  const configStr = fs.readFileSync( path + file, 'utf8');
-  const config = JSON.parse(configStr);
-  console.log('Mock config file found √')
-
-  output += `
+  const output = `
   ******** MOCK CONFIGURATION DETAILS ********
 
   * Config file: ${file}
-  * Controller: ${config.systemProduct}
-  * Shelves: ${config.enclosureOptions.expansionModels}
-  * Slot Asssignment: ${config.enclosureOptions.dispersal}
+  * Controller: ${environment.mockConfig.systemProduct}
+  * Shelves: ${environment.mockConfig.enclosureOptions.expansionModels}
+  * Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}
 
   ********************************************
 
@@ -192,7 +208,7 @@ function mock(command: Command, options: CommandOptions): void {
     showBanner();
     command.help();
   } else if (command.reset) {
-    environment.mockConfig = defaultMockConfig;
+    environment.mockConfig = environmentTemplate.mockConfig;
     saveEnvironment();
     outputMessage += mockResetReport();
   } else {
@@ -210,9 +226,17 @@ function mock(command: Command, options: CommandOptions): void {
           break;
         case 'config': {
           if (!command.reset) {
+            console.log('Locating mock configuration file...');
+            const path = 'src/assets/mock/configs/';
+            const configStr = fs.readFileSync( path + command.config, 'utf8');
+            const config = JSON.parse(configStr);
+
+            environment.mockConfig = config;
+            console.log('Mock config file found √');
+
             let mockConfig = mockConfigReport(command.config);
             console.log(mockConfig);
-            environment.mockConfig = command.config ? command.config : defaultMockConfig;
+            environment.mockConfig = command.config ? config : null;
             saveEnvironment();
           }
           break;

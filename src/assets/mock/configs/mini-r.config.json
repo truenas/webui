@@ -1,4 +1,5 @@
 {
+  "enabled": true,
   "enclosureOptions": {
     "controllerModel": "MINI-R",
     "expansionModels": [],

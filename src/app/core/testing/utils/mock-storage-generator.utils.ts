@@ -1,4 +1,11 @@
 import { TiB } from 'app/constants/bytes.constant';
+import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import {
+  AddEnclosureOptions,
+  AddTopologyOptions, DispersedData,
+  MockStorage,
+  MockTopology,
+} from 'app/core/testing/interfaces/mock-storage-generator.interface';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -24,54 +31,6 @@ import { MockM50 } from './enclosure-templates/mock-m50';
 import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
 import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
 import { MockMiniR } from './enclosure-templates/mock-mini-r';
-
-export enum MockStorageScenario {
-  Default = 'default',
-  Uniform = 'uniform',
-  Multi = 'multi', // Multiple problems
-  MixedVdevLayout = 'mixedVdevLayout',
-  MixedVdevCapacity = 'mixedVdevCapacity',
-  MixedDiskCapacity = 'mixedDiskCapacity',
-  MixedVdevWidth = 'mixedVdevWidth',
-  NoRedundancy = 'noRedundancy',
-}
-
-export interface MockStorage {
-  poolState: PoolInstance;
-  disks: Disk[];
-  enclosures?: Enclosure[] | null;
-}
-
-export interface MockTopology {
-  topologyItems: TopologyItem[];
-  disks: Disk[];
-}
-
-export interface AddTopologyOptions {
-  scenario: MockStorageScenario;
-  layout: TopologyItemType;
-  diskSize: number;
-  width: number;
-  repeats: number;
-}
-
-export interface DispersedData {
-  enclosures: Enclosure[];
-  disks: Disk[];
-}
-
-export interface AddEnclosureOptions {
-  controllerModel: string;
-  expansionModels: string[];
-  dispersal: EnclosureDispersalStrategy;
-}
-
-export enum EnclosureDispersalStrategy {
-  Min = 'min',
-  Max = 'max',
-  Default = 'default',
-  Existing = 'existing',
-}
 
 export class MockStorageGenerator {
   poolState: PoolInstance;

@@ -1,4 +1,5 @@
 {
+  "enabled": true,
   "enclosureOptions": {
     "controllerModel": "M50",
     "expansionModels": ["ES24"],
