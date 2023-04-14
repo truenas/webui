@@ -57,8 +57,8 @@ def click_on_the_trash_icon_for_cert1(driver):
     """click on the trash icon for cert1."""
     assert wait_on_element(driver, 7, xpaths.certificates.title)
     assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificates")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"cert1")]//ix-icon[contains(text(),"delete")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"cert1")]//ix-icon[contains(text(),"delete")]').click()
+    assert wait_on_element(driver, 5, xpaths.certificates.cert1_Delete_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.certificates.cert1_Delete_Button).click()
 
 
 @then('click the confirm checkbox and click delete')
@@ -67,8 +67,8 @@ def click_the_confirm_checkbox_and_click_delete(driver):
     assert wait_on_element(driver, 5, '//h1[contains(.,"Delete")]')
     assert wait_on_element(driver, 10, xpaths.button.delete, 'clickable')
     driver.find_element_by_xpath(xpaths.button.delete).click()
-    assert wait_on_element(driver, 5, '//*[contains(.,"Deleting")]')
-    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Deleteing")]')
+    assert wait_on_element(driver, 5, xpaths.popup.deleting)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.deleting)
 
 
 @then('verify that the Cert was deleted')

@@ -139,7 +139,7 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User)
 

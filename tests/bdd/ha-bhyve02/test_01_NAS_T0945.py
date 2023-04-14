@@ -5,13 +5,14 @@ import pytest
 import reusableSeleniumCode as rsc
 import time
 import xpaths
-from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
     wait_on_element,
     wait_for_attribute_value,
     attribute_value_exist,
     ssh_cmd,
-    wait_on_element_disappear
+    wait_on_element_disappear,
+    get,
+    put
 )
 from pytest_bdd import (
     given,
@@ -31,6 +32,8 @@ def test_verify_ssh_access_with_root_works(driver):
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open navigate to "{nas_url}"."""
+    global nas_hostname
+    nas_hostname = nas_url.replace('http://', '')
     if nas_url not in driver.current_url:
         driver.get(f"{nas_url}/ui/sessions/signin")
 
@@ -38,6 +41,9 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('login appear enter "{user}" and "{password}"'))
 def login_appear_enter_root_and_password(driver, user, password):
     """login appear enter "{user}" and "{password}"."""
+    global nas_user, nas_password
+    nas_user = user
+    nas_password = password
     assert wait_on_element(driver, 10, xpaths.login.user_Input)
     driver.find_element_by_xpath(xpaths.login.user_Input).clear()
     driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
@@ -51,17 +57,8 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     rsc.Verify_The_Dashboard(driver)
-    if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
-        try:
-            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-            if wait_on_element(driver, 2, xpaths.button.close, 'clickable'):
-                driver.find_element_by_xpath(xpaths.button.close).click()
-        except ElementClickInterceptedException:
-            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
-            driver.find_element_by_xpath(xpaths.button.close).click()
-            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+
+    rsc.License_Agrement(driver)
 
 
 @then('go to System Settings, click Services')
@@ -96,10 +93,10 @@ def click_the_checkbox_log_in_as_root_with_password(driver):
     """click the checkbox "Log in as root with password"."""
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'clickable')
     time.sleep(0.5)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Log in as Root with Password")]').click()
-    wait_for_value = wait_for_attribute_value(driver, 7, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-checkbox-checked')
+    wait_for_value = wait_for_attribute_value(driver, 7, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-mdc-checkbox-checked')
     assert wait_for_value
 
 
@@ -115,15 +112,15 @@ def click_save(driver):
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
     assert wait_on_element(driver, 5, xpaths.services.title)
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
-    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service)
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Checkbox)
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-slide-toggle/label', 'clickable')
-    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
+        driver.find_element_by_xpath(xpaths.services.ssh_Service_Checkbox).click()
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Toggle, 'clickable')
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
     if not value_exist:
-        driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-slide-toggle/label').click()
+        driver.find_element_by_xpath(xpaths.services.ssh_Service_Toggle).click()
     time.sleep(1)
 
 
@@ -131,7 +128,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
 
 
 @then(parsers.parse('run ssh root@"{host}" with root password "{password}"'))

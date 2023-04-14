@@ -49,8 +49,8 @@ def navigate_to_system_settings_and_click_general(driver):
     """navigate to System Settings and click General."""
     assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.general, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.general).click()
 
 
 @then('the General page should load')
@@ -88,24 +88,22 @@ def the_reload_the_page_for_the_license_to_take_effect_should_appear(driver):
 @then(parsers.parse('click reload now and "{agreement}" should appear'))
 def click_reload_now_and_end_user_license_agreement__truenas_should_appear(driver, agreement):
     """click reload now and "End User License Agreement - TrueNAS" should appear."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__RELOAD NOW"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__RELOAD NOW"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.reload_Now, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.reload_Now).click()
     assert wait_on_element(driver, 10, f'//h1[contains(.,"{agreement}")]')
 
 
 @then('click Agree we should be returned to the General page')
 def click_agree_we_should_be_returned_to_the_general_page(driver):
     """click Agree we should be returned to the General page."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    if wait_on_element(driver, 1, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 5, xpaths.button.close)
-        driver.find_element_by_xpath(xpaths.button.close).click()
+    rsc.License_Agrement(driver)
+
     if is_element_present(driver, xpaths.dashboard.title):
         assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
         driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
-        assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
-        driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
+        assert wait_on_element(driver, 7, xpaths.side_Menu.general, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.general).click()
+
     assert wait_on_element(driver, 7, '//h1[contains(.,"General")]')
 
 
@@ -156,6 +154,10 @@ def enter_domain_nameserver1_nameserver2_nameserver3(driver, domain, nameserver1
 @then('click save when finished')
 def click_save_when_finished(driver):
     """click save when finished."""
+    element = driver.find_element_by_xpath(xpaths.button.save)
+    # Scroll to SSH service
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -172,8 +174,8 @@ def navigate_to_system_then_click_failover(driver):
     """navigate to System then click Failover"""
     assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]').click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.failover).click()
 
 
 @then('the Failover page should open')
@@ -189,7 +191,7 @@ def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
     element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
-    if 'mat-checkbox-checked' not in class_attribute:
+    if 'mat-mdc-checkbox-checked' not in class_attribute:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
 
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
@@ -261,8 +263,8 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     assert wait_on_element(driver, 7, '//button[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Test Changes")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
+    driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
+    driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
     assert wait_on_element(driver, 5, xpaths.popup.please_Wait)
     # sleep 5 second to let the changes to take effect
     time.sleep(5)
@@ -294,8 +296,8 @@ def on_the_virtual_hostname_dashboard_save_the_network_interface_changes(driver)
 @then('navigate to Storage then click the gear icon and click Disks')
 def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):
     """navigate to Storage then click the gear icon and click Disks."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
+    driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
+    assert wait_on_element(driver, 7, xpaths.storage.title)
     assert wait_on_element(driver, 7, '//a[*/text()=" Disks "]', 'clickable')
     driver.find_element_by_xpath('//a[*/text()=" Disks "]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Disks"]')
@@ -314,37 +316,13 @@ def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver)
 @then('wipe all disk without a pool')
 def wipe_all_disk_without_a_pool(driver):
     """wipe all disk without a pool."""
-    disk_list = []
-    disk_elements = driver.find_elements_by_xpath('//div[contains(text(),"sd")]')
-    for disk_element in disk_elements:
-        if is_element_present(driver, f'//tr[contains(.,"{disk_element.text}")]//div[contains(text(),"N/A") or contains(text(),"Exported")]'):
-            disk_list.append(disk_element.text)
-
-    for disk in disk_list:
-        assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
-        driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
-        assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
-        driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
-        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//div[@class="form-actions"]//button[contains(.,"Wipe")]', 'clickable')
-        driver.find_element_by_xpath('//div[@class="form-actions"]//button[contains(.,"Wipe")]').click()
-        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-        assert wait_on_element(driver, 10, '//mat-progress-bar')
-        assert wait_on_element_disappear(driver, 60, '//mat-progress-bar')
-        assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
-        assert wait_on_element(driver, 5, '//button[contains(.,"Close")]', 'clickable')
-        driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
-        assert wait_on_element_disappear(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
+    rsc.Wiped_Unused_Disk(driver)
 
 
 @then('navigate to Storage click Create')
 def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
     assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()
@@ -371,7 +349,7 @@ def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_crea
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
-    rsc.Confirm_Single_Disk(driver)
+    # rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 7, '//button[@name="create-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
     rsc.Confirm_Creating_Pool(driver)
@@ -394,7 +372,7 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
-    if 'mat-checkbox-checked' in class_attribute:
+    if 'mat-mdc-checkbox-checked' in class_attribute:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
 
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
