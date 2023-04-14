@@ -74,7 +74,7 @@ def on_the_datasets_page_create_a_smb_dataset_rtacltest1_with_tank(driver, datas
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset1_name))
 
 
@@ -95,7 +95,7 @@ def create_a_second_smb_dataset_rtacltest2_under_rtacltest1(driver, dataset2_nam
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, '//button[contains(.,"Return to pool list")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Return to pool list")]').click()
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset2_name))
@@ -174,7 +174,7 @@ def create_a_third_smb_dataset_rtacltest3(driver, dataset3_name, dataset1_name):
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, '//button[contains(.,"Return to pool list")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Return to pool list")]').click()
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset3_name))
