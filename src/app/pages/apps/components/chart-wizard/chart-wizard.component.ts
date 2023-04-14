@@ -366,6 +366,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         title: this.isNew ? helptext.installing : helptext.updating,
       },
     });
+    this.dialogRef.componentInstance.showCloseButton = false;
 
     if (this.isNew) {
       const version = data.version;
