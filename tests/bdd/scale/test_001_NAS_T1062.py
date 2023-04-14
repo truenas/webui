@@ -62,44 +62,36 @@ def on_the_service_page_press_on_configurepencil_ssh(driver):
     """on the service page, press on configure(pencil) SSH."""
     assert wait_on_element(driver, 5, xpaths.services.title)
     assert wait_on_element(driver, 5, '//td[contains(text(),"SSH")]')
-    # assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Button, 'clickable')
-    # driver.find_element_by_xpath(xpaths.services.ssh_Service_Button).click()
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.services.ssh_Service_Button).click()
 
 
 @then('the SSH General Options page should open')
 def the_ssh_general_options_page_should_open(driver):
     """the SSH General Options page should open."""
-    # assert wait_on_element(driver, 5, '//h1[text()="SSH"]')
-    # assert wait_on_element(driver, 5, '//legend[contains(.,"General Options")]')
+    assert wait_on_element(driver, 5, '//h1[text()="SSH"]')
+    assert wait_on_element(driver, 5, '//legend[contains(.,"General Options")]')
 
 
 @then('click the checkbox "Log in as root with password"')
 def click_the_checkbox_log_in_as_root_with_password(driver):
     """click the checkbox "Log in as root with password"."""
-    # assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'clickable')
-    # time.sleep(0.5)
-    # value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-mdc-checkbox-checked')
-    # if not value_exist:
-    #     driver.find_element_by_xpath('//mat-checkbox[contains(.,"Log in as Root with Password")]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'clickable')
+    time.sleep(0.5)
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-mdc-checkbox-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//mat-checkbox[contains(.,"Log in as Root with Password")]').click()
 
 
 @then('verify the checkbox works and click Save')
 def verify_the_checkbox_works_and_click_save(driver, nas_ip, root_password):
     """verify the checkbox works and click Save."""
-    # wait_for_value = wait_for_attribute_value(driver, 5, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-mdc-checkbox-checked')
-    # assert wait_for_value
-    # time.sleep(1)
-    # assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
-    # driver.find_element_by_xpath(xpaths.button.save).click()
-    # assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-
-    root = get(nas_ip, 'user?username=root', ('root', root_password))
-    results = root.json()
-    assert len(results) == 1, root.text
-
-    payload = {"ssh_password_enabled": True}
-    results = put(nas_ip, f"user/id/{results[0]['id']}", ('root', root_password), payload)
-    assert results.status_code == 200, results.text
+    wait_for_value = wait_for_attribute_value(driver, 5, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-mdc-checkbox-checked')
+    assert wait_for_value
+    time.sleep(1)
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
 
 
 @then('click the Start Automatically SSH checkbox and enable the SSH service')
