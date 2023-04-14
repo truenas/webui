@@ -129,6 +129,16 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
 
     this.form.reset(formValues, { emitEvent: false });
 
+    if (this.isUserTag) {
+      this.form.controls.group.setErrors(null);
+    } else {
+      this.form.controls.user.setErrors(null);
+    }
+    if (!this.isUserTag && !this.isGroupTag) {
+      this.form.controls.group.setErrors(null);
+      this.form.controls.user.setErrors(null);
+    }
+
     this.form.markAllAsTouched();
 
     setTimeout(() => {
