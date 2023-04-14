@@ -106,7 +106,12 @@
 
       <ng-template #similarAppsTemplate>
         <div *ngIf="similarApps.length; else emptySimilarApps" class="similar-apps">
-          <ix-app-card *ngFor="let app of similarApps" [app]="app"></ix-app-card>
+          <ix-app-card
+            *ngFor="let app of similarApps; trackBy: trackByAppId"
+            [app]="app"
+            [routerLink]="['/apps', 'available', app.name]"
+          ></ix-app-card>
+
         </div>
       </ng-template>
 

@@ -4,6 +4,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { shuffle } from 'lodash';
 import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
@@ -52,9 +53,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private appService: ApplicationsService,
-  ) {
-
-  }
+  ) {}
 
   ngOnInit(): void {
     this.listenForRouteChanges();
@@ -105,7 +104,8 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     this.similarAppsLoading$.next(true);
     this.appService.getAvailableApps().pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
-        this.similarApps = apps.slice(0, 4);
+        this.similarApps = shuffle(apps.filter((app) => app.name !== this.appId)).slice(0, 4);
+
         this.similarAppsLoading$.next(false);
       },
       error: () => {
@@ -120,5 +120,9 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   installButtonPressed(): void {
     this.router.navigate(['/apps', 'available', this.appId, 'install']);
+  }
+
+  trackByAppId(id: number, app: AvailableApp): string {
+    return `${app.catalog}-${app.train}-${app.name}`;
   }
 }
