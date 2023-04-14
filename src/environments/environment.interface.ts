@@ -3,8 +3,8 @@ import { MockEnclosureConfig } from '../app/core/testing/interfaces/mock-enclosu
 
 export interface WebUiEnvironment {
   remote: string;
-  port: number;
+  port?: number;
   production: boolean;
   sentryPublicDsn: string;
-  mockConfig: MockEnclosureConfig;
+  mockConfig?: MockEnclosureConfig;
 }

@@ -3,7 +3,7 @@
   "enclosureOptions": {
     "controllerModel": "MINI-R",
     "expansionModels": [],
-    "dispersal": "default"
+    "dispersal": "existing"
   },
   "systemProduct": "TRUENAS-MINI-R"
 }

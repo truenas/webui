@@ -1,3 +1,4 @@
+import { environment } from 'environments/environment';
 import { MockEnclosureConfig } from 'app/core/testing/interfaces/mock-enclosure-utils.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -8,11 +9,10 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MockStorageGenerator } from './mock-storage-generator.utils';
 
 export class MockEnclosureUtils {
-  mockConfig: MockEnclosureConfig;
+  mockConfig: MockEnclosureConfig = (environment).mockConfig;
   mockStorage: MockStorageGenerator;
 
-  constructor(config: MockEnclosureConfig) {
-    this.mockConfig = config;
+  constructor() {
     this.mockStorage = new MockStorageGenerator();
     this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
   }

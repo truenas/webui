@@ -33,7 +33,7 @@ export class WebSocketService {
     protected wsManager: WebsocketConnectionService,
     protected http: HttpClient,
   ) {
-    this.mockUtils = new MockEnclosureUtils(environment.mockConfig);
+    this.mockUtils = new MockEnclosureUtils();
   }
 
   private get ws$(): Observable<unknown> {
@@ -58,7 +58,8 @@ export class WebSocketService {
 
         // Mock Data Test
         if (
-          !environment.production
+          environment
+          && !environment.production
           && environment.mockConfig?.enabled
           && data.msg === IncomingApiMessageType.Result
         ) {
