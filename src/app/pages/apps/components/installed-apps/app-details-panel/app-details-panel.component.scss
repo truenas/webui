@@ -16,5 +16,11 @@ $title-gap: 8px;
     max-width: 100%;
     min-height: 36px;
   }
+
+  .app-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
