@@ -73,7 +73,7 @@ export class MockMini30Xl extends MockEnclosure {
   constructor(number: number) {
     super(number);
     this.enclosureNumber = number;
-    this.resetSlotsToEmpty();
+    this.enclosureInit();
   }
 
   processSlotTemplate(template: EnclosureElement): EnclosureElement {

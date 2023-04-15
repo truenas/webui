@@ -62,10 +62,10 @@ export class MockM50Rear extends MockEnclosure {
   constructor(number: number) {
     super(number);
     this.enclosureNumber = number;
-    this.resetSlotsToEmpty();
+    this.enclosureInit();
   }
 
-  resetSlotsToEmpty(): void {
+  enclosureInit(): void {
     const emptySlots = this.generateEmptySlots(this.totalSlotsRear);
     (this.data.elements[0] as EnclosureElementsGroup).elements = emptySlots;
   }

@@ -238,7 +238,7 @@ export class MockEnclosure {
 
   constructor(number: number) {
     this.enclosureNumber = number;
-    this.resetSlotsToEmpty();
+    this.enclosureInit();
   }
 
   addDiskToSlot(diskName: string, slotNumber: number): MockEnclosure {
@@ -281,6 +281,11 @@ export class MockEnclosure {
       return groupElement.slot === element.slot;
     });
     slotElementsGroup.splice(slotIndex, 1, this.processSlotTemplate(element));
+  }
+
+  enclosureInit(): void {
+    this.data.number = this.enclosureNumber;
+    this.resetSlotsToEmpty();
   }
 
   resetSlotsToEmpty(): void {

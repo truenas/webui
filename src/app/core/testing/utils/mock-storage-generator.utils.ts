@@ -25,6 +25,7 @@ import {
   VDev,
 } from 'app/interfaces/storage.interface';
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
+import { MockEs102 } from './enclosure-templates/mock-es102';
 import { MockEs24 } from './enclosure-templates/mock-es24';
 import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
@@ -605,6 +606,9 @@ export class MockStorageGenerator {
       case 'ES24':
         chassis = new MockEs24(enclosureNumber);
         break;
+      case 'ES102':
+        chassis = new MockEs102(enclosureNumber);
+        break;
       case 'M40':
         chassis = new MockM40(enclosureNumber);
         break;
@@ -805,7 +809,7 @@ export class MockStorageGenerator {
 
   private resetAllSlots(): void {
     this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
-      mockEnclosure.resetSlotsToEmpty();
+      mockEnclosure.enclosureInit();
     });
   }
 }
