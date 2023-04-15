@@ -136,7 +136,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         } else {
           this.dialogService.warn(
             'Error with error',
-            'Yo dawg we heard you like errors so we made your error have an error. (Empty websocket error)',
+            `Yo dawg we heard you like errors so we made your error have an error. (Empty websocket error)
+            * Source: enclosure-store.service.ts
+            `,
           );
         }
       },
@@ -219,7 +221,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     /*
     * EnclosureSlots setup
     * */
-
     // Add Slots to View
     enclosures.forEach((enclosure: Enclosure) => {
       const slots = (enclosure.elements as EnclosureElementsGroup[]).find((element: EnclosureElementsGroup) => {
