@@ -87,4 +87,13 @@ describe('FormatDateTimePipe', () => {
     });
     expect(spectator.element).toHaveExactText('2021-09-28 15:22');
   });
+
+  it('converts date using custom time format with old style " A" format', () => {
+    spectator = createPipe('{{ inputDateValue | formatDateTime:"Europe/Kiev":"":"hh:mm A" }}', {
+      hostProps: {
+        inputDateValue: new Date(inputValue),
+      },
+    });
+    expect(spectator.element).toHaveExactText('2021-09-28 03:22 PM');
+  });
 });

@@ -6,8 +6,10 @@ import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { lastValueFrom, merge } from 'rxjs';
-import { take } from 'rxjs/operators';
+import {
+  EMPTY, lastValueFrom, merge, throwError,
+} from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -16,6 +18,7 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { MiddlewareError } from 'app/enums/middleware-error.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -1338,7 +1341,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           recursive: data['recursive'] ? data['recursive'] : false,
         };
         snapshotPromises.push(
-          lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
+          lastValueFrom(this.ws.call(this.createCalls[item], [payload]).pipe(
+            catchError((error) => {
+              if (error.errname === MiddlewareError.Eexist) {
+                return EMPTY;
+              }
+              return throwError(() => error);
+            }),
+          )),
         );
       }
       return Promise.all(snapshotPromises);

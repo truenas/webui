@@ -68,37 +68,31 @@ export class LocaleService {
     ];
   }
 
-  formatDateTime(date: Date | number, tz?: string): string {
-    if (tz) {
-      date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timezone) {
-      date = utcToZonedTime(date.valueOf(), this.timezone);
-    }
-
-    return format(date, `${this.dateFormat} ${this.timeFormat}`);
-  }
-
   formatDateTimeWithNoTz(date: Date): string {
     try {
       return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
-    } catch (error: unknown) {
+    } catch {
       return 'Invalid date';
     }
   }
 
   getTimeOnly(date: Date | number, seconds = true, tz?: string): string {
-    if (tz) {
-      date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timezone) {
-      date = utcToZonedTime(date.valueOf(), this.timezone);
-    }
-    let formatStr: string;
-    formatStr = this.timeFormat;
-    if (!seconds) {
-      formatStr = formatStr.replace(':ss', '');
-    }
+    try {
+      if (tz) {
+        date = utcToZonedTime(date.valueOf(), tz);
+      } else if (this.timezone) {
+        date = utcToZonedTime(date.valueOf(), this.timezone);
+      }
+      let formatStr: string;
+      formatStr = this.timeFormat;
+      if (!seconds) {
+        formatStr = formatStr.replace(':ss', '');
+      }
 
-    return format(date, formatStr);
+      return format(date, formatStr);
+    } catch {
+      return 'Invalid date';
+    }
   }
 
   getPreferredDateFormat(): string {
