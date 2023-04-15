@@ -7,8 +7,10 @@
     </button>
 
     <ix-toolbar-multimenu
-      *ngIf="catalogMenu"
-      [config]="catalogMenu"
+      *ngIf="catalogOptions?.length"
+      [label]="helptext.catalogs | translate"
+      [options]="catalogOptions"
+      [selected]="selectedCatalogOptions"
       (selectionChange)="onCatalogsSelectionChanged($event)"
     ></ix-toolbar-multimenu>
 

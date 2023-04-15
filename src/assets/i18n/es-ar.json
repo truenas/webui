@@ -2627,8 +2627,6 @@
   "Fetching Encryption Summary": "Extracción de resumen de cifrado",
   "Fetching Encryption Summary for ": "Extracción del resumen de cifrado para ",
   "Fetching data...": "Obteniendo datos...",
-  "Fibre Channel Port {name} update successful.": "La actualización del puerto de canal de fibra {name} se realizó correctamente.",
-  "Fibre Channel Ports": "Puertos de canal de fibra",
   "Field is required": "El campo es requerido",
   "File": "Archivo",
   "File Inherit": "Heredar archivo",
