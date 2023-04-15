@@ -62,6 +62,7 @@ export class MockM50Rear extends MockEnclosure {
   constructor(number: number) {
     super(number);
     this.enclosureNumber = number;
+    this.data.number = number;
     this.enclosureInit();
   }
 

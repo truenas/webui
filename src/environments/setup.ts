@@ -139,10 +139,11 @@ function showHelp(command: Command): void {
 /*
 * Reset Environment File
 * */
-function reset(): void {
+function reset(): WebUiEnvironment {
   const templateStr = fs.readFileSync( template, 'utf8');
   const result = templateStr.replace('const environmentTemplate', 'const environment');
   fs.writeFileSync(environmentTs, result, 'utf8');
+  return JSON.parse(result);
 }
 
 /*
