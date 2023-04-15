@@ -6,7 +6,6 @@ import {
   Component,
   OnInit, QueryList,
   TemplateRef,
-  TrackByFunction,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -24,6 +23,7 @@ import {
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { trackById } from 'app/helpers/track-by.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -80,7 +80,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   );
   readonly JobState = JobState;
   readonly JobTab = JobTab;
-  readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
+  readonly trackByJobId = trackById;
 
   get emptyConfigService(): EmptyService {
     return this.emptyService;

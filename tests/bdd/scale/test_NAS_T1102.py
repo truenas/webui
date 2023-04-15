@@ -84,7 +84,7 @@ def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
 @then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
 def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(driver):
     """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
-    rsc.Confirm_Single_Disk(driver)
+    # rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_Button).click()
     rsc.Confirm_Creating_Pool(driver)

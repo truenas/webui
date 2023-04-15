@@ -7,7 +7,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_cmd,
+    ssh_sudo_exptext
 )
 from pytest_bdd import (
     given,
@@ -86,8 +86,4 @@ def change_should_be_saved_open_the_user_page_and_verify_the_user_disable_passwo
 def try_login_with_ssh_the_user_should_be_able_to_login(driver, nas_ip):
     """try login with ssh, the user should be able to login."""
     time.sleep(1)
-    # check SSH
-    global ssh_result
-    ssh_result = ssh_cmd('ls /', 'ericbsd', 'testing', nas_ip)
-    assert ssh_result['result'], ssh_result['output']
-    assert 'home' in ssh_result['output'], ssh_result['output']
+    assert ssh_sudo_exptext('ls /tmp', nas_ip, 'ericbsd', 'testing', 'collectd-boot')

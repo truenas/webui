@@ -1,17 +1,26 @@
+$title-gap: 8px;
+
 :host {
   width: 100%;
 
   h2 {
-    $title-gap: 8px;
+    align-items: center;
     align-items: center;
     color: var(--fg2);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     gap: $title-gap;
-    margin-bottom: 1rem;
+    margin-bottom: 12px;
+    margin-top: 20px;
     max-width: 100%;
-    place-items: flex-start;
+    min-height: 36px;
+  }
+
+  .app-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 }
 

@@ -17,18 +17,20 @@
   </div>
   <div *ngIf="showFilters" class="filters-container">
     <div class="filters">
-      <ix-select
+      <ix-filter-select-list
+        class="catalogs"
         [formControl]="form.controls.catalogs"
         [label]="'Catalogs' | translate"
         [options]="catalogsOptions$"
         [multiple]="true"
-      ></ix-select>
-      <ix-select
+      ></ix-filter-select-list>
+      <ix-filter-select-list
+        class="sort"
         [formControl]="form.controls.sort"
         [label]="'Sort' | translate"
         [options]="sortOptions$"
-      ></ix-select>
-      <div class="filter">
+      ></ix-filter-select-list>
+      <div class="сategories">
         <ix-chips
           [formControl]="form.controls.categories"
           [label]="'Categories' | translate"
@@ -68,7 +70,7 @@
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
     <h2 *ngIf="!isLoading">{{ availableApps.length }}</h2>
     <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
-    <a class="header-link" ixTest="refresh-charts" (click)="loadData()">
+    <a class="header-link" ixTest="refresh-charts" (click)="refreshCharts()">
       {{ 'Refresh Charts' | translate }}
     </a>
   </div>

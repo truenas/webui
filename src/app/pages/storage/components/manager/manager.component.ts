@@ -14,6 +14,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
+import { ManagerVdev } from 'app/classes/manager-vdev.class';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -29,7 +30,6 @@ import {
   UpdatePoolTopologyGroup,
 } from 'app/interfaces/pool.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';

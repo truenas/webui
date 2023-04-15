@@ -19,3 +19,19 @@
 .manual-disk-selection {
   margin-top: 25px;
 }
+
+.reset-layout {
+  margin-left: 25px;
+  margin-top: 25px;
+}
+
+.description-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.selection-actions { 
+  column-gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+}

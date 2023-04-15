@@ -14,11 +14,12 @@
           [tooltip]="tooltips.tcpport | translate"
         ></ix-input>
 
-        <ix-checkbox
-          formControlName="rootlogin"
-          [label]="'Log in as Root with Password' | translate"
-          [tooltip]="tooltips.rootlogin | translate"
-        ></ix-checkbox>
+        <ix-chips
+          [formControl]="form.controls.password_login_groups"
+          [label]="'Password Login Groups' | translate"
+          [autocompleteProvider]="groupProvider"
+          [tooltip]="tooltips.password_login_groups | translate"
+        ></ix-chips>
 
         <ix-checkbox
           formControlName="passwordauth"

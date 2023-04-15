@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import {
   mockCall, mockJob, mockWebsocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
-import { AclType } from 'app/enums/acl-type.enum';
+import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -39,7 +39,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       mockWebsocket([
         mockCall('pool.dataset.query', [{
           acltype: {
-            value: AclType.Posix1e,
+            value: DatasetAclType.Posix,
           },
         } as Dataset]),
         mockJob('pool.dataset.permission'),
