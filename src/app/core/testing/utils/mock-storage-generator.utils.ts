@@ -572,7 +572,6 @@ export class MockStorageGenerator {
 
     // M50/M60 have separate chassis reported for rear drives
     if (options.controllerModel === 'M50' || options.controllerModel === 'M60') {
-      console.warn(mockEnclosures.length);
       const rearChassis: MockEnclosure = this.generateMockEnclosure(
         options.controllerModel + '-REAR',
         options.expansionModels.length + 1,
