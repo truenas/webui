@@ -31,7 +31,11 @@ function checkEnv(suppress: boolean = false): void {
     const checkRemote = (suppress: boolean, envStr: string = '$SERVER$') => {
       if (envStr.includes('$SERVER$')) {
         console.log('Remote not set! Use yarn ui script to set remote url: yarn ui remote -i <ip-address>');
-        process.exit(1);
+        if (suppress) {
+          process.exit(0);
+        } else {
+          process.exit(1);
+        }
       }
     }
 
