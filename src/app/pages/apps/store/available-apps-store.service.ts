@@ -129,6 +129,12 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   applyFilters(filter: AppsFiltersValues): void {
     if (filter.categories.some((cat) => cat.includes(AppExtraCategory.NewAndUpdated))) {
       filter.categories = filter.categories.filter((cat) => !cat.includes(AppExtraCategory.NewAndUpdated));
+      this.patchState((state) => {
+        return {
+          ...state,
+          isLoading: true,
+        };
+      });
       this.appsService.getLatestApps(filter).pipe(
         tap((filteredApps) => {
           this.patchState((state: AvailableAppsState): AvailableAppsState => {
@@ -140,11 +146,18 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
                   ? filteredApps.filter((filteredApp) => this.doesAppCotainsString(state.searchQuery, filteredApp))
                   : filteredApps,
               isFilterApplied: true,
+              isLoading: false,
             };
           });
         }),
       ).subscribe();
     } else {
+      this.patchState((state) => {
+        return {
+          ...state,
+          isLoading: true,
+        };
+      });
       this.appsService.getAvailableApps(filter).pipe(
         tap((filteredApps) => {
           this.patchState((state: AvailableAppsState): AvailableAppsState => {
@@ -156,6 +169,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
                   ? filteredApps.filter((app) => this.doesAppCotainsString(state.searchQuery, app))
                   : filteredApps,
               isFilterApplied: true,
+              isLoading: false,
             };
           });
         }),
