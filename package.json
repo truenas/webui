@@ -9,8 +9,9 @@
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
     "commitlint": "commitlint",
-    "start": "ng serve --proxy-config proxy.config.json",
-    "start:dev": "ng serve --proxy-config proxy.config.json",
+    "setup": "cd $(git rev-parse --show-toplevel) && npx ts-node ./src/environments/setup.ts",
+    "start": "yarn run setup && ng serve --proxy-config proxy.config.json",
+    "start:dev": "yarn run setup && ng serve --proxy-config proxy.config.json",
     "start:prod": "ng serve --configuration production",
     "build": "yarn run generate_licenses && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --configuration production",
@@ -18,7 +19,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
-    "test:pr": "echo 'Setting up temporary environment file...\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
+    "test:pr": "yarn run setup && echo 'Setting up temporary environment file...\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
     "lint": "ng lint && stylelint 'src/**/*.scss' && markuplint 'src/**/*.html'",
     "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss' && markuplint --fix 'src/**/*.html'",
     "snyk": "snyk test",
@@ -30,7 +31,7 @@
     "generate_licenses": "yarn licenses generate-disclaimer > src/assets/disclaimer.txt && yarn licenses list --json > src/assets/licenses.json",
     "generate_licenses_list": "yarn licenses list > licenses.txt",
     "prepare": "husky install",
-    "ui": "cd $(git rev-parse --show-toplevel) && npx ts-node ./src/environments/setup.ts"
+    "ui": "cd $(git rev-parse --show-toplevel) && npx ts-node ./src/environments/ui.ts"
   },
   "repository": {
     "type": "git",
