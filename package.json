@@ -19,7 +19,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
-    "test:pr": "yarn run setup && echo 'Setting up temporary environment file...\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
+    "test:pr": "yarn run setup -s && echo 'Setting up temporary environment file...\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
     "lint": "ng lint && stylelint 'src/**/*.scss' && markuplint 'src/**/*.html'",
     "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss' && markuplint --fix 'src/**/*.html'",
     "snyk": "snyk test",
