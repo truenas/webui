@@ -56,7 +56,7 @@
         mat-button
         color="accent"
         ixTest="reset"
-        [disabled]="!form.dirty || !appliedFilters"
+        [disabled]="!form.dirty || !(appliedFilters$ |async)"
         (click)="resetFilters()"
       >
         {{ 'Reset' | translate }}
@@ -68,8 +68,8 @@
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
-    <h2 *ngIf="!isLoading">{{ availableApps.length }}</h2>
-    <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
+    <h2 *ngIf="!(applicationsStore.isLoading$ | async)">{{ availableApps.length }}</h2>
+    <mat-spinner *ngIf="applicationsStore.isLoading$ | async" [diameter]="30"></mat-spinner>
     <a class="header-link" ixTest="refresh-charts" (click)="refreshCharts()">
       {{ 'Refresh Charts' | translate }}
     </a>
@@ -77,8 +77,8 @@
 
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
-    <h2 *ngIf="!isLoading">{{ installedApps.length }}</h2>
-    <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
+    <h2 *ngIf="!(applicationsStore.isLoading$ | async)">{{ installedApps.length }}</h2>
+    <mat-spinner *ngIf="applicationsStore.isLoading$ | async" [diameter]="30"></mat-spinner>
     <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
       {{ 'Manage Installed Apps' | translate }}
     </a>
@@ -86,8 +86,8 @@
 
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Catalogs' | translate }}</div>
-    <h2 *ngIf="!isLoading">{{ installedCatalogs.length }}</h2>
-    <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
+    <h2 *ngIf="!(applicationsStore.isLoading$ | async)">{{ installedCatalogs.length }}</h2>
+    <mat-spinner *ngIf="applicationsStore.isLoading$ | async" [diameter]="30"></mat-spinner>
     <a class="header-link" ixTest="manage-catalogs" [routerLink]="['/apps/catalogs']">
       {{ 'Manage Catalogs' | translate }}
     </a>

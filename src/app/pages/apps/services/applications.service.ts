@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, switchMap } from 'rxjs';
+import {
+  Observable, of, switchMap,
+} from 'rxjs';
+import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -72,7 +75,7 @@ export class ApplicationsService {
       firstOption.push(['catalog', 'in', filters.catalogs]);
     }
     filters.categories?.forEach((category) => {
-      if (category === 'recommended') {
+      if (category === AppExtraCategory.Recommended) {
         firstOption.push(['recommended', '=', true]);
       } else {
         firstOption.push(['categories', 'rin', category]);
