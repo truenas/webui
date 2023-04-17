@@ -81,8 +81,4 @@ export class RsyncConfigureComponent implements OnInit {
       },
     });
   }
-
-  cancel(): void {
-    this.router.navigate(['services']);
-  }
 }
