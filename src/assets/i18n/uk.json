@@ -14,6 +14,8 @@
   "Snapshot Directory": "",
   "Sudo Enabled": "",
   "Use Sudo for Zfs Commands": "",
+  "last run {date}": "",
+  "never ran": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "\n Схоже, ваш сеанс був неактивний понад {lifetime} секунд.<br>\n З міркувань безпеки ми виведемо вас із системи о {time}.\n",
   " Est. Usable Capacity": " Орієнтовний обсяг корисного простору",
   " Please click the button below to add {item}.": "Натисніть кнопку нижче, щоб додати {item}.",

@@ -204,6 +204,8 @@
   "Windows": "",
   "Wizard iSCSI": "",
   "Your release is named {name}": "",
+  "last run {date}": "",
+  "never ran": "",
   "{app} Application Summary": "",
   "{app} Catalog Summary": "",
   "{n, plural, one {# Application} other {# Applications} } have pending updates!": "",

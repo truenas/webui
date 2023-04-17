@@ -7,7 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { merge, Observable, of } from 'rxjs';
+import {
+  map, merge, Observable, of,
+} from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -18,7 +20,7 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
+import { forbiddenAsyncValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import {
@@ -37,7 +39,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
   readonly helptext = helptext;
-  namesInUse: string[] = [];
   sshCredentials: KeychainSshCredentials[] = [];
 
   form = this.formBuilder.group({
@@ -65,7 +66,13 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     transport: [TransportMode.Ssh, [Validators.required]],
     sudo: [false],
-    name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
+    name: ['', [Validators.required],
+      forbiddenAsyncValues(
+        this.ws.call('replication.query').pipe(
+          map((replications) => replications.map((replication) => replication.name)),
+        ),
+      ),
+    ],
   });
 
   existReplicationOptions$: Observable<Option[]>;
@@ -102,11 +109,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-  ) {
-    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((replications) => {
-      this.namesInUse.push(...replications.map((replication) => replication.name));
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.disableSource();
@@ -117,19 +120,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
       if (value === DatasetSource.Local) {
-        this.form.controls.target_dataset_from.enable();
-        this.form.controls.ssh_credentials_source.disable();
-        this.form.controls.source_datasets.enable();
-        this.form.controls.recursive.enable();
-        this.form.controls.custom_snapshots.enable();
+        this.selectLocalSource();
       } else if (value === DatasetSource.Remote) {
-        this.form.controls.target_dataset_from.setValue(DatasetSource.Local);
-        this.form.controls.target_dataset_from.disable();
-        this.form.controls.ssh_credentials_source.enable();
-        this.form.controls.source_datasets.enable();
-        this.form.controls.recursive.enable();
-        this.form.controls.custom_snapshots.disable();
-        this.disableCustomSnapshots();
+        this.selectRemoteSource();
       } else {
         this.form.controls.target_dataset_from.enable();
         this.disableSource();
@@ -231,7 +224,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .pipe(untilDestroyed(this))
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
-        if (!selectedCredential || selectedCredential.attributes.username === 'root') {
+        if (!selectedCredential || selectedCredential.attributes?.username === 'root') {
           return;
         }
 
@@ -281,10 +274,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         const options: Option[] = [];
         for (const task of tasks) {
           if (task.transport !== TransportMode.Legacy) {
-            const label = task.name + ' (' + ((task.state && task.state.datetime)
-              ? `last run ${this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy')}`
-              : 'never ran')
-            + ')';
+            const exp = task.state && task.state.datetime
+              ? this.translate.instant('last run {date}', {
+                date: this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy'),
+              })
+              : this.translate.instant('never ran');
+            const label = `${task.name} (${exp})`;
             options.push({ label, value: task.id });
           }
         }
@@ -400,6 +395,24 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     }
   }
 
+  private selectLocalSource(): void {
+    this.form.controls.target_dataset_from.enable();
+    this.form.controls.ssh_credentials_source.disable();
+    this.form.controls.source_datasets.enable();
+    this.form.controls.recursive.enable();
+    this.form.controls.custom_snapshots.enable();
+  }
+
+  private selectRemoteSource(): void {
+    this.form.controls.target_dataset_from.setValue(DatasetSource.Local);
+    this.form.controls.target_dataset_from.disable();
+    this.form.controls.ssh_credentials_source.enable();
+    this.form.controls.source_datasets.enable();
+    this.form.controls.recursive.enable();
+    this.form.controls.custom_snapshots.disable();
+    this.disableCustomSnapshots();
+  }
+
   loadReplicationTask(task: ReplicationTask): void {
     if (task.direction === Direction.Push) {
       this.form.controls.source_datasets_from.setValue(DatasetSource.Local);
@@ -417,6 +430,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.source_datasets.setValue(task.source_datasets);
     this.form.controls.target_dataset.setValue(task.target_dataset);
     this.form.controls.transport.setValue(task.transport);
+    this.form.controls.name.setValue(task.name);
   }
 
   clearReplicationTask(): void {

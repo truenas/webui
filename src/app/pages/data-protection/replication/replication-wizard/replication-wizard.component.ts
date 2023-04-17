@@ -27,6 +27,7 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
+import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
@@ -94,9 +95,15 @@ export class ReplicationWizardComponent {
     });
 
     if (requests.length) {
-      forkJoin(requests).pipe(untilDestroyed(this)).subscribe(() => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+      forkJoin(requests).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
       });
     } else {
       this.isLoading = false;
@@ -114,18 +121,20 @@ export class ReplicationWizardComponent {
 
     const values = this.preparePayload();
 
-    const snapshotsСountPayload = this.getSnapshotsCountPayload(values);
-    if (snapshotsСountPayload) {
-      await this.getSnapshotsСount(snapshotsСountPayload).then(
+    const snapshotsCountPayload = this.getSnapshotsCountPayload(values);
+    if (snapshotsCountPayload) {
+      await this.getSnapshotsСount(snapshotsCountPayload).then(
         (snapshotCount) => this.eligibleSnapshots = snapshotCount.eligible,
         (err: WebsocketError) => {
           this.eligibleSnapshots = 0;
+          this.toStop = true;
           this.handleError(err);
         },
       );
     }
 
     if (this.toStop) {
+      this.rollBack();
       return;
     }
 
@@ -136,7 +145,10 @@ export class ReplicationWizardComponent {
           if (tasks.length === 0) {
             await this.createPeriodicSnapshotTask(payload).then(
               (createdSnapshotTask) => this.createdSnapshotTasks.push(createdSnapshotTask),
-              (err: WebsocketError) => this.handleError(err),
+              (err: WebsocketError) => {
+                this.toStop = true;
+                this.handleError(err);
+              },
             );
           } else {
             this.existSnapshotTasks.push(...tasks.map((task) => task.id));
@@ -154,7 +166,10 @@ export class ReplicationWizardComponent {
       for (const payload of this.getSnapshotsPayload(values)) {
         await this.createSnapshot(payload).then(
           (createdSnapshot) => this.createdSnapshots.push(createdSnapshot),
-          (err: WebsocketError) => this.handleError(err),
+          (err: WebsocketError) => {
+            this.toStop = true;
+            this.handleError(err);
+          },
         );
       }
     }
@@ -182,20 +197,29 @@ export class ReplicationWizardComponent {
             replicationPayload.allow_from_scratch = dialogResult;
             await this.createReplication(replicationPayload).then(
               (createdReplication) => this.createdReplication = createdReplication,
-              (err: WebsocketError) => this.handleError(err),
+              (err: WebsocketError) => {
+                this.toStop = true;
+                this.handleError(err);
+              },
             );
           });
         } else {
           await this.createReplication(replicationPayload).then(
             (createdReplication) => this.createdReplication = createdReplication,
-            (err: WebsocketError) => this.handleError(err),
+            (err: WebsocketError) => {
+              this.toStop = true;
+              this.handleError(err);
+            },
           );
         }
       },
       async () => {
         await this.createReplication(replicationPayload).then(
           (createdReplication) => this.createdReplication = createdReplication,
-          (err: WebsocketError) => this.handleError(err),
+          (err: WebsocketError) => {
+            this.toStop = true;
+            this.handleError(err);
+          },
         );
       },
     );
@@ -270,7 +294,7 @@ export class ReplicationWizardComponent {
       payload.push({
         dataset,
         recursive: data.recursive,
-        schedule: this.parsePickerTime(data.schedule_picker),
+        schedule: crontabToSchedule(data.schedule_picker),
         lifetime_value: 2,
         lifetime_unit: LifetimeUnit.Week,
         naming_schema: data.naming_schema ? data.naming_schema : this.defaultNamingSchema,
@@ -323,7 +347,7 @@ export class ReplicationWizardComponent {
     if (data.schedule_method === ScheduleMethod.Cron) {
       payload.auto = true;
       if (payload.direction === Direction.Pull) {
-        payload.schedule = this.parsePickerTime(data.schedule_picker);
+        payload.schedule = crontabToSchedule(data.schedule_picker);
         payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
       } else {
         const createdIds = this.createdSnapshotTasks.map((task) => task.id);
@@ -390,19 +414,7 @@ export class ReplicationWizardComponent {
     return data;
   }
 
-  parsePickerTime(picker: string): Schedule {
-    const spl = picker.split(' ');
-    return {
-      minute: spl[0],
-      hour: spl[1],
-      dom: spl[2],
-      month: spl[3],
-      dow: spl[4],
-    };
-  }
-
   handleError(err: WebsocketError): void {
-    this.toStop = true;
     this.dialogService.error(this.errorHandler.parseWsError(err));
   }
 }

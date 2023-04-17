@@ -9,6 +9,7 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Direction } from 'app/enums/direction.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -137,7 +138,7 @@ describe('ReplicationWizardComponent', () => {
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(12, 'replication.create', [{
       auto: true,
-      direction: 'PUSH',
+      direction: Direction.Push,
       encryption: false,
       lifetime_unit: 'WEEK',
       lifetime_value: 2,

@@ -123,6 +123,8 @@
   "Windows": "",
   "Wizard iSCSI": "",
   "Your release is named {name}": "",
+  "last run {date}": "",
+  "never ran": "",
   "{n, plural, one {# Application} other {# Applications} } have pending updates!": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",

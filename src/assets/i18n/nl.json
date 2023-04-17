@@ -12,6 +12,8 @@
   "SSH password login enabled": "",
   "Sensitive": "",
   "Snapshot Directory": "",
+  "last run {date}": "",
+  "never ran": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "\n            Het lijkt erop dat deze sessie langer dan {lifetime} seconden inactief is geweest.<br>\n            Om veiligheidsredenen zullen we u om {time} uitloggen.\n",
   " Est. Usable Capacity": "Geschatte bruikbare capaciteit",
   " Please click the button below to add {item}.": "Op onderstaande knop klikken om {item} toe te voegen.",
