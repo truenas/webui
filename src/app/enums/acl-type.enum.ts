@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum AclType {
   Nfs4 = 'NFS4',
   Posix1e = 'POSIX1E',
@@ -10,6 +12,13 @@ export enum AclMode {
   Discard = 'DISCARD',
   Inherit = 'INHERIT',
 }
+
+export const aclModeLabels = new Map<AclMode, string>([
+  [AclMode.Inherit, T('Inherit')],
+  [AclMode.Restricted, T('Restricted')],
+  [AclMode.Passthrough, T('Passthrough')],
+  [AclMode.Discard, T('Discard')],
+]);
 
 export enum DefaultAclType {
   Nfs4Open = 'NFS4_OPEN',

@@ -3,8 +3,10 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import {
+  BehaviorSubject, Observable, combineLatest, switchMap, tap,
+} from 'rxjs';
+import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -13,7 +15,7 @@ interface AppSection {
   title: string;
   totalApps: number;
   apps$: BehaviorSubject<AvailableApp[]>;
-  fetchMore?: () => void;
+  category: string;
 }
 
 @UntilDestroy()
@@ -31,6 +33,8 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
   searchQuery = '';
   isFilterOrSearch = false;
   isLoading = false;
+
+  appliedFilters = false;
 
   allRecommendedApps: AvailableApp[] = [];
   allNewAndUpdatedApps: AvailableApp[] = [];
@@ -65,7 +69,8 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   changeFilters(filters: AppsFiltersValues): void {
     this.filters = filters;
-    this.loadApplications(this.filters);
+    this.appliedFilters = true;
+    this.loadApplications(filters);
   }
 
   changeSearchQuery(query: string): void {
@@ -75,7 +80,27 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   private loadApplications(filters?: AppsFiltersValues): void {
     this.isLoading = true;
-    combineLatest([this.appService.getAvailableApps(filters), this.appService.getAllAppsCategories()])
+    let appCall$: Observable<AvailableApp[]>;
+    if (filters) {
+      if (filters.categories.includes('latest')) {
+        filters.categories = filters.categories.filter((category) => category !== 'latest');
+        appCall$ = this.appService.getLatestApps(filters);
+      } else {
+        appCall$ = this.appService.getAvailableApps(filters);
+      }
+    } else {
+      appCall$ = this.appService.getLatestApps().pipe(
+        tap((latestApps) => {
+          this.allNewAndUpdatedApps = latestApps;
+        }),
+        switchMap(() => this.appService.getAvailableApps()),
+      );
+    }
+
+    combineLatest([
+      appCall$,
+      this.appService.getAllAppsCategories(),
+    ])
       .pipe(untilDestroyed(this))
       .subscribe(([apps, appCategories]) => {
         this.apps = apps;
@@ -94,9 +119,6 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   private setupApps(apps: AvailableApp[], appCategories: string[]): void {
     this.allRecommendedApps = apps.filter((app) => app.recommended);
-    this.allNewAndUpdatedApps = apps
-      .sort((a, b) => new Date(a.last_update).getTime() - new Date(b.last_update).getTime());
-
     this.recommendedApps$.next(this.allRecommendedApps.slice(0, this.sliceAmount));
     this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps.slice(0, this.sliceAmount));
 
@@ -105,16 +127,22 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
       {
         title: this.translate.instant('Recommended Apps'),
         apps$: this.recommendedApps$,
-        totalApps: this.allNewAndUpdatedApps.length,
-        fetchMore: () => this.recommendedApps$.next(this.allRecommendedApps),
+        totalApps: this.allRecommendedApps.length,
+        category: 'recommended',
       },
-      {
+
+    );
+
+    if (!this.filters?.categories?.includes('latest')) {
+      // If this filter is applied, that means every app is already latest one so showing
+      // the new and updated category is not required
+      this.appSections.push({
         title: this.translate.instant('New & Updated Apps'),
         apps$: this.newAndUpdatedApps$,
         totalApps: this.allNewAndUpdatedApps.length,
-        fetchMore: () => this.newAndUpdatedApps$.next(this.allNewAndUpdatedApps),
-      },
-    );
+        category: 'latest',
+      });
+    }
 
     appCategories.forEach((category) => {
       const categorizedApps = apps.filter((app) => app.categories.some((appCategory) => appCategory === category));
@@ -125,11 +153,19 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
           apps$: new BehaviorSubject(categorizedApps.slice(0, this.sliceAmount)),
           totalApps: categorizedApps.length,
           // TODO: Implement logic to show all apps page per category
-          fetchMore: () => {},
+          category,
         },
       );
     });
 
     this.cdr.markForCheck();
+  }
+
+  applyCategoryFilter(category: string): void {
+    this.changeFilters({
+      categories: [category],
+      catalogs: [],
+      sort: AppsFiltersSort.Name,
+    });
   }
 }

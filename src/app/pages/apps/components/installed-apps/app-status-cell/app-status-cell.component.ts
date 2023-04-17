@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component, EventEmitter, HostBinding, Input, Output,
 } from '@angular/core';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -13,7 +12,6 @@ import { AppStatus, appStatusLabels } from 'app/pages/apps/enum/app-status.enum'
   selector: 'ix-app-status-cell',
   templateUrl: './app-status-cell.component.html',
   styleUrls: ['./app-status-cell.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppStatusCellComponent {
   @Input() app: ChartRelease;

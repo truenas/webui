@@ -19,10 +19,10 @@ import { WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Dataset {
-  available: ZfsProperty<number>;
-  compression: ZfsProperty<string>;
-  compressratio: ZfsProperty<string>;
-  deduplication: ZfsProperty<string>;
+  available: ZfsProperty<string, number>;
+  compression: ZfsProperty<string, string>;
+  compressratio: ZfsProperty<string, string>;
+  deduplication: ZfsProperty<DeduplicationSetting, string>;
   encrypted: boolean;
   encryption_algorithm: ZfsProperty<string>;
   encryption_root: string;
@@ -33,47 +33,47 @@ export interface Dataset {
   mountpoint: string;
   name: string;
   pool: string;
-  readonly: ZfsProperty<boolean>;
-  used: ZfsProperty<number>;
-  usedbychildren: ZfsProperty<number>;
-  usedbydataset: ZfsProperty<number>;
-  usedbyrefreservation: ZfsProperty<number>;
-  usedbysnapshots: ZfsProperty<number>;
+  readonly: ZfsProperty<OnOff, boolean>;
+  used: ZfsProperty<string, number>;
+  usedbychildren: ZfsProperty<string, number>;
+  usedbydataset: ZfsProperty<string, number>;
+  usedbyrefreservation: ZfsProperty<string, number>;
+  usedbysnapshots: ZfsProperty<string, number>;
   type: DatasetType;
-  managedby: ZfsProperty<string>;
-  aclmode: ZfsProperty<string>;
-  acltype: ZfsProperty<string>;
-  atime: ZfsProperty<boolean>;
-  casesensitivity: ZfsProperty<DatasetCaseSensitivity>;
-  copies: ZfsProperty<number>;
-  exec: ZfsProperty<boolean>;
+  managedby: ZfsProperty<string, string>;
+  aclmode: ZfsProperty<AclMode, string>;
+  acltype: ZfsProperty<DatasetAclType, string>;
+  atime: ZfsProperty<OnOff, boolean>;
+  casesensitivity: ZfsProperty<DatasetCaseSensitivity, string>;
+  copies: ZfsProperty<string, number>;
+  exec: ZfsProperty<OnOff, boolean>;
   origin: ZfsProperty<string>;
-  pbkdf2iters: ZfsProperty<string>;
+  pbkdf2iters: ZfsProperty<string, string>;
   quota: ZfsProperty<number>;
-  recordsize: ZfsProperty<number>;
+  recordsize: ZfsProperty<string, number>;
   refquota: ZfsProperty<number>;
   refreservation: ZfsProperty<number>;
-  reservation: ZfsProperty<number>;
-  snapdev: ZfsProperty<string>;
-  snapdir: ZfsProperty<number>;
-  share_type: ZfsProperty<string>;
+  reservation: ZfsProperty<string, number>;
+  snapdev: ZfsProperty<DatasetSnapdev, string>;
+  snapdir: ZfsProperty<DatasetSnapdir, string>;
+  share_type: ZfsProperty<DatasetShareType, string>;
   special_small_block_size: ZfsProperty<string>;
-  sync: ZfsProperty<string>;
-  xattr: ZfsProperty<boolean>;
+  sync: ZfsProperty<DatasetSync, string>;
+  xattr: ZfsProperty<DatasetXattr, boolean>;
   checksum: ZfsProperty<DatasetChecksum>;
 
   // Absent if extra.retrieve_children is false
   children?: Dataset[];
 
-  refquota_critical?: ZfsProperty<number>;
-  refquota_warning?: ZfsProperty<number>;
-  quota_critical?: ZfsProperty<number>;
-  quota_warning?: ZfsProperty<number>;
+  refquota_critical?: ZfsProperty<string, string>;
+  refquota_warning?: ZfsProperty<string, string>;
+  quota_critical?: ZfsProperty<string, string>;
+  quota_warning?: ZfsProperty<string, string>;
   comments?: ZfsProperty<string>;
 
   // Present for type === DatasetType.Volume
-  volsize?: ZfsProperty<number>;
-  volblocksize?: ZfsProperty<number>;
+  volsize?: ZfsProperty<string, number>;
+  volblocksize?: ZfsProperty<string, number>;
 }
 
 export interface ExtraDatasetQueryOptions {
@@ -92,10 +92,10 @@ export interface DatasetCreate {
   sparse?: boolean;
   force_size?: boolean;
   comments?: string;
-  sync?: DatasetSync;
+  sync?: WithInherit<DatasetSync>;
   compression?: string;
   atime?: OnOff;
-  exec?: OnOff;
+  exec?: WithInherit<OnOff>;
   managedby?: string;
   quota?: number;
   quota_warning?: WithInherit<number>;
@@ -107,8 +107,8 @@ export interface DatasetCreate {
   refreservation?: number;
   special_small_block_size?: WithInherit<number>;
   copies?: WithInherit<number>;
-  snapdir?: DatasetSnapdir;
-  snapdev?: DatasetSnapdev;
+  snapdir?: WithInherit<DatasetSnapdir>;
+  snapdev?: WithInherit<DatasetSnapdev>;
   deduplication?: string;
   checksum?: DatasetChecksum;
   readonly?: WithInherit<OnOff>;
@@ -135,7 +135,7 @@ export interface DatasetUpdate {
   volsize?: number;
   force_size?: boolean;
   comments?: WithInherit<string>;
-  sync?: DatasetSync;
+  sync?: WithInherit<DatasetSync>;
   compression?: WithInherit<string>;
   atime?: WithInherit<OnOff>;
   exec?: WithInherit<OnOff>;
@@ -167,7 +167,7 @@ export interface DatasetUpdate {
 export interface DatasetDetails {
   id: string;
   encrypted: boolean;
-  available: ZfsProperty<number>;
+  available: ZfsProperty<string, number>;
   encryption_algorithm: ZfsProperty<string>;
   encryption_root: string;
   key_format: ZfsProperty<string>;
@@ -178,14 +178,14 @@ export interface DatasetDetails {
   name: string;
   pool: string;
   type: DatasetType;
-  used: ZfsProperty<number>;
-  usedbychildren: ZfsProperty<number>;
-  usedbydataset: ZfsProperty<number>;
-  usedbysnapshots: ZfsProperty<number>;
-  quota: ZfsProperty<number>;
-  refquota: ZfsProperty<number>;
-  refreservation: ZfsProperty<number>;
-  reservation: ZfsProperty<number>;
+  used: ZfsProperty<string, number>;
+  usedbychildren: ZfsProperty<string, number>;
+  usedbydataset: ZfsProperty<string, number>;
+  usedbysnapshots: ZfsProperty<string, number>;
+  quota: ZfsProperty<string, number>;
+  refquota: ZfsProperty<string, number>;
+  refreservation: ZfsProperty<string, number>;
+  reservation: ZfsProperty<string, number>;
   snapshot_count?: number;
   replication_tasks_count?: number;
   snapshot_tasks_count?: number;
@@ -197,7 +197,7 @@ export interface DatasetDetails {
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
   children?: DatasetDetails[];
-  volsize?: ZfsProperty<number>; // Present for type === DatasetType.Volume
+  volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
   atime: boolean;
   casesensitive: boolean;
@@ -205,10 +205,10 @@ export interface DatasetDetails {
   sync: ZfsProperty<string>;
   compression: ZfsProperty<string>;
   deduplication: ZfsProperty<string>;
-  refquota_critical?: ZfsProperty<number>;
-  refquota_warning?: ZfsProperty<number>;
-  quota_critical?: ZfsProperty<number>;
-  quota_warning?: ZfsProperty<number>;
+  refquota_critical?: ZfsProperty<string, number>;
+  refquota_warning?: ZfsProperty<string, number>;
+  quota_critical?: ZfsProperty<string, number>;
+  quota_warning?: ZfsProperty<string, number>;
   comments?: ZfsProperty<string>;
 }
 
