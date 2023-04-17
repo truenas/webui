@@ -20,6 +20,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -69,6 +70,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    private applicationsStore: AvailableAppsStore,
     private slideInService: IxSlideInService,
   ) {
     this.router.events
@@ -204,8 +206,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.showLoadStatus(EmptyType.Loading);
     this.cdr.markForCheck();
 
-    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
-      if (!config.pool) {
+    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+      if (!pool) {
         this.dataSource = [];
         this.showLoadStatus(EmptyType.FirstUse);
         this.isLoading = false;

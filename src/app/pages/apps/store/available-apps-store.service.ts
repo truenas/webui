@@ -3,7 +3,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  Observable, catchError, combineLatest, of, switchMap, tap,
+  Observable, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -33,6 +33,7 @@ export interface AvailableAppsState {
   appsPerCategory: 6;
   searchQuery: string;
   searchedApps: AvailableApp[];
+  selectedPool: string;
 }
 
 const initialState: AvailableAppsState = {
@@ -52,6 +53,7 @@ const initialState: AvailableAppsState = {
   appsByCategories: [],
   searchQuery: '',
   searchedApps: [],
+  selectedPool: null,
 };
 
 @Injectable()
@@ -67,6 +69,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly sliceAmount$ = this.select((state) => state.appsPerCategory);
   readonly appsCategories$ = this.select((state) => state.categories);
   readonly availableApps$ = this.select((state) => state.availableApps);
+  readonly selectedPool$ = this.select((state) => state.selectedPool);
 
   constructor(
     private dialogService: DialogService,
@@ -90,6 +93,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
           this.loadLatestApps(),
           this.loadAvailableApps(),
           this.loadCategories(),
+          this.loadAppsPool(),
         ]);
       }),
       tap((
@@ -97,7 +101,8 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
           latestApps,
           availableApps,
           categories,
-        ]: [AvailableApp[], AvailableApp[], string[]],
+          pool,
+        ]: [AvailableApp[], AvailableApp[], string[], string],
       ) => {
         this.patchState((state: AvailableAppsState): AvailableAppsState => {
           const newState: AvailableAppsState = {
@@ -108,6 +113,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
             filteredApps: [],
             recommendedApps: availableApps.filter((app) => app.recommended),
             isLoading: false,
+            selectedPool: pool,
           };
           newState.appsByCategories = this.getAppsSlicesByCategory(newState);
           return newState;
@@ -262,6 +268,13 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     );
   }
 
+  updateSelectedPool = this.updater((state: AvailableAppsState, pool: string) => {
+    return {
+      ...state,
+      selectedPool: pool,
+    };
+  });
+
   private loadCategories(): Observable<string[]> {
     return this.appsService.getAllAppsCategories().pipe(
       catchError((error: WebsocketError) => {
@@ -269,5 +282,9 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
         return of([]);
       }),
     );
+  }
+
+  private loadAppsPool(): Observable<string> {
+    return this.appsService.getKubernetesConfig().pipe(map((config) => config.pool));
   }
 }

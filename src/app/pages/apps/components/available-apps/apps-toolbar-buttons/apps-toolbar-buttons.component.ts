@@ -11,6 +11,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -37,6 +38,7 @@ export class AppsToolbarButtonsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
+    private applicationsStore: AvailableAppsStore,
   ) { }
 
   ngOnInit(): void {
@@ -90,8 +92,8 @@ export class AppsToolbarButtonsComponent implements OnInit {
   }
 
   private loadIfPoolSet(): void {
-    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
-      this.wasPoolSet = Boolean(config.pool);
+    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+      this.wasPoolSet = Boolean(pool);
       this.cdr.markForCheck();
     });
   }
