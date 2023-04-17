@@ -58,8 +58,6 @@ const initialState: AvailableAppsState = {
 
 @Injectable()
 export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
-  // readonly recommendedAppsSlice$ = this.select((state) => state.recommendedApps.slice(0, state.appsPerCategory));
-  // readonly latestAppsSlice$ = this.select((state) => state.latestApps.slice(0, state.appsPerCategory));
   readonly searchedApps$ = this.select((state) => state.searchedApps);
   readonly appsByCategories$ = this.select((state) => state.appsByCategories);
   readonly isLoading$ = this.select((state) => state.isLoading);
@@ -78,6 +76,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     private translate: TranslateService,
   ) {
     super(initialState);
+    this.initialize();
   }
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {

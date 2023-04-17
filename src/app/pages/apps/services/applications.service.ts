@@ -4,6 +4,7 @@ import {
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
@@ -86,13 +87,17 @@ export class ApplicationsService {
     return this.ws.call(endPoint, [firstOption, secondOption]);
   }
 
-  getChartReleases(name?: string): Observable<ChartRelease[]> {
+  getAllChartReleases(): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true } };
-
-    if (name) {
-      return this.ws.call('chart.release.query', [[['name', '=', name]]]);
-    }
     return this.ws.call('chart.release.query', [[], secondOption]);
+  }
+
+  getChartRelease(name: string): Observable<ChartRelease[]> {
+    return this.ws.call('chart.release.query', [[['name', '=', name]]]);
+  }
+
+  subscribeToAllChartReleases(): Observable<ApiEvent<ChartRelease>> {
+    return this.ws.subscribe('chart.release.query');
   }
 
   getChartReleaseWithResources(name: string): Observable<ChartRelease[]> {

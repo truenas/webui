@@ -35,9 +35,7 @@ export class AvailableAppsComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     protected applicationsStore: AvailableAppsStore,
-  ) {
-    this.applicationsStore.initialize();
-  }
+  ) { }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);

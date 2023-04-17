@@ -5,7 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, take } from 'rxjs';
+import {
+  combineLatest, filter, map, switchMap, take, takeWhile, tap,
+} from 'rxjs';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -59,30 +62,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     },
   };
 
-  constructor(
-    private appService: ApplicationsService,
-    private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-    private layoutService: LayoutService,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private applicationsStore: AvailableAppsStore,
-    private slideInService: IxSlideInService,
-  ) {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-      });
-  }
-
   get filteredApps(): ChartRelease[] {
     return this.dataSource
       .filter((app) => app.name.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
@@ -133,10 +112,34 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .some((app) => app.update_available || app.container_images_update_available);
   }
 
+  constructor(
+    private appService: ApplicationsService,
+    private cdr: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute,
+    private errorHandler: ErrorHandlerService,
+    private router: Router,
+    private layoutService: LayoutService,
+    private matDialog: MatDialog,
+    private dialogService: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
+    private applicationsStore: AvailableAppsStore,
+    private slideInService: IxSlideInService,
+  ) {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+      });
+  }
+
   ngOnInit(): void {
     this.listenForRouteChanges();
-    this.listenForSlideFormClosed();
-    this.updateChartReleases();
+    this.loadChartReleases();
+    this.subscribeToChartReleaseUpdates();
   }
 
   ngAfterViewInit(): void {
@@ -201,49 +204,75 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       });
   }
 
-  updateChartReleases(): void {
+  loadChartReleases(): void {
     this.isLoading = true;
     this.showLoadStatus(EmptyType.Loading);
     this.cdr.markForCheck();
 
-    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      if (!pool) {
-        this.dataSource = [];
-        this.showLoadStatus(EmptyType.FirstUse);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      } else {
-        this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((kubernetesStarted) => {
+    combineLatest([
+      this.applicationsStore.selectedPool$,
+      this.applicationsStore.isLoading$.pipe(filter((isLoading) => !isLoading)),
+    ])
+      .pipe(
+        takeWhile(([pool]) => !pool, true),
+        filter(([pool]) => {
+          if (!pool) {
+            this.dataSource = [];
+            this.showLoadStatus(EmptyType.FirstUse);
+            this.isLoading = false;
+            this.cdr.markForCheck();
+          }
+          return !!pool;
+        }),
+        switchMap(() => this.appService.getKubernetesServiceStarted()),
+        filter((kubernetesStarted) => {
           if (!kubernetesStarted) {
             this.dataSource = [];
             this.showLoadStatus(EmptyType.Errors);
             this.isLoading = false;
             this.cdr.markForCheck();
-          } else {
-            this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
-              if (charts.length) {
-                this.dataSource = charts;
-                this.dataSource.forEach((app) => {
-                  if (app.status === ChartReleaseStatus.Deploying) {
-                    this.refreshStatus(app.name);
-                  }
-                });
-                this.selectAppOnLoad();
-              } else {
-                this.dataSource = [];
-                this.showLoadStatus(EmptyType.NoPageData);
-              }
-              this.isLoading = false;
-              this.cdr.markForCheck();
-            });
           }
-        });
-      }
+          return !!kubernetesStarted;
+        }),
+        switchMap(() => this.appService.getAllChartReleases()),
+        filter((charts) => {
+          if (!charts.length) {
+            this.dataSource = [];
+            this.showLoadStatus(EmptyType.NoPageData);
+          }
+          return !!charts.length;
+        }),
+        tap((charts) => {
+          this.dataSource = charts;
+          this.dataSource.forEach((app) => {
+            if (app.status === ChartReleaseStatus.Deploying) {
+              this.refreshStatus(app.name);
+            }
+          });
+          this.selectAppOnLoad();
+        }),
+        untilDestroyed(this),
+      ).subscribe({
+        complete: () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  subscribeToChartReleaseUpdates(): void {
+    this.appService.subscribeToAllChartReleases().pipe(untilDestroyed(this)).subscribe({
+      next: (apiEvent) => {
+        if (apiEvent.msg === IncomingApiMessageType.Removed) {
+          this.dataSource = this.dataSource.filter((chartRelease) => chartRelease.name !== apiEvent.id.toString());
+          this.cdr.markForCheck();
+        }
+      },
     });
   }
 
   refreshStatus(name: string): void {
-    this.appService.getChartReleases(name)
+    this.appService.getChartRelease(name)
       .pipe(filter(Boolean), take(1), untilDestroyed(this))
       .subscribe((releases) => {
         const installedApp = this.dataSource.find((app) => app.name === name);
@@ -313,11 +342,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onBulkUpgrade(): void {
     const apps = this.dataSource.filter((app) => app.selected);
-    const dialogRef = this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
-
-    dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.updateChartReleases();
-    });
+    this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
   }
 
   onBulkDelete(): void {
@@ -348,7 +373,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
             message = '<ul>' + message + '</ul>';
             this.dialogService.error({ title: helptext.bulkActions.title, message });
           }
-          this.updateChartReleases();
         },
       );
     });
@@ -367,12 +391,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
 
     this.cdr.markForCheck();
-  }
-
-  private listenForSlideFormClosed(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateChartReleases();
-    });
   }
 
   private openAdvancedSettings(): void {

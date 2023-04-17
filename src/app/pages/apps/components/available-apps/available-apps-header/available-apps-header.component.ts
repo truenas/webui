@@ -93,7 +93,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
   loadData(): void {
     combineLatest([
       this.applicationsStore.availableApps$,
-      this.appService.getChartReleases(),
+      this.appService.getAllChartReleases(),
       this.applicationsStore.appsCategories$,
     ]).pipe(untilDestroyed(this)).subscribe(([availableApps, releases, categories]) => {
       this.availableApps = availableApps;
