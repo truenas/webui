@@ -99,10 +99,6 @@ export class ServiceNfsComponent implements OnInit {
       });
   }
 
-  onCancel(): void {
-    this.router.navigate(['/services']);
-  }
-
   private loadConfig(): void {
     this.ws.call('nfs.config')
       .pipe(untilDestroyed(this))
