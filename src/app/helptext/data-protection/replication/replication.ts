@@ -223,6 +223,8 @@ to determine snapshots creation order.'),
   encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
   encryption_key_location_tooltip: repwizardhelptext.encryption_key_location_tooltip,
 
+  sudo_tooltip: repwizardhelptext.sudo_tooltip,
+
   allow_from_scratch_placeholder: T('Replication from scratch'),
   allow_from_scratch_tooltip: T('If the destination system has \
  snapshots but they do not have any data in common with the source \

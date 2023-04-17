@@ -263,6 +263,6 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   doEdit(id: number): void {
     const replication = this.entityList.rows.find((row) => row.id === id);
     const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
-    form.setExistingReplication(replication);
+    form.setForEdit(replication);
   }
 }

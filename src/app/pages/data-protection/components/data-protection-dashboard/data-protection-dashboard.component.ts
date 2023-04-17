@@ -283,7 +283,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           edit: (row: ReplicationTaskUi) => {
             const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
-            form.setExistingReplication(row);
+            form.setForEdit(row);
           },
           onButtonClick: (row) => {
             this.stateButton(row);

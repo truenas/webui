@@ -4,361 +4,31 @@
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <form class="ix-form-container" (submit)="onSubmit()">
       <div class="fieldsets">
-        <ix-fieldset [title]="'General' | translate">
-          <ix-input
-            formControlName="name"
-            [label]="'Name' | translate"
-            [required]="true"
-            [tooltip]="helptext.name_tooltip | translate"
-          ></ix-input>
-          <ix-select
-            *ngIf="!isLocal"
-            formControlName="direction"
-            [label]="'Direction' | translate"
-            [required]="true"
-            [options]="directions$"
-            [tooltip]="helptext.direction_tooltip | translate"
-          ></ix-select>
-          <ix-select
-            formControlName="transport"
-            [label]="'Transport' | translate"
-            [required]="true"
-            [options]="transports$"
-            [tooltip]="helptext.transport_tooltip | translate"
-          ></ix-select>
-          <ix-input
-            formControlName="retries"
-            type="number"
-            [label]="'Number of retries for failed replications' | translate"
-            [tooltip]="helptext.retries_tooltip | translate"
-          ></ix-input>
-          <ix-select
-            formControlName="logging_level"
-            [label]="'Logging Level' | translate"
-            [required]="true"
-            [options]="loggingLevels$"
-            [tooltip]="helptext.logging_level_tooltip | translate"
-          ></ix-select>
-          <ix-checkbox
-            formControlName="enabled"
-            [label]="'Enabled' | translate"
-            [tooltip]="helptext.enabled_tooltip | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
+        <ix-replication-general-section
+          [replication]="existingReplication"
+        ></ix-replication-general-section>
 
-        <ix-fieldset [title]="'Transport Options' | translate">
-          <ix-select
-            *ngIf="!isLocal"
-            formControlName="ssh_credentials"
-            [label]="'SSH Connection' | translate"
-            [required]="true"
-            [options]="sshCredentials$"
-            [tooltip]="helptext.ssh_credentials_tooltip | translate"
-          ></ix-select>
-          <ng-container *ngIf="isNetcat">
-            <ix-select
-              formControlName="netcat_active_side"
-              [label]="'Netcat Active Side' | translate"
-              [required]="true"
-              [options]="netcatActiveSides$"
-              [tooltip]="helptext.netcat_active_side_tooltip | translate"
-            ></ix-select>
-            <ix-input
-              formControlName="netcat_active_side_listen_address"
-              [label]="'Netcat Active Side Listen Address' | translate"
-              [tooltip]="helptext.netcat_active_side_listen_address_tooltip | translate"
-            ></ix-input>
-            <ix-input
-              formControlName="netcat_active_side_port_min"
-              type="number"
-              [label]="'Netcat Active Side Min Port' | translate"
-              [tooltip]="helptext.netcat_active_side_port_min_tooltip | translate"
-            ></ix-input>
-            <ix-input
-              formControlName="netcat_active_side_port_max"
-              type="number"
-              [label]="'Netcat Active Side Max Port' | translate"
-              [tooltip]="helptext.netcat_active_side_port_max_tooltip | translate"
-            ></ix-input>
-            <ix-input
-              formControlName="netcat_passive_side_connect_address"
-              [label]="'Netcat Active Side Connect Address' | translate"
-              [tooltip]="helptext.netcat_passive_side_connect_address_tooltip | translate"
-            ></ix-input>
-          </ng-container>
-          <ng-container *ngIf="isSsh">
-            <ix-select
-              formControlName="compression"
-              [label]="'Stream Compression' | translate"
-              [required]="true"
-              [options]="compressions$"
-              [tooltip]="helptext.compression_tooltip | translate"
-            ></ix-select>
-            <ix-input
-              formControlName="speed_limit"
-              [label]="('Limit' | translate) + sizeSuggestion"
-              [format]="formatter.memorySizeFormatting"
-              [parse]="formatter.memorySizeParsing"
-              [tooltip]="helptext.speed_limit_tooltip | translate"
-            ></ix-input>
-          </ng-container>
-          <ix-checkbox
-            formControlName="large_block"
-            [label]="'Allow Blocks Larger than 128KB' | translate"
-            [tooltip]="helptext.large_block_tooltip | translate"
-          ></ix-checkbox>
-          <ix-checkbox
-            formControlName="compressed"
-            [label]="'Allow Compressed WRITE Records' | translate"
-            [tooltip]="helptext.compressed_tooltip | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
+        <ix-replication-transport-section
+          [replication]="existingReplication"
+          [transport]="generalSection?.form.value.transport"
+        ></ix-replication-transport-section>
 
-        <ix-fieldset [title]="'Source' | translate">
-          <ix-explorer
-            formControlName="source_datasets"
-            [label]="'Source' | translate"
-            [root]="''"
-            [required]="true"
-            [multiple]="true"
-            [tooltip]="helptext.source_datasets_tooltip"
-            [nodeProvider]="sourceNodeProvider"
-          ></ix-explorer>
-          <ix-checkbox
-            *ngIf="!form.value.replicate"
-            formControlName="recursive"
-            [label]="'Recursive' | translate"
-            [tooltip]="helptext.recursive_tooltip | translate"
-          ></ix-checkbox>
-          <ix-chips
-            *ngIf="form.value.recursive && !form.value.replicate"
-            formControlName="exclude"
-            [label]="'Exclude Child Datasets' | translate"
-            [tooltip]="helptext.exclude_tooltip | translate"
-          ></ix-chips>
-          <ix-checkbox
-            *ngIf="!form.value.replicate"
-            formControlName="properties"
-            [label]="'Include Dataset Properties' | translate"
-            [tooltip]="helptext.properties_tooltip | translate"
-          ></ix-checkbox>
-          <ix-checkbox
-            formControlName="replicate"
-            [label]="'Full Filesystem Replication' | translate"
-            [tooltip]="helptext.replicate_tooltip | translate"
-          ></ix-checkbox>
-          <ix-chips
-            *ngIf="form.value.replicate || form.value.properties"
-            formControlName="properties_override"
-            [label]="'Properties Override' | translate"
-            [tooltip]="helptext.properties_override_tooltip | translate"
-          ></ix-chips>
-          <ix-chips
-            *ngIf="form.value.replicate || form.value.properties"
-            formControlName="properties_exclude"
-            [label]="'Properties Exclude' | translate"
-            [tooltip]="helptext.properties_exclude_tooltip | translate"
-          ></ix-chips>
-          <ix-select
-            *ngIf="isPush"
-            formControlName="periodic_snapshot_tasks"
-            [label]="'Periodic Snapshot Tasks' | translate"
-            [options]="periodicSnapshotTasks$"
-            [required]="true"
-            [multiple]="true"
-            [tooltip]="helptext.periodic_snapshot_tasks_tooltip | translate"
-          ></ix-select>
-          <!-- TODO: Weird name -->
-          <ix-checkbox
-            formControlName="restrict_schedule"
-            [label]="'Replicate Specific Snapshots' | translate"
-            [tooltip]="helptext.restrict_schedule_tooltip | translate"
-          ></ix-checkbox>
-          <!-- TODO: Confirm label -->
-          <!-- TODO: Test limiting by time -->
-          <ng-container *ngIf="form.value.restrict_schedule">
-            <ix-scheduler
-              formControlName="restrict_schedule_picker"
-              [label]="'By snapshot creation time' | translate"
-              [startTime]="form.value.restrict_schedule_begin"
-              [endTime]="form.value.restrict_schedule_end"
-              [tooltip]="helptext.restrict_schedule_picker_tooltip | translate"
-            ></ix-scheduler>
-            <ix-select
-              *ngIf="form.value.restrict_schedule_picker === CronPresetValue.Hourly"
-              formControlName="restrict_schedule_begin"
-              [label]="'Begin' | translate"
-              [options]="timeOptions$"
-              [tooltip]="helptext.restrict_schedule_begin_tooltip | translate"
-            ></ix-select>
-            <ix-select
-              *ngIf="form.value.restrict_schedule_picker === CronPresetValue.Hourly"
-              formControlName="restrict_schedule_end"
-              [label]="'End' | translate"
-              [options]="timeOptions$"
-              [tooltip]="helptext.restrict_schedule_end_tooltip | translate"
-            ></ix-select>
-          </ng-container>
-          <ix-radio-group
-            formControlName="schema_or_regex"
-            [label]="nameOrRegexLabel"
-            [options]="snapshotNamingOptions$"
-          ></ix-radio-group>
-          <ix-chips
-            *ngIf="usesNamingSchema && !isPush"
-            formControlName="naming_schema"
-            [label]="'Matching naming schema' | translate"
-            [tooltip]="helptext.naming_schema_tooltip | translate"
-          ></ix-chips>
-          <ix-chips
-            *ngIf="usesNamingSchema && isPush"
-            formControlName="also_include_naming_schema"
-            [label]="'Also Include Naming Schema' | translate"
-            [tooltip]="helptext.also_include_naming_schema_tooltip | translate"
-          ></ix-chips>
-          <ix-input
-            *ngIf="!usesNamingSchema"
-            formControlName="name_regex"
-            [label]="'Matching regular expression' | translate"
-            [tooltip]="helptext.name_regex_tooltip | translate"
-          ></ix-input>
-          <ix-checkbox
-            formControlName="hold_pending_snapshots"
-            [label]="'Save Pending Snapshots' | translate"
-            [tooltip]="helptext.hold_pending_snapshots_tooltip | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
+        <ix-replication-source-section
+          [replication]="existingReplication"
+          [direction]="generalSection?.form.value.direction"
+          [nodeProvider]="sourceNodeProvider"
+        ></ix-replication-source-section>
 
-        <ix-fieldset [title]="'Destination' | translate">
-          <ix-explorer
-            formControlName="target_dataset"
-            [label]="'Destination' | translate"
-            [required]="true"
-            [root]="''"
-            [tooltip]="helptext.target_dataset_tooltip"
-            [nodeProvider]="destinationNodeProvider"
-          ></ix-explorer>
-          <ix-select
-            formControlName="readonly"
-            [label]="'Destination Dataset Read-only Policy' | translate"
-            [options]="readonlyModes$"
-            [required]="true"
-            [tooltip]="helptext.readonly_tooltip | translate"
-          ></ix-select>
-          <ix-checkbox
-            formControlName="encryption"
-            [label]="'Encryption' | translate"
-            [tooltip]="helptext.encryption_tooltip | translate"
-          ></ix-checkbox>
-          <ix-select
-            *ngIf="form.value.encryption"
-            formControlName="encryption_key_format"
-            [label]="'Encryption Key Format' | translate"
-            [options]="encryptionKeyFormats$"
-            [required]="true"
-            [tooltip]="helptext.encryption_key_generate_tooltip | translate"
-          ></ix-select>
-          <ix-checkbox
-            *ngIf="form.value.encryption && form.value.encryption_key_format === EncryptionKeyFormat.Hex"
-            formControlName="encryption_key_generate"
-            [label]="'Generate Encryption Key' | translate"
-            [tooltip]="helptext.encryption_key_generate_tooltip | translate"
-          ></ix-checkbox>
-          <ix-input
-            *ngIf="form.value.encryption && form.value.encryption_key_format === EncryptionKeyFormat.Hex && !form.value.encryption_key_generate"
-            formControlName="encryption_key"
-            [label]="'Encryption Key' | translate"
-            [tooltip]="helptext.encryption_key_hex_tooltip | translate"
-          ></ix-input>
-          <ix-input
-            *ngIf="form.value.encryption && form.value.encryption_key_format === EncryptionKeyFormat.Passphrase"
-            formControlName="encryption_key"
-            type="password"
-            [label]="'Passphrase' | translate"
-            [tooltip]="helptext.encryption_key_passphrase_tooltip | translate"
-          ></ix-input>
-          <ix-checkbox
-            *ngIf="form.value.encryption"
-            formControlName="encryption_key_location_truenasdb"
-            [label]="'Store Encryption key in Sending TrueNAS database' | translate"
-            [tooltip]="helptext.encryption_key_location_truenasdb_tooltip | translate"
-          ></ix-checkbox>
-          <ix-input
-            *ngIf="form.value.encryption && !form.value.encryption_key_location_truenasdb"
-            formControlName="encryption_key_location"
-            [label]="'Encryption Key Location in Target System' | translate"
-            [tooltip]="helptext.encryption_key_location_tooltip | translate"
-          ></ix-input>
-          <ix-checkbox
-            formControlName="allow_from_scratch"
-            [label]="'Replication from scratch' | translate"
-            [tooltip]="helptext.allow_from_scratch_tooltip | translate"
-          ></ix-checkbox>
-          <ix-select
-            formControlName="retention_policy"
-            [label]="'Snapshot Retention Policy' | translate"
-            [options]="retentionPolicies$"
-            [required]="true"
-            [tooltip]="helptext.retention_policy_tooltip | translate"
-          ></ix-select>
-          <div *ngIf="form.value.retention_policy === RetentionPolicy.Custom" class="retention-policy">
-            <ix-input
-              formControlName="lifetime_value"
-              type="number"
-              [label]="'Snapshot Lifetime' | translate"
-              [tooltip]="helptext.lifetime_value_tooltip | translate"
-            ></ix-input>
-            <ix-select
-              *ngIf="form.value.retention_policy === RetentionPolicy.Custom"
-              formControlName="lifetime_unit"
-              [label]="'Unit' | translate"
-              [options]="lifetimeUnits$"
-              [required]="true"
-            ></ix-select>
-          </div>
-        </ix-fieldset>
+        <ix-replication-target-section
+          [replication]="existingReplication"
+          [nodeProvider]="targetNodeProvider"
+        ></ix-replication-target-section>
 
-        <ix-fieldset [title]="'Replication Schedule' | translate">
-          <ix-checkbox
-            formControlName="auto"
-            [label]="'Run Automatically' | translate"
-            [tooltip]="helptext.auto_tooltip | translate"
-          ></ix-checkbox>
-          <ix-checkbox
-            formControlName="schedule"
-            [label]="'Schedule' | translate"
-            [tooltip]="helptext.schedule_tooltip | translate"
-          ></ix-checkbox>
-          <ng-container *ngIf="form.value.schedule">
-            <ix-scheduler
-              formControlName="schedule_picker"
-              [label]="'Frequency' | translate"
-              [tooltip]="helptext.schedule_picker_tooltip | translate"
-            ></ix-scheduler>
-            <ix-select
-              *ngIf="form.value.schedule_picker === CronPresetValue.Hourly"
-              formControlName="schedule_begin"
-              [label]="'Begin' | translate"
-              [options]="timeOptions$"
-              [tooltip]="helptext.schedule_begin_tooltip | translate"
-            ></ix-select>
-            <ix-select
-              *ngIf="form.value.schedule_picker === CronPresetValue.Hourly"
-              formControlName="schedule_end"
-              [label]="'End' | translate"
-              [options]="timeOptions$"
-              [tooltip]="helptext.schedule_end_tooltip | translate"
-            ></ix-select>
-          </ng-container>
-          <ix-checkbox
-            *ngIf="form.value.schedule"
-            formControlName="only_matching_schedule"
-            [label]="'Only Replicate Snapshots Matching Schedule' | translate"
-            [tooltip]="helptext.only_matching_schedule_tooltip | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
+        <ix-replication-schedule-section
+          [replication]="existingReplication"
+        ></ix-replication-schedule-section>
       </div>
 
       <div
@@ -374,13 +44,15 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
         >{{ 'Save' | translate }}</button>
         <button
           *ngIf="isNew"
           mat-button
           type="button"
+          ixTest="switch-to-wizard"
           (click)="onSwitchToWizard()"
-        >{{ 'Switch to Wizard' | translate }}</button>
+        >{{ 'Switch To Wizard' | translate }}</button>
       </div>
     </form>
   </mat-card-content>
