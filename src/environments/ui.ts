@@ -17,12 +17,32 @@ interface ReportOptions {
   showFooter: boolean;
 }
 
+interface Headers {
+  header: string;
+  footer: string;
+}
+
 
 /*
 * Nice Header
 * */
 function showBanner(): void {
   console.log(figlet.textSync('TrueNAS WebUI'));
+}
+
+function generateHeaders(content: string): Headers {
+  const width: number = 44;
+  const start = '\n ';
+  const finish = '\n';
+  const asterisk = '*';
+  const asterisksPerSide = (width - (content.length + 2)) / 2;
+  const asterisks = asterisk.repeat(asterisksPerSide);
+  const output = {
+    header: start +asterisks + ' ' + content.toUpperCase() + ' ' + asterisks + finish,
+    footer: start +asterisk.repeat(width) + '\n\n',
+  }
+
+  return output;
 }
 
 /*
@@ -49,10 +69,11 @@ program
   .option('-e, --enable', 'enable mock config')
   .option('-d, --disable', 'disable mock config')
   .option('-m, --model <name>', 'set controller model to mock')
-  .option('-M, --showmodels ', 'show available models for mock')
+  .option('-M, --showcontrollers ', 'show available controllers for mock')
   .option('-l, --list', 'show current mock config settings')
   .option('-a, --assign, <existing | default>', 'set slot assignment strategy')
   .option('-s, --shelves, <list as string>', 'set expansion shelves')
+  .option('-S, --showshelves ', 'show available shelves for mock')
   .action(() => {
     const mockCommand = program.commands.find((command: Command) => command._name === 'mock');
     const mockOptions = commandOpts(mockCommand);
@@ -228,8 +249,9 @@ function wrap(key:string, value: any): string {
 * Mock Command
 * */
 function mockConfigReport(options: ReportOptions): string {
-  const header: string = options.showHeader ? '  ************ MOCK CONFIGURATION ************\n' : '';
-  const footer: string = options.showFooter ? '\n  ********************************************\n\n' : '';
+  const headers = generateHeaders('current mock configuration');
+  const header: string = options.showHeader ? headers.header : '';
+  const footer: string = options.showFooter ? headers.footer : '';
   const file = typeof options.data !== 'undefined' ? '\n    * Config file: ' + options.data + '\n' : '\n';
 
   const report = `    * Enabled: ${environment.mockConfig.enabled}
@@ -251,23 +273,25 @@ function setMockEnabled(value: boolean): void {
 }
 
 function setMockModel(value: string): void {
-  const models: CommandOptions = JSON.parse(fs.readFileSync('src/assets/mock/configs/models.json', 'utf8'));
-  environment.mockConfig.systemProduct = models[value.toUpperCase()].systemProduct;
-  environment.mockConfig.enclosureOptions.controllerModel = models[value.toUpperCase()].model;
+  const models: CommandOptions = JSON.parse(fs.readFileSync('src/environments/models.json', 'utf8'));
+  environment.mockConfig.systemProduct = models.controllers[value.toUpperCase()].systemProduct;
+  environment.mockConfig.enclosureOptions.controllerModel = models.controllers[value.toUpperCase()].model;
   saveEnvironment();
 }
 
-function showAvailableModels(options: ReportOptions): void {
-  const rawModels: CommandOptions = JSON.parse(fs.readFileSync('src/assets/mock/configs/models.json', 'utf8'));
-  const models = Object.keys(rawModels);
+function showAvailableModels(options: ReportOptions, key: string): void {
+  const data: CommandOptions = JSON.parse(fs.readFileSync('src/environments/models.json', 'utf8'));
+  const models = Object.keys(data[key]);
   let report = '\n';
 
   models.forEach((model: string) => {
     report += `    * ${model} \n`
   })
 
-  const header: string = options.showHeader ? '\n  ************* AVAILABLE MODELS *************\n' : '';
-  const footer: string = options.showFooter ? '\n  ********************************************\n\n' : '';
+  const headers: Headers = generateHeaders('available mock ' + key);
+
+  const header: string = options.showHeader ? headers.header : '';
+  const footer: string = options.showFooter ? headers.footer : '';
 
   const output = header + report + footer;
 
@@ -338,32 +362,22 @@ function mock(command: Command, options: CommandOptions): void {
         case 'shelves':
           setMockShelves(command[option]);
           break;
-        case 'showmodels':
+        case 'showcontrollers':
           showAvailableModels({
             showHeader: true,
             showFooter: true,
-          });
+          }, 'controllers');
+          process.exit(0);
+          break;
+        case 'showshelves':
+          showAvailableModels({
+            showHeader: true,
+            showFooter: true,
+          }, 'shelves');
           process.exit(0);
           break;
         default: {
           console.log(command[option]);
-          /*if (!command.reset) {
-            console.log('Locating mock configuration file...');
-            const path = 'src/assets/mock/configs/';
-            const configStr = fs.readFileSync( path + command.config, 'utf8');
-            const config = JSON.parse(configStr);
-
-            environment.mockConfig = config;
-            console.log('Mock config file found √\n');
-
-            mockConfigReport({
-              data: command.config,
-              showHeader : true,
-              showFooter: true,
-            });
-            environment.mockConfig = command.config ? config : null;
-            saveEnvironment();
-          }*/
           break;
         }
       }
@@ -410,8 +424,9 @@ function printCurrentConfig(proxyConfigJson: string): void {
 }
 
 function showRemote(options: ReportOptions): void {
-  const header: string = options.showHeader ? '  ************** REMOTE SERVER ***************\n' : '';
-  const footer: string = options.showFooter ? '\n  ********************************************\n\n' : '';
+  const headers = generateHeaders('remote server');
+  const header: string = options.showHeader ? headers.header : '';
+  const footer: string = options.showFooter ? headers.footer : '';
 
   const report = `
     * Server URL: ${environment.remote}
