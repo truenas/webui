@@ -39,11 +39,12 @@ function generateHeaders(content: string): Headers {
   const asterisks = asterisk.repeat(asterisksPerSide);
   const output = {
     header: start +asterisks + ' ' + content.toUpperCase() + ' ' + asterisks + finish,
-    footer: start +asterisk.repeat(width) + '\n\n',
+    footer: start +asterisk.repeat(width) + '\n',
   }
 
   return output;
 }
+
 
 /*
 * Variables
@@ -249,22 +250,30 @@ function wrap(key:string, value: any): string {
 * Mock Command
 * */
 function mockConfigReport(options: ReportOptions): string {
-  const headers = generateHeaders('current mock configuration');
-  const header: string = options.showHeader ? headers.header : '';
-  const footer: string = options.showFooter ? headers.footer : '';
-  const file = typeof options.data !== 'undefined' ? '\n    * Config file: ' + options.data + '\n' : '\n';
+    if (!environment.mockConfig) {
+      console.log('Something is wrong. Environment variable not initialized');
+      console.log(environment);
+      process.exit(0);
+    }
 
-  const report = `    * Enabled: ${environment.mockConfig.enabled}
+
+    const headers = generateHeaders('current mock configuration');
+    const header: string = options.showHeader ? headers.header : '';
+    const footer: string = options.showFooter ? headers.footer : '';
+    const file = typeof options.data !== 'undefined' ? '\n    * Config file: ' + options.data + '\n' : '\n';
+
+    const report = `    * Enabled: ${environment?.mockConfig?.enabled}
     * Controller: ${environment.mockConfig.systemProduct}
     * Shelves: ${environment.mockConfig.enclosureOptions.expansionModels}
     * Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}
  `;
 
-  const output = header + file + report + footer;
+    const output = header + file + report + footer;
 
-  console.log(output)
+    console.log(output)
 
-  return output;
+    return output;
+
 }
 
 function setMockEnabled(value: boolean): void {
@@ -384,7 +393,6 @@ function mock(command: Command, options: CommandOptions): void {
     }
   }
 
-  console.log('\n');
   mockConfigReport({
     showHeader : true,
     showFooter: true,
@@ -437,7 +445,7 @@ function showRemote(options: ReportOptions): void {
 }
 
 function remote(command: Command, ip: string): void {
-  console.log('Setting remote machine url...\n ');
+  console.log('Setting remote machine url...');
 
   const proxyConfigJson = './proxy.config.json';
   const url = normalizeUrl(ip);

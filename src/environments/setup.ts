@@ -25,12 +25,16 @@ program
 program.parse(process.argv);
 
 
-function checkEnv(suppress: boolean = false): void {
+export function checkEnv(suppress: boolean = false): void {
   exec('wc -w < ' + environmentTs, (error, stdout) => {
     const response = Number(stdout.replace(/\D/g, ''));
     const checkRemote = (suppress: boolean, envStr: string = '$SERVER$') => {
       if (envStr.includes('$SERVER$')) {
-        console.log('Remote not set! Use yarn ui script to set remote url: yarn ui remote -i <ip-address>');
+        const message = `
+Ready for development but remote not set.
+Use yarn ui script to set remote url: yarn ui remote -i <ip-address>
+            `
+        console.log(message);
         if (suppress) {
           process.exit(0);
         } else {
