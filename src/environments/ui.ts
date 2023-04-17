@@ -139,11 +139,10 @@ function showHelp(command: Command): void {
 /*
 * Reset Environment File
 * */
-function reset(): WebUiEnvironment {
+function reset(): void {
   const templateStr = fs.readFileSync( template, 'utf8');
   const result = templateStr.replace('const environmentTemplate', 'const environment');
   fs.writeFileSync(environmentTs, result, 'utf8');
-  return JSON.parse(result);
 }
 
 /*
@@ -431,9 +430,11 @@ function remote(command: Command, ip: string): void {
   printCurrentConfig(proxyConfigJson);
 
   if (!url) {
-    showBanner();
-    command.help();
-    process.exit(2);
+    showRemote({
+      showHeader: true,
+      showFooter: true,
+    });
+    process.exit(0);
   }
 
   saveProxyConfig(proxyConfigJson, url);
