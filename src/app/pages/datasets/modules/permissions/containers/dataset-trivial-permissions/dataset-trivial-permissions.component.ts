@@ -148,7 +148,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       .subscribe({
         next: ([datasets, stat]) => {
           this.isLoading = false;
-          this.aclType = datasets[0].acltype.value as AclType;
+          // TODO: DatasetAclType and AclType may represent the same thing
+          this.aclType = datasets[0].acltype.value as unknown as AclType;
           this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
             mode: this.oldDatasetMode,

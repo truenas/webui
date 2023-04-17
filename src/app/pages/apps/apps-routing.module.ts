@@ -26,7 +26,7 @@ const routes: Routes = [
       children: [{
         path: ':appId',
         component: InstalledAppsComponent,
-        data: { title: T('Installed Apps'), breadcrumb: T('Installed') },
+        data: { title: T('Installed'), breadcrumb: T('Applications') },
       },
       {
         path: ':appId/shell/:pname/:cname',

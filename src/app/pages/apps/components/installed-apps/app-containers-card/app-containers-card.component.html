@@ -54,7 +54,7 @@
                   {{ 'Update available' | translate }}
                 </ng-container>
               </span>
-              <span class="container-action">
+              <span *ngIf="app.status !== chartReleaseStatus.Stopped" class="container-action">
                 <button
                   mat-icon-button
                   matTooltipPosition="above"

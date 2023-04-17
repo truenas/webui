@@ -1,0 +1,6 @@
+<mat-spinner
+  *ngIf="inProgress"
+  [diameter]="20"
+  [matTooltip]="job?.progress?.description"
+></mat-spinner>
+<span>{{ appStatus | mapValue: appStatusLabels | translate }}</span>

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,7 +20,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 })
 export class DiskWipeDialogComponent {
   form = this.formBuilder.group({
-    wipe_method: [DiskWipeMethod.Quick],
+    wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
   });
 
   readonly tooltips = {

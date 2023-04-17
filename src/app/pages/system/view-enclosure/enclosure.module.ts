@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -26,6 +27,7 @@ import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/componen
 import { SetEnclosureLabelDialogComponent } from './components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { TemperatureMeterComponent } from './components/temperature-meter/temperature-meter.component';
+import { EnclosureStore } from './stores/enclosure-store.service';
 
 @NgModule({
   imports: [
@@ -49,6 +51,7 @@ import { TemperatureMeterComponent } from './components/temperature-meter/temper
     IxFormsModule,
     CoreComponents,
     TestIdModule,
+    NgxFilesizeModule,
   ],
   declarations: [
     ViewEnclosureComponent,
@@ -59,6 +62,6 @@ import { TemperatureMeterComponent } from './components/temperature-meter/temper
     TemperatureMeterComponent,
     SetEnclosureLabelDialogComponent,
   ],
-  providers: [],
+  providers: [EnclosureStore],
 })
 export class EnclosureModule {}

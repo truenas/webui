@@ -1,16 +1,15 @@
 import { Point } from 'pixi.js';
-import { Position } from 'app/pages/system/view-enclosure/classes/chassis-view';
-import { CompoundChassisView } from 'app/pages/system/view-enclosure/classes/compound-chassis-view';
+import { ChassisView, Position } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { Chassis } from './chassis';
 
 export class MINIR extends Chassis {
-  front: CompoundChassisView;
+  front: ChassisView;
 
-  constructor(controller: number, sibling: number) {
+  constructor() {
     super();
     this.model = 'mini-r';
 
-    this.front = new CompoundChassisView(controller, sibling);
+    this.front = new ChassisView();
     this.front.container = new PIXI.Container();
     this.front.chassisPath = 'assets/images/hardware/mini_r/mini_r_1150w.png';
     this.front.driveTrayBackgroundPath = 'assets/images/hardware/mini_r/mini_r_hdd_drivetray_bg.png';

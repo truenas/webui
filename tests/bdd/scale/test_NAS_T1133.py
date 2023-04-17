@@ -82,10 +82,10 @@ def input_wheelsmbshare_as_name_click_to_enable(driver, share_name):
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(share_name)
     assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
+    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
-    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
 
 
 @then(parsers.parse('input "{description}" as description, and click save'))

@@ -64,7 +64,7 @@ def navigate_to_storage(driver):
 @then('when the storage page appears, click Create')
 def when_the_storage_page_appears_click_create(driver):
     """when the storage page appears, click Create."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 7, xpaths.storage.title)
     assert wait_on_element(driver, 7, '//a[contains(.,"Create Pool")]', 'clickable')
     driver.find_element_by_xpath('//a[contains(.,"Create Pool")]').click()
 
@@ -102,10 +102,11 @@ def press_right_arrow_under_data_vdev_click_on_the_force_checkbox(driver):
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
 
 
+# This is passed since the confirmation box is missing in Cobia
 @then('on the warning box, click Confirm checkbox and click CONTINUE')
 def on_the_warning_box_click_confirm_checkbox_and_click_continue(driver):
     """on the warning box, click Confirm checkbox and click CONTINUE."""
-    rsc.Confirm_Single_Disk(driver)
+    # rsc.Confirm_Single_Disk(driver)
 
 
 @then('click Create, click on Confirm checkbox and click CREATE POOL')
@@ -227,8 +228,8 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
 
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
-    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+
+    rsc.License_Agrement(driver)
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)

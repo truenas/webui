@@ -1,4 +1,3 @@
-import { AutofillMonitor } from '@angular/cdk/text-field';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
@@ -29,7 +28,6 @@ export class SigninFormComponent implements OnInit {
   });
 
   hasTwoFactor = false;
-  wasFormAutofilled = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -39,12 +37,10 @@ export class SigninFormComponent implements OnInit {
     private signinStore: SigninStore,
     private translate: TranslateService,
     private authService: AuthService,
-    private autofillMonitor: AutofillMonitor,
   ) { }
 
   ngOnInit(): void {
     this.checkForTwoFactor();
-    this.updateFormValidationOnAutofill();
   }
 
   onSubmit(): void {
@@ -98,19 +94,5 @@ export class SigninFormComponent implements OnInit {
     this.form.patchValue({ password: '', otp: '' });
     this.form.controls.password.setErrors(null);
     this.form.controls.otp.setErrors(null);
-  }
-
-  /**
-   * When form is autofilled by browser, Angular form is still empty until user clicks somewhere.
-   * Do not disable Log In button in this case.
-   * https://github.com/angular/angular/issues/30616
-   */
-  private updateFormValidationOnAutofill(): void {
-    this.autofillMonitor.monitor(this.usernameField.nativeElement.querySelector('input'))
-      .pipe(untilDestroyed(this))
-      .subscribe((event) => {
-        this.wasFormAutofilled = event.isAutofilled;
-        this.cdr.markForCheck();
-      });
   }
 }

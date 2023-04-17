@@ -26,6 +26,7 @@ export class M50 extends Chassis {
       this.rear.columns = 1;
       this.rear.rows = 4;
 
+      this.rear.slotRange = { start: 25, end: 28 };
       this.rear.totalDriveTrays = 4;
     }
   }

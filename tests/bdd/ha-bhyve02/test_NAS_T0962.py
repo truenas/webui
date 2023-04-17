@@ -197,6 +197,7 @@ def verify_that_the_trust_secret_succeeded(driver):
 @then('after, go to the Dashboard')
 def after_go_to_the_dashboard(driver):
     """after, go to the Dashboard."""
+    assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
 
@@ -274,7 +275,7 @@ def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
 
 
