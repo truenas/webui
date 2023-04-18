@@ -521,10 +521,6 @@ export type ApiDirectory = {
   'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
   'fcport.update': { params: [id: string, update: FibreChannelPortUpdate]; response: unknown };
 
-  // DS Cache
-  'dscache.get_uncached_group': { params: [groupname: string]; response: DsUncachedGroup };
-  'dscache.get_uncached_user': { params: [username: string]; response: DsUncachedUser };
-
   // Keychain Credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
   'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
