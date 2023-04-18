@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import {
-  lastValueFrom, Observable, of, throwError,
-} from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -22,13 +19,6 @@ export class ReplicationService {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) { }
-
-  /**
-   * @deprecated
-   */
-  genSshKeypair(): Promise<SshKeyPair> {
-    return lastValueFrom(this.ws.call('keychaincredential.generate_ssh_key_pair'));
-  }
 
   getTreeNodeProvider(providerOptions: {
     transport: TransportMode;

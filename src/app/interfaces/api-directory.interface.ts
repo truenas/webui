@@ -114,7 +114,6 @@ import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interfa
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
-import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FilesystemPutParams, FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -516,10 +515,6 @@ export type ApiDirectory = {
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.upgrade_finish': { params: void; response: boolean };
   'failover.upgrade': { params: void; response: boolean };
-
-  // FCPort
-  'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
-  'fcport.update': { params: [id: string, update: FibreChannelPortUpdate]; response: unknown };
 
   // DS Cache
   'dscache.get_uncached_group': { params: [groupname: string]; response: DsUncachedGroup };
