@@ -92,6 +92,7 @@
   "Selected": "",
   "Sensitive": "",
   "Set to inhibit some syslog diagnostics to avoid error messages. See <a href=\"https://man7.org/linux/man-pages/man5/exports.5.html\" target=\"_blank\">exports(5)</a> for examples.": "",
+  "Setup Pool First": "",
   "Snapshot Directory": "",
   "Some of the disks are attached to the exported pools   mentioned in this list. Checking a pool name means you want to   allow reallocation of the disks attached to that pool.": "",
   "Sort": "",
