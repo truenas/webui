@@ -74,7 +74,7 @@ program
   .option('-M, --showcontrollers ', 'show available controllers for mock')
   .option('-l, --list', 'show current mock config settings')
   .option('-a, --assign, <existing | default>', 'set slot assignment strategy')
-  .option('-s, --shelves, <list as string>', 'set expansion shelves')
+  .option('-s, --shelves, [Array|null]', 'set expansion shelves')
   .option('-S, --showshelves ', 'show available shelves for mock')
   .action(() => {
     const mockCommand = program.commands.find((command: Command) => command._name === 'mock');
