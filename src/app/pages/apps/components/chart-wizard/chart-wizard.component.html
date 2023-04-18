@@ -27,7 +27,7 @@
           ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
-          {{ isNew ? 'Install' : 'Update' | translate }}
+          {{ isNew ? ('Install' | translate) : ('Update' | translate) }}
         </button>
       </div>
     </form>
