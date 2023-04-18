@@ -21,7 +21,6 @@ import {
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
@@ -387,11 +386,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
-  }
-
-  onFailure(failedJob: Job): void {
-    this.formErrorHandler.handleWsFormError(failedJob, this.form);
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
+      this.dialogRef.close();
+      this.formErrorHandler.handleWsFormError(failedJob, this.form);
+    });
   }
 
   onSuccess(): void {
