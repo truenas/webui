@@ -13,6 +13,7 @@ import {
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
@@ -21,6 +22,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { forbiddenAsyncValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
+import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import {
@@ -38,7 +40,10 @@ import { FilesystemService } from 'app/services/filesystem.service';
 })
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  remoteSourceNodeProvider: TreeNodeProvider;
+  remoteTargetNodeProvider: TreeNodeProvider;
   readonly helptext = helptext;
+  readonly mntPath = mntPath;
   sshCredentials: KeychainSshCredentials[] = [];
 
   form = this.formBuilder.group({
@@ -98,6 +103,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     { label: this.translate.instant('PASSPHRASE'), value: EncryptionKeyFormat.Passphrase },
   ]);
 
+  get isRemoteSource(): boolean {
+    return this.form.value.source_datasets_from === DatasetSource.Remote;
+  }
+
+  get isRemoteTarget(): boolean {
+    return this.form.value.target_dataset_from === DatasetSource.Remote;
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
@@ -119,6 +132,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
+      this.form.controls.source_datasets.setValue([]);
       if (value === DatasetSource.Local) {
         this.selectLocalSource();
       } else if (value === DatasetSource.Remote) {
@@ -153,6 +167,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
 
     this.form.controls.target_dataset_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.form.controls.target_dataset.setValue('');
       this.disableTransportAndSudo(this.form.value.source_datasets_from, value);
       if (value === DatasetSource.Local) {
         this.form.controls.ssh_credentials_target.disable();
@@ -241,16 +256,21 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.ssh_credentials_source.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === SshCredentialsNewOption.New) {
         this.createSshConnection(true);
-      } else {
-        // TODO: Set fileNodeProvider
+      } else if (value) {
+        this.form.controls.source_datasets.setValue([]);
+        this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
+          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
+        );
       }
     });
 
     this.form.controls.ssh_credentials_target.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === SshCredentialsNewOption.New) {
         this.createSshConnection(false);
-      } else {
-        // TODO: Set fileNodeProvider
+      } else if (value) {
+        this.remoteTargetNodeProvider = this.replicationService.getTreeNodeProvider(
+          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
+        );
       }
     });
   }

@@ -30,7 +30,8 @@
         [tooltip]="helptext.source_datasets_tooltip | translate"
         [multiple]="true"
         [required]="true"
-        [nodeProvider]="fileNodeProvider"
+        [root]="isRemoteSource ? '' : mntPath"
+        [nodeProvider]="isRemoteSource ? remoteSourceNodeProvider : fileNodeProvider"
       ></ix-explorer>
       <ix-checkbox
         *ngIf="form.controls.recursive.enabled"
@@ -88,7 +89,8 @@
         [label]="helptext.target_dataset_placeholder | translate"
         [tooltip]="helptext.target_dataset_tooltip | translate"
         [required]="true"
-        [nodeProvider]="fileNodeProvider"
+        [root]="isRemoteTarget ? '' : mntPath"
+        [nodeProvider]="isRemoteTarget ? remoteTargetNodeProvider : fileNodeProvider"
       ></ix-explorer>
       <ix-checkbox
         *ngIf="form.controls.encryption.enabled"
