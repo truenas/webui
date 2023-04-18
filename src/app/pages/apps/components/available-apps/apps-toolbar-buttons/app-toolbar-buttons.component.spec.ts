@@ -8,6 +8,7 @@ import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -24,6 +25,9 @@ describe('AppsToolbarButtonsComponent', () => {
       mockProvider(DialogService),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
+      }),
+      mockProvider(AvailableAppsStore, {
+        selectedPool$: of('pool'),
       }),
     ],
   });
