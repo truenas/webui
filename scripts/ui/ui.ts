@@ -52,7 +52,7 @@ function generateHeaders(content: string): Headers {
 const environmentTs = './src/environments/environment.ts';
 const template = './scripts/ui/environment.template.ts';
 const originalEnvironment = {...environment};
-const modelsFile = './models.json';
+const modelsFile = './scripts/ui//models.json';
 
 /*
 * Command Setup
