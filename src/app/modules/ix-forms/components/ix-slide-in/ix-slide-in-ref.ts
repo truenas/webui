@@ -9,20 +9,20 @@ export class IxSlideInRef<T> {
   uuid: string;
   constructor(
     private slideInComponent: IxSlideInComponent,
-    private modalType: Type<T>,
+    private modalType: Type<T>, // ??
   ) {}
 
   closeThisSlide(error?: Error, response?: unknown): void {
     if (error) {
       this.slideInClosed$.error({
         error,
-        modalType: this.modalType,
+        modalType: this.modalType, // ??
       });
     }
 
     this.slideInClosed$.next({
       response: response === undefined ? null : response,
-      modalType: this.modalType,
+      modalType: this.modalType, // ???
     });
 
     this.slideInClosed$.complete();

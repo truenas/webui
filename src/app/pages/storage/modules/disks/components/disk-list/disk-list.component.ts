@@ -8,7 +8,9 @@ import * as filesize from 'filesize';
 import {
   forkJoin, lastValueFrom, of, Subject, switchMap,
 } from 'rxjs';
-import { catchError, debounceTime, map } from 'rxjs/operators';
+import {
+  catchError, debounceTime, filter, map,
+} from 'rxjs/operators';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -72,6 +74,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     },
   };
   private smartDiskChoices: Choices = {};
+  private entityTable: EntityTableComponent<Disk>;
 
   multiActions = [{
     id: 'medit',
@@ -83,9 +86,17 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       if (selected.length > 1) {
         const diskBulkEditFormSlide = this.slideInService.open(DiskBulkEditComponent);
         diskBulkEditFormSlide.componentInstance.setFormDiskBulk(selected);
+        diskBulkEditFormSlide.afterClosed$()
+          .pipe(filter((value) => !!value.response), untilDestroyed(this)).subscribe(() => {
+            this.getData();
+          });
       } else {
         const editFormSlide = this.slideInService.open(DiskFormComponent, { wide: true });
         editFormSlide.componentInstance.setFormDisk(selected[0]);
+        editFormSlide.afterClosed$()
+          .pipe(filter((value) => !!value.response), untilDestroyed(this)).subscribe(() => {
+            this.getData();
+          });
       }
     },
   }, {
@@ -126,6 +137,10 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       onClick: (disk: Disk) => {
         const editFormSlideRef = this.slideInService.open(DiskFormComponent, { wide: true });
         editFormSlideRef.componentInstance.setFormDisk(disk);
+        editFormSlideRef.afterClosed$()
+          .pipe(filter((value) => !!value.response), untilDestroyed(this)).subscribe(() => {
+            this.getData();
+          });
       },
     }];
 
@@ -195,6 +210,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   }
 
   afterInit(entityList: EntityTableComponent<Disk>): void {
+    this.entityTable = entityList;
     const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
     disksUpdateTrigger$.pipe(
       debounceTime(50),
@@ -205,10 +221,11 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       entityList.getData();
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityList.getData();
-      entityList.pageChanged();
-    });
+  }
+
+  getData(): void {
+    this.entityTable?.getData();
+    this.entityTable?.pageChanged();
   }
 
   resourceTransformIncomingRestData(disks: Disk[]): Disk[] {

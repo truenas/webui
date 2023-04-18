@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -22,7 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./disk-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskInfoCardComponent implements OnInit {
+export class DiskInfoCardComponent {
   @Input() topologyDisk: TopologyDisk;
   @Input() disk: Disk;
 
@@ -42,18 +42,15 @@ export class DiskInfoCardComponent implements OnInit {
     return !!this.disk;
   }
 
-  ngOnInit(): void {
-    this.slideInService.onClose$?.pipe(
-      filter((value) => !!value.response && value.modalType === DiskFormComponent),
+  onEdit(): void {
+    const editFormSlide = this.slideInService.open(DiskFormComponent, { wide: true });
+    editFormSlide.componentInstance.setFormDisk(this.disk);
+    editFormSlide.afterClosed$().pipe(
+      filter((value) => !!value.response),
       untilDestroyed(this),
     ).subscribe(() => {
       this.devicesStore.reloadList();
     });
-  }
-
-  onEdit(): void {
-    const editFormSlide = this.slideInService.open(DiskFormComponent, { wide: true });
-    editFormSlide.componentInstance.setFormDisk(this.disk);
   }
 
   onReplace(): void {
