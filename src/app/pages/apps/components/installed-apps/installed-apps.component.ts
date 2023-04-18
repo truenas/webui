@@ -263,9 +263,25 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   subscribeToChartReleaseUpdates(): void {
     this.appService.subscribeToAllChartReleases().pipe(untilDestroyed(this)).subscribe({
       next: (apiEvent) => {
-        if (apiEvent.msg === IncomingApiMessageType.Removed) {
-          this.dataSource = this.dataSource.filter((chartRelease) => chartRelease.name !== apiEvent.id.toString());
-          this.cdr.markForCheck();
+        switch (apiEvent.msg) {
+          case IncomingApiMessageType.Removed:
+            this.dataSource = this.dataSource.filter((chartRelease) => chartRelease.name !== apiEvent.id.toString());
+            break;
+          case IncomingApiMessageType.Added:
+            this.dataSource = [...this.dataSource, apiEvent.fields];
+            break;
+          case IncomingApiMessageType.Changed:
+            this.dataSource = this.dataSource.map(
+              (chartRelease) => {
+                if (chartRelease.name === apiEvent.id.toString()) {
+                  return {
+                    ...apiEvent.fields,
+                  };
+                }
+                return chartRelease;
+              },
+            );
+            break;
         }
       },
     });
