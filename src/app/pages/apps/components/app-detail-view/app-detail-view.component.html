@@ -15,7 +15,7 @@
           mat-button
           color="primary"
           [ixTest]="[app?.name, 'install']"
-          (click)="wasPoolSet ? installButtonPressed() : onChoosePool()"
+          (click)="wasPoolSet ? navigateToInstallPage() : showChoosePoolModal()"
         >{{ wasPoolSet ? 'Install' : 'Setup Pool First' | translate }}</a>
       </div>
 
