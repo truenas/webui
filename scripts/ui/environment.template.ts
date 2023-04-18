@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
-import { EnclosureDispersalStrategy } from '../app/core/testing/enums/mock-storage.enum';
-import { WebUiEnvironment } from './environment.interface';
+import { EnclosureDispersalStrategy } from '../../src/app/core/testing/enums/mock-storage.enum';
+import { WebUiEnvironment } from 'environments/environment.interface';
 
 export const environmentTemplate: WebUiEnvironment = {
   remote: '$SERVER$',

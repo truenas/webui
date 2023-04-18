@@ -1,11 +1,11 @@
 /* eslint-disable */
-import { environment } from './environment';
+import { environment } from '../../src/environments/environment';
 import { environmentTemplate } from './environment.template';
 import { Command } from 'commander';
 import * as fs from 'fs';
-import {EnclosureDispersalStrategy} from "../app/core/testing/enums/mock-storage.enum";
+import {EnclosureDispersalStrategy} from "../../src/app/core/testing/enums/mock-storage.enum";
 const figlet = require("figlet");
-import { WebUiEnvironment } from "./environment.interface";
+import { WebUiEnvironment } from "../../src/environments/environment.interface";
 
 interface CommandOptions {
   [p: string]: any;
@@ -50,8 +50,9 @@ function generateHeaders(content: string): Headers {
 * Variables
 * */
 const environmentTs = './src/environments/environment.ts';
-const template = './src/environments/environment.template.ts';
+const template = './scripts/ui/environment.template.ts';
 const originalEnvironment = {...environment};
+const modelsFile = './models.json';
 
 /*
 * Command Setup
@@ -282,14 +283,14 @@ function setMockEnabled(value: boolean): void {
 }
 
 function setMockModel(value: string): void {
-  const models: CommandOptions = JSON.parse(fs.readFileSync('src/environments/models.json', 'utf8'));
+  const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
   environment.mockConfig.systemProduct = models.controllers[value.toUpperCase()].systemProduct;
   environment.mockConfig.enclosureOptions.controllerModel = models.controllers[value.toUpperCase()].model;
   saveEnvironment();
 }
 
 function showAvailableModels(options: ReportOptions, key: string): void {
-  const data: CommandOptions = JSON.parse(fs.readFileSync('src/environments/models.json', 'utf8'));
+  const data: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
   const models = Object.keys(data[key]);
   let report = '\n';
 
