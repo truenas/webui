@@ -23,10 +23,10 @@ import {
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
@@ -82,6 +82,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
@@ -372,6 +373,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         title: this.isNew ? helptext.installing : helptext.updating,
       },
     });
+    this.dialogRef.componentInstance.showCloseButton = false;
 
     if (this.isNew) {
       const version = data.version;
@@ -392,11 +394,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
-  }
-
-  onFailure(failedJob: Job): void {
-    this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
+      this.dialogRef.close();
+      this.formErrorHandler.handleWsFormError(failedJob, this.form);
+    });
   }
 
   onSuccess(): void {

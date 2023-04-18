@@ -92,4 +92,4 @@ def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
-    assert wait_on_element(driver, 10, '//dd[contains(.,"/usr/bin/bash")]')
+    assert wait_on_element(driver, 7, xpaths.users.user_Bash_Shell)

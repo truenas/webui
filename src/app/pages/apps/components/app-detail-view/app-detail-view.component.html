@@ -20,16 +20,26 @@
         <div class="app-image-holder">
           <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
         </div>
-        <a
+        <button
+          *ngIf="!wasPoolSet"
+          mat-button
+          color="primary"
+          ixTest="setup-pool"
+          (click)="showChoosePoolModal()"
+        >
+          {{ 'Setup Pool First' | translate }}
+        </button>
+        <button
+          *ngIf="wasPoolSet"
           mat-button
           color="primary"
           [ixTest]="[app?.name, 'install']"
           [disabled]="!app"
-          (click)="installButtonPressed()"
+          [routerLink]="['/apps', 'available', appId, 'install']"
         >
           <ng-container *ngIf="!app?.installed">{{ 'Install' | translate }}</ng-container>
           <ng-container *ngIf="app?.installed">{{ 'Install another instance' | translate }}</ng-container>
-        </a>
+        </button>
       </div>
 
       <div class="app-info" fxFlex="240px">

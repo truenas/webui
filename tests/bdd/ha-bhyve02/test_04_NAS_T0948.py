@@ -102,11 +102,10 @@ def change_the_users_shell_and_click_save(driver):
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//ix-combobox[@formcontrolname="shell"]//input', 'clickable')
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="shell"]//input').click()
-    # keep a space before sh in the xpath below to make sure it only grab sh and not the other that contains sh.
-    assert wait_on_element(driver, 7, '//mat-option[contains(.," sh")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[contains(.," sh")]').click()
+    assert wait_on_element(driver, 5, xpaths.add_User.shell_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.shell_Select).click()
+    assert wait_on_element(driver, 10, xpaths.add_User.bash_Shell_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.bash_Shell_Option).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -123,11 +122,9 @@ def open_the_user_drop_down_to_verify_the_shell_was_changed(driver):
     """Open the user drop down to verify the shell was changed."""
     assert wait_on_element(driver, 7, xpaths.users.eric_User, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
-    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button)
-    driver.find_element_by_xpath('//dt[contains(.,"Shell:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    driver.find_element_by_xpath('//dd[contains(.,"/bin/sh")]')
+    assert wait_on_element(driver, 7, xpaths.users.user_Bash_Shell)

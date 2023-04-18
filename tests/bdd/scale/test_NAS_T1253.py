@@ -1,6 +1,8 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import os
+import pytest
 import time
 from selenium.webdriver.common.keys import Keys
 import xpaths
@@ -8,7 +10,10 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_sudo
+    ssh_sudo,
+    setup_ssh_agent,
+    create_key,
+    add_ssh_key
 )
 from pytest_bdd import (
     given,
@@ -19,6 +24,24 @@ from pytest_bdd import (
 from pytest_dependency import depends
 
 
+localHome = os.path.expanduser('~')
+dotsshPath = localHome + '/.ssh'
+keyPath = localHome + '/.ssh/ui_test_id_rsa'
+
+setup_ssh_agent()
+if os.path.isdir(dotsshPath) is False:
+    os.makedirs(dotsshPath)
+if os.path.exists(keyPath) is False:
+    create_key(keyPath)
+add_ssh_key(keyPath)
+
+
+@pytest.fixture(scope='module')
+def ssh_key():
+    ssh_key_file = open(f'{keyPath}.pub', 'r')
+    return ssh_key_file.read().strip()
+
+
 @scenario('features/NAS-T1253.feature', 'Verify enabling sudo for group works')
 def test_verify_enabling_sudo_for_group_works():
     """Verify enabling sudo for group works."""
@@ -27,7 +50,7 @@ def test_verify_enabling_sudo_for_group_works():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Set_Group'], scope='session')
+    depends(request, ['Set_Group', 'Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -56,7 +79,7 @@ def on_the_dashboard_click_on_credentials_and_local_users(driver):
 
 
 @then('create new qetestuser user add to qatest group')
-def create_new_qetestuser_user_add_to_qatest_group(driver):
+def create_new_qetestuser_user_add_to_qatest_group(driver, ssh_key):
     """create new qetestuser user add to qatest group."""
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
@@ -77,6 +100,10 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank')
     # this line will create the qetestuser home directory
     driver.find_element_by_xpath(xpaths.add_User.create_Home_Directory_Checkbox).click()
+
+    # Set SSH key to test sudo
+    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).clear()
+    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).send_keys(ssh_key)
 
     # The default shell is nologin this test will fail with nologin
     assert wait_on_element(driver, 5, xpaths.add_User.shell_Select, 'clickable')
@@ -143,7 +170,6 @@ def check_the_enable_sudo_box_and_click_save(driver):
 @then('ssh in with qetest user and try to sudo')
 def ssh_in_with_qetest_user_and_try_to_sudo(driver, nas_ip):
     """ssh in with qetest user and try to sudo."""
-    global sudo_results2
     cmd = 'ls /'
     sudo_results2 = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
     assert "vmlinuz" in sudo_results2, str(sudo_results2)

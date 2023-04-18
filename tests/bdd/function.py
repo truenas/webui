@@ -238,11 +238,21 @@ def ssh_sudo(cmd, host, user, password):
     command = f'ssh {options} {user}@{host} "sudo -S {cmd}"'
     child = pexpect.spawn(command, encoding='utf-8')
     child.logfile = sys.stdout
-    child.expect('ssword:')
-    child.sendline(password)
     child.expect(f'ssword for {user}:')
     child.sendline(password)
     child.expect(pexpect.EOF)
+    return child.before
+
+
+def ssh_sudo_exptext(cmd, host, user, password, expect_text):
+    options = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null " \
+        "-o VerifyHostKeyDNS=no"
+    command = f'ssh {options} {user}@{host} "sudo -S {cmd}"'
+    child = pexpect.spawn(command, encoding='utf-8')
+    child.logfile = sys.stdout
+    child.expect(f'ssword for {user}:')
+    child.sendline(password)
+    child.expect(expect_text)
     return child.before
 
 

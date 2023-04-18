@@ -115,8 +115,4 @@ export class ServiceSshComponent implements OnInit {
         },
       });
   }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
-  }
 }

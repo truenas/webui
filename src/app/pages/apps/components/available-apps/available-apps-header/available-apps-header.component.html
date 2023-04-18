@@ -68,7 +68,7 @@
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
-    <a class="header-link" ixTest="refresh-charts" (click)="refreshAvailableApps()">
+    <a class="header-link" ixTest="refresh-charts" (click)="refreshCharts()">
       <h2 *ixWithLoadingState="availableApps$ as availableApps">{{ availableApps.length }}</h2>
       <span>{{ 'Refresh Charts' | translate }}</span>
     </a>

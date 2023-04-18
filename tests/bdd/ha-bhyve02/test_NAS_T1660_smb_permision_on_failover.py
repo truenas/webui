@@ -89,7 +89,7 @@ def input_smb1_for_dataset_name_select_smb_for_share_type_and_click_save(driver)
 @then('when the new dataset is created click Add Dataset again')
 def when_the_new_dataset_is_created_click_add_dataset_again(driver):
     """when the new dataset is created click Add Dataset again."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name('smb1'))
 
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
@@ -175,7 +175,7 @@ def set_the_path_to_mntdozersmb1_and_input_the_smbtest1_as_name_then_click_to_en
     rsc.Click_Clear_Input(driver, xpaths.smb.name_Input, share_name)
 
     assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked'):
+    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked'):
         driver.find_element_by_xpath(xpaths.checkbox.enable).click()
 
 
