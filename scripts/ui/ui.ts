@@ -493,15 +493,6 @@ function mockConfigWizard(): void {
       const extension = '.config.json';
       const filePath = saveLocation + '/' + answers.fileName + extension;
 
-      console.info(`
-        Saving configuration into ${filePath} with the following values.
-
-        * Enabled: true
-        * Controller: ${answers.controller}
-        * Shelves: ${answers.shelves.length ? answers.shelves.toUpperCase() : 'None'}
-        * Slot Assignment: ${answers.dispersal.toLowerCase()}
-      `);
-
       const expansionModels: string[] = answers.shelves.length
         ? [].concat(answers.shelves.toUpperCase().split(','))
         : [];
@@ -519,12 +510,27 @@ function mockConfigWizard(): void {
       }
 
       if (answers.saveOrCancel === 'Save'){
+        console.info(`
+        Saving configuration into ${filePath} with the following values.
+
+        * Enabled: true
+        * Controller: ${models.controllers[answers.controller].systemProduct as string}
+        * Shelves: ${answers.shelves.length ? answers.shelves.toUpperCase() : 'None'}
+        * Slot Assignment: ${answers.dispersal.toLowerCase()}
+      `);
+
         fs.writeFileSync(filePath, JSON.stringify(mockConfig), 'utf8');
+      } else {
+        console.log('Aborting mock file generation. No file will be generated and environment remains unchanged');
+        process.exit(0);
       }
 
       if (answers.loadAfterSave === 'Yes') {
         environment.mockConfig = mockConfig;
         saveEnvironment();
+        console.info('Config loaded into environment');
+      } else {
+        console.info('New configuration not to be loaded. Environment remains unchanged')
       }
     })
     .catch((error) => {
