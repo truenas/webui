@@ -1,7 +1,9 @@
 import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 import {
-  Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef,
+  Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, TemplateRef,
 } from '@angular/core';
+import _ from 'lodash';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { difference, ListSelection, ListSelectionImpl } from './models';
 
 const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
@@ -18,7 +20,7 @@ const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
 })
-export class DualListboxComponent<T extends { id: string | number; name?: string }> implements OnInit {
+export class DualListboxComponent<T extends { id: string | number; name?: string }> implements OnInit, OnChanges {
   @Input() key: keyof T = 'id';
   @Input() items: T[];
   // eslint-disable-next-line @angular-eslint/no-input-rename
@@ -43,6 +45,12 @@ export class DualListboxComponent<T extends { id: string | number; name?: string
       difference(this.items, this._selectedItems, this.key),
     );
     this.selectedItems = new ListSelectionImpl(this._selectedItems);
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if ('items' in changes && !_.isEqual(changes.items.currentValue, changes.items.previousValue)) {
+      this.ngOnInit();
+    }
   }
 
   select(): void {

@@ -1,6 +1,7 @@
 {
   "": "",
   "ACL Types & ACL Modes": "",
+  "Available Initiators": "",
   "Edit Manual Disk Selection": "",
   "Generic": "",
   "Groups that can log in using password": "",
@@ -13,6 +14,7 @@
   "Password Login Groups": "",
   "SMB": "",
   "SSH password login enabled": "",
+  "Selected Initiators": "",
   "Sensitive": "",
   "Setup Pool First": "",
   "Snapshot Directory": "",
