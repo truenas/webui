@@ -30,6 +30,7 @@ export function checkEnv(suppress: boolean = false): boolean {
   const fileExists = fs.existsSync(environmentTs);
   let envStr: string = '';
   let wordCount: number = 0;
+  let isCurrent: boolean = false;
 
   if (fileExists) {
     // Make sure it's not just an empty file either
@@ -37,6 +38,9 @@ export function checkEnv(suppress: boolean = false): boolean {
     const regex = /\S+/g;
     const match = envStr.match(regex);
     wordCount = match !== null ? match.length : 0;
+
+    // Make it isn't deprecated and missing properties
+    isCurrent = envStr.includes('mockConfig');
   }
 
   const isRemoteSet = (suppress: boolean, envStr: string = '$SERVER$'): boolean => {
@@ -54,7 +58,7 @@ Use yarn ui script to set remote url: ./ui remote -i <ip-address>
     return true;
   }
 
-  if (fileExists && wordCount > 0) {
+  if (fileExists && wordCount > 0 && isCurrent) {
     console.log('Environment file exists');
     remoteIsSet = isRemoteSet(suppress, envStr);
   } else {
