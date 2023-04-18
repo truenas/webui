@@ -15,9 +15,8 @@
           mat-button
           color="primary"
           [ixTest]="[app?.name, 'install']"
-          [disabled]="!app"
-          (click)="installButtonPressed()"
-        >{{ 'Install' | translate }}</a>
+          (click)="wasPoolSet ? navigateToInstallPage() : showChoosePoolModal()"
+        >{{ wasPoolSet ? 'Install' : 'Setup Pool First' | translate }}</a>
       </div>
 
       <div class="app-info" fxFlex="240px">

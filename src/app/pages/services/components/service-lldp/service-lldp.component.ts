@@ -111,8 +111,4 @@ export class ServiceLldpComponent implements OnInit {
         },
       });
   }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
-  }
 }
