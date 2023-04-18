@@ -129,6 +129,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   }
 
   installButtonPressed(): void {
-    this.router.navigate(['/apps', 'available', this.appId, 'install']);
+    this.router.navigate(['/apps', 'available', this.catalog, this.train, this.appId, 'install']);
   }
 }

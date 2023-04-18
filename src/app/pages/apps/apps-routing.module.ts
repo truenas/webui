@@ -54,12 +54,12 @@ const routes: Routes = [
         data: { title: T('App Detail'), breadcrumb: T('App Detail') },
       },
       {
-        path: ':appId/install',
+        path: ':catalog/:train/:appId/install',
         component: ChartWizardComponent,
         data: { title: T('Install App'), breadcrumb: T('Install App') },
       },
       {
-        path: ':appId/edit',
+        path: ':catalog/:train/:appId/edit',
         component: ChartWizardComponent,
         data: { title: T('Edit App'), breadcrumb: T('Edit App') },
       }],
