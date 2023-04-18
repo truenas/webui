@@ -326,7 +326,7 @@ export class ZvolFormComponent {
               }
 
               this.form.controls.sync.setValue(parent.sync.value);
-              if (parent.compression.value === 'GZIP') {
+              if (String(parent.compression.value) === 'GZIP') {
                 this.form.controls.compression.setValue(parent.compression.value + '-6');
               }
               this.form.controls.deduplication.setValue(parent.deduplication.value);

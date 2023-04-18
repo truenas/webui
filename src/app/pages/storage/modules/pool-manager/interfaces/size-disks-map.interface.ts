@@ -1,6 +1,8 @@
+import { DiskType } from 'app/enums/disk-type.enum';
+
 export interface SizeDisksMap {
-  hdd: SizeDisksMapItem;
-  ssd: SizeDisksMapItem;
+  [DiskType.Hdd]: SizeDisksMapItem;
+  [DiskType.Ssd]: SizeDisksMapItem;
 }
 
 export interface SizeDisksMapItem {

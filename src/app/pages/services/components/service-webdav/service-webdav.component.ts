@@ -177,8 +177,4 @@ export class ServiceWebdavComponent implements OnInit {
       },
     });
   }
-
-  cancel(): void {
-    this.router.navigate(['/', 'services']);
-  }
 }

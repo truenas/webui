@@ -15,7 +15,6 @@ import {
   getDatasetLabel,
   isDatasetHasShares, isIocageMounted, isRootDataset, ixApplications,
 } from 'app/pages/datasets/utils/dataset.utils';
-import { ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -31,7 +30,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(
-    private modalService: ModalService,
     private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
     private router: Router,
@@ -40,17 +38,23 @@ export class DatasetDetailsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe((value) => {
-      const dataset = value.response as Dataset;
-      if (value.modalType === DatasetFormComponent && dataset?.id) {
+    this.slideIn.onClose$
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        const dataset = value.response as Dataset;
+        if ((value.modalType !== DatasetFormComponent && value.modalType !== ZvolFormComponent) || !dataset?.id) {
+          return;
+        }
+
         this.datasetStore.datasetUpdated();
         this.router.navigate(['/datasets', dataset.id]).then(() => {
           this.snackbar.success(
-            this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
+            value.modalType === ZvolFormComponent
+              ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
+              : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
           );
         });
-      }
-    });
+      });
   }
 
   get datasetHasRoles(): boolean {
@@ -97,10 +101,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
   }
 
   onAddDataset(): void {
-    const addDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent);
-    addDatasetComponent.setParent(this.dataset.id);
-    addDatasetComponent.setVolId(this.dataset.pool);
-    addDatasetComponent.setTitle(this.translate.instant('Add Dataset'));
+    const addDataset = this.slideIn.open(DatasetFormComponent, { wide: true });
+    addDataset.componentInstance.setForNew(this.dataset.id);
   }
 
   onAddZvol(): void {

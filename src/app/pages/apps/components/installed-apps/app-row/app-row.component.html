@@ -1,51 +1,77 @@
-<div class="row-grid">
-  <div class="cell cell-name">
-    <div class="name">
-      <mat-checkbox
-        color="primary"
-        [ixTest]="application.name"
-        [checked]="application.selected"
-        (click)="$event.stopPropagation()"
-        (change)="toggleAppChecked($event.checked)"
-      ></mat-checkbox>
-      <img [src]="application.chart_metadata.icon" [src-fallback]="imagePlaceholder" />
-      <span>{{ application.name }}</span>
+<div class="cell cell-name">
+  <div class="name">
+    <mat-checkbox
+      color="primary"
+      [ixTest]="app.name"
+      [checked]="app.selected"
+      (click)="$event.stopPropagation()"
+      (change)="toggleAppChecked($event.checked)"
+    ></mat-checkbox>
+
+    <div class="app-logo">
+      <img [src]="app.chart_metadata.icon" [src-fallback]="imagePlaceholder" />
+    </div>
+
+    <div>
+      <div class="app-name">{{ app.name }}</div>
+      <small class="app-catalog">{{ app.catalog | titlecase }}</small>
     </div>
   </div>
-  <div class="cell cell-status">
-    <ng-container [ngSwitch]="application.status">
-      <div *ngSwitchCase="chartReleaseStatus.Active" class="status active">
-        {{ 'Active' | translate }}
-      </div>
-      <div *ngSwitchCase="chartReleaseStatus.Deploying" class="status deploying">
-        <mat-spinner [diameter]="20"></mat-spinner>
-        {{ 'Deploying' | translate }}
-      </div>
-      <div *ngSwitchCase="chartReleaseStatus.Stopped" class="status stopped">
-        {{ 'Stopped' | translate }}
-      </div>
-    </ng-container>
-  </div>
-  <div class="cell cell-cpu">
-    <span> {{ 'N/A' | translate }} </span>
-  </div>
-  <div class="cell cell-ram">
-    <span> {{ 'N/A' | translate }} </span>
-  </div>
-  <div class="cell cell-disk">
-    <span> {{ 'N/A' | translate }} </span>
-  </div>
-  <div class="cell cell-update">
-    <span> {{ 'N/A' | translate }} </span>
-  </div>
-  <div class="cell cell-action">
-    <button
-      mat-icon-button
-      ixTest="app-action"
-      (click)="isAppStopped ? start() : stop(); $event.stopPropagation()"
-    >
-      <ix-icon *ngIf="isAppStopped" name="mdi-play"></ix-icon>
-      <ix-icon *ngIf="!isAppStopped" name="mdi-stop"></ix-icon>
-    </button>
-  </div>
 </div>
+<div class="cell cell-status">
+  <ix-app-status-cell
+    [app]="app"
+    [job]="job"
+    (click)="statusPressed(); $event.stopPropagation()"
+    (statusChanged)="statusChanged($event)"
+  ></ix-app-status-cell>
+</div>
+<div class="cell cell-cpu">
+  <span [ngTemplateOutlet]="notAvailable"></span>
+</div>
+<div class="cell cell-ram">
+  <span [ngTemplateOutlet]="notAvailable"></span>
+</div>
+<div class="cell cell-disk">
+  <span [ngTemplateOutlet]="notAvailable"></span>
+</div>
+<div class="cell cell-update">
+  <ng-container *ngIf="hasUpdates; else upToDate">
+    <span>{{ 'Update available' | translate }}</span>
+    <ix-icon
+      name="mdi-alert-circle"
+      matTooltipPosition="above"
+      [matTooltip]="'{version} is available!' | translate: { version: app.human_latest_version }"
+    ></ix-icon>
+  </ng-container>
+</div>
+<div class="cell cell-action">
+  <button
+    *ngIf="isAppStopped && !inProgress"
+    mat-icon-button
+    matTooltipPosition="above"
+    [ixTest]="[app.name, 'start']"
+    [matTooltip]="'Start' | translate"
+    (click)="start(); $event.stopPropagation()"
+  >
+    <ix-icon name="mdi-play"></ix-icon>
+  </button>
+  <button
+    *ngIf="!isAppStopped && !inProgress"
+    mat-icon-button
+    matTooltipPosition="above"
+    [ixTest]="[app.name, 'stop']"
+    [matTooltip]="'Stop' | translate"
+    (click)="stop(); $event.stopPropagation()"
+  >
+    <ix-icon name="mdi-stop"></ix-icon>
+  </button>
+</div>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>
+
+<ng-template #upToDate>
+  {{ 'Up to date' | translate }}
+</ng-template>

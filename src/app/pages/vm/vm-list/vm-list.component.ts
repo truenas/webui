@@ -39,6 +39,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 
+const noMemoryError = 'ENOMEM';
+
 @UntilDestroy()
 @Component({
   templateUrl: './vm-list.component.html',
@@ -290,7 +292,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       },
       error: (error: WebsocketError) => {
         this.loader.close();
-        if (method === this.wsMethods.start && error.error === 12) {
+        if (method === this.wsMethods.start && error.errname === noMemoryError) {
           this.onMemoryError(row);
           return;
         }

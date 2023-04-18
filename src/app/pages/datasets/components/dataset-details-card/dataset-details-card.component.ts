@@ -19,7 +19,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
@@ -31,10 +30,10 @@ import { ModalService } from 'app/services/modal.service';
 export class DatasetDetailsCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
-  OnOff = OnOff;
+
+  readonly OnOff = OnOff;
 
   constructor(
-    private modalService: ModalService,
     private translate: TranslateService,
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
@@ -101,10 +100,8 @@ export class DatasetDetailsCardComponent {
   }
 
   editDataset(): void {
-    const editDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, this.dataset.id);
-    editDatasetComponent.setPk(this.dataset.id);
-    editDatasetComponent.setVolId(this.dataset.pool);
-    editDatasetComponent.setTitle(this.translate.instant('Edit Dataset'));
+    const editForm = this.slideIn.open(DatasetFormComponent, { wide: true });
+    editForm.componentInstance.setForEdit(this.dataset.id);
   }
 
   editZvol(): void {

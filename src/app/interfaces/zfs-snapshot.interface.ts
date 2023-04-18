@@ -9,7 +9,7 @@ export interface ZfsSnapshot {
   pool: string;
   properties: {
     [property: string]: ZfsProperty<string | number | boolean | ApiTimestamp>;
-    creation: ZfsProperty<ApiTimestamp>;
+    creation: ZfsProperty<string, ApiTimestamp>;
   };
   holds?: {
     truenas?: number;

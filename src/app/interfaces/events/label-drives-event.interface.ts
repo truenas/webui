@@ -1,7 +1,7 @@
-import { VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
+import { SelectedEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 export interface LabelDrivesEvent {
   name: 'LabelDrives';
   sender: unknown;
-  data: VDevMetadata;
+  data: SelectedEnclosureSlot;
 }

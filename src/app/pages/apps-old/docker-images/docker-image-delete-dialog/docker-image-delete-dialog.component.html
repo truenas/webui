@@ -16,7 +16,7 @@
 
   <div class="bulk-list">
     <ix-bulk-list-item
-      *ngFor="let bulkItem of bulkItems | keyvalue; trackBy: trackById"
+      *ngFor="let bulkItem of bulkItems | keyvalue; trackBy: trackByKey"
       [item]="bulkItem.value"
     >
       <span>

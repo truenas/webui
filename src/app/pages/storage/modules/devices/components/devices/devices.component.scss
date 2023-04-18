@@ -1,4 +1,3 @@
-@import 'mixins/grid';
 @import 'scss-imports/splitview';
 @import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
@@ -220,15 +219,15 @@ ix-disk-details-panel {
 }
 
 .disk-tree-header {
-  @include grid-row();
-
   align-items: center;
   color: var(--fg2);
-
-  // Override default fraction based values to avoid misaligned columns
+  display: grid;
+  grid-gap: 8px;
   grid-template-columns: auto 125px 125px 125px 40px;
   min-height: 48px;
+  min-width: fit-content;
   padding-left: 48px;
+  width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0;

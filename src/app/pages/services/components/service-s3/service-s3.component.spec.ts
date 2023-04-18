@@ -2,8 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Router } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -26,7 +25,7 @@ describe('ServiceS3Component', () => {
   let spectator: Spectator<ServiceS3Component>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  const createComponent = createComponentFactory({
+  const createComponent = createRoutingFactory({
     component: ServiceS3Component,
     imports: [
       IxFormsModule,
@@ -59,7 +58,6 @@ describe('ServiceS3Component', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(Router),
       mockProvider(SystemGeneralService, {
         getCertificates: jest.fn(() => of([
           { name: 'Default', id: 1 },
