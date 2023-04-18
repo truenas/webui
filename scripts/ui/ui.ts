@@ -498,7 +498,7 @@ function mockConfigWizard(): void {
         : [];
 
       const enclosureOptions = {
-        controllerModel: answers.controller.toUpperCase(),
+        controllerModel: models.controllers[answers.controller.toUpperCase()].model,
         expansionModels: expansionModels,
         dispersal: dispersalAsEnum(answers.dispersal),
       }
