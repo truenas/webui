@@ -26,9 +26,11 @@
     "strictInputAccessModifiers": true
   },
   "ts-node": {
+    "experimentalSpecifierResolution": "node",
     "compilerOptions": {
       "module": "commonjs",
-      "noImplicitAny": false
+      "noImplicitAny": false,
+      "esModuleInterop": true
     }
   }
 }

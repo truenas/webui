@@ -1,11 +1,14 @@
 /* eslint-disable */
-import { environment } from '../../src/environments/environment';
-import { environmentTemplate } from './environment.template';
-import { Command } from 'commander';
-import * as fs from 'fs';
+import {environment} from '../../src/environments/environment';
+import {environmentTemplate} from './environment.template';
+import {Command} from 'commander';
+import fs from 'fs';
 import {EnclosureDispersalStrategy} from "../../src/app/core/testing/enums/mock-storage.enum";
+import {WebUiEnvironment} from "../../src/environments/environment.interface";
+import inquirer from 'inquirer';
+import {MockEnclosureConfig} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
+
 const figlet = require("figlet");
-import { WebUiEnvironment } from "../../src/environments/environment.interface";
 
 interface CommandOptions {
   [p: string]: any;
@@ -22,12 +25,23 @@ interface Headers {
   footer: string;
 }
 
+interface ConfigWizardAnswers {
+  fileName: string;
+  controller: string;
+  shelves: string;
+  dispersal: string;
+  loadAfterSave: string;
+  saveOrCancel: string;
+}
+
 
 /*
 * Nice Header
 * */
-function showBanner(): void {
-  console.log(figlet.textSync('TrueNAS WebUI'));
+function banner(): string {
+  const content = figlet.textSync('TrueNAS WebUI');
+  console.info(content);
+  return content;
 }
 
 function generateHeaders(content: string): Headers {
@@ -53,34 +67,45 @@ const environmentTs = './src/environments/environment.ts';
 const template = './scripts/ui/environment.template.ts';
 const originalEnvironment = {...environment};
 const modelsFile = './scripts/ui//models.json';
+const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
 
 /*
 * Command Setup
 * */
 const program: Command = new Command();
 program
+  .name('./ui')
   .version('0.0.1')
-  .description('WebUI setup utility')
+  .description('TrueNAS webui setup utility')
+  .usage('(Call from root directory)')
 
 program
   .command('mock')
   .description('Mocking enclosure ui support')
-  .option('-r, --reset', 'Reset mock configuration option')
-  .option('-D, --debug', 'debug output')
-  .option('-c, --config <filename>', 'load mock config file')
   .option('-e, --enable', 'enable mock config')
   .option('-d, --disable', 'disable mock config')
-  .option('-m, --model <name>', 'set controller model to mock')
   .option('-M, --showcontrollers ', 'show available controllers for mock')
-  .option('-l, --list', 'show current mock config settings')
-  .option('-a, --assign, <existing | default>', 'set slot assignment strategy')
-  .option('-s, --shelves, [Array|null]', 'set expansion shelves')
   .option('-S, --showshelves ', 'show available shelves for mock')
+  .option('-m, --model <name>', 'set controller to mock')
+  .option('-s, --shelves, [Array|null]', 'set expansion shelves to mock')
+  .option('-a, --assign, <existing | default>', 'set slot assignment strategy')
+  .option('-c, --config <filename>', 'load mock config file')
+  .option('-r, --reset', 'Reset mock configuration to default values')
+  .option('-l, --list', 'show current mock config settings')
+  .option('-D, --debug', 'debug output')
   .action(() => {
     const mockCommand = program.commands.find((command: Command) => command._name === 'mock');
     const mockOptions = commandOpts(mockCommand);
     mock(mockCommand, mockOptions);
   });
+
+program
+  .command('mock-gen')
+  .alias('mg')
+  .description('Generates a mock config.json file')
+  .action(() => {
+    mockConfigWizard();
+  })
 
 program
   .command('reset')
@@ -124,7 +149,7 @@ program
   .command('*')
   .description('Unmatched command')
   .action(() => {
-    showBanner();
+    banner();
     program.help();
   });
 
@@ -132,7 +157,7 @@ program.parse(process.argv);
 
 // Show help when no commands and args provided
 if (!process.argv.slice(2).length) {
-  showBanner();
+  banner();
   program.help();
 }
 
@@ -155,7 +180,7 @@ function commandOpts(command: Command): CommandOptions {
 }
 
 function showHelp(command: Command): void {
-  showBanner();
+  banner();
   command.help();
 }
 
@@ -216,6 +241,19 @@ function enumAsString(value: string): string | null {
   }
 
   return output ? output : value.replace(/\"/g, '\'');
+}
+
+function dispersalAsEnum(dispersal: string): EnclosureDispersalStrategy {
+  if (dispersal.toLowerCase() === 'default' || dispersal.toLowerCase() === 'existing') {
+    return EnclosureDispersalStrategy[capitalize(dispersal) as keyof EnclosureDispersalStrategy];
+  } else {
+    console.info(`ERROR: ${dispersal} is not a valid slot assignment`);
+    process.exit(1);
+  }
+}
+
+function capitalize(text: string): string {
+  return text[0].toUpperCase() + text.slice(1, text.length).toLowerCase();
 }
 
 function wrap(key:string, value: any): string {
@@ -283,18 +321,16 @@ function setMockEnabled(value: boolean): void {
 }
 
 function setMockModel(value: string): void {
-  const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
   environment.mockConfig.systemProduct = models.controllers[value.toUpperCase()].systemProduct;
   environment.mockConfig.enclosureOptions.controllerModel = models.controllers[value.toUpperCase()].model;
   saveEnvironment();
 }
 
 function showAvailableModels(options: ReportOptions, key: string): void {
-  const data: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
-  const models = Object.keys(data[key]);
+  const modelKeys = Object.keys(models[key]);
   let report = '\n';
 
-  models.forEach((model: string) => {
+  modelKeys.forEach((model: string) => {
     report += `    * ${model} \n`
   })
 
@@ -399,6 +435,109 @@ function mock(command: Command, options: CommandOptions): void {
     showFooter: true,
   });
 }
+
+/*
+* Mock Command
+* */
+function mockConfigWizard(): void {
+  const controllerChoices = Object.keys(models.controllers);
+  const shelfChoices = Object.keys(models.shelves);
+  const dispersalChoices = ['Default', 'Existing'];
+  const loadAfterSaveChoices = ['Yes', 'No'];
+  const saveChoices = ['Save', 'Cancel'];
+
+  inquirer.prompt([
+    // Pass your questions in here
+    {
+      name: 'fileName',
+      message: 'Give your config file a name:',
+      type: 'input',
+    },
+    {
+      name: 'controller',
+      message: 'Choose a controller:',
+      type: 'list',
+      choices: controllerChoices,
+      default: 'M40',
+    },
+    {
+      name: 'shelves',
+      message: 'Specify shelves (' + shelfChoices.toString() + '):',
+      type: 'input',
+      default: '',
+    },
+    {
+      name: 'dispersal',
+      message: 'Choose a slot assignment method (Default or Existing)',
+      type: 'list',
+      choices: dispersalChoices,
+      default: 'Default',
+    },
+    {
+      name: 'loadAfterSave',
+      message: 'Should we load the config after saving?',
+      type: 'list',
+      choices: loadAfterSaveChoices,
+      default: 'Yes',
+    },
+    {
+      name: 'saveOrCancel',
+      message: 'Are you ready to save this configuration?',
+      type: 'list',
+      choices: saveChoices,
+      default: 'save',
+    },
+  ])
+    .then((answers: ConfigWizardAnswers) => {
+      const saveLocation = './src/assets/mock/configs';
+      const extension = '.config.json';
+      const filePath = saveLocation + '/' + answers.fileName + extension;
+
+      console.info(`
+        Saving configuration into ${filePath} with the following values.
+
+        * Enabled: true
+        * Controller: ${answers.controller}
+        * Shelves: ${answers.shelves.length ? answers.shelves.toUpperCase() : 'None'}
+        * Slot Assignment: ${answers.dispersal.toLowerCase()}
+      `);
+
+      const expansionModels: string[] = answers.shelves.length
+        ? [].concat(answers.shelves.toUpperCase().split(','))
+        : [];
+
+      const enclosureOptions = {
+        controllerModel: answers.controller.toUpperCase(),
+        expansionModels: expansionModels,
+        dispersal: dispersalAsEnum(answers.dispersal),
+      }
+
+      let mockConfig: MockEnclosureConfig = {
+        enabled: true,
+        enclosureOptions: enclosureOptions,
+        systemProduct: models.controllers[answers.controller].systemProduct as string
+      }
+
+      if (answers.saveOrCancel === 'Save'){
+        fs.writeFileSync(filePath, JSON.stringify(mockConfig), 'utf8');
+      }
+
+      if (answers.loadAfterSave === 'Yes') {
+        environment.mockConfig = mockConfig;
+        saveEnvironment();
+      }
+    })
+    .catch((error) => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+        console.log(error);
+      } else {
+        // Something else went wrong
+        console.log(error);
+      }
+    });
+}
+
 
 /*
 * Remote Command
