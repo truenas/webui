@@ -18,7 +18,7 @@
     <ix-app-card
       *ngFor="let app of (applicationsStore.searchedApps$ | async); trackBy: trackByAppId"
       [app]="app"
-      [routerLink]="['/apps', 'available', app.name]"
+      [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
     ></ix-app-card>
   </div>
 </div>
@@ -34,7 +34,7 @@
           <ix-app-card
             *ngFor="let app of apps; trackBy: trackByAppId"
             [app]="app"
-            [routerLink]="['/apps', 'available', app.name]"
+            [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
           ></ix-app-card>
         </div>
 

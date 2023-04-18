@@ -7,9 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
-import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -21,7 +22,11 @@ import { LayoutService } from 'app/services/layout.service';
 export class AppDetailViewComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   app: AvailableApp;
+
   appId: string;
+  catalog: string;
+  train: string;
+
   isLoading$ = new BehaviorSubject<boolean>(false);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
@@ -52,9 +57,8 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private appService: ApplicationsService,
-  ) {
-
-  }
+    private applicationsStore: AvailableAppsStore,
+  ) { }
 
   ngOnInit(): void {
     this.listenForRouteChanges();
@@ -67,24 +71,30 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
+        filter((params) => {
+          return !!(params.appId as string) && !!(params.catalog as string) && !!(params.train as string);
+        }),
         tap(() => {
           this.isLoading$.next(true);
           this.similarAppsLoading$.next(true);
         }),
         untilDestroyed(this),
       )
-      .subscribe((appId) => {
+      .subscribe(({ appId, catalog, train }: { appId: string; catalog: string; train: string }) => {
         this.appId = appId;
+        this.catalog = catalog;
+        this.train = train;
         this.loadAppInfo();
       });
   }
 
   private loadAppInfo(): void {
     this.isLoading$.next(true);
-    this.appService
-      .getAvailableItem(this.appId, officialCatalog, chartsTrain)
+    this.applicationsStore.select((state) => state.availableApps).pipe(
+      map((apps: AvailableApp[]) => apps.find(
+        (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
+      )),
+    )
       .pipe(untilDestroyed(this)).subscribe({
         next: (app) => {
           this.app = app;

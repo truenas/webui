@@ -49,7 +49,7 @@ const routes: Routes = [
         data: { title: T('Available'), breadcrumb: T('Available') },
       },
       {
-        path: ':appId',
+        path: ':catalog/:train/:appId',
         component: AppDetailViewComponent,
         data: { title: T('App Detail'), breadcrumb: T('App Detail') },
       },
