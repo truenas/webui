@@ -271,10 +271,7 @@ export class AppSchemaService {
     schema: ChartSchema['schema'],
   ): HierarchicalObjectMap<ChartFormValue>[] {
     return list.map((listItem: HierarchicalObjectMap<ChartFormValue>) => {
-      if (Object.keys(listItem).length > 1) {
-        return this.serializeFormValue(listItem, schema);
-      }
-      return this.serializeFormValue(listItem[Object.keys(listItem)[0]], schema);
+      return this.serializeFormValue(listItem, schema);
     }) as HierarchicalObjectMap<ChartFormValue>[];
   }
 
