@@ -141,8 +141,13 @@ export class SourceSectionComponent implements OnChanges {
       replicate: values.replicate,
       hold_pending_snapshots: values.hold_pending_snapshots,
       exclude: values.exclude,
-      periodic_snapshot_tasks: values.periodic_snapshot_tasks,
     };
+
+    if (this.isPush) {
+      payload.periodic_snapshot_tasks = values.periodic_snapshot_tasks;
+    } else {
+      payload.periodic_snapshot_tasks = [];
+    }
 
     if (values.restrict_schedule) {
       payload.restrict_schedule = {
@@ -150,6 +155,8 @@ export class SourceSectionComponent implements OnChanges {
         begin: values.restrict_schedule_begin,
         end: values.restrict_schedule_end,
       };
+    } else {
+      payload.restrict_schedule = null;
     }
 
     if (values.replicate) {
@@ -161,7 +168,9 @@ export class SourceSectionComponent implements OnChanges {
     if (this.usesNamingSchema) {
       payload.naming_schema = values.naming_schema;
       payload.also_include_naming_schema = values.also_include_naming_schema;
+      payload.name_regex = null;
     } else {
+      payload.also_include_naming_schema = [];
       payload.name_regex = values.name_regex;
     }
 

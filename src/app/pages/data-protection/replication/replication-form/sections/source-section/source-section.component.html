@@ -57,8 +57,6 @@
     [label]="'Replicate Specific Snapshots' | translate"
     [tooltip]="helptext.restrict_schedule_tooltip | translate"
   ></ix-checkbox>
-  <!-- TODO: Confirm label -->
-  <!-- TODO: Test limiting by time -->
   <ng-container *ngIf="form.value.restrict_schedule">
     <ix-scheduler
       formControlName="restrict_schedule_picker"

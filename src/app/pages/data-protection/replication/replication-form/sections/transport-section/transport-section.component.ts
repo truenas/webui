@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { of } from 'rxjs';
@@ -25,7 +25,7 @@ export class TransportSectionComponent implements OnChanges {
   @Input() transport: TransportMode;
 
   form = this.formBuilder.group({
-    ssh_credentials: [null as number, Validators.required], // TODO: Really required?
+    ssh_credentials: [null as number],
     netcat_active_side: [NetcatMode.Local],
     netcat_active_side_listen_address: [null as string],
     netcat_active_side_port_min: [null as number],
@@ -91,28 +91,44 @@ export class TransportSectionComponent implements OnChanges {
       return {
         large_block: values.large_block,
         compressed: values.compressed,
+        ssh_credentials: null,
+        netcat_active_side: null,
+        netcat_active_side_listen_address: null,
+        netcat_active_side_port_min: null,
+        netcat_active_side_port_max: null,
+        netcat_passive_side_connect_address: null,
       };
     }
 
     if (this.isSsh) {
-      return _.omitBy({
-        ssh_credentials: values.ssh_credentials,
-        compression: values.compression === CompressionType.Disabled ? null : values.compression,
-        speed_limit: values.speed_limit,
-        large_block: values.large_block,
-        compressed: values.compressed,
-      }, _.isNull);
+      return {
+        ..._.omitBy({
+          ssh_credentials: values.ssh_credentials,
+          compression: values.compression === CompressionType.Disabled ? null : values.compression,
+          speed_limit: values.speed_limit,
+          large_block: values.large_block,
+          compressed: values.compressed,
+        }, _.isNull),
+        netcat_active_side: null,
+        netcat_active_side_listen_address: null,
+        netcat_active_side_port_min: null,
+        netcat_active_side_port_max: null,
+        netcat_passive_side_connect_address: null,
+      };
     }
 
-    return _.omitBy({
-      ssh_credentials: values.ssh_credentials,
-      netcat_active_side: values.netcat_active_side,
-      large_block: values.large_block,
-      compressed: values.compressed,
-      netcat_active_side_listen_address: values.netcat_active_side_listen_address,
-      netcat_active_side_port_min: values.netcat_active_side_port_min,
-      netcat_active_side_port_max: values.netcat_active_side_port_max,
-      netcat_passive_side_connect_address: values.netcat_passive_side_connect_address,
-    }, _.isNull);
+    return {
+      ..._.omitBy({
+        ssh_credentials: values.ssh_credentials,
+        large_block: values.large_block,
+        compressed: values.compressed,
+        netcat_active_side: values.netcat_active_side,
+        netcat_active_side_listen_address: values.netcat_active_side_listen_address,
+        netcat_active_side_port_min: values.netcat_active_side_port_min,
+        netcat_active_side_port_max: values.netcat_active_side_port_max,
+        netcat_passive_side_connect_address: values.netcat_passive_side_connect_address,
+      }, _.isNull),
+      speed_limit: null,
+    };
   }
 }

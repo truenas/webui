@@ -67,6 +67,9 @@ export class GeneralSectionComponent implements OnChanges {
   }
 
   getPayload(): Partial<ReplicationCreate> {
-    return this.form.value;
+    return {
+      ...this.form.value,
+      logging_level: this.form.value.logging_level === LoggingLevel.Default ? null : this.form.value.logging_level,
+    };
   }
 }

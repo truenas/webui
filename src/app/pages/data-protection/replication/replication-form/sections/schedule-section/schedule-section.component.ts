@@ -57,6 +57,9 @@ export class ScheduleSectionComponent implements OnChanges {
         end: values.schedule_end,
       };
       payload.only_matching_schedule = values.only_matching_schedule;
+    } else {
+      payload.schedule = null;
+      payload.only_matching_schedule = false;
     }
 
     return payload;

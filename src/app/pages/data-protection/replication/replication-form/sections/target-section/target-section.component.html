@@ -29,20 +29,20 @@
       [tooltip]="helptext.encryption_key_generate_tooltip | translate"
     ></ix-select>
     <ix-checkbox
-      *ngIf="form.value.encryption_key_format === EncryptionKeyFormat.Hex"
+      *ngIf="isHex"
       formControlName="encryption_key_generate"
       [label]="'Generate Encryption Key' | translate"
       [tooltip]="helptext.encryption_key_generate_tooltip | translate"
     ></ix-checkbox>
     <ix-input
-      *ngIf="form.value.encryption_key_format === EncryptionKeyFormat.Hex && !form.value.encryption_key_generate"
-      formControlName="encryption_key"
+      *ngIf="isHex && !form.value.encryption_key_generate"
+      formControlName="encryption_key_hex"
       [label]="'Encryption Key' | translate"
       [tooltip]="helptext.encryption_key_hex_tooltip | translate"
     ></ix-input>
     <ix-input
-      *ngIf="form.value.encryption_key_format === EncryptionKeyFormat.Passphrase"
-      formControlName="encryption_key"
+      *ngIf="!isHex"
+      formControlName="encryption_key_passphrase"
       type="password"
       [label]="'Passphrase' | translate"
       [tooltip]="helptext.encryption_key_passphrase_tooltip | translate"

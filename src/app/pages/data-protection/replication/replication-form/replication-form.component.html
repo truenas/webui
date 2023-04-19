@@ -24,6 +24,7 @@
         <ix-replication-target-section
           [replication]="existingReplication"
           [nodeProvider]="targetNodeProvider"
+          [allowsCustomRetentionPolicy]="!usesNameRegex"
         ></ix-replication-target-section>
 
         <ix-replication-schedule-section
@@ -45,6 +46,7 @@
           type="submit"
           color="primary"
           ixTest="save"
+          (click)="onSubmit(); $event.preventDefault();"
         >{{ 'Save' | translate }}</button>
         <button
           *ngIf="isNew"

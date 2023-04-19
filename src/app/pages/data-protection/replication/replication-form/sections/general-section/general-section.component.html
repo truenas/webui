@@ -21,6 +21,7 @@
     [tooltip]="helptext.transport_tooltip | translate"
   ></ix-select>
   <ix-checkbox
+    *ngIf="!isLocal"
     formControlName="sudo"
     [label]="'Use Sudo For Zfs Commands' | translate"
     [tooltip]="helptext.sudo_tooltip | translate"

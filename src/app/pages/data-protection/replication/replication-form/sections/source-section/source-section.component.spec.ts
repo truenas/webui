@@ -145,6 +145,7 @@ describe('SourceSectionComponent', () => {
     });
 
     expect(spectator.component.getPayload()).toEqual({
+      also_include_naming_schema: [],
       source_datasets: ['tank/files'],
       replicate: true,
       periodic_snapshot_tasks: [1],
@@ -155,6 +156,7 @@ describe('SourceSectionComponent', () => {
       properties_override: {},
       name_regex: 'test-.*',
       hold_pending_snapshots: true,
+      restrict_schedule: null,
     });
   });
 
@@ -270,8 +272,8 @@ describe('SourceSectionComponent', () => {
       expect(payload).toMatchObject({
         naming_schema: ['%Y%m%d%H%M', '%Y%m%d%H%M-2'],
         also_include_naming_schema: [],
+        name_regex: null,
       });
-      expect(Object.keys(payload)).not.toContain('name_regex');
     });
 
     it('shows regex specific fields when `Matching regular expression` is selected', async () => {
@@ -285,9 +287,9 @@ describe('SourceSectionComponent', () => {
       const payload = spectator.component.getPayload();
       expect(payload).toMatchObject({
         name_regex: 'test-.*',
+        also_include_naming_schema: [],
       });
       expect(Object.keys(payload)).not.toContain('naming_schema');
-      expect(Object.keys(payload)).not.toContain('also_include_naming_schema');
     });
   });
 

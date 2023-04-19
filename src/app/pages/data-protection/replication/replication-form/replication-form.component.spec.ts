@@ -1,11 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
+import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -52,6 +54,8 @@ describe('ReplicationFormComponent', () => {
   const sourceForm = new FormGroup({
     source_datasets: new FormControl(['/tank/source']),
     name_regex: new FormControl('test-.*'),
+    schema_or_regex: new FormControl(SnapshotNamingOption.NameRegex),
+    also_include_naming_schema: new FormControl('%Y%m%d%H%M'),
   });
   const targetForm = new FormGroup({
     target_dataset: new FormControl('/tank/target'),
@@ -70,7 +74,12 @@ describe('ReplicationFormComponent', () => {
   }));
   MockInstance(SourceSectionComponent, () => ({
     form: sourceForm as unknown as SourceSectionComponent['form'],
-    getPayload: jest.fn(() => sourceForm.value),
+    getPayload: jest.fn(() => {
+      return {
+        source_datasets: sourceForm.value.source_datasets,
+        name_regex: sourceForm.value.name_regex,
+      };
+    }),
   }));
   MockInstance(TargetSectionComponent, () => ({
     form: targetForm as unknown as TargetSectionComponent['form'],
@@ -97,9 +106,6 @@ describe('ReplicationFormComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(ReplicationService, {
-        getTreeNodeProvider: jest.fn(() => remoteNodeProvider),
-      }),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
@@ -115,12 +121,18 @@ describe('ReplicationFormComponent', () => {
       mockProvider(ModalService),
       mockProvider(SnackbarService),
     ],
+    componentProviders: [
+      mockProvider(ReplicationService, {
+        getTreeNodeProvider: jest.fn(() => remoteNodeProvider),
+      }),
+    ],
   });
 
-  beforeEach(() => {
+  beforeEach(fakeAsync(() => {
     spectator = createComponent();
+    tick();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
+  }));
 
   it('shows form sections', () => {
     expect(spectator.query(GeneralSectionComponent)).toExist();
@@ -184,43 +196,59 @@ describe('ReplicationFormComponent', () => {
   });
 
   describe('updates node providers when direction, transport or ssh credentials change', () => {
-    it('push from local to remote', () => {
+    it('push from local to remote', fakeAsync(() => {
       generalForm.controls.direction.setValue(Direction.Push);
       generalForm.controls.transport.setValue(TransportMode.Ssh);
+      tick();
       spectator.detectChanges();
 
       expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(remoteNodeProvider);
-    });
+    }));
 
-    it('pull from remote to local', () => {
+    it('pull from remote to local', fakeAsync(() => {
       generalForm.controls.direction.setValue(Direction.Pull);
       generalForm.controls.transport.setValue(TransportMode.Ssh);
+      tick();
       spectator.detectChanges();
 
       expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(remoteNodeProvider);
       expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
-    });
+    }));
 
-    it('from local to local', () => {
+    it('from local to local', fakeAsync(() => {
       generalForm.controls.direction.setValue(Direction.Push);
       generalForm.controls.transport.setValue(TransportMode.Local);
+      tick();
       spectator.detectChanges();
       expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
 
       generalForm.controls.direction.setValue(Direction.Pull);
+      tick();
       spectator.detectChanges();
       expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
+    }));
+  });
+
+  it('counts the number of eligible manual snapshots on change on some of the fields', fakeAsync(() => {
+    generalForm.patchValue({
+      transport: TransportMode.Ssh,
+      direction: Direction.Push,
     });
-  });
+    tick();
+    spectator.detectChanges();
 
-  it('counts the number of eligible manual snapshots on change on some of the fields', () => {
-    generalForm.controls.direction.setValue(Direction.Push);
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.count_eligible_manual_snapshots');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('replication.count_eligible_manual_snapshots', [{
+      datasets: ['/tank/target'],
+      transport: TransportMode.Ssh,
+      ssh_credentials: 5,
+      name_regex: 'test-.*',
+    }]);
     expect(spectator.query('.eligible-snapshots')).toExist();
-    expect(spectator.query('.eligible-snapshots')).toHaveText('2');
-  });
+    expect(spectator.query('.eligible-snapshots')).toHaveExactTrimmedText(
+      '3 of 5 existing snapshots of dataset /tank/target would be replicated with this task.',
+    );
+  }));
 });

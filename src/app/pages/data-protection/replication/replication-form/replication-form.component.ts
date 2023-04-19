@@ -4,7 +4,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
+import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -39,13 +41,12 @@ import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-// TODO: Test what happens when ssh credential is no longer valid
-// TODO: Port recent changes by Alex about showing one field but not the other
 @UntilDestroy()
 @Component({
   templateUrl: './replication-form.component.html',
   styleUrls: ['./replication-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ReplicationService],
 })
 export class ReplicationFormComponent implements OnInit {
   @ViewChild(GeneralSectionComponent, { static: true }) generalSection: GeneralSectionComponent;
@@ -111,6 +112,10 @@ export class ReplicationFormComponent implements OnInit {
     return this.generalSection.form.controls.direction.value === Direction.Push;
   }
 
+  get usesNameRegex(): boolean {
+    return this.sourceSection.form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
+  }
+
   setForEdit(replication: ReplicationTask): void {
     this.existingReplication = replication;
     this.cdr.markForCheck();
@@ -159,28 +164,30 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   private countSnapshotsOnChanges(): void {
-    // const observedAttributes = [
-    //   'name_regex',
-    //   'transport',
-    //   'target_dataset',
-    //   'direction',
-    //   'also_include_naming_schema',
-    // ] as const;
-    // merge(
-    //   ...observedAttributes.map((attribute) => this.form.controls[attribute].valueChanges),
-    // )
-    //   .pipe(untilDestroyed(this))
-    //   .subscribe(() => {
-    //     this.countEligibleManualSnapshots();
-    //   });
+    merge(
+      this.generalSection.form.controls.transport.valueChanges,
+      this.generalSection.form.controls.direction.valueChanges,
+      this.sourceSection.form.controls.name_regex.valueChanges,
+      this.sourceSection.form.controls.also_include_naming_schema.valueChanges,
+      this.targetSection.form.controls.target_dataset.valueChanges,
+    )
+      .pipe(
+        // Workaround for https://github.com/angular/angular/issues/13129
+        debounceTime(0),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.countEligibleManualSnapshots();
+      });
   }
 
   private get canCountSnapshots(): boolean {
     const formValues = this.getPayload();
     return this.isPush
       && !this.isLocal
+      && formValues.target_dataset
       && formValues.ssh_credentials
-      && (Boolean(formValues.name_regex) || formValues.also_include_naming_schema.length > 0);
+      && (Boolean(formValues.name_regex) || formValues.also_include_naming_schema?.length > 0);
   }
 
   private countEligibleManualSnapshots(): void {
@@ -241,7 +248,11 @@ export class ReplicationFormComponent implements OnInit {
       this.generalSection.form.controls.transport.valueChanges,
       this.transportSection.form.controls.ssh_credentials.valueChanges,
     )
-      .pipe(untilDestroyed(this))
+      .pipe(
+        // Workaround for https://github.com/angular/angular/issues/13129
+        debounceTime(0),
+        untilDestroyed(this),
+      )
       .subscribe(() => this.updateExplorers());
   }
 
@@ -259,12 +270,5 @@ export class ReplicationFormComponent implements OnInit {
     this.sourceNodeProvider = this.isPush || this.isLocal ? localProvider : remoteProvider;
     this.targetNodeProvider = this.isPush && !this.isLocal ? remoteProvider : localProvider;
     this.cdr.markForCheck();
-
-    // TODO: Clearing source value may be a bit annoying in some scenarios.
-    // TODO: Do something about it?
-    // this.form.patchValue({
-    //   source_datasets: [],
-    //   target_dataset: null,
-    // });
   }
 }

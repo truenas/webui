@@ -88,6 +88,11 @@ describe('TransportSectionComponent', () => {
         compression: 'LZ4',
         compressed: true,
         large_block: true,
+        netcat_active_side: null,
+        netcat_active_side_listen_address: null,
+        netcat_active_side_port_max: null,
+        netcat_active_side_port_min: null,
+        netcat_passive_side_connect_address: null,
       });
     });
   });
@@ -151,6 +156,7 @@ describe('TransportSectionComponent', () => {
         netcat_active_side_port_min: 1000,
         compressed: false,
         large_block: true,
+        speed_limit: null,
       });
     });
 
@@ -175,6 +181,7 @@ describe('TransportSectionComponent', () => {
         netcat_passive_side_connect_address: '127.0.0.1',
         compressed: false,
         large_block: false,
+        speed_limit: null,
       });
     });
   });
@@ -223,6 +230,12 @@ describe('TransportSectionComponent', () => {
       expect(spectator.component.getPayload()).toEqual({
         large_block: true,
         compressed: true,
+        netcat_active_side: null,
+        netcat_active_side_listen_address: null,
+        netcat_active_side_port_max: null,
+        netcat_active_side_port_min: null,
+        netcat_passive_side_connect_address: null,
+        ssh_credentials: null,
       });
     });
   });

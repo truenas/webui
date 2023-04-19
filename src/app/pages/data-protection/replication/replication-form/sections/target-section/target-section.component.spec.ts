@@ -10,6 +10,7 @@ import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   TargetSectionComponent,
@@ -85,6 +86,8 @@ describe('TargetSectionComponent', () => {
       encryption: false,
       allow_from_scratch: false,
       retention_policy: RetentionPolicy.Source,
+      lifetime_unit: null,
+      lifetime_value: null,
     });
   });
 
@@ -193,7 +196,20 @@ describe('TargetSectionComponent', () => {
   });
 
   describe('snapshot retention policy', () => {
+    it('does not show custom retention policy when allowsCustomRetentionPolicy is false', async () => {
+      spectator.setInput('allowsCustomRetentionPolicy', true);
+      await form.fillForm({
+        'Snapshot Retention Policy': 'Custom',
+      });
+      spectator.setInput('allowsCustomRetentionPolicy', false);
+
+      const retentionPolicySelect = await form.getControl('Snapshot Retention Policy') as IxSelectHarness;
+      expect(await retentionPolicySelect.getOptionLabels()).toEqual(['Same as Source', 'None']);
+      expect(await retentionPolicySelect.getValue()).toBe('None');
+    });
+
     it('shows snapshot lifetime fields when snapshot retention policy is custom', async () => {
+      spectator.setInput('allowsCustomRetentionPolicy', true);
       await form.fillForm({
         'Snapshot Retention Policy': 'Custom',
       });
