@@ -30,7 +30,6 @@ import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/r
 import {
   DialogService, KeychainCredentialService, ModalService, ReplicationService, WebSocketService,
 } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -132,7 +131,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private modalService: ModalService,
-    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -537,9 +535,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           }
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
         },
-        error: (error) => {
+        error: () => {
           this.snapshotsText = '';
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     } else {
