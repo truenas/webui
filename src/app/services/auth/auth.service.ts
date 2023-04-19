@@ -37,9 +37,9 @@ export class AuthService {
    */
   readonly tokenRegenerationTimeMillis = 290 * 1000;
 
-  private readonly latestTokenGenerated$ = new ReplaySubject<string>(1);
+  private latestTokenGenerated$ = new ReplaySubject<string>(1);
   get authToken$(): Observable<string> {
-    return this.latestTokenGenerated$.asObservable();
+    return this.latestTokenGenerated$.asObservable().pipe(filter((token) => !!token));
   }
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -62,23 +62,38 @@ export class AuthService {
   constructor(
     private wsManager: WebsocketConnectionService,
   ) {
+    this.setupAuthenticationUpdate();
+
+    this.setupWsConnectionUpdate();
+
+    this.setupTokenUpdate();
+  }
+
+  setupAuthenticationUpdate(): void {
     this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.getLoggedInUserInformation();
           this.setupPeriodicTokenGeneration();
         } else if (this.generateTokenSubscription) {
+          this.latestTokenGenerated$?.complete();
+          this.latestTokenGenerated$ = new ReplaySubject<string>(1);
+          this.setupTokenUpdate();
           this.generateTokenSubscription.unsubscribe();
           this.generateTokenSubscription = null;
         }
       },
     });
+  }
 
+  setupWsConnectionUpdate(): void {
     this.wsManager.isConnected$.pipe(filter((isConnected) => !isConnected), untilDestroyed(this)).subscribe(() => {
       this.isLoggedIn$.next(false);
     });
+  }
 
-    this.authToken$.pipe(untilDestroyed(this)).subscribe((token) => {
+  setupTokenUpdate(): void {
+    this.latestTokenGenerated$.pipe(untilDestroyed(this)).subscribe((token) => {
       this.token = token;
     });
   }
@@ -154,7 +169,7 @@ export class AuthService {
   private setupPeriodicTokenGeneration(): void {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
-        switchMap(() => this.isAuthenticated$),
+        switchMap(() => this.isAuthenticated$.pipe(take(1))),
         filter((isAuthenticated) => isAuthenticated),
         switchMap(() => this.generateToken()),
         tap((token) => this.latestTokenGenerated$.next(token)),
