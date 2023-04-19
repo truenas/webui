@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
@@ -38,12 +37,9 @@ export class GuiCardComponent {
   ) {}
 
   doAdd(): void {
-    this.slideInService.open(GuiFormComponent);
-    this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(({ response }: ResponseOnClose) => {
-      // TODO: Do not simplify. Refactor slideInService to be more like MatDialog.
-      if (response === true) {
-        return;
-      }
+    const slideInRef = this.slideInService.open(GuiFormComponent);
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(({ response }: ResponseOnClose) => {
+      if (response === true) return;
 
       this.store$.dispatch(guiFormClosedWithoutSaving());
     });

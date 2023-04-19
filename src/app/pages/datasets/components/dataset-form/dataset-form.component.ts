@@ -10,6 +10,7 @@ import {
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   EncryptionSectionComponent,
@@ -26,7 +27,6 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,7 @@ export class DatasetFormComponent {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<DatasetFormComponent>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialog: DialogService,
@@ -172,7 +172,7 @@ export class DatasetFormComponent {
       next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close(null, createdDataset);
+        this.slideInRef.closeThisSlide(null, createdDataset);
       },
       error: (error) => {
         this.isLoading = false;

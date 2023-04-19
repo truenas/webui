@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,7 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./dataset-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetDetailsPanelComponent implements OnInit {
+export class DatasetDetailsPanelComponent {
   @Input() dataset: DatasetDetails;
   @Input() systemDataset: string;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
@@ -36,26 +36,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
     private slideIn: IxSlideInService,
     private snackbar: SnackbarService,
   ) { }
-
-  ngOnInit(): void {
-    this.slideIn.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        const dataset = value.response as Dataset;
-        if ((value.modalType !== DatasetFormComponent && value.modalType !== ZvolFormComponent) || !dataset?.id) {
-          return;
-        }
-
-        this.datasetStore.datasetUpdated();
-        this.router.navigate(['/datasets', dataset.id]).then(() => {
-          this.snackbar.success(
-            value.modalType === ZvolFormComponent
-              ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
-              : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
-          );
-        });
-      });
-  }
 
   get datasetHasRoles(): boolean {
     return !!this.dataset.apps?.length
@@ -103,6 +83,18 @@ export class DatasetDetailsPanelComponent implements OnInit {
   onAddDataset(): void {
     const addDataset = this.slideIn.open(DatasetFormComponent, { wide: true });
     addDataset.componentInstance.setForNew(this.dataset.id);
+    addDataset.afterClosed$().pipe(
+      filter(({ response }) => Boolean((response as Dataset)?.id)),
+      untilDestroyed(this),
+    ).subscribe(({ response }) => {
+      const dataSet = response as Dataset;
+      this.datasetStore.datasetUpdated();
+      this.router.navigate(['/datasets', dataSet.id]).then(() => {
+        this.snackbar.success(
+          this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataSet) }),
+        );
+      });
+    });
   }
 
   onAddZvol(): void {
@@ -116,7 +108,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
       this.datasetStore.datasetUpdated();
       this.router.navigate(['/datasets', zvol.id]).then(() => {
         this.snackbar.success(
-          this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(zvol) }),
+          this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(zvol) }),
         );
       });
     });

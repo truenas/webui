@@ -14,12 +14,12 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, ServicesService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -103,7 +103,8 @@ export class OpenVpnClientConfigComponent implements OnInit {
     private services: ServicesService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    // private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<OpenVpnClientConfigComponent>,
     private dialogService: DialogService,
     private router: Router,
     private appLoaderService: AppLoaderService,
@@ -122,7 +123,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.closeThisSlide();
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
@@ -155,7 +156,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
   }
 
   certificatesLinkClicked(): void {
-    this.slideInService.close(null, false);
+    this.slideInRef.closeThisSlide();
     this.router.navigate(['/', 'credentials', 'certificates']);
   }
 

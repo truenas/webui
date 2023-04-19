@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 import helptext from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -40,7 +40,8 @@ export class StaticRouteFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    // private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<StaticRouteFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -69,7 +70,7 @@ export class StaticRouteFormComponent {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInRef.closeThisSlide(null, true);
       },
       error: (error) => {
         this.isFormLoading = false;

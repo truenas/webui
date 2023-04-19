@@ -95,12 +95,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getBootEnvironments();
-    this.slideInService.onClose$.pipe(
-      filter((value) => value.response === true),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.getBootEnvironments();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -119,16 +113,34 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   doAdd(): void {
     const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
     slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Create);
+    slideInServiceRef.afterClosed$().pipe(
+      filter(({ response }) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getBootEnvironments();
+    });
   }
 
   doRename(bootenv: Bootenv): void {
     const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
     slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Rename, bootenv.id);
+    slideInServiceRef.afterClosed$().pipe(
+      filter(({ response }) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getBootEnvironments();
+    });
   }
 
   doClone(bootenv: Bootenv): void {
     const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
     slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Clone, bootenv.id);
+    slideInServiceRef.afterClosed$().pipe(
+      filter(({ response }) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getBootEnvironments();
+    });
   }
 
   doScrub(): void {

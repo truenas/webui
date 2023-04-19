@@ -17,6 +17,7 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   DownloadClientConfigModalComponent,
@@ -25,7 +26,6 @@ import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -100,7 +100,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private slideInService: IxSlideInService,
+    // private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<OpenVpnServerConfigComponent>,
     private dialogService: DialogService,
     private storageService: StorageService,
     private matDialog: MatDialog,
@@ -127,7 +128,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.closeThisSlide(null, true);
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

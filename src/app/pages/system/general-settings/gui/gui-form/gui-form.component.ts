@@ -20,12 +20,12 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DialogService, SystemGeneralService,
 } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -71,7 +71,7 @@ export class GuiFormComponent {
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<GuiFormComponent>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
@@ -173,7 +173,7 @@ export class GuiFormComponent {
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
       }).pipe(
-        tap(() => this.slideInService.close(null, true)),
+        tap(() => this.slideInRef.closeThisSlide(null, true)),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -211,7 +211,7 @@ export class GuiFormComponent {
         });
       });
     } else {
-      this.slideInService.close(null, true);
+      this.slideInRef.closeThisSlide(null, true);
     }
   }
 
@@ -243,7 +243,7 @@ export class GuiFormComponent {
 
   private setupThemePreview(): void {
     this.formGroup.controls.theme.valueChanges.pipe(
-      takeUntil(this.slideInService.onClose$),
+      takeUntil(this.slideInRef.afterClosed$()),
       untilDestroyed(this),
     ).subscribe((theme) => {
       this.store$.dispatch(themeChangedInGuiForm({ theme }));

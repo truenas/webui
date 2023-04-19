@@ -12,7 +12,7 @@ export class IxSlideInRef<T> {
     private modalType: Type<T>, // ??
   ) {}
 
-  closeThisSlide(error?: Error, response?: unknown): void {
+  closeThisSlide(error?: Error, response?: unknown): void { // rename close
     if (error) {
       this.slideInClosed$.error({
         error,
@@ -29,7 +29,7 @@ export class IxSlideInRef<T> {
     this.slideInComponent.closeSlideIn(this.uuid);
   }
 
-  afterClosed$(): Observable<ResponseOnClose> {
+  afterClosed$(): Observable<ResponseOnClose> { // rename onClose
     return this.slideInClosed$;
   }
 }

@@ -42,7 +42,7 @@ export class IxSlideInService {
   }
   // will be renamed to closeAllSlides
   // params error and response will be removed
-  close(error?: Error, response?: unknown): void {
+  close(error?: Error, response?: unknown): void { // pass onle object rsponse {data: ... error:...}
     if (!this.slideInComponent?.isSlideInOpen) {
       return;
     }

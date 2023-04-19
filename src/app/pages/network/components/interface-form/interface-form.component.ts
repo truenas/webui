@@ -26,6 +26,7 @@ import {
 } from 'app/interfaces/network-interface.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
@@ -41,7 +42,6 @@ import {
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
 import { NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -132,7 +132,8 @@ export class InterfaceFormComponent implements OnInit {
     private translate: TranslateService,
     private networkService: NetworkService,
     private errorHandler: FormErrorHandlerService,
-    private slideInService: IxSlideInService,
+    // private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<InterfaceFormComponent>,
     private core: CoreService,
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
@@ -226,7 +227,7 @@ export class InterfaceFormComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-        this.slideInService.close();
+        this.slideInRef.closeThisSlide(null, true);
 
         this.ws.call('interface.default_route_will_be_removed').pipe(
           filter(Boolean),

@@ -14,9 +14,9 @@ import {
   CreateBootenvParams,
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { NameValidationService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +45,8 @@ export class BootEnvironmentFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private nameValidationService: NameValidationService,
-    private slideInService: IxSlideInService,
+    // private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<BootEnvironmentFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
@@ -101,11 +102,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInService.close(null, true);
+            this.slideInRef.closeThisSlide(null, true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInService.close(error, false);
+            this.slideInRef.closeThisSlide(error, false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });
@@ -123,11 +124,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInService.close(null, true);
+            this.slideInRef.closeThisSlide(null, true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInService.close(error, false);
+            this.slideInRef.closeThisSlide(error, false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });
@@ -143,11 +144,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInService.close(null, true);
+            this.slideInRef.closeThisSlide(null, true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInService.close(error, false);
+            this.slideInRef.closeThisSlide(error, false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });

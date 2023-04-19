@@ -17,12 +17,12 @@ import { RadioOption } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, RedirectService, SystemGeneralService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
@@ -84,7 +84,8 @@ export class IpmiFormComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private validatorsService: IxValidatorsService,
-    private slideInService: IxSlideInService,
+    // private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<IpmiFormComponent>,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
@@ -230,7 +231,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.closeThisSlide(null, true);
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );
