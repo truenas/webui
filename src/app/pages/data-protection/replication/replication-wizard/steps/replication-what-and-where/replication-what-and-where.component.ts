@@ -94,8 +94,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   ]);
 
   schemaOrRegexOptions$ = of([
-    { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
-    { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
+    { label: this.translate.instant(helptext.naming_schema_placeholder), value: SnapshotNamingOption.NamingSchema },
+    { label: this.translate.instant(helptext.name_regex_placeholder), value: SnapshotNamingOption.NameRegex },
   ]);
 
   encryptionKeyFormatOptions$ = of([
@@ -279,8 +279,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     const values = this.form.value;
 
     return [
-      { label: helptext.source_datasets_placeholder, value: values.source_datasets.join(',') },
-      { label: helptext.target_dataset_placeholder, value: values.target_dataset },
+      { label: this.translate.instant(helptext.source_datasets_placeholder), value: values.source_datasets.join(',') },
+      { label: this.translate.instant(helptext.target_dataset_placeholder), value: values.target_dataset },
     ];
   }
 
@@ -350,7 +350,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         }
 
         const sshCredentialNewOption = { label: this.translate.instant('Create New'), value: SshCredentialsNewOption.New };
-        const sshCredentialCreatedOption = { label: newCredential.name + ' (Newly Created)', value: newCredential.id };
+        const sshCredentialCreatedOption = {
+          label: this.translate.instant('{credentialName} (Newly Created)', { credentialName: newCredential.name }),
+          value: newCredential.id,
+        };
         const sshCredentialOptions = this.sshCredentials.map((crd) => ({ label: crd.name, value: crd.id }));
         this.sshCredentialsOptions$ = of([sshCredentialCreatedOption, sshCredentialNewOption, ...sshCredentialOptions]);
         this.sshCredentials = credentials;

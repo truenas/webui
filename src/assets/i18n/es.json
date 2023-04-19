@@ -3897,6 +3897,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{app} Application Summary": "",
   "{app} Catalog Summary": "",
+  "{credentialName} (Newly Created)": "",
   "{duration} remaining": "",
   "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "",
   "{field} is required": "",

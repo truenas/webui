@@ -208,6 +208,7 @@
   "never ran": "",
   "{app} Application Summary": "",
   "{app} Catalog Summary": "",
+  "{credentialName} (Newly Created)": "",
   "{n, plural, one {# Application} other {# Applications} } have pending updates!": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
