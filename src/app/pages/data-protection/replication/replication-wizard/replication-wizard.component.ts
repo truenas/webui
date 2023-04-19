@@ -6,7 +6,9 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { forkJoin, lastValueFrom, Observable } from 'rxjs';
+import {
+  catchError, EMPTY, forkJoin, map, Observable, of, switchMap,
+} from 'rxjs';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -48,7 +50,6 @@ export class ReplicationWizardComponent {
 
   rowId: number;
   isLoading = false;
-  toStop = false;
   summary: SummarySection[];
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
 
@@ -111,9 +112,8 @@ export class ReplicationWizardComponent {
     }
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     this.isLoading = true;
-    this.toStop = false;
 
     this.createdSnapshots = [];
     this.createdSnapshotTasks = [];
@@ -121,117 +121,24 @@ export class ReplicationWizardComponent {
 
     const values = this.preparePayload();
 
-    const snapshotsCountPayload = this.getSnapshotsCountPayload(values);
-    if (snapshotsCountPayload) {
-      await this.getSnapshotsСount(snapshotsCountPayload).then(
-        (snapshotCount) => this.eligibleSnapshots = snapshotCount.eligible,
-        (err: WebsocketError) => {
-          this.eligibleSnapshots = 0;
-          this.toStop = true;
-          this.handleError(err);
-        },
-      );
-    }
-
-    if (this.toStop) {
-      this.rollBack();
-      return;
-    }
-
-    if (values.schedule_method === ScheduleMethod.Cron && values.source_datasets_from === DatasetSource.Local) {
-      this.existSnapshotTasks = [];
-      for (const payload of this.getPeriodicSnapshotTasksPayload(values)) {
-        await this.isSnapshotTaskExist(payload).then(async (tasks) => {
-          if (tasks.length === 0) {
-            await this.createPeriodicSnapshotTask(payload).then(
-              (createdSnapshotTask) => this.createdSnapshotTasks.push(createdSnapshotTask),
-              (err: WebsocketError) => {
-                this.toStop = true;
-                this.handleError(err);
-              },
-            );
-          } else {
-            this.existSnapshotTasks.push(...tasks.map((task) => task.id));
-          }
+    this.callCreateSnapshots(values).pipe(
+      catchError((err) => { this.handleError(err); return EMPTY; }),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.callCreateTasks(values).pipe(
+        catchError((err) => { this.handleError(err); return EMPTY; }),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.callCreateReplication(values).pipe(
+          catchError((err) => { this.handleError(err); return EMPTY; }),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.slideInService.close();
         });
-      }
-    }
-
-    if (this.toStop) {
-      this.rollBack();
-      return;
-    }
-
-    if (this.eligibleSnapshots === 0 && values.source_datasets_from === DatasetSource.Local) {
-      for (const payload of this.getSnapshotsPayload(values)) {
-        await this.createSnapshot(payload).then(
-          (createdSnapshot) => this.createdSnapshots.push(createdSnapshot),
-          (err: WebsocketError) => {
-            this.toStop = true;
-            this.handleError(err);
-          },
-        );
-      }
-    }
-
-    if (this.toStop) {
-      this.rollBack();
-      return;
-    }
-
-    const replicationPayload = this.getReplicationPayload(values);
-    await this.getUnmatchedSnapshots([
-      replicationPayload.direction,
-      replicationPayload.source_datasets,
-      replicationPayload.target_dataset,
-      replicationPayload.transport,
-      replicationPayload.ssh_credentials,
-    ]).then(
-      async (unmatchedSnapshots) => {
-        const hasBadSnapshots = Object.values(unmatchedSnapshots).some((snapshots) => snapshots.length > 0);
-        if (hasBadSnapshots) {
-          await lastValueFrom(this.dialogService.confirm({
-            title: helptext.clearSnapshotDialog_title,
-            message: helptext.clearSnapshotDialog_content,
-          })).then(async (dialogResult) => {
-            replicationPayload.allow_from_scratch = dialogResult;
-            await this.createReplication(replicationPayload).then(
-              (createdReplication) => this.createdReplication = createdReplication,
-              (err: WebsocketError) => {
-                this.toStop = true;
-                this.handleError(err);
-              },
-            );
-          });
-        } else {
-          await this.createReplication(replicationPayload).then(
-            (createdReplication) => this.createdReplication = createdReplication,
-            (err: WebsocketError) => {
-              this.toStop = true;
-              this.handleError(err);
-            },
-          );
-        }
-      },
-      async () => {
-        await this.createReplication(replicationPayload).then(
-          (createdReplication) => this.createdReplication = createdReplication,
-          (err: WebsocketError) => {
-            this.toStop = true;
-            this.handleError(err);
-          },
-        );
-      },
-    );
-
-    if (this.toStop) {
-      this.rollBack();
-      return;
-    }
-
-    this.isLoading = false;
-    this.cdr.markForCheck();
-    this.slideInService.close();
+      });
+    });
   }
 
   private preparePayload(): ReplicationWizardData {
@@ -244,24 +151,24 @@ export class ReplicationWizardComponent {
     return payload;
   }
 
-  getSnapshotsСount(payload: CountManualSnapshotsParams): Promise<EligibleManualSnapshotsCount> {
-    return lastValueFrom(this.ws.call('replication.count_eligible_manual_snapshots', [payload]));
+  getSnapshotsСount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
+    return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
   }
 
-  getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Promise<{ [dataset: string]: string[] }> {
-    return lastValueFrom(this.ws.call('replication.target_unmatched_snapshots', payload));
+  getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<{ [dataset: string]: string[] }> {
+    return this.ws.call('replication.target_unmatched_snapshots', payload);
   }
 
-  createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Promise<PeriodicSnapshotTask> {
-    return lastValueFrom(this.ws.call('pool.snapshottask.create', [payload]));
+  createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
+    return this.ws.call('pool.snapshottask.create', [payload]);
   }
 
-  createSnapshot(payload: CreateZfsSnapshot): Promise<ZfsSnapshot> {
-    return lastValueFrom(this.ws.call('zfs.snapshot.create', [payload]));
+  createSnapshot(payload: CreateZfsSnapshot): Observable<ZfsSnapshot> {
+    return this.ws.call('zfs.snapshot.create', [payload]);
   }
 
-  createReplication(payload: ReplicationCreate): Promise<ReplicationTask> {
-    return lastValueFrom(this.ws.call('replication.create', [payload]));
+  createReplication(payload: ReplicationCreate): Observable<ReplicationTask> {
+    return this.ws.call('replication.create', [payload]);
   }
 
   getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams {
@@ -383,18 +290,16 @@ export class ReplicationWizardComponent {
     dataset: string;
     schedule: Schedule;
     naming_schema?: string;
-  }): Promise<PeriodicSnapshotTask[]> {
-    return lastValueFrom(
-      this.ws.call('pool.snapshottask.query', [[
-        ['dataset', '=', payload.dataset],
-        ['schedule.minute', '=', payload.schedule.minute],
-        ['schedule.hour', '=', payload.schedule.hour],
-        ['schedule.dom', '=', payload.schedule.dom],
-        ['schedule.month', '=', payload.schedule.month],
-        ['schedule.dow', '=', payload.schedule.dow],
-        ['naming_schema', '=', payload.naming_schema ? payload.naming_schema : this.defaultNamingSchema],
-      ]]),
-    );
+  }): Observable<PeriodicSnapshotTask[]> {
+    return this.ws.call('pool.snapshottask.query', [[
+      ['dataset', '=', payload.dataset],
+      ['schedule.minute', '=', payload.schedule.minute],
+      ['schedule.hour', '=', payload.schedule.hour],
+      ['schedule.dom', '=', payload.schedule.dom],
+      ['schedule.month', '=', payload.schedule.month],
+      ['schedule.dow', '=', payload.schedule.dow],
+      ['naming_schema', '=', payload.naming_schema ? payload.naming_schema : this.defaultNamingSchema],
+    ]]);
   }
 
   setSchemaOrRegexForObject(
@@ -416,5 +321,83 @@ export class ReplicationWizardComponent {
 
   handleError(err: WebsocketError): void {
     this.dialogService.error(this.errorHandler.parseWsError(err));
+    this.rollBack();
+  }
+
+  callCreateSnapshots(values: ReplicationWizardData): Observable<ZfsSnapshot[]> {
+    const snapshotsCountPayload = this.getSnapshotsCountPayload(values);
+    if (snapshotsCountPayload) {
+      return this.getSnapshotsСount(snapshotsCountPayload).pipe(
+        switchMap((snapshotCount) => {
+          this.eligibleSnapshots = snapshotCount.eligible;
+          const requestsSnapshots = [];
+          if (this.eligibleSnapshots === 0 && values.source_datasets_from === DatasetSource.Local) {
+            for (const payload of this.getSnapshotsPayload(values)) {
+              requestsSnapshots.push(this.createSnapshot(payload));
+            }
+          }
+          return requestsSnapshots.length ? forkJoin(requestsSnapshots) : of(null);
+        }),
+        map((createdSnapshots) => this.createdSnapshots = (createdSnapshots || []).filter((snapshot) => !!snapshot)),
+      );
+    }
+    return of(null);
+  }
+
+  callCreateTasks(values: ReplicationWizardData): Observable<PeriodicSnapshotTask[]> {
+    if (values.schedule_method === ScheduleMethod.Cron && values.source_datasets_from === DatasetSource.Local) {
+      this.existSnapshotTasks = [];
+      const requestsTasks = [];
+      for (const payload of this.getPeriodicSnapshotTasksPayload(values)) {
+        requestsTasks.push(
+          this.isSnapshotTaskExist(payload).pipe(
+            switchMap((tasks) => {
+              if (tasks.length === 0) {
+                return this.createPeriodicSnapshotTask(payload);
+              }
+              this.existSnapshotTasks.push(...tasks.map((task) => task.id));
+              return of(null);
+            }),
+          ),
+        );
+      }
+      if (requestsTasks.length) {
+        return forkJoin(requestsTasks).pipe(
+          map((createdSnapshotTasks) => this.createdSnapshotTasks = (createdSnapshotTasks || []).filter((tk) => !!tk)),
+        );
+      }
+    }
+    return of(null);
+  }
+
+  callCreateReplication(values: ReplicationWizardData): Observable<ReplicationTask> {
+    const replicationPayload = this.getReplicationPayload(values);
+    return this.getUnmatchedSnapshots([
+      replicationPayload.direction,
+      replicationPayload.source_datasets,
+      replicationPayload.target_dataset,
+      replicationPayload.transport,
+      replicationPayload.ssh_credentials,
+    ]).pipe(
+      catchError(() => {
+        return this.createReplication(replicationPayload);
+      }),
+      switchMap((unmatchedSnapshots) => {
+        const hasBadSnapshots = Object.values(unmatchedSnapshots).some((snapshots) => snapshots.length > 0);
+        if (hasBadSnapshots) {
+          return this.dialogService.confirm({
+            title: helptext.clearSnapshotDialog_title,
+            message: helptext.clearSnapshotDialog_content,
+          }).pipe(
+            switchMap((dialogResult) => {
+              replicationPayload.allow_from_scratch = dialogResult;
+              return this.createReplication(replicationPayload);
+            }),
+          );
+        }
+        return this.createReplication(replicationPayload);
+      }),
+      map((createdReplication) => this.createdReplication = createdReplication),
+    );
   }
 }
