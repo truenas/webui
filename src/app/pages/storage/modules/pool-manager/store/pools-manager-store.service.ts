@@ -3,9 +3,10 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { forkJoin, Observable, tap } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { PoolManagerDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -47,6 +48,29 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly formValue$ = this.select((state) => state.formValue);
   readonly disksSelectedManually$ = this.select((state) => state.disksSelectedManually);
   readonly dataVdevs$ = this.select((state) => state.vdevs.data);
+  readonly totalUsableCapacity$ = this.dataVdevs$.pipe(
+    map((vdevs) => vdevs.reduce((previousValue, currentValue) => {
+      return previousValue + currentValue.rawSize;
+    }, 0)),
+  );
+  readonly vdevsCountString$ = this.dataVdevs$.pipe(
+    map((vdevs) => {
+      const vdevLayoutCounter: { [key in CreateVdevLayout]?: number } = {};
+      for (const vdev of vdevs) {
+        if (!vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout]) {
+          vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout] = 1;
+        } else {
+          vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout] += 1;
+        }
+      }
+      let description = '';
+      for (const type of Object.keys(vdevLayoutCounter)) {
+        description += description ? ', ' : '';
+        description += `${vdevLayoutCounter[type as CreateVdevLayout]} × ${type.toUpperCase()}`;
+      }
+      return description;
+    }),
+  );
 
   constructor(
     private errorHandler: ErrorHandlerService,
