@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
@@ -38,6 +38,7 @@ export class DialogService {
 
   error(error: ErrorReport | ErrorReport[]): Observable<boolean> {
     if (Array.isArray(error)) {
+      error = this.cleanErrors(error);
       if (error.length > 1) {
         const dialogRef = this.dialog.open(MultiErrorDialogComponent, {
           data: error,
@@ -45,6 +46,9 @@ export class DialogService {
         return dialogRef.afterClosed();
       }
       error = error[0];
+    }
+    if (!error.message) {
+      return of(false);
     }
     const dialogRef = this.dialog.open(ErrorDialogComponent, {
       data: error,
@@ -56,6 +60,16 @@ export class DialogService {
       dialogRef.componentInstance.logs = error.logs;
     }
     return dialogRef.afterClosed();
+  }
+
+  private cleanErrors(errorReports: ErrorReport[]): ErrorReport[] {
+    const newErrorReports = [];
+    for (const errorReport of errorReports) {
+      if (errorReport.message) {
+        newErrorReports.push({ ...errorReport });
+      }
+    }
+    return newErrorReports;
   }
 
   info(title: string, info: string, isHtml = false): Observable<boolean> {
