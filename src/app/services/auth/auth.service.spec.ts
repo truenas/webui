@@ -207,8 +207,8 @@ describe('AuthService', () => {
           { c: false },
         );
         expectObservable(spectator.service.authToken$).toBe(
-          'd',
-          { d: null },
+          '|',
+          {},
         );
       });
       expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
