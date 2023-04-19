@@ -26,7 +26,7 @@
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button color="accent" ixTest="cancel" (click)="cancel()">
+        <button mat-button type="button" ixTest="cancel" [routerLink]="['/services']">
           {{ 'Cancel' | translate }}
         </button>
       </div>

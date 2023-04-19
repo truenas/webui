@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
+import { ManagerVdev } from 'app/classes/manager-vdev.class';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 
 @UntilDestroy()

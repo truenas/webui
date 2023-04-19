@@ -2,7 +2,7 @@ import {
   Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
 import { getUniqueId } from 'app/helpers/get-unique-id.helper';
-import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { ToolbarMenuOption } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-menu-option.interface';
 
 @Component({
   selector: 'ix-toolbar-multimenu',
@@ -10,23 +10,25 @@ import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/
   templateUrl: 'toolbar-multimenu.component.html',
 })
 export class ToolbarMultimenuComponent implements OnInit {
-  @Input() config?: ControlConfig;
-  @Output() selectionChange = new EventEmitter<ToolbarOption[]>();
+  @Input() label: string;
+  @Input() options: ToolbarMenuOption[];
+  @Input() selected: ToolbarMenuOption[];
+  @Output() selectionChange = new EventEmitter<ToolbarMenuOption[]>();
 
   allSelected = false;
-  values: ToolbarOption[] = [];
+  values: ToolbarMenuOption[] = [];
   selectStates: boolean [] = [];
   id = getUniqueId();
 
   ngOnInit(): void {
-    this.selectStates.length = this.config.options.length;
+    this.selectStates.length = this.options.length;
     this.selectStates.fill(false);
-    if (this.config.value) {
-      for (const value of this.config.value) {
+    if (this.selected) {
+      for (const value of this.selected) {
         if (value) {
           this.values.push(value);
           for (let i = 0; i < this.selectStates.length; i++) {
-            if (this.config.options[i].value === value.value) {
+            if (this.options[i].value === value.value) {
               this.selectStates[i] = true;
               break;
             }
@@ -34,14 +36,14 @@ export class ToolbarMultimenuComponent implements OnInit {
         }
       }
     } else {
-      this.values.push(this.config.options[0]);
+      this.values.push(this.options[0]);
       this.selectStates[0] = true;
     }
 
     this.updateController();
   }
 
-  onClick(value: ToolbarOption, index: number): void {
+  onClick(value: ToolbarMenuOption, index: number): void {
     if (this.selectStates[index]) {
       if (this.checkLength()) {
         this.allSelected = false;
@@ -55,7 +57,7 @@ export class ToolbarMultimenuComponent implements OnInit {
   }
 
   updateController(): void {
-    this.config.value = this.values;
+    this.selected = this.values;
     this.selectionChange.next(this.values);
   }
 
@@ -67,7 +69,7 @@ export class ToolbarMultimenuComponent implements OnInit {
     this.allSelected = this.checkLength();
     if (!this.allSelected) {
       this.selectStates.fill(true);
-      this.values = Object.assign([], this.config.options);
+      this.values = Object.assign([], this.options);
     } else {
       this.selectStates.fill(false);
       this.values = [];

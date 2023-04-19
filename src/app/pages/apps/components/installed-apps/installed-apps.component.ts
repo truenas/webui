@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -240,16 +240,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   refreshStatus(name: string): void {
     this.appService.getChartReleases(name)
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), take(1), untilDestroyed(this))
       .subscribe((releases) => {
-        const item = this.dataSource.find((app) => app.name === name);
-        if (item) {
-          item.status = releases[0].status;
+        const installedApp = this.dataSource.find((app) => app.name === name);
+        if (installedApp) {
+          installedApp.status = releases[0].status;
           this.cdr.markForCheck();
-          if (item.status === ChartReleaseStatus.Deploying) {
+          if (installedApp.status === ChartReleaseStatus.Deploying) {
             setTimeout(() => {
               this.refreshStatus(name);
-              this.cdr.markForCheck();
             }, 3000);
           }
         }

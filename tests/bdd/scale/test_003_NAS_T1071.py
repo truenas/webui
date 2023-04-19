@@ -83,10 +83,11 @@ def click_on_the_force_checkbox_on_the_warning_box(driver):
     driver.find_element_by_xpath(xpaths.pool_manager.force_Checkbox).click()
 
 
+# This is passed since the confirmation box is missing in Cobia
 @then('click Confirm checkbox and click CONTINUE')
 def click_confirm_checkbox_and_click_continue(driver):
     """click Confirm checkbox and click CONTINUE."""
-    rsc.Confirm_Single_Disk(driver)
+    # rsc.Confirm_Single_Disk(driver)
 
 
 @then('click Create, click on Confirm checkbox and click CREATE POOL')

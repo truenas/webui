@@ -10,6 +10,8 @@ from function import (
     wait_for_attribute_value,
     wait_on_element_disappear,
     ssh_cmd,
+    get,
+    put
 )
 from pytest_bdd import (
     given,
@@ -76,16 +78,17 @@ def click_the_checkbox_log_in_as_root_with_password(driver):
     """click the checkbox "Log in as root with password"."""
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'clickable')
     time.sleep(0.5)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Log in as Root with Password")]').click()
 
 
 @then('verify the checkbox works and click Save')
-def verify_the_checkbox_works_and_click_save(driver):
+def verify_the_checkbox_works_and_click_save(driver, nas_ip, root_password):
     """verify the checkbox works and click Save."""
-    wait_for_value = wait_for_attribute_value(driver, 5, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-checkbox-checked')
+    wait_for_value = wait_for_attribute_value(driver, 5, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-mdc-checkbox-checked')
     assert wait_for_value
+    time.sleep(1)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
@@ -95,15 +98,15 @@ def verify_the_checkbox_works_and_click_save(driver):
 def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click the Start Automatically SSH checkbox and enable the SSH service."""
     assert wait_on_element(driver, 5, xpaths.services.title)
-    assert wait_on_element(driver, 5, '//td[contains(text(),"SSH")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox', 'clickable')
-    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service)
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Checkbox, 'clickable')
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-slide-toggle/label', 'clickable')
-    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
+        driver.find_element_by_xpath(xpaths.services.ssh_Service_Checkbox).click()
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Toggle, 'clickable')
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
     if not value_exist:
-        driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-slide-toggle/label').click()
+        driver.find_element_by_xpath(xpaths.services.ssh_Service_Toggle).click()
     time.sleep(1)
 
 
@@ -111,7 +114,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
     wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
 
 
 @then('ssh to a NAS with root and the root password should work')
@@ -120,4 +123,4 @@ def ssh_to_a_nas_with_root_and_the_root_password_should_work(driver, root_passwo
     global ssh_result
     ssh_result = ssh_cmd('ls', 'root', root_password, nas_ip)
     assert ssh_result['result'], ssh_result['output']
-    assert 'syslog' in ssh_result['output'], ssh_result['output']
+    assert 'tdb' in ssh_result['output'], ssh_result['output']
