@@ -16,7 +16,10 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
+import { ModalService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
@@ -45,7 +48,10 @@ describe('ReplicationWhatAndWhereComponent', () => {
         mockCall('keychaincredential.query', [
           { id: 123, name: 'test_ssh' },
         ] as KeychainCredential[]),
+        mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
+      mockProvider(IxSlideInService),
+      mockProvider(ModalService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
@@ -105,7 +111,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
 
   it('opens an extended dialog when choosing to create a new ssh connection', async () => {
     await form.fillForm({ 'Source Location': 'On a Different System' });
-    await form.fillForm({ 'SSH Connections': 'Create New' });
+    await form.fillForm({ 'SSH Connection': 'Create New' });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SshConnectionFormComponent, {
       data: { dialog: true },
       width: '600px',
@@ -135,7 +141,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       source_datasets: ['pool21', 'pool22'],
       target_dataset: 'pool23',
       ssh_credentials_target: 123,
-      custom_snapshots: true,
+      custom_snapshots: false,
       recursive: true,
       encryption: true,
       encryption_key_format: EncryptionKeyFormat.Hex,
@@ -145,5 +151,12 @@ describe('ReplicationWhatAndWhereComponent', () => {
       sudo: false,
       transport: TransportMode.Ssh,
     });
+  });
+
+  it('opens an advanced dialog when Advanced Replication Creation is pressed', async () => {
+    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
+    await advancedButton.click();
+    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ReplicationFormComponent);
   });
 });

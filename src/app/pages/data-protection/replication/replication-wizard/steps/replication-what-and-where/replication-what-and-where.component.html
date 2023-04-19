@@ -39,6 +39,7 @@
         [label]="helptext.recursive_placeholder | translate"
         [tooltip]="helptext.recursive_tooltip | translate"
       ></ix-checkbox>
+      <span *ngIf="snapshotsText" class="snapshots-text">{{ snapshotsText }}</span>
       <ix-checkbox
         *ngIf="form.controls.custom_snapshots.enabled"
         formControlName="custom_snapshots"
@@ -48,7 +49,7 @@
       <ix-radio-group
         *ngIf="form.controls.schema_or_regex.enabled"
         formControlName="schema_or_regex"
-        [label]="helptext.name_schema_or_regex_placeholder_push | translate"
+        [label]="schemaOrRegexLabel | translate"
         [required]="true"
         [options]="schemaOrRegexOptions$"
       ></ix-radio-group>
@@ -171,5 +172,12 @@
       ixTest="next"
       [disabled]="form.invalid"
     >{{ 'Next' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="advanced"
+      (click)="openAdvanced()"
+    >{{ 'Advanced Replication Creation' | translate }}</button>
   </ix-form-actions>
 </form>

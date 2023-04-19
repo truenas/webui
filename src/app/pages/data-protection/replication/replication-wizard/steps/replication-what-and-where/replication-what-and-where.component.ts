@@ -17,6 +17,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -24,11 +25,14 @@ import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summ
 import { forbiddenAsyncValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import {
-  DialogService, KeychainCredentialService, ReplicationService, WebSocketService,
+  DialogService, KeychainCredentialService, ModalService, ReplicationService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +48,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   remoteTargetNodeProvider: TreeNodeProvider;
   readonly helptext = helptext;
   readonly mntPath = mntPath;
+  readonly defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   sshCredentials: KeychainSshCredentials[] = [];
+  snapshotsText = '';
 
   form = this.formBuilder.group({
     exist_replication: [null as number],
@@ -55,7 +61,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     recursive: [false],
     custom_snapshots: [false],
     schema_or_regex: [SnapshotNamingOption.NamingSchema],
-    naming_schema: ['auto-%Y-%m-%d_%H-%M', [Validators.required]],
+    naming_schema: [this.defaultNamingSchema, [Validators.required]],
     name_regex: ['', [Validators.required]],
 
     target_dataset_from: [null as DatasetSource, [Validators.required]],
@@ -111,6 +117,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     return this.form.value.target_dataset_from === DatasetSource.Remote;
   }
 
+  get schemaOrRegexLabel(): string {
+    return this.form.value.source_datasets_from === DatasetSource.Local
+      ? helptext.name_schema_or_regex_placeholder_push : helptext.name_schema_or_regex_placeholder_pull;
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
@@ -119,6 +130,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private translate: TranslateService,
     private filesystemService: FilesystemService,
     private dialogService: DialogService,
+    private slideInService: IxSlideInService,
+    private modalService: ModalService,
+    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -149,6 +163,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.form.controls.schema_or_regex.enable();
           this.form.controls.naming_schema.enable();
         } else {
+          this.getSnapshots();
           this.disableCustomSnapshots();
         }
       }
@@ -177,7 +192,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         this.form.controls.ssh_credentials_target.enable();
         this.form.controls.target_dataset.enable();
         this.form.controls.encryption.enable();
-        this.disableCustomSnapshots();
       } else {
         this.disableTarget();
       }
@@ -199,6 +213,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.form.controls.encryption_key_passphrase.disable();
         } else if (value === EncryptionKeyFormat.Passphrase) {
           this.form.controls.encryption_key_passphrase.enable();
+          this.form.controls.encryption_key_generate.setValue(true);
           this.form.controls.encryption_key_generate.disable();
         }
       }
@@ -226,11 +241,17 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.form.controls.source_datasets.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.genTaskName(value || [], this.form.value.target_dataset || '');
+      this.getSnapshots();
     });
 
     this.form.controls.target_dataset.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.genTaskName(this.form.value.source_datasets || [], value || '');
     });
+
+    merge(
+      this.form.controls.naming_schema.valueChanges,
+      this.form.controls.name_regex.valueChanges,
+    ).pipe(untilDestroyed(this)).subscribe(() => (this.getSnapshots()));
 
     merge(
       this.form.controls.ssh_credentials_source.valueChanges,
@@ -424,6 +445,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.source_datasets.enable();
     this.form.controls.recursive.enable();
     this.form.controls.custom_snapshots.enable();
+    this.form.controls.custom_snapshots.setValue(false);
   }
 
   private selectRemoteSource(): void {
@@ -432,8 +454,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.ssh_credentials_source.enable();
     this.form.controls.source_datasets.enable();
     this.form.controls.recursive.enable();
+    this.form.controls.custom_snapshots.setValue(true);
     this.form.controls.custom_snapshots.disable();
-    this.disableCustomSnapshots();
   }
 
   loadReplicationTask(task: ReplicationTask): void {
@@ -480,5 +502,48 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.transport.setValue(TransportMode.Ssh);
     this.form.controls.sudo.setValue(false);
     this.form.controls.name.setValue('');
+  }
+
+  openAdvanced(): void {
+    this.slideInService.close();
+    this.modalService.openInSlideIn(ReplicationFormComponent);
+  }
+
+  getSnapshots(): void {
+    const value = this.form.value;
+    let transport = value.transport || TransportMode.Local;
+    if (value.ssh_credentials_target) {
+      transport = TransportMode.Local;
+    }
+
+    const payload: CountManualSnapshotsParams = {
+      datasets: value.source_datasets?.map((item) => item.replace(`${mntPath}/`, '')) || [],
+      transport: value.ssh_credentials_target ? TransportMode.Local : transport,
+      ssh_credentials: transport === TransportMode.Local ? null : value.ssh_credentials_source as number,
+    };
+
+    if (value.schema_or_regex === SnapshotNamingOption.NameRegex) {
+      payload.name_regex = value.name_regex;
+    } else {
+      payload.naming_schema = (value.naming_schema || this.defaultNamingSchema).split(' ');
+    }
+
+    if (payload.datasets.length > 0) {
+      this.ws.call('replication.count_eligible_manual_snapshots', [payload]).pipe(untilDestroyed(this)).subscribe({
+        next: (snapshotCount) => {
+          let snapexpl = '';
+          if (snapshotCount.eligible === 0 && value.source_datasets_from === DatasetSource.Local) {
+            snapexpl = this.translate.instant('Snapshots will be created automatically.');
+          }
+          this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
+        },
+        error: (error) => {
+          this.snapshotsText = '';
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
+      });
+    } else {
+      this.snapshotsText = '';
+    }
   }
 }
