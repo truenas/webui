@@ -104,6 +104,9 @@ export class AuthService {
    */
   clearAuthToken(): void {
     this.latestTokenGenerated$.next(null);
+    this.latestTokenGenerated$.complete();
+    this.latestTokenGenerated$ = new ReplaySubject<string>(1);
+    this.setupTokenUpdate();
   }
 
   login(username: string, password: string, otp: string = null): Observable<boolean> {
