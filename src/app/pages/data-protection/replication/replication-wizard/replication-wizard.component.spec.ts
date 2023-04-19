@@ -10,6 +10,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
+import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -103,7 +107,7 @@ describe('ReplicationWizardComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool1/',
       enabled: true,
-      lifetime_unit: 'WEEK',
+      lifetime_unit: LifetimeUnit.Week,
       lifetime_value: 2,
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
@@ -115,7 +119,7 @@ describe('ReplicationWizardComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool2/',
       enabled: true,
-      lifetime_unit: 'WEEK',
+      lifetime_unit: LifetimeUnit.Week,
       lifetime_value: 2,
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
@@ -140,18 +144,18 @@ describe('ReplicationWizardComponent', () => {
       auto: true,
       direction: Direction.Push,
       encryption: false,
-      lifetime_unit: 'WEEK',
+      lifetime_unit: LifetimeUnit.Week,
       lifetime_value: 2,
       name: 'pool1/,pool2/ - pool3/',
       periodic_snapshot_tasks: [33, 33],
-      readonly: 'SET',
+      readonly: ReadOnlyMode.Set,
       recursive: false,
-      retention_policy: 'CUSTOM',
+      retention_policy: RetentionPolicy.Custom,
       source_datasets: ['pool1/', 'pool2/'],
       ssh_credentials: undefined,
       sudo: undefined,
       target_dataset: 'pool3/',
-      transport: 'LOCAL',
+      transport: TransportMode.Local,
     }]);
 
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
