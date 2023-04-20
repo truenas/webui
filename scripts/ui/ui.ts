@@ -6,8 +6,7 @@ import {EnclosureDispersalStrategy} from "../../src/app/core/testing/enums/mock-
 import {WebUiEnvironment} from "../../src/environments/environment.interface";
 import inquirer from 'inquirer';
 import {MockEnclosureConfig} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
-
-const figlet = require("figlet");
+import * as figlet from 'figlet';
 
 interface CommandOptions {
   [p: string]: any;
