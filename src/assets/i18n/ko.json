@@ -3395,7 +3395,7 @@
   "Username on the remote system which will be used to login <b>via SSH</b>.": "",
   "Username or Password is incorrect.": "",
   "Username, Password, or 2FA Code is incorrect.": "",
-  "Usernames can be up to 16 characters long. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "",
+  "Usernames can be up to 32 characters long. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "",
   "Users": "",
   "Users could not be loaded": "",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "",
