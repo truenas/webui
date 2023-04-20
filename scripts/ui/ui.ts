@@ -262,19 +262,20 @@ function wrap(key:string, value: any): string {
     return value.toString();
     case 'undefined':
       console.error('Property not defined');
-    default: {
+    case 'object': {
       if (key === 'mockConfig') {
         const regexBefore = /\".*\"\:/g;
         const regexAfter = /\: \".*\"/g;
-        const pretty = JSON.stringify(value, null, "    ")
+        const pretty = JSON.stringify(value, null, "  ")
           .replace(regexBefore, (match) => {
             return match.replace(/\"/g, '');
-        }).replace(regexAfter, (match) => {
+          }).replace(regexAfter, (match) => {
             const converted = enumAsString(match);
             return converted;
-          }).replace(/\"/g, '\'')
-          .replace(/\'true\'/g, 'true')
-          .replace(/\'false\'/g, 'false')
+          }).replace(/\"/g, '\'') // Double quotes to single quotes
+          .replace(/\'true\'/g, 'true') // remove quotes from boolean true
+          .replace(/\'false\'/g, 'false') // remove quotes from boolean false
+          .replace(/\n/g, '\n  ') // fix indentation
 
         return pretty;
       }
