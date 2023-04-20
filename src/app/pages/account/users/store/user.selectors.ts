@@ -8,11 +8,15 @@ export interface UserSlice {
   [userStateKey]: UsersState;
 }
 
-const { selectAll, selectTotal } = adapter.getSelectors();
+const { selectTotal } = adapter.getSelectors();
 
 export const selectUsers = createSelector(
   selectUserState,
-  selectAll,
+  (state) => state.ids.map((id) => ({
+    id,
+    ...state.entities[id],
+    full_name: state.entities[id]?.full_name?.replace(/,*$/, ''),
+  })),
 );
 
 export const selectUsersTotal = createSelector(
