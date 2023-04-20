@@ -11,7 +11,7 @@
         <a
           *ngIf="app?.installed"
           class="installed-badge"
-          [matTooltip]="'Already installed. Go to Installed Apps' | translate"
+          [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
           [ixTest]="[app?.name, 'installed-badge']"
           [routerLink]="['/apps', 'installed', app.name]"
         >
