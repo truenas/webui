@@ -196,8 +196,7 @@ function reset(): void {
 * General environment file editing functions
 * */
 function saveEnvironment(): void {
-  const imports = `/* eslint-disable no-restricted-imports */
-import { EnclosureDispersalStrategy } from "../app/core/testing/enums/mock-storage.enum";
+  const imports = `import { EnclosureDispersalStrategy } from "../app/core/testing/enums/mock-storage.enum";
 import { WebUiEnvironment } from "./environment.interface";\n
 `
 
