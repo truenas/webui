@@ -3,8 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -24,7 +23,7 @@ describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  const createComponent = createComponentFactory({
+  const createComponent = createRoutingFactory({
     component: ServiceNfsComponent,
     imports: [
       IxFormsModule,
@@ -67,7 +66,6 @@ describe('ServiceNfsComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(Router),
     ],
   });
 

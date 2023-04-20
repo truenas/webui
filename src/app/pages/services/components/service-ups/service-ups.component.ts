@@ -177,8 +177,4 @@ export class ServiceUpsComponent implements OnInit {
         },
       });
   }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
-  }
 }

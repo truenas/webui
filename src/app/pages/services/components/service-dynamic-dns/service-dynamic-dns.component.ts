@@ -116,8 +116,4 @@ export class ServiceDynamicDnsComponent implements OnInit {
       },
     });
   }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
-  }
 }
