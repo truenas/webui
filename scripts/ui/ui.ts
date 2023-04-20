@@ -435,7 +435,7 @@ function mock(command: Command, options: CommandOptions): void {
 }
 
 /*
-* Mock Command
+* Mock Generate Command
 * */
 function mockConfigWizard(): void {
   const controllerChoices = Object.keys(models.controllers);
@@ -517,7 +517,8 @@ function mockConfigWizard(): void {
         * Slot Assignment: ${answers.dispersal.toLowerCase()}
       `);
 
-        fs.writeFileSync(filePath, JSON.stringify(mockConfig), 'utf8');
+        const contents = JSON.stringify(mockConfig, null,'  ');
+        fs.writeFileSync(filePath, contents, 'utf8');
       } else {
         console.info('Aborting mock file generation. No file will be generated and environment remains unchanged');
         process.exit(0);
