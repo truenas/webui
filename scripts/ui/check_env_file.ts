@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { environmentTemplate } from './environment.template';
 import * as fs from 'fs';
 import {Command} from "commander";
