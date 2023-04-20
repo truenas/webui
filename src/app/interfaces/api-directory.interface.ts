@@ -516,10 +516,6 @@ export type ApiDirectory = {
   'failover.upgrade_finish': { params: void; response: boolean };
   'failover.upgrade': { params: void; response: boolean };
 
-  // FCPort
-  'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
-  'fcport.update': { params: [id: string, update: FibreChannelPortUpdate]; response: unknown };
-
   // Keychain Credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
   'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
