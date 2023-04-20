@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {environment} from '../../src/environments/environment';
 import {environmentTemplate} from './environment.template';
 import {Command} from 'commander';
@@ -113,7 +112,7 @@ program
   .action(() => {
     reset();
     process.exit(0);
-    console.log(environment);
+    console.info(environment);
 
     showRemote({
       showHeader: true,
@@ -210,11 +209,11 @@ import { WebUiEnvironment } from "./environment.interface";\n
 }
 
 function debugOutput(newConfig: string): void {
-  console.log('Old Environment :\n');
-  console.log(originalEnvironment);
-  console.log('****************************');
-  console.log('New Environment:\n');
-  console.log(newConfig);
+  console.info('Old Environment :\n');
+  console.info(originalEnvironment);
+  console.info('****************************');
+  console.info('New Environment:\n');
+  console.info(newConfig);
 }
 
 function makePrintable(src: WebUiEnvironment, prefix: string) {
@@ -290,8 +289,8 @@ function wrap(key:string, value: any): string {
 * */
 function mockConfigReport(options: ReportOptions): string {
     if (!environment.mockConfig) {
-      console.log('Something is wrong. Environment variable not initialized');
-      console.log(environment);
+      console.info('Something is wrong. Environment variable not initialized');
+      console.info(environment);
       process.exit(0);
     }
 
@@ -309,7 +308,7 @@ function mockConfigReport(options: ReportOptions): string {
 
     const output = header + file + report + footer;
 
-    console.log(output)
+    console.info(output)
 
     return output;
 
@@ -341,7 +340,7 @@ function showAvailableModels(options: ReportOptions, key: string): void {
 
   const output = header + report + footer;
 
-  console.log(output)
+  console.info(output)
 }
 
 function setMockDispersal(value: string): void {
@@ -368,20 +367,20 @@ function mock(command: Command, options: CommandOptions): void {
     environment.mockConfig = environmentTemplate.mockConfig;
     saveEnvironment();
   } else if (command.config) {
-    console.log('Locating mock configuration file...');
+    console.info('Locating mock configuration file...');
     const path = 'src/assets/mock/configs/';
     const configStr = fs.readFileSync( path + command.config, 'utf8');
     const config = JSON.parse(configStr);
 
     environment.mockConfig = config;
-    console.log('Mock config file found √\n');
+    console.info('Mock config file found √\n');
 
     environment.mockConfig = command.config ? config : null;
     saveEnvironment();
   } else {
     for (let option in options) {
       if (command.debug) {
-        console.log({
+        console.info({
           option: option,
           value: command[option],
         })
@@ -423,7 +422,7 @@ function mock(command: Command, options: CommandOptions): void {
           process.exit(0);
           break;
         default: {
-          console.log(command[option]);
+          console.info(command[option]);
           break;
         }
       }
@@ -521,7 +520,7 @@ function mockConfigWizard(): void {
 
         fs.writeFileSync(filePath, JSON.stringify(mockConfig), 'utf8');
       } else {
-        console.log('Aborting mock file generation. No file will be generated and environment remains unchanged');
+        console.info('Aborting mock file generation. No file will be generated and environment remains unchanged');
         process.exit(0);
       }
 
@@ -536,10 +535,10 @@ function mockConfigWizard(): void {
     .catch((error) => {
       if (error.isTtyError) {
         // Prompt couldn't be rendered in the current environment
-        console.log(error);
+        console.info(error);
       } else {
         // Something else went wrong
-        console.log(error);
+        console.info(error);
       }
     });
 }
@@ -572,7 +571,7 @@ function saveProxyConfig(file: string, url: string): void {
 function printCurrentConfig(proxyConfigJson: string): void {
   const doesConfigExist = fs.existsSync(proxyConfigJson);
   if (!doesConfigExist) {
-    console.log('No current config set.');
+    console.info('No current config set.');
     return;
   }
 }
@@ -587,11 +586,11 @@ function showRemote(options: ReportOptions): void {
  `;
 
   const output = header + report + footer;
-  console.log(output);
+  console.info(output);
 }
 
 function remote(command: Command, ip: string): void {
-  console.log('Setting remote machine url...');
+  console.info('Setting remote machine url...');
 
   const proxyConfigJson = './proxy.config.json';
   const url = normalizeUrl(ip);

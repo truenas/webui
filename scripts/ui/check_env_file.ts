@@ -1,7 +1,6 @@
 /* eslint-disable */
 import { environmentTemplate } from './environment.template';
 import * as fs from 'fs';
-import { exec } from 'child_process';
 import {Command} from "commander";
 
 
@@ -50,7 +49,7 @@ Ready for development but remote not set.
 Use yarn ui script to set remote url: ./ui remote -i <ip-address>
 `
       if (!suppress) {
-        console.log(message);
+        console.info(message);
       }
 
       return false
@@ -59,10 +58,10 @@ Use yarn ui script to set remote url: ./ui remote -i <ip-address>
   }
 
   if (fileExists && wordCount > 0 && isCurrent) {
-    console.log('Environment file exists');
+    console.info('Environment file exists');
     remoteIsSet = isRemoteSet(suppress, envStr);
   } else {
-    console.log('Environment file not found. Creating new file with default values');
+    console.info('Environment file not found. Creating new file with default values');
     let templateStr: string = fs.readFileSync(template, 'utf8');
     fs.writeFileSync(
       environmentTs,
