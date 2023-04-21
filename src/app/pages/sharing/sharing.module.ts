@@ -39,8 +39,6 @@ import { AssociatedTargetFormComponent } from './iscsi/associated-target/associa
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { ExtentListComponent } from './iscsi/extent/extent-list/extent-list.component';
-import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
-import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/initiator-list.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
@@ -112,8 +110,6 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     ExtentFormComponent,
     AssociatedTargetListComponent,
     AssociatedTargetFormComponent,
-    FibreChannelPortsComponent,
-    FibreChannelPortComponent,
     DeleteExtentDialogComponent,
     StartServiceDialogComponent,
   ],

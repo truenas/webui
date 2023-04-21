@@ -368,7 +368,6 @@ export class LanguageService {
       code: 'zh-hans',
     },
   ];
-  updateCall = 'system.general.update' as const;
 
   constructor(
     protected translate: TranslateService,
