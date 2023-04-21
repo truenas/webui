@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -20,9 +20,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   `,
   providers: [IscsiService],
 })
-export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnInit {
-  @Input() fcEnabled: boolean;
-
+export class TargetListComponent implements EntityTableConfig<IscsiTarget> {
   title = this.translate.instant('Targets');
   queryCall = 'iscsi.target.query' as const;
   wsDelete = 'iscsi.target.delete' as const;
@@ -58,15 +56,6 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
-
-  ngOnInit(): void {
-    if (this.fcEnabled) {
-      this.columns.push({
-        name: this.translate.instant('Mode'),
-        prop: 'mode',
-      });
-    }
-  }
 
   afterInit(entityList: EntityTableComponent<IscsiTarget>): void {
     this.entityList = entityList;

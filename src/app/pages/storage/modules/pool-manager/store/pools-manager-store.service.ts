@@ -42,6 +42,7 @@ const initialState: PoolManagerState = {
 
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
+  readonly isLoading$ = this.select((state) => state.isLoading);
   readonly unusedDisks$ = this.select((state) => state.unusedDisks);
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly hasMultipleEnclosures$ = this.select((state) => state.enclosures.length > 1);
@@ -69,6 +70,17 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         description += `${vdevLayoutCounter[type as CreateVdevLayout]} × ${type.toUpperCase()}`;
       }
       return description;
+    }),
+  );
+  readonly nonUniqueSerialDisks$ = this.unusedDisks$.pipe(
+    map((disks) => disks.filter((disk) => disk.duplicate_serial.length)),
+  );
+  readonly exportedPools$ = this.unusedDisks$.pipe(
+    map((disks) => {
+      return disks
+        .filter((disk) => !!disk.exported_zpool)
+        .map((disk) => disk.exported_zpool)
+        .filter((value, index, self) => self.indexOf(value) === index);
     }),
   );
 

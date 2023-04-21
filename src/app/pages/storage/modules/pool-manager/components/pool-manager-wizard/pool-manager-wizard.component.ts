@@ -13,13 +13,14 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
+  isLoading$ = this.store.isLoading$;
   form = this.fb.group({
     general: this.fb.group({
       name: ['', Validators.required],
       encryption: [false],
+      encryption_standard: [null as string, Validators.required],
       allowNonUniqueSerialDisks: ['false'],
       allowDisksFromExportedPools: [[] as string[]],
-      encryption_standard: [null as string, Validators.required],
     }),
     data: this.fb.group({
       type: [CreateVdevLayout.Stripe, Validators.required],
@@ -42,7 +43,6 @@ export class PoolManagerWizardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // TODO: Add loading indicator
     this.store.initialize();
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((formValue) => {

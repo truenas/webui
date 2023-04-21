@@ -16,7 +16,7 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { ToolbarMenuOption } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-menu-option.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { CommonAppsToolbarButtonsComponent } from 'app/pages/apps-old/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
@@ -64,9 +64,8 @@ export class CatalogComponent implements OnInit, AfterViewInit {
     title: helptext.catalogMessage.loading,
   };
 
-  catalogMenu: ControlConfig;
-
   readonly officialCatalog = officialCatalog;
+  readonly helptext = helptext;
 
   constructor(
     private dialogService: DialogService,
@@ -147,7 +146,6 @@ export class CatalogComponent implements OnInit, AfterViewInit {
         return { label: capitalizeFirstLetter(catalog), value: catalog };
       });
       this.selectedCatalogOptions = this.catalogOptions;
-      this.setupCatalogMenu();
 
       this.filterApps();
       this.isLoading = false;
@@ -277,17 +275,7 @@ export class CatalogComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setupCatalogMenu(): void {
-    this.catalogMenu = {
-      label: helptext.catalogs,
-      multiple: true,
-      options: this.catalogOptions,
-      value: this.selectedCatalogOptions,
-      customTriggerValue: helptext.catalogs,
-    };
-  }
-
-  onCatalogsSelectionChanged(selected: ToolbarOption[]): void {
+  onCatalogsSelectionChanged(selected: ToolbarMenuOption[]): void {
     const catalogNames = selected.map((catalog) => catalog.value);
     if (!_.isEqual(this.filteredCatalogNames.sort(), catalogNames.sort())) {
       this.filteredCatalogNames = catalogNames as string[];

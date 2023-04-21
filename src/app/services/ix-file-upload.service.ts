@@ -10,6 +10,7 @@ import {
 import {
   catchError, concatMap, tap, toArray,
 } from 'rxjs/operators';
+import { MiB } from 'app/constants/bytes.constant';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ValidatedFile } from 'app/interfaces/validated-file.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -19,7 +20,7 @@ import { AuthService } from 'app/services/auth/auth.service';
   providedIn: 'root',
 })
 export class IxFileUploadService {
-  private readonly FILE_SIZE_LIMIT_50MB = 52428800;
+  private readonly FILE_SIZE_LIMIT_50MB = 50 * MiB;
   private fileUploadProgress$ = new Subject<HttpProgressEvent>();
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
