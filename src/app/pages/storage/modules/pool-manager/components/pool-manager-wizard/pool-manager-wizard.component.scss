@@ -2,6 +2,11 @@
 
 .card {
   @include details-card();
+
+  ix-fake-progress-bar {
+    position: absolute;
+    top: 0;
+  }
 }
 
 .step-buttons {
