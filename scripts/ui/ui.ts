@@ -38,7 +38,6 @@ interface ConfigWizardAnswers {
 * */
 function banner(): string {
   const content = figlet.textSync('TrueNAS WebUI');
-  console.info(content);
   return content;
 }
 
@@ -68,18 +67,51 @@ const modelsFile = './scripts/ui//models.json';
 const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
 
 /*
-* Command Setup
-* */
-const program: Command = new Command();
-program
+* Command Setup* */
+const program: Command = new Command()
   .name('./ui')
   .version('0.0.1')
   .description('TrueNAS webui setup utility')
   .usage('(Call from root directory)')
+  .addHelpText('before', banner())
+
+const mockExamples = `
+EXAMPLES:
+
+  * Retrieve a list of mockable controller models
+
+    % ./ui mock -M OR ./ui mock --showcontrollers
+
+  * Retrieve a list of mockable expansion shelf models
+
+    % ./ui mock -S OR ./ui mock --showshelves
+
+  * Set the controller model to mock
+
+    % ./ui mock -m OR ./ui mock --model
+
+  * Set the expansion shelf models to mock
+
+    NOTE: It will except no argument or empty string to specify no shelves.
+    Specifying shelves must be done via a comma separated string
+
+    % ./ui mock -s 'es24,es24' OR ./ui mock --shelves 'es24,es24'
+
+  * Loading a config.json file
+
+    This script will look for config.json files in src/assets/mock/configs.
+
+    % ./ui mock -c <filename> OR ./ui mock --config <filename>
+
+    NOTE: To see how to use this script to generate a config file, see the mock-gen command
+
+`
 
 program
   .command('mock')
+  .name('mock')
   .description('Mocking enclosure ui support')
+  .addHelpText('after', mockExamples)
   .option('-e, --enable', 'enable mock config')
   .option('-d, --disable', 'disable mock config')
   .option('-M, --showcontrollers ', 'show available controllers for mock')
@@ -92,15 +124,27 @@ program
   .option('-l, --list', 'show current mock config settings')
   .option('-D, --debug', 'debug output')
   .action(() => {
-    const mockCommand = program.commands.find((command: Command) => command._name === 'mock');
+    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock');
     const mockOptions = commandOpts(mockCommand);
     mock(mockCommand, mockOptions);
   });
+
+const mockGenExamples = `
+EXAMPLES:
+
+  * Generating a config.json
+
+  The mock-gen command will provide a series of prompts that results in the creation of a config.json file
+  After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs
+
+    % ./ui mock-gen OR ./ui mg
+`
 
 program
   .command('mock-gen')
   .alias('mg')
   .description('Generates a mock config.json file')
+  .addHelpText('after', mockGenExamples)
   .action(() => {
     mockConfigWizard();
   })
@@ -128,7 +172,7 @@ program
   .description('Set the server WebUI communicates with')
   .option('-i, --ip <ip_address>', 'Sets IP address of your server')
   .action(() => {
-    const remoteCommand = program.commands.find((command: Command) => command._name === 'remote');
+    const remoteCommand = program.commands.find((command: Command) => command.name() === 'remote');
     const remoteOptions = commandOpts(remoteCommand);
     remote(remoteCommand, remoteOptions.ip);
   });
@@ -143,21 +187,7 @@ program
     });
   });
 
-program
-  .command('*')
-  .description('Unmatched command')
-  .action(() => {
-    banner();
-    program.help();
-  });
-
 program.parse(process.argv);
-
-// Show help when no commands and args provided
-if (!process.argv.slice(2).length) {
-  banner();
-  program.help();
-}
 
 // How is this not built into commander.js?
 function commandOpts(command: Command): CommandOptions {
@@ -169,17 +199,12 @@ function commandOpts(command: Command): CommandOptions {
   let options: CommandOptions = {};
 
   keys.forEach((key: string) => {
-    if (command[key]) {
-      options[key] = command[key];
+    if (command.getOptionValue(key)) {
+      options[key] = command.getOptionValue(key);
     }
   });
 
   return options;
-}
-
-function showHelp(command: Command): void {
-  banner();
-  command.help();
 }
 
 /*
@@ -202,16 +227,7 @@ import { WebUiEnvironment } from "./environment.interface";\n
   const prefix = 'export const environment: WebUiEnvironment = ';
   const result = makePrintable(environment, imports + prefix);
 
-  if (program.debug) debugOutput(result);
   fs.writeFileSync(environmentTs, result, 'utf8');
-}
-
-function debugOutput(newConfig: string): void {
-  console.info('Old Environment :\n');
-  console.info(originalEnvironment);
-  console.info('****************************');
-  console.info('New Environment:\n');
-  console.info(newConfig);
 }
 
 function makePrintable(src: WebUiEnvironment, prefix: string) {
@@ -307,7 +323,7 @@ function mockConfigReport(options: ReportOptions): string {
 
     const output = header + file + report + footer;
 
-    console.info(output)
+    console.info(output);
 
     return output;
 
@@ -357,31 +373,31 @@ function setMockShelves(value: string): void {
 }
 
 function mock(command: Command, options: CommandOptions): void {
-  if (command.shelves?.length === 0) setMockShelves(command.shelves);
+  if (options.shelves?.length === 0) setMockShelves(options.shelves);
   if (!Object.keys(options).length) {
     // showHelp(command);
   }
 
-  if (command.reset) {
+  if (options.reset) {
     environment.mockConfig = environmentTemplate.mockConfig;
     saveEnvironment();
-  } else if (command.config) {
+  } else if (options.config) {
     console.info('Locating mock configuration file...');
     const path = 'src/assets/mock/configs/';
-    const configStr = fs.readFileSync( path + command.config, 'utf8');
+    const configStr = fs.readFileSync( path + options.config, 'utf8');
     const config = JSON.parse(configStr);
 
     environment.mockConfig = config;
     console.info('Mock config file found √\n');
 
-    environment.mockConfig = command.config ? config : null;
+    environment.mockConfig = options.config ? config : null;
     saveEnvironment();
   } else {
     for (let option in options) {
-      if (command.debug) {
+      if (options.debug) {
         console.info({
           option: option,
-          value: command[option],
+          value: options[option],
         })
       }
 
@@ -398,13 +414,13 @@ function mock(command: Command, options: CommandOptions): void {
           setMockEnabled(false);
           break;
         case 'model':
-          setMockModel(command[option]);
+          setMockModel(options[option]);
           break;
         case 'assign':
-          setMockDispersal(command[option]);
+          setMockDispersal(options[option]);
           break;
         case 'shelves':
-          setMockShelves(command[option]);
+          setMockShelves(options[option]);
           break;
         case 'showcontrollers':
           showAvailableModels({
@@ -421,7 +437,7 @@ function mock(command: Command, options: CommandOptions): void {
           process.exit(0);
           break;
         default: {
-          console.info(command[option]);
+          console.info(options[option]);
           break;
         }
       }
@@ -542,7 +558,6 @@ function mockConfigWizard(): void {
       }
     });
 }
-
 
 /*
 * Remote Command

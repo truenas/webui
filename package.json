@@ -165,7 +165,7 @@
     "@typescript-eslint/eslint-plugin": "~5.48.0",
     "@typescript-eslint/parser": "~5.48.0",
     "codelyzer": "~6.0.2",
-    "commander": "~4.1.1",
+    "commander": "~10.0.1",
     "commitlint-config-jira": "~1.5.1",
     "commitlint-plugin-jira-rules": "~1.5.1",
     "eslint": "~8.38.0",
