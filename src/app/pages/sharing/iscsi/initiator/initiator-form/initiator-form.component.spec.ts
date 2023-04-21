@@ -52,8 +52,8 @@ describe('InitiatorFormComponent', () => {
   it('shows current initiator values when form is being edited', async () => {
     spectator.setRouteParam('pk', '1');
 
-    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Available Initiators"]' }));
-    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Selected Initiators"]' }));
+    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Connected Initiators"]' }));
+    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Allowed Initiators"]' }));
 
     expect(await availableList.getItems()).toHaveLength(1);
     expect(await selectedList.getItems()).toHaveLength(2);
@@ -63,7 +63,7 @@ describe('InitiatorFormComponent', () => {
 
     expect(await form.getValues()).toEqual({
       'Allow All Initiators': false,
-      'Allowed Initiators (IQN)': '',
+      'Add Allowed Initiators (IQN)': '',
       Description: 'comment1',
     });
   });
@@ -71,8 +71,8 @@ describe('InitiatorFormComponent', () => {
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
     spectator.setRouteParam('pk', '1');
 
-    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Available Initiators"]' }));
-    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Selected Initiators"]' }));
+    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Connected Initiators"]' }));
+    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Allowed Initiators"]' }));
 
     const available = await availableList.getItems();
 
@@ -120,18 +120,18 @@ describe('InitiatorFormComponent', () => {
   });
 
   it('adds a new initiator and closes modal when Save button is pressed', async () => {
-    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Available Initiators"]' }));
-    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Selected Initiators"]' }));
+    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Connected Initiators"]' }));
+    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Allowed Initiators"]' }));
 
     expect(await availableList.getItems()).toHaveLength(1);
     expect(await selectedList.getItems()).toHaveLength(0);
 
     const addNewInitiatorButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="add-initiator"]' }));
 
-    await form.fillForm({ 'Allowed Initiators (IQN)': 'new_initiator_1' });
+    await form.fillForm({ 'Add Allowed Initiators (IQN)': 'new_initiator_1' });
     await addNewInitiatorButton.click();
 
-    await form.fillForm({ 'Allowed Initiators (IQN)': 'new_initiator_2' });
+    await form.fillForm({ 'Add Allowed Initiators (IQN)': 'new_initiator_2' });
     await addNewInitiatorButton.click();
 
     expect(await availableList.getItems()).toHaveLength(1);
