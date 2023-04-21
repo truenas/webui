@@ -1,0 +1,20 @@
+:host {
+  ix-checkbox-list ::ng-deep {
+    .checkbox-list {
+      max-height: 180px;
+      overflow-y: auto;
+    }
+  }
+
+  ix-radio-group {
+    margin-top: 0;
+  }
+
+  .spacer-top {
+    margin-top: 16px;
+  }
+
+  .spacer-bottom {
+    margin-bottom: 16px;
+  }
+}

@@ -1,4 +1,5 @@
 <mat-card class="card">
+  <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
     <mat-vertical-stepper #stepper>
       <mat-step #matStepInstance>
