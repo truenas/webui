@@ -608,7 +608,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       }
     }
 
-    this.rows = this.generateRows(response);
+    this.rows = this.generateRows(res);
     this.currentRows = this.rows;
 
     if (!skipActions) {
