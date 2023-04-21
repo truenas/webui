@@ -10,45 +10,43 @@
   (search)="changeSearchQuery($event)"
 ></ix-available-apps-header>
 
-<h3 *ngIf="searchQuery" class="apps-title">
-  {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
-</h3>
 <div class="available-apps-list">
-  <ix-fake-progress-bar
-    *ngIf="isLoading"
-    class="loader-bar"
-    [loading]="isLoading"
-  ></ix-fake-progress-bar>
+  <h3 *ngIf="searchQuery" class="section-title">
+    {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
+  </h3>
 
-  <ng-container *ngIf="!isFilterOrSearch">
+  <ng-container *ngIf="isLoading">
+    <ngx-skeleton-loader class="fake-apps-section-title"></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="fake-apps" [count]="6"></ngx-skeleton-loader>
+  </ng-container>
+
+  <ng-container *ngIf="!isFilterOrSearch && !isLoading">
     <ng-container *ngFor="let appSection of appSections; trackBy: trackByAppSectionTitle">
-      <section *ngIf="appSection.apps$ | async as apps">
-        <ng-container *ngIf="apps.length">
-          <h3 class="apps-section-title">{{ appSection.title }}</h3>
+      <section *ngIf="(appSection.apps$ | async).length">
+        <h3 class="section-title">{{ appSection.title }}</h3>
 
-          <div class="apps">
-            <ix-app-card
-              *ngFor="let app of apps; trackBy: trackByAppId"
-              [app]="app"
-              [routerLink]="['/apps', 'available', app.name]"
-            ></ix-app-card>
-          </div>
+        <div class="apps">
+          <ix-app-card
+            *ngFor="let app of apps; trackBy: trackByAppId"
+            [app]="app"
+            [routerLink]="['/apps', 'available', app.name]"
+          ></ix-app-card>
+        </div>
 
-          <div *ngIf="appSection.totalApps > sliceAmount" class="view-all">
-            <button
-              mat-stroked-button
-              [ixTest]="[appSection.title, 'view-all']"
-              (click)="applyCategoryFilter(appSection.category)"
-            >
-              {{ 'View All' | translate }} {{ appSection.title | translate }}
-            </button>
-          </div>
-        </ng-container>
+        <div *ngIf="appSection.totalApps > sliceAmount" class="view-all">
+          <button
+            mat-stroked-button
+            [ixTest]="[appSection.title, 'view-all']"
+            (click)="applyCategoryFilter(appSection.category)"
+          >
+            {{ 'View All' | translate }} {{ appSection.title | translate }}
+          </button>
+        </div>
       </section>
     </ng-container>
   </ng-container>
 
-  <div *ngIf="isFilterOrSearch" class="filtered-apps">
+  <div *ngIf="isFilterOrSearch && !isLoading" class="apps">
     <ix-app-card
       *ngFor="let app of filteredApps; trackBy: trackByAppId"
       [app]="app"
