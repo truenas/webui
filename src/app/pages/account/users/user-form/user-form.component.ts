@@ -60,7 +60,7 @@ export class UserFormComponent {
     username: ['', [
       Validators.required,
       Validators.pattern(UserService.namePattern),
-      Validators.maxLength(16),
+      Validators.maxLength(32),
     ]],
     email: ['', [Validators.email]],
     password: ['', [
@@ -315,13 +315,6 @@ export class UserFormComponent {
     const key = this.form.get('sshpubkey').value;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
-  }
-
-  getUsernameHint(): string {
-    if (this.form.get('username')?.value?.length > 8) {
-      return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
-    }
-    return null;
   }
 
   private setupNewUserForm(): void {
