@@ -1,7 +1,6 @@
 {
   "": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
-  "\n        Warning: There are {n} disks available that have non-unique serial numbers.\n        Non-unique serial numbers can be caused by a cabling issue and\n        adding such disks to a pool can result in lost data.": "",
   " Est. Usable Capacity": "",
   " Please click the button below to add {item}.": "",
   " bytes.": "",
@@ -1308,6 +1307,7 @@
   "Warning!": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers.\n          USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other.\n          Adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "",
+  "Warning: There are {n} disks available that have non-unique serial numbers.\n        Non-unique serial numbers can be caused by a cabling issue and\n        adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
   "Warning: {n} of {total} boot environments could not be deleted.": "",
   "Warning: {n} of {total} docker images could not be deleted.": "",

@@ -1,6 +1,5 @@
 {
   "": "",
-  "\n        Warning: There are {n} disks available that have non-unique serial numbers.\n        Non-unique serial numbers can be caused by a cabling issue and\n        adding such disks to a pool can result in lost data.": "",
   "Access Based Share Enumeration": "",
   "Access Control Entry (ACE) user or group. Select a specific <i>User</i> or <i>Group</i> for this entry, <i>owner@</i> to apply this entry to the user that owns the dataset, <i>group@</i> to apply this entry to the group that owns the dataset, or <i>everyone@</i> to apply this entry to all users and groups. See <a href=\"https://man7.org/linux/man-pages/man1/nfs4_setfacl.1.html\" target=\"_blank\">nfs4_setfacl(1) NFSv4 ACL ENTRIES</a>.": "",
   "All data stored in this dataset will be decrypted and the dataset marked  as non-encrypted. Do you want to continue?": "",
@@ -3487,6 +3486,7 @@
   "Warning!": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers.\n          USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other.\n          Adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "",
+  "Warning: There are {n} disks available that have non-unique serial numbers.\n        Non-unique serial numbers can be caused by a cabling issue and\n        adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
   "Warning: iSCSI Target is already in use.</font><br>": "",
   "Warning: {n} of {total} boot environments could not be deleted.": "",

@@ -46,11 +46,12 @@ export class GeneralWizardStepComponent implements OnInit {
   nonUniqueSerialDisksTooltip: string;
   nonUniqueSerialDisks$ = this.store.nonUniqueSerialDisks$.pipe(
     tap((disks) => {
-      let tooltip = this.translate.instant(`
-        Warning: There are {n} disks available that have non-unique serial numbers.
+      let tooltip = this.translate.instant(
+        `Warning: There are {n} disks available that have non-unique serial numbers.
         Non-unique serial numbers can be caused by a cabling issue and
         adding such disks to a pool can result in lost data.`,
-      { n: disks.length });
+        { n: disks.length },
+      );
 
       if (disks.every((disk) => disk.bus === DiskBus.Usb)) {
         tooltip = this.translate.instant(

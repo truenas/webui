@@ -1,7 +1,6 @@
 {
   "": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
-  "\n        Warning: There are {n} disks available that have non-unique serial numbers.\n        Non-unique serial numbers can be caused by a cabling issue and\n        adding such disks to a pool can result in lost data.": "",
   " Est. Usable Capacity": "",
   " Please click the button below to add {item}.": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "",
@@ -3759,6 +3758,7 @@
   "Warning!": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers.\n          USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other.\n          Adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "",
+  "Warning: There are {n} disks available that have non-unique serial numbers.\n        Non-unique serial numbers can be caused by a cabling issue and\n        adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
   "Warning: iSCSI Target is already in use.</font><br>": "",
   "Warning: {n} of {total} boot environments could not be deleted.": "",
