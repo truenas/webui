@@ -1,5 +1,5 @@
 ##NODE temporary builder image
-from node:18-buster as uibuilder
+from node:16-buster as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
 RUN yarn install --frozen-lockfile
