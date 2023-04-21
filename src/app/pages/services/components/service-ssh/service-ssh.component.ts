@@ -4,6 +4,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -12,6 +13,7 @@ import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -74,6 +76,8 @@ export class ServiceSshComponent implements OnInit {
     private router: Router,
     private dialogService: DialogService,
     private userService: UserService,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +109,7 @@ export class ServiceSshComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.router.navigate(['/services']);
           this.cdr.markForCheck();
         },

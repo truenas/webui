@@ -4,12 +4,14 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-tftp';
 import { TftpConfigUpdate } from 'app/interfaces/tftp-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -58,6 +60,8 @@ export class ServiceTftpComponent implements OnInit {
     private dialogService: DialogService,
     private userService: UserService,
     private filesystemService: FilesystemService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -93,6 +97,7 @@ export class ServiceTftpComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },

@@ -3,9 +3,11 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -32,6 +34,8 @@ export class ReplicationSettingsFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +71,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideInService.close();

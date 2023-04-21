@@ -10,6 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -26,6 +27,7 @@ export class LockDatasetDialogComponent {
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     private dialogRef: MatDialogRef<LockDatasetDialogComponent>,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
@@ -47,6 +49,7 @@ export class LockDatasetDialogComponent {
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         jobDialogRef.close();
+        this.snackbar.success(this.translate.instant('Dataset locked'));
         this.dialogRef.close(true);
       },
       error: (error: WebsocketError | Job) => {

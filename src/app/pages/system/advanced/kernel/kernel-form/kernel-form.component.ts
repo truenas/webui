@@ -4,9 +4,11 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -35,6 +37,8 @@ export class KernelFormComponent {
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
     private store$: Store<AppState>,
   ) {}
 
@@ -54,6 +58,7 @@ export class KernelFormComponent {
     this.ws.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
         this.slideInService.close();
         this.store$.dispatch(advancedConfigUpdated());
