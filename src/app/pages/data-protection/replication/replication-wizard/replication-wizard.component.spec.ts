@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -79,7 +78,7 @@ describe('ReplicationWizardComponent', () => {
     await updateStepHarnesses();
   }
 
-  it('creates objects when wizard is submitted', fakeAsync(async () => {
+  it('creates objects when wizard is submitted', async () => {
     await form.fillForm({
       'Source Location': 'On this System',
       'Destination Location': 'On this System',
@@ -98,11 +97,8 @@ describe('ReplicationWizardComponent', () => {
       'Destination Snapshot Lifetime': 'Custom',
     });
 
-    await goToNextStep();
-
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
-    tick();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool1/',
@@ -159,5 +155,5 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  }));
+  });
 });

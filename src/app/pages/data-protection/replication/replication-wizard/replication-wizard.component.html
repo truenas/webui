@@ -5,7 +5,7 @@
 
 <mat-card>
   <mat-card-content>
-    <mat-vertical-stepper [linear]="true" (selectionChange)="updateSummary()">
+    <mat-vertical-stepper [linear]="true">
       <mat-step [stepControl]="whatAndWhere?.form">
         <ng-template matStepLabel>{{ 'What and Where' | translate }}</ng-template>
         <ix-replication-what-and-where></ix-replication-what-and-where>
@@ -13,26 +13,7 @@
 
       <mat-step [stepControl]="when?.form">
         <ng-template matStepLabel>{{ 'When' | translate }}</ng-template>
-        <ix-replication-when></ix-replication-when>
-      </mat-step>
-
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
-
-        <ix-form-actions>
-          <button
-            mat-button
-            matStepperPrevious
-            ixTest="back"
-          >{{ 'Back' | translate }}</button>
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            ixTest="save"
-            (click)="onSubmit()"
-          >{{ 'Save' | translate }}</button>
-        </ix-form-actions>
+        <ix-replication-when (save)="onSubmit()"></ix-replication-when>
       </mat-step>
     </mat-vertical-stepper>
   </mat-card-content>

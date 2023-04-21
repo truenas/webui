@@ -28,7 +28,6 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
@@ -50,7 +49,6 @@ export class ReplicationWizardComponent {
 
   rowId: number;
   isLoading = false;
-  summary: SummarySection[];
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
 
   eligibleSnapshots = 0;
@@ -77,11 +75,6 @@ export class ReplicationWizardComponent {
     ReplicationWhenComponent,
   ] {
     return [this.whatAndWhere, this.when];
-  }
-
-  updateSummary(): void {
-    const stepsWithSummary = this.getSteps();
-    this.summary = stepsWithSummary.map((step) => step.getSummary());
   }
 
   rollBack(): void {
@@ -122,22 +115,14 @@ export class ReplicationWizardComponent {
     const values = this.preparePayload();
 
     this.callCreateSnapshots(values).pipe(
+      switchMap(() => this.callCreateTasks(values)),
+      switchMap(() => this.callCreateReplication(values)),
       catchError((err) => { this.handleError(err); return EMPTY; }),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.callCreateTasks(values).pipe(
-        catchError((err) => { this.handleError(err); return EMPTY; }),
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.callCreateReplication(values).pipe(
-          catchError((err) => { this.handleError(err); return EMPTY; }),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.slideInService.close();
-        });
-      });
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      this.slideInService.close();
     });
   }
 
@@ -151,7 +136,7 @@ export class ReplicationWizardComponent {
     return payload;
   }
 
-  getSnapshotsСount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
+  getSnapshotsCount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
     return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
   }
 
@@ -327,7 +312,7 @@ export class ReplicationWizardComponent {
   callCreateSnapshots(values: ReplicationWizardData): Observable<ZfsSnapshot[]> {
     const snapshotsCountPayload = this.getSnapshotsCountPayload(values);
     if (snapshotsCountPayload) {
-      return this.getSnapshotsСount(snapshotsCountPayload).pipe(
+      return this.getSnapshotsCount(snapshotsCountPayload).pipe(
         switchMap((snapshotCount) => {
           this.eligibleSnapshots = snapshotCount.eligible;
           const requestsSnapshots = [];
@@ -363,7 +348,9 @@ export class ReplicationWizardComponent {
       }
       if (requestsTasks.length) {
         return forkJoin(requestsTasks).pipe(
-          map((createdSnapshotTasks) => this.createdSnapshotTasks = (createdSnapshotTasks || []).filter((tk) => !!tk)),
+          map((createdSnapshotTasks) => {
+            return this.createdSnapshotTasks = (createdSnapshotTasks || []).filter((task) => !!task);
+          }),
         );
       }
     }

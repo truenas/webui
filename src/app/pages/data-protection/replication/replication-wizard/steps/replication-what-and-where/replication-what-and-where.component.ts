@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  map, merge, Observable, of,
+  debounceTime, map, merge, Observable, of,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -249,7 +249,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     merge(
       this.form.controls.naming_schema.valueChanges,
       this.form.controls.name_regex.valueChanges,
-    ).pipe(untilDestroyed(this)).subscribe(() => (this.getSnapshots()));
+    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => (this.getSnapshots()));
 
     merge(
       this.form.controls.ssh_credentials_source.valueChanges,
@@ -452,54 +452,61 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.ssh_credentials_source.enable();
     this.form.controls.source_datasets.enable();
     this.form.controls.recursive.enable();
+    this.form.controls.custom_snapshots.enable();
     this.form.controls.custom_snapshots.setValue(true);
     this.form.controls.custom_snapshots.disable();
   }
 
   loadReplicationTask(task: ReplicationTask): void {
     if (task.direction === Direction.Push) {
-      this.form.controls.source_datasets_from.setValue(DatasetSource.Local);
-      this.form.controls.target_dataset_from
-        .setValue(task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local);
+      this.form.patchValue({
+        source_datasets_from: DatasetSource.Local,
+        target_dataset_from: task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local,
+      });
       if (task.ssh_credentials) {
         this.form.controls.ssh_credentials_target.setValue(task.ssh_credentials.id);
       }
     } else {
-      this.form.controls.source_datasets_from.setValue(DatasetSource.Remote);
-      this.form.controls.target_dataset_from.setValue(DatasetSource.Local);
-      this.form.controls.ssh_credentials_source.setValue(task.ssh_credentials.id);
+      this.form.patchValue({
+        source_datasets_from: DatasetSource.Remote,
+        target_dataset_from: DatasetSource.Local,
+        ssh_credentials_source: task.ssh_credentials.id,
+      });
     }
-
-    this.form.controls.source_datasets.setValue(task.source_datasets);
-    this.form.controls.target_dataset.setValue(task.target_dataset);
-    this.form.controls.transport.setValue(task.transport);
-    this.form.controls.name.setValue(task.name);
+    this.form.patchValue({
+      source_datasets: task.source_datasets,
+      target_dataset: task.target_dataset,
+      transport: task.transport,
+      name: task.name,
+    });
   }
 
   clearReplicationTask(): void {
-    this.form.controls.source_datasets_from.setValue(null);
-    this.form.controls.ssh_credentials_source.setValue(null);
-    this.form.controls.source_datasets.setValue([]);
-    this.form.controls.recursive.setValue(false);
-    this.form.controls.custom_snapshots.setValue(false);
-    this.form.controls.schema_or_regex.setValue(SnapshotNamingOption.NamingSchema);
-    this.form.controls.naming_schema.setValue('auto-%Y-%m-%d_%H-%M');
-    this.form.controls.name_regex.setValue('');
+    this.form.patchValue({
+      source_datasets_from: null,
+      ssh_credentials_source: null,
+      source_datasets: [],
+      recursive: false,
+      custom_snapshots: false,
+      schema_or_regex: SnapshotNamingOption.NamingSchema,
+      naming_schema: 'auto-%Y-%m-%d_%H-%M',
+      name_regex: '',
 
-    this.form.controls.target_dataset_from.setValue(null);
-    this.form.controls.ssh_credentials_target.setValue(null);
-    this.form.controls.target_dataset.setValue(null);
-    this.form.controls.encryption.setValue(false);
-    this.form.controls.encryption_key_format.setValue(null);
-    this.form.controls.encryption_key_generate.setValue(true);
-    this.form.controls.encryption_key_hex.setValue('');
-    this.form.controls.encryption_key_passphrase.setValue('');
-    this.form.controls.encryption_key_location_truenasdb.setValue(true);
-    this.form.controls.encryption_key_location.setValue('');
+      target_dataset_from: null,
+      ssh_credentials_target: null,
+      target_dataset: null,
+      encryption: false,
+      encryption_key_format: null,
+      encryption_key_generate: true,
+      encryption_key_hex: '',
+      encryption_key_passphrase: '',
+      encryption_key_location_truenasdb: true,
+      encryption_key_location: '',
 
-    this.form.controls.transport.setValue(TransportMode.Ssh);
-    this.form.controls.sudo.setValue(false);
-    this.form.controls.name.setValue('');
+      transport: TransportMode.Ssh,
+      sudo: false,
+      name: '',
+    });
   }
 
   openAdvanced(): void {
@@ -523,10 +530,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     if (value.schema_or_regex === SnapshotNamingOption.NameRegex) {
       payload.name_regex = value.name_regex;
     } else {
-      payload.naming_schema = (value.naming_schema || this.defaultNamingSchema).split(' ');
+      payload.naming_schema = value.naming_schema ? value.naming_schema?.split(' ') : undefined;
     }
 
-    if (payload.datasets.length > 0) {
+    if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
       this.ws.call('replication.count_eligible_manual_snapshots', [payload]).pipe(untilDestroyed(this)).subscribe({
         next: (snapshotCount) => {
           let snapexpl = '';
@@ -534,13 +541,16 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
             snapexpl = this.translate.instant('Snapshots will be created automatically.');
           }
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
+          this.cdr.markForCheck();
         },
         error: () => {
           this.snapshotsText = '';
+          this.cdr.markForCheck();
         },
       });
     } else {
       this.snapshotsText = '';
+      this.cdr.markForCheck();
     }
   }
 }

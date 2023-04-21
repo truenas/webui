@@ -51,10 +51,11 @@
     >{{ 'Back' | translate }}</button>
     <button
       mat-button
-      matStepperNext
+      type="button"
       color="primary"
-      ixTest="next"
+      ixTest="save"
       [disabled]="form.invalid"
-    >{{ 'Next' | translate }}</button>
+      (click)="onSave()"
+    >{{ 'Save' | translate }}</button>
   </ix-form-actions>
 </form>

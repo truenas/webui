@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,6 +20,8 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationWhenComponent implements OnInit, SummaryProvider {
+  @Output() save = new EventEmitter<void>();
+
   form = this.formBuilder.group({
     schedule_method: [ScheduleMethod.Cron, [Validators.required]],
     schedule_picker: [CronPresetValue.Daily, [Validators.required]],
@@ -98,5 +102,9 @@ export class ReplicationWhenComponent implements OnInit, SummaryProvider {
 
   getPayload(): ReplicationWhenComponent['form']['value'] {
     return this.form.value;
+  }
+
+  onSave(): void {
+    this.save.emit();
   }
 }

@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -48,5 +49,12 @@ describe('ReplicationWhenComponent', () => {
     expect(spectator.component.getSummary()).toEqual([
       { label: 'Replication Schedule', value: 'Run On a Schedule' },
     ]);
+  });
+
+  it('emits (save) when Save is selected', async () => {
+    jest.spyOn(spectator.component.save, 'emit');
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+    expect(spectator.component.save.emit).toHaveBeenCalled();
   });
 });
