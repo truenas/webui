@@ -39,12 +39,12 @@ export const selectUpdateJob = createSelector(
 
 export const selectFailedJobs = createSelector(
   selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Failed),
+  (jobs) => jobs.filter((job) => job.state === JobState.Failed && !job.transient),
 );
 
 export const selectWaitingJobs = createSelector(
   selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Waiting),
+  (jobs) => jobs.filter((job) => job.state === JobState.Waiting && !job.transient),
 );
 
 export const selectRunningJobsCount = createSelector(
