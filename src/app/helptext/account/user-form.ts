@@ -3,9 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export default {
   user_form_title_class: 'name-and-contact',
   user_form_full_name_tooltip: T('Spaces are allowed.'),
-  user_form_username_tooltip: T('Usernames can be up to 16 characters long.\
- When using NIS or other legacy software with limited username lengths,\
- keep usernames to eight characters or less for compatibility.\
+  user_form_username_tooltip: T('Usernames can be up to 32 characters long.\
  Usernames cannot begin with a hyphen (<i>-</i>) or contain a space,\
  tab, or these characters:\
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
