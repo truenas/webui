@@ -4,11 +4,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
     margin-bottom: 20px;
+    margin-top: 15px;
     row-gap: 16px;
-
-    &.extra-offset {
-      padding-top: 15px;
-    }
   }
 
   .section-title {
@@ -20,6 +17,10 @@
     text-transform: capitalize;
     top: -15px;
     z-index: 1;
+
+    ~ .apps {
+      margin-top: 0;
+    }
   }
 
   .view-all {
@@ -31,6 +32,14 @@
     justify-content: flex-end;
     margin: 0;
   }
+}
+
+.loader-bar {
+  height: 2px;
+  left: 0;
+  position: absolute;
+  top: -1px;
+  z-index: 10;
 }
 
 .available-apps-list {

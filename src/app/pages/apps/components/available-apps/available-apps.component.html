@@ -11,13 +11,19 @@
 ></ix-available-apps-header>
 
 <div class="available-apps-list">
+  <ix-fake-progress-bar
+    *ngIf="isLoading"
+    class="loader-bar"
+    [loading]="isLoading"
+  ></ix-fake-progress-bar>
+
   <h3 *ngIf="searchQuery" class="section-title">
     {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
   </h3>
 
   <ng-container *ngIf="isLoading">
-    <ngx-skeleton-loader class="fake-apps-section-title"></ngx-skeleton-loader>
-    <ngx-skeleton-loader class="fake-apps" [count]="6"></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="fake-apps-section-title" [animation]="false"></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="fake-apps" [count]="6" [animation]="false"></ngx-skeleton-loader>
   </ng-container>
 
   <ng-container *ngIf="!isFilterOrSearch && !isLoading">
