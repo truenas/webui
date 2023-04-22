@@ -55,12 +55,14 @@ export class IscsiWizardComponent {
         {
           type: 'input',
           name: 'name',
-          placeholder: helptext_sharing_iscsi.name_placeholder,
-          tooltip: helptext_sharing_iscsi.name_tooltip,
+          placeholder: helptext_sharing_iscsi.name.placeholder,
+          tooltip: helptext_sharing_iscsi.name.tooltip,
           required: true,
           validation: [
             Validators.required,
             forbiddenValues(this.namesInUse),
+            // Allowed characters: letters, numbers, period, hyphen, colon
+            Validators.pattern(/^[a-z0-9\\.\-\\:]+$/),
           ],
         },
         {
