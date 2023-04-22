@@ -1,6 +1,8 @@
 {
   "": "",
   "ACL Types & ACL Modes": "",
+  "Add Allowed Initiators (IQN)": "",
+  "Allowed Initiators": "",
   "Allowed addresses have been updated": "",
   "By snapshot creation time": "",
   "Catalog is being added. This may take some time. You can minimize this dialog and process will continue in background": "",
@@ -393,7 +395,6 @@
   "Allow using open file handles that can withstand short disconnections.  Support for POSIX byte-range locks in Samba is also disabled. This option is not recommended when  configuring multi-protocol or local access to files.": "Дозволити використання дескрипторів відкритих файлів, які можуть витримувати короткі вимкнення. Підтримка блокування діапазону байтів POSIX у Samba також вимкнена. Цей параметр не рекомендується для налаштування багатопротокольного або локального доступу до файлів.",
   "Allow {activities}": "Дозволити {activities}",
   "Allowed IP Addresses": "Дозволені IP-адреси",
-  "Allowed Initiators (IQN)": "Дозволені ініціатори (IQN)",
   "Allowed Services": "Дозволені послуги",
   "Allowed Sudo Commands": "Дозволені команди sudo",
   "Allowed Sudo Commands (No Password)": "Дозволені команди sudo (без пароля)",

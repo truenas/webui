@@ -105,7 +105,7 @@ export const helptextSharingIscsi = {
 
   all_placeholder_initiators: T('Allow All Initiators'),
 
-  initiator_form_placeholder_initiators: T('Allowed Initiators (IQN)'),
+  initiator_form_placeholder_initiators: T('Add Allowed Initiators (IQN)'),
   initiator_form_tooltip_initiators: T(
     'Initiators allowed access to this system. Enter an\
  <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
