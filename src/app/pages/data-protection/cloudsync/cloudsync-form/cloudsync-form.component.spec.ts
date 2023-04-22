@@ -12,7 +12,9 @@ import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { DataProtectionModule } from 'app/pages/data-protection/data-protection.module';
+import {
+  TransferModeExplanationComponent,
+} from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -75,7 +77,9 @@ describe('CloudsyncFormComponent', () => {
       IxFormsModule,
       SchedulerModule,
       ReactiveFormsModule,
-      DataProtectionModule,
+    ],
+    declarations: [
+      TransferModeExplanationComponent,
     ],
     providers: [
       mockProvider(DialogService),
