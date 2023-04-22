@@ -20,7 +20,7 @@ import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -83,7 +83,6 @@ export class ActiveDirectoryComponent implements OnInit {
     private matDialog: MatDialog,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private modalService: ModalService,
     private snackbarService: SnackbarService,
   ) {}
 
@@ -207,11 +206,9 @@ export class ActiveDirectoryComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
       this.slideInService.close();
-      this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.dialogService.error(this.errorHandler.parseJobError(error));
-      this.modalService.refreshTable();
       dialogRef.close();
     });
   }

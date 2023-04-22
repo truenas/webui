@@ -157,11 +157,6 @@ export class OpenVpnClientConfigComponent implements OnInit {
       });
   }
 
-  certificatesLinkClicked(): void {
-    this.slideInService.close(null, false);
-    this.router.navigate(['/', 'credentials', 'certificates']);
-  }
-
   unsetCertificates(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Warning'),

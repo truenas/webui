@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import {
   forbiddenAsyncValues,
   forbiddenValues,
-} from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
+} from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 
 describe('forbiddenValuesValidation', () => {
   let formControl: AbstractControl;

@@ -32,9 +32,9 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   StartServiceDialogComponent, StartServiceDialogResult,

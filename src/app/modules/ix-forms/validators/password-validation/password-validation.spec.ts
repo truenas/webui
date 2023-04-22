@@ -3,7 +3,7 @@ import {
   AbstractControl,
   FormBuilder, FormGroup,
 } from '@angular/forms';
-import { doesNotEqualValidator, matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { doesNotEqualValidator, matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 
 describe('PasswordValidation', () => {
   describe('matchOtherValidator', () => {

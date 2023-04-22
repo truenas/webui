@@ -12,7 +12,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
   getDatasetLabel,
-  isDatasetHasShares, isIocageMounted, isRootDataset, ixApplications,
+  isDatasetHasShares, isIocageMounted, ixApplications,
 } from 'app/pages/datasets/utils/dataset.utils';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -85,10 +85,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
 
   get ownName(): string {
     return this.dataset.name.split('/').slice(-1)[0];
-  }
-
-  get isRoot(): boolean {
-    return isRootDataset(this.dataset);
   }
 
   get isZvol(): boolean {

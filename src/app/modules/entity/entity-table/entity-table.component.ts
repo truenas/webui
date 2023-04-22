@@ -52,7 +52,6 @@ import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -203,7 +202,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     public storageService: StorageService,
     protected store$: Store<AppState>,
     protected matDialog: MatDialog,
-    public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
     protected layoutService: LayoutService,
     protected slideIn: IxSlideInService,

@@ -24,7 +24,7 @@ import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -83,7 +83,6 @@ describe('ActiveDirectoryComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInService),
-      mockProvider(ModalService),
     ],
     declarations: [
       LeaveDomainDialogComponent,
@@ -232,7 +231,6 @@ describe('ActiveDirectoryComponent', () => {
     });
     expect(entityJobComponent.jobId).toBe(12345);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-    expect(spectator.inject(ModalService).refreshTable).toHaveBeenCalled();
   });
 
   describe('leave domain button', () => {

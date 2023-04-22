@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
 
 @UntilDestroy()

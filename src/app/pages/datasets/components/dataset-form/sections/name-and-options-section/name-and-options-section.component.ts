@@ -15,7 +15,7 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import {
   forbiddenValues,
-} from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
+} from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';

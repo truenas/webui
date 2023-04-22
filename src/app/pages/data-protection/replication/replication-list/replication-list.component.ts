@@ -14,7 +14,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -46,7 +45,6 @@ import { AppState } from 'app/store';
     TaskService,
     KeychainCredentialService,
     ReplicationService,
-    EntityFormService,
     DatePipe,
   ],
 })
