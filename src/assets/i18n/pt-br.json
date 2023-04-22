@@ -3872,7 +3872,7 @@
   "Username on the remote system which will be used to login <b>via SSH</b>.": "",
   "Username or Password is incorrect.": "",
   "Username, Password, or 2FA Code is incorrect.": "",
-  "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.": "",
+  "Usernames can be up to 32 characters long. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "",
   "Users": "",
   "Users could not be loaded": "",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "",
@@ -4272,6 +4272,5 @@
   "User ID to log in - optional - most swift systems use user and leave this blank <a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">(rclone documentation)</a>.": "User ID to log in - optional - most swift systems use user and leave this blank <a href=\"https://rclone.org/swift/\\#standard-options\" target=\"_blank\">(rclone documentation)</a>.",
   "User domain - optional <a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">(rclone documentation)</a>.": "User domain - optional <a href=\"https://rclone.org/swift/\\#standard-options\" target=\"_blank\">(rclone documentation)</a>.",
   "Username of the SNMP  <a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a> user.": "Username of the SNMP  <a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html\\#pysnmp.hlapi.UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a> user.",
-  "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & \\# % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.",
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer."
 }
