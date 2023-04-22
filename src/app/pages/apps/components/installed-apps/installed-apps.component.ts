@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -21,7 +21,6 @@ import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -62,7 +61,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private errorHandler: ErrorHandlerService,
     private router: Router,
     private layoutService: LayoutService,
     private matDialog: MatDialog,
@@ -242,16 +240,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   refreshStatus(name: string): void {
     this.appService.getChartReleases(name)
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), take(1), untilDestroyed(this))
       .subscribe((releases) => {
-        const item = this.dataSource.find((app) => app.name === name);
-        if (item) {
-          item.status = releases[0].status;
+        const installedApp = this.dataSource.find((app) => app.name === name);
+        if (installedApp) {
+          installedApp.status = releases[0].status;
           this.cdr.markForCheck();
-          if (item.status === ChartReleaseStatus.Deploying) {
+          if (installedApp.status === ChartReleaseStatus.Deploying) {
             setTimeout(() => {
               this.refreshStatus(name);
-              this.cdr.markForCheck();
             }, 3000);
           }
         }

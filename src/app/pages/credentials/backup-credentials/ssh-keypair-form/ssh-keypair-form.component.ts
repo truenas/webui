@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -10,6 +11,7 @@ import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/key
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   AppLoaderService, DialogService, StorageService,
 } from 'app/services';
@@ -53,6 +55,8 @@ export class SshKeypairFormComponent {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
@@ -120,6 +124,12 @@ export class SshKeypairFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('SSH Keypair created'));
+        } else {
+          this.snackbar.success(this.translate.instant('SSH Keypair updated'));
+        }
+
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideInService.close();

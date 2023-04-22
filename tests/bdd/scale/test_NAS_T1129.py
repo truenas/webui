@@ -107,7 +107,7 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_save(driver, descr
     assert wait_on_element(driver, 5, xpaths.smb.description_Input)
     driver.find_element_by_xpath(xpaths.smb.description_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.description_Input).send_keys(description)
-    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
+    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
     time.sleep(0.5)

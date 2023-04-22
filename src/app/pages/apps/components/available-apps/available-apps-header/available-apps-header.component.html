@@ -70,7 +70,7 @@
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
     <h2 *ngIf="!isLoading">{{ availableApps.length }}</h2>
     <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
-    <a class="header-link" ixTest="refresh-charts" (click)="loadData()">
+    <a class="header-link" ixTest="refresh-charts" (click)="refreshCharts()">
       {{ 'Refresh Charts' | translate }}
     </a>
   </div>

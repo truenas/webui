@@ -4,6 +4,7 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, forkJoin, of, Subscription,
 } from 'rxjs';
@@ -17,6 +18,7 @@ import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -70,6 +72,8 @@ export class SyslogFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
   ) {}
 
@@ -106,6 +110,7 @@ export class SyslogFormComponent implements OnInit {
             return;
           }
 
+          this.snackbar.success(this.translate.instant('Settings saved'));
           this.store$.dispatch(advancedConfigUpdated());
           this.isFormLoading = false;
           this.cdr.markForCheck();

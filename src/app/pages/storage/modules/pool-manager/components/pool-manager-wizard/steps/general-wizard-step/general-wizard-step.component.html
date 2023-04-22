@@ -8,22 +8,6 @@
     formControlName="encryption"
     [label]="'Encryption' | translate"
   ></ix-checkbox>
-  <ix-radio-group
-    *ngIf="hasNonUniqueSerialDisks"
-    formControlName="allowNonUniqueSerialDisks"
-    [label]="'Allow non-unique serialed disks' | translate"
-    [required]="true"
-    [options]="allowNonUniqueSerialDisksOptions$"
-    [inlineFields]="true"
-  ></ix-radio-group>
-  <ix-checkbox-list
-    *ngIf="exportedPools.length"
-    formControlName="allowDisksFromExportedPools"
-    [label]="'Allow Disks Attached to Exported Pools' | translate"
-    [tooltip]="exportedPoolsTooltip"
-    [options]="exportedPoolsOptions$"
-    [inlineFields]="true"
-  ></ix-checkbox-list>
   <ix-select
     *ngIf="form.controls.encryption_standard.enabled"
     formControlName="encryption_standard"
@@ -32,4 +16,26 @@
     [required]="true"
   ></ix-select>
 
+  <div *ngIf="(nonUniqueSerialDisks$ | async).length" class="spacer-top">
+    <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
+    <ix-radio-group
+      formControlName="allowNonUniqueSerialDisks"
+      [label]="'Allow non-unique serialed disks' | translate"
+      [tooltip]="nonUniqueSerialDisksTooltip"
+      [required]="true"
+      [options]="allowNonUniqueSerialDisksOptions$"
+      [inlineFields]="true"
+    ></ix-radio-group>
+  </div>
+  <div *ngIf="(exportedPools$ | async).length" class="spacer-bottom">
+    <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+    <ix-checkbox-list
+      formControlName="allowDisksFromExportedPools"
+      inlineFieldFlex="33%"
+      [label]="'Select disks you want to use' | translate"
+      [tooltip]="exportedPoolsTooltip"
+      [options]="exportedPoolsOptions$"
+      [inlineFields]="true"
+    ></ix-checkbox-list>
+  </div>
 </ng-container>

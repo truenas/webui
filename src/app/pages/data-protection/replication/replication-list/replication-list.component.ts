@@ -35,7 +35,6 @@ import {
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService, ModalServiceMessage } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
@@ -51,14 +50,14 @@ import { AppState } from 'app/store';
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements EntityTableConfig {
+export class ReplicationListComponent implements EntityTableConfig<ReplicationTaskUi> {
   title = this.translate.instant('Replication Tasks');
   queryCall = 'replication.query' as const;
   wsDelete = 'replication.delete' as const;
   routeAdd: string[] = ['tasks', 'replication', 'wizard'];
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
 
   columns = [
@@ -89,7 +88,6 @@ export class ReplicationListComponent implements EntityTableConfig {
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
-    protected modalService: ModalService,
     protected loader: AppLoaderService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
@@ -103,24 +101,13 @@ export class ReplicationListComponent implements EntityTableConfig {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(
-      filter((value) => !!value.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.entityList.getData();
-    });
-
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
-      if (message.action === 'open' && message.component === 'replicationForm') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
-      }
-      if (message.action === 'open' && message.component === 'replicationWizard') {
-        const wizard = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-        wizard.setRowId(message.row);
-      }
-    });
+    this.slideInService.onClose$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.entityList.getData();
+      });
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
@@ -268,6 +255,8 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   doEdit(id: number): void {
-    this.modalService.openInSlideIn(ReplicationFormComponent, id);
+    const replication = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
+    form.setForEdit(replication);
   }
 }

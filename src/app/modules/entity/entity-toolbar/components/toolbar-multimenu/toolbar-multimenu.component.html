@@ -5,17 +5,17 @@
       mat-button
       color="default"
       class="menu-toggle"
-      [ixTest]="['toolbar-menu', config.label]"
+      [ixTest]="['toolbar-menu', label]"
       [matMenuTriggerFor]="menu"
     >
-      {{ config.label }} <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+      {{ label }} <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" multiple overlapTrigger="false">
       <!-- SELECT ALL -->
       <div (click)="$event.stopPropagation()">
         <button
           mat-menu-item
-          [ixTest]="['toolbar-menu', config.label, 'select-all']"
+          [ixTest]="['toolbar-menu', label, 'select-all']"
           (click)="checkAll()"
         >
           <span>
@@ -29,9 +29,9 @@
       <!-- OPTIONS-->
       <div (click)="$event.stopPropagation()">
         <button
-          *ngFor="let option of config.options; let i = index"
+          *ngFor="let option of options; let i = index"
           mat-menu-item
-          [ixTest]="['toolbar-menu', config.label, option.label]"
+          [ixTest]="['toolbar-menu', label, option.label]"
           (click)="onClick(option, i)"
         >
           <span>

@@ -28,7 +28,7 @@ import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credent
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import {
-  DialogService, KeychainCredentialService, ModalService, ReplicationService, WebSocketService,
+  DialogService, KeychainCredentialService, ReplicationService, WebSocketService,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -130,7 +130,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private filesystemService: FilesystemService,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
-    private modalService: ModalService,
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -511,7 +510,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   openAdvanced(): void {
     this.slideInService.close();
-    this.modalService.openInSlideIn(ReplicationFormComponent);
+    this.slideInService.open(ReplicationFormComponent, { wide: true });
   }
 
   getSnapshots(): void {

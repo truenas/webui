@@ -8,12 +8,14 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-webdav';
 import { WebdavConfig, WebdavConfigUpdate, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ValidationService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -103,6 +105,8 @@ export class ServiceWebdavComponent implements OnInit {
     protected validationService: ValidationService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
   ) {}
 
@@ -167,6 +171,7 @@ export class ServiceWebdavComponent implements OnInit {
     this.ws.call('webdav.update', [values] as [WebdavConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Service configuration saved'));
         this.cdr.markForCheck();
         this.router.navigate(['/', 'services']);
       },
@@ -176,9 +181,5 @@ export class ServiceWebdavComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  cancel(): void {
-    this.router.navigate(['/', 'services']);
   }
 }

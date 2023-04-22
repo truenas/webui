@@ -4,12 +4,14 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -77,6 +79,8 @@ export class ServiceSnmpComponent implements OnInit {
     private router: Router,
     private formErrorHandler: FormErrorHandlerService,
     private validation: IxValidatorsService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -113,6 +117,7 @@ export class ServiceSnmpComponent implements OnInit {
     this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Service configuration saved'));
         this.form.patchValue(config);
         this.cdr.markForCheck();
       },

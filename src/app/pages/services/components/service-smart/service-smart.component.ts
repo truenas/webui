@@ -11,6 +11,7 @@ import helptext from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -56,6 +57,7 @@ export class ServiceSmartComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +87,7 @@ export class ServiceSmartComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },

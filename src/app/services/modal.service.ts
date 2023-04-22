@@ -25,7 +25,6 @@ export class ModalService {
   readonly refreshTable$ = new Subject<void>();
   readonly onClose$ = new Subject<{ modalType?: Type<unknown>; response: unknown }>();
   getRow$ = new Subject();
-  message$ = new Subject<ModalServiceMessage>();
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -37,10 +36,6 @@ export class ModalService {
 
   refreshTable(): void {
     this.refreshTable$.next();
-  }
-
-  message(message: ModalServiceMessage): void {
-    this.message$.next(message);
   }
 
   add(modal: ModalComponent): void {

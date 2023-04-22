@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -38,9 +39,6 @@ import { AssociatedTargetFormComponent } from './iscsi/associated-target/associa
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { ExtentListComponent } from './iscsi/extent/extent-list/extent-list.component';
-import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
-import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
-import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/initiator-list.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
@@ -82,6 +80,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     IxFormsModule,
     TestIdModule,
     MatStepperModule,
+    NgxDualListboxModule,
   ],
   declarations: [
     NfsListComponent,
@@ -101,7 +100,6 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     TargetGlobalConfigurationComponent,
     PortalListComponent,
     PortalFormComponent,
-    DynamicListComponent,
     InitiatorListComponent,
     InitiatorFormComponent,
     AuthorizedAccessListComponent,
@@ -112,8 +110,6 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     ExtentFormComponent,
     AssociatedTargetListComponent,
     AssociatedTargetFormComponent,
-    FibreChannelPortsComponent,
-    FibreChannelPortComponent,
     DeleteExtentDialogComponent,
     StartServiceDialogComponent,
   ],
