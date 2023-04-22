@@ -14,6 +14,7 @@ import helptext from 'app/helptext/services/components/service-nfs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { rangeValidator, portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -69,6 +70,7 @@ export class ServiceNfsComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
+    private snackbar: SnackbarService,
     private matDialog: MatDialog,
   ) {}
 
@@ -88,6 +90,7 @@ export class ServiceNfsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },
@@ -105,6 +108,7 @@ export class ServiceNfsComponent implements OnInit {
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

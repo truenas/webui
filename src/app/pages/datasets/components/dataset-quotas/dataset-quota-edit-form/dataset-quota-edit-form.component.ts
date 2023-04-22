@@ -13,6 +13,7 @@ import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -96,6 +97,7 @@ export class DatasetQuotaEditFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private slideIn: IxSlideInService,
+    private snackbar: SnackbarService,
     protected dialogService: DialogService,
   ) {}
 
@@ -164,6 +166,7 @@ export class DatasetQuotaEditFormComponent {
         .pipe(untilDestroyed(this))
         .subscribe({
           next: () => {
+            this.snackbar.success(this.translate.instant('Quotas updated'));
             this.isFormLoading = false;
             this.slideIn.close();
             this.cdr.markForCheck();
