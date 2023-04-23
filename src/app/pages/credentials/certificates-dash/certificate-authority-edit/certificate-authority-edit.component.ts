@@ -77,7 +77,7 @@ export class CertificateAuthorityEditComponent {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInService.closeAll();
         },
         error: (error) => {
           this.isLoading = false;

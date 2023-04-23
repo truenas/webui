@@ -147,7 +147,7 @@ describe('OpenVpnClientConfigComponent', () => {
       additional_parameters: 'param=newvalue',
       tls_crypt_auth: 'Key 2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('unsets certificates when unset button is clicked', async () => {

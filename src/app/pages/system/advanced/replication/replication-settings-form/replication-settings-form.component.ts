@@ -69,7 +69,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInService.closeAll();
       },
       error: (error: WebsocketError) => {
         this.isFormLoading = false;

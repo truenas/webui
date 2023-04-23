@@ -41,6 +41,6 @@ export class TokenSettingsComponent implements OnInit {
 
   onSubmit(): void {
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
-    this.slideInService.close();
+    this.slideInService.closeAll();
   }
 }

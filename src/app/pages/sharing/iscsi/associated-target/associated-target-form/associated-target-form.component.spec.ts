@@ -73,7 +73,7 @@ describe('AssociatedTargetFormComponent', () => {
       lunid: 234,
       target: 1,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing associated target when form is opened for edit', async () => {
@@ -110,6 +110,6 @@ describe('AssociatedTargetFormComponent', () => {
         },
       ],
     );
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

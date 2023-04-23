@@ -209,7 +209,7 @@ export class RsyncTaskFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.closeThisSlide(null, true);
+        this.slideInRef.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;

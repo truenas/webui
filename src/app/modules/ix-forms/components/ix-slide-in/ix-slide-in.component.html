@@ -9,7 +9,9 @@
 </div>
 
 <div
+  #overlay
   [class]="['ix-slide-in-background', 'ix-' + id + '-background']"
   [class.open]="isSlideInOpen"
-  (click)="close()"
+  [id]="overlayId"
+  (click)="closeSlideIn(overlayId)"
 ></div>

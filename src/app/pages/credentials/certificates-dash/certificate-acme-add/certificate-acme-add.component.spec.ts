@@ -103,6 +103,6 @@ describe('CertificateAcmeAddComponent', () => {
       }],
     );
     expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

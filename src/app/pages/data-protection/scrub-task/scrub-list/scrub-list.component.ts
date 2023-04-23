@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -64,9 +65,6 @@ export class ScrubListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(data: ScrubTaskUi[]): ScrubTaskUi[] {
@@ -82,7 +80,13 @@ export class ScrubListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.slideInService.open(ScrubTaskFormComponent);
+    const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+    slideInRef.afterClosed$().pipe(
+      filter(({ response }) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   getActions(): EntityTableAction<ScrubTaskUi>[] {
@@ -91,8 +95,14 @@ export class ScrubListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: ScrubTaskUi) => {
-        const slideInServiceRef = this.slideInService.open(ScrubTaskFormComponent);
-        slideInServiceRef.componentInstance.setTaskForEdit(row);
+        const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+        slideInRef.componentInstance.setTaskForEdit(row);
+        slideInRef.afterClosed$().pipe(
+          filter(({ response }) => Boolean(response)),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.entityList.getData();
+        });
       },
     }, {
       id: 'delete',

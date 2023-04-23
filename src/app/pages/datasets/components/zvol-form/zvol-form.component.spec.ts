@@ -168,7 +168,7 @@ describe('ZvolFormComponent', () => {
       },
       type: 'VOLUME',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   }));
 
   it('saves updated zvol when form opened for edit is saved', fakeAsync(async (): Promise<void> => {
@@ -193,6 +193,6 @@ describe('ZvolFormComponent', () => {
       volsize: 2147483648,
     }]);
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   }));
 });

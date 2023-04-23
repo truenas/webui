@@ -141,6 +141,6 @@ describe('IscsiWizardComponent', () => {
       target: 15,
     }]);
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   }));
 });

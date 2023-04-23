@@ -203,7 +203,7 @@ export class SshConnectionFormComponent {
             this.dialogRef.close();
           }
         } else {
-          this.slideIn.close();
+          this.slideIn.closeAll();
         }
       },
       error: (error) => {

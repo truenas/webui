@@ -147,7 +147,7 @@ describe('RsyncTaskFormComponent', () => {
       times: false,
       user: 'steven',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing rsync task when it is open for edit', async () => {
@@ -205,7 +205,7 @@ describe('RsyncTaskFormComponent', () => {
         delayupdates: true,
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {

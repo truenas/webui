@@ -68,7 +68,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: '2000' },
         ],
       ]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     });
   });
 
@@ -97,7 +97,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: '2000' },
         ],
       ]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     });
   });
 });

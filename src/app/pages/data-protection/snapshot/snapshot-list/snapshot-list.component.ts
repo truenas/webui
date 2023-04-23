@@ -89,12 +89,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   afterInit(entityList: EntityTableComponent<PeriodicSnapshotTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(
-      filter((value) => !!value.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
@@ -147,12 +141,24 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   doAdd(): void {
-    this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    slideInRef.afterClosed$().pipe(
+      filter(({ response }) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   doEdit(id: number): void {
     const snapshotTask = this.entityList.rows.find((row) => row.id === id);
-    const slideInServiceRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-    slideInServiceRef.componentInstance.setTaskForEdit(snapshotTask);
+    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    slideInRef.componentInstance.setTaskForEdit(snapshotTask);
+    slideInRef.afterClosed$().pipe(
+      filter(({ response }) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 }

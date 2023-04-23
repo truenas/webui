@@ -164,7 +164,7 @@ describe('CloudsyncFormComponent', () => {
       transfer_mode: TransferMode.Copy,
       transfers: 4,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing cloudsync task when it is open for edit', () => {
@@ -238,6 +238,6 @@ describe('CloudsyncFormComponent', () => {
       transfer_mode: TransferMode.Copy,
       transfers: 10,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

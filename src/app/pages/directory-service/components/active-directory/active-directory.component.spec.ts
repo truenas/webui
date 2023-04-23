@@ -195,7 +195,7 @@ describe('ActiveDirectoryComponent', () => {
       netbiosname: 'truenas',
       netbiosalias: ['alias1', 'alias2'],
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows EntityJobComponent when activedirectory.update returns a job id', async () => {
@@ -231,7 +231,7 @@ describe('ActiveDirectoryComponent', () => {
       disableClose: true,
     });
     expect(entityJobComponent.jobId).toBe(12345);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     expect(spectator.inject(ModalService).refreshTable).toHaveBeenCalled();
   });
 

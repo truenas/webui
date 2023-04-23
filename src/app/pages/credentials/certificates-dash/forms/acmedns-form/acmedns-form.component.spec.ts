@@ -139,7 +139,7 @@ describe('AcmednsFormComponent', () => {
         cloudflare_email: 'aaa@aaa.com',
       },
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('edits existing DNS Authenticator when form opened for edit is submitted', async () => {
@@ -168,6 +168,6 @@ describe('AcmednsFormComponent', () => {
         },
       ],
     );
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

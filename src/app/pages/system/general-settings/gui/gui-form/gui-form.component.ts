@@ -173,7 +173,7 @@ export class GuiFormComponent {
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
       }).pipe(
-        tap(() => this.slideInRef.closeThisSlide(null, true)),
+        tap(() => this.slideInRef.close(null, true)),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -211,7 +211,7 @@ export class GuiFormComponent {
         });
       });
     } else {
-      this.slideInRef.closeThisSlide(null, true);
+      this.slideInRef.close(null, true);
     }
   }
 

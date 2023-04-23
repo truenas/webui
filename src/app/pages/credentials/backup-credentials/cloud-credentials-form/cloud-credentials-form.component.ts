@@ -162,7 +162,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInService.close();
+          this.slideInService.closeAll();
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -244,7 +244,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.slideInService.close();
+          this.slideInService.closeAll();
         },
       });
   }

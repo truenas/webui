@@ -94,7 +94,7 @@ export class SmartTaskFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.closeThisSlide();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

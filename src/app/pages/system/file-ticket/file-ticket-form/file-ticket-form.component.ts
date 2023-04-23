@@ -231,7 +231,7 @@ export class FileTicketFormComponent implements OnInit {
         if (shouldOpen) {
           this.window.open(params.url, '_blank');
         }
-        this.slideIn.close();
+        this.slideIn.closeAll();
       });
   }
 

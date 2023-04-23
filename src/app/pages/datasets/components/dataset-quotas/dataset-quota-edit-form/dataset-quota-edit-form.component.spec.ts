@@ -92,7 +92,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 0,
         },
       ]]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     });
   });
 
@@ -139,7 +139,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 1,
         },
       ]]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     });
   });
 });

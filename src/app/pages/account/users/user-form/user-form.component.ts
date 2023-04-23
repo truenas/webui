@@ -298,7 +298,7 @@ export class UserFormComponent {
               this.store$.dispatch(userChanged({ user }));
             }
             this.isFormLoading = false;
-            this.slideIn.close();
+            this.slideIn.closeAll();
             this.cdr.markForCheck();
           },
           error: (error) => {

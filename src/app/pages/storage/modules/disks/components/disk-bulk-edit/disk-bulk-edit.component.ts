@@ -122,7 +122,7 @@ export class DiskBulkEditComponent {
           this.isLoading = false;
           const isSuccessful = job.result.every((result) => {
             if (result.error !== null) {
-              this.slideInService.close();
+              this.slideInService.closeAll();
               this.dialogService.error({
                 title: helptext.dialog_error,
                 message: result.error,
@@ -134,13 +134,13 @@ export class DiskBulkEditComponent {
           });
 
           if (isSuccessful) {
-            this.slideInService.close();
+            this.slideInService.closeAll();
             this.snackbarService.success(successText);
           }
         },
         error: (error) => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInService.closeAll();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

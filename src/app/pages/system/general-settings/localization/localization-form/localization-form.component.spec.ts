@@ -140,7 +140,7 @@ describe('LocalizationFormComponent', () => {
         kbdmap: 'us',
         timezone: 'America/Los_Angeles',
       }]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
       expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });
   });

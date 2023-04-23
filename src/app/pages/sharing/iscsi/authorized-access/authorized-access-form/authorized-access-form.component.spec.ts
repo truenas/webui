@@ -72,7 +72,7 @@ describe('AuthorizedAccessFormComponent', () => {
       peeruser: 'new-peer',
       peersecret: 'peer123456789012',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing authorized access when form is opened for edit', async () => {
@@ -119,6 +119,6 @@ describe('AuthorizedAccessFormComponent', () => {
         },
       ],
     );
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

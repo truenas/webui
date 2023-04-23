@@ -33,7 +33,7 @@ export class DatasetFormService {
         this.translate.instant(helptext.pathWarningTitle),
         this.translate.instant(helptext.pathIsTooLongWarning),
       ).pipe(
-        tap(() => this.slideIn.close()),
+        tap(() => this.slideIn.closeAll()),
       );
     }
 
@@ -42,7 +42,7 @@ export class DatasetFormService {
         this.translate.instant(helptext.pathWarningTitle),
         this.translate.instant(helptext.pathIsTooDeepWarning),
       ).pipe(
-        tap(() => this.slideIn.close()),
+        tap(() => this.slideIn.closeAll()),
       );
     }
 

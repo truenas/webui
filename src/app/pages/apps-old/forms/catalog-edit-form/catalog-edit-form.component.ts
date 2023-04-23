@@ -66,7 +66,7 @@ export class CatalogEditFormComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInService.closeAll();
         },
         error: (error) => {
           this.isFormLoading = false;

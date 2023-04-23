@@ -152,7 +152,7 @@ describe('IdmapFormComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('creates a new idmap when form is submitted for creation', async () => {
@@ -181,7 +181,7 @@ describe('IdmapFormComponent', () => {
         unix_primary_group: true,
       },
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('sets name to TDB and hides it when SMB - Primary Domain is selected', async () => {

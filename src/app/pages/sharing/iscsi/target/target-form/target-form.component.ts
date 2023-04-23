@@ -10,9 +10,9 @@ import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -86,7 +86,7 @@ export class TargetFormComponent {
     protected iscsiService: IscsiService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<TargetFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
@@ -118,7 +118,7 @@ export class TargetFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;

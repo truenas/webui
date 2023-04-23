@@ -96,7 +96,7 @@ describe('AlertServiceComponent', () => {
     ],
     providers: [
       MockProvider(IxSlideInService, {
-        close: jest.fn(),
+        closeAll: jest.fn(),
       }),
       MockProvider(SnackbarService, {
         success: jest.fn(),
@@ -154,7 +154,7 @@ describe('AlertServiceComponent', () => {
       },
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing alert service', fakeAsync(async () => {
@@ -199,7 +199,7 @@ describe('AlertServiceComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {

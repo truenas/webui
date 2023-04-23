@@ -113,7 +113,7 @@ export class VmWizardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideIn.close();
+          this.slideIn.closeAll();
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },

@@ -121,7 +121,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate authority created'));
-          this.slideIn.close();
+          this.slideIn.closeAll();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

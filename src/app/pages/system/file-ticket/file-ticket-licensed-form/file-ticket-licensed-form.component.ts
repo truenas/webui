@@ -202,7 +202,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
         if (shouldOpen) {
           this.window.open(params.url, '_blank');
         }
-        this.slideIn.close();
+        this.slideIn.closeAll();
       });
   }
 
@@ -218,7 +218,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
   }
 
   onEulaPressed(): void {
-    this.slideIn.close();
+    this.slideIn.closeAll();
     this.router.navigate(['system', 'support', 'eula']);
   }
 }

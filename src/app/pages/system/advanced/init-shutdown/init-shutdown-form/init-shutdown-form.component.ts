@@ -111,7 +111,7 @@ export class InitShutdownFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideInService.close();
+        this.slideInService.closeAll();
       },
       error: (error) => {
         this.isFormLoading = false;

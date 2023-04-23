@@ -133,7 +133,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.listenForRouteChanges();
-    this.listenForSlideFormClosed();
     this.updateChartReleases();
   }
 
@@ -367,14 +366,14 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
   }
 
-  private listenForSlideFormClosed(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+  private openAdvancedSettings(): void {
+    const slideInRef = this.slideInService.open(KubernetesSettingsComponent);
+    slideInRef.afterClosed$().pipe(
+      filter(({ response }) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.updateChartReleases();
     });
-  }
-
-  private openAdvancedSettings(): void {
-    this.slideInService.open(KubernetesSettingsComponent);
   }
 
   private resetSearch(): void {

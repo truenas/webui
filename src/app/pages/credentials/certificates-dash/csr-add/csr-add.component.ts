@@ -109,7 +109,7 @@ export class CsrAddComponent {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate signing request created'));
-          this.slideIn.close();
+          this.slideIn.closeAll();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

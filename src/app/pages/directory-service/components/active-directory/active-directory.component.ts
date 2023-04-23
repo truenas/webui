@@ -120,7 +120,7 @@ export class ActiveDirectoryComponent implements OnInit {
         return;
       }
 
-      this.slideInService.close();
+      this.slideInService.closeAll();
     });
   }
 
@@ -141,7 +141,7 @@ export class ActiveDirectoryComponent implements OnInit {
           if (update.job_id) {
             this.showStartingJob(update.job_id);
           } else {
-            this.slideInService.close();
+            this.slideInService.closeAll();
           }
         },
         error: (error) => {
@@ -206,7 +206,7 @@ export class ActiveDirectoryComponent implements OnInit {
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.slideInService.close();
+      this.slideInService.closeAll();
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {

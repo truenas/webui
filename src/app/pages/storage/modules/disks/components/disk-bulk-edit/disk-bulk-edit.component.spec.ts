@@ -126,7 +126,7 @@ describe('DiskBulkEditComponent', () => {
     ];
 
     expect(ws.job).toHaveBeenCalledWith('core.bulk', req);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

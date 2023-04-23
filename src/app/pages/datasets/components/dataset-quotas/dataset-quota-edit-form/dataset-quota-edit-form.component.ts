@@ -165,7 +165,7 @@ export class DatasetQuotaEditFormComponent {
         .subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideIn.close();
+            this.slideIn.closeAll();
             this.cdr.markForCheck();
           },
           error: (error) => {

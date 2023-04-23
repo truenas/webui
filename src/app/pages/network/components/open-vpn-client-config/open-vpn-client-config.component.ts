@@ -123,7 +123,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.closeThisSlide();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
@@ -156,7 +156,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
   }
 
   certificatesLinkClicked(): void {
-    this.slideInRef.closeThisSlide();
+    this.slideInRef.close();
     this.router.navigate(['/', 'credentials', 'certificates']);
   }
 

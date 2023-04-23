@@ -115,7 +115,7 @@ describe('SshConnectionFormComponent', () => {
         username: 'root',
       },
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('saves new SSH connection added manually', async () => {
@@ -153,7 +153,7 @@ describe('SshConnectionFormComponent', () => {
         username: 'john',
       },
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('saves new SSH connection added using semi-automatic setup', async () => {

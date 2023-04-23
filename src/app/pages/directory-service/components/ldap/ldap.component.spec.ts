@@ -158,7 +158,7 @@ describe('LdapComponent', () => {
       anonbind: true,
       kerberos_principal: 'principal2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows job dialog when form is submitted and there is a job_id in the response', async () => {
@@ -181,7 +181,7 @@ describe('LdapComponent', () => {
 
     expect(jobComponent.jobId).toBe(2);
     expect(jobComponent.wsshow).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     expect(spectator.inject(ModalService).refreshTable).toHaveBeenCalled();
   });
 });

@@ -119,7 +119,7 @@ export class SnapshotAddFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideInRef.closeThisSlide(null, true);
+        this.slideInRef.close(null, true);
         this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },

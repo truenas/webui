@@ -184,7 +184,7 @@ describe('CertificateAuthorityAddComponent', () => {
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('certificateauthority.create', [expectedInternalCa]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('create a new CA when Type = Intermediate and form is submitted', async () => {
@@ -212,7 +212,7 @@ describe('CertificateAuthorityAddComponent', () => {
       create_type: CaCreateType.Intermediate,
       signedby: 1,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CA and form is submitted', async () => {

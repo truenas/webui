@@ -129,7 +129,7 @@ describe('ExtentFormComponent', () => {
       type: 'DISK',
       xen: true,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing extent when form is opened for edit', async () => {
@@ -187,6 +187,6 @@ describe('ExtentFormComponent', () => {
         xen: true,
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

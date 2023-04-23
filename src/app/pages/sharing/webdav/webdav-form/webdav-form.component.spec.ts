@@ -150,6 +150,6 @@ describe('WebdavFormComponent', () => {
       'The WebDAV service has been enabled.',
     );
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

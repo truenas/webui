@@ -167,7 +167,7 @@ describe('IpmiFormComponent', () => {
         netmask: '255.255.240.0',
         vlan: null,
       }]]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
   });

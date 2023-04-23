@@ -157,7 +157,7 @@ describe('NfsFormComponent', () => {
       hosts: ['truenas.com'],
     }]);
     expect(websocket.call).toHaveBeenCalledWith('service.query');
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing NFS share when it is open for edit', async () => {
@@ -220,7 +220,7 @@ describe('NfsFormComponent', () => {
       },
     ]);
     expect(websocket.call).toHaveBeenCalledWith('service.query');
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('checks if NFS service is not enabled and enables it after confirmation', async () => {

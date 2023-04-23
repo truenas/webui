@@ -80,7 +80,7 @@ export class KerberosKeytabsFormComponent {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInService.closeAll();
         },
         error: (error) => {
           this.isLoading = false;

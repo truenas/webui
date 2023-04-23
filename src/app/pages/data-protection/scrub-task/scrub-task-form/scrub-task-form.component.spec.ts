@@ -108,7 +108,7 @@ describe('ScrubTaskFormComponent', () => {
       },
       threshold: 30,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('edits existing SMART test task when form is opened for edit', async () => {
@@ -137,6 +137,6 @@ describe('ScrubTaskFormComponent', () => {
       },
       threshold: 20,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

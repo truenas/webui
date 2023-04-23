@@ -231,7 +231,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.closeThisSlide(null, true);
+          this.slideInRef.close(null, true);
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );

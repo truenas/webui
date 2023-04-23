@@ -158,7 +158,7 @@ describe('DatasetCapacitySettingsComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('only sends updated properties on form submit', async () => {

@@ -1,7 +1,12 @@
 import { Type } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
-import { ResponseOnClose } from 'app/services/ix-slide-in.service';
+
+export interface ResponseOnClose {
+  response?: unknown;
+  error?: unknown;
+  modalType: Type<unknown>;
+}
 
 export class IxSlideInRef<T> {
   private slideInClosed$ = new Subject<ResponseOnClose>();
@@ -11,8 +16,8 @@ export class IxSlideInRef<T> {
     private slideInComponent: IxSlideInComponent,
     private modalType: Type<T>, // ??
   ) {}
-
-  closeThisSlide(error?: Error, response?: unknown): void { // rename close
+  // pass onle object rsponse {data: ... error:...}
+  close(error?: Error, response?: unknown): void {
     if (error) {
       this.slideInClosed$.error({
         error,
@@ -29,7 +34,7 @@ export class IxSlideInRef<T> {
     this.slideInComponent.closeSlideIn(this.uuid);
   }
 
-  afterClosed$(): Observable<ResponseOnClose> { // rename onClose
+  afterClosed$(): Observable<ResponseOnClose> { // ? get
     return this.slideInClosed$;
   }
 }

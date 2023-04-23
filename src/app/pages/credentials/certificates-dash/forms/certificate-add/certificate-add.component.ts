@@ -88,7 +88,7 @@ export class CertificateAddComponent {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
-          this.slideIn.close();
+          this.slideIn.closeAll();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

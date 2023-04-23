@@ -8,9 +8,9 @@ import { of } from 'rxjs';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbSharesecAceUpdate } from 'app/interfaces/smb-share.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface FormAclEntry {
@@ -70,7 +70,7 @@ export class SmbAclComponent {
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private validatorService: IxValidatorsService,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<SmbAclComponent>,
     private translate: TranslateService,
   ) {}
 
@@ -109,7 +109,7 @@ export class SmbAclComponent {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideIn.close();
+          this.slideInRef.close(null, true);
         },
         error: (error) => {
           this.isLoading = false;

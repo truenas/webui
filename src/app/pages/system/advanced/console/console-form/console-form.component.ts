@@ -102,7 +102,7 @@ export class ConsoleFormComponent implements OnInit {
         this.isFormLoading = false;
         this.store$.dispatch(advancedConfigUpdated());
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInService.closeAll();
       },
       error: (error) => {
         this.isFormLoading = false;

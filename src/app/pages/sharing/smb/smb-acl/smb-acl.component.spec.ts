@@ -117,7 +117,7 @@ describe('SmbAclComponent', () => {
       ],
     }]);
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('requires either SID or domain + name to be validated', async () => {

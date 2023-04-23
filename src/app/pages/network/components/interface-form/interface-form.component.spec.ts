@@ -162,7 +162,7 @@ describe('InterfaceFormComponent', () => {
         }],
         mtu: 1500,
       }]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
       expect(spectator.inject(CoreService).emit).toHaveBeenCalledWith({
         name: 'NetworkInterfacesChanged',
         data: { commit: false, checkin: false },
@@ -217,7 +217,7 @@ describe('InterfaceFormComponent', () => {
         data: { commit: false, checkin: false },
         sender: expect.any(InterfaceFormComponent),
       });
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(

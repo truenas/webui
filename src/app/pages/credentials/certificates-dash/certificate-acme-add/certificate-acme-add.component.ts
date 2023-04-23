@@ -97,7 +97,7 @@ export class CertificateAcmeAddComponent {
       this.isLoading = false;
       this.mdDialog.closeAll();
       this.cdr.markForCheck();
-      this.slideIn.close();
+      this.slideIn.closeAll();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isLoading = false;

@@ -56,7 +56,7 @@ export class CatalogAddFormComponent {
           this.snackbar.success(
             this.translate.instant('Adding large catalogs can take minutes. Please check on the progress in Task Manager.'),
           );
-          this.slideInService.close();
+          this.slideInService.closeAll();
         },
         error: (error) => {
           this.isFormLoading = false;

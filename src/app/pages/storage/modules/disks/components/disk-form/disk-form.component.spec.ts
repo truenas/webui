@@ -113,7 +113,7 @@ describe('DiskFormComponent', () => {
       togglesmart: true,
       passwd: '',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

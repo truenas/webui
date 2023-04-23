@@ -123,7 +123,7 @@ describe('SnapshotTaskComponent', () => {
         month: '*',
       },
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing snapshot task when it is open for edit', async () => {
@@ -175,6 +175,6 @@ describe('SnapshotTaskComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

@@ -109,7 +109,7 @@ export class SyslogFormComponent implements OnInit {
           this.store$.dispatch(advancedConfigUpdated());
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInService.closeAll();
         }),
         catchError((error) => {
           this.isFormLoading = false;

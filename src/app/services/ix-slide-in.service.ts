@@ -9,19 +9,13 @@ import {
   IxSlideInComponent,
 } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 
-export interface ResponseOnClose {
-  response?: unknown;
-  error?: unknown;
-  modalType: Type<unknown>;
-}
-
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class IxSlideInService {
   private slideInComponent: IxSlideInComponent;
-  private slideInClosed$ = new Subject<ResponseOnClose>();
+  private slideInClosed$ = new Subject<boolean>();
   modalType: Type<unknown>;
 
   constructor(
@@ -36,36 +30,22 @@ export class IxSlideInService {
   }
 
   open<T>(modal: Type<T>, params?: { wide?: boolean; data?: { [key: string]: unknown } }): IxSlideInRef<T> {
-    this.modalType = modal;
+    // this.modalType = modal;
 
     return this.slideInComponent.openSlideIn<T>(modal, params);
   }
-  // will be renamed to closeAllSlides
-  // params error and response will be removed
-  close(error?: Error, response?: unknown): void { // pass onle object rsponse {data: ... error:...}
+
+  closeAll(): void {
     if (!this.slideInComponent?.isSlideInOpen) {
       return;
     }
 
-    if (error) {
-      this.slideInClosed$.error({
-        error,
-        modalType: this.modalType,
-      });
-    }
-
-    this.slideInClosed$.next({
-      response: response === undefined ? null : response,
-      modalType: this.modalType,
-    });
-    // close all created slides
-    this.slideInComponent.createdSlideInRef.forEach((ref) => ref.closeThisSlide());
-    this.slideInComponent.createdSlideInRef = [];
-
-    // this.slideInComponent.closeSlideIn();
+    this.slideInClosed$.next(true);
+    this.slideInComponent.slideInRefList.forEach((ref) => ref.close());
+    this.slideInComponent.slideInRefList = [];
   }
 
-  get onClose$(): Subject<ResponseOnClose> {
+  get onClose$(): Subject<boolean> {
     return this.slideInClosed$;
   }
 
@@ -76,7 +56,7 @@ export class IxSlideInService {
     )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.close();
+        this.closeAll();
       });
   }
 }

@@ -140,7 +140,7 @@ export class GroupFormComponent {
           this.store$.dispatch(groupChanged({ group }));
         }
         this.isFormLoading = false;
-        this.slideInService.close();
+        this.slideInService.closeAll();
         this.cdr.markForCheck();
       },
       error: (error) => {

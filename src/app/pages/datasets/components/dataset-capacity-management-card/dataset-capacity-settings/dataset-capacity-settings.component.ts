@@ -139,7 +139,7 @@ export class DatasetCapacitySettingsComponent {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideIn.close();
+          this.slideIn.closeAll();
           this.cdr.markForCheck();
         },
         error: (error) => {

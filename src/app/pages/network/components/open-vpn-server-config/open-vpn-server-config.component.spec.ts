@@ -155,7 +155,7 @@ describe('OpenVpnServerConfigComponent', () => {
       additional_parameters: 'param=newvalue',
       tls_crypt_auth: 'Key 2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('disables Topology field when Device Type is set to TAP', async () => {

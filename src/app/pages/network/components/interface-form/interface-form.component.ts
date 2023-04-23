@@ -227,7 +227,7 @@ export class InterfaceFormComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-        this.slideInRef.closeThisSlide(null, true);
+        this.slideInRef.close(null, true);
 
         this.ws.call('interface.default_route_will_be_removed').pipe(
           filter(Boolean),

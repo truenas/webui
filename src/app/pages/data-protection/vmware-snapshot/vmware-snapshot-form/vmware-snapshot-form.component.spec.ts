@@ -111,7 +111,7 @@ describe('VmwareSnapshotFormComponent', () => {
       filesystem: 'fs01',
       datastore: 'ds01',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows values for an existing vm snapshot task when it is open for edit', async () => {
@@ -156,6 +156,6 @@ describe('VmwareSnapshotFormComponent', () => {
         datastore: 'ds01',
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

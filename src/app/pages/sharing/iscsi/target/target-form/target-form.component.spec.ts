@@ -158,7 +158,7 @@ describe('TargetFormComponent', () => {
       ],
       auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('edits existing target when form opened for edit is submitted', async () => {
@@ -199,7 +199,7 @@ describe('TargetFormComponent', () => {
         },
       ],
     );
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {

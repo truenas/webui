@@ -394,7 +394,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInService.close();
+    this.slideInService.closeAll();
     this.router.navigate(['/apps/installed']);
   }
 }

@@ -130,7 +130,7 @@ describe('DeviceFormComponent', () => {
         order: 1002,
         vm: 45,
       }]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     });
 
     it('shows values for an existing CD-ROM device', async () => {

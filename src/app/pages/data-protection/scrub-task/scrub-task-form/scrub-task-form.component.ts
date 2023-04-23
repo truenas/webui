@@ -93,7 +93,7 @@ export class ScrubTaskFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.closeThisSlide();
+        this.slideInRef.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;

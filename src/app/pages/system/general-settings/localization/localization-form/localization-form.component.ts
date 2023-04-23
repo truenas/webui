@@ -154,7 +154,7 @@ export class LocalizationFormComponent {
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInService.closeAll();
         this.setTimeOptions(body.timezone);
         this.langService.setLanguage(body.language);
       },

@@ -128,7 +128,7 @@ describe('FileTicketLicensedFormComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'EULA' }));
     await button.click();
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);
   });
 });

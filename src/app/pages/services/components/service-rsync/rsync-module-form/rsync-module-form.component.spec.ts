@@ -109,7 +109,7 @@ describe('RsyncModuleFormComponent', () => {
 
       auxiliary: 'newParam=2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows current rsync values when it is opened for edit', async () => {
@@ -164,6 +164,6 @@ describe('RsyncModuleFormComponent', () => {
         auxiliary: 'aux',
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

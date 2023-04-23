@@ -107,7 +107,7 @@ describe('SmartTaskFormComponent', () => {
       },
       type: SmartTestType.Long,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('edits existing SMART test task when form is opened for edit', async () => {
@@ -134,6 +134,6 @@ describe('SmartTaskFormComponent', () => {
       },
       type: SmartTestType.Offline,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

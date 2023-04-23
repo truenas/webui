@@ -15,12 +15,12 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, AppLoaderService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -72,7 +72,7 @@ export class WebdavFormComponent {
     private fb: FormBuilder,
     protected ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<WebdavFormComponent>,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -128,7 +128,7 @@ export class WebdavFormComponent {
         complete: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close(null, true);
         },
         error: (error) => {
           this.isFormLoading = false;

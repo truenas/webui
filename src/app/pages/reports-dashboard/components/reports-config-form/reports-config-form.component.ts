@@ -77,7 +77,7 @@ export class ReportsConfigFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close();
+        this.slideIn.closeAll();
       },
       error: (error) => {
         this.isFormLoading = false;

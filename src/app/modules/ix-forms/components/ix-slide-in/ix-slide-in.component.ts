@@ -25,10 +25,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class IxSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
+  @ViewChild('overlay', { static: true, read: ViewContainerRef }) overlayElement: ElementRef<HTMLElement>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
     if (this.element) {
-      this.close();
+      const overlayId: string = this.overlayElement.nativeElement.getAttribute('id');
+      this.closeSlideIn(overlayId);
     }
   }
 
@@ -37,17 +39,14 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   private element: HTMLElement;
   timeOutOfClear: Subscription;
   wasBodyCleared = false;
-  createdSlideInRef: IxSlideInRef<unknown>[] = [];
+  slideInRefList: IxSlideInRef<unknown>[] = [];
+  overlayId: string;
 
   constructor(
     private el: ElementRef,
     protected slideInService: IxSlideInService,
   ) {
     this.element = this.el.nativeElement;
-  }
-
-  close(): void {
-    this.slideInService.close();
   }
 
   ngOnInit(): void {
@@ -58,14 +57,6 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
     // move element to bottom of page (just before </body>) so it can be displayed above everything else
     document.body.appendChild(this.element);
-
-    // close modal on background click
-    this.element.addEventListener('click', (event) => {
-      if ((event.target as HTMLElement).className === 'ix-slide-in') {
-        this.close();
-      }
-    });
-
     this.slideInService.setModal(this);
   }
 
@@ -74,7 +65,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.wasBodyCleared = true;
 
     if (id) {
-      this.createdSlideInRef = this.createdSlideInRef.filter((ref) => ref.uuid !== id);
+      this.slideInRefList = this.slideInRefList.filter((ref) => ref.uuid !== id);
     }
 
     this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
@@ -89,6 +80,10 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     componentType: Type<T>,
     params?: { wide?: boolean; data?: { [key: string]: unknown } },
   ): IxSlideInRef<T> {
+    if (this.isSlideInOpen) {
+      console.error('SlideIn is already open');
+    }
+
     this.isSlideInOpen = true;
     this.wide = !!params?.wide;
 
@@ -98,15 +93,10 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInBody.clear();
     this.wasBodyCleared = false;
     // clear body and close all slides
-    this.createdSlideInRef.forEach((ref) => ref.closeThisSlide());
-    this.createdSlideInRef = [];
+    this.slideInRefList.forEach((ref) => ref.close());
+    this.slideInRefList = [];
     // the componentType will be removed
     return this.createSlideInRef(componentType, params);
-  }
-
-  ngOnDestroy(): void {
-    this.element.remove();
-    this.slideInService.close();
   }
 
   createSlideInRef<T>(
@@ -114,7 +104,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     params?: { wide?: boolean; data?: { [key: string]: unknown } },
   ): IxSlideInRef<T> {
     const slideInRef = new IxSlideInRef<T>(this, componentType);
-    this.createdSlideInRef.push(slideInRef);
+    this.slideInRefList.push(slideInRef);
 
     const injector = Injector.create({
       providers: [
@@ -125,7 +115,13 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     const componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
     slideInRef.componentInstance = componentRef.instance;
     slideInRef.uuid = UUID.UUID();
+    this.overlayId = slideInRef.uuid;
 
     return slideInRef;
+  }
+
+  ngOnDestroy(): void {
+    this.element.remove();
+    this.slideInService.closeAll();
   }
 }

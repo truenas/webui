@@ -98,7 +98,7 @@ export class DashboardFormComponent {
       next: (wasSet) => {
         this.isFormLoading = false;
         this.onSubmit$.next(this.dashState);
-        this.slideInService.close();
+        this.slideInService.closeAll();
 
         if (!wasSet) {
           throw new Error('Unable to save Dashboard State');

@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, merge, mergeMap, Observable, Subject,
+  EMPTY,
 } from 'rxjs';
 import {
   filter, switchMap, tap, catchError,
@@ -49,7 +49,7 @@ import {
   TaskService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -87,7 +87,6 @@ export class DataProtectionDashboardComponent implements OnInit {
   dataCards: TaskCard[] = [];
   disks: Disk[] = [];
   jobStates = new Map<number, string>();
-  afterClosedSlideIn$ = new Subject<Observable<ResponseOnClose>>();
 
   constructor(
     private ws: WebSocketService,
@@ -116,34 +115,14 @@ export class DataProtectionDashboardComponent implements OnInit {
     this.getCardData();
     this.refreshAllTables();
 
-    merge(
-      this.modalService.onClose$,
-      this.afterClosedSlideIn$.pipe(mergeMap((afterClosed$) => afterClosed$)),
-    )
-      .pipe(untilDestroyed(this))
-      .subscribe(({ modalType }) => {
-        switch (modalType) {
-          case ReplicationFormComponent:
-          case ReplicationWizardComponent:
-            this.refreshTable(TaskCardId.Replication);
-            break;
-          case CloudsyncFormComponent:
-            this.refreshTable(TaskCardId.CloudSync);
-            break;
-          case ScrubTaskFormComponent:
-            this.refreshTable(TaskCardId.Scrub);
-            break;
-          case SnapshotTaskComponent:
-            this.refreshTable(TaskCardId.Snapshot);
-            break;
-          case RsyncTaskFormComponent:
-            this.refreshTable(TaskCardId.Rsync);
-            break;
-          case SmartTaskFormComponent:
-            this.refreshTable(TaskCardId.Smart);
-            break;
-        }
-      });
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(({ modalType }) => {
+      switch (modalType) {
+        case ReplicationFormComponent:
+        case ReplicationWizardComponent:
+          this.refreshTable(TaskCardId.Replication);
+          break;
+      }
+    });
 
     this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
       if (message.action === 'open' && message.component === 'replicationForm') {
@@ -186,12 +165,22 @@ export class DataProtectionDashboardComponent implements OnInit {
           parent: this,
           add: () => {
             const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Scrub);
+            });
           },
           edit: (task: ScrubTaskUi) => {
             const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
             slideInRef.componentInstance.setTaskForEdit(task);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Scrub);
+            });
           },
           tableActions: [
             {
@@ -237,12 +226,22 @@ export class DataProtectionDashboardComponent implements OnInit {
           parent: this,
           add: () => {
             const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Snapshot);
+            });
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
             const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
             slideInRef.componentInstance.setTaskForEdit(row);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Snapshot);
+            });
           },
           tableFooterActions: [
             {
@@ -343,12 +342,22 @@ export class DataProtectionDashboardComponent implements OnInit {
           parent: this,
           add: () => {
             const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.CloudSync);
+            });
           },
           edit: (row: CloudSyncTaskUi) => {
             const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
             slideInRef.componentInstance.setTaskForEdit(row);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.CloudSync);
+            });
           },
           onButtonClick: (row: CloudSyncTaskUi) => {
             this.stateButton(row);
@@ -390,12 +399,22 @@ export class DataProtectionDashboardComponent implements OnInit {
           parent: this,
           add: () => {
             const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Rsync);
+            });
           },
           edit: (row: RsyncTaskUi) => {
             const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
             slideInRef.componentInstance.setTaskForEdit(row);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Rsync);
+            });
           },
           onButtonClick: (row: RsyncTaskUi) => {
             this.stateButton(row as TaskTableRow);
@@ -437,12 +456,22 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           add: () => {
             const slideInRef = this.slideInService.open(SmartTaskFormComponent);
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Smart);
+            });
           },
           edit: (row: SmartTestTaskUi) => {
             const slideInRef = this.slideInService.open(SmartTaskFormComponent);
-            this.afterClosedSlideIn$.next(slideInRef.afterClosed$());
             slideInRef.componentInstance.setTestForEdit(row);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshTable(TaskCardId.Smart);
+            });
           },
         },
       },

@@ -240,7 +240,7 @@ describe('CloudCredentialsFormComponent', () => {
           s3attribute: 's3 value',
         },
       }]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalledWith();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalledWith();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
@@ -271,7 +271,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalledWith();
+      expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalledWith();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 

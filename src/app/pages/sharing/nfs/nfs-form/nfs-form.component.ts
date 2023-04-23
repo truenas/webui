@@ -16,12 +16,12 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -91,7 +91,7 @@ export class NfsFormComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<NfsFormComponent>,
     private filesystemService: FilesystemService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -149,7 +149,7 @@ export class NfsFormComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close(null, true);
         },
         error: (error) => {
           this.isLoading = false;

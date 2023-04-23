@@ -201,7 +201,7 @@ describe('CertificateAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import Certificate and form is submitted', async () => {

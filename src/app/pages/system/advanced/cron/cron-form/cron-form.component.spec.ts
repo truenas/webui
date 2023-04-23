@@ -118,7 +118,7 @@ describe('CronFormComponent', () => {
       stdout: true,
       user: 'root',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('edits an existing cron job entry when it is open for editing', async () => {
@@ -148,6 +148,6 @@ describe('CronFormComponent', () => {
       stdout: true,
       user: 'root',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 });

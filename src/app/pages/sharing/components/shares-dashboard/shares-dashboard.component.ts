@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
@@ -36,7 +36,7 @@ import {
   IscsiService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 enum ShareType {
@@ -152,42 +152,6 @@ export class SharesDashboardComponent implements AfterViewInit {
     if (this.iscsiHasItems) {
       this.iscsiExpandableState = ExpandableTableState.Expanded;
     }
-    this.setupTableRefreshOnPanelClose();
-  }
-
-  setupTableRefreshOnPanelClose(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(({ modalType }: ResponseOnClose) => {
-      switch (modalType) {
-        case WebdavFormComponent:
-          if (!this.webdavTable.tableComponent) {
-            this.refreshDashboard();
-          }
-          this.webdavTable.tableComponent.getData();
-          break;
-        case SmbFormComponent:
-        case SmbAclComponent:
-          if (!this.smbTable.tableComponent) {
-            this.refreshDashboard();
-          }
-          this.smbTable.tableComponent.getData();
-          break;
-        case NfsFormComponent:
-          if (!this.nfsTable.tableComponent) {
-            this.refreshDashboard();
-          }
-          this.nfsTable.tableComponent.getData();
-          break;
-        case TargetFormComponent:
-          if (!this.iscsiTable.tableComponent) {
-            this.refreshDashboard();
-          }
-          this.iscsiTable.tableComponent.getData();
-          break;
-        default:
-          this.refreshDashboard();
-          break;
-      }
-    });
   }
 
   refreshDashboard(): void {
@@ -226,11 +190,23 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           detailsHref: '/sharing/nfs',
           add: () => {
-            this.slideInService.open(NfsFormComponent);
+            const slideInRef = this.slideInService.open(NfsFormComponent);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshAfterClosing(this.nfsTable);
+            });
           },
           edit: (row: NfsShare): void => {
-            const slideInServiceRef = this.slideInService.open(NfsFormComponent);
-            slideInServiceRef.componentInstance.setNfsShareForEdit(row);
+            const slideInRef = this.slideInService.open(NfsFormComponent);
+            slideInRef.componentInstance.setNfsShareForEdit(row);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshAfterClosing(this.nfsTable);
+            });
           },
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
@@ -269,12 +245,24 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add: () => {
-            this.slideInService.open(IscsiWizardComponent);
+            const slideInRef = this.slideInService.open(IscsiWizardComponent);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshDashboard();
+            });
           },
           addButtonLabel: this.translate.instant('Wizard'),
           edit: (row: IscsiTarget) => {
-            const targetFormSlide = this.slideInService.open(TargetFormComponent, { wide: true });
-            targetFormSlide.componentInstance.setTargetForEdit(row);
+            const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true });
+            slideInRef.componentInstance.setTargetForEdit(row);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshAfterClosing(this.iscsiTable);
+            });
           },
           afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
@@ -330,12 +318,24 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add: () => {
-            this.slideInService.open(WebdavFormComponent);
+            const slideInRef = this.slideInService.open(WebdavFormComponent);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshAfterClosing(this.webdavTable);
+            });
           },
           limitRowsByMaxHeight: true,
           edit: (row: WebDavShare) => {
             const slideInServiceRef = this.slideInService.open(WebdavFormComponent);
             slideInServiceRef.componentInstance.setWebdavForEdit(row);
+            slideInServiceRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshAfterClosing(this.webdavTable);
+            });
           },
           afterGetData: (data: WebDavShare[]) => {
             this.webdavHasItems = 0;
@@ -377,7 +377,13 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           limitRowsByMaxHeight: true,
           add: () => {
-            this.slideInService.open(SmbFormComponent);
+            const slideInRef = this.slideInService.open(SmbFormComponent);
+            slideInRef.afterClosed$().pipe(
+              filter(({ response }) => Boolean(response)),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.refreshAfterClosing(this.smbTable);
+            });
           },
           edit: (row: SmbShare) => {
             if (this.isClustered) {
@@ -386,8 +392,14 @@ export class SharesDashboardComponent implements AfterViewInit {
                 this.translate.instant('This share is configured through TrueCommand'),
               );
             } else {
-              const slideInServiceRef = this.slideInService.open(SmbFormComponent);
-              slideInServiceRef.componentInstance.setSmbShareForEdit(row);
+              const slideInRef = this.slideInService.open(SmbFormComponent);
+              slideInRef.componentInstance.setSmbShareForEdit(row);
+              slideInRef.afterClosed$().pipe(
+                filter(({ response }) => Boolean(response)),
+                untilDestroyed(this),
+              ).subscribe(() => {
+                this.refreshAfterClosing(this.smbTable);
+              });
             }
           },
           afterGetData: (data: SmbShare[]) => {
@@ -422,12 +434,17 @@ export class SharesDashboardComponent implements AfterViewInit {
                       } else {
                         // A home share has a name (homes) set; row.name works for other shares
                         const searchName = row.home ? 'homes' : row.name;
-                        this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                          (sharesecs) => {
-                            const slideInServiceRef = this.slideInService.open(SmbAclComponent);
-                            slideInServiceRef.componentInstance.setSmbShareName(sharesecs[0].share_name);
-                          },
-                        );
+                        this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]])
+                          .pipe(
+                            switchMap((sharesecs) => {
+                              const slideInRef = this.slideInService.open(SmbAclComponent);
+                              slideInRef.componentInstance.setSmbShareName(sharesecs[0].share_name);
+                              return slideInRef.afterClosed$().pipe(filter(({ response }) => Boolean(response)));
+                            }),
+                            untilDestroyed(this),
+                          ).subscribe(() => {
+                            this.refreshAfterClosing(this.smbTable);
+                          });
                       }
                     },
                   );
@@ -673,5 +690,12 @@ export class SharesDashboardComponent implements AfterViewInit {
       title: helptextSharingSmb.action_edit_acl_dialog.title,
       message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
     });
+  }
+
+  refreshAfterClosing(table: ExpandableTableComponent): void {
+    if (!table.tableComponent) {
+      this.refreshDashboard();
+    }
+    table.tableComponent.getData();
   }
 }

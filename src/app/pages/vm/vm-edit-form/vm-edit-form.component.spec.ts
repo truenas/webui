@@ -193,7 +193,7 @@ describe('VmEditFormComponent', () => {
       time: VmTime.Local,
       vcpus: 1,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('updates GPU devices when form is edited and saved', async () => {

@@ -183,7 +183,7 @@ describe('CsrAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CSR and form is submitted', async () => {

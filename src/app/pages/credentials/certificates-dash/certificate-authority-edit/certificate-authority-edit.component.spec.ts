@@ -79,7 +79,7 @@ describe('CertificateAuthorityEditComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificateauthority.update', [1, { name: 'New Name' }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('opens modal for authority certificate when View/Download Certificate is pressed', async () => {

@@ -93,7 +93,7 @@ describe('ProactiveComponent', () => {
       secondary_email: 'test-user@test-user.com',
       secondary_phone: '+999999999',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeAll).toHaveBeenCalled();
   });
 
   it('shows a warning when support is not available', async () => {

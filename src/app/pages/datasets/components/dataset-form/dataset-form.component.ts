@@ -172,7 +172,7 @@ export class DatasetFormComponent {
       next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.closeThisSlide(null, createdDataset);
+        this.slideInRef.close(null, createdDataset);
       },
       error: (error) => {
         this.isLoading = false;

@@ -134,7 +134,7 @@ export class VmEditFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.snackbar.success(this.translate.instant('VM updated successfully.'));
-          this.slideIn.close();
+          this.slideIn.closeAll();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;
