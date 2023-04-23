@@ -32,14 +32,14 @@ export class ConfigurationPreviewComponent implements OnInit {
     combineLatest([
       this.poolManagerStore.formValue$,
       this.poolManagerStore.disksSelectedManually$,
-      this.poolManagerStore.vdevsCountString$,
+      this.poolManagerStore.dataVdevs$,
       this.poolManagerStore.totalUsableCapacity$,
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(([formValue, disksSelectedManually, vdevsCountString, totalUsableCapacity]) => {
+      .subscribe(([formValue, disksSelectedManually, dataVdevs, totalUsableCapacity]) => {
         this.formValue = formValue;
         this.disksSelectedManually = disksSelectedManually;
-        this.vdevsCountString = `${vdevsCountString} VDEVs`;
+        this.vdevsCountString = `${dataVdevs.length} VDEVs`;
         this.totalUsableCapacity = `${filesize(totalUsableCapacity, { standard: 'iec' })} ${this.translate.instant('Total')}`;
         this.cdr.markForCheck();
       });

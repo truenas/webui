@@ -6,7 +6,6 @@ import { forkJoin, Observable, tap } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PoolManagerDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
-import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -53,24 +52,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     map((vdevs) => vdevs.reduce((previousValue, currentValue) => {
       return previousValue + currentValue.rawSize;
     }, 0)),
-  );
-  readonly vdevsCountString$ = this.dataVdevs$.pipe(
-    map((vdevs) => {
-      const vdevLayoutCounter: { [key in CreateVdevLayout]?: number } = {};
-      for (const vdev of vdevs) {
-        if (!vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout]) {
-          vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout] = 1;
-        } else {
-          vdevLayoutCounter[vdev.type.toUpperCase() as CreateVdevLayout] += 1;
-        }
-      }
-      let description = '';
-      for (const type of Object.keys(vdevLayoutCounter)) {
-        description += description ? ', ' : '';
-        description += `${vdevLayoutCounter[type as CreateVdevLayout]} × ${type.toUpperCase()}`;
-      }
-      return description;
-    }),
   );
   readonly nonUniqueSerialDisks$ = this.unusedDisks$.pipe(
     map((disks) => disks.filter((disk) => disk.duplicate_serial.length)),

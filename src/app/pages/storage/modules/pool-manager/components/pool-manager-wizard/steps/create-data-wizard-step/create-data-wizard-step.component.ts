@@ -52,7 +52,6 @@ export class CreateDataWizardStepComponent implements OnInit {
   widthOptions$: Observable<SelectOption[]> = of([]);
   numberOptions$: Observable<SelectOption[]> = of([]);
 
-  readonly vdevsCountString$ = this.poolManagerStore.vdevsCountString$;
   readonly totalUsableCapacity$ = this.poolManagerStore.totalUsableCapacity$;
   readonly dispersalOptions$ = of([
     {
@@ -164,9 +163,11 @@ export class CreateDataWizardStepComponent implements OnInit {
   }
 
   updateNumberOptions(width: number): void {
-    const length: number = this.selectedDiskType === DiskType.Hdd
-      ? this.sizeDisksMap[DiskType.Hdd][this.selectedSize]
-      : this.sizeDisksMap[DiskType.Ssd][this.selectedSize];
+    if (!this.selectedDiskType || !this.selectedSize) {
+      return;
+    }
+
+    const length = this.sizeDisksMap[this.selectedDiskType][this.selectedSize];
     let nextNumberOptions: SelectOption[] = [];
 
     if (width) {

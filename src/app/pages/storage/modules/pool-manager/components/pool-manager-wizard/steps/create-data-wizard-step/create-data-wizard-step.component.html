@@ -104,7 +104,7 @@
       <h3>{{ 'Description' | translate }}</h3>
       <ul class="description-list">
         <li>
-          <strong>{{ 'VDEVs' | translate }}: </strong>{{ vdevsCountString$ | async }}
+          <strong>{{ 'VDEVs' | translate }}: </strong>{{ (poolManagerStore.dataVdevs$ | async).length }}
         </li>
         <li>
           <strong>{{ 'Total Usable Capacity' | translate }}: </strong>{{ totalUsableCapacity$ | async | filesize: { standard: 'iec' } }}
