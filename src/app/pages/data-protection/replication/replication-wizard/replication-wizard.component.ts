@@ -54,6 +54,9 @@ import {
   SshConnectionFormComponent,
 } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import {
+  ReplicationFormComponent,
+} from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import {
   ReplicationWizardData,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import {
@@ -64,6 +67,7 @@ import {
   TaskService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -111,8 +115,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     name: this.translate.instant('Advanced Replication Creation'),
     function: () => {
       this.modalService.closeSlideIn();
-      const message = { action: 'open', component: 'replicationForm', row: this.pk };
-      this.modalService.message(message);
+      this.slideInService.open(ReplicationFormComponent, { wide: true });
     },
   }];
   protected namesInUse: string[] = [];
@@ -703,6 +706,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private entityFormService: EntityFormService,
     private modalService: ModalService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
     protected matDialog: MatDialog,
   ) {
     this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((replications) => {

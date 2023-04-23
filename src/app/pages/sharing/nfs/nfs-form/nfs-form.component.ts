@@ -147,6 +147,11 @@ export class NfsFormComponent implements OnInit {
       )
       .subscribe({
         next: () => {
+          if (this.isNew) {
+            this.snackbar.success(this.translate.instant('NFS share created'));
+          } else {
+            this.snackbar.success(this.translate.instant('NFS share updated'));
+          }
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
