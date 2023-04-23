@@ -48,7 +48,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
 
-  diskSizeAndTypeOptions$: Observable<SelectOption[]> = of([]);
+  diskSizeAndTypeOptions$ = of([]);
   widthOptions$: Observable<SelectOption[]> = of([]);
   numberOptions$: Observable<SelectOption[]> = of([]);
 
@@ -121,17 +121,15 @@ export class CreateDataWizardStepComponent implements OnInit {
       [DiskType.Ssd]: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
     };
 
-    // TODO: Fix this. Value as an array does not support in SelectOption.
     const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd]).map((size) => ({
       label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Hdd})`,
       value: [size, DiskType.Hdd],
-    })) as unknown as SelectOption[];
+    }));
 
-    // TODO: Fix this. Value as an array does not support in SelectOption.
     const ssdOptions = Object.keys(this.sizeDisksMap[DiskType.Ssd]).map((size) => ({
       label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Ssd})`,
       value: [size, DiskType.Ssd],
-    })) as unknown as SelectOption[];
+    }));
 
     this.diskSizeAndTypeOptions$ = of([...hddOptions, ...ssdOptions]);
   }
