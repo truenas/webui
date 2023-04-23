@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
+import { combineLatest } from 'rxjs';
 import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
@@ -17,6 +18,10 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 export class ConfigurationPreviewComponent implements OnInit {
   formValue: PoolManagerWizardFormValue;
 
+  private disksSelectedManually = false;
+  private vdevsCountString: string;
+  private totalUsableCapacity: string;
+
   constructor(
     private poolManagerStore: PoolManagerStore,
     private translate: TranslateService,
@@ -24,10 +29,20 @@ export class ConfigurationPreviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.formValue$.pipe(untilDestroyed(this)).subscribe((formValue) => {
-      this.formValue = formValue;
-      this.cdr.markForCheck();
-    });
+    combineLatest([
+      this.poolManagerStore.formValue$,
+      this.poolManagerStore.disksSelectedManually$,
+      this.poolManagerStore.dataVdevs$,
+      this.poolManagerStore.totalUsableCapacity$,
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(([formValue, disksSelectedManually, dataVdevs, totalUsableCapacity]) => {
+        this.formValue = formValue;
+        this.disksSelectedManually = disksSelectedManually;
+        this.vdevsCountString = `${dataVdevs.length} VDEVs`;
+        this.totalUsableCapacity = `${filesize(totalUsableCapacity, { standard: 'iec' })} ${this.translate.instant('Total')}`;
+        this.cdr.markForCheck();
+      });
   }
 
   get unknownProp(): string {
@@ -38,14 +53,40 @@ export class ConfigurationPreviewComponent implements OnInit {
     return this.formValue.general?.name || this.unknownProp;
   }
 
+  private get vdevTypeConfiguration(): string {
+    if (!this.formValue?.data?.vdevsNumber || !this.formValue?.data?.type) {
+      return '';
+    }
+
+    if (this.disksSelectedManually) {
+      return this.translate.instant('Manual layout');
+    }
+
+    return `${this.formValue.data.vdevsNumber} × ${this.formValue.data.type}`;
+  }
+
+  private get formattedDiskSize(): string {
+    return filesize(Number(this.formValue.data.sizeAndType[0] || 0), { standard: 'iec' });
+  }
+
+  private get disksConfiguration(): string {
+    if (!this.formValue?.data?.sizeAndType) {
+      return '';
+    }
+
+    if (this.disksSelectedManually) {
+      return `${this.vdevsCountString} | ${this.totalUsableCapacity}`;
+    }
+
+    return `${this.formValue.data.width} × ${this.formattedDiskSize} (${this.formValue.data.sizeAndType[1]})`;
+  }
+
   get data(): string {
-    if (!this.formValue.data?.sizeAndType[0] || !this.formValue.data?.vdevsNumber || !this.formValue.data?.width) {
+    if (!this.vdevTypeConfiguration || !this.disksConfiguration) {
       return this.unknownProp;
     }
-    const part1 = `${this.formValue.data.vdevsNumber} x ${this.formValue.data.type} | `;
-    const part2 = `${this.formValue.data.width} x ${filesize(Number(this.formValue.data.sizeAndType[0]), { standard: 'iec' })} | `;
-    const part3 = this.formValue.data.sizeAndType[1];
-    return part1 + part2 + part3;
+
+    return `${this.vdevTypeConfiguration} | ${this.disksConfiguration}`;
   }
 
   get log(): string {

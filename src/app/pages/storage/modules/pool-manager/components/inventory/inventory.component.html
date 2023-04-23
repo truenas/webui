@@ -3,18 +3,18 @@
     <h3 mat-card-title>{{ 'Inventory' | translate }}</h3>
   </mat-card-header>
   <mat-card-content>
-    <div *ngFor="let item of inventory[DiskType.Hdd] | keyvalue">
+    <div *ngFor="let item of sizeDisksMap[DiskType.Hdd] | keyvalue">
       <div *ngIf="item.value" class="details-item">
         <ix-icon name="ix:hdd"></ix-icon>
         <span class="label">{{ getFilesize(item.key) }} </span>
-        <span class="value"> x {{ item.value }}</span>
+        <span class="value"> × {{ item.value }}</span>
       </div>
     </div>
-    <div *ngFor="let item of inventory[DiskType.Ssd] | keyvalue">
+    <div *ngFor="let item of sizeDisksMap[DiskType.Ssd] | keyvalue">
       <div *ngIf="item.value" class="details-item">
         <ix-icon name="ix:ssd"></ix-icon>
         <span class="label">{{ getFilesize(item.key) }} </span>
-        <span class="value"> x {{ item.value }}</span>
+        <span class="value"> × {{ item.value }}</span>
       </div>
     </div>
   </mat-card-content>
