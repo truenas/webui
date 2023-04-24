@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { when } from 'jest-when';
@@ -36,9 +35,8 @@ export class MockWebsocketService extends WebSocketService {
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
-    protected http: HttpClient,
   ) {
-    super(router, wsManager, http);
+    super(router, wsManager);
 
     this.call = jest.fn();
     this.job = jest.fn();
