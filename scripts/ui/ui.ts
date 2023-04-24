@@ -399,7 +399,6 @@ function setMockShelves(value: string): void {
 
 function loadMockConfigFile(path: string): void {
   console.info('Locating mock configuration file...');
-  // const path = 'src/assets/mock/configs/';
   const configStr = fs.readFileSync( path, 'utf8');
   const config = JSON.parse(configStr);
 
@@ -412,9 +411,6 @@ function loadMockConfigFile(path: string): void {
 
 function mock(command: Command, options: CommandOptions): void {
   if (options.shelves?.length === 0) setMockShelves(options.shelves);
-  if (!Object.keys(options).length) {
-    // showHelp(command);
-  }
 
   if (options.reset) {
     environment.mockConfig = environmentTemplate.mockConfig;
