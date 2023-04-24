@@ -1,0 +1,47 @@
+<ix-fieldset [title]="'General' | translate" [formGroup]="form">
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+    [tooltip]="helptext.name_tooltip | translate"
+  ></ix-input>
+  <ix-select
+    *ngIf="!isLocal"
+    formControlName="direction"
+    [label]="'Direction' | translate"
+    [required]="true"
+    [options]="directions$"
+    [tooltip]="helptext.direction_tooltip | translate"
+  ></ix-select>
+  <ix-select
+    formControlName="transport"
+    [label]="'Transport' | translate"
+    [required]="true"
+    [options]="transports$"
+    [tooltip]="helptext.transport_tooltip | translate"
+  ></ix-select>
+  <ix-checkbox
+    *ngIf="!isLocal"
+    formControlName="sudo"
+    [label]="'Use Sudo For Zfs Commands' | translate"
+    [tooltip]="helptext.sudo_tooltip | translate"
+  ></ix-checkbox>
+  <ix-input
+    formControlName="retries"
+    type="number"
+    [label]="'Number of retries for failed replications' | translate"
+    [tooltip]="helptext.retries_tooltip | translate"
+  ></ix-input>
+  <ix-select
+    formControlName="logging_level"
+    [label]="'Logging Level' | translate"
+    [required]="true"
+    [options]="loggingLevels$"
+    [tooltip]="helptext.logging_level_tooltip | translate"
+  ></ix-select>
+  <ix-checkbox
+    formControlName="enabled"
+    [label]="'Enabled' | translate"
+    [tooltip]="helptext.enabled_tooltip | translate"
+  ></ix-checkbox>
+</ix-fieldset>

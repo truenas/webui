@@ -3,7 +3,7 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { forkJoin, Observable, tap } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { PoolManagerDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -41,12 +41,29 @@ const initialState: PoolManagerState = {
 
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
+  readonly isLoading$ = this.select((state) => state.isLoading);
   readonly unusedDisks$ = this.select((state) => state.unusedDisks);
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly hasMultipleEnclosures$ = this.select((state) => state.enclosures.length > 1);
   readonly formValue$ = this.select((state) => state.formValue);
   readonly disksSelectedManually$ = this.select((state) => state.disksSelectedManually);
   readonly dataVdevs$ = this.select((state) => state.vdevs.data);
+  readonly totalUsableCapacity$ = this.dataVdevs$.pipe(
+    map((vdevs) => vdevs.reduce((previousValue, currentValue) => {
+      return previousValue + currentValue.rawSize;
+    }, 0)),
+  );
+  readonly nonUniqueSerialDisks$ = this.unusedDisks$.pipe(
+    map((disks) => disks.filter((disk) => disk.duplicate_serial.length)),
+  );
+  readonly exportedPools$ = this.unusedDisks$.pipe(
+    map((disks) => {
+      return disks
+        .filter((disk) => !!disk.exported_zpool)
+        .map((disk) => disk.exported_zpool)
+        .filter((value, index, self) => self.indexOf(value) === index);
+    }),
+  );
 
   constructor(
     private errorHandler: ErrorHandlerService,

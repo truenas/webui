@@ -4,7 +4,9 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
@@ -27,6 +29,8 @@ export class TokenSettingsComponent implements OnInit {
     private slideInService: IxSlideInService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -40,6 +44,7 @@ export class TokenSettingsComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.snackbar.success(this.translate.instant('Settings saved'));
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
     this.slideInService.close();
   }

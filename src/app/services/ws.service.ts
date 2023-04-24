@@ -31,12 +31,11 @@ export class WebSocketService {
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
   ) {
+    this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
       }
-
-      this.mockUtils = new MockEnclosureUtils();
     });
   }
 

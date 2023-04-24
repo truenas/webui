@@ -140,7 +140,7 @@ describe('CloudsyncFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
-      attributes: { folder: '/', acknowledge_abuse: false },
+      attributes: { folder: '/' },
       bwlimit: [],
       create_empty_src_dirs: false,
       credentials: 1,
@@ -210,7 +210,7 @@ describe('CloudsyncFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
-      attributes: { folder: mntPath, acknowledge_abuse: false },
+      attributes: { folder: mntPath },
       bwlimit: [
         { time: '9:00' },
         { bandwidth: 2097152, time: '12:30' },

@@ -4,11 +4,13 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Weekday } from 'app/enums/weekday.enum';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, TaskService } from 'app/services';
 import { CalendarService } from 'app/services/calendar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -58,6 +60,8 @@ export class ResilverConfigComponent implements OnInit {
     private taskService: TaskService,
     private dialogService: DialogService,
     private router: Router,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -87,6 +91,7 @@ export class ResilverConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          this.snackbar.success(this.translate.instant('Resilver configuration saved'));
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.router.navigate(['/data-protection']);
