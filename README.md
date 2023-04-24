@@ -53,7 +53,7 @@ $ yarn install
 Generate an environment file
 
 ```sh
-$ yarn check-environment
+$ yarn check-env
 ```
 
 Configure the remote TrueNAS system you'd like to connect to. 
