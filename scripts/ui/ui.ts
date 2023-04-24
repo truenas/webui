@@ -591,8 +591,12 @@ function mockConfigLoader(): void {
   const includedDir = 'included/';
   const customDir = 'custom/';
   const locationChoices: string[] = ['included', 'custom'];
-  const includedChoices: string[] = fs.readdirSync(mockConfigDir + includedDir);
-  const customChoices: string[] = fs.readdirSync(mockConfigDir + customDir);
+  const includedChoices: string[] = fs.readdirSync(mockConfigDir + includedDir).filter((fileName: string) => {
+    return fileName.endsWith('config.json');
+  });
+  const customChoices: string[] = fs.readdirSync(mockConfigDir + customDir).filter((fileName: string) => {
+    return fileName.endsWith('config.json');
+  });
 
   inquirer.prompt([
     {
