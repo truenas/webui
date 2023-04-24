@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -61,7 +62,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly searchedApps$ = this.select((state) => state.searchedApps);
   readonly appsByCategories$ = this.select((state) => state.appsByCategories);
   readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly appsByCategory$ = this.select((state) => state.appsByCategories);
   readonly isFilterApplied$ = this.select((state) => state.isFilterApplied);
   readonly searchQuery$ = this.select((state) => state.searchQuery);
   readonly sliceAmount$ = this.select((state) => state.appsPerCategory);
@@ -132,54 +132,36 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   });
 
   applyFilters(filter: AppsFiltersValues): void {
-    if (filter.categories.some((cat) => cat.includes(AppExtraCategory.NewAndUpdated))) {
+    this.patchState((state) => {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    });
+
+    let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps(filter);
+
+    if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
       filter.categories = filter.categories.filter((cat) => !cat.includes(AppExtraCategory.NewAndUpdated));
-      this.patchState((state) => {
-        return {
-          ...state,
-          isLoading: true,
-        };
-      });
-      this.appsService.getLatestApps(filter).pipe(
-        tap((filteredApps) => {
-          this.patchState((state: AvailableAppsState): AvailableAppsState => {
-            return {
-              ...state,
-              filteredApps: [...filteredApps],
-              searchedApps:
-                state.searchQuery
-                  ? filteredApps.filter((filteredApp) => this.doesAppCotainsString(state.searchQuery, filteredApp))
-                  : filteredApps,
-              isFilterApplied: true,
-              isLoading: false,
-            };
-          });
-        }),
-      ).subscribe();
-    } else {
-      this.patchState((state) => {
-        return {
-          ...state,
-          isLoading: true,
-        };
-      });
-      this.appsService.getAvailableApps(filter).pipe(
-        tap((filteredApps) => {
-          this.patchState((state: AvailableAppsState): AvailableAppsState => {
-            return {
-              ...state,
-              filteredApps: [...filteredApps],
-              searchedApps:
-                state.searchQuery
-                  ? filteredApps.filter((app) => this.doesAppCotainsString(state.searchQuery, app))
-                  : filteredApps,
-              isFilterApplied: true,
-              isLoading: false,
-            };
-          });
-        }),
-      ).subscribe();
+      request$ = this.appsService.getLatestApps(filter);
     }
+
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: (filteredApps) => {
+        this.patchState((state: AvailableAppsState): AvailableAppsState => {
+          return {
+            ...state,
+            filteredApps: [...filteredApps],
+            searchedApps:
+              state.searchQuery
+                ? filteredApps.filter((filteredApp) => this.doesAppCotainsString(state.searchQuery, filteredApp))
+                : filteredApps,
+            isFilterApplied: true,
+            isLoading: false,
+          };
+        });
+      },
+    });
   }
 
   applySearchQuery = this.updater((state: AvailableAppsState, searchQuery: string) => {

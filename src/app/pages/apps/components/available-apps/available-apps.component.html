@@ -23,7 +23,7 @@
   </div>
 </div>
 <div *ngIf="!(isFilterOrSearch$ | async)" class="available-apps-list">
-  <ng-container *ngFor="let appSection of (applicationsStore.appsByCategory$ | async); trackBy: trackByAppSectionTitle">
+  <ng-container *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle">
     <section *ngIf="appSection.apps as apps">
       <ng-container *ngIf="apps.length">
         <h3 class="apps-section-title">
