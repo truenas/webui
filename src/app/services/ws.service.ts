@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import {
   merge, Observable, of, throwError,
 } from 'rxjs';
 import {
   filter, map, share, switchMap, take, takeWhile, tap,
 } from 'rxjs/operators';
+import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -24,10 +26,12 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 })
 export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
+  mockUtils: MockEnclosureUtils;
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
   ) {
+    this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
@@ -54,8 +58,21 @@ export class WebSocketService {
           console.error('Error: ', data.error);
           return throwError(() => data.error);
         }
+
+        // Mock Data
+        if (
+          environment
+          && !environment.production
+          && environment.mockConfig?.enabled
+          && data.msg === IncomingApiMessageType.Result
+        ) {
+          const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
+          return of(mockResultMessage);
+        }
         return of(data);
       }),
+      // END Mock Data
+
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
     );
