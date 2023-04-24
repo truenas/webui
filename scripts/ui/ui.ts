@@ -147,11 +147,11 @@ Developers can also create custom config files. See examples below...
 
 EXAMPLES:
 
-  * Load an existing configuration file (both custom and included)
+  * Load a custom or included configuration file (guided)
 
   % ui mock | ui m
 
-  * Generating a custom config file
+  * Generating a custom config file (guided)
 
   The --generate option will provide a series of prompts that results in the creation of a config.json file.
   After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs

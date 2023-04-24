@@ -1,9 +1,0 @@
-{
-  "enabled": true,
-  "enclosureOptions": {
-    "controllerModel": "MINI-R",
-    "expansionModels": [],
-    "dispersal": "existing"
-  },
-  "systemProduct": "TRUENAS-MINI-R"
-}
