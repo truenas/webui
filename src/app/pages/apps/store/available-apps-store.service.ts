@@ -14,6 +14,8 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
+export const availableAppsShownPerCategory = 6;
+
 export interface AppsByCategory {
   title: string;
   apps: AvailableApp[];
@@ -31,7 +33,7 @@ export interface AvailableAppsState {
   filter: AppsFiltersValues;
   isLoading: boolean;
   isFilterApplied: boolean;
-  appsPerCategory: 6;
+  appsPerCategory: typeof availableAppsShownPerCategory;
   searchQuery: string;
   searchedApps: AvailableApp[];
   selectedPool: string;
@@ -43,7 +45,7 @@ const initialState: AvailableAppsState = {
   latestApps: [],
   categories: [],
   filteredApps: [],
-  appsPerCategory: 6,
+  appsPerCategory: availableAppsShownPerCategory,
   isLoading: false,
   isFilterApplied: false,
   filter: {
@@ -155,7 +157,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
             filteredApps: [...filteredApps],
             searchedApps:
               state.searchQuery
-                ? filteredApps.filter((filteredApp) => this.doesAppCotainsString(state.searchQuery, filteredApp))
+                ? filteredApps.filter((filteredApp) => this.doesAppCotainString(state.searchQuery, filteredApp))
                 : filteredApps,
             isFilterApplied: true,
             isLoading: false,
@@ -177,13 +179,13 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     return {
       ...state,
       searchedApps: filteredApps.filter((app) => {
-        return this.doesAppCotainsString(searchQuery, app);
+        return this.doesAppCotainString(searchQuery, app);
       }),
       searchQuery,
     };
   });
 
-  private doesAppCotainsString = (searchQuery: string, app: AvailableApp): boolean => {
+  private doesAppCotainString = (searchQuery: string, app: AvailableApp): boolean => {
     const normalize = (str: string): string => _.toLower(_.deburr(str));
     const isStringsArray = (arr: unknown[]): boolean => arr.every((i) => typeof i === 'string');
     const search = normalize(searchQuery);

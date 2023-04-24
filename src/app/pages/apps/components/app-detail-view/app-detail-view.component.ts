@@ -96,7 +96,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadAppInfo(): void {
     this.isLoading$.next(true);
-    this.applicationsStore.select((state) => state.availableApps).pipe(
+    this.applicationsStore.availableApps$.pipe(
       map((apps: AvailableApp[]) => apps.find(
         (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
       )),
