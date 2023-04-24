@@ -63,7 +63,11 @@ Configure the remote TrueNAS system you'd like to connect to.
 $ yarn ui remote -i <ip address or FQDN of the server where TrueNAS is running>
 ```
 NOTE: It is highly recommended to create an alias in your shell of choice to 'ui' to minimize typing
-If this script gives a typescript error in the console, try running the `yarn check-environment` script above
+If this script gives a typescript error in the console, please see the section above on generating an environment file
+
+zsh example: `alias ui='yarn run --silent ui`
+
+## Starting the Application
 
 To start run
 ```yarn start```
