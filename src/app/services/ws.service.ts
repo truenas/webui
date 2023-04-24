@@ -1,7 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
@@ -31,9 +30,14 @@ export class WebSocketService {
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
-    protected http: HttpClient,
   ) {
-    this.mockUtils = new MockEnclosureUtils();
+    this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+      if (!isConnected) {
+        this.clearSubscriptions();
+      }
+
+      this.mockUtils = new MockEnclosureUtils();
+    });
   }
 
   private get ws$(): Observable<unknown> {
@@ -56,7 +60,7 @@ export class WebSocketService {
           return throwError(() => data.error);
         }
 
-        // Mock Data Test
+        // Mock Data
         if (
           environment
           && !environment.production
@@ -68,7 +72,7 @@ export class WebSocketService {
         }
         return of(data);
       }),
-      // END Mock Data Test
+      // END Mock Data
 
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
@@ -129,6 +133,10 @@ export class WebSocketService {
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
+  }
+
+  clearSubscriptions(): void {
+    this.eventSubscriptions.clear();
   }
 
   private subscribeToJobUpdates(jobId: number): Observable<Job> {
