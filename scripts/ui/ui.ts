@@ -97,6 +97,18 @@ EXAMPLES:
 
     % ./ui mock -s 'es24,es24' OR ./ui mock --shelves 'es24,es24'
 
+  * Enable mock functionality
+
+    % ./ui mock -e OR ./ui mock --enable
+
+  * Disable mock functionality
+
+    % ./ui mock -d OR ./ui mock --disable
+
+  * Complete configuration example that creates an M50 with two ES24 shelves
+
+    % ./ui mock -e -m m50 -s 'es24,es24' -a default
+
   * Loading a config.json file
 
     This script will look for config.json files in src/assets/mock/configs.
