@@ -1,3 +1,8 @@
+.type-container {
+  max-width: 50%;
+  padding: 0 30px;
+}
+
 .content-container {
   border: 1px solid var(--lines);
   display: flex;
@@ -30,7 +35,7 @@
   padding-left: 0;
 }
 
-.selection-actions { 
+.selection-actions {
   column-gap: 16px;
   display: flex;
   flex-wrap: wrap;

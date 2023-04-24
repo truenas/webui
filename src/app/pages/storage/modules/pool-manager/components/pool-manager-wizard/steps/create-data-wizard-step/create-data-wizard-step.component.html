@@ -1,24 +1,24 @@
 <ng-container [formGroup]="form">
-  <ix-select
-    formControlName="type"
-    [label]="'Type' | translate"
-    [tooltip]="'Select a VDEV layout' | translate"
-    [options]="vdevLayoutOptions$"
-    [required]="true"
-  ></ix-select>
+  <div class="type-container">
+    <ix-select
+      formControlName="type"
+      [label]="'Type' | translate"
+      [tooltip]="'Select a VDEV layout' | translate"
+      [options]="vdevLayoutOptions$"
+      [required]="true"
+    ></ix-select>
+  </div>
   <div
     *ngIf="!(poolManagerStore.disksSelectedManually$ | async)"
-    class="content-container" 
+    class="content-container"
   >
-    <div
-      class="automated-disk-selection-container"
-    >
-      <h3>{{'Automated Disk Selection' | translate}}</h3>
+    <div class="automated-disk-selection-container">
+      <h3>{{ 'Automated Disk Selection' | translate }}</h3>
       <ix-select
         formControlName="sizeAndType"
         [label]="'Disk Size' | translate"
         [tooltip]="'Select a disk size from inventory' | translate"
-        [options]="diskSizeOptions$"
+        [options]="diskSizeAndTypeOptions$"
         [required]="true"
       ></ix-select>
       <ix-select
@@ -37,7 +37,7 @@
       ></ix-select>
     </div>
     <div class="advanced-options-container">
-      <h3>{{'Advanced Options' | translate}}</h3>
+      <h3>{{ 'Advanced Options' | translate }}</h3>
 
       <ix-radio-group
         *ngIf="poolManagerStore.hasMultipleEnclosures$ | async"
@@ -47,6 +47,7 @@
       ></ix-radio-group>
 
       <ix-checkbox
+        *ngIf="false"
         formControlName="treatDiskSizeAsMinimum"
         [label]="'Treat Disk Size as Minimum' | translate"
       ></ix-checkbox>
@@ -74,10 +75,8 @@
   </div>
 
   <div *ngIf="poolManagerStore.disksSelectedManually$ | async" class="content-container">
-    <div
-      class="automated-disk-selection-container"
-    >
-      <h3>{{'Manually Configured VDEVs' | translate}}</h3>
+    <div class="automated-disk-selection-container">
+      <h3>{{ 'Manually Configured VDEVs' | translate }}</h3>
       <p>{{ manualDiskSelectionMessage }}</p>
       <div class="selection-actions">
         <button
@@ -102,13 +101,13 @@
       </div>
     </div>
     <div class="advanced-options-container">
-      <h3>{{'Description' | translate}}</h3>
+      <h3>{{ 'Description' | translate }}</h3>
       <ul class="description-list">
         <li>
-          <strong>{{ 'VDEVs' | translate }}: </strong>{{ getVdevsCountString() }}
+          <strong>{{ 'VDEVs' | translate }}: </strong>{{ (poolManagerStore.dataVdevs$ | async).length }}
         </li>
         <li>
-          <strong>{{ 'Total Usable Capacity' | translate }}: </strong>{{ dataVdevs[0]?.rawSize | filesize: { standard: 'iec' } }}
+          <strong>{{ 'Total Usable Capacity' | translate }}: </strong>{{ totalUsableCapacity$ | async | filesize: { standard: 'iec' } }}
         </li>
         <li>
           <strong>{{ 'No warnings' | translate }}</strong>

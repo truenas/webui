@@ -7,11 +7,13 @@ import {
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -99,6 +101,8 @@ export class ServiceS3Component implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private dialog: DialogService,
     private router: Router,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
   ) {}
 
@@ -160,6 +164,7 @@ export class ServiceS3Component implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.router.navigate(['/services']);
           this.cdr.markForCheck();
         },

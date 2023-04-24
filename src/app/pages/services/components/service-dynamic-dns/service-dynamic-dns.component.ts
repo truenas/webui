@@ -12,6 +12,7 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-dynamic-dns';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -74,6 +75,7 @@ export class ServiceDynamicDnsComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private router: Router,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -106,6 +108,7 @@ export class ServiceDynamicDnsComponent implements OnInit {
     this.ws.call('dyndns.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Service configuration saved'));
         this.cdr.markForCheck();
         this.router.navigate(['/services']);
       },

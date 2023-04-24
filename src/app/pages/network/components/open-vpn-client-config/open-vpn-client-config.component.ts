@@ -15,6 +15,7 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   AppLoaderService, DialogService, ServicesService, WebSocketService,
 } from 'app/services';
@@ -106,6 +107,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private router: Router,
+    private snackbar: SnackbarService,
     private appLoaderService: AppLoaderService,
     private translate: TranslateService,
   ) {}
@@ -121,6 +123,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          this.snackbar.success(this.translate.instant('OpenVPN client configuration saved'));
           this.isLoading = false;
           this.slideInService.close();
         },

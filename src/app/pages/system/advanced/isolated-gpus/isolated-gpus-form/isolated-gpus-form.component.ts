@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -37,6 +38,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     private store$: Store<AppState>,
     private gpuValidator: IsolatedGpuValidatorService,
     private gpuService: GpuService,
+    private snackbar: SnackbarService,
   ) { }
 
   ngOnInit(): void {
@@ -58,6 +60,7 @@ export class IsolatedGpusFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
+        this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.modal.close();
       },

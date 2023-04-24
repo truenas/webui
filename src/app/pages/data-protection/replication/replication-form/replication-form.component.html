@@ -1,0 +1,61 @@
+<ix-modal-header
+  [title]="isNew ? ('Add Replication Task' | translate) : ('Edit Replication Task' | translate)"
+  [loading]="isLoading"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" (submit)="onSubmit()">
+      <div class="fieldsets">
+        <ix-replication-general-section
+          [replication]="existingReplication"
+        ></ix-replication-general-section>
+
+        <ix-replication-transport-section
+          [replication]="existingReplication"
+          [transport]="generalSection?.form.value.transport"
+        ></ix-replication-transport-section>
+
+        <ix-replication-source-section
+          [replication]="existingReplication"
+          [direction]="generalSection?.form.value.direction"
+          [nodeProvider]="sourceNodeProvider"
+        ></ix-replication-source-section>
+
+        <ix-replication-target-section
+          [replication]="existingReplication"
+          [nodeProvider]="targetNodeProvider"
+          [allowsCustomRetentionPolicy]="!usesNameRegex"
+        ></ix-replication-target-section>
+
+        <ix-replication-schedule-section
+          [replication]="existingReplication"
+        ></ix-replication-schedule-section>
+      </div>
+
+      <div
+        *ngIf="eligibleSnapshotsMessage"
+        class="eligible-snapshots"
+        [class.danger]="isEligibleSnapshotsMessageRed"
+      >
+        {{ eligibleSnapshotsMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          (click)="onSubmit(); $event.preventDefault();"
+        >{{ 'Save' | translate }}</button>
+        <button
+          *ngIf="isNew"
+          mat-button
+          type="button"
+          ixTest="switch-to-wizard"
+          (click)="onSwitchToWizard()"
+        >{{ 'Switch To Wizard' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
