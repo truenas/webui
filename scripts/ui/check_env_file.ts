@@ -45,7 +45,7 @@ export function checkEnv(suppress: boolean = false): boolean {
     if (envStr.includes('$SERVER$')) {
       const message = `
 Ready for development but remote not set.
-Use yarn ui script to set remote url: ./ui remote -i <ip-address>
+Use yarn ui script to set remote url: yarn ui remote -i <ip-address>
 `
       if (!suppress) {
         console.info(message);

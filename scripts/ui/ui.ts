@@ -69,10 +69,10 @@ const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
 /*
 * Command Setup* */
 const program: Command = new Command()
-  .name('./ui')
+  .name('ui')
   .version('0.0.1')
   .description('TrueNAS webui setup utility')
-  .usage('(Call from root directory)')
+  .usage('(Call from root directory of repo via yarn)')
   .addHelpText('before', banner())
 
 const mockExamples = `
@@ -80,40 +80,40 @@ EXAMPLES:
 
   * Retrieve a list of mockable controller models
 
-    % ./ui mock -M OR ./ui mock --showcontrollers
+    % ui mock -M OR ui mock --showcontrollers
 
   * Retrieve a list of mockable expansion shelf models
 
-    % ./ui mock -S OR ./ui mock --showshelves
+    % ui mock -S OR ui mock --showshelves
 
   * Set the controller model to mock
 
-    % ./ui mock -m OR ./ui mock --model
+    % ui mock -m OR ui mock --model
 
   * Set the expansion shelf models to mock
 
     NOTE: It will except no argument or empty string to specify no shelves.
     Specifying shelves must be done via a comma separated string
 
-    % ./ui mock -s 'es24,es24' OR ./ui mock --shelves 'es24,es24'
+    % ui mock -s 'es24,es24' OR ui mock --shelves 'es24,es24'
 
   * Enable mock functionality
 
-    % ./ui mock -e OR ./ui mock --enable
+    % ui mock -e OR ui mock --enable
 
   * Disable mock functionality
 
-    % ./ui mock -d OR ./ui mock --disable
+    % ui mock -d OR ui mock --disable
 
   * Complete configuration example that creates an M50 with two ES24 shelves
 
-    % ./ui mock -e -m m50 -s 'es24,es24' -a default
+    % ui mock -e -m m50 -s 'es24,es24' -a default
 
   * Loading a config.json file
 
     This script will look for config.json files in src/assets/mock/configs.
 
-    % ./ui mock -c <filename> OR ./ui mock --config <filename>
+    % ui mock -c <filename> OR ui mock --config <filename>
 
     NOTE: To see how to use this script to generate a config file, see the mock-gen command
 
@@ -149,7 +149,7 @@ EXAMPLES:
   The mock-gen command will provide a series of prompts that results in the creation of a config.json file
   After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs
 
-    % ./ui mock-gen OR ./ui mg
+    % ui mock-gen OR ui mg
 `
 
 program
