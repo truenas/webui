@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -57,6 +57,7 @@ const initialState: AvailableAppsState = {
   selectedPool: null,
 };
 
+@UntilDestroy()
 @Injectable()
 export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly searchedApps$ = this.select((state) => state.searchedApps);
