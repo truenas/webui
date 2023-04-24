@@ -23,13 +23,19 @@ interface Headers {
   footer: string;
 }
 
-interface ConfigWizardAnswers {
+interface ConfigGeneratorAnswers {
   fileName: string;
   controller: string;
   shelves: string;
   dispersal: string;
   loadAfterSave: string;
   saveOrCancel: string;
+}
+
+interface ConfigLoaderAnswers {
+  location: string;
+  customFile?: string;
+  includedFile?: string;
 }
 
 
@@ -65,6 +71,7 @@ const template = './scripts/ui/environment.template.ts';
 const originalEnvironment = {...environment};
 const modelsFile = './scripts/ui//models.json';
 const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
+const mockConfigDir = './src/assets/mock/configs/';
 
 /*
 * Command Setup* */
@@ -75,55 +82,48 @@ const program: Command = new Command()
   .usage('(Call from root directory of repo via yarn)')
   .addHelpText('before', banner())
 
-const mockExamples = `
+const mockOptExamples = `
 EXAMPLES:
 
   * Retrieve a list of mockable controller models
 
-    % ui mock -M OR ui mock --showcontrollers
+    % ui mock-opt -M OR ui mock-opt --showcontrollers
 
   * Retrieve a list of mockable expansion shelf models
 
-    % ui mock -S OR ui mock --showshelves
+    % ui mock-opt -S OR ui mock-opt --showshelves
 
   * Set the controller model to mock
 
-    % ui mock -m OR ui mock --model
+    % ui mock-opt -m OR ui mock-opt --model
 
   * Set the expansion shelf models to mock
 
     NOTE: It will except no argument or empty string to specify no shelves.
     Specifying shelves must be done via a comma separated string
 
-    % ui mock -s 'es24,es24' OR ui mock --shelves 'es24,es24'
+    % ui mock-opt -s 'es24,es24' OR ui mock-opt --shelves 'es24,es24'
 
   * Enable mock functionality
 
-    % ui mock -e OR ui mock --enable
+    % ui mock-opt -e OR ui mock-opt --enable
 
   * Disable mock functionality
 
-    % ui mock -d OR ui mock --disable
+    % ui mock-opt -d OR ui mock-opt --disable
 
   * Complete configuration example that creates an M50 with two ES24 shelves
 
-    % ui mock -e -m m50 -s 'es24,es24' -a default
-
-  * Loading a config.json file
-
-    This script will look for config.json files in src/assets/mock/configs.
-
-    % ui mock -c <filename> OR ui mock --config <filename>
-
-    NOTE: To see how to use this script to generate a config file, see the mock-gen command
+    % ui mock-opt -e -m m50 -s 'es24,es24' -a default
 
 `
 
 program
-  .command('mock')
-  .name('mock')
-  .description('Mocking enclosure ui support')
-  .addHelpText('after', mockExamples)
+  .command('mock-opt')
+  .name('mock-opt')
+  .alias('mo')
+  .description('Set specific mock options')
+  .addHelpText('after', mockOptExamples)
   .option('-e, --enable', 'enable mock config')
   .option('-d, --disable', 'disable mock config')
   .option('-M, --showcontrollers ', 'show available controllers for mock')
@@ -131,34 +131,47 @@ program
   .option('-m, --model <name>', 'set controller to mock')
   .option('-s, --shelves, [Array|null]', 'set expansion shelves to mock')
   .option('-a, --assign, <existing | default>', 'set slot assignment strategy')
-  .option('-c, --config <filename>', 'load mock config file')
   .option('-r, --reset', 'Reset mock configuration to default values')
   .option('-l, --list', 'show current mock config settings')
   .option('-D, --debug', 'debug output')
   .action(() => {
-    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock');
+    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-opt');
     const mockOptions = commandOpts(mockCommand);
     mock(mockCommand, mockOptions);
   });
 
-const mockGenExamples = `
+const mockExamples = `
+The mock command sets mock related configurations through the use of json files.
+The repo includes some files for common configurations developers might need for testing.
+Developers can also create custom config files. See examples below...
+
 EXAMPLES:
 
-  * Generating a config.json
+  * Load an existing configuration file (both custom and included)
 
-  The mock-gen command will provide a series of prompts that results in the creation of a config.json file
+  % ui mock | ui m
+
+  * Generating a custom config file
+
+  The --generate option will provide a series of prompts that results in the creation of a config.json file.
   After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs
 
-    % ui mock-gen OR ui mg
+    % ui mock --generate OR ui m -g
 `
 
 program
-  .command('mock-gen')
-  .alias('mg')
-  .description('Generates a mock config.json file')
-  .addHelpText('after', mockGenExamples)
+  .command('mock')
+  .alias('m')
+  .description('Configure mock settings via config.json files')
+  .addHelpText('after', mockExamples)
+  .option('-e, --enable', 'enable mock config')
+  .option('-d, --disable', 'disable mock config')
+  .option('-g, --generate', 'generate a mock config file')
   .action(() => {
-    mockConfigWizard();
+    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock');
+    const mockOptions = commandOpts(mockCommand);
+    mockConfig(mockCommand, mockOptions);
+
   })
 
 program
@@ -312,7 +325,7 @@ function wrap(key:string, value: any): string {
 }
 
 /*
-* Mock Command
+* Mock Options Command
 * */
 function mockConfigReport(options: ReportOptions): string {
     if (!environment.mockConfig) {
@@ -384,6 +397,19 @@ function setMockShelves(value: string): void {
   saveEnvironment();
 }
 
+function loadMockConfigFile(path: string): void {
+  console.info('Locating mock configuration file...');
+  // const path = 'src/assets/mock/configs/';
+  const configStr = fs.readFileSync( path, 'utf8');
+  const config = JSON.parse(configStr);
+
+  environment.mockConfig = config;
+  console.info('Mock config file found √\n');
+
+  environment.mockConfig = path ? config : originalEnvironment.mockConfig;
+  saveEnvironment();
+}
+
 function mock(command: Command, options: CommandOptions): void {
   if (options.shelves?.length === 0) setMockShelves(options.shelves);
   if (!Object.keys(options).length) {
@@ -394,16 +420,7 @@ function mock(command: Command, options: CommandOptions): void {
     environment.mockConfig = environmentTemplate.mockConfig;
     saveEnvironment();
   } else if (options.config) {
-    console.info('Locating mock configuration file...');
-    const path = 'src/assets/mock/configs/';
-    const configStr = fs.readFileSync( path + options.config, 'utf8');
-    const config = JSON.parse(configStr);
-
-    environment.mockConfig = config;
-    console.info('Mock config file found √\n');
-
-    environment.mockConfig = options.config ? config : null;
-    saveEnvironment();
+    loadMockConfigFile(options.config);
   } else {
     for (let option in options) {
       if (options.debug) {
@@ -416,7 +433,6 @@ function mock(command: Command, options: CommandOptions): void {
       switch (option) {
         case 'debug':
         case 'reset':
-        case 'config':
         case 'list':
           break;
         case 'enable':
@@ -463,14 +479,15 @@ function mock(command: Command, options: CommandOptions): void {
 }
 
 /*
-* Mock Generate Command
+* Mock Command
 * */
-function mockConfigWizard(): void {
-  const controllerChoices = Object.keys(models.controllers);
-  const shelfChoices = Object.keys(models.shelves);
-  const dispersalChoices = ['Default', 'Existing'];
-  const loadAfterSaveChoices = ['Yes', 'No'];
-  const saveChoices = ['Save', 'Cancel'];
+function mockConfigGenerator(): void {
+  const controllerChoices: string[] = Object.keys(models.controllers);
+  const shelfChoices: string[] = Object.keys(models.shelves);
+  const dispersalChoices: string[] = ['Default', 'Existing'];
+  const loadAfterSaveChoices: string[] = ['Yes', 'No'];
+  const saveChoices: string[] = ['Save', 'Cancel'];
+  const saveLocation = mockConfigDir + 'custom/';
 
   inquirer.prompt([
     // Pass your questions in here
@@ -514,10 +531,9 @@ function mockConfigWizard(): void {
       default: 'save',
     },
   ])
-    .then((answers: ConfigWizardAnswers) => {
-      const saveLocation = './src/assets/mock/configs';
+    .then((answers: ConfigGeneratorAnswers) => {
       const extension = '.config.json';
-      const filePath = saveLocation + '/' + answers.fileName + extension;
+      const filePath = saveLocation + answers.fileName + extension;
 
       const expansionModels: string[] = answers.shelves.length
         ? [].concat(answers.shelves.toUpperCase().split(','))
@@ -569,6 +585,99 @@ function mockConfigWizard(): void {
         console.info(error);
       }
     });
+}
+
+function mockConfigLoader(): void {
+  const includedDir = 'included/';
+  const customDir = 'custom/';
+  const locationChoices: string[] = ['included', 'custom'];
+  const includedChoices: string[] = fs.readdirSync(mockConfigDir + includedDir);
+  const customChoices: string[] = fs.readdirSync(mockConfigDir + customDir);
+
+  inquirer.prompt([
+    {
+      name: 'location',
+      message: 'Would you like to load an included or a custom config?',
+      type: 'list',
+      choices: locationChoices,
+      default: 'included'
+    },
+    {
+      name: 'customFile',
+      message: 'Which custom config would you like to load?',
+      type: 'list',
+      choices: customChoices,
+      when: ( answers ) => {
+        return answers.location === 'custom';
+      },
+    },
+    {
+      name: 'includedFile',
+      message: 'Which config would you like to load?',
+      type: 'list',
+      choices: includedChoices,
+      when: ( answers ) => {
+        return answers.location === 'included';
+      },
+    },
+  ])
+    .then((answers: ConfigLoaderAnswers) =>{
+      const subDir = answers.location === 'custom'
+        ? customDir + answers.customFile
+        : includedDir + answers.includedFile
+
+      loadMockConfigFile(mockConfigDir + subDir);
+
+      mockConfigReport({
+        showHeader : true,
+        showFooter: true,
+      });
+    })
+    .catch((error) => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+        console.info(error);
+      } else {
+        // Something else went wrong
+        console.info(error);
+      }
+    });
+
+
+}
+
+function mockConfig(command: Command, options: CommandOptions): void {
+  if (Object.keys(options).length === 0) {
+    mockConfigLoader();
+  }
+
+  for (let option in options) {
+    if (options.debug) {
+      console.info({
+        option: option,
+        value: options[option],
+      })
+    }
+
+    switch (option) {
+      case 'config':
+        loadMockConfigFile(options.config);
+        break;
+      case 'enable':
+        setMockEnabled(true);
+        break;
+      case 'disable':
+        setMockEnabled(false);
+        break;
+      case 'generate':
+        mockConfigGenerator();
+        break;
+      default: {
+        console.info(options[option]);
+        break;
+      }
+    }
+  }
 }
 
 /*
