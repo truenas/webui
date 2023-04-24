@@ -9,6 +9,7 @@ import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
+import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -85,7 +86,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(({ appId, catalog, train }: { appId: string; catalog: string; train: string }) => {
+      .subscribe(({ appId, catalog, train }: AppDetailsRouteParams) => {
         this.appId = appId;
         this.catalog = catalog;
         this.train = train;

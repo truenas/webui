@@ -14,6 +14,7 @@ import { filter, take } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
+import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
@@ -139,7 +140,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         filter((params) => !!(params.appId as string) && !!(params.catalog) && !!(params.train)),
         untilDestroyed(this),
       )
-      .subscribe(({ train, catalog, appId }: { catalog: string; train: string; appId: string }) => {
+      .subscribe(({ train, catalog, appId }: AppDetailsRouteParams) => {
         this.appId = appId;
         this.train = train;
         this.catalog = catalog;
