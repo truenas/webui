@@ -1829,7 +1829,7 @@
   "Keep": "",
   "Keep for": "",
   "Keep snapshot for": "",
-  "Keep the name short. Using a name longer than 63 characters can prevent accessing the block device.": "",
+  "Keep the name short. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).": "",
   "Keep the zvol name short. Using a zvol name longer than 63 characters can prevent accessing the zvol as a device.": "",
   "Keep this Boot Environment?": "",
   "Kerberos Keytab": "",
