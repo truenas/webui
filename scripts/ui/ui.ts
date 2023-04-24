@@ -617,7 +617,7 @@ function showRemote(options: ReportOptions): void {
 }
 
 function remote(command: Command, ip: string): void {
-  console.info('Setting remote machine url...');
+  console.info('Old remote value: ' + originalEnvironment.remote);
 
   const proxyConfigJson = './proxy.config.json';
   const url = normalizeUrl(ip);
