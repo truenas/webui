@@ -14,16 +14,19 @@ program
   .version('0.0.1')
   .description('Checks for environment file and creates one if not present')
   .option('-s, --suppress', 'Exit without error if remote not set')
+  .option('-q, --quiet', 'Don\'t show output')
   .action(() => {
     const options = program.opts();
     const suppress = typeof options.suppress === 'undefined' ? false : options.suppress;
-    checkEnv(suppress);
+    const quiet = typeof options.quiet === 'undefined' ? false : options.quiet;
+
+    checkEnv(suppress, quiet);
   })
 
 program.parse(process.argv);
 
 
-export function checkEnv(suppress: boolean = false): boolean {
+export function checkEnv(suppress: boolean = false, quiet: boolean = false): boolean {
   let remoteIsSet: boolean = false;
   const fileExists = fs.existsSync(environmentTs);
   let envStr: string = '';
@@ -41,8 +44,8 @@ export function checkEnv(suppress: boolean = false): boolean {
     isCurrent = envStr.includes('mockConfig');
   }
 
-  const isRemoteSet = (suppress: boolean, envStr: string = '$SERVER$'): boolean => {
-    if (envStr.includes('$SERVER$')) {
+  const isRemoteSet = (suppress: boolean, quiet: boolean, envStr: string = '$SERVER$'): boolean => {
+    if (envStr.includes('$SERVER$') && !quiet) {
       const message = `
 Ready for development but remote not set.
 Use yarn ui script to set remote url: yarn ui remote -i <ip-address>
@@ -57,10 +60,10 @@ Use yarn ui script to set remote url: yarn ui remote -i <ip-address>
   }
 
   if (fileExists && wordCount > 0 && isCurrent) {
-    console.info('Environment file exists');
-    remoteIsSet = isRemoteSet(suppress, envStr);
+    if (!quiet) console.info('Environment file exists');
+    remoteIsSet = isRemoteSet(suppress, quiet, envStr);
   } else {
-    console.info('Environment file not found. Creating new file with default values');
+    if (!quiet) console.info('Environment file not found. Creating new file with default values');
     let templateStr: string = fs.readFileSync(template, 'utf8');
     fs.writeFileSync(
       environmentTs,
@@ -68,7 +71,7 @@ Use yarn ui script to set remote url: yarn ui remote -i <ip-address>
       'utf8'
     );
 
-    remoteIsSet = isRemoteSet(suppress);
+    remoteIsSet = isRemoteSet(suppress, quiet);
   }
 
   return remoteIsSet;

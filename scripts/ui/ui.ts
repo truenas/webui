@@ -82,6 +82,40 @@ const program: Command = new Command()
   .usage('(Call from root directory of repo via yarn)')
   .addHelpText('before', banner())
 
+const mockExamples = `
+The mock command sets mock related configurations through the use of json files.
+The repo includes some files for common configurations developers might need for testing.
+Developers can also create custom config files. See examples below...
+
+EXAMPLES:
+
+  * Load a custom or included configuration file (guided)
+
+  % ui mock | ui m
+
+  * Generating a custom config file (guided)
+
+  The --generate option will provide a series of prompts that results in the creation of a config.json file.
+  After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs
+
+    % ui mock --generate OR ui m -g
+`
+
+program
+  .command('mock')
+  .alias('m')
+  .description('Configure mock settings via config.json files')
+  .addHelpText('after', mockExamples)
+  .option('-e, --enable', 'enable mock config')
+  .option('-d, --disable', 'disable mock config')
+  .option('-g, --generate', 'generate a mock config file')
+  .action(() => {
+    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock');
+    const mockOptions = commandOpts(mockCommand);
+    mockConfig(mockCommand, mockOptions);
+
+  });
+
 const mockOptExamples = `
 EXAMPLES:
 
@@ -139,40 +173,6 @@ program
     const mockOptions = commandOpts(mockCommand);
     mock(mockCommand, mockOptions);
   });
-
-const mockExamples = `
-The mock command sets mock related configurations through the use of json files.
-The repo includes some files for common configurations developers might need for testing.
-Developers can also create custom config files. See examples below...
-
-EXAMPLES:
-
-  * Load a custom or included configuration file (guided)
-
-  % ui mock | ui m
-
-  * Generating a custom config file (guided)
-
-  The --generate option will provide a series of prompts that results in the creation of a config.json file.
-  After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs
-
-    % ui mock --generate OR ui m -g
-`
-
-program
-  .command('mock')
-  .alias('m')
-  .description('Configure mock settings via config.json files')
-  .addHelpText('after', mockExamples)
-  .option('-e, --enable', 'enable mock config')
-  .option('-d, --disable', 'disable mock config')
-  .option('-g, --generate', 'generate a mock config file')
-  .action(() => {
-    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock');
-    const mockOptions = commandOpts(mockCommand);
-    mockConfig(mockCommand, mockOptions);
-
-  })
 
 program
   .command('reset')
@@ -665,9 +665,17 @@ function mockConfig(command: Command, options: CommandOptions): void {
         break;
       case 'enable':
         setMockEnabled(true);
+        mockConfigReport({
+          showHeader : true,
+          showFooter: true,
+        });
         break;
       case 'disable':
         setMockEnabled(false);
+        mockConfigReport({
+          showHeader : true,
+          showFooter: true,
+        });
         break;
       case 'generate':
         mockConfigGenerator();
@@ -726,7 +734,6 @@ function showRemote(options: ReportOptions): void {
 }
 
 function remote(command: Command, ip: string): void {
-  console.info('Old remote value: ' + originalEnvironment.remote);
 
   const proxyConfigJson = './proxy.config.json';
   const url = normalizeUrl(ip);
@@ -741,6 +748,7 @@ function remote(command: Command, ip: string): void {
     process.exit(0);
   }
 
+  console.info('Old remote value: ' + originalEnvironment.remote);
   saveProxyConfig(proxyConfigJson, url);
   environment.remote = url;
   showRemote({
