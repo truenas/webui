@@ -50,12 +50,20 @@ Install yarn packages:
 $ yarn install
 ```
 
-Run the environment configuration script
+Generate an environment file
+
+```sh
+$ yarn check-environment
+```
+
+Configure the remote TrueNAS system you'd like to connect to. 
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./ui remote -i <ip address or FQDN of the server where TrueNAS is running>
+$ yarn ui remote -i <ip address or FQDN of the server where TrueNAS is running>
 ```
+NOTE: It is highly recommended to create an alias in your shell of choice to 'ui' to minimize typing
+If this script gives a typescript error in the console, try running the `yarn check-environment` script above
 
 To start run
 ```yarn start```
