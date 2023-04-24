@@ -16,7 +16,7 @@ import {
   Inject,
   TemplateRef,
 } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -120,16 +120,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private store$: Store<AppState>,
     private systemService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
-  ) {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
-      .subscribe(() => {
-        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-        if (this.router.getCurrentNavigation().extras.state?.hideMobileDetails) {
-          this.closeMobileDetails();
-        }
-      });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
