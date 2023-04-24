@@ -40,18 +40,24 @@ export class DatasetDetailsPanelComponent implements OnInit {
     this.slideIn.onClose$
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
-        const dataset = value.response as Dataset;
+        const response = value.response as { dataset: Dataset; isNew: boolean };
+        const dataset = response.dataset;
+
         if ((value.modalType !== DatasetFormComponent && value.modalType !== ZvolFormComponent) || !dataset?.id) {
           return;
         }
 
+        const handleCreateSuccessCases = value.modalType === ZvolFormComponent
+          ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
+          : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) });
+
+        const handleUpdateSuccessCases = value.modalType === ZvolFormComponent
+          ? this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(dataset) })
+          : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(dataset) });
+
         this.datasetStore.datasetUpdated();
         this.router.navigate(['/datasets', dataset.id]).then(() => {
-          this.snackbar.success(
-            value.modalType === ZvolFormComponent
-              ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
-              : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
-          );
+          this.snackbar.success(response.isNew ? handleCreateSuccessCases : handleUpdateSuccessCases);
         });
       });
   }

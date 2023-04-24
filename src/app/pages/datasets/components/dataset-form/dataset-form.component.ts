@@ -4,13 +4,11 @@ import {
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import {
   forkJoin, Observable, of, switchMap, tap,
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -51,8 +49,6 @@ export class DatasetFormComponent {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private slideIn: IxSlideInService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
     private router: Router,
@@ -172,7 +168,7 @@ export class DatasetFormComponent {
       next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close(null, createdDataset);
+        this.slideIn.close(null, { dataset: createdDataset, isNew: this.isNew });
       },
       error: (error) => {
         this.isLoading = false;
