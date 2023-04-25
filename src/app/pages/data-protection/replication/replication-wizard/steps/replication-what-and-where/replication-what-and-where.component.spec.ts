@@ -9,6 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -138,8 +139,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
       exist_replication: 1,
       source_datasets_from: DatasetSource.Local,
       target_dataset_from: DatasetSource.Remote,
-      source_datasets: ['pool21', 'pool22'],
-      target_dataset: 'pool23',
+      source_datasets: [`${mntPath}/pool21`, `${mntPath}/pool22`],
+      target_dataset: `${mntPath}/pool23`,
       ssh_credentials_target: 123,
       custom_snapshots: false,
       recursive: true,
