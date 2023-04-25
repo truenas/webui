@@ -92,9 +92,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.checkedAppsNames.length > 0;
   }
 
-  get hasSelectionUpdates(): number {
-    return this.checkedAppsNames
-      .map((name) => this.dataSource.find((app) => app.name === name))
+  get appsUpdateAvailable(): number {
+    return this.dataSource
       .filter((app) => app.update_available || app.container_images_update_available).length;
   }
 
@@ -307,8 +306,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
-  onBulkUpgrade(): void {
-    const apps = this.dataSource.filter((app) => app.selected);
+  onBulkUpgrade(updateAll = false): void {
+    const apps = this.dataSource
+      .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
+
     const dialogRef = this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
 
     dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
