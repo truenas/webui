@@ -3804,7 +3804,6 @@
   "Thread responsible for syncing db transactions not running on this node.": "Thread responsable de la synchronisation des transactions db ne s'exécutant pas sur ce nœud.",
   "Thread:": "Thread :",
   "Threads": "Threads",
-  "Threads:": "Threads :",
   "Threshold Days": "Nombre de jours limite",
   "Threshold days": "Jours-seuil",
   "Threshold temperature in Celsius. If the drive temperature is higher than this value, a LOG_CRIT level log entry is created and an email is sent. <i>0</i> disables this check.": "Température seuil en degrés Celsius. Si la température du variateur est supérieure à cette valeur, un journal de niveau LOG_CRIT est créé et un e-mail est envoyé. <i>0</i> désactive cette vérification.",

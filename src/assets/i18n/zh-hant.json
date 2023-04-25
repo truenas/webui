@@ -4194,7 +4194,6 @@
   "This Dataset and Child Datasets": "此資料及與子資料集",
   "This is the OS_TENANT_NAME from an <a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack credentials file</a>.": "This is the OS_TENANT_NAME from an <a href=\"https://rclone.org/swift/\\#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack credentials file</a>.",
   "Threads": "執行緒",
-  "Threads:": "執行緒：",
   "Threshold days": "檢查門檻日數",
   "Time Format": "時間格式",
   "Time Machine": "時光機",
