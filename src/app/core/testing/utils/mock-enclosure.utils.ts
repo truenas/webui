@@ -9,17 +9,18 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MockStorageGenerator } from './mock-storage-generator.utils';
 
 export class MockEnclosureUtils {
-  mockConfig: MockEnclosureConfig = (environment).mockConfig;
+  mockConfig: MockEnclosureConfig = environment.mockConfig;
   mockStorage: MockStorageGenerator;
 
   constructor() {
     this.mockStorage = new MockStorageGenerator();
-    this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
+    if (this.mockConfig?.enclosureOptions) {
+      this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
+    }
   }
 
   overrideMessage<K extends ApiMethod>(data: ResultMessage, method: K): ResultMessage {
-    let mockData: unknown = data.result;
-    mockData = this.enclosureOverrides(data.result, method);
+    const mockData = this.enclosureOverrides(data.result, method);
     const mockMessage: IncomingWebsocketMessage = {
       id: data.id,
       msg: data.msg,
