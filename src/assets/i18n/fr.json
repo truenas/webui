@@ -175,7 +175,7 @@
   "Windows": "",
   "Wizard iSCSI": "",
   "Your release is named {name}": "",
-  "{n, plural, one {# Application} other {# Applications} } have pending updates!": "",
+  "{n, plural, one {# Application} other {# Applications} } have pending updates.": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
   "{n, plural, one {# core} other {# cores}}": "",

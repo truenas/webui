@@ -3644,7 +3644,7 @@
   "{minute, plural, one {# minute} other {# minutes}}": "",
   "{n, plural, =0 {No Errors} one {# Error} other {# Errors}}": "",
   "{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured": "",
-  "{n, plural, one {# Application} other {# Applications} } have pending updates!": "",
+  "{n, plural, one {# Application} other {# Applications} } have pending updates.": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
   "{n, plural, one {# boot environment} other {# boot environments}} has been deleted.": "",
