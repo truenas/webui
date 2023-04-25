@@ -84,7 +84,6 @@ export class IpmiFormComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private validatorsService: IxValidatorsService,
-    // private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<IpmiFormComponent>,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
@@ -231,7 +230,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(null, true);
+          this.slideInRef.close();
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );

@@ -93,7 +93,7 @@ export class KubernetesSettingsComponent implements OnInit {
               return;
             }
             this.loader.close();
-            this.slideInRef.close(null, true);
+            this.slideInRef.close();
           }),
           catchError((error) => {
             this.loader.close();

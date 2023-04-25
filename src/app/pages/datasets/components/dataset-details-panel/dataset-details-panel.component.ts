@@ -84,7 +84,7 @@ export class DatasetDetailsPanelComponent {
     const addDataset = this.slideIn.open(DatasetFormComponent, { wide: true });
     addDataset.componentInstance.setForNew(this.dataset.id);
     addDataset.afterClosed$().pipe(
-      filter(({ response }) => Boolean((response as Dataset)?.id)),
+      filter((response) => Boolean((response as Dataset)?.id)),
       untilDestroyed(this),
     ).subscribe(({ response }) => {
       const dataSet = response as Dataset;
@@ -101,7 +101,7 @@ export class DatasetDetailsPanelComponent {
     const addZvolSlide = this.slideIn.open(ZvolFormComponent);
     addZvolSlide.componentInstance.zvolFormInit(true, this.dataset.id);
     addZvolSlide.afterClosed$().pipe(
-      filter(({ response }) => Boolean((response as Dataset)?.id)),
+      filter((response) => Boolean((response as Dataset)?.id)),
       untilDestroyed(this),
     ).subscribe(({ response }) => {
       const zvol = response as Dataset;

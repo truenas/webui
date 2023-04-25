@@ -18,6 +18,7 @@ import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/c
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -70,7 +71,6 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
@@ -100,7 +100,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<CloudCredentialsFormComponent>,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -162,7 +162,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInService.closeAll();
+          this.slideInRef.close();
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -244,7 +244,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.slideInService.closeAll();
+          this.slideInRef.close();
         },
       });
   }

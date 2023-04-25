@@ -45,8 +45,7 @@ export class BootEnvironmentFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private nameValidationService: NameValidationService,
-    // private slideInService: IxSlideInService,
-    private slideInRef: IxSlideInRef<BootEnvironmentFormComponent>,
+    private slideInRef: IxSlideInRef<BootEnvironmentFormComponent, boolean>,
     private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
@@ -102,11 +101,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInRef.close(null, true);
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInRef.close(error, false);
+            this.slideInRef.close();
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });
@@ -124,11 +123,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInRef.close(null, true);
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInRef.close(error, false);
+            this.slideInRef.close();
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });
@@ -144,11 +143,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInRef.close(null, true);
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInRef.close(error, false);
+            this.slideInRef.close();
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });

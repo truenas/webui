@@ -50,7 +50,7 @@ export class DatasetFormComponent {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideInRef: IxSlideInRef<DatasetFormComponent>,
+    private slideInRef: IxSlideInRef<DatasetFormComponent, Dataset>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialog: DialogService,
@@ -172,7 +172,7 @@ export class DatasetFormComponent {
       next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(null, createdDataset);
+        this.slideInRef.close(createdDataset);
       },
       error: (error) => {
         this.isLoading = false;

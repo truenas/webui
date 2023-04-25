@@ -18,11 +18,11 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, KeychainCredentialService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
 
@@ -139,7 +139,7 @@ export class SshConnectionFormComponent {
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<SshConnectionFormComponent>,
     public formatter: IxFormatterService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
@@ -203,7 +203,7 @@ export class SshConnectionFormComponent {
             this.dialogRef.close();
           }
         } else {
-          this.slideIn.closeAll();
+          this.slideInRef.close();
         }
       },
       error: (error) => {

@@ -103,7 +103,6 @@ export class OpenVpnClientConfigComponent implements OnInit {
     private services: ServicesService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    // private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<OpenVpnClientConfigComponent>,
     private dialogService: DialogService,
     private router: Router,

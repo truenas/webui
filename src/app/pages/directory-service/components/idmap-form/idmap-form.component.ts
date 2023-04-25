@@ -19,6 +19,7 @@ import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -27,7 +28,6 @@ import {
   DialogService, IdmapService, ValidationService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;
@@ -153,7 +153,7 @@ export class IdmapFormComponent implements OnInit {
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<IdmapFormComponent>,
     private router: Router,
     private snackbar: SnackbarService,
   ) {}
@@ -204,7 +204,7 @@ export class IdmapFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.closeAll();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

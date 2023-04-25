@@ -100,7 +100,6 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    // private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<OpenVpnServerConfigComponent>,
     private dialogService: DialogService,
     private storageService: StorageService,
@@ -128,7 +127,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(null, true);
+          this.slideInRef.close();
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

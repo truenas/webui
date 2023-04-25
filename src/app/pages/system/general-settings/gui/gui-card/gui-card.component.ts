@@ -5,7 +5,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { ResponseOnClose } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -39,8 +38,8 @@ export class GuiCardComponent {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(GuiFormComponent);
-    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(({ response }: ResponseOnClose) => {
-      if (response === true) return;
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe((response) => {
+      if (response) return;
 
       this.store$.dispatch(guiFormClosedWithoutSaving());
     });

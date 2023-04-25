@@ -71,7 +71,7 @@ export class GuiFormComponent {
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
-    private slideInRef: IxSlideInRef<GuiFormComponent>,
+    private slideInRef: IxSlideInRef<GuiFormComponent, boolean>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
@@ -173,7 +173,7 @@ export class GuiFormComponent {
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
       }).pipe(
-        tap(() => this.slideInRef.close(null, true)),
+        tap(() => this.slideInRef.close(true)),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -211,7 +211,7 @@ export class GuiFormComponent {
         });
       });
     } else {
-      this.slideInRef.close(null, true);
+      this.slideInRef.close(true);
     }
   }
 

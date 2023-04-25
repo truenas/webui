@@ -84,9 +84,6 @@ export class IdmapListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   prerequisite(): Promise<boolean> {
@@ -112,7 +109,8 @@ export class IdmapListComponent implements EntityTableConfig {
       onClick: () => {
         this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
-            this.slideIn.open(IdmapFormComponent);
+            const slideInRef = this.slideIn.open(IdmapFormComponent);
+            slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
           } else {
             this.dialogService.confirm({
               title: helptext.idmap.enable_ad_dialog.title,
@@ -137,8 +135,9 @@ export class IdmapListComponent implements EntityTableConfig {
       label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
       onClick: (rowToEdit: IdmapRow) => {
-        const slideInServiceRef = this.slideIn.open(IdmapFormComponent);
-        slideInServiceRef.componentInstance.setIdmapForEdit(rowToEdit);
+        const slideInRef = this.slideIn.open(IdmapFormComponent);
+        slideInRef.componentInstance.setIdmapForEdit(rowToEdit);
+        slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     });
     if (!requiredIdmapDomains.includes(row.name as IdmapName)) {
@@ -163,6 +162,7 @@ export class IdmapListComponent implements EntityTableConfig {
   }
 
   showActiveDirectoryForm(): void {
-    this.slideIn.open(ActiveDirectoryComponent, { wide: true });
+    const slideInRef = this.slideIn.open(ActiveDirectoryComponent, { wide: true });
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

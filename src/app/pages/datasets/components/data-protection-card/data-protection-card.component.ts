@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -26,10 +25,7 @@ export class DataProtectionCardComponent {
   addSnapshot(): void {
     const addFormSlide = this.slideIn.open(SnapshotAddFormComponent);
     addFormSlide.componentInstance.setDataset(this.dataset.id);
-    addFormSlide.afterClosed$().pipe(
-      filter((value) => value.response === true),
-      untilDestroyed(this),
-    ).subscribe(() => {
+    addFormSlide.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
     });
   }

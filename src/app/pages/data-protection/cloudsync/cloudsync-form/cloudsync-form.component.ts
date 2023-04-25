@@ -748,7 +748,7 @@ export class CloudsyncFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close(null, true);
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

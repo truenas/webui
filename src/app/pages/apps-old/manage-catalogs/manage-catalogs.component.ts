@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
@@ -88,10 +88,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
         this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
       }
     });
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refresh();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -157,14 +153,21 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       message: helptext.thirdPartyRepoWarning.message,
       buttonText: helptext.thirdPartyRepoWarning.btnMsg,
       hideCheckbox: true,
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
-      () => this.slideInService.open(CatalogAddFormComponent),
-    );
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.slideInService.open(CatalogAddFormComponent).afterClosed$()),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.refresh();
+    });
   }
 
   edit(catalog: Catalog): void {
-    const slideInServiceRef = this.slideInService.open(CatalogEditFormComponent);
-    slideInServiceRef.componentInstance.setCatalogForEdit(catalog);
+    const slideInRef = this.slideInService.open(CatalogEditFormComponent);
+    slideInRef.componentInstance.setCatalogForEdit(catalog);
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
+      this.refresh();
+    });
   }
 
   refreshRow(row: Catalog): void {

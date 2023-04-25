@@ -128,7 +128,7 @@ export class WebdavFormComponent {
         complete: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close(null, true);
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isFormLoading = false;

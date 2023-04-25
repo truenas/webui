@@ -10,7 +10,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -107,11 +106,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   onImportPool(): void {
     const slideInRef = this.slideIn.open(ImportPoolComponent);
-    slideInRef.afterClosed$()
-      .pipe(
-        filter((value) => value.response === true),
-        untilDestroyed(this),
-      ).subscribe(() => this.store.loadDashboard());
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => this.store.loadDashboard());
   }
 
   createPool(): void {

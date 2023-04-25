@@ -132,7 +132,6 @@ export class InterfaceFormComponent implements OnInit {
     private translate: TranslateService,
     private networkService: NetworkService,
     private errorHandler: FormErrorHandlerService,
-    // private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<InterfaceFormComponent>,
     private core: CoreService,
     private validatorsService: IxValidatorsService,
@@ -227,7 +226,7 @@ export class InterfaceFormComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-        this.slideInRef.close(null, true);
+        this.slideInRef.close();
 
         this.ws.call('interface.default_route_will_be_removed').pipe(
           filter(Boolean),

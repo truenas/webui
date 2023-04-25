@@ -16,7 +16,6 @@ import {
 export class IxSlideInService {
   private slideInComponent: IxSlideInComponent;
   private slideInClosed$ = new Subject<boolean>();
-  modalType: Type<unknown>;
 
   constructor(
     private location: Location,
@@ -29,10 +28,8 @@ export class IxSlideInService {
     this.slideInComponent = modal;
   }
 
-  open<T>(modal: Type<T>, params?: { wide?: boolean; data?: { [key: string]: unknown } }): IxSlideInRef<T> {
-    // this.modalType = modal;
-
-    return this.slideInComponent.openSlideIn<T>(modal, params);
+  open<T, R>(modal: Type<T>, params?: { wide?: boolean; data?: R }): IxSlideInRef<T, R> {
+    return this.slideInComponent.openSlideIn<T, R>(modal, params);
   }
 
   closeAll(): void {
@@ -45,6 +42,11 @@ export class IxSlideInService {
     this.slideInComponent.slideInRefList = [];
   }
 
+  closeFromHeader(): void {
+    this.slideInComponent.close();
+  }
+
+  // need remove all subscribers
   get onClose$(): Subject<boolean> {
     return this.slideInClosed$;
   }

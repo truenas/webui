@@ -40,7 +40,6 @@ export class StaticRouteFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    // private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<StaticRouteFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -70,7 +69,7 @@ export class StaticRouteFormComponent {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(null, true);
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

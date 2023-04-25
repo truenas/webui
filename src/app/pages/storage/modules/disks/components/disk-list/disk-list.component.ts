@@ -9,7 +9,7 @@ import {
   forkJoin, lastValueFrom, of, Subject, switchMap,
 } from 'rxjs';
 import {
-  catchError, debounceTime, filter, map,
+  catchError, debounceTime, map,
 } from 'rxjs/operators';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -87,14 +87,14 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         const diskBulkEditFormSlide = this.slideInService.open(DiskBulkEditComponent);
         diskBulkEditFormSlide.componentInstance.setFormDiskBulk(selected);
         diskBulkEditFormSlide.afterClosed$()
-          .pipe(filter((value) => !!value.response), untilDestroyed(this)).subscribe(() => {
+          .pipe(untilDestroyed(this)).subscribe(() => {
             this.getData();
           });
       } else {
         const editFormSlide = this.slideInService.open(DiskFormComponent, { wide: true });
         editFormSlide.componentInstance.setFormDisk(selected[0]);
         editFormSlide.afterClosed$()
-          .pipe(filter((value) => !!value.response), untilDestroyed(this)).subscribe(() => {
+          .pipe(untilDestroyed(this)).subscribe(() => {
             this.getData();
           });
       }
@@ -138,7 +138,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         const editFormSlideRef = this.slideInService.open(DiskFormComponent, { wide: true });
         editFormSlideRef.componentInstance.setFormDisk(disk);
         editFormSlideRef.afterClosed$()
-          .pipe(filter((value) => !!value.response), untilDestroyed(this)).subscribe(() => {
+          .pipe(untilDestroyed(this)).subscribe(() => {
             this.getData();
           });
       },

@@ -197,10 +197,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-    slideInRef.afterClosed$().pipe(
-      filter(({ response }) => Boolean(response)),
-      untilDestroyed(this),
-    ).subscribe(() => {
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -209,10 +206,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
     const rsyncTask = this.entityList.rows.find((row) => row.id === id);
     const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
     slideInRef.componentInstance.setTaskForEdit(rsyncTask);
-    slideInRef.afterClosed$().pipe(
-      filter(({ response }) => Boolean(response)),
-      untilDestroyed(this),
-    ).subscribe(() => {
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

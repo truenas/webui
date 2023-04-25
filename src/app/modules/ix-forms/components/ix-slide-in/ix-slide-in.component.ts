@@ -1,7 +1,8 @@
 import {
   Component,
   ElementRef,
-  HostListener, Injector,
+  HostListener,
+  Injector,
   Input,
   OnDestroy,
   OnInit,
@@ -25,22 +26,18 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class IxSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
-  @ViewChild('overlay', { static: true, read: ViewContainerRef }) overlayElement: ElementRef<HTMLElement>;
+  @ViewChild('slideIn', { static: true, read: ElementRef }) slideIn: ElementRef<HTMLElement>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
-    if (this.element) {
-      const overlayId: string = this.overlayElement.nativeElement.getAttribute('id');
-      this.closeSlideIn(overlayId);
-    }
+    this.close();
   }
 
   isSlideInOpen = false;
   wide = false;
   private element: HTMLElement;
-  timeOutOfClear: Subscription;
-  wasBodyCleared = false;
+  private wasBodyCleared = false;
+  private timeOutOfClear: Subscription;
   slideInRefList: IxSlideInRef<unknown>[] = [];
-  overlayId: string;
 
   constructor(
     private el: ElementRef,
@@ -60,14 +57,19 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInService.setModal(this);
   }
 
-  closeSlideIn(id?: string): void {
+  close(): void {
+    if (!this.element) { return; }
+
+    const instanceInBody = this.slideIn.nativeElement.firstChild;
+    const ixSlideInRef = this.slideInRefList.find((ref) => ref.hostOfInstance === instanceInBody);
+
+    this.closeSlideIn(ixSlideInRef.uuid);
+  }
+
+  closeSlideIn(id: string): void {
     this.isSlideInOpen = false;
     this.wasBodyCleared = true;
-
-    if (id) {
-      this.slideInRefList = this.slideInRefList.filter((ref) => ref.uuid !== id);
-    }
-
+    this.slideInRefList = this.slideInRefList.filter((ref) => ref.uuid !== id);
     this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
       // Destroying child component later improves performance a little bit.
       // 200ms matches transition duration
@@ -76,10 +78,10 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     });
   }
 
-  openSlideIn<T>(
+  openSlideIn<T, R>(
     componentType: Type<T>,
-    params?: { wide?: boolean; data?: { [key: string]: unknown } },
-  ): IxSlideInRef<T> {
+    params?: { wide?: boolean; data?: R },
+  ): IxSlideInRef<T, R> {
     if (this.isSlideInOpen) {
       console.error('SlideIn is already open');
     }
@@ -93,29 +95,27 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInBody.clear();
     this.wasBodyCleared = false;
     // clear body and close all slides
-    this.slideInRefList.forEach((ref) => ref.close());
+    (this.slideInRefList as IxSlideInRef<T, R>[]).forEach((ref) => ref.close());
     this.slideInRefList = [];
-    // the componentType will be removed
-    return this.createSlideInRef(componentType, params);
+
+    return this.createSlideInRef<T, R>(componentType, params?.data);
   }
 
-  createSlideInRef<T>(
+  createSlideInRef<T, R>(
     componentType: Type<T>,
-    params?: { wide?: boolean; data?: { [key: string]: unknown } },
-  ): IxSlideInRef<T> {
-    const slideInRef = new IxSlideInRef<T>(this, componentType);
-    this.slideInRefList.push(slideInRef);
-
+    data?: R,
+  ): IxSlideInRef<T, R> {
+    const slideInRef = new IxSlideInRef<T, R>(this);
     const injector = Injector.create({
       providers: [
-        { provide: SLIDE_IN_DATA, useValue: params?.data },
+        { provide: SLIDE_IN_DATA, useValue: data },
         { provide: IxSlideInRef, useValue: slideInRef },
       ],
     });
-    const componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
-    slideInRef.componentInstance = componentRef.instance;
+    slideInRef.componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
     slideInRef.uuid = UUID.UUID();
-    this.overlayId = slideInRef.uuid;
+
+    this.slideInRefList.push(slideInRef);
 
     return slideInRef;
   }

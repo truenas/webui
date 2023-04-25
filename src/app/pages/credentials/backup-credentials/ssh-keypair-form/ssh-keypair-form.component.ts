@@ -9,12 +9,12 @@ import helptext from 'app/helptext/system/ssh-keypairs';
 import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, StorageService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -51,7 +51,7 @@ export class SshKeypairFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<SshKeypairFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
@@ -122,7 +122,7 @@ export class SshKeypairFormComponent {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.closeAll();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

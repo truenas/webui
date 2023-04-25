@@ -3,15 +3,13 @@
   [class.open]="isSlideInOpen"
   [class.wide]="wide"
 >
-  <div class="ix-slide-in-body">
+  <div #slideIn class="ix-slide-in-body">
     <ng-template #body></ng-template>
   </div>
 </div>
 
 <div
-  #overlay
   [class]="['ix-slide-in-background', 'ix-' + id + '-background']"
   [class.open]="isSlideInOpen"
-  [id]="overlayId"
-  (click)="closeSlideIn(overlayId)"
+  (click)="close()"
 ></div>

@@ -45,10 +45,7 @@ export class DiskInfoCardComponent {
   onEdit(): void {
     const editFormSlide = this.slideInService.open(DiskFormComponent, { wide: true });
     editFormSlide.componentInstance.setFormDisk(this.disk);
-    editFormSlide.afterClosed$().pipe(
-      filter((value) => !!value.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
+    editFormSlide.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
       this.devicesStore.reloadList();
     });
   }

@@ -183,7 +183,7 @@ export class ZvolFormComponent {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: IxSlideInRef<ZvolFormComponent>,
+    private slideInRef: IxSlideInRef<ZvolFormComponent, Dataset>,
     private slideInService: IxSlideInService,
     private formatter: IxFormatterService,
     protected storageService: StorageService,
@@ -559,7 +559,7 @@ export class ZvolFormComponent {
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => {
         this.isLoading = false;
-        this.slideInRef.close(null, dataset);
+        this.slideInRef.close(dataset);
       },
       error: (error) => {
         this.isLoading = false;
@@ -620,9 +620,9 @@ export class ZvolFormComponent {
 
         if (!data.volsize || data.volsize >= roundedVolSize) {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
-            next: () => {
+            next: (dataset) => {
               this.isLoading = false;
-              this.slideInRef.close(null, true);
+              this.slideInRef.close(dataset);
             },
             error: (error) => {
               this.isLoading = false;
@@ -636,7 +636,7 @@ export class ZvolFormComponent {
             title: helptext.zvol_save_errDialog.title,
             message: helptext.zvol_save_errDialog.msg,
           });
-          this.slideInRef.close(null, false);
+          this.slideInRef.close();
         }
       },
       error: (error: WebsocketError): void => {

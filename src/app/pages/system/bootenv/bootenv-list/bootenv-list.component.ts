@@ -114,7 +114,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
     slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Create);
     slideInServiceRef.afterClosed$().pipe(
-      filter(({ response }) => Boolean(response)),
+      filter((response) => Boolean(response)),
       untilDestroyed(this),
     ).subscribe(() => {
       this.getBootEnvironments();
@@ -125,7 +125,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
     slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Rename, bootenv.id);
     slideInServiceRef.afterClosed$().pipe(
-      filter(({ response }) => Boolean(response)),
+      filter((response) => Boolean(response)),
       untilDestroyed(this),
     ).subscribe(() => {
       this.getBootEnvironments();
@@ -136,7 +136,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     const slideInServiceRef = this.slideInService.open(BootEnvironmentFormComponent);
     slideInServiceRef.componentInstance.setupForm(BootEnvironmentAction.Clone, bootenv.id);
     slideInServiceRef.afterClosed$().pipe(
-      filter(({ response }) => Boolean(response)),
+      filter((response) => Boolean(response)),
       untilDestroyed(this),
     ).subscribe(() => {
       this.getBootEnvironments();

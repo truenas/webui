@@ -191,20 +191,14 @@ export class SharesDashboardComponent implements AfterViewInit {
           detailsHref: '/sharing/nfs',
           add: () => {
             const slideInRef = this.slideInService.open(NfsFormComponent);
-            slideInRef.afterClosed$().pipe(
-              filter(({ response }) => Boolean(response)),
-              untilDestroyed(this),
-            ).subscribe(() => {
+            slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
               this.refreshAfterClosing(this.nfsTable);
             });
           },
           edit: (row: NfsShare): void => {
             const slideInRef = this.slideInService.open(NfsFormComponent);
             slideInRef.componentInstance.setNfsShareForEdit(row);
-            slideInRef.afterClosed$().pipe(
-              filter(({ response }) => Boolean(response)),
-              untilDestroyed(this),
-            ).subscribe(() => {
+            slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
               this.refreshAfterClosing(this.nfsTable);
             });
           },
@@ -246,10 +240,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           add: () => {
             const slideInRef = this.slideInService.open(IscsiWizardComponent);
-            slideInRef.afterClosed$().pipe(
-              filter(({ response }) => Boolean(response)),
-              untilDestroyed(this),
-            ).subscribe(() => {
+            slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
               this.refreshDashboard();
             });
           },
@@ -257,10 +248,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           edit: (row: IscsiTarget) => {
             const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true });
             slideInRef.componentInstance.setTargetForEdit(row);
-            slideInRef.afterClosed$().pipe(
-              filter(({ response }) => Boolean(response)),
-              untilDestroyed(this),
-            ).subscribe(() => {
+            slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
               this.refreshAfterClosing(this.iscsiTable);
             });
           },
@@ -319,10 +307,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           add: () => {
             const slideInRef = this.slideInService.open(WebdavFormComponent);
-            slideInRef.afterClosed$().pipe(
-              filter(({ response }) => Boolean(response)),
-              untilDestroyed(this),
-            ).subscribe(() => {
+            slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
               this.refreshAfterClosing(this.webdavTable);
             });
           },
@@ -330,10 +315,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           edit: (row: WebDavShare) => {
             const slideInServiceRef = this.slideInService.open(WebdavFormComponent);
             slideInServiceRef.componentInstance.setWebdavForEdit(row);
-            slideInServiceRef.afterClosed$().pipe(
-              filter(({ response }) => Boolean(response)),
-              untilDestroyed(this),
-            ).subscribe(() => {
+            slideInServiceRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
               this.refreshAfterClosing(this.webdavTable);
             });
           },
@@ -378,10 +360,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           limitRowsByMaxHeight: true,
           add: () => {
             const slideInRef = this.slideInService.open(SmbFormComponent);
-            slideInRef.afterClosed$().pipe(
-              filter(({ response }) => Boolean(response)),
-              untilDestroyed(this),
-            ).subscribe(() => {
+            slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
               this.refreshAfterClosing(this.smbTable);
             });
           },
@@ -394,10 +373,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             } else {
               const slideInRef = this.slideInService.open(SmbFormComponent);
               slideInRef.componentInstance.setSmbShareForEdit(row);
-              slideInRef.afterClosed$().pipe(
-                filter(({ response }) => Boolean(response)),
-                untilDestroyed(this),
-              ).subscribe(() => {
+              slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
                 this.refreshAfterClosing(this.smbTable);
               });
             }
@@ -439,7 +415,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                             switchMap((sharesecs) => {
                               const slideInRef = this.slideInService.open(SmbAclComponent);
                               slideInRef.componentInstance.setSmbShareName(sharesecs[0].share_name);
-                              return slideInRef.afterClosed$().pipe(filter(({ response }) => Boolean(response)));
+                              return slideInRef.afterClosed$();
                             }),
                             untilDestroyed(this),
                           ).subscribe(() => {

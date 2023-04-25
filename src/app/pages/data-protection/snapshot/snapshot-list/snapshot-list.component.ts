@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take } from 'rxjs';
+import { take } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   PeriodicSnapshotTask,
@@ -142,10 +142,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-    slideInRef.afterClosed$().pipe(
-      filter(({ response }) => Boolean(response)),
-      untilDestroyed(this),
-    ).subscribe(() => {
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -154,10 +151,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     const snapshotTask = this.entityList.rows.find((row) => row.id === id);
     const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
     slideInRef.componentInstance.setTaskForEdit(snapshotTask);
-    slideInRef.afterClosed$().pipe(
-      filter(({ response }) => Boolean(response)),
-      untilDestroyed(this),
-    ).subscribe(() => {
+    slideInRef.afterClosed$().pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

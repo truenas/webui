@@ -92,7 +92,7 @@ export class ImportPoolComponent implements OnInit {
       next: () => {
         dialogRef.close(true);
         this.isLoading = false;
-        this.slideInRef.close(null, true);
+        this.slideInRef.close();
         this.modalService.refreshTable();
       },
       error: (error: WebsocketError | Job) => {
