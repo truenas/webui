@@ -25,9 +25,9 @@ import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
@@ -372,7 +372,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       conf.push({
         id: conf.length.toString(),
         name: 'Pool',
-        identifier: `name,${pool.name}`,
+        identifier: `name,Pool:${pool.name}`,
         rendered: false,
       });
     });
@@ -399,18 +399,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    switch (item.name.toLowerCase()) {
-      case 'storage':
-        return this.volumeData;
-      default: {
-        const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
-        if (!dashboardPool) {
-          console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-          return;
-        }
-        return this.volumeData && this.volumeData[dashboardPool.name];
-      }
+    if (item.name.toLowerCase() === 'storage') {
+      return this.volumeData;
     }
+
+    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value.split(':')[1]);
+    if (!dashboardPool) {
+      console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
+      return undefined;
+    }
+    return this.volumeData && this.volumeData[dashboardPool.name];
   }
 
   dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
@@ -436,7 +434,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'pool':
         if (spl) {
-          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value.split(':')[1]);
           if (pools.length) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
