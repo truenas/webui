@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "enclosureOptions": {
+    "controllerModel": "M50",
+    "expansionModels": [
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102"
+    ],
+    "dispersal": "default"
+  },
+  "systemProduct": "TRUENAS-M50"
+}

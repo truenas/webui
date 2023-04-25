@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import {
   merge, Observable, of, throwError,
 } from 'rxjs';
 import {
   filter, map, share, switchMap, take, takeWhile, tap,
 } from 'rxjs/operators';
+import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -24,10 +26,18 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 })
 export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
+  mockUtils: MockEnclosureUtils;
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
-  ) { }
+  ) {
+    this.mockUtils = new MockEnclosureUtils();
+    this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+      if (!isConnected) {
+        this.clearSubscriptions();
+      }
+    });
+  }
 
   private get ws$(): Observable<unknown> {
     return this.wsManager.websocket$;
@@ -48,8 +58,21 @@ export class WebSocketService {
           console.error('Error: ', data.error);
           return throwError(() => data.error);
         }
+
+        // Mock Data
+        if (
+          environment
+          && !environment.production
+          && environment.mockConfig?.enabled
+          && data.msg === IncomingApiMessageType.Result
+        ) {
+          const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
+          return of(mockResultMessage);
+        }
         return of(data);
       }),
+      // END Mock Data
+
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
     );
@@ -109,6 +132,10 @@ export class WebSocketService {
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
+  }
+
+  clearSubscriptions(): void {
+    this.eventSubscriptions.clear();
   }
 
   private subscribeToJobUpdates(jobId: number): Observable<Job> {

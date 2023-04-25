@@ -1,4 +1,9 @@
-import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
+import {
+  Enclosure,
+  EnclosureElement,
+  EnclosureElementData,
+  EnclosureElementsGroup,
+} from 'app/interfaces/enclosure.interface';
 
 export class MockEnclosure {
   enclosureNumber = 0;
@@ -233,23 +238,54 @@ export class MockEnclosure {
 
   constructor(number: number) {
     this.enclosureNumber = number;
-    this.resetSlotsToEmpty();
+    this.enclosureInit();
   }
 
   addDiskToSlot(diskName: string, slotNumber: number): MockEnclosure {
     if (!this.data) return this;
 
-    const slot: EnclosureElement = { ...this.slotTemplate };
-    slot.slot = slotNumber;
-    slot.data.Device = diskName;
-    this.addSlotToData(slot);
+    const element: EnclosureElement = { ...this.slotTemplate };
+    const elementData: EnclosureElementData = { ...this.slotTemplate.data };
+    elementData.Device = diskName;
+    element.slot = slotNumber;
+    element.data = elementData;
+
+    this.addSlotToData(element);
     return this;
   }
 
-  protected addSlotToData(slot: EnclosureElement): void {
-    const slotElementsGroup: EnclosureElementsGroup = this.data.elements[0] as EnclosureElementsGroup;
-    const slotIndex = slotElementsGroup.elements.findIndex((element: EnclosureElement) => element.slot === slot.slot);
-    slotElementsGroup.elements.splice(slotIndex, 1, this.processSlotTemplate(slot));
+  addDiskToNextEmptySlot(diskName: string): MockEnclosure {
+    const emptySlots = this.getEmptySlots().map((element: EnclosureElement) => element.slot);
+    if (emptySlots.length === 0) {
+      console.warn('No open slots available in enclosure');
+    } else {
+      this.addDiskToSlot(diskName, emptySlots[0]);
+    }
+    return this;
+  }
+
+  removeDiskFromSlot(diskName: string, slotNumber: number): MockEnclosure {
+    const element: EnclosureElement = { ...this.emptySlotTemplate };
+    element.slot = slotNumber;
+    const elementData: EnclosureElementData = { ...this.emptySlotTemplate.data };
+    element.data = elementData;
+
+    this.addSlotToData(element);
+    return this;
+  }
+
+  protected addSlotToData(element: EnclosureElement): void {
+    const slotElementsGroup = this.getSlots();
+
+    const slotIndex = slotElementsGroup.findIndex((groupElement: EnclosureElement) => {
+      return groupElement.slot === element.slot;
+    });
+    slotElementsGroup.splice(slotIndex, 1, this.processSlotTemplate(element));
+  }
+
+  enclosureInit(): void {
+    this.data.number = this.enclosureNumber;
+    this.resetSlotsToEmpty();
   }
 
   resetSlotsToEmpty(): void {
@@ -272,5 +308,23 @@ export class MockEnclosure {
     // Subclasses can override this method to deal with whatever unique values
     // particular models may require. eg. minis have the original property
     return element;
+  }
+
+  protected getSlots(): EnclosureElement[] {
+    return (this.data.elements[0] as EnclosureElementsGroup).elements;
+  }
+
+  getSlotByDiskName(diskName: string): number | null {
+    const enclosureElement: EnclosureElement = this.getSlots()
+      .find((element: EnclosureElement) => element.data.Device === diskName);
+    return enclosureElement.slot;
+  }
+
+  getPopulatedSlots(): EnclosureElement[] {
+    return this.getSlots().filter((element: EnclosureElement) => element.status === 'OK');
+  }
+
+  getEmptySlots(): EnclosureElement[] {
+    return this.getSlots().filter((element: EnclosureElement) => element.status === 'Not installed');
   }
 }

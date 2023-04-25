@@ -695,6 +695,10 @@ export class CloudsyncFormComponent {
     }
 
     attributesToFill.forEach((name) => {
+      if (name === 'acknowledge_abuse' && this.form.controls.credentials.value !== this.googleDriveProviderId) {
+        return;
+      }
+
       if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
         if (name === 'task_encryption') {
           attributes[name] = formValue[name] === '' ? null : formValue[name];
