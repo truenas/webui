@@ -18,7 +18,7 @@ import {
   TrackByFunction,
 } from '@angular/core';
 import {
-  ActivatedRoute, Router,
+  ActivatedRoute, NavigationStart, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -125,7 +125,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private slideIn: IxSlideInService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
-  ) {}
+  ) {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
+      .subscribe(() => {
+        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+          this.closeMobileDetails();
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
