@@ -4137,7 +4137,7 @@
   "{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
-  "{n, plural, one {# application} other {# applications} } have pending updates!": "",
+  "{n, plural, one {# application} other {# applications} } have pending updates.": "",
   "{n, plural, one {# boot environment} other {# boot environments}} has been deleted.": "",
   "{n, plural, one {# core} other {# cores}}": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",

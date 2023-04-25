@@ -1,7 +1,7 @@
 <ng-template #pageHeader>
   <ix-page-title-header [pageTitle]="'Installed' | translate">
     <div *ngIf="hasUpdates" class="global-update">
-      <span>{{ '{n, plural, one {# application} other {# applications} } have pending updates!' | translate: { n: appsUpdateAvailable } }}</span>
+      <span>{{ '{n, plural, one {# application} other {# applications} } have pending updates.' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
         color="primary"
