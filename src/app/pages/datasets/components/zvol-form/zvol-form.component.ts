@@ -19,6 +19,8 @@ import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbi
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import {
   CloudCredentialService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
@@ -185,6 +187,7 @@ export class ZvolFormComponent {
     private slideInService: IxSlideInService,
     private formatter: IxFormatterService,
     protected storageService: StorageService,
+    protected snackbar: SnackbarService,
   ) {
     this.form.controls.key.disable();
     this.form.controls.passphrase.disable();
@@ -555,10 +558,7 @@ export class ZvolFormComponent {
     delete data.algorithm;
 
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
-      next: (dataset) => {
-        this.isLoading = false;
-        this.slideInService.close(null, { dataset, isNew: this.isNew });
-      },
+      next: (dataset) => this.handleZvolCreateUpdate(dataset),
       error: (error) => {
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
@@ -618,10 +618,7 @@ export class ZvolFormComponent {
 
         if (!data.volsize || data.volsize >= roundedVolSize) {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
-            next: (dataset) => {
-              this.isLoading = false;
-              this.slideInService.close(null, { dataset, isNew: this.isNew });
-            },
+            next: (dataset) => this.handleZvolCreateUpdate(dataset),
             error: (error) => {
               this.isLoading = false;
               this.formErrorHandler.handleWsFormError(error, this.form);
@@ -634,7 +631,7 @@ export class ZvolFormComponent {
             title: helptext.zvol_save_errDialog.title,
             message: helptext.zvol_save_errDialog.msg,
           });
-          this.slideInService.close(null, { isNew: this.isNew });
+          this.slideInService.close(null, false);
         }
       },
       error: (error: WebsocketError): void => {
@@ -699,5 +696,16 @@ export class ZvolFormComponent {
       }
     }
     this.form.controls.readonly.setValue(readonlyValue);
+  }
+
+  private handleZvolCreateUpdate(dataset: Dataset): void {
+    this.isLoading = false;
+    this.slideInService.close(null, dataset);
+
+    this.snackbar.success(
+      this.isNew
+        ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
+        : this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(dataset) }),
+    );
   }
 }

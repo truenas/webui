@@ -4,11 +4,13 @@ import {
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import {
   forkJoin, Observable, of, switchMap, tap,
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -22,6 +24,7 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -53,6 +56,8 @@ export class DatasetFormComponent {
     private datasetFormService: DatasetFormService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   get isNew(): boolean {
@@ -168,7 +173,12 @@ export class DatasetFormComponent {
       next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close(null, { dataset: createdDataset, isNew: this.isNew });
+        this.slideIn.close(null, createdDataset);
+        this.snackbar.success(
+          this.isNew
+            ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
+            : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
+        );
       },
       error: (error) => {
         this.isLoading = false;
