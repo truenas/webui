@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -19,7 +20,6 @@ export class AppRowComponent {
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Output() clickStatus = new EventEmitter<void>();
-  inProgress = false;
 
   readonly imagePlaceholder = appImagePlaceholder;
 
@@ -29,6 +29,48 @@ export class AppRowComponent {
 
   get isAppStopped(): boolean {
     return this.app.status === ChartReleaseStatus.Stopped;
+  }
+
+  get inProgress(): boolean {
+    return [
+      AppStatus.Deploying,
+      AppStatus.Starting,
+      AppStatus.Stopping,
+    ].includes(this.appStatus);
+  }
+
+  get appStatus(): AppStatus {
+    let status: AppStatus;
+
+    switch (this.app.status) {
+      case ChartReleaseStatus.Active:
+        status = AppStatus.Started;
+        break;
+      case ChartReleaseStatus.Deploying:
+        status = AppStatus.Deploying;
+        break;
+      case ChartReleaseStatus.Stopped:
+        status = AppStatus.Stopped;
+        break;
+    }
+
+    if (this.job) {
+      const [, params] = this.job.arguments;
+      if (this.job.state === JobState.Running && params.replica_count === 1) {
+        status = AppStatus.Starting;
+      }
+      if (this.job.state === JobState.Running && params.replica_count === 0) {
+        status = AppStatus.Stopping;
+      }
+      if (this.job.state === JobState.Success && params.replica_count === 1) {
+        status = AppStatus.Started;
+      }
+      if (this.job.state === JobState.Success && params.replica_count === 0) {
+        status = AppStatus.Stopped;
+      }
+    }
+
+    return status;
   }
 
   toggleAppChecked(checked: boolean): void {
@@ -41,14 +83,6 @@ export class AppRowComponent {
 
   stop(): void {
     this.stopApp.emit();
-  }
-
-  statusChanged(status: AppStatus): void {
-    this.inProgress = [
-      AppStatus.Deploying,
-      AppStatus.Starting,
-      AppStatus.Stopping,
-    ].includes(status);
   }
 
   statusPressed(): void {
