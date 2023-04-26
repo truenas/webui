@@ -19,7 +19,6 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
-import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -159,13 +158,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         this.entityEmptyConf.button = undefined;
         break;
       case EmptyType.FirstUse:
-        this.entityEmptyConf.title = helptext.message.not_configured;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = {
-          label: this.translate.instant('Choose Pool'),
-          action: () => this.choosePool(),
-        };
-        break;
       case EmptyType.NoPageData:
         this.entityEmptyConf.title = helptext.message.no_installed;
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
@@ -385,12 +377,5 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   private redirectToAvailableApps(): void {
     this.router.navigate(['/apps', 'available']);
-  }
-
-  private choosePool(): void {
-    const dialog = this.matDialog.open(SelectPoolDialogComponent);
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateChartReleases();
-    });
   }
 }
