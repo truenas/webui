@@ -8,9 +8,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Option, SelectOption } from 'app/interfaces/option.interface';
+import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 
-type IxSelectValue = string | number | string[] | number[];
+type IxSelectValue = SelectOptionValueType;
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   hasErrorInOptions = false;
   opts$: Observable<SelectOption[]>;
   isLoading = false;
-  private opts: Option[] = [];
+  private opts: SelectOption[] = [];
 
   get multipleLabels(): string[] {
     const selectedLabels: string[] = [];
