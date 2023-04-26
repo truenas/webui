@@ -219,7 +219,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             {
               name: helptextSharingNfs.column_enabled,
               prop: 'enabled',
-              width: '60px',
+              width: '100px',
               slideToggle: true,
               onChange: (row: NfsShare) => this.onSlideToggle(ShareType.Nfs, row, 'enabled'),
             },
@@ -324,7 +324,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             {
               prop: 'enabled',
               name: helptextSharingWebdav.column_enabled,
-              width: '60px',
+              width: '100px',
               slideToggle: true,
               onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'enabled'),
             },
@@ -370,7 +370,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             {
               name: helptextSharingSmb.column_enabled,
               prop: 'enabled',
-              width: '60px',
+              width: '100px',
               slideToggle: true,
               onChange: (row: SmbShare) => this.onSlideToggle(ShareType.Smb, row, 'enabled'),
             },
