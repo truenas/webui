@@ -2168,6 +2168,7 @@
   "{serviceName} service failed to start.": "",
   "{serviceName} service failed to stop.": "",
   "{service} Service is not currently running. Start the service now?": "",
+  "{size} Total": "",
   "{size} {type} at {location}": "",
   "{this} and {that}. At least one is required": "",
   "{type} at {location}": "",

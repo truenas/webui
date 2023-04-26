@@ -30,7 +30,7 @@ export function forbiddenAsyncValues(
 
   return (control: FormControl): Observable<ValidationErrors> | null => {
     if (control.value === '' || control.value === undefined) {
-      return null;
+      return of(null);
     }
 
     return request$.pipe(
