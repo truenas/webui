@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -129,7 +129,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.listenForRouteChanges();
     this.listenForSlideFormClosed();
     this.updateChartReleases();
   }
@@ -182,18 +181,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
 
     this.entityEmptyConf.type = type;
-  }
-
-  private listenForRouteChanges(): void {
-    this.activatedRoute.params
-      .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
-        untilDestroyed(this),
-      )
-      .subscribe((appId) => {
-        this.selectAppOnLoad(appId);
-      });
   }
 
   updateChartReleases(): void {
@@ -351,10 +338,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private selectAppOnLoad(appId?: string): void {
+  private selectAppOnLoad(): void {
     if (!this.dataSource.length) {
       return;
     }
+
+    const appId = this.router.url.split('/installed/')?.[1];
 
     const app = this.dataSource.find((chart) => chart.id === appId);
     if (app) {
