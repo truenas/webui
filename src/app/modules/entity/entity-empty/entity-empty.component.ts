@@ -9,7 +9,6 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 })
 export class EntityEmptyComponent {
   @Input() conf: EmptyConfig;
-  @Input() showSpinner = true;
 
   doAction(): void {
     if (this.conf.button.action) {
@@ -18,7 +17,7 @@ export class EntityEmptyComponent {
   }
 
   isLoading(): boolean {
-    return this.conf.type === EmptyType.Loading && this.showSpinner;
+    return this.conf.type === EmptyType.Loading;
   }
 
   getIcon(): string {

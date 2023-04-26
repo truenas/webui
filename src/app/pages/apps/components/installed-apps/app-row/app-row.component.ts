@@ -56,13 +56,13 @@ export class AppRowComponent {
 
     if (this.job) {
       const [, params] = this.job.arguments;
-      if (this.job.state === JobState.Running && params.replica_count === 1) {
+      if (this.job.state === JobState.Running && params.replica_count >= 1) {
         status = AppStatus.Starting;
       }
       if (this.job.state === JobState.Running && params.replica_count === 0) {
         status = AppStatus.Stopping;
       }
-      if (this.job.state === JobState.Success && params.replica_count === 1) {
+      if (this.job.state === JobState.Success && params.replica_count >= 1) {
         status = AppStatus.Started;
       }
       if (this.job.state === JobState.Success && params.replica_count === 0) {

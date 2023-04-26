@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs';
@@ -45,22 +45,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     title: helptext.message.loading,
   };
 
-  emptySearchResultsConf: EmptyConfig = {
-    type: EmptyType.NoSearchResults,
-    title: helptext.message.no_search_result,
-    button: {
-      label: this.translate.instant('Reset Search'),
-      action: () => {
-        this.resetSearch();
-        this.cdr.markForCheck();
-      },
-    },
-  };
-
   constructor(
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
     private router: Router,
     private layoutService: LayoutService,
     private matDialog: MatDialog,
@@ -139,6 +126,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onSearch(query: string): void {
     this.filterString = query;
+
+    if (!this.filteredApps.length) {
+      this.showLoadStatus(EmptyType.NoSearchResults);
+    }
   }
 
   toggleAppsChecked(checked: boolean): void {
@@ -151,11 +142,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   showLoadStatus(type: EmptyType): void {
     switch (type) {
-      case EmptyType.Loading:
-        this.entityEmptyConf.title = helptext.message.loading;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = undefined;
-        break;
       case EmptyType.FirstUse:
         this.entityEmptyConf.title = helptext.message.not_configured;
         this.entityEmptyConf.message = undefined;
@@ -178,6 +164,17 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           action: () => this.openAdvancedSettings(),
         };
         break;
+      case EmptyType.NoSearchResults:
+        this.entityEmptyConf.title = helptext.message.no_search_result;
+        this.entityEmptyConf.message = undefined;
+        this.entityEmptyConf.button = {
+          label: this.translate.instant('Reset Search'),
+          action: () => {
+            this.resetSearch();
+            this.cdr.markForCheck();
+          },
+        };
+        break;
     }
 
     this.entityEmptyConf.type = type;
@@ -185,7 +182,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   updateChartReleases(): void {
     this.isLoading = true;
-    this.showLoadStatus(EmptyType.Loading);
     this.cdr.markForCheck();
 
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
