@@ -10,6 +10,7 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DialogService, WebSocketService,
 } from 'app/services';
@@ -64,6 +65,7 @@ export class ConsoleFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     private store$: Store<AppState>,
   ) {}
 
@@ -100,6 +102,7 @@ export class ConsoleFormComponent implements OnInit {
     this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.cdr.markForCheck();
         this.slideInService.close();

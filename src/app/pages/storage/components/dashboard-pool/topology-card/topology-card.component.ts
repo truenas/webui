@@ -10,7 +10,14 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { StorageDashboardDisk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { SmartTestResult } from 'app/interfaces/smart-test.interface';
+import {
+  Disk,
+  EnclosureAndSlot,
+  StorageDashboardDisk,
+  TopologyDisk,
+  TopologyItem,
+} from 'app/interfaces/storage.interface';
 import { StorageService } from 'app/services';
 
 interface TopologyState {
@@ -20,6 +27,10 @@ interface TopologyState {
   cache: string;
   spare: string;
   dedup: string;
+}
+
+interface EmptyDiskObject {
+  [p: string]: string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot;
 }
 
 const notAssignedDev = 'VDEVs not assigned';
@@ -105,7 +116,10 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     category: PoolTopologyCategory,
     dataVdevs?: TopologyItem[],
   ): string {
-    const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataVdevs);
+    const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
+      return this.dashboardDiskToDisk(disk);
+    });
+    const warnings = this.storageService.validateVdevs(category, vdevs, disks, dataVdevs);
 
     let outputString = vdevs.length ? '' : notAssignedDev;
 
@@ -189,5 +203,24 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       default:
         return false;
     }
+  }
+
+  dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
+    const output: EmptyDiskObject | Disk = {};
+    const keys: string[] = Object.keys(dashDisk);
+    keys.forEach((key: keyof StorageDashboardDisk) => {
+      if (
+        key === 'alerts'
+        || key === 'smartTestsRunning'
+        || key === 'smartTestsFailed'
+        || key === 'tempAggregates'
+      ) {
+        return;
+      }
+
+      output[key as keyof Disk] = dashDisk[key];
+    });
+
+    return output as unknown as Disk;
   }
 }

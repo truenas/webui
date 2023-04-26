@@ -1,13 +1,12 @@
 <ng-template #pageHeader>
   <ix-page-title-header [pageTitle]="'Installed' | translate">
-    <div *ngIf="hasSelectionUpdates" class="global-update">
-      <span>{{ '{n, plural, one {# Application} other {# Applications} } have pending updates!' | translate: { n: hasSelectionUpdates } }}</span>
+    <div *ngIf="hasUpdates" class="global-update">
+      <span>{{ '{n, plural, one {# application} other {# applications} } have pending updates.' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
         color="primary"
         ixTest="update-all"
-        [disabled]="!hasCheckedApps"
-        (click)="onBulkUpgrade()"
+        (click)="onBulkUpgrade(true)"
       >
         {{ 'Update All' | translate }}
       </button>

@@ -48,6 +48,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly formValue$ = this.select((state) => state.formValue);
   readonly disksSelectedManually$ = this.select((state) => state.disksSelectedManually);
   readonly dataVdevs$ = this.select((state) => state.vdevs.data);
+  readonly totalUsableCapacity$ = this.dataVdevs$.pipe(
+    map((vdevs) => vdevs.reduce((previousValue, currentValue) => {
+      return previousValue + currentValue.rawSize;
+    }, 0)),
+  );
   readonly nonUniqueSerialDisks$ = this.unusedDisks$.pipe(
     map((disks) => disks.filter((disk) => disk.duplicate_serial.length)),
   );

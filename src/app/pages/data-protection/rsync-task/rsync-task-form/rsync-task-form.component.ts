@@ -20,6 +20,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { KeychainCredentialService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -118,6 +119,7 @@ export class RsyncTaskFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private userService: UserService,
     private filesystemService: FilesystemService,
+    private snackbar: SnackbarService,
     protected keychainCredentialService: KeychainCredentialService,
     protected matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
@@ -208,6 +210,11 @@ export class RsyncTaskFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Task created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Task updated'));
+        }
         this.isLoading = false;
         this.slideInService.close(null, true);
       },

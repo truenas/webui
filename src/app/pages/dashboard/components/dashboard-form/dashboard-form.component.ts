@@ -5,7 +5,9 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -32,6 +34,8 @@ export class DashboardFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
@@ -97,6 +101,7 @@ export class DashboardFormComponent {
     ).subscribe({
       next: (wasSet) => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Dashboard settings saved'));
         this.onSubmit$.next(this.dashState);
         this.slideInService.close();
 

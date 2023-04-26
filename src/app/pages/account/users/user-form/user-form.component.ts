@@ -23,6 +23,7 @@ import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/p
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
 import { UserService, DialogService } from 'app/services';
@@ -61,7 +62,7 @@ export class UserFormComponent {
     username: ['', [
       Validators.required,
       Validators.pattern(UserService.namePattern),
-      Validators.maxLength(16),
+      Validators.maxLength(32),
     ]],
     email: ['', [Validators.email]],
     password: ['', [
@@ -164,6 +165,7 @@ export class UserFormComponent {
     private validatorsService: IxValidatorsService,
     private filesystemService: FilesystemService,
     private slideIn: IxSlideInService,
+    private snackbar: SnackbarService,
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
@@ -293,8 +295,10 @@ export class UserFormComponent {
         ).subscribe({
           next: (user) => {
             if (this.isNewUser) {
+              this.snackbar.success(this.translate.instant('User added'));
               this.store$.dispatch(userAdded({ user }));
             } else {
+              this.snackbar.success(this.translate.instant('User updated'));
               this.store$.dispatch(userChanged({ user }));
             }
             this.isFormLoading = false;
@@ -318,13 +322,6 @@ export class UserFormComponent {
     const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
-  }
-
-  getUsernameHint(): string {
-    if (this.form.controls.username?.value?.length > 8) {
-      return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
-    }
-    return null;
   }
 
   private setupNewUserForm(): void {
