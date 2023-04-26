@@ -33,13 +33,13 @@ export class MockM50Rear extends MockEnclosure {
     slot: 0,
     data: {
       Descriptor: 'Disk #1',
-      Status: 'Not Installed',
+      Status: 'Not installed',
       Value: 'None',
       Device: null,
     },
     name: 'Array Device Slot',
     descriptor: 'Disk #1',
-    status: 'Not Installed',
+    status: 'Not installed',
     value: 'None',
     value_raw: '0x05000000',
   };
@@ -62,10 +62,11 @@ export class MockM50Rear extends MockEnclosure {
   constructor(number: number) {
     super(number);
     this.enclosureNumber = number;
-    this.resetSlotsToEmpty();
+    this.data.number = number;
+    this.enclosureInit();
   }
 
-  resetSlotsToEmpty(): void {
+  enclosureInit(): void {
     const emptySlots = this.generateEmptySlots(this.totalSlotsRear);
     (this.data.elements[0] as EnclosureElementsGroup).elements = emptySlots;
   }

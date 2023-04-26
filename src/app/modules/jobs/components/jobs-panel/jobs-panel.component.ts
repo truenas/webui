@@ -41,8 +41,7 @@ export class JobsPanelComponent {
     private translate: TranslateService,
     private dialog: DialogService,
     private matDialog: MatDialog,
-  ) {
-  }
+  ) {}
 
   onAbort(job: Job): void {
     this.dialog

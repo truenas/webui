@@ -1,11 +1,11 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
-    is_element_present,
-    wait_on_element_disappear
+    is_element_present
 )
 from pytest_bdd import (
     given,
@@ -65,28 +65,4 @@ def the_disks_page_shoule_appears(driver):
 @then('expand N/A pool disks, click wipe select quick press Wipe and confirm, then close when finished')
 def expand_na_pool_disks_click_wipe_select_quick_press_wipe_and_confirm_then_close_when_finished(driver):
     """expand N/A pool disks, click wipe select quick press Wipe and confirm, then close when finished."""
-    disk_list = []
-    disk_elements = driver.find_elements_by_xpath(xpaths.disks.all_Disk)
-    for disk_element in disk_elements:
-        if is_element_present(driver, f'//tr[contains(.,"{disk_element.text}")]//div[contains(text(),"N/A") or contains(text(),"Exported")]'):
-            disk_list.append(disk_element.text)
-
-    for disk in disk_list:
-        assert wait_on_element(driver, 7, xpaths.disks.disk_Expander(disk), 'clickable')
-        driver.find_element_by_xpath(xpaths.disks.disk_Expander(disk)).click()
-        assert wait_on_element(driver, 7, xpaths.disks.wipe_Disk_Button(disk), 'clickable')
-        driver.find_element_by_xpath(xpaths.disks.wipe_Disk_Button(disk)).click()
-        assert wait_on_element(driver, 7, xpaths.disks.confirm_Box_Title(disk))
-        assert wait_on_element(driver, 7, xpaths.disks.wipe_Button, 'clickable')
-        driver.find_element_by_xpath(xpaths.disks.wipe_Button).click()
-        assert wait_on_element(driver, 7, xpaths.disks.confirm_Box_Title(disk))
-        assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
-        driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
-        assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
-        driver.find_element_by_xpath(xpaths.button.Continue).click()
-        assert wait_on_element(driver, 10, xpaths.progress.progressbar)
-        assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
-        assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
-        assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
-        driver.find_element_by_xpath(xpaths.button.close).click()
-        assert wait_on_element_disappear(driver, 7, xpaths.disks.confirm_Box_Title(disk))
+    rsc.Wiped_Unused_Disk(driver)

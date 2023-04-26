@@ -1,0 +1,31 @@
+.form-actions {
+  margin: 8px 10px;
+
+  button {
+    margin-right: 8px;
+  }
+}
+
+.fieldsets {
+  display: flex;
+  flex-wrap: wrap;
+
+  > * {
+    width: 50%;
+  }
+}
+
+.eligible-snapshots {
+  font-size: 13px;
+  margin-bottom: 15px;
+  margin-left: 10px;
+
+  &.danger {
+    color: var(--red);
+  }
+}
+
+.retention-policy {
+  display: flex;
+  flex-direction: row;
+}

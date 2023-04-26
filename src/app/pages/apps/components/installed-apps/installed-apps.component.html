@@ -1,13 +1,12 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="selectedApp?.name">
-    <div *ngIf="hasSelectionUpdates" class="global-update">
-      <span>{{ '{n, plural, one {# Application} other {# Applications} } have pending updates!' | translate: { n: hasSelectionUpdates } }}</span>
+  <ix-page-title-header [pageTitle]="'Installed' | translate">
+    <div *ngIf="hasUpdates" class="global-update">
+      <span>{{ '{n, plural, one {# application} other {# applications} } have pending updates.' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
         color="primary"
         ixTest="update-all"
-        [disabled]="!hasCheckedApps"
-        (click)="onBulkUpgrade()"
+        (click)="onBulkUpgrade(true)"
       >
         {{ 'Update All' | translate }}
       </button>
@@ -92,7 +91,7 @@
 
       <div class="app-wrapper">
         <div class="app-inner">
-          <div class="app-header">
+          <div class="app-header-row">
             <div>
               <span class="app-name-header">
                 <mat-checkbox
@@ -120,6 +119,7 @@
             </div>
             <div>{{ 'Action' | translate }}</div>
           </div>
+
           <div class="apps-rows">
             <ng-container *ngFor="let app of filteredApps">
               <ix-app-row
@@ -134,6 +134,7 @@
                 (keydown.enter)="selectApp(app)"
               ></ix-app-row>
             </ng-container>
+
             <div *ngIf="!dataSource.length" class="no-apps">
               <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
             </div>
@@ -142,6 +143,7 @@
               <ix-entity-empty [conf]="emptySearchResultsConf"></ix-entity-empty>
             </div>
           </div>
+
         </div>
       </div>
     </div>

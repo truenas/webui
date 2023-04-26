@@ -292,13 +292,13 @@ export class MockEs24 extends MockEnclosure {
         has_slot_status: false,
       },
     ],
-    number: 1,
+    number: 0,
     label: 'iX 4024Js e001',
   } as Enclosure;
 
   constructor(number: number) {
     super(number);
     this.enclosureNumber = number;
-    this.resetSlotsToEmpty();
+    this.enclosureInit();
   }
 }

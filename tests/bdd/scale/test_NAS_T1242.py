@@ -77,11 +77,9 @@ def click_encryption_and_confirm_popup(driver):
     """click encryption and confirm popup."""
     assert wait_on_element(driver, 10, xpaths.pool_manager.encryption_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.encryption_Checkbox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.warning)
-    assert wait_on_element(driver, 10, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__I UNDERSTAND"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__I UNDERSTAND"]').click()
+
+    # Encryption warning
+    rsc.Confirm_Warning(driver)
 
 
 @then('click a drive checkbox and press the right arrow')
@@ -98,17 +96,18 @@ def click_a_drive_checkbox_and_press_the_right_arrow(driver):
 @then('click create confirm the warning checkbox and click CREATE POOL')
 def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
     """click create confirm the warning checkbox and click CREATE POOL."""
-    rsc.Confirm_Single_Disk(driver)
+    # rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_Button).click()
+
     rsc.Confirm_Creating_Pool(driver)
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 30, '//button[contains(text(),"Done")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(text(),"Done")]').click()
-    assert wait_on_element(driver, 10, xpaths.storage.title)
+
+    rsc.Encyrpted_Key_Waring(driver)
 
 
 @then('the pool should appear on the storage page')
 def the_pool_should_appear_on_the_storage_page(driver):
     """the pool should appear on the storage page."""
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 7, xpaths.storage.encrypted_Pool)

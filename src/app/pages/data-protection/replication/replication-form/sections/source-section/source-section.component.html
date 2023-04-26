@@ -1,0 +1,111 @@
+<ix-fieldset [title]="'Source' | translate" [formGroup]="form">
+  <ix-explorer
+    formControlName="source_datasets"
+    [label]="'Source' | translate"
+    [root]="''"
+    [required]="true"
+    [multiple]="true"
+    [tooltip]="helptext.source_datasets_tooltip"
+    [nodeProvider]="nodeProvider"
+  ></ix-explorer>
+  <ng-container *ngIf="!form.value.replicate">
+    <ix-checkbox
+      formControlName="recursive"
+      [label]="'Recursive' | translate"
+      [tooltip]="helptext.recursive_tooltip | translate"
+    ></ix-checkbox>
+    <ix-chips
+      *ngIf="form.value.recursive"
+      formControlName="exclude"
+      [label]="'Exclude Child Datasets' | translate"
+      [tooltip]="helptext.exclude_tooltip | translate"
+    ></ix-chips>
+    <ix-checkbox
+      formControlName="properties"
+      [label]="'Include Dataset Properties' | translate"
+      [tooltip]="helptext.properties_tooltip | translate"
+    ></ix-checkbox>
+  </ng-container>
+  <ix-checkbox
+    formControlName="replicate"
+    [label]="'Full Filesystem Replication' | translate"
+    [tooltip]="helptext.replicate_tooltip | translate"
+  ></ix-checkbox>
+  <ix-chips
+    *ngIf="form.value.replicate || form.value.properties"
+    formControlName="properties_override"
+    [label]="'Properties Override' | translate"
+    [tooltip]="helptext.properties_override_tooltip | translate"
+  ></ix-chips>
+  <ix-chips
+    *ngIf="form.value.replicate || form.value.properties"
+    formControlName="properties_exclude"
+    [label]="'Properties Exclude' | translate"
+    [tooltip]="helptext.properties_exclude_tooltip | translate"
+  ></ix-chips>
+  <ix-select
+    *ngIf="isPush"
+    formControlName="periodic_snapshot_tasks"
+    [label]="'Periodic Snapshot Tasks' | translate"
+    [options]="periodicSnapshotTasks$"
+    [required]="true"
+    [multiple]="true"
+    [tooltip]="helptext.periodic_snapshot_tasks_tooltip | translate"
+  ></ix-select>
+  <ix-checkbox
+    formControlName="restrict_schedule"
+    [label]="'Replicate Specific Snapshots' | translate"
+    [tooltip]="helptext.restrict_schedule_tooltip | translate"
+  ></ix-checkbox>
+  <ng-container *ngIf="form.value.restrict_schedule">
+    <ix-scheduler
+      formControlName="restrict_schedule_picker"
+      [label]="'By snapshot creation time' | translate"
+      [startTime]="form.value.restrict_schedule_begin"
+      [endTime]="form.value.restrict_schedule_end"
+      [tooltip]="helptext.restrict_schedule_picker_tooltip | translate"
+    ></ix-scheduler>
+    <ix-select
+      *ngIf="form.value.restrict_schedule_picker === CronPresetValue.Hourly"
+      formControlName="restrict_schedule_begin"
+      [label]="'Begin' | translate"
+      [options]="timeOptions$"
+      [tooltip]="helptext.restrict_schedule_begin_tooltip | translate"
+    ></ix-select>
+    <ix-select
+      *ngIf="form.value.restrict_schedule_picker === CronPresetValue.Hourly"
+      formControlName="restrict_schedule_end"
+      [label]="'End' | translate"
+      [options]="timeOptions$"
+      [tooltip]="helptext.restrict_schedule_end_tooltip | translate"
+    ></ix-select>
+  </ng-container>
+  <ix-radio-group
+    formControlName="schema_or_regex"
+    [label]="nameOrRegexLabel"
+    [options]="snapshotNamingOptions$"
+  ></ix-radio-group>
+  <ix-chips
+    *ngIf="usesNamingSchema && !isPush"
+    formControlName="naming_schema"
+    [label]="'Matching naming schema' | translate"
+    [tooltip]="helptext.naming_schema_tooltip | translate"
+  ></ix-chips>
+  <ix-chips
+    *ngIf="usesNamingSchema && isPush"
+    formControlName="also_include_naming_schema"
+    [label]="'Also Include Naming Schema' | translate"
+    [tooltip]="helptext.also_include_naming_schema_tooltip | translate"
+  ></ix-chips>
+  <ix-input
+    *ngIf="!usesNamingSchema"
+    formControlName="name_regex"
+    [label]="'Matching regular expression' | translate"
+    [tooltip]="helptext.name_regex_tooltip | translate"
+  ></ix-input>
+  <ix-checkbox
+    formControlName="hold_pending_snapshots"
+    [label]="'Save Pending Snapshots' | translate"
+    [tooltip]="helptext.hold_pending_snapshots_tooltip | translate"
+  ></ix-checkbox>
+</ix-fieldset>

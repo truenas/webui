@@ -52,7 +52,20 @@ export class MockMini30Xl extends MockEnclosure {
     name: 'Drive Bays',
     model: 'FREENAS-MINI-3.0-XL+',
     controller: true,
-    elements: [],
+    elements: [
+      {
+        name: 'Array Device Slot',
+        descriptor: 'Drive Slots',
+        header: [
+          'Descriptor',
+          'Status',
+          'Value',
+          'Device',
+        ],
+        elements: [],
+        has_slot_status: false,
+      },
+    ],
     number: this.enclosureNumber,
     label: 'Drive Bays',
   } as Enclosure;
@@ -60,25 +73,17 @@ export class MockMini30Xl extends MockEnclosure {
   constructor(number: number) {
     super(number);
     this.enclosureNumber = number;
-    this.resetSlotsToEmpty();
-  }
-
-  resetSlotsToEmpty(): void {
-    const emptySlots = this.generateEmptySlots();
-    (this.data.elements as EnclosureElement[]) = emptySlots;
-  }
-
-  protected addSlotToData(slot: EnclosureElement): void {
-    const slotElements: EnclosureElement[] = this.data.elements as EnclosureElement[];
-    const slotIndex = slotElements.findIndex((element: EnclosureElement) => element.slot === slot.slot);
-    slotElements.splice(slotIndex, 1, this.processSlotTemplate(slot));
+    this.enclosureInit();
   }
 
   processSlotTemplate(template: EnclosureElement): EnclosureElement {
-    const original = {
+    // console.warn({...template});
+    /* const original = {
       enclosure_id: '0',
       slot: 0,
-    };
+    }; */
+    const updatedTemplate = { ...template };
+    const original = { ...template.original };
     if (template.slot === 1) {
       original.slot = 6;
       original.enclosure_id = '3000000000000002';
@@ -90,7 +95,7 @@ export class MockMini30Xl extends MockEnclosure {
       original.enclosure_id = '3000000000000001';
     }
 
-    template.original = original;
-    return template;
+    updatedTemplate.original = original;
+    return updatedTemplate;
   }
 }

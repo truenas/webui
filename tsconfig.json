@@ -24,5 +24,13 @@
     "strictInjectionParameters": true,
     "strictTemplates": true,
     "strictInputAccessModifiers": true
+  },
+  "ts-node": {
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {
+      "module": "commonjs",
+      "noImplicitAny": false,
+      "esModuleInterop": true
+    }
   }
 }

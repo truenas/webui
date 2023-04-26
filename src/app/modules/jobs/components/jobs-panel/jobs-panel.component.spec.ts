@@ -54,6 +54,20 @@ const failedJob = {
     $date: 1632411439082,
   },
 } as Job;
+const transientRunningJob = {
+  id: 4,
+  method: 'cloudsync.sync',
+  progress: {
+    percent: 99,
+    description: 'transient progress description',
+  },
+  state: JobState.Running,
+  abortable: true,
+  time_started: {
+    $date: 1632411439081,
+  },
+  transient: true,
+} as Job;
 
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
@@ -80,7 +94,7 @@ describe('JobsPanelComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockWebsocket([
-        mockCall('core.get_jobs', [runningJob, waitingJob, failedJob]),
+        mockCall('core.get_jobs', [runningJob, waitingJob, failedJob, transientRunningJob]),
         mockCall('core.job_abort'),
       ]),
       mockProvider(MatDialogRef),
@@ -123,6 +137,7 @@ describe('JobsPanelComponent', () => {
     expect(jobs[0].job).toEqual(runningJob);
     expect(jobs[1].job).toEqual(waitingJob);
     expect(jobs[2].job).toEqual(failedJob);
+    expect(jobs[4]).toBeUndefined();
   });
 
   it('shows confirm dialog if user clicks on the abort button', async () => {

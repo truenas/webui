@@ -8,6 +8,7 @@ import { WebdavConfig, WebdavProtocol } from 'app/interfaces/webdav-config.inter
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
 import {
   AppLoaderService, DialogService,
@@ -44,6 +45,7 @@ describe('ServiceWebdavComponent', () => {
       mockProvider(FormErrorHandlerService),
       mockProvider(AppLoaderService),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
     ],
   });
 

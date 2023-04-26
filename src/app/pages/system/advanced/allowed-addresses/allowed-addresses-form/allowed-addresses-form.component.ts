@@ -10,6 +10,7 @@ import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -37,6 +38,7 @@ export class AllowedAddressesFormComponent implements OnInit {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private loader: AppLoaderService,
+    private snackbar: SnackbarService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
   ) {}
@@ -105,6 +107,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Allowed addresses have been updated'));
         this.cdr.markForCheck();
         this.handleServiceRestart();
       },

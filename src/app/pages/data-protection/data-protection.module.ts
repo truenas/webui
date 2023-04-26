@@ -24,6 +24,9 @@ import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import {
+  TransportSectionComponent,
+} from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
+import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
@@ -41,6 +44,10 @@ import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-lis
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { dataProtectionRoutes } from './data-protection.routing';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
+import { GeneralSectionComponent } from './replication/replication-form/sections/general-section/general-section.component';
+import { ScheduleSectionComponent } from './replication/replication-form/sections/schedule-section/schedule-section.component';
+import { SourceSectionComponent } from './replication/replication-form/sections/source-section/source-section.component';
+import { TargetSectionComponent } from './replication/replication-form/sections/target-section/target-section.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
@@ -93,6 +100,11 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     TransferModeExplanationComponent,
     ReplicationRestoreDialogComponent,
     CustomTransfersDialogComponent,
+    GeneralSectionComponent,
+    TransportSectionComponent,
+    ScheduleSectionComponent,
+    SourceSectionComponent,
+    TargetSectionComponent,
   ],
 })
 export class DataProtectionModule {}
