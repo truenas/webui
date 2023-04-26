@@ -22,8 +22,8 @@
   </h3>
 
   <ng-container *ngIf="isLoading">
-    <ngx-skeleton-loader class="fake-apps-section-title"></ngx-skeleton-loader>
-    <ngx-skeleton-loader class="fake-apps" [count]="6"></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="fake-apps-section-title" [animation]="false"></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="fake-apps" [count]="6" [animation]="false"></ngx-skeleton-loader>
   </ng-container>
 
   <ng-container *ngIf="!isFilterOrSearch && !isLoading">
