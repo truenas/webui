@@ -6,6 +6,7 @@ import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
@@ -15,6 +16,8 @@ describe('AppRowComponent', () => {
     chart_metadata: { icon: 'https://image/' },
     catalog: officialCatalog,
   } as ChartRelease;
+
+  const appStatus = AppStatus.Started;
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
@@ -26,7 +29,7 @@ describe('AppRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { app },
+      props: { app, appStatus },
     });
   });
 
@@ -39,7 +42,7 @@ describe('AppRowComponent', () => {
   it('checks app status column', () => {
     const statusCell = spectator.query(AppStatusCellComponent);
     expect(statusCell).toBeTruthy();
-    expect(statusCell.app).toBe(app);
+    expect(statusCell.appStatus).toBe(appStatus);
   });
 
   it('checks app update column', () => {
