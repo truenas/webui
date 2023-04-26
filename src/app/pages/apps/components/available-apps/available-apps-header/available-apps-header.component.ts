@@ -9,6 +9,7 @@ import {
   debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import helptext from 'app/helptext/apps/apps';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -63,7 +64,8 @@ export class AvailableAppsHeaderComponent implements OnInit {
     }),
   );
   catalogsOptions$: Observable<Option[]> = this.installedCatalogs$.pipe(
-    map((state) => state.value.map((catalog) => ({ label: catalog, value: catalog }))),
+    map((state) => state.value),
+    singleArrayToOptions(),
   );
   installedApps$ = this.appService.getChartReleases().pipe(
     toLoadingState(),

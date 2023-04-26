@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   Observable, OperatorFunction, map, pipe,
 } from 'rxjs';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -15,7 +16,7 @@ import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services';
 
-const ignoredAppsList = ['ix-chart'];
+const ignoredAppsList = [ixChartApp];
 
 export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableApp[]> {
   return pipe(
