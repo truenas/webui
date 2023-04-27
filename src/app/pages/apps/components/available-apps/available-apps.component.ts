@@ -20,16 +20,15 @@ import { LayoutService } from 'app/services/layout.service';
 export class AvailableAppsComponent implements AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  get isFilterOrSearch$(): Observable<boolean> {
-    return combineLatest([
-      this.applicationsStore.searchQuery$,
-      this.applicationsStore.isFilterApplied$,
-    ]).pipe(
-      map(([searchQuery, isFilterApplied]) => {
-        return !!searchQuery || isFilterApplied;
-      }),
-    );
-  }
+  isFilterOrSearch$: Observable<boolean> = combineLatest([
+    this.applicationsStore.searchQuery$,
+    this.applicationsStore.isFilterApplied$,
+  ]).pipe(
+    map(([searchQuery, isFilterApplied]) => {
+      return !!searchQuery || isFilterApplied;
+    }),
+  );
+
   constructor(
     private layoutService: LayoutService,
     private cdr: ChangeDetectorRef,
