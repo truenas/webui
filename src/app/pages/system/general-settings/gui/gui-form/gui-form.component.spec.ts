@@ -10,13 +10,13 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService, DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -64,8 +64,8 @@ describe('GuiFormComponent', () => {
         mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('system.general.ui_restart'),
       ]),
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(IxSlideInRef, {
+        afterClosed$: of(),
       }),
       mockProvider(WebsocketConnectionService),
       mockProvider(DialogService, {
