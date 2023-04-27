@@ -53,7 +53,6 @@ export class AppInfoCardComponent {
     this.appLoaderService.open();
     this.appService.getChartUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe({
       next: (summary: UpgradeSummary) => {
-        console.info('summary', summary);
         this.appLoaderService.close();
 
         const dialogRef = this.matDialog.open(AppUpgradeDialogComponent, {
