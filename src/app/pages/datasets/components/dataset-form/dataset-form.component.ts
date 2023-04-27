@@ -24,6 +24,7 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -51,12 +52,12 @@ export class DatasetFormComponent {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private slideIn: IxSlideInService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   get isNew(): boolean {
@@ -173,6 +174,11 @@ export class DatasetFormComponent {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.slideIn.close(null, createdDataset);
+        this.snackbar.success(
+          this.isNew
+            ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
+            : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
+        );
       },
       error: (error) => {
         this.isLoading = false;

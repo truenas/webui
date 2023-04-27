@@ -6,6 +6,9 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 export const ixApplications = 'ix-applications';
 
 export function getDatasetLabel(dataset: Pick<Dataset, 'name'>): string {
+  if (!dataset || !dataset?.name) {
+    return '';
+  }
   const segments = dataset.name.split('/');
   if (segments.length === 1) {
     return dataset.name;
