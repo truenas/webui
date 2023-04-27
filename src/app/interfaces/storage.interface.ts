@@ -79,6 +79,7 @@ export interface Disk {
   hddstandby: DiskStandby;
   identifier: string;
   informational: number;
+  lunid?: string;
   model: string;
   multipath_member: string;
   multipath_name: string;
@@ -91,6 +92,7 @@ export interface Disk {
   size: number;
   smartoptions: string;
   subsystem: string;
+  supports_smart?: boolean;
   togglesmart: boolean;
   transfermode: string;
   type: DiskType;

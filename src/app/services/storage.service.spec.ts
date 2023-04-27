@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import {
-  AddTopologyOptions,
-  MockStorageGenerator,
-  MockStorageScenario,
-} from 'app/core/testing/utils/mock-storage-generator.utils';
+import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import { AddTopologyOptions } from 'app/core/testing/interfaces/mock-storage-generator.interface';
+import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';

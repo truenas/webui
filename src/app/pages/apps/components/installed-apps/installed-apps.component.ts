@@ -6,7 +6,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, map, switchMap, take, takeWhile, tap,
+  combineLatest, filter, map, switchMap, take, takeWhile,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -43,6 +43,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   isLoading = false;
   filterString = '';
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
+  routeAppIdForDetails: string;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -75,9 +76,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.checkedAppsNames.length > 0;
   }
 
-  get hasSelectionUpdates(): number {
-    return this.checkedAppsNames
-      .map((name) => this.dataSource.find((app) => app.name === name))
+  get appsUpdateAvailable(): number {
+    return this.dataSource
       .filter((app) => app.update_available || app.container_images_update_available).length;
   }
 
@@ -148,6 +148,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onSearch(query: string): void {
     this.filterString = query;
+
+    if (!this.filteredApps.length) {
+      this.showLoadStatus(EmptyType.NoSearchResults);
+    }
   }
 
   toggleAppsChecked(checked: boolean): void {
@@ -160,17 +164,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   showLoadStatus(type: EmptyType): void {
     switch (type) {
-      case EmptyType.Loading:
-        this.entityEmptyConf.title = helptext.message.loading;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = undefined;
-        break;
       case EmptyType.FirstUse:
-        this.entityEmptyConf.title = helptext.message.not_configured;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = undefined;
-        // TODO: Button to check available apps or open advanced settings?
-        break;
       case EmptyType.NoPageData:
         this.entityEmptyConf.title = helptext.message.no_installed;
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
@@ -187,6 +181,17 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           action: () => this.openAdvancedSettings(),
         };
         break;
+      case EmptyType.NoSearchResults:
+        this.entityEmptyConf.title = helptext.message.no_search_result;
+        this.entityEmptyConf.message = undefined;
+        this.entityEmptyConf.button = {
+          label: this.translate.instant('Reset Search'),
+          action: () => {
+            this.resetSearch();
+            this.cdr.markForCheck();
+          },
+        };
+        break;
     }
 
     this.entityEmptyConf.type = type;
@@ -200,13 +205,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         untilDestroyed(this),
       )
       .subscribe((appId) => {
-        this.selectAppOnLoad(appId);
+        this.routeAppIdForDetails = appId;
       });
   }
 
   loadChartReleases(): void {
     this.isLoading = true;
-    this.showLoadStatus(EmptyType.Loading);
     this.cdr.markForCheck();
 
     combineLatest([
@@ -242,17 +246,22 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           }
           return !!charts.length;
         }),
-        tap((charts) => {
+        untilDestroyed(this),
+      ).subscribe({
+        next: (charts) => {
           this.dataSource = charts;
           this.dataSource.forEach((app) => {
             if (app.status === ChartReleaseStatus.Deploying) {
               this.refreshStatus(app.name);
             }
           });
-          this.selectAppOnLoad();
-        }),
-        untilDestroyed(this),
-      ).subscribe({
+          if (!this.routeAppIdForDetails) {
+            this.selectFirstRowForDetails();
+          } else {
+            this.selectAppForDetails(this.routeAppIdForDetails);
+          }
+          this.cdr.markForCheck();
+        },
         complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
@@ -356,8 +365,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
-  onBulkUpgrade(): void {
-    const apps = this.dataSource.filter((app) => app.selected);
+  onBulkUpgrade(updateAll = false): void {
+    const apps = this.dataSource
+      .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
     this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
   }
 
@@ -394,18 +404,28 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private selectAppOnLoad(appId?: string): void {
+  private selectAppForDetails(appId: string): void {
     if (!this.dataSource.length) {
       return;
     }
 
-    const app = this.dataSource.find((chart) => chart.id === appId);
+    let app: ChartRelease;
+    if (appId) {
+      app = this.dataSource.find((chart) => chart.id === appId);
+    }
     if (app) {
       this.selectApp(app);
-    } else {
-      this.selectApp(this.dataSource[0]);
     }
 
+    this.cdr.markForCheck();
+  }
+
+  private selectFirstRowForDetails(): void {
+    if (!this.dataSource.length) {
+      return;
+    }
+
+    this.selectApp(this.dataSource[0]);
     this.cdr.markForCheck();
   }
 

@@ -73,7 +73,7 @@
     &.bulk-list {
       display: block;
       max-height: 50vh;
-      overflow-y: auto;
+      overflow: hidden auto;
       padding-bottom: 16px;
 
       > .mat-expansion-panel {
@@ -99,7 +99,7 @@
 
   .expansion-content {
     overflow: hidden auto;
-    padding-top: 16px;
+    padding: 7px;
 
     ix-job-item {
       margin: 0 -12px;
