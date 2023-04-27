@@ -34,6 +34,7 @@ import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
 import { MockMiniR } from './enclosure-templates/mock-mini-r';
 import { MockR20 } from './enclosure-templates/mock-r20';
 import { MockR40 } from './enclosure-templates/mock-r40';
+import { MockR50 } from './enclosure-templates/mock-r50';
 
 export class MockStorageGenerator {
   poolState: PoolInstance;
@@ -619,6 +620,9 @@ export class MockStorageGenerator {
         break;
       case 'R40':
         chassis = new MockR40(enclosureNumber);
+        break;
+      case 'R50':
+        chassis = new MockR50(enclosureNumber);
         break;
       default:
         console.error('Chassis ' + model + ' not found');
