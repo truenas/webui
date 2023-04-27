@@ -21,10 +21,12 @@
     {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
   </h3>
 
-  <ng-container *ngIf="isLoading">
-    <ngx-skeleton-loader class="fake-apps-section-title" [animation]="false"></ngx-skeleton-loader>
-    <ngx-skeleton-loader class="fake-apps" [count]="6" [animation]="false"></ngx-skeleton-loader>
-  </ng-container>
+  <ngx-skeleton-loader
+    *ngIf="isLoading"
+    class="fake-apps"
+    [count]="6"
+    [animation]="false"
+  ></ngx-skeleton-loader>
 
   <ng-container *ngIf="!isFilterOrSearch && !isLoading">
     <ng-container *ngFor="let appSection of appSections; trackBy: trackByAppSectionTitle">

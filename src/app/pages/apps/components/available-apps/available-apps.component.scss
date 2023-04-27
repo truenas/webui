@@ -46,19 +46,11 @@
   position: relative;
 }
 
-.fake-apps-section-title ::ng-deep {
-  display: flex;
-
-  span {
-    height: 24px;
-    margin: 15px 0;
-  }
-}
-
 .fake-apps {
   column-gap: 40px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  padding-top: 50px;
   row-gap: 16px;
 
   ::ng-deep span {
