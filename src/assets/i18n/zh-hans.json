@@ -3808,7 +3808,6 @@
   "Thread responsible for syncing db transactions not running on this node.": "负责同步未在此节点上运行的数据库事务的线程。",
   "Thread:": "线程：",
   "Threads": "线程",
-  "Threads:": "线程：",
   "Threshold Days": "天数阈值",
   "Threshold days": "阈值天数",
   "Threshold temperature in Celsius. If the drive temperature is higher than this value, a LOG_CRIT level log entry is created and an email is sent. <i>0</i> disables this check.": "阈值温度（摄氏度）。如果驱动器温度高于此温度，则会创建LOG_CRIT级别的日志条目并发送电子邮件。<i> 0 </i>禁用此检查。",

@@ -4129,7 +4129,6 @@
   "This is the OS_TENANT_NAME from an <a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack credentials file</a>.": "This is the OS_TENANT_NAME from an <a href=\"https://rclone.org/swift/\\#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack credentials file</a>.",
   "This system will restart when the update completes.": "Эта система перезапустится после завершения обновления.",
   "Threads": "Тредов",
-  "Threads:": "Тредов:",
   "Threshold days": "Порог дней",
   "Threshold temperature in Celsius. If the drive temperature is higher than this value, a LOG_CRIT level log entry is created and an email is sent. <i>0</i> disables this check.": "Пороговая температура в градусах Цельсия. Если температура привода выше этого значения, создается запись в журнале уровня LOG_CRIT и отправляется электронное письмо. <i>0</i> отключает эту проверку.",
   "Thu": "Чт",
