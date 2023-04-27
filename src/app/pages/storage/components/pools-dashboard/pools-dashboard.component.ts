@@ -10,7 +10,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -19,7 +18,7 @@ import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -62,7 +61,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     private ws: WebSocketService,
     protected router: Router,
     private layoutService: LayoutService,
-    private slideIn: IxSlideInService,
+    private slideInService2: IxSlideIn2Service,
     private cdr: ChangeDetectorRef,
     private sorter: StorageService,
     private store: PoolsDashboardStore,
@@ -91,12 +90,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         this.store.loadDashboard();
       });
 
-    this.slideIn.onClose$
-      .pipe(
-        filter((value) => value.response === true),
-        untilDestroyed(this),
-      ).subscribe(() => this.store.loadDashboard());
-
     this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
       for (const disk of disks) {
         if (!this.allDisksByPool[disk.pool]) {
@@ -112,7 +105,9 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   }
 
   onImportPool(): void {
-    this.slideIn.open(ImportPoolComponent);
+    const slideinRef = this.slideInService2.open(ImportPoolComponent);
+    this.slideInService2.open(ImportPoolComponent);
+    slideinRef.afterClosed$.pipe(untilDestroyed(this)).subscribe(() => this.store.loadDashboard());
   }
 
   createPool(): void {

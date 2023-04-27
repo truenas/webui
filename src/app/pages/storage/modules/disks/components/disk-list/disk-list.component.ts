@@ -8,7 +8,9 @@ import * as filesize from 'filesize';
 import {
   forkJoin, lastValueFrom, of, Subject, switchMap,
 } from 'rxjs';
-import { catchError, debounceTime, map } from 'rxjs/operators';
+import {
+  catchError, debounceTime, filter, map,
+} from 'rxjs/operators';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -30,7 +32,7 @@ import {
 import { WebSocketService, DialogService } from 'app/services';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 @UntilDestroy()
 @Component({
@@ -81,11 +83,19 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     ttpos: 'above' as TooltipPosition,
     onClick: (selected: Disk[]) => {
       if (selected.length > 1) {
-        const diskBulkEditForm = this.slideInService.open(DiskBulkEditComponent);
-        diskBulkEditForm.setFormDiskBulk(selected);
+        const slideInRef = this.slideIn2Service.open(DiskBulkEditComponent);
+        slideInRef.componentInstance.setFormDiskBulk(selected);
+        slideInRef.afterClosed$.pipe(
+          filter((response) => Boolean(response)),
+          untilDestroyed(this),
+        ).subscribe(() => this.updateData());
       } else {
-        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-        editForm.setFormDisk(selected[0]);
+        const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
+        slideInRef.componentInstance.setFormDisk(selected[0]);
+        slideInRef.afterClosed$.pipe(
+          filter((response) => Boolean(response)),
+          untilDestroyed(this),
+        ).subscribe(() => this.updateData());
       }
     },
   }, {
@@ -100,6 +110,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   }];
 
   private diskUpdateSubscriptionId: string;
+  private entityList: EntityTableComponent<Disk>;
 
   protected unusedDisks: UnusedDisk[] = [];
   constructor(
@@ -108,7 +119,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     protected router: Router,
     private matDialog: MatDialog,
     protected translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideIn2Service: IxSlideIn2Service,
     private dialogService: DialogService,
     private disksUpdate: DisksUpdateService,
   ) {}
@@ -124,8 +135,12 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       name: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (disk: Disk) => {
-        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-        editForm.setFormDisk(disk);
+        const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
+        slideInRef.componentInstance.setFormDisk(disk);
+        slideInRef.afterClosed$.pipe(
+          filter((response) => Boolean(response)),
+          untilDestroyed(this),
+        ).subscribe(() => this.updateData());
       },
     }];
 
@@ -205,10 +220,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       entityList.getData();
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityList.getData();
-      entityList.pageChanged();
-    });
+    this.entityList = entityList;
   }
 
   resourceTransformIncomingRestData(disks: Disk[]): Disk[] {
@@ -236,5 +248,10 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         diskIdsWithSmart: Object.keys(this.smartDiskChoices),
       } as ManualTestDialogParams,
     });
+  }
+
+  updateData(): void {
+    this.entityList.getData();
+    this.entityList.pageChanged();
   }
 }
