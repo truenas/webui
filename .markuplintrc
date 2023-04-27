@@ -8,7 +8,8 @@
     "indentation": {
       "value": 2,
       "severity": "error"
-    }
+    },
+    "disallowed-element": ["mat-icon"]
   },
   "excludeFiles": [
     "./src/index.html"
