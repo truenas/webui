@@ -145,7 +145,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps(filter);
 
     if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
-      filter.categories = filter.categories.filter((cat) => !cat.includes(AppExtraCategory.NewAndUpdated));
+      filter.categories = filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated));
       request$ = this.appsService.getLatestApps(filter);
     }
 
