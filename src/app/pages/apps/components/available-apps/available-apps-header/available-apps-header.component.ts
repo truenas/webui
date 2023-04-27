@@ -47,7 +47,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
 
   isFirstLoad = true;
   showFilters = false;
-  appliedFilters$ = this.applicationsStore.isFilterApplied$;
+  isFilterApplied$ = this.applicationsStore.isFilterApplied$;
   availableApps: AvailableApp[] = [];
   installedApps: ChartRelease[] = [];
   installedCatalogs: string[] = [];
