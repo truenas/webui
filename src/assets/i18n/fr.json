@@ -191,6 +191,7 @@
   "{n, plural, one {# core} other {# cores}}": "",
   "{n, plural, one {# thread} other {# threads}}": "",
   "{n}% Uploaded": "",
+  "{size} Total": "",
   "{size} {type} at {location}": "",
   "{type} at {location}": "",
   "{version} is available!": "",

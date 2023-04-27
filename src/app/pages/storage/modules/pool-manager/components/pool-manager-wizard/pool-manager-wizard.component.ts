@@ -18,7 +18,7 @@ export class PoolManagerWizardComponent implements OnInit {
     general: this.fb.group({
       name: ['', Validators.required],
       encryption: [false],
-      encryption_standard: [null as string, Validators.required],
+      encryption_standard: ['AES-256-GCM', Validators.required],
       allowNonUniqueSerialDisks: ['false'],
       allowDisksFromExportedPools: [[] as string[]],
     }),
