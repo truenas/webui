@@ -157,7 +157,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
             filteredApps: [...filteredApps],
             searchedApps:
               state.searchQuery
-                ? filteredApps.filter((filteredApp) => this.doesAppCotainString(state.searchQuery, filteredApp))
+                ? filteredApps.filter((filteredApp) => this.doesAppContainString(state.searchQuery, filteredApp))
                 : filteredApps,
             isFilterApplied: true,
             isLoading: false,
@@ -179,13 +179,13 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     return {
       ...state,
       searchedApps: filteredApps.filter((app) => {
-        return this.doesAppCotainString(searchQuery, app);
+        return this.doesAppContainString(searchQuery, app);
       }),
       searchQuery,
     };
   });
 
-  private doesAppCotainString = (searchQuery: string, app: AvailableApp): boolean => {
+  private doesAppContainString = (searchQuery: string, app: AvailableApp): boolean => {
     const normalize = (str: string): string => _.toLower(_.deburr(str));
     const isStringsArray = (arr: unknown[]): boolean => arr.every((i) => typeof i === 'string');
     const search = normalize(searchQuery);
