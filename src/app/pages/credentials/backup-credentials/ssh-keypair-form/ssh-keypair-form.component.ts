@@ -9,8 +9,8 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   AppLoaderService, DialogService, StorageService,

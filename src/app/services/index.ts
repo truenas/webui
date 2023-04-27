@@ -17,5 +17,4 @@ export * from 'app/services/keychain-credential.service';
 export * from './replication.service';
 export * from './services.service';
 export * from './validation.service';
-export * from './modal.service';
 export * from './redirect.service';

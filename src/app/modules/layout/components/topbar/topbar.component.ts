@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter, finalize, take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -37,7 +37,6 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -89,7 +88,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private systemGeneralService: SystemGeneralService,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private modalService: ModalService,
     private loader: AppLoaderService,
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
@@ -186,13 +184,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
     });
-
-    this.wsManager.websocket$.pipe(
-      finalize(() => {
-        this.modalService.closeSlideIn();
-      }),
-      untilDestroyed(this),
-    ).subscribe();
   }
 
   ngOnDestroy(): void {

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, merge } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import {
   filter, switchMap, tap, catchError,
 } from 'rxjs/operators';
@@ -48,7 +48,6 @@ import {
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -88,7 +87,6 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: ModalService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
@@ -113,10 +111,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     this.getCardData();
     this.refreshAllTables();
 
-    merge(
-      this.modalService.onClose$,
-      this.slideInService.onClose$,
-    )
+    this.slideInService.onClose$
       .pipe(untilDestroyed(this))
       .subscribe(({ modalType }) => {
         switch (modalType) {

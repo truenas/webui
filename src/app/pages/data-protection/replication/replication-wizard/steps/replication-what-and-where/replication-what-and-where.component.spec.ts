@@ -19,7 +19,6 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
-import { ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
@@ -52,7 +51,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ModalService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
@@ -158,6 +156,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ReplicationFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
   });
 });

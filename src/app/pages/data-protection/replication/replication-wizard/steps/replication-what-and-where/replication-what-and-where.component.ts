@@ -22,13 +22,15 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
-import { forbiddenAsyncValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import {
+  forbiddenAsyncValues,
+} from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import {
-  DialogService, KeychainCredentialService, ModalService, ReplicationService, WebSocketService,
+  DialogService, KeychainCredentialService, ReplicationService, WebSocketService,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -133,7 +135,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private filesystemService: FilesystemService,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
-    private modalService: ModalService,
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -521,7 +522,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   openAdvanced(): void {
     this.slideInService.close();
-    this.modalService.openInSlideIn(ReplicationFormComponent);
+    this.slideInService.open(ReplicationFormComponent, { wide: true });
   }
 
   getSnapshots(): void {

@@ -33,7 +33,6 @@ import {
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import {
   DialogService,
-  ModalService,
   ReplicationService,
   WebSocketService,
 } from 'app/services';
@@ -70,7 +69,6 @@ export class ReplicationFormComponent implements OnInit {
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private slideIn: IxSlideInService,
-    private modalService: ModalService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
     private snackbar: SnackbarService,
@@ -154,7 +152,7 @@ export class ReplicationFormComponent implements OnInit {
 
   onSwitchToWizard(): void {
     this.slideIn.close();
-    this.modalService.openInSlideIn(ReplicationWizardComponent);
+    this.slideIn.open(ReplicationWizardComponent, { wide: true });
   }
 
   private getPayload(): ReplicationCreate {

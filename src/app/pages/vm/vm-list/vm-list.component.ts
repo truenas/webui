@@ -5,7 +5,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { merge } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -37,7 +36,6 @@ import {
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 
 const noMemoryError = 'ENOMEM';
 
@@ -111,7 +109,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private router: Router,
     protected dialog: MatDialog,
     private errorHandler: ErrorHandlerService,
-    private modalService: ModalService,
     private vmService: VmService,
     private translate: TranslateService,
     private layoutService: LayoutService,
@@ -120,7 +117,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   ) {}
 
   ngOnInit(): void {
-    merge(this.modalService.onClose$, this.slideIn.onClose$)
+    this.slideIn.onClose$
       .pipe(untilDestroyed(this))
       .subscribe(() => this.entityList.getData());
   }

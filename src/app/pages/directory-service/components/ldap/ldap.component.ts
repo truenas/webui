@@ -16,7 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -82,7 +82,6 @@ export class LdapComponent implements OnInit {
     private matDialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
-    private modalService: ModalService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -168,11 +167,9 @@ export class LdapComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
       this.slideInService.close();
-      this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.dialogService.error(this.errorHandler.parseJobError(error));
-      this.modalService.refreshTable();
       dialogRef.close();
     });
   }
