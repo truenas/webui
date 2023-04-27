@@ -6,24 +6,33 @@
 
   ::ng-deep ngx-skeleton-loader {
     display: flex;
+    flex-direction: column;
 
     .loader {
-      margin: 0;
+      height: 18px;
+      margin: 4px 0;
     }
   }
 }
 
 .events {
   h4 {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .event-list {
+    background-color: rgba(0, 0, 0, 0.1);
+    height: 150px;
+    overflow: auto;
+    padding: 12px;
   }
 }
 
-.event-list {
-  background-color: rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  overflow: auto;
-  padding: 12px;
+.no-events {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
 }
 
 .event-item {
