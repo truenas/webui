@@ -50,6 +50,7 @@ export class ReplicationWizardComponent {
   rowId: number;
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
+  isCustomRetentionVisible = true;
 
   eligibleSnapshots = 0;
   existSnapshotTasks: number[] = [];

@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle | titlecase"></ix-page-title-header>
+  <ix-page-title-header [pageTitle]="pageTitle$ | async"></ix-page-title-header>
 </ng-template>
 <ng-container *ngIf="appsLoaded">
   <div class="wizard-container">

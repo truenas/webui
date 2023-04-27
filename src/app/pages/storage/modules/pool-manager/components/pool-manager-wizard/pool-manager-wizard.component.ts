@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
+import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 @UntilDestroy()
@@ -18,13 +18,13 @@ export class PoolManagerWizardComponent implements OnInit {
     general: this.fb.group({
       name: ['', Validators.required],
       encryption: [false],
-      encryption_standard: [null as string, Validators.required],
+      encryption_standard: ['AES-256-GCM', Validators.required],
       allowNonUniqueSerialDisks: ['false'],
       allowDisksFromExportedPools: [[] as string[]],
     }),
     data: this.fb.group({
       type: [CreateVdevLayout.Stripe, Validators.required],
-      sizeAndType: [[null, null] as (string | DiskType)[], Validators.required],
+      sizeAndType: [[null, null] as SizeAndType, Validators.required],
       width: [null as number, Validators.required],
       vdevsNumber: [null as number, Validators.required],
       minimizeEnclosureDispersal: [true],

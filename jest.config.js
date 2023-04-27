@@ -9,7 +9,7 @@ module.exports = {
   globalSetup: 'jest-preset-angular/global-setup',
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
   collectCoverage: false,
-  collectCoverageFrom: ["**/*.ts"],
+  collectCoverageFrom: ["./src/**/*.ts"],
   coverageReporters: ['html', 'json'],
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],

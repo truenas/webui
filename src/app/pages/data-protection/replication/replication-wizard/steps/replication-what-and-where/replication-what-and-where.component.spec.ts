@@ -9,6 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -18,6 +19,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
+import { ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
@@ -50,6 +52,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(ModalService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
@@ -136,7 +139,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       exist_replication: 1,
       source_datasets_from: DatasetSource.Local,
       target_dataset_from: DatasetSource.Remote,
-      source_datasets: ['pool21', 'pool22'],
+      source_datasets: [`${mntPath}/pool21`, `${mntPath}/pool22`],
       target_dataset: 'pool23',
       ssh_credentials_target: 123,
       custom_snapshots: false,
@@ -155,6 +158,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
+    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ReplicationFormComponent);
   });
 });

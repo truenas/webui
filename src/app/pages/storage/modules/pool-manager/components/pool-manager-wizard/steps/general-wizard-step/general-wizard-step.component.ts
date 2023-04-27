@@ -25,7 +25,6 @@ import { DialogService, WebSocketService } from 'app/services';
 export class GeneralWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['general'];
 
-  isLoading$ = this.store.isLoading$;
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
 
   exportedPoolsWarning = this.translate.instant(
@@ -85,6 +84,10 @@ export class GeneralWizardStepComponent implements OnInit {
   ngOnInit(): void {
     this.form.controls.name.addAsyncValidators(forbiddenAsyncValues(this.poolNames$));
 
+    this.setFieldRelations();
+  }
+
+  private setFieldRelations(): void {
     this.form.controls.encryption_standard.disable();
     this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((isEncrypted) => {
       if (isEncrypted) {

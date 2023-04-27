@@ -4,9 +4,10 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
+import { RadioOption } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
@@ -41,7 +42,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
 
   hasInstanceId = false;
 
-  readonly usernameOptions$ = of([
+  readonly usernameOptions$: Observable<RadioOption[]> = of([
     { label: this.translate.instant('Administrative user'), value: adminUsername },
     { label: this.translate.instant('Root user (not recommended)'), value: 'root' },
   ]);

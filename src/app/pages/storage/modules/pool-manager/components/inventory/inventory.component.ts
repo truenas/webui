@@ -4,7 +4,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/pool-manager.utils';
@@ -18,8 +17,6 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
 })
 export class InventoryComponent implements OnInit {
   sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
-  inventory: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
-  formValue: PoolManagerWizardFormValue;
   DiskType = DiskType;
 
   constructor(
@@ -34,30 +31,6 @@ export class InventoryComponent implements OnInit {
         [DiskType.Ssd]: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
       };
       this.cdr.markForCheck();
-    });
-
-    this.poolManagerStore.formValue$.pipe(untilDestroyed(this)).subscribe((formValue) => {
-      this.formValue = formValue;
-      this.cdr.markForCheck();
-      if (formValue) {
-        this.updateInventory();
-      }
-    });
-  }
-
-  updateInventory(): void {
-    const type = this.formValue.data.sizeAndType[1] as DiskType;
-    const selectedSize = this.formValue.data.sizeAndType[0];
-    const disksSelected = this.formValue.data.width * this.formValue.data.vdevsNumber;
-    if (!type || !selectedSize || !disksSelected) {
-      return;
-    }
-
-    this.inventory[type] = {};
-
-    Object.entries(this.sizeDisksMap[type]).forEach(([size, number]) => {
-      const remainingCount = number > disksSelected ? number - disksSelected : 0;
-      this.inventory[type][size] = size === selectedSize ? remainingCount : number;
     });
   }
 

@@ -2,10 +2,10 @@ import {
   Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -45,22 +45,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     title: helptext.message.loading,
   };
 
-  emptySearchResultsConf: EmptyConfig = {
-    type: EmptyType.NoSearchResults,
-    title: helptext.message.no_search_result,
-    button: {
-      label: this.translate.instant('Reset Search'),
-      action: () => {
-        this.resetSearch();
-        this.cdr.markForCheck();
-      },
-    },
-  };
-
   constructor(
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
     private router: Router,
     private layoutService: LayoutService,
     private matDialog: MatDialog,
@@ -92,9 +79,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.checkedAppsNames.length > 0;
   }
 
-  get hasSelectionUpdates(): number {
-    return this.checkedAppsNames
-      .map((name) => this.dataSource.find((app) => app.name === name))
+  get appsUpdateAvailable(): number {
+    return this.dataSource
       .filter((app) => app.update_available || app.container_images_update_available).length;
   }
 
@@ -130,7 +116,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.listenForRouteChanges();
     this.listenForSlideFormClosed();
     this.updateChartReleases();
   }
@@ -141,6 +126,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onSearch(query: string): void {
     this.filterString = query;
+
+    if (!this.filteredApps.length) {
+      this.showLoadStatus(EmptyType.NoSearchResults);
+    }
   }
 
   toggleAppsChecked(checked: boolean): void {
@@ -153,17 +142,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   showLoadStatus(type: EmptyType): void {
     switch (type) {
-      case EmptyType.Loading:
-        this.entityEmptyConf.title = helptext.message.loading;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = undefined;
-        break;
       case EmptyType.FirstUse:
-        this.entityEmptyConf.title = helptext.message.not_configured;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = undefined;
-        // TODO: Button to check available apps or open advanced settings?
-        break;
       case EmptyType.NoPageData:
         this.entityEmptyConf.title = helptext.message.no_installed;
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
@@ -180,26 +159,24 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           action: () => this.openAdvancedSettings(),
         };
         break;
+      case EmptyType.NoSearchResults:
+        this.entityEmptyConf.title = helptext.message.no_search_result;
+        this.entityEmptyConf.message = undefined;
+        this.entityEmptyConf.button = {
+          label: this.translate.instant('Reset Search'),
+          action: () => {
+            this.resetSearch();
+            this.cdr.markForCheck();
+          },
+        };
+        break;
     }
 
     this.entityEmptyConf.type = type;
   }
 
-  private listenForRouteChanges(): void {
-    this.activatedRoute.params
-      .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
-        untilDestroyed(this),
-      )
-      .subscribe((appId) => {
-        this.selectAppOnLoad(appId);
-      });
-  }
-
   updateChartReleases(): void {
     this.isLoading = true;
-    this.showLoadStatus(EmptyType.Loading);
     this.cdr.markForCheck();
 
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
@@ -307,8 +284,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
-  onBulkUpgrade(): void {
-    const apps = this.dataSource.filter((app) => app.selected);
+  onBulkUpgrade(updateAll = false): void {
+    const apps = this.dataSource
+      .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
+
     const dialogRef = this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
 
     dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -350,10 +329,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private selectAppOnLoad(appId?: string): void {
+  private selectAppOnLoad(): void {
     if (!this.dataSource.length) {
       return;
     }
+
+    const appId = this.router.url.split('/installed/')?.[1];
 
     const app = this.dataSource.find((chart) => chart.id === appId);
     if (app) {

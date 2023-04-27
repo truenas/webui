@@ -1,14 +1,16 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { Option } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 
@@ -19,7 +21,8 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
   styleUrls: ['./replication-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReplicationWhenComponent implements OnInit, SummaryProvider {
+export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvider {
+  @Input() isCustomRetentionVisible = true;
   @Output() save = new EventEmitter<void>();
 
   form = this.formBuilder.group({
@@ -38,11 +41,10 @@ export class ReplicationWhenComponent implements OnInit, SummaryProvider {
     { label: this.translate.instant('Run Once'), value: ScheduleMethod.Once },
   ]);
 
-  retentionPolicyOptions$ = of([
+  defaultRetentionPolicyOptions = [
     { label: this.translate.instant('Same as Source'), value: RetentionPolicy.Source },
     { label: this.translate.instant('Never Delete'), value: RetentionPolicy.None },
-    { label: this.translate.instant('Custom'), value: RetentionPolicy.Custom },
-  ]);
+  ];
 
   lifetimeUnitOptions$ = of([
     { label: this.translate.instant('Hours'), value: LifetimeUnit.Hour },
@@ -51,6 +53,13 @@ export class ReplicationWhenComponent implements OnInit, SummaryProvider {
     { label: this.translate.instant('Months'), value: LifetimeUnit.Month },
     { label: this.translate.instant('Years'), value: LifetimeUnit.Year },
   ]);
+
+  get retentionPolicyOptions$(): Observable<Option[]> {
+    return this.isCustomRetentionVisible ? of([
+      ...this.defaultRetentionPolicyOptions,
+      { label: this.translate.instant('Custom'), value: RetentionPolicy.Custom },
+    ]) : of(this.defaultRetentionPolicyOptions);
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -79,6 +88,12 @@ export class ReplicationWhenComponent implements OnInit, SummaryProvider {
         this.form.controls.lifetime_unit.disable();
       }
     });
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isCustomRetentionVisible && !changes.isCustomRetentionVisible.currentValue) {
+      this.form.controls.retention_policy.setValue(RetentionPolicy.Source);
+    }
   }
 
   getSummary(): SummarySection {

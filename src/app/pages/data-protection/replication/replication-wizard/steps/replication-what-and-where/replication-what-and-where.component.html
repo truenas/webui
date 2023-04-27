@@ -39,7 +39,7 @@
         [label]="helptext.recursive_placeholder | translate"
         [tooltip]="helptext.recursive_tooltip | translate"
       ></ix-checkbox>
-      <span *ngIf="snapshotsText" class="snapshots-text">{{ snapshotsText }}</span>
+      <span *ngIf="snapshotsText" class="snapshots-text" [class.warning]="isSnapshotsWarning">{{ snapshotsText }}</span>
       <ix-checkbox
         *ngIf="form.controls.custom_snapshots.enabled"
         formControlName="custom_snapshots"

@@ -130,10 +130,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  navigateToInstallPage(): void {
-    this.router.navigate(['/apps', 'available', this.appId, 'install']);
-  }
-
   showChoosePoolModal(): void {
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {

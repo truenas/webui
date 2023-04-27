@@ -9,7 +9,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { of, Subject, Subscription } from 'rxjs';
+import {
+  BehaviorSubject, of, Subject, Subscription,
+} from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -62,17 +64,19 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly helptext = helptext;
 
-  get pageTitle(): string {
-    const prefix = this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
-    if (this.appId) {
-      return `${prefix}  ${this.appId}`;
-    }
+  private _pageTitle$ = new BehaviorSubject<string>('Loading');
+  pageTitle$ = this._pageTitle$.asObservable().pipe(
+    filter(Boolean),
+    map((name) => {
+      if (name === ixChartApp) {
+        return `${this.titlePrefix} ${this.translate.instant('Custom App')}`;
+      }
+      return `${this.titlePrefix} ${name}`;
+    }),
+  );
 
-    if (this.catalogApp) {
-      return `${prefix}  ${this.catalogApp.name}`;
-    }
-
-    return this.translate.instant('Loading');
+  get titlePrefix(): string {
+    return this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
   }
 
   constructor(
@@ -138,6 +142,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe((appId) => {
         this.appId = appId;
+        this._pageTitle$.next(appId);
         this.isLoading = false;
         this.cdr.markForCheck();
 
@@ -177,6 +182,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setChartCreate(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
+    this._pageTitle$.next(this.catalogApp.name);
     let hideVersion = false;
     if (this.catalogApp.name === ixChartApp) {
       hideVersion = true;
@@ -220,7 +226,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.buildDynamicForm(catalogApp.schema);
-    this.form.patchValue({ release_name: this.catalogApp.name });
+    if (this.catalogApp.name !== ixChartApp) {
+      this.form.patchValue({ release_name: this.catalogApp.name });
+    }
   }
 
   private setChartEdit(chart: ChartRelease): void {

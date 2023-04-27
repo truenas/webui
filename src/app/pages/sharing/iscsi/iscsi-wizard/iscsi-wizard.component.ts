@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { forkJoin, lastValueFrom } from 'rxjs';
+import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
   IscsiAuthMethod,
@@ -60,7 +61,11 @@ export class IscsiWizardComponent implements OnInit {
 
   form = this.fb.group({
     device: this.fb.group({
-      name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
+      name: ['', [
+        Validators.required,
+        forbiddenValues(this.namesInUse),
+        Validators.pattern(patterns.targetDeviceName),
+      ]],
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],

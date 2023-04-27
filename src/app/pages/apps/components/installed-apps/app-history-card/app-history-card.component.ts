@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnInit, OnChanges,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { map, take } from 'rxjs';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -15,8 +16,8 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 })
 export class AppHistoryCardComponent implements OnInit, OnChanges {
   @Input() app: ChartRelease;
-  isLoading = false;
-  events: ChartReleaseEvent[] = [];
+  protected isLoading = false;
+  protected events: ChartReleaseEvent[] = [];
 
   constructor(
     private appService: ApplicationsService,
@@ -28,13 +29,16 @@ export class AppHistoryCardComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.events = [];
     this.loadEvents();
   }
 
   loadEvents(): void {
     this.isLoading = true;
     this.appService.getChartReleaseEvents(this.app.name).pipe(
+      map((events) => events.sort((a, b) => {
+        return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+      })),
+      take(1),
       untilDestroyed(this),
     ).subscribe({
       next: (events) => {

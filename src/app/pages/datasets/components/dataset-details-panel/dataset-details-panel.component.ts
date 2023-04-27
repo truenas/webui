@@ -3,15 +3,12 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
-  getDatasetLabel,
   isDatasetHasShares, isIocageMounted, ixApplications,
 } from 'app/pages/datasets/utils/dataset.utils';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -29,11 +26,9 @@ export class DatasetDetailsPanelComponent implements OnInit {
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(
-    private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
     private router: Router,
     private slideIn: IxSlideInService,
-    private snackbar: SnackbarService,
   ) { }
 
   ngOnInit(): void {
@@ -41,18 +36,13 @@ export class DatasetDetailsPanelComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
         const dataset = value.response as Dataset;
+
         if ((value.modalType !== DatasetFormComponent && value.modalType !== ZvolFormComponent) || !dataset?.id) {
           return;
         }
 
         this.datasetStore.datasetUpdated();
-        this.router.navigate(['/datasets', dataset.id]).then(() => {
-          this.snackbar.success(
-            value.modalType === ZvolFormComponent
-              ? this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(dataset) })
-              : this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
-          );
-        });
+        this.router.navigate(['/datasets', dataset.id]);
       });
   }
 
