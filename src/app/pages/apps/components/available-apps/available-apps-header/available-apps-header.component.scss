@@ -64,6 +64,7 @@
   gap: 70px;
   justify-content: flex-end;
   margin-left: 60px;
+  margin-top: -4px;
   white-space: nowrap;
 
   @media (max-width: $breakpoint-sm) {
@@ -86,11 +87,33 @@
 
   h2 {
     color: var(--primary-txt);
+    line-height: 1;
+  }
+}
+
+.header-link {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  min-height: 54px;
+
+  h2 {
+    min-height: 26px;
   }
 
-  .header-link {
+  ::ng-deep ngx-skeleton-loader {
+    &,
+    span {
+      height: 26px;
+    }
+  }
+
+  span {
     color: var(--primary);
-    cursor: pointer;
+    display: block;
     font-weight: 600;
   }
 }
