@@ -282,7 +282,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       if (value === SshCredentialsNewOption.New) {
         this.createSshConnection(true);
       } else if (value) {
-        this.form.controls.source_datasets.setValue([]);
         this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
           { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
         );
@@ -481,9 +480,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         ssh_credentials_source: task.ssh_credentials.id,
       });
     }
+
+    const sourcePrefix = this.form.value.source_datasets_from === DatasetSource.Remote ? '' : `${mntPath}/`;
+    const targetPrefix = this.form.value.target_dataset_from === DatasetSource.Remote ? '' : `${mntPath}/`;
     this.form.patchValue({
-      source_datasets: task.source_datasets.map((item) => `${mntPath}/${item}`),
-      target_dataset: `${mntPath}/${task.target_dataset}`,
+      source_datasets: task.source_datasets.map((item) => sourcePrefix + item),
+      target_dataset: targetPrefix + task.target_dataset,
       transport: task.transport,
       name: task.name,
     });

@@ -140,7 +140,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       source_datasets_from: DatasetSource.Local,
       target_dataset_from: DatasetSource.Remote,
       source_datasets: [`${mntPath}/pool21`, `${mntPath}/pool22`],
-      target_dataset: `${mntPath}/pool23`,
+      target_dataset: 'pool23',
       ssh_credentials_target: 123,
       custom_snapshots: false,
       recursive: true,
