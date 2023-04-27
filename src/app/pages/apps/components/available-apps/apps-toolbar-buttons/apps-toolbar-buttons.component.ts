@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,8 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./apps-toolbar-buttons.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppsToolbarButtonsComponent implements OnInit {
-  wasPoolSet = false;
+export class AppsToolbarButtonsComponent {
   readonly customIxChartApp = ixChartApp;
 
   constructor(
@@ -41,16 +40,8 @@ export class AppsToolbarButtonsComponent implements OnInit {
     private applicationsStore: AvailableAppsStore,
   ) { }
 
-  ngOnInit(): void {
-    this.loadIfPoolSet();
-  }
-
   onChoosePool(): void {
-    const dialog = this.matDialog.open(SelectPoolDialogComponent);
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.core.emit({ name: 'RefreshAppsTab' });
-      this.loadIfPoolSet();
-    });
+    this.matDialog.open(SelectPoolDialogComponent);
   }
 
   onAdvancedSettings(): void {
@@ -78,8 +69,7 @@ export class AppsToolbarButtonsComponent implements OnInit {
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close();
-        this.core.emit({ name: 'RefreshAppsTab' });
-        this.loadIfPoolSet();
+        this.applicationsStore.updateSelectedPool(null);
         this.snackbar.success(
           this.translate.instant('Pool has been unset.'),
         );
@@ -88,13 +78,6 @@ export class AppsToolbarButtonsComponent implements OnInit {
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
         this.dialogService.error(this.errorHandler.parseJobError(err));
       });
-    });
-  }
-
-  private loadIfPoolSet(): void {
-    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      this.wasPoolSet = Boolean(pool);
-      this.cdr.markForCheck();
     });
   }
 }
