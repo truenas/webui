@@ -56,8 +56,6 @@ describe('AppsToolbarButtonsComponent', () => {
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
-    spectator.component.wasPoolSet = true;
-
     await menu.open();
     await menu.clickItem({ text: 'Unset Pool' });
 
