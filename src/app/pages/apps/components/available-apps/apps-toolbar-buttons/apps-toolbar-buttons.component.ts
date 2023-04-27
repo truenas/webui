@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,12 +8,10 @@ import { ixChartApp } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -28,16 +26,13 @@ export class AppsToolbarButtonsComponent {
   readonly customIxChartApp = ixChartApp;
 
   constructor(
-    private appService: ApplicationsService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private core: CoreService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
-    private applicationsStore: AvailableAppsStore,
+    protected applicationsStore: AvailableAppsStore,
   ) { }
 
   onChoosePool(): void {
