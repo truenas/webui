@@ -143,11 +143,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   showLoadStatus(type: EmptyType): void {
     switch (type) {
       case EmptyType.FirstUse:
-        this.entityEmptyConf.title = helptext.message.not_configured;
-        this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = undefined;
-        // TODO: Button to check available apps or open advanced settings?
-        break;
       case EmptyType.NoPageData:
         this.entityEmptyConf.title = helptext.message.no_installed;
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
