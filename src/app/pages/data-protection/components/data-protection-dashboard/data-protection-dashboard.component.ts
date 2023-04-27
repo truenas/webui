@@ -279,7 +279,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(ReplicationWizardComponent);
+            this.slideInService.open(ReplicationWizardComponent, { wide: true });
           },
           edit: (row: ReplicationTaskUi) => {
             const form = this.slideInService.open(ReplicationFormComponent, { wide: true });

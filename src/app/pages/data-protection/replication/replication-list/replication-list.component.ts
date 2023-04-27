@@ -92,11 +92,11 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     private dialog: DialogService,
     protected modalService: ModalService,
     protected loader: AppLoaderService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private route: ActivatedRoute,
-    private slideInService: IxSlideInService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
@@ -257,7 +257,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(ReplicationWizardComponent);
+    this.slideInService.open(ReplicationWizardComponent, { wide: true });
   }
 
   doEdit(id: number): void {
