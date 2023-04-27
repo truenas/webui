@@ -11,6 +11,7 @@
       <span class="version"> {{ dialogConfig.appInfo.human_version }}</span>
     </div>
   </div>
+
   <div
     *ngIf="selectedVersion?.item_update_available; else noItemUpdate"
     class="resource"
@@ -34,11 +35,13 @@
       </mat-select>
     </mat-form-field>
   </div>
+
   <ng-template #noItemUpdate>
     <div class="resource">
       <span>{{ 'Only image(s) will be updated' | translate }}</span>
     </div>
   </ng-template>
+
   <mat-accordion>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
