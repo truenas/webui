@@ -11,7 +11,7 @@ import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()

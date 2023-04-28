@@ -9,8 +9,8 @@ import { map, of, switchMap } from 'rxjs';
 import { IscsiAuthMethod, IscsiNewOption } from 'app/enums/iscsi.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services';
 

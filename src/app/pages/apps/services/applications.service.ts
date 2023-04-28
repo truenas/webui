@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
-  Observable, of, switchMap,
+  Observable, OperatorFunction, map, pipe,
 } from 'rxjs';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -16,6 +17,14 @@ import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services';
+
+const ignoredAppsList = [ixChartApp];
+
+export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableApp[]> {
+  return pipe(
+    map((apps) => apps.filter((app) => !ignoredAppsList.includes(app.name))),
+  );
+}
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
@@ -43,15 +52,15 @@ export class ApplicationsService {
       ['catalog', '=', catalog],
       ['train', '=', train],
     ];
-    return this.ws.call('app.available', [queryFilters]).pipe(switchMap((app) => of(app[0])));
+    return this.ws.call('app.available', [queryFilters]).pipe(map((app) => app[0]));
   }
 
   getLatestApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
-    return this.getAppsFetchCall('app.latest', filters);
+    return this.getAppsFetchCall('app.latest', filters).pipe(filterIgnoredApps());
   }
 
   getAvailableApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
-    return this.getAppsFetchCall('app.available', filters);
+    return this.getAppsFetchCall('app.available', filters).pipe(filterIgnoredApps());
   }
 
   private getAppsFetchCall(
@@ -68,7 +77,7 @@ export class ApplicationsService {
       delete filters.sort;
     }
     if (!filters || (filters && !Object.keys(filters).length)) {
-      return this.ws.call(endPoint);
+      return this.ws.call(endPoint).pipe(filterIgnoredApps());
     }
 
     const firstOption: QueryFilter<AvailableApp>[] = [];
@@ -84,7 +93,7 @@ export class ApplicationsService {
     });
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
-    return this.ws.call(endPoint, [firstOption, secondOption]);
+    return this.ws.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
   }
 
   getAllChartReleases(): Observable<ChartRelease[]> {

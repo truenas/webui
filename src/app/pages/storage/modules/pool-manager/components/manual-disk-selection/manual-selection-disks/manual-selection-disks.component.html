@@ -1,24 +1,6 @@
-<div class="filter-container">
-  <form [formGroup]="filterForm">
-    <ix-input
-      formControlName="search"
-      prefixIcon="search"
-      [placeholder]="'Search' | translate"
-    ></ix-input>
-    <div class="select-container">
-      <ix-select
-        formControlName="diskType"
-        [label]="'Filter by Disk Type' | translate"
-        [options]="typeOptions$"
-      ></ix-select>
-      <ix-select
-        formControlName="diskSize"
-        [label]="'Filter by Disk Size' | translate"
-        [options]="sizeOptions$"
-      ></ix-select>
-    </div>
-  </form>
-</div>
+<ix-manual-selection-disk-filters
+  (filtersUpdated)="filtersUpdated.next($event)"
+></ix-manual-selection-disk-filters>
 
 <div
   class="tree-container"
@@ -48,7 +30,6 @@
           class="disk-icon"
           dndDragImageRef
           [disk]="asDisk(disk)"
-          
         ></ix-disk-icon>
 
         <ix-disk-info

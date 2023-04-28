@@ -14,8 +14,6 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -90,10 +88,8 @@ import { routing } from './vm.routing';
   ],
   providers: [
     VmService,
-    EntityFormService,
     NetworkService,
     SystemGeneralService,
-    MessageService,
   ],
 })
 export class VmModule { }

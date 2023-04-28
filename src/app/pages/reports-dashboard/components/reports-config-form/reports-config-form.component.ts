@@ -11,8 +11,8 @@ import {
 } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
-import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

@@ -4,50 +4,63 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-fake-progress-bar
-  *ngIf="applicationsStore.isLoading$ | async"
-  class="loader-bar"
-  [loading]="applicationsStore.isLoading$ | async"
-></ix-fake-progress-bar>
-
 <ix-available-apps-header></ix-available-apps-header>
 
-<h3 *ngIf="applicationsStore.searchQuery$ | async as searchQuery" class="apps-title"> {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}</h3>
-<div *ngIf="isFilterOrSearch$ | async" class="available-apps-list">
-  <div class="filtered-apps">
-    <ix-app-card
-      *ngFor="let app of (applicationsStore.searchedApps$ | async); trackBy: trackByAppId"
-      [app]="app"
-      [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-    ></ix-app-card>
-  </div>
-</div>
-<div *ngIf="!(isFilterOrSearch$ | async)" class="available-apps-list">
-  <ng-container *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle">
-    <section *ngIf="appSection.apps as apps">
-      <ng-container *ngIf="apps.length">
-        <h3 class="apps-section-title">
-          {{ appSection.title }}
-        </h3>
+<div class="available-apps-list">
+  <ix-fake-progress-bar
+    *ngIf="applicationsStore.isLoading$ | async"
+    class="loader-bar"
+    [loading]="applicationsStore.isLoading$ | async"
+  ></ix-fake-progress-bar>
 
-        <div class="apps">
-          <ix-app-card
-            *ngFor="let app of apps; trackBy: trackByAppId"
-            [app]="app"
-            [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-          ></ix-app-card>
-        </div>
+  <h3 *ngIf="applicationsStore.searchQuery$ | async as searchQuery" class="section-title">
+    {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
+  </h3>
 
-        <p
-          *ngIf="appSection.totalApps > (applicationsStore.sliceAmount$ | async)"
-          class="view-all"
-          (click)="applyCategoryFilter(appSection.category)"
-        >
-          <b>
-            {{ 'View All' | translate }} {{ appSection.title | translate }}
-          </b>
-        </p>
+  <ngx-skeleton-loader
+    *ngIf="applicationsStore.isLoading$ | async"
+    class="fake-apps"
+    [count]="6"
+    [animation]="false"
+  ></ngx-skeleton-loader>
+
+  <ng-container *ngIf="!(applicationStore.isLoading$ | async)">
+    <ng-container *ngIf="!(isFilterOrSearch$ | async)">
+      <ng-container *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle">
+        <section *ngIf="appSection.apps as apps">
+          <ng-container *ngIf="apps.length">
+            <h3 class="section-title">{{ appSection.title }}</h3>
+  
+            <div class="apps">
+              <ix-app-card
+                *ngFor="let app of apps; trackBy: trackByAppId"
+                [app]="app"
+                [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+              ></ix-app-card>
+            </div>
+  
+            <div *ngIf="appSection.totalApps > (applicationsStore.sliceAmount$ | async)" class="view-all">
+              <button
+                mat-stroked-button
+                [ixTest]="[appSection.title, 'view-all']"
+                (click)="applyCategoryFilter(appSection.category)"
+              >
+                {{ 'View All' | translate }} {{ appSection.title | translate }}
+              </button>
+            </div>
+          </ng-container>
+        </section>
       </ng-container>
-    </section>
+    </ng-container>
+  
+    <div *ngIf="isFilterOrSearch$ | async" class="apps">
+      <ix-app-card
+        *ngFor="let app of (applicationsStore.searchedApps$ | async); trackBy: trackByAppId"
+        [app]="app"
+        [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+      ></ix-app-card>
+    </div>
   </ng-container>
+
+  
 </div>

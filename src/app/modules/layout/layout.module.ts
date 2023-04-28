@@ -26,7 +26,6 @@ import {
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/components/console-footer/console-footer.component';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
-import { ModalComponent } from 'app/modules/layout/components/modal/modal.component';
 import { NavigationComponent } from 'app/modules/layout/components/navigation/navigation.component';
 import { SecondaryMenuComponent } from 'app/modules/layout/components/secondary-menu/secondary-menu.component';
 import { DirectoryServicesIndicatorComponent } from 'app/modules/layout/components/topbar/directory-services-indicator/directory-services-indicator.component';
@@ -74,7 +73,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     UserMenuComponent,
     AuthLayoutComponent,
     AdminLayoutComponent,
-    ModalComponent,
     CopyrightLineComponent,
     ConsoleFooterComponent,
     DirectoryServicesIndicatorComponent,
@@ -85,7 +83,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     PageTitleHeaderComponent,
     SecondaryMenuComponent,
     NavigationComponent,
-    ModalComponent,
     CopyrightLineComponent,
     TopbarComponent,
   ],

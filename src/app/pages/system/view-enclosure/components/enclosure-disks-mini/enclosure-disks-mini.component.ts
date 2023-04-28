@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { EnclosureSlot, EnclosureView } from 'app/interfaces/enclosure.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
 import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
@@ -51,10 +50,6 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     super(core, cdr, dialogService, translate, ws, store$, themeService, diskTemperatureService, matDialog);
     this.pixiWidth = 320;// 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
-  }
-
-  getPoolByName(poolName: string): Pool {
-    return this.systemState.pools.find((pool: Pool) => pool.name === poolName);
   }
 
   findEnclosureSlotFromSlotNumber(slot: number): EnclosureSlot {

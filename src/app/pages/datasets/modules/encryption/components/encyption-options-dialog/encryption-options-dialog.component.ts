@@ -14,10 +14,10 @@ import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';

@@ -2,12 +2,8 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import {
-  AuthorityKeyIdentifiers,
-  BasicConstraints,
   CertificateAuthority,
   CertificateExtensions,
-  ExtendedKeyUsage,
-  KeyUsages,
 } from 'app/interfaces/certificate-authority.interface';
 
 export interface Certificate {
@@ -73,32 +69,6 @@ export interface CertificateProfile {
 }
 
 export type CertificateExtension = keyof CertificateExtensions;
-
-/**
- * Temporary type for type-safety reasons.
- * @deprecated
- */
-export type SomeCertificateExtension =
-  Partial<
-  & BasicConstraints
-  & AuthorityKeyIdentifiers
-  & ExtendedKeyUsage
-  & KeyUsages
-  >;
-
-/**
- * @deprecated
- */
-export type CertificationExtensionAttribute =
-  | keyof BasicConstraints
-  | keyof AuthorityKeyIdentifiers
-  | keyof ExtendedKeyUsage
-  | keyof KeyUsages;
-
-/**
- * @deprecated
- */
-export type ExtensionProperty = keyof CertificateExtensions[CertificateExtension];
 
 export interface ExtendedKeyUsageChoices {
   [key: string]: string;
