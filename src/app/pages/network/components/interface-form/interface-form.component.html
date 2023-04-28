@@ -83,7 +83,6 @@
           [multiple]="true"
           [options]="lagPorts$"
           [required]="true"
-          [ordered]="isFailover"
           [tooltip]="(isFailover ? helptext.lagg_interfaces_failover_tooltip : helptext.lagg_interfaces_tooltip) | translate"
         ></ix-select>
       </ix-fieldset>
