@@ -615,7 +615,9 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.storageService.tableSorter(this.rows, this.sortKey, 'asc');
     }
     if (this.conf.dataHandler) {
-      this.conf.dataHandler(this);
+      this.conf.dataHandler(this).pipe(untilDestroyed(this)).subscribe(() => {
+        this.changeDetectorRef.markForCheck();
+      });
     }
 
     if (this.conf.addRows) {
