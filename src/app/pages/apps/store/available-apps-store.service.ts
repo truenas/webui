@@ -28,7 +28,6 @@ export interface AvailableAppsState {
   latestApps: AvailableApp[];
   recommendedApps: AvailableApp[];
   categories: string[];
-  appsByCategories: AppsByCategory[];
   filteredApps: AvailableApp[];
   filter: AppsFiltersValues;
   isLoading: boolean;
@@ -52,7 +51,6 @@ const initialState: AvailableAppsState = {
     sort: AppsFiltersSort.Name,
     catalogs: [],
   },
-  appsByCategories: [],
   searchQuery: '',
   searchedApps: [],
   installedApps: [],
@@ -65,7 +63,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly appsPerCategory = 6;
 
   readonly searchedApps$ = this.select((state) => state.searchedApps);
-  readonly appsByCategories$ = this.select((state) => state.appsByCategories);
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly isFilterApplied$ = this.select((state) => state.isFilterApplied);
   readonly searchQuery$ = this.select((state) => state.searchQuery);
@@ -74,6 +71,39 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly selectedPool$ = this.select((state) => state.selectedPool);
   readonly filterValues$ = this.select((state) => state.filter);
+  readonly appsByCategories$ = this.select((state: AvailableAppsState): AppsByCategory[] => {
+    const appsByCategory: AppsByCategory[] = [];
+
+    appsByCategory.push({
+      title: this.translate.instant('Recommended Apps'),
+      apps: state.recommendedApps.slice(0, this.appsPerCategory),
+      totalApps: state.recommendedApps.length,
+      category: AppExtraCategory.Recommended,
+    },
+    {
+      title: this.translate.instant('New & Updated Apps'),
+      apps: state.latestApps.slice(0, this.appsPerCategory),
+      totalApps: state.latestApps.length,
+      category: AppExtraCategory.NewAndUpdated,
+    });
+
+    state.categories.forEach((category) => {
+      const categorizedApps = state.availableApps.filter(
+        (app) => app.categories.some((appCategory) => appCategory === category),
+      );
+
+      appsByCategory.push(
+        {
+          title: category,
+          apps: categorizedApps.slice(0, this.appsPerCategory),
+          totalApps: categorizedApps.length,
+          category,
+        },
+      );
+    });
+
+    return appsByCategory;
+  });
 
   private installedAppsSubscription: Subscription;
 
@@ -129,7 +159,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
             isLoading: false,
             selectedPool: pool,
           };
-          newState.appsByCategories = this.getAppsSlicesByCategory(newState);
           return newState;
         });
       }),
@@ -229,40 +258,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       return false;
     });
   };
-
-  private getAppsSlicesByCategory(state: AvailableAppsState): AppsByCategory[] {
-    const appsByCategory: AppsByCategory[] = [];
-
-    appsByCategory.push({
-      title: this.translate.instant('Recommended Apps'),
-      apps: state.recommendedApps.slice(0, this.appsPerCategory),
-      totalApps: state.recommendedApps.length,
-      category: AppExtraCategory.Recommended,
-    },
-    {
-      title: this.translate.instant('New & Updated Apps'),
-      apps: state.latestApps.slice(0, this.appsPerCategory),
-      totalApps: state.latestApps.length,
-      category: AppExtraCategory.NewAndUpdated,
-    });
-
-    state.categories.forEach((category) => {
-      const categorizedApps = state.availableApps.filter(
-        (app) => app.categories.some((appCategory) => appCategory === category),
-      );
-
-      appsByCategory.push(
-        {
-          title: category,
-          apps: categorizedApps.slice(0, this.appsPerCategory),
-          totalApps: categorizedApps.length,
-          category,
-        },
-      );
-    });
-
-    return appsByCategory;
-  }
 
   private loadInstalledApps(): Observable<ChartRelease[]> {
     return this.appsService.getAllChartReleases().pipe(
