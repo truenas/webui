@@ -91,10 +91,6 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
           row.targetName = _.find(targets, { id: row.target }).name;
           row.extentName = _.find(extents, { id: row.extent }).name;
         });
-        this.entityList.rows = null;
-        this.entityList.currentRows = null;
-        entityList.rows = null;
-        entityList.currentRows = null;
       }),
     );
   }
