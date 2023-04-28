@@ -1,9 +1,11 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { FormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 
 const fakeAppInfo = {
@@ -38,6 +40,7 @@ describe('AppUpgradeDialogComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
+    imports: [FormsModule, ImgFallbackModule],
     providers: [
       mockProvider(MatDialogRef),
       {
