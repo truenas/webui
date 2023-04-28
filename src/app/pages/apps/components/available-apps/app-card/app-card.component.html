@@ -1,5 +1,13 @@
 <div class="left-column">
-  <div *ngIf="app.installed" class="installed-badge">{{ 'Installed' | translate }}</div>
+  <a
+    *ngIf="app?.installed"
+    class="installed-badge"
+    [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
+    [ixTest]="[app?.name, 'installed-badge']"
+    [routerLink]="['/apps', 'installed', app.name]"
+  >
+    {{ 'Installed' | translate }}
+  </a>
 
   <ix-app-card-logo [url]="app.icon_url"></ix-app-card-logo>
 

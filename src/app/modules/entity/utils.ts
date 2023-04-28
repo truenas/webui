@@ -87,14 +87,6 @@ export class EntityUtils {
     return result;
   }
 
-  changeNull2String<T>(value: T): T | typeof NULL_VALUE {
-    if (value === null) {
-      return NULL_VALUE;
-    }
-
-    return value;
-  }
-
   changeNullString2Null(data: unknown): unknown {
     let result: unknown;
     if (data === undefined || data === null || data === '') {

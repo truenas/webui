@@ -15,7 +15,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { DialogService, ModalService } from 'app/services';
+import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -43,7 +43,6 @@ export class ImportPoolComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private slideInService: IxSlideInService,
-    private modalService: ModalService,
     private ws: WebSocketService,
     private dialog: MatDialog,
     private errorHandler: ErrorHandlerService,
@@ -93,7 +92,6 @@ export class ImportPoolComponent implements OnInit {
         dialogRef.close(true);
         this.isLoading = false;
         this.slideInService.close(null, true);
-        this.modalService.refreshTable();
       },
       error: (error: WebsocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));

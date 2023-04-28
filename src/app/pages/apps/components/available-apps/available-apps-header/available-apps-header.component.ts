@@ -6,13 +6,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, forkJoin, Observable, of,
+  debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
+import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import helptext from 'app/helptext/apps/apps';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
@@ -37,23 +37,55 @@ export class AvailableAppsHeaderComponent implements OnInit {
   });
 
   searchControl = this.fb.control('');
+  isLoading = false;
+  isFirstLoad = true;
+  showFilters = false;
+  @Input() appliedFilters = false;
 
-  catalogsOptions$: Observable<Option[]> = of([]);
+  installedCatalogs: string[] = [];
+
+  refreshAvailableApps$ = new Subject<boolean>();
+  availableApps$ = this.appService.getAvailableApps().pipe(
+    toLoadingState(),
+    repeat({ delay: () => this.refreshAvailableApps$ }),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
+  );
+  installedCatalogs$ = this.availableApps$.pipe(
+    map((state) => ({ ...state, value: [...new Set<string>(state.value?.map((app) => app.catalog))] })),
+    tap(({ value: installedCatalogs }) => {
+      this.installedCatalogs = installedCatalogs;
+      if (this.isFirstLoad) {
+        this.isFirstLoad = false;
+        this.form.controls.catalogs.patchValue(installedCatalogs);
+      }
+    }),
+  );
+  catalogsOptions$: Observable<Option[]> = this.installedCatalogs$.pipe(
+    map((state) => state.value),
+    singleArrayToOptions(),
+  );
+  installedApps$ = this.appService.getChartReleases().pipe(
+    toLoadingState(),
+    repeat({ delay: () => this.refreshAvailableApps$ }),
+  );
+  categoriesProvider$: ChipsProvider = (query) => this.appService.getAllAppsCategories().pipe(
+    map((categories) => {
+      categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
+      return categories.filter((category) => category.includes(query));
+    }),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
+  );
   sortOptions$: Observable<Option[]> = of([
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
     { label: this.translate.instant('Catalog Name'), value: AppsFiltersSort.Catalog },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
   ]);
-  categoriesProvider$: ChipsProvider = () => of([]);
-
-  isLoading = false;
-  isFirstLoad = true;
-  showFilters = false;
-  @Input() appliedFilters = false;
-  availableApps: AvailableApp[] = [];
-  installedApps: ChartRelease[] = [];
-  installedCatalogs: string[] = [];
-  appsCategories: string[] = [];
 
   constructor(
     private appService: ApplicationsService,
@@ -65,8 +97,6 @@ export class AvailableAppsHeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
-
     this.searchControl.valueChanges.pipe(
       debounceTime(200),
       distinctUntilChanged(),
@@ -86,35 +116,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.loadData();
-      this.cdr.markForCheck();
-    });
-  }
-
-  loadData(): void {
-    this.isLoading = true;
-    forkJoin([
-      this.appService.getAvailableApps(),
-      this.appService.getChartReleases(),
-      this.appService.getAllAppsCategories(),
-    ]).pipe(untilDestroyed(this)).subscribe(([availableApps, releases, categories]) => {
-      this.availableApps = availableApps;
-      this.installedApps = releases;
-
-      const catalogs = new Set<string>();
-      availableApps.forEach((app) => catalogs.add(app.catalog));
-      this.installedCatalogs = Array.from(catalogs);
-      this.catalogsOptions$ = of(this.installedCatalogs.map((catalog) => ({ label: catalog, value: catalog })));
-
-      categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
-      this.appsCategories = categories;
-      this.categoriesProvider$ = (query) => of(categories.filter((category) => category.includes(query)));
-
-      if (this.isFirstLoad) {
-        this.isFirstLoad = false;
-        this.form.controls.catalogs.patchValue(this.installedCatalogs);
-      }
-      this.isLoading = false;
+      this.refreshAvailableApps$.next(true);
       this.cdr.markForCheck();
     });
   }
@@ -127,7 +129,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
     this.filters.emit({
       catalogs: this.form.value.catalogs || [],
       sort: this.form.value.sort || undefined,
-      categories: (this.form.value.categories || this.appsCategories).map(
+      categories: this.form.value.categories.map(
         (category) => {
           if (category === AppExtraCategory.NewAndUpdated) {
             return 'latest';
@@ -148,5 +150,9 @@ export class AvailableAppsHeaderComponent implements OnInit {
     this.form.controls.categories.setValue([]);
     this.filters.emit(undefined);
     this.appliedFilters = false;
+  }
+
+  refreshAvailableApps(): void {
+    this.refreshAvailableApps$.next(true);
   }
 }
