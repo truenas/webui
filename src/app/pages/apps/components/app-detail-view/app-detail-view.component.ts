@@ -135,8 +135,8 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   }
 
   private loadIfPoolSet(): void {
-    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
-      this.wasPoolSet = Boolean(config.pool);
+    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+      this.wasPoolSet = Boolean(pool);
       this.cdr.markForCheck();
     });
   }

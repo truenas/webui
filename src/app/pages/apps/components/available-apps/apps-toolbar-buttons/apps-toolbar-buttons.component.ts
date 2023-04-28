@@ -4,7 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ixChartApp } from 'app/constants/catalog.constants';
+import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,6 +24,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class AppsToolbarButtonsComponent {
   readonly customIxChartApp = ixChartApp;
+  readonly chartsTrain = chartsTrain;
+  readonly officialCatalog = officialCatalog;
 
   constructor(
     private slideInService: IxSlideInService,
