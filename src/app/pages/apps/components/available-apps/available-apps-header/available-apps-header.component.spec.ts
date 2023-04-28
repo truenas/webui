@@ -100,8 +100,13 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['OFFICIAL'],
-      sort: undefined,
-      categories: [],
+      sort: AppsFiltersSort.Name,
+      categories: [
+        'storage',
+        'crypto',
+        'media',
+        'torrent',
+      ],
     });
   });
 
@@ -112,7 +117,12 @@ describe('AvailableAppsHeaderComponent', () => {
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['OFFICIAL', 'TEST'],
       sort: AppsFiltersSort.LastUpdate,
-      categories: [],
+      categories: [
+        'storage',
+        'crypto',
+        'media',
+        'torrent',
+      ],
     });
   });
 
@@ -122,7 +132,7 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['OFFICIAL', 'TEST'],
-      sort: undefined,
+      sort: AppsFiltersSort.Name,
       categories: ['storage'],
     });
   });
