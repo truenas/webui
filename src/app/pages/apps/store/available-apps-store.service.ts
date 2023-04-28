@@ -16,8 +16,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-export const availableAppsShownPerCategory = 6;
-
 export interface AppsByCategory {
   title: string;
   apps: AvailableApp[];
@@ -35,7 +33,6 @@ export interface AvailableAppsState {
   filter: AppsFiltersValues;
   isLoading: boolean;
   isFilterApplied: boolean;
-  appsPerCategory: typeof availableAppsShownPerCategory;
   searchQuery: string;
   searchedApps: AvailableApp[];
   selectedPool: string;
@@ -48,7 +45,6 @@ const initialState: AvailableAppsState = {
   latestApps: [],
   categories: [],
   filteredApps: [],
-  appsPerCategory: availableAppsShownPerCategory,
   isLoading: false,
   isFilterApplied: false,
   filter: {
@@ -66,12 +62,13 @@ const initialState: AvailableAppsState = {
 @UntilDestroy()
 @Injectable()
 export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
+  readonly appsPerCategory = 6;
+
   readonly searchedApps$ = this.select((state) => state.searchedApps);
   readonly appsByCategories$ = this.select((state) => state.appsByCategories);
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly isFilterApplied$ = this.select((state) => state.isFilterApplied);
   readonly searchQuery$ = this.select((state) => state.searchQuery);
-  readonly sliceAmount$ = this.select((state) => state.appsPerCategory);
   readonly appsCategories$ = this.select((state) => state.categories);
   readonly availableApps$ = this.select((state) => state.availableApps);
   readonly installedApps$ = this.select((state) => state.installedApps);
@@ -238,13 +235,13 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
 
     appsByCategory.push({
       title: this.translate.instant('Recommended Apps'),
-      apps: state.recommendedApps.slice(0, state.appsPerCategory),
+      apps: state.recommendedApps.slice(0, this.appsPerCategory),
       totalApps: state.recommendedApps.length,
       category: AppExtraCategory.Recommended,
     },
     {
       title: this.translate.instant('New & Updated Apps'),
-      apps: state.latestApps.slice(0, state.appsPerCategory),
+      apps: state.latestApps.slice(0, this.appsPerCategory),
       totalApps: state.latestApps.length,
       category: AppExtraCategory.NewAndUpdated,
     });
@@ -257,7 +254,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       appsByCategory.push(
         {
           title: category,
-          apps: categorizedApps.slice(0, state.appsPerCategory),
+          apps: categorizedApps.slice(0, this.appsPerCategory),
           totalApps: categorizedApps.length,
           category,
         },

@@ -39,7 +39,7 @@
               ></ix-app-card>
             </div>
   
-            <div *ngIf="appSection.totalApps > (applicationsStore.sliceAmount$ | async)" class="view-all">
+            <div *ngIf="appSection.totalApps > applicationsStore.appsPerCategory" class="view-all">
               <button
                 mat-stroked-button
                 [ixTest]="[appSection.title, 'view-all']"
