@@ -3779,7 +3779,6 @@
   "Thread responsible for syncing db transactions not running on this node.": "Thread verantwoordelijk voor het synchroniseren van database-transacties die niet op deze node worden uitgevoerd.",
   "Thread:": "Thread:",
   "Threads": "Threads",
-  "Threads:": "Threads:",
   "Threshold Days": "Drempeldagen",
   "Threshold days": "Drempeldagen",
   "Threshold temperature in Celsius. If the drive temperature is higher than this value, a LOG_CRIT level log entry is created and an email is sent. <i>0</i> disables this check.": "Drempeltemperatuur in graden Celsius. Als de omvormertemperatuur hoger is dan deze waarde, wordt een LOG_CRIT-niveaulogitem gemaakt en wordt er een e-mail verzonden. <i>0</i> schakelt deze controle uit.",

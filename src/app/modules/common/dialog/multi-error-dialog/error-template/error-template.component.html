@@ -9,8 +9,8 @@
     class="more-info"
     (click)="toggleOpen()"
   >
-    <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
-    <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
+    <ix-icon *ngIf="isCloseMoreInfo" name="add_circle_outline"></ix-icon>
+    <ix-icon *ngIf="!isCloseMoreInfo" name="remove_circle_outline"></ix-icon>
     <span>{{ 'More info...' | translate }}</span>
   </div>
   <div

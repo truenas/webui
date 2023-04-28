@@ -3779,7 +3779,6 @@
   "Thread responsible for syncing db transactions not running on this node.": "Потік, відповідальний за синхронізацію транзакцій бази даних, не запущених на цьому вузлі.",
   "Thread:": "Тред:",
   "Threads": "Тредів",
-  "Threads:": "Тредів:",
   "Threshold Days": "Порогові дні",
   "Threshold days": "Поріг днів",
   "Threshold temperature in Celsius. If the drive temperature is higher than this value, a LOG_CRIT level log entry is created and an email is sent. <i>0</i> disables this check.": "Порогова температура у градусах Цельсія. Якщо температура приводу вище цього значення, створюється запис у журналі рівня LOG_CRIT і надсилається електронний лист. <i>0</i> вимикає цю перевірку.",

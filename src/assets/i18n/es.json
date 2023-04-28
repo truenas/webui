@@ -4262,7 +4262,6 @@
   "The OU in which new computer accounts are created.  The OU string is read from top to bottom without RDNs. Slashes (\"/\") are used as  delimiters, like <samp>Computers/Servers/NAS</samp>. The backslash (\"\\\") is  used to escape characters but not as a separator. Backslashes are interpreted at  multiple levels and might require doubling or even quadrupling to take effect.  When this field is blank, new computer accounts are created in the Active Directory  default OU.": "The OU in which new computer accounts are created.  The OU string is read from top to bottom without RDNs. Slashes (\"/\") are used as  delimiters, like <samp>Computers/Servers/NAS</samp>. The backslash (\"\\\\\") is  used to escape characters but not as a separator. Backslashes are interpreted at  multiple levels and might require doubling or even quadrupling to take effect.  When this field is blank, new computer accounts are created in the Active Directory  default OU.",
   "This is the OS_TENANT_NAME from an <a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack credentials file</a>.": "This is the OS_TENANT_NAME from an <a href=\"https://rclone.org/swift/\\#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack credentials file</a>.",
   "Threads": "Hilos",
-  "Threads:": "Hilos:",
   "Title": "Título",
   "Topology": "Topología",
   "Transfer": "Transferir",
