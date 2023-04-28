@@ -12,7 +12,7 @@ const fakeAppInfo = {
     icon: 'https://images.contentstack.io/v3/assets/bltefdd0b53724fa2ce/blt280217a63b82a734/6202d3378b1f312528798412/elastic-logo.svg',
   },
   id: 'elastic-search',
-  human_version: '8.7.0_1.0.0',
+  human_version: '8.7.0_1.0.1',
   human_latest_version: '8.7.0_1.0.2',
 };
 
@@ -60,7 +60,7 @@ describe('AppUpgradeDialogComponent', () => {
   });
 
   it('shows current application version', () => {
-    expect(spectator.query('.version').textContent).toBe(' 8.7.0_1.0.0');
+    expect(spectator.query('.version').textContent).toBe(' 8.7.0_1.0.1');
   });
 
   it('shows application image', () => {
@@ -87,7 +87,7 @@ describe('AppUpgradeDialogComponent', () => {
     expect(optionLabels).toEqual(['8.7.0_1.0.2']);
   });
 
-  it('submits upgrade from 1.0.0 to 1.0.2 version', async () => {
+  it('submits upgrade from 1.0.1 to 1.0.2 version', async () => {
     const upgradeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
     await upgradeButton.click();
 
