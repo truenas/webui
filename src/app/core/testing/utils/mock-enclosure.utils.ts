@@ -13,16 +13,25 @@ export class MockEnclosureUtils {
   mockStorage: MockStorageGenerator;
 
   constructor() {
-    this.mockStorage = new MockStorageGenerator();
-    if (this.mockConfig?.diskOptions?.enabled && this.mockConfig?.diskOptions?.mockPools) {
+    const diskOptions = this.mockConfig?.diskOptions;
+
+    // Mock Disk Settings
+    if (diskOptions?.enabled && diskOptions?.mockPools) {
+      // Simulate pools
+      this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
       this.mockStorage.addDataTopology(this.mockConfig.diskOptions.topologyOptions);
-    } else if (this.mockConfig?.diskOptions?.enabled && !this.mockConfig?.diskOptions?.mockPools) {
+    } else if (diskOptions?.enabled && !diskOptions?.mockPools) {
+      // Just add unassigned disks
+      this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
       this.mockStorage.addUnassignedDisks(
         this.mockConfig.diskOptions.topologyOptions.diskSize,
         this.mockConfig.diskOptions.topologyOptions.repeats,
       );
+    } else {
+      this.mockStorage = new MockStorageGenerator(false);
     }
 
+    // Mock Enclosure Settings
     if (this.mockConfig?.enclosureOptions) {
       this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
     }
@@ -54,18 +63,24 @@ export class MockEnclosureUtils {
           mockPayload = [];
           break;
         } else {
-          return data;
+          mockPayload = data;
+          break;
         }
       }
       case 'pool.dataset.query': {
+        console.warn({
+          method,
+          data,
+        });
         if (this.mockConfig.diskOptions.enabled && this.mockConfig.diskOptions.mockPools) {
-          mockPayload = [this.mockStorage.poolState];
+          mockPayload = data; // [this.mockStorage.poolState];
+          break;
         } else if (this.mockConfig.diskOptions.enabled && !this.mockConfig.diskOptions.mockPools) {
           mockPayload = [];
+          break;
         } else {
           return data;
         }
-        break;
       }
       case 'system.build_time': {
         let sysBuildtimeClone: ApiTimestamp = { ...data as ApiTimestamp };

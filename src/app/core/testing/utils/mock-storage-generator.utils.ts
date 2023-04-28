@@ -42,16 +42,16 @@ export class MockStorageGenerator {
   enclosures: Enclosure[] | null = null;
   private mockEnclosures: MockEnclosure[] = [];
 
-  constructor(noPool = false) {
+  constructor(mockPool = true) {
     // Creates a pool with empty topologies
-    const storage = this.generateStorage(noPool);
+    const storage = this.generateStorage(mockPool);
     this.poolState = storage.poolState;
     this.disks = storage.disks;
   }
 
   // Generate Empty Topology & Disks
-  private generateStorage(noPool = false): MockStorage {
-    if (noPool) return { poolState: null, disks: [] };
+  private generateStorage(mockPool = true): MockStorage {
+    if (!mockPool) return { poolState: null, disks: [] };
 
     const pool = {
       id: 1,
@@ -835,5 +835,11 @@ export class MockStorageGenerator {
     this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
       mockEnclosure.enclosureInit();
     });
+  }
+
+  generateRootDataset(/* pool: PoolInstance */): void {
+    // let rootDataset = {...rootDatasetTemplate};
+
+    // return rootDataset;
   }
 }

@@ -31,6 +31,10 @@ interface ConfigGeneratorAnswers {
   dispersal: string;
   loadAfterSave: string;
   saveOrCancel: string;
+  mockDisk: string;
+  mockPool: string;
+  diskSize: string;
+  repeats: string;
 }
 
 interface ConfigLoaderAnswers {
@@ -405,6 +409,7 @@ function mockConfigReport(options: ReportOptions): string {
  `;
   if (diskOptions.enabled) report += `   * Disk Size: ${diskOptions.topologyOptions.diskSize} TB`
   if (diskOptions.enabled) report += `\n    * Repeats: ${diskOptions.topologyOptions.repeats}`
+  report += '\n';
 
     const output = header + file + report + footer;
 
@@ -461,7 +466,7 @@ function loadMockConfigFile(path: string): void {
   console.info('Locating mock configuration file...');
   const configStr = fs.readFileSync( path, 'utf8');
   let config = JSON.parse(configStr);
-  if (!config.diskOptions) config.diskOptions = environment.mockConfig.diskOptions;
+  if (typeof config.diskOptions === 'undefined') config.diskOptions = environment.mockConfig.diskOptions;
 
   environment.mockConfig = config;
   console.info('Mock config file found √\n');
@@ -543,6 +548,8 @@ function mockConfigGenerator(): void {
   const shelfChoices: string[] = Object.keys(models.shelves);
   const dispersalChoices: string[] = ['Default', 'Existing'];
   const loadAfterSaveChoices: string[] = ['Yes', 'No'];
+  const mockDiskChoices: string[] = ['Yes', 'No'];
+  const mockPoolChoices: string[] = ['Create Pool', 'Leave Unassigned'];
   const saveChoices: string[] = ['Save', 'Cancel'];
   const saveLocation = mockConfigDir + 'custom/';
 
@@ -574,6 +581,41 @@ function mockConfigGenerator(): void {
       default: 'Default',
     },
     {
+      name: 'mockDisk',
+      message: 'Do you want mock disks?',
+      type: 'list',
+      choices: mockDiskChoices,
+      default: 'Yes',
+    },
+/*    {
+      name: 'mockPool',
+      message: 'Create mock pool or leave disks unassigned?',
+      type: 'list',
+      choices: mockPoolChoices,
+      default: 'Leave Unassigned',
+      when: ( answers ) => {
+        return answers.mockDisk === 'Yes';
+      },
+    },*/
+    {
+      name: 'diskSize',
+      message: 'Select HDD capacity in TB',
+      type: 'input',
+      default: '4',
+      when: ( answers ) => {
+        return answers.mockDisk === 'Yes';
+      },
+    },
+    {
+      name: 'repeats',
+      message: 'How many devices?',
+      type: 'input',
+      default: '12',
+      when: ( answers ) => {
+        return answers.mockDisk === 'Yes';
+      },
+    },
+    {
       name: 'loadAfterSave',
       message: 'Should we load the config after saving?',
       type: 'list',
@@ -592,6 +634,7 @@ function mockConfigGenerator(): void {
       const extension = '.config.json';
       const filePath = saveLocation + answers.fileName + extension;
 
+      // Setup enclosure stuff
       const expansionModels: string[] = answers.shelves.length
         ? [].concat(answers.shelves.toUpperCase().split(','))
         : [];
@@ -602,10 +645,28 @@ function mockConfigGenerator(): void {
         dispersal: dispersalAsEnum(answers.dispersal),
       }
 
+      // Setup disk stuff
+      let diskOptions = {...environmentTemplate.mockConfig.diskOptions}
+
+      if (answers.mockDisk === 'Yes') {
+        diskOptions.enabled = true;
+        diskOptions.mockPools = answers.mockPool === 'Create Pool' ? true : false;
+        diskOptions.topologyOptions.diskSize = Number(answers.diskSize);
+        diskOptions.topologyOptions.repeats = Number(answers.repeats);
+      }
+
+      let diskOptionsReport = answers.mockDisk === 'No'
+        ? '  * Mock Disks: Disabled'
+        : `  * MockDisks: Enabled (${Number(answers.repeats)} x ${Number(answers.diskSize)}TB disks)
+
+        `
+
+      // Put it all together in our config
       let mockConfig: MockEnclosureConfig = {
         enabled: true,
         enclosureOptions: enclosureOptions,
-        systemProduct: models.controllers[answers.controller].systemProduct as string
+        systemProduct: models.controllers[answers.controller].systemProduct as string,
+        diskOptions: diskOptions,
       }
 
       if (answers.saveOrCancel === 'Save'){
@@ -616,7 +677,7 @@ function mockConfigGenerator(): void {
         * Controller: ${models.controllers[answers.controller].systemProduct as string}
         * Shelves: ${answers.shelves.length ? answers.shelves.toUpperCase() : 'None'}
         * Slot Assignment: ${answers.dispersal.toLowerCase()}
-      `);
+      ` + diskOptionsReport);
 
         const contents = JSON.stringify(mockConfig, null,'  ');
         fs.writeFileSync(filePath, contents, 'utf8');
