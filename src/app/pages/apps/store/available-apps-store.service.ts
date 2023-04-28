@@ -33,7 +33,6 @@ export interface AvailableAppsState {
   isLoading: boolean;
   isFilterApplied: boolean;
   searchQuery: string;
-  searchedApps: AvailableApp[];
   selectedPool: string;
   installedApps: ChartRelease[];
 }
@@ -52,7 +51,6 @@ const initialState: AvailableAppsState = {
     catalogs: [],
   },
   searchQuery: '',
-  searchedApps: [],
   installedApps: [],
   selectedPool: null,
 };
@@ -62,7 +60,11 @@ const initialState: AvailableAppsState = {
 export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly appsPerCategory = 6;
 
-  readonly searchedApps$ = this.select((state) => state.searchedApps);
+  readonly searchedApps$ = this.select((state) => {
+    return state.searchQuery
+      ? state.filteredApps.filter((filteredApp) => this.doesAppContainString(state.searchQuery, filteredApp))
+      : [...state.filteredApps];
+  });
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly isFilterApplied$ = this.select((state) => state.isFilterApplied);
   readonly searchQuery$ = this.select((state) => state.searchQuery);
@@ -214,10 +216,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
             ...state,
             filter: { ...filter },
             filteredApps: [...filteredApps],
-            searchedApps:
-              state.searchQuery
-                ? filteredApps.filter((filteredApp) => this.doesAppContainString(state.searchQuery, filteredApp))
-                : filteredApps,
             isFilterApplied: true,
             isLoading: false,
           };
