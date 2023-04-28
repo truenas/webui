@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, forkJoin } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -85,16 +85,18 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     return forkJoin([
       this.iscsiService.getTargets(),
       this.iscsiService.getExtents(),
-    ]).pipe((map(([targets, extents]) => {
-      entityList.rows.forEach((row) => {
-        row.targetName = _.find(targets, { id: row.target }).name;
-        row.extentName = _.find(extents, { id: row.extent }).name;
-      });
-      this.entityList.rows = null;
-      this.entityList.currentRows = null;
-      entityList.rows = null;
-      entityList.currentRows = null;
-    })));
+    ]).pipe(
+      tap(([targets, extents]) => {
+        entityList.rows.forEach((row) => {
+          row.targetName = _.find(targets, { id: row.target }).name;
+          row.extentName = _.find(extents, { id: row.extent }).name;
+        });
+        this.entityList.rows = null;
+        this.entityList.currentRows = null;
+        entityList.rows = null;
+        entityList.currentRows = null;
+      }),
+    );
   }
 
   doAdd(): void {
