@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatChipInputHarness } from '@angular/material/chips/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -10,6 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { IxFilterSelectListHarness } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.harness';
@@ -22,7 +22,7 @@ describe('AvailableAppsHeaderComponent', () => {
   let searchInput: MatInputHarness;
   let catalogsItems: IxFilterSelectListHarness;
   let sortItems: IxFilterSelectListHarness;
-  let categoriesSelect: MatChipInputHarness;
+  let categoriesSelect: IxChipsHarness;
   let applyButton: MatButtonHarness;
   let resetButton: MatButtonHarness;
   let availableAppsStore: AvailableAppsStore;
@@ -50,6 +50,12 @@ describe('AvailableAppsHeaderComponent', () => {
           last_update: '2023-02-28 16:37:54',
           name: 'qbittorent',
         }] as AvailableApp[]),
+        installedApps$: of([{}, {}, {}] as ChartRelease[]),
+        filterValues$: of({
+          catalogs: ['OFFICIAL'],
+          sort: AppsFiltersSort.Name,
+          categories: ['storage', 'crypto', 'media', 'torrent'],
+        }),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
         isFilterApplied$: of(true),
         applySearchQuery: jest.fn(),
@@ -69,7 +75,7 @@ describe('AvailableAppsHeaderComponent', () => {
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
     catalogsItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
     sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[1];
-    categoriesSelect = await loader.getHarness(MatChipInputHarness);
+    categoriesSelect = await loader.getHarness(IxChipsHarness);
     applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
     resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
     availableAppsStore = spectator.inject(AvailableAppsStore);
@@ -111,8 +117,7 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('calls applyFilters when user selects categories', async () => {
-    await categoriesSelect.setValue('storage');
-    await categoriesSelect.blur();
+    await categoriesSelect.setValue(['storage']);
     await applyButton.click();
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
@@ -125,8 +130,7 @@ describe('AvailableAppsHeaderComponent', () => {
   it('emits (filters) when reset button is pressed', async () => {
     await catalogsItems.setValue(['OFFICIAL']);
     await sortItems.setValue(['Updated Date']);
-    await categoriesSelect.setValue('storage');
-    await categoriesSelect.blur();
+    await categoriesSelect.setValue(['storage']);
     await applyButton.click();
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
