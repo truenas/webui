@@ -49,10 +49,13 @@ export class MockEnclosureUtils {
       case 'pool.query': {
         if (this.mockConfig.diskOptions.enabled && this.mockConfig.diskOptions.mockPools) {
           mockPayload = [this.mockStorage.poolState];
+          break;
         } else if (this.mockConfig.diskOptions.enabled && !this.mockConfig.diskOptions.mockPools) {
           mockPayload = [];
+          break;
+        } else {
+          return data;
         }
-        break;
       }
       case 'pool.dataset.query': {
         if (this.mockConfig.diskOptions.enabled && this.mockConfig.diskOptions.mockPools) {
