@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, tap,
 } from 'rxjs';
-import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import helptext from 'app/helptext/apps/apps';
@@ -45,7 +44,11 @@ export class AvailableAppsHeaderComponent implements OnInit {
   availableApps: AvailableApp[] = [];
   installedApps: ChartRelease[] = [];
   appsCategories: string[] = [];
-  categoriesProvider$: ChipsProvider = () => of([]);
+  categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
+    map((categories) => {
+      return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
+    }),
+  );
 
   installedCatalogs: string[] = [];
 
@@ -134,7 +137,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
   loadData(): void {
     combineLatest([
       this.applicationsStore.availableApps$,
-      this.appService.getAllChartReleases(),
+      this.applicationsStore.installedApps$,
       this.applicationsStore.appsCategories$,
     ]).pipe(untilDestroyed(this)).subscribe(([availableApps, releases, categories]) => {
       this.availableApps = availableApps;
@@ -145,9 +148,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
       this.installedCatalogs = Array.from(catalogs);
       this.catalogsOptions$ = of(this.installedCatalogs.map((catalog) => ({ label: catalog, value: catalog })));
 
-      categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
-      this.appsCategories = categories;
-      this.categoriesProvider$ = (query) => of(categories.filter((category) => category.includes(query)));
+      this.appsCategories = [...categories];
 
       if (this.isFirstLoad) {
         this.isFirstLoad = false;

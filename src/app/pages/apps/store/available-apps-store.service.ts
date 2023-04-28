@@ -118,6 +118,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       ) => {
         this.subscribeToInstalledAppsUpdates();
         this.patchState((state: AvailableAppsState): AvailableAppsState => {
+          categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
           const newState: AvailableAppsState = {
             ...state,
             installedApps,
