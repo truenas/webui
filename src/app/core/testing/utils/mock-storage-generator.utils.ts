@@ -39,15 +39,17 @@ export class MockStorageGenerator {
   enclosures: Enclosure[] | null = null;
   private mockEnclosures: MockEnclosure[] = [];
 
-  constructor() {
+  constructor(noPool = false) {
     // Creates a pool with empty topologies
-    const storage = this.generateStorage();
+    const storage = this.generateStorage(noPool);
     this.poolState = storage.poolState;
     this.disks = storage.disks;
   }
 
   // Generate Empty Topology & Disks
-  private generateStorage(): MockStorage {
+  private generateStorage(noPool = false): MockStorage {
+    if (noPool) return { poolState: null, disks: [] };
+
     const pool = {
       id: 1,
       name: 'MOCK_POOL',
@@ -61,11 +63,21 @@ export class MockStorageGenerator {
         cache: [],
         dedup: [],
       },
+      autotrim: {
+        value: 'off',
+      },
     } as PoolInstance;
 
     const disks: Disk[] = [];
 
     return { poolState: pool, disks };
+  }
+
+  addUnassignedDisks(diskSize: number, repeats: number): MockStorageGenerator {
+    for (let i = 0; i < repeats; i++) {
+      this.disks.push(this.generateDisk(diskSize, i));
+    }
+    return this;
   }
 
   addDataTopology(options: AddTopologyOptions = {
@@ -549,7 +561,7 @@ export class MockStorageGenerator {
       devname: 'sdc',
       enclosure: null,
       supports_smart: null,
-      pool: null,
+      pool: this.poolState ? this.poolState.name : null,
     };
   }
 

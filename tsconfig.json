@@ -28,6 +28,7 @@
   "ts-node": {
     "experimentalSpecifierResolution": "node",
     "compilerOptions": {
+      "lib": ["es2017"],
       "module": "commonjs",
       "noImplicitAny": false,
       "esModuleInterop": true

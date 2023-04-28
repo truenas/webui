@@ -2,11 +2,12 @@ import {environment} from '../../src/environments/environment';
 import {environmentTemplate} from './environment.template';
 import {Command} from 'commander';
 import fs from 'fs';
-import {EnclosureDispersalStrategy} from "../../src/app/core/testing/enums/mock-storage.enum";
+import {EnclosureDispersalStrategy, MockStorageScenario} from "../../src/app/core/testing/enums/mock-storage.enum";
 import {WebUiEnvironment} from "../../src/environments/environment.interface";
 import inquirer from 'inquirer';
 import {MockEnclosureConfig} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
 import * as figlet from 'figlet';
+import {TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
 
 interface CommandOptions {
   [p: string]: any;
@@ -156,7 +157,7 @@ program
   .command('mock-opt')
   .name('mock-opt')
   .alias('mo')
-  .description('Set specific mock options')
+  .description('Set specific mock enclosure options')
   .addHelpText('after', mockOptExamples)
   .option('-e, --enable', 'enable mock config')
   .option('-d, --disable', 'disable mock config')
@@ -172,6 +173,44 @@ program
     const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-opt');
     const mockOptions = commandOpts(mockCommand);
     mock(mockCommand, mockOptions);
+  });
+
+/*
+TODO: Mock Disks Command
+-e, --enabled => sets diskConfig.enabled
+-d, --disabled => sets diskConfig.enabled
+-s, --size => sets topologyOptions.diskSize
+-r, --repeats => sets topologyOptions.repeat
+
+**** Experimental Pool Mocking (Maybe hide for now) ****
+-p, --pool: mockPools => sets mockPools to true
+-u, --unassigned => sets mockPools to false
+-l, --layout => sets topologyOptions.layout
+-w, --width => sets topologyOptions.width
+-S, --scenario => sets topologyOptions.scenario
+ */
+
+const mockDiskExamples = ``
+
+program
+  .command('mock-disks')
+  .name('mock-disks')
+  .alias('md')
+  .description('Ignore all middleware disk related responses and create our own')
+  .addHelpText('after', mockDiskExamples)
+  .option('-e, --enable', 'enable mock disks')
+  .option('-d, --disable', 'disable mock disks')
+  .option('-s, --size, <number>', 'set disk size')
+  .option('-r, --repeats, <number>', 'set number of disks')
+  .option('-p, --pool', 'override pool data (experimental)')
+  .option('-u, --unassigned', 'replace pool data with unassigned disks (experimental)')
+  .option('-l, --layout, <layout>', 'vdev layout for mock pool (experimental)')
+  .option('-w, --width, <number>', 'vdev width for mock pool (experimental)')
+  .option('-S, --scenario, <number>', 'choose test scenario for mock pool (experimental)')
+  .action(() => {
+    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-disks');
+    const mockOptions = commandOpts(mockCommand);
+    mockDisks(mockCommand, mockOptions);
   });
 
 program
@@ -245,8 +284,9 @@ function reset(): void {
 * General environment file editing functions
 * */
 function saveEnvironment(): void {
-  const imports = `import { EnclosureDispersalStrategy } from "../app/core/testing/enums/mock-storage.enum";
-import { WebUiEnvironment } from "./environment.interface";\n
+  const imports = `import { EnclosureDispersalStrategy, MockStorageScenario } from "../app/core/testing/enums/mock-storage.enum";
+import { WebUiEnvironment } from "./environment.interface";
+import {TopologyItemType} from "../app/enums/v-dev-type.enum";\n
 `
 
   const prefix = 'export const environment: WebUiEnvironment = ';
@@ -270,11 +310,27 @@ function makePrintable(src: WebUiEnvironment, prefix: string) {
 }
 
 function enumAsString(value: string): string | null {
+  if (Object.values(MockStorageScenario).includes(value as MockStorageScenario)) {
+    console.log(value)
+  }
   const trimmed = value.replace(/\"|\: /g, '');
   let output: string;
+
   for (const key in EnclosureDispersalStrategy) {
     if (key.toLowerCase() === trimmed) {
       output =  ': EnclosureDispersalStrategy.' + key;
+    }
+  }
+
+  for (const key in MockStorageScenario) {
+    if (key !== 'Default' && key.toLowerCase() === trimmed) {
+      output =  ': MockStorageScenario.' + key;
+    }
+  }
+
+  for (const key in TopologyItemType) {
+    if (key !== 'Default' && key.toUpperCase() === trimmed) {
+      output =  ': TopologyItemType.' + key;
     }
   }
 
@@ -339,12 +395,16 @@ function mockConfigReport(options: ReportOptions): string {
     const header: string = options.showHeader ? headers.header : '';
     const footer: string = options.showFooter ? headers.footer : '';
     const file = typeof options.data !== 'undefined' ? '\n    * Config file: ' + options.data + '\n' : '\n';
+    const diskOptions = environment.mockConfig.diskOptions;
 
-    const report = `    * Enabled: ${environment?.mockConfig?.enabled}
+    let report = `    * Enabled: ${environment?.mockConfig?.enabled}
     * Controller: ${environment.mockConfig.systemProduct}
     * Shelves: ${environment.mockConfig.enclosureOptions.expansionModels}
     * Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}
+    * Mock Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}
  `;
+  if (diskOptions.enabled) report += `   * Disk Size: ${diskOptions.topologyOptions.diskSize} TB`
+  if (diskOptions.enabled) report += `\n    * Repeats: ${diskOptions.topologyOptions.repeats}`
 
     const output = header + file + report + footer;
 
@@ -400,7 +460,8 @@ function setMockShelves(value: string): void {
 function loadMockConfigFile(path: string): void {
   console.info('Locating mock configuration file...');
   const configStr = fs.readFileSync( path, 'utf8');
-  const config = JSON.parse(configStr);
+  let config = JSON.parse(configStr);
+  if (!config.diskOptions) config.diskOptions = environment.mockConfig.diskOptions;
 
   environment.mockConfig = config;
   console.info('Mock config file found √\n');
@@ -686,6 +747,54 @@ function mockConfig(command: Command, options: CommandOptions): void {
       }
     }
   }
+}
+
+/*
+* Mock Disks Command
+* */
+function setDiskOptionsEnabled(value: boolean): void {
+  environment.mockConfig.diskOptions.enabled = value;
+  saveEnvironment();
+}
+
+function setDiskSize(value: number | string): void {
+  const size: number = typeof value === 'string' ? Number(value) : value
+  environment.mockConfig.diskOptions.topologyOptions.diskSize = size;
+  saveEnvironment();
+}
+
+function setRepeats(value: number | string): void {
+  const repeats: number = typeof value === 'string' ? Number(value) : value;
+  environment.mockConfig.diskOptions.topologyOptions.repeats = repeats;
+  saveEnvironment();
+}
+
+function mockDisks(command: Command, options: CommandOptions): void {
+  for (let option in options) {
+    switch (option) {
+      case 'enable':
+        setDiskOptionsEnabled(true);
+        break;
+      case 'disable':
+        setDiskOptionsEnabled(false);
+        break;
+      case 'size':
+        setDiskSize(options[option]);
+        break;
+      case 'repeats':
+        setRepeats(options[option]);
+        break;
+      default:
+        const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`
+        console.info(warning);
+        process.exit(0);
+    }
+  }
+
+  mockConfigReport({
+    showHeader : true,
+    showFooter: true,
+  });
 }
 
 /*

@@ -1,5 +1,6 @@
-import { EnclosureDispersalStrategy } from '../../src/app/core/testing/enums/mock-storage.enum';
+import {EnclosureDispersalStrategy, MockStorageScenario} from '../../src/app/core/testing/enums/mock-storage.enum';
 import { WebUiEnvironment } from 'environments/environment.interface';
+import {TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
 
 export const environmentTemplate: WebUiEnvironment = {
   remote: '$SERVER$',
@@ -14,5 +15,16 @@ export const environmentTemplate: WebUiEnvironment = {
       dispersal: EnclosureDispersalStrategy.Default,
     },
     systemProduct: 'TRUENAS-M40',
+    diskOptions: {
+      enabled: false,
+      topologyOptions: {
+        scenario: MockStorageScenario.Uniform,
+        layout: TopologyItemType.Mirror,
+        diskSize: 12,
+        width: 2,
+        repeats: 1,
+      },
+      mockPools: false,
+    }
   },
 };

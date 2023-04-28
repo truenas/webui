@@ -1,7 +1,7 @@
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { AddEnclosureOptions } from './mock-storage-generator.interface';
+import { AddEnclosureOptions, AddTopologyOptions } from './mock-storage-generator.interface';
 
 export interface MockEnclosureConfigItem {
   enabled: boolean;
@@ -22,12 +22,15 @@ export interface MockEnclosure extends MockEnclosureConfigItem {
   overflowShelfModel: string;
 }
 
-export interface MockDisk extends MockEnclosureConfigItem {
-  useRealDisks: boolean;
+export interface MockDiskOptions extends MockEnclosureConfigItem {
+  enabled: boolean;
+  topologyOptions: AddTopologyOptions;
+  mockPools: boolean;
 }
 
 export interface MockEnclosureConfig {
   enabled: boolean;
   enclosureOptions: AddEnclosureOptions;
   systemProduct: string;
+  diskOptions?: MockDiskOptions;
 }
