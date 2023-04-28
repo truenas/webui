@@ -101,6 +101,19 @@ export class AvailableAppsHeaderComponent implements OnInit {
     ).subscribe((searchQuery) => {
       this.applicationsStore.applySearchQuery(searchQuery);
     });
+    this.applicationsStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
+      next: (filter) => {
+        if (filter.categories?.length) {
+          this.form.controls.categories.setValue(filter.categories);
+        }
+        if (filter.catalogs?.length) {
+          this.form.controls.catalogs.setValue(filter.catalogs);
+        }
+        if (filter.sort) {
+          this.form.controls.sort.setValue(filter.sort);
+        }
+      },
+    });
   }
 
   refreshCharts(): void {

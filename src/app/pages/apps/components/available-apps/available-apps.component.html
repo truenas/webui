@@ -24,7 +24,7 @@
     [animation]="false"
   ></ngx-skeleton-loader>
 
-  <ng-container *ngIf="!(applicationStore.isLoading$ | async)">
+  <ng-container *ngIf="!(applicationsStore.isLoading$ | async)">
     <ng-container *ngIf="!(isFilterOrSearch$ | async)">
       <ng-container *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle">
         <section *ngIf="appSection.apps as apps">

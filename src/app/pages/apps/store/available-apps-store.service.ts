@@ -4,11 +4,13 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  Observable, catchError, combineLatest, map, of, switchMap, tap,
+  Observable, Subscription, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services';
@@ -37,6 +39,7 @@ export interface AvailableAppsState {
   searchQuery: string;
   searchedApps: AvailableApp[];
   selectedPool: string;
+  installedApps: ChartRelease[];
 }
 
 const initialState: AvailableAppsState = {
@@ -56,6 +59,7 @@ const initialState: AvailableAppsState = {
   appsByCategories: [],
   searchQuery: '',
   searchedApps: [],
+  installedApps: [],
   selectedPool: null,
 };
 
@@ -70,7 +74,11 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly sliceAmount$ = this.select((state) => state.appsPerCategory);
   readonly appsCategories$ = this.select((state) => state.categories);
   readonly availableApps$ = this.select((state) => state.availableApps);
+  readonly installedApps$ = this.select((state) => state.installedApps);
   readonly selectedPool$ = this.select((state) => state.selectedPool);
+  readonly filterValues$ = this.select((state) => state.filter);
+
+  private installedAppsSubscription: Subscription;
 
   constructor(
     private dialogService: DialogService,
@@ -92,6 +100,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       }),
       switchMap(() => {
         return combineLatest([
+          this.loadInstalledApps(),
           this.loadLatestApps(),
           this.loadAvailableApps(),
           this.loadCategories(),
@@ -100,15 +109,18 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       }),
       tap((
         [
+          installedApps,
           latestApps,
           availableApps,
           categories,
           pool,
-        ]: [AvailableApp[], AvailableApp[], string[], string],
+        ]: [ChartRelease[], AvailableApp[], AvailableApp[], string[], string],
       ) => {
+        this.subscribeToInstalledAppsUpdates();
         this.patchState((state: AvailableAppsState): AvailableAppsState => {
           const newState: AvailableAppsState = {
             ...state,
+            installedApps,
             latestApps: [...latestApps],
             availableApps: [...availableApps],
             categories: [...categories],
@@ -145,8 +157,12 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps(filter);
 
     if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
-      filter.categories = filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated));
-      request$ = this.appsService.getLatestApps(filter);
+      request$ = this.appsService.getLatestApps(
+        {
+          ...filter,
+          categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated)),
+        },
+      );
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -154,6 +170,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
         this.patchState((state: AvailableAppsState): AvailableAppsState => {
           return {
             ...state,
+            filter: { ...filter },
             filteredApps: [...filteredApps],
             searchedApps:
               state.searchQuery
@@ -232,6 +249,64 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     });
 
     return appsByCategory;
+  }
+
+  private loadInstalledApps(): Observable<ChartRelease[]> {
+    return this.appsService.getAllChartReleases().pipe(
+      catchError((error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+        return of([]);
+      }),
+    );
+  }
+
+  private subscribeToInstalledAppsUpdates(): void {
+    if (this.installedAppsSubscription) {
+      return;
+    }
+    this.installedAppsSubscription = this.appsService.subscribeToAllChartReleases().pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (apiEvent) => {
+        switch (apiEvent.msg) {
+          case IncomingApiMessageType.Removed:
+            this.patchState((state) => {
+              return {
+                ...state,
+                installedApps: state.installedApps.filter(
+                  (chartRelease) => chartRelease.name !== apiEvent.id.toString(),
+                ),
+              };
+            });
+            break;
+          case IncomingApiMessageType.Added:
+            this.patchState((state) => {
+              return {
+                ...state,
+                installedApps: [...state.installedApps, apiEvent.fields],
+              };
+            });
+            break;
+          case IncomingApiMessageType.Changed:
+            this.patchState((state) => {
+              return {
+                ...state,
+                installedApps: state.installedApps.map(
+                  (chartRelease) => {
+                    if (chartRelease.name === apiEvent.id.toString()) {
+                      return {
+                        ...apiEvent.fields,
+                      };
+                    }
+                    return chartRelease;
+                  },
+                ),
+              };
+            });
+            break;
+        }
+      },
+    });
   }
 
   private loadLatestApps(): Observable<AvailableApp[]> {

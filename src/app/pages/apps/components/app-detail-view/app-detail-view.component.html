@@ -35,7 +35,7 @@
           color="primary"
           [ixTest]="[app?.name, 'install']"
           [disabled]="!app"
-          [routerLink]="['/apps', 'available', appId, 'install']"
+          (click)="navigateToInstallPage()"
         >
           <ng-container *ngIf="!app?.installed">{{ 'Install' | translate }}</ng-container>
           <ng-container *ngIf="app?.installed">{{ 'Install another instance' | translate }}</ng-container>
