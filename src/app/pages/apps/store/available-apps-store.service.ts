@@ -126,7 +126,9 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
             availableApps: [...availableApps],
             categories: [...categories],
             filteredApps: [],
-            recommendedApps: availableApps.filter((app) => app.recommended),
+            recommendedApps: availableApps
+              .filter((app) => app.recommended)
+              .map((app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] })),
             isLoading: false,
             selectedPool: pool,
           };
@@ -155,7 +157,10 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       };
     });
 
-    let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps(filter);
+    let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps({
+      ...filter,
+      categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.Recommended)),
+    });
 
     if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
       request$ = this.appsService.getLatestApps(
@@ -169,6 +174,16 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: (filteredApps) => {
         this.patchState((state: AvailableAppsState): AvailableAppsState => {
+          if (filter.categories.some((category) => category.includes(AppExtraCategory.Recommended))) {
+            filteredApps = [
+              ...filteredApps,
+              ...filteredApps.filter(
+                (app) => app.recommended,
+              ).map(
+                (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] }),
+              ),
+            ];
+          }
           return {
             ...state,
             filter: { ...filter },
