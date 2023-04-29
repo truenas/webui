@@ -25,6 +25,10 @@ export const environmentTemplate: WebUiEnvironment = {
         repeats: 1,
       },
       mockPools: false,
+      unassignedOptions: {
+        diskSize: 4,
+        repeats: 4,
+      }
     }
   },
 };

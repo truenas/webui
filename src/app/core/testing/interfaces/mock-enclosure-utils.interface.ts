@@ -26,7 +26,7 @@ export interface MockDiskOptions extends MockEnclosureConfigItem {
   enabled: boolean;
   topologyOptions: AddTopologyOptions;
   mockPools: boolean;
-  unassignedOptions?: AddUnAssignedOptions;
+  unassignedOptions: AddUnAssignedOptions;
 }
 
 export interface MockEnclosureConfig {

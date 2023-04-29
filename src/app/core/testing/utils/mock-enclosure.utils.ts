@@ -16,23 +16,31 @@ export class MockEnclosureUtils {
   constructor() {
     const diskOptions = this.mockConfig?.diskOptions;
 
-    // Mock Disk Settings
-    if (diskOptions?.enabled && diskOptions?.mockPools) {
-      // Simulate pools
-      this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
+    this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
 
+    // Add Vdevs
+    if (diskOptions?.mockPools && diskOptions?.topologyOptions) {
       this.mockStorage.addDataTopology(this.mockConfig.diskOptions.topologyOptions);
-    } else if (diskOptions?.enabled && !diskOptions?.mockPools) {
+    }
+
+    // Add Unassigned Disks
+    if (diskOptions?.enabled && diskOptions?.unassignedOptions) {
+      // Simulate pools
+      // this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
+
+      this.mockStorage.addUnassignedDisks(this.mockConfig.diskOptions.unassignedOptions);
+    }
+
+    // Unassigned disks
+    /* if (diskOptions?.enabled && diskOptions?.unassignedOptions) {
       // Just add unassigned disks
       this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
 
       this.mockStorage.addUnassignedDisks(
-        this.mockConfig.diskOptions.topologyOptions.diskSize,
-        this.mockConfig.diskOptions.topologyOptions.repeats,
+        this.mockConfig.diskOptions.unassignedOptions.diskSize,
+        this.mockConfig.diskOptions.unassignedOptions.repeats,
       );
-    } else {
-      this.mockStorage = new MockStorageGenerator(false);
-    }
+    } */
 
     // Mock Enclosure Settings
     if (this.mockConfig?.enclosureOptions) {

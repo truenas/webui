@@ -2,7 +2,7 @@ import { TiB } from 'app/constants/bytes.constant';
 import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import {
   AddEnclosureOptions,
-  AddTopologyOptions, DispersedData,
+  AddTopologyOptions, AddUnAssignedOptions, DispersedData,
   MockStorage,
   MockTopology,
 } from 'app/core/testing/interfaces/mock-storage-generator.interface';
@@ -76,9 +76,9 @@ export class MockStorageGenerator {
     return { poolState: pool, disks };
   }
 
-  addUnassignedDisks(diskSize: number, repeats: number): MockStorageGenerator {
-    for (let i = 0; i < repeats; i++) {
-      this.disks.push(this.generateDisk(diskSize, i));
+  addUnassignedDisks(options: AddUnAssignedOptions): MockStorageGenerator {
+    for (let i = 0; i < options.repeats; i++) {
+      this.disks.push(this.generateDisk(options.diskSize, this.disks.length + i));
     }
     return this;
   }
