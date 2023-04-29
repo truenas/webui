@@ -180,21 +180,6 @@ program
     mock(mockCommand, mockOptions);
   });
 
-/*
-TODO: Mock Disks Command
--e, --enabled => sets diskConfig.enabled
--d, --disabled => sets diskConfig.enabled
--s, --size => sets topologyOptions.diskSize
--r, --repeats => sets topologyOptions.repeat
-
-**** Experimental Pool Mocking (Maybe hide for now) ****
--p, --pool: mockPools => sets mockPools to true
--n, --nopool => sets mockPools to false
--l, --layout => sets topologyOptions.layout
--w, --width => sets topologyOptions.width
--S, --vdevscenario => sets topologyOptions.scenario
- */
-
 const mockDiskExamples = ``
 
 program
@@ -246,16 +231,6 @@ program
     const remoteCommand = program.commands.find((command: Command) => command.name() === 'remote');
     const remoteOptions = commandOpts(remoteCommand);
     remote(remoteCommand, remoteOptions.ip);
-  });
-
-program
-  .command('showremote')
-  .description('Show the server WebUI communicates with')
-  .action(() => {
-    showRemote({
-      showHeader: true,
-      showFooter: true,
-    });
   });
 
 program.parse(process.argv);
