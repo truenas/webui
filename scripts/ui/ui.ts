@@ -8,6 +8,7 @@ import inquirer from 'inquirer';
 import {MockEnclosureConfig} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
 import * as figlet from 'figlet';
 import {TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
+import setMock = jest.setMock;
 
 interface CommandOptions {
   [p: string]: any;
@@ -188,10 +189,10 @@ TODO: Mock Disks Command
 
 **** Experimental Pool Mocking (Maybe hide for now) ****
 -p, --pool: mockPools => sets mockPools to true
--u, --unassigned => sets mockPools to false
+-n, --nopool => sets mockPools to false
 -l, --layout => sets topologyOptions.layout
 -w, --width => sets topologyOptions.width
--S, --scenario => sets topologyOptions.scenario
+-S, --vdevscenario => sets topologyOptions.scenario
  */
 
 const mockDiskExamples = ``
@@ -204,13 +205,15 @@ program
   .addHelpText('after', mockDiskExamples)
   .option('-e, --enable', 'enable mock disks')
   .option('-d, --disable', 'disable mock disks')
-  .option('-s, --size, <number>', 'set disk size')
-  .option('-r, --repeats, <number>', 'set number of disks')
-  .option('-p, --pool', 'override pool data (experimental)')
-  .option('-u, --unassigned', 'replace pool data with unassigned disks (experimental)')
+  .option('-s, --disksize, <number>', 'set unassigned disk size')
+  .option('-r, --diskrepeats, <number>', 'set number of unassigned disks')
+  .option('-p, --pool', 'enable mock pool data (experimental)')
+  .option('-n, --nopool', 'disable mock pool data (experimental)')
+  .option('-S, --vdevdisksize <number>', 'set vdev member disk size (experimental)')
+  .option('-R, --vdevrepeats <number>', 'set vdev repeats (experimental)')
   .option('-l, --layout, <layout>', 'vdev layout for mock pool (experimental)')
   .option('-w, --width, <number>', 'vdev width for mock pool (experimental)')
-  .option('-S, --scenario, <number>', 'choose test scenario for mock pool (experimental)')
+  .option('-v, --vdevscenario, <uniform | mixedCapacity | mixedLayout>', 'choose test scenario for mock pool (experimental)')
   .action(() => {
     const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-disks');
     const mockOptions = commandOpts(mockCommand);
@@ -407,8 +410,25 @@ function mockConfigReport(options: ReportOptions): string {
     * Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}
     * Mock Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}
  `;
-  if (diskOptions.enabled) report += `   * Disk Size: ${diskOptions.topologyOptions.diskSize} TB`
-  if (diskOptions.enabled) report += `\n    * Repeats: ${diskOptions.topologyOptions.repeats}`
+  if (diskOptions.enabled) {
+    report += `   * Disk Size: ${diskOptions.unassignedOptions.diskSize} TB`
+
+    report += `\n    * Repeats: ${diskOptions.unassignedOptions.repeats}`
+  }
+
+  if (diskOptions.enabled && diskOptions.mockPools) {
+   report += `
+
+    (EXPERIMENTAL MOCK POOL SUPPORT)
+
+    * Mock Pools: ${diskOptions.mockPools ? 'Enabled' : 'Disabled'}
+    * Storage Scenario: ${capitalize(diskOptions.topologyOptions.scenario)}
+    * VDEV Member Disk Size: ${diskOptions.topologyOptions.diskSize} TB
+    * VDEV Repeats: ${diskOptions.topologyOptions.repeats}
+    * VDEV Layout: ${diskOptions.topologyOptions.layout}
+    * VDEV Width: ${diskOptions.topologyOptions.width}
+    `
+  }
   report += '\n';
 
     const output = header + file + report + footer;
@@ -818,13 +838,47 @@ function setDiskOptionsEnabled(value: boolean): void {
   saveEnvironment();
 }
 
-function setDiskSize(value: number | string): void {
+function setUnassignedDiskSize(value: number | string): void {
+  const size: number = typeof value === 'string' ? Number(value) : value
+  environment.mockConfig.diskOptions.unassignedOptions.diskSize = size;
+  saveEnvironment();
+}
+
+function setUnassignedRepeats(value: number | string): void {
+  const repeats: number = typeof value === 'string' ? Number(value) : value;
+  environment.mockConfig.diskOptions.unassignedOptions.repeats = repeats;
+  saveEnvironment();
+}
+
+function setMockPools(value: boolean): void {
+  environment.mockConfig.diskOptions.mockPools = value;
+  saveEnvironment();
+}
+
+function setTopologyDiskSize(value: number | string): void {
   const size: number = typeof value === 'string' ? Number(value) : value
   environment.mockConfig.diskOptions.topologyOptions.diskSize = size;
   saveEnvironment();
 }
 
-function setRepeats(value: number | string): void {
+function setTopologyRepeats(value: number | string): void {
+  const repeats: number = typeof value === 'string' ? Number(value) : value;
+  console.log(`\n${value}\n`)
+  environment.mockConfig.diskOptions.topologyOptions.repeats = repeats;
+  saveEnvironment();
+}
+
+function setTopologyLayout(value: string): void {
+  // environment.mockConfig.diskOptions.topologyOptions.layout = ;
+  saveEnvironment();
+}
+function setTopologyWidth(value: number | string): void {
+  const width: number = typeof value === 'string' ? Number(value) : value;
+  environment.mockConfig.diskOptions.topologyOptions.width = width;
+  saveEnvironment();
+}
+
+function setTopologyScenario(value: number | string): void {
   const repeats: number = typeof value === 'string' ? Number(value) : value;
   environment.mockConfig.diskOptions.topologyOptions.repeats = repeats;
   saveEnvironment();
@@ -839,12 +893,33 @@ function mockDisks(command: Command, options: CommandOptions): void {
       case 'disable':
         setDiskOptionsEnabled(false);
         break;
-      case 'size':
-        setDiskSize(options[option]);
+      case 'disksize':
+        setUnassignedDiskSize(options[option]);
         break;
-      case 'repeats':
-        setRepeats(options[option]);
+      case 'diskrepeats':
+        setUnassignedRepeats(options[option]);
         break;
+      case 'pool':
+        setMockPools(true);
+        break;
+      case 'nopool':
+        setMockPools(false);
+        break;
+      case 'vdevdisksize':
+        setTopologyDiskSize(options[option]);
+        break;
+      case 'vdevrepeats':
+        setTopologyRepeats(options[option]);
+        break;
+      /*case 'layout':
+        setTopologyRepeats(options[option]);
+        break;*/
+      case 'width':
+        setTopologyWidth(options[option]);
+        break;
+      /*case 'vdevscenario':
+        setTopologyRepeats(options[option]);
+        break;*/
       default:
         const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`
         console.info(warning);
