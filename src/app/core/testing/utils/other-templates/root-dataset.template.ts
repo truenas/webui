@@ -1,240 +1,219 @@
-export const rootDatasetTemplate = '';
-/*: Dataset = {
-  id: 'POOLNAME',
-  type: 'FILESYSTEM',
-  name: 'POOLNAME',
-  pool: 'POOLNAME',
-  encrypted: false,
-  encryption_root: null,
-  key_loaded: false,
-  deduplication: {
-    parsed: 'off',
-    rawvalue: 'off',
-    value: 'OFF',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  mountpoint: '/mnt/POOLNAME',
-  aclmode: {
-    parsed: 'discard',
-    rawvalue: 'discard',
-    value: 'DISCARD',
-    source: 'LOCAL',
-    source_info: null
-  },
-  acltype: {
-    parsed: 'posix',
-    rawvalue: 'posix',
-    value: 'POSIX',
-    source: 'LOCAL',
-    source_info: null
-  },
-  xattr: {
-    parsed: true,
-    rawvalue: 'on',
-    value: 'ON',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  atime: {
-    parsed: false,
-    rawvalue: 'off',
-    value: 'OFF',
-    source: 'LOCAL',
-    source_info: null
-  },
-  casesensitivity: {
-    parsed: 'sensitive',
-    rawvalue: 'sensitive',
-    value: 'SENSITIVE',
-    source: 'NONE',
-    source_info: null
-  },
-  checksum: {
-    parsed: true,
-    rawvalue: 'on',
-    value: 'ON',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  exec: {
-    parsed: true,
-    rawvalue: 'on',
-    value: 'ON',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  sync: {
-    parsed: 'standard',
-    rawvalue: 'standard',
-    value: 'STANDARD',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  compression: {
-    parsed: 'lz4',
-    rawvalue: 'lz4',
-    value: 'LZ4',
-    source: 'LOCAL',
-    source_info: null
-  },
-  compressratio: {
-    parsed: '1.00',
-    rawvalue: '1.00',
-    value: '1.00x',
-    source: 'NONE',
-    source_info: null
-  },
-  origin: {
-    parsed: '',
-    rawvalue: '',
-    value: '',
-    source: 'NONE',
-    source_info: null
-  },
-  quota: {
-    parsed: null,
-    rawvalue: '0',
-    value: null,
-    source: 'DEFAULT',
-    source_info: null
-  },
-  refquota: {
-    parsed: null,
-    rawvalue: '0',
-    value: null,
-    source: 'DEFAULT',
-    source_info: null
-  },
-  reservation: {
-    parsed: null,
-    rawvalue: '0',
-    value: null,
-    source: 'DEFAULT',
-    source_info: null
-  },
-  refreservation: {
-    parsed: null,
-    rawvalue: '0',
-    value: null,
-    source: 'DEFAULT',
-    source_info: null
-  },
-  copies: {
-    parsed: 1,
-    rawvalue: '1',
-    value: '1',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  snapdir: {
-    parsed: null,
-    rawvalue: 'hidden',
-    value: 'HIDDEN',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  readonly: {
-    parsed: false,
-    rawvalue: 'off',
-    value: 'OFF',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  recordsize: {
-    parsed: 131072,
-    rawvalue: '131072',
-    value: '128K',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  key_format: {
-    parsed: 'none',
-    rawvalue: 'none',
-    value: null,
-    source: 'DEFAULT',
-    source_info: null
-  },
-  encryption_algorithm: {
-    parsed: 'off',
-    rawvalue: 'off',
-    value: null,
-    source: 'DEFAULT',
-    source_info: null
-  },
-  used: {
-    parsed: 430080,
-    rawvalue: '430080',
-    value: '420K',
-    source: 'NONE',
-    source_info: null
-  },
-  usedbychildren: {
-    parsed: 331776,
-    rawvalue: '331776',
-    value: '324K',
-    source: 'NONE',
-    source_info: null
-  },
-  usedbydataset: {
-    parsed: 98304,
-    rawvalue: '98304',
-    value: '96K',
-    source: 'NONE',
-    source_info: null
-  },
-  usedbyrefreservation: {
-    parsed: 0,
-    rawvalue: '0',
-    value: '0B',
-    source: 'NONE',
-    source_info: null
-  },
-  usedbysnapshots: {
-    parsed: 0,
-    rawvalue: '0',
-    value: '0B',
-    source: 'NONE',
-    source_info: null
-  },
-  available: {
-    parsed: 5720600576,
-    rawvalue: '5720600576',
-    value: '5.33G',
-    source: 'NONE',
-    source_info: null
-  },
-  special_small_block_size: {
-    parsed: '0',
-    rawvalue: '0',
-    value: '0',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  pbkdf2iters: {
-    parsed: '0',
-    rawvalue: '0',
-    value: '0',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  creation: {
-    parsed: {
-      $date: 1682692348000
+import { AclMode } from 'app/enums/acl-type.enum';
+import {
+  DatasetAclType,
+  DatasetCaseSensitivity,
+  DatasetChecksum,
+  DatasetSnapdev,
+  DatasetSnapdir,
+  DatasetSync,
+  DatasetType,
+  DatasetXattr,
+} from 'app/enums/dataset.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { Dataset } from 'app/interfaces/dataset.interface';
+
+export function mockRootDataset(poolName: string): Dataset {
+  const output: Dataset = {
+    id: poolName,
+    type: DatasetType.Filesystem,
+    name: poolName,
+    pool: poolName,
+    encrypted: false,
+    encryption_root: null,
+    key_loaded: false,
+    deduplication: {
+      parsed: 'off',
+      rawvalue: 'off',
+      value: DeduplicationSetting.Off,
+      source: ZfsPropertySource.Default,
     },
-    rawvalue: '1682692348',
-    value: 'Fri Apr 28 10:32 2023',
-    source: 'NONE',
-    source_info: null
-  },
-  snapdev: {
-    parsed: 'hidden',
-    rawvalue: 'hidden',
-    value: 'HIDDEN',
-    source: 'DEFAULT',
-    source_info: null
-  },
-  user_properties: {},
-  locked: false
+    mountpoint: '/mnt/POOLNAME',
+    aclmode: {
+      parsed: 'discard',
+      rawvalue: 'discard',
+      value: AclMode.Discard,
+      source: ZfsPropertySource.Local,
+    },
+    acltype: {
+      parsed: 'posix',
+      rawvalue: 'posix',
+      value: DatasetAclType.Posix,
+      source: ZfsPropertySource.Local,
+    },
+    xattr: {
+      parsed: true,
+      rawvalue: 'on',
+      value: DatasetXattr.On,
+      source: ZfsPropertySource.Default,
+    },
+    atime: {
+      parsed: false,
+      rawvalue: 'off',
+      value: OnOff.Off,
+      source: ZfsPropertySource.Local,
+    },
+    casesensitivity: {
+      parsed: 'sensitive',
+      rawvalue: 'sensitive',
+      value: DatasetCaseSensitivity.Sensitive,
+      source: ZfsPropertySource.None,
+    },
+    checksum: {
+      parsed: true,
+      rawvalue: 'on',
+      value: DatasetChecksum.On,
+      source: ZfsPropertySource.Default,
+    },
+    exec: {
+      parsed: true,
+      rawvalue: 'on',
+      value: OnOff.On,
+      source: ZfsPropertySource.Default,
+    },
+    sync: {
+      parsed: 'standard',
+      rawvalue: 'standard',
+      value: DatasetSync.Standard,
+      source: ZfsPropertySource.Default,
+    },
+    compression: {
+      parsed: 'lz4',
+      rawvalue: 'lz4',
+      value: 'LZ4',
+      source: ZfsPropertySource.Local,
+    },
+    compressratio: {
+      parsed: '1.00',
+      rawvalue: '1.00',
+      value: '1.00x',
+      source: ZfsPropertySource.None,
+    },
+    origin: {
+      parsed: '',
+      rawvalue: '',
+      value: '',
+      source: ZfsPropertySource.None,
+    },
+    quota: {
+      parsed: null,
+      rawvalue: '0',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    refquota: {
+      parsed: null,
+      rawvalue: '0',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    reservation: {
+      parsed: null,
+      rawvalue: '0',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    refreservation: {
+      parsed: null,
+      rawvalue: '0',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    copies: {
+      parsed: 1,
+      rawvalue: '1',
+      value: '1',
+      source: ZfsPropertySource.Default,
+    },
+    snapdir: {
+      parsed: null,
+      rawvalue: 'hidden',
+      value: DatasetSnapdir.Hidden,
+      source: ZfsPropertySource.Default,
+    },
+    readonly: {
+      parsed: false,
+      rawvalue: 'off',
+      value: OnOff.Off,
+      source: ZfsPropertySource.Default,
+    },
+    recordsize: {
+      parsed: 131072,
+      rawvalue: '131072',
+      value: '128K',
+      source: ZfsPropertySource.Default,
+    },
+    key_format: {
+      parsed: 'none',
+      rawvalue: 'none',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    encryption_algorithm: {
+      parsed: 'off',
+      rawvalue: 'off',
+      value: null,
+      source: ZfsPropertySource.Default,
+    },
+    used: {
+      parsed: 430080,
+      rawvalue: '430080',
+      value: '420K',
+      source: ZfsPropertySource.None,
+    },
+    usedbychildren: {
+      parsed: 331776,
+      rawvalue: '331776',
+      value: '324K',
+      source: ZfsPropertySource.None,
+    },
+    usedbydataset: {
+      parsed: 98304,
+      rawvalue: '98304',
+      value: '96K',
+      source: ZfsPropertySource.None,
+    },
+    usedbyrefreservation: {
+      parsed: 0,
+      rawvalue: '0',
+      value: '0B',
+      source: ZfsPropertySource.None,
+    },
+    usedbysnapshots: {
+      parsed: 0,
+      rawvalue: '0',
+      value: '0B',
+      source: ZfsPropertySource.None,
+    },
+    available: {
+      parsed: 5720600576,
+      rawvalue: '5720600576',
+      value: '5.33G',
+      source: ZfsPropertySource.None,
+    },
+    special_small_block_size: {
+      parsed: '0',
+      rawvalue: '0',
+      value: '0',
+      source: ZfsPropertySource.Default,
+    },
+    pbkdf2iters: {
+      parsed: '0',
+      rawvalue: '0',
+      value: '0',
+      source: ZfsPropertySource.Default,
+    },
+    snapdev: {
+      parsed: 'hidden',
+      rawvalue: 'hidden',
+      value: DatasetSnapdev.Hidden,
+      source: ZfsPropertySource.Default,
+    },
+    locked: false,
+    managedby: null,
+    share_type: null,
+  };
+
+  return output;
 }
-*/

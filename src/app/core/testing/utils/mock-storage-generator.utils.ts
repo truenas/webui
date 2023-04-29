@@ -830,16 +830,4 @@ export class MockStorageGenerator {
 
     return this;
   }
-
-  private resetAllSlots(): void {
-    this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
-      mockEnclosure.enclosureInit();
-    });
-  }
-
-  generateRootDataset(/* pool: PoolInstance */): void {
-    // let rootDataset = {...rootDatasetTemplate};
-
-    // return rootDataset;
-  }
 }

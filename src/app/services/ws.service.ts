@@ -69,9 +69,9 @@ export class WebSocketService {
           const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
           return of(mockResultMessage);
         }
+        // END Mock Data
         return of(data);
       }),
-      // END Mock Data
 
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),

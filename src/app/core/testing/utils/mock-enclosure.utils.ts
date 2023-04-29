@@ -7,6 +7,7 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MockStorageGenerator } from './mock-storage-generator.utils';
+import { mockRootDataset } from './other-templates/root-dataset.template';
 
 export class MockEnclosureUtils {
   mockConfig: MockEnclosureConfig = environment.mockConfig;
@@ -19,10 +20,12 @@ export class MockEnclosureUtils {
     if (diskOptions?.enabled && diskOptions?.mockPools) {
       // Simulate pools
       this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
+
       this.mockStorage.addDataTopology(this.mockConfig.diskOptions.topologyOptions);
     } else if (diskOptions?.enabled && !diskOptions?.mockPools) {
       // Just add unassigned disks
       this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
+
       this.mockStorage.addUnassignedDisks(
         this.mockConfig.diskOptions.topologyOptions.diskSize,
         this.mockConfig.diskOptions.topologyOptions.repeats,
@@ -68,12 +71,9 @@ export class MockEnclosureUtils {
         }
       }
       case 'pool.dataset.query': {
-        console.warn({
-          method,
-          data,
-        });
         if (this.mockConfig.diskOptions.enabled && this.mockConfig.diskOptions.mockPools) {
-          mockPayload = data; // [this.mockStorage.poolState];
+          const rootDataset = mockRootDataset(this.mockStorage.poolState.name);
+          mockPayload = [rootDataset]; // [this.mockStorage.poolState];
           break;
         } else if (this.mockConfig.diskOptions.enabled && !this.mockConfig.diskOptions.mockPools) {
           mockPayload = [];
@@ -92,19 +92,17 @@ export class MockEnclosureUtils {
         const sysinfoClone: SystemInfo = { ...data as SystemInfo };
         sysinfoClone.system_manufacturer = 'iXsystems';
         sysinfoClone.buildtime = { $date: 1676641039000 };
-        sysinfoClone.system_product = this.mockConfig.systemProduct; // 'TRUENAS-' + model;
+        sysinfoClone.system_product = this.mockConfig.systemProduct;
         sysinfoClone.system_serial = 'abcdefgh12345678';
         mockPayload = sysinfoClone;
         break;
       }
-      case 'disk.get_unused': {
-        mockPayload = this.mockStorage.disks.filter((disk: Disk) => !disk.pool);
-        break;
-      }
+      case 'smart.test.results':
       case 'disk.query': {
         // Sometimes response only has two keys "name" and "type"
         const keys = Object.keys([...data as Disk[]][0]);
-        if (this.mockConfig.diskOptions.enabled) {
+
+        if (this.mockConfig.diskOptions.enabled && keys.length > 2) {
           mockPayload = this.mockStorage.disks;
         } else if (this.mockStorage.enclosures.length > 0 && data && keys.length > 2) {
           const sorted = (data as Disk[]).sort((a, b) => (a.name < b.name ? -1 : 1));
@@ -113,6 +111,16 @@ export class MockEnclosureUtils {
           return data;
         }
         break;
+      }
+      case 'disk.get_unused': {
+        if (this.mockConfig.diskOptions.enabled) {
+          mockPayload = this.mockStorage.disks.filter((disk: Disk) => {
+            return !Object.keys(disk).includes('pool') || typeof disk.pool === 'undefined' || disk.pool === null;
+          });
+          break;
+        } else {
+          return data;
+        }
       }
       default:
         return data;
