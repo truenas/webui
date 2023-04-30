@@ -7,8 +7,9 @@ import {WebUiEnvironment} from "../../src/environments/environment.interface";
 import inquirer from 'inquirer';
 import {MockEnclosureConfig} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
 import * as figlet from 'figlet';
-import {TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
+import {CreateVdevLayout, TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
 import setMock = jest.setMock;
+import {capitalizeFirstLetter} from "../../src/app/helpers/text.helpers";
 
 interface CommandOptions {
   [p: string]: any;
@@ -299,20 +300,21 @@ function enumAsString(value: string): string | null {
   let output: string;
 
   for (const key in EnclosureDispersalStrategy) {
+    //console.log(key);
     if (key.toLowerCase() === trimmed) {
       output =  ': EnclosureDispersalStrategy.' + key;
     }
   }
 
   for (const key in MockStorageScenario) {
-    if (key !== 'Default' && key.toLowerCase() === trimmed) {
+    if (key !== 'Default' && key === capitalize(trimmed, true)) {
       output =  ': MockStorageScenario.' + key;
     }
   }
 
   for (const key in TopologyItemType) {
     if (key !== 'Default' && key.toUpperCase() === trimmed) {
-      output =  ': TopologyItemType.' + key;
+      output =  ': TopologyItemType.' + capitalize(key);
     }
   }
 
@@ -328,8 +330,30 @@ function dispersalAsEnum(dispersal: string): EnclosureDispersalStrategy {
   }
 }
 
-function capitalize(text: string): string {
-  return text[0].toUpperCase() + text.slice(1, text.length).toLowerCase();
+function layoutAsEnum(layout: string): TopologyItemType {
+  if (layout.toLowerCase() !== 'default') {
+    return TopologyItemType[capitalize(layout) as keyof TopologyItemType];
+  } else {
+    console.info(`ERROR: ${layout} is not a valid VDEV layout`);
+    process.exit(1);
+  }
+}
+
+function scenarioAsEnum(scenario: string): MockStorageScenario {
+  if (scenario.toLowerCase() !== 'default' && scenario.toLowerCase() !== 'multi') {
+    return MockStorageScenario[scenario as keyof MockStorageScenario];
+  } else {
+    console.info(`ERROR: ${scenario} is not a valid scenario`);
+    process.exit(1);
+  }
+}
+
+function capitalize(text: string, firstCharOnly: boolean = false): string {
+  if (firstCharOnly) {
+    return text[0].toUpperCase() + text.slice(1, text.length);
+  } else {
+    return text[0].toUpperCase() + text.slice(1, text.length).toLowerCase();
+  }
 }
 
 function wrap(key:string, value: any): string {
@@ -397,7 +421,7 @@ function mockConfigReport(options: ReportOptions): string {
     (EXPERIMENTAL MOCK POOL SUPPORT)
 
     * Mock Pools: ${diskOptions.mockPools ? 'Enabled' : 'Disabled'}
-    * Storage Scenario: ${capitalize(diskOptions.topologyOptions.scenario)}
+    * Storage Scenario: ${diskOptions.topologyOptions.scenario}
     * VDEV Member Disk Size: ${diskOptions.topologyOptions.diskSize} TB
     * VDEV Repeats: ${diskOptions.topologyOptions.repeats}
     * VDEV Layout: ${diskOptions.topologyOptions.layout}
@@ -838,25 +862,39 @@ function setTopologyDiskSize(value: number | string): void {
 
 function setTopologyRepeats(value: number | string): void {
   const repeats: number = typeof value === 'string' ? Number(value) : value;
-  console.log(`\n${value}\n`)
   environment.mockConfig.diskOptions.topologyOptions.repeats = repeats;
   saveEnvironment();
 }
 
 function setTopologyLayout(value: string): void {
-  // environment.mockConfig.diskOptions.topologyOptions.layout = ;
-  saveEnvironment();
+  for (const key in CreateVdevLayout) {
+    if (capitalize(value) === key) {
+      environment.mockConfig.diskOptions.topologyOptions.layout = layoutAsEnum(capitalize(value));
+      saveEnvironment();
+      return;
+    }
+  }
+
+  process.exit(1);
 }
+
 function setTopologyWidth(value: number | string): void {
   const width: number = typeof value === 'string' ? Number(value) : value;
   environment.mockConfig.diskOptions.topologyOptions.width = width;
   saveEnvironment();
 }
 
-function setTopologyScenario(value: number | string): void {
-  const repeats: number = typeof value === 'string' ? Number(value) : value;
-  environment.mockConfig.diskOptions.topologyOptions.repeats = repeats;
-  saveEnvironment();
+function setTopologyScenario(scenario: string): void {
+  for (const key in MockStorageScenario) {
+    if (scenario === key) {
+      environment.mockConfig.diskOptions.topologyOptions.scenario = scenarioAsEnum(scenario); // MockStorageScenario[scenario as keyof MockStorageScenario];
+      // console.log(environment.mockConfig.diskOptions.topologyOptions);
+      console.log(scenarioAsEnum(scenario));
+      saveEnvironment();
+      return;
+    }
+  }
+  process.exit(1);
 }
 
 function mockDisks(command: Command, options: CommandOptions): void {
@@ -886,15 +924,15 @@ function mockDisks(command: Command, options: CommandOptions): void {
       case 'vdevrepeats':
         setTopologyRepeats(options[option]);
         break;
-      /*case 'layout':
-        setTopologyRepeats(options[option]);
-        break;*/
+      case 'layout':
+        setTopologyLayout(options[option]);
+        break;
       case 'width':
         setTopologyWidth(options[option]);
         break;
-      /*case 'vdevscenario':
-        setTopologyRepeats(options[option]);
-        break;*/
+      case 'vdevscenario':
+        setTopologyScenario(options[option]);
+        break;
       default:
         const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`
         console.info(warning);
