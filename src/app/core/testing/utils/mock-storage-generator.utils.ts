@@ -79,8 +79,9 @@ export class MockStorageGenerator {
   }
 
   addUnassignedDisks(options: AddUnAssignedOptions): MockStorageGenerator {
+    const offset = this.disks.length;
     for (let i = 0; i < options.repeats; i++) {
-      this.disks.push(this.generateDisk(options.diskSize, this.disks.length + i, false));
+      this.disks.push(this.generateDisk(options.diskSize, offset + i, false));
     }
     return this;
   }
