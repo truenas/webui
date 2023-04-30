@@ -2,7 +2,9 @@ import { TiB } from 'app/constants/bytes.constant';
 import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import {
   AddEnclosureOptions,
-  AddTopologyOptions, AddUnAssignedOptions, DispersedData,
+  AddTopologyOptions,
+  AddUnAssignedOptions,
+  DispersedData,
   MockStorage,
   MockTopology,
 } from 'app/core/testing/interfaces/mock-storage-generator.interface';
@@ -490,6 +492,7 @@ export class MockStorageGenerator {
   private generateTopologyDisk(): TopologyDisk {
     return {
       type: TopologyItemType.Disk,
+      status: TopologyItemStatus.Online,
       children: [],
       disk: null,
       stats: { size: null } as TopologyItemStats,
