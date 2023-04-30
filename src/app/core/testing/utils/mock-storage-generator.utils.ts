@@ -604,7 +604,7 @@ export class MockStorageGenerator {
       type: DiskType.Hdd,
       zfs_guid: '594160193876939323',
       bus: DiskBus.Spi,
-      devname: 'sdc',
+      devname: name,
       enclosure: null,
       supports_smart: null,
       pool: isAssigned ? this.poolState.name : null,
