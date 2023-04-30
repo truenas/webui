@@ -18,7 +18,7 @@ export class MockEnclosureUtils {
 
     this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
 
-    // Add Vdevs
+    // Add Pools and VDEVs
     if (diskOptions?.mockPools && diskOptions?.topologyOptions) {
       this.mockStorage.addDataTopology(this.mockConfig.diskOptions.topologyOptions);
     }
@@ -26,26 +26,15 @@ export class MockEnclosureUtils {
     // Add Unassigned Disks
     if (diskOptions?.enabled && diskOptions?.unassignedOptions) {
       // Simulate pools
-      // this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
-
       this.mockStorage.addUnassignedDisks(this.mockConfig.diskOptions.unassignedOptions);
     }
-
-    // Unassigned disks
-    /* if (diskOptions?.enabled && diskOptions?.unassignedOptions) {
-      // Just add unassigned disks
-      this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
-
-      this.mockStorage.addUnassignedDisks(
-        this.mockConfig.diskOptions.unassignedOptions.diskSize,
-        this.mockConfig.diskOptions.unassignedOptions.repeats,
-      );
-    } */
 
     // Mock Enclosure Settings
     if (this.mockConfig?.enclosureOptions) {
       this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
     }
+
+    console.warn(this.mockStorage);
   }
 
   overrideMessage<K extends ApiMethod>(data: ResultMessage, method: K): ResultMessage {

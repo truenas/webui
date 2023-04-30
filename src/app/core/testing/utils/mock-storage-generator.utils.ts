@@ -246,7 +246,14 @@ export class MockStorageGenerator {
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
         child.disk = disk.name;
-        child.stats = { size: disk.size } as TopologyItemStats;
+        child.device = disk.name + '2';
+        child.stats = {
+          size: disk.size,
+          timestamp: 164848882662718,
+          read_errors: 0,
+          write_errors: 0,
+          checksum_errors: 0,
+        } as TopologyItemStats;
         disks.push(disk);
       });
 
@@ -295,7 +302,14 @@ export class MockStorageGenerator {
         const childDiskSize = index === 0 ? diskSize + 1 : diskSize;
         const disk = this.generateDisk(childDiskSize, (disks.length + allDisks.length));
         child.disk = disk.name;
-        child.stats = { size: disk.size } as TopologyItemStats;
+        child.device = disk.name + '2';
+        child.stats = {
+          size: disk.size,
+          timestamp: 164848882662718,
+          read_errors: 0,
+          write_errors: 0,
+          checksum_errors: 0,
+        } as TopologyItemStats;
         disks.push(disk);
       });
 
@@ -327,7 +341,14 @@ export class MockStorageGenerator {
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(childDiskSize, (disks.length + allDisks.length));
         child.disk = disk.name;
-        child.stats = { size: disk.size } as TopologyItemStats;
+        child.device = disk.name + '2';
+        child.stats = {
+          size: disk.size,
+          timestamp: 164848882662718,
+          read_errors: 0,
+          write_errors: 0,
+          checksum_errors: 0,
+        } as TopologyItemStats;
         disks.push(disk);
       });
 
@@ -360,7 +381,14 @@ export class MockStorageGenerator {
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
         child.disk = disk.name;
-        child.stats = { size: disk.size } as TopologyItemStats;
+        child.device = disk.name + '2';
+        child.stats = {
+          size: disk.size,
+          timestamp: 164848882662718,
+          read_errors: 0,
+          write_errors: 0,
+          checksum_errors: 0,
+        } as TopologyItemStats;
         disks.push(disk);
       });
 
@@ -401,7 +429,14 @@ export class MockStorageGenerator {
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
         child.disk = disk.name;
-        child.stats = { size: disk.size } as TopologyItemStats;
+        child.device = disk.name + '2';
+        child.stats = {
+          size: disk.size,
+          timestamp: 164848882662718,
+          read_errors: 0,
+          write_errors: 0,
+          checksum_errors: 0,
+        } as TopologyItemStats;
         disks.push(disk);
       });
 
@@ -540,7 +575,7 @@ export class MockStorageGenerator {
       name,
       subsystem: 'scsi',
       number: 2080,
-      serial: '',
+      serial: '1234567890abcd' + offset.toString(),
       lunid: null,
       size: this.terabytesToBytes(size),
       description: '',

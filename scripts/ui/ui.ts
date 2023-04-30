@@ -293,9 +293,6 @@ function makePrintable(src: WebUiEnvironment, prefix: string) {
 }
 
 function enumAsString(value: string): string | null {
-  if (Object.values(MockStorageScenario).includes(value as MockStorageScenario)) {
-    console.log(value)
-  }
   const trimmed = value.replace(/\"|\: /g, '');
   let output: string;
 
@@ -887,8 +884,6 @@ function setTopologyScenario(scenario: string): void {
   for (const key in MockStorageScenario) {
     if (scenario === key) {
       environment.mockConfig.diskOptions.topologyOptions.scenario = scenarioAsEnum(scenario); // MockStorageScenario[scenario as keyof MockStorageScenario];
-      // console.log(environment.mockConfig.diskOptions.topologyOptions);
-      console.log(scenarioAsEnum(scenario));
       saveEnvironment();
       return;
     }
