@@ -300,7 +300,6 @@ function enumAsString(value: string): string | null {
   let output: string;
 
   for (const key in EnclosureDispersalStrategy) {
-    //console.log(key);
     if (key.toLowerCase() === trimmed) {
       output =  ': EnclosureDispersalStrategy.' + key;
     }
@@ -422,10 +421,10 @@ function mockConfigReport(options: ReportOptions): string {
 
     * Mock Pools: ${diskOptions.mockPools ? 'Enabled' : 'Disabled'}
     * Storage Scenario: ${diskOptions.topologyOptions.scenario}
-    * VDEV Member Disk Size: ${diskOptions.topologyOptions.diskSize} TB
-    * VDEV Repeats: ${diskOptions.topologyOptions.repeats}
     * VDEV Layout: ${diskOptions.topologyOptions.layout}
     * VDEV Width: ${diskOptions.topologyOptions.width}
+    * VDEV Member Disk Size: ${diskOptions.topologyOptions.diskSize} TB
+    * VDEV Repeats: ${diskOptions.topologyOptions.repeats}
     `
   }
   report += '\n';
