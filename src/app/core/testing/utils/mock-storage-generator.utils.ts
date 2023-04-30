@@ -244,7 +244,7 @@ export class MockStorageGenerator {
     const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
-      const vdev: VDev = this.generateVdev(layout, width) as VDev;
+      const vdev: VDev = this.generateVdev(layout, width, layout + '-' + i.toString()) as VDev;
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
         child.disk = disk.name;
@@ -299,7 +299,7 @@ export class MockStorageGenerator {
     const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
-      const vdev: VDev = this.generateVdev(layout, width) as VDev;
+      const vdev: VDev = this.generateVdev(layout, width, layout + '-' + i.toString()) as VDev;
       vdev.children.forEach((child: TopologyDisk, index) => {
         const childDiskSize = index === 0 ? diskSize + 1 : diskSize;
         const disk = this.generateDisk(childDiskSize, (disks.length + allDisks.length));
@@ -338,7 +338,7 @@ export class MockStorageGenerator {
     const disks: Disk[] = [];
 
     for (let i = 0; i < repeats; i++) {
-      const vdev: VDev = this.generateVdev(layout, width) as VDev;
+      const vdev: VDev = this.generateVdev(layout, width, layout + '-' + i.toString()) as VDev;
       const childDiskSize = i === 0 ? diskSize + 2 : diskSize;
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(childDiskSize, (disks.length + allDisks.length));
@@ -378,7 +378,7 @@ export class MockStorageGenerator {
 
     for (let i = 0; i < repeats; i++) {
       const vdevWidth: number = i === 0 ? width + 1 : width;
-      const vdev: VDev = this.generateVdev(layout, vdevWidth) as VDev;
+      const vdev: VDev = this.generateVdev(layout, vdevWidth, layout + '-' + i.toString()) as VDev;
 
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
@@ -426,7 +426,7 @@ export class MockStorageGenerator {
     for (let i = 0; i < vdevCount; i++) {
       const targetLayout = i === 0 ? altLayout : layout;
       const targetWidth = i === 0 ? altWidth : width;
-      const vdev: VDev = this.generateVdev(targetLayout, targetWidth) as VDev;
+      const vdev: VDev = this.generateVdev(targetLayout, targetWidth, layout + '-' + i.toString()) as VDev;
 
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
@@ -453,7 +453,7 @@ export class MockStorageGenerator {
   }
 
   // Generate VDEV
-  private generateVdev(layout: TopologyItemType, width = 1): TopologyDisk | VDev {
+  private generateVdev(layout: TopologyItemType, width = 1, vdevName?: string): TopologyDisk | VDev {
     const minWidth = this.getMinLayoutWidth(layout);
     if (width < minWidth) {
       width = minWidth;
@@ -475,7 +475,7 @@ export class MockStorageGenerator {
           vdevDisks.push(topologyDisk);
         }
 
-        return {
+        const vdev = {
           type: layout,
           children: vdevDisks,
           guid: Number(12345).toString(),
@@ -483,6 +483,10 @@ export class MockStorageGenerator {
           stats: { size: null } as TopologyItemStats,
           status: TopologyItemStatus.Online,
         } as VDev;
+
+        if (vdevName) vdev.name = vdevName;
+
+        return vdev;
       }
       default:
         throw new Error('Invalid TopologyItemType. Please use STRIPE, MIRROR, RAIDZ etc');
