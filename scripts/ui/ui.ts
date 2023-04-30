@@ -8,8 +8,6 @@ import inquirer from 'inquirer';
 import {MockEnclosureConfig} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
 import * as figlet from 'figlet';
 import {CreateVdevLayout, TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
-import setMock = jest.setMock;
-import {capitalizeFirstLetter} from "../../src/app/helpers/text.helpers";
 
 interface CommandOptions {
   [p: string]: any;
@@ -160,9 +158,9 @@ EXAMPLES:
 `
 
 program
-  .command('mock-opt')
-  .name('mock-opt')
-  .alias('mo')
+  .command('mock-enclosure')
+  .name('mock-enclosure')
+  .alias('me')
   .description('Set specific mock enclosure options')
   .addHelpText('after', mockOptExamples)
   .option('-e, --enable', 'enable mock config')
@@ -176,7 +174,7 @@ program
   .option('-l, --list', 'show current mock config settings')
   .option('-D, --debug', 'debug output')
   .action(() => {
-    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-opt');
+    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-enclosure');
     const mockOptions = commandOpts(mockCommand);
     mock(mockCommand, mockOptions);
   });
@@ -193,17 +191,31 @@ program
   .option('-d, --disable', 'disable mock disks')
   .option('-s, --disksize, <number>', 'set unassigned disk size')
   .option('-r, --diskrepeats, <number>', 'set number of unassigned disks')
-  .option('-p, --pool', 'enable mock pool data (experimental)')
-  .option('-n, --nopool', 'disable mock pool data (experimental)')
-  .option('-S, --vdevdisksize <number>', 'set vdev member disk size (experimental)')
-  .option('-R, --vdevrepeats <number>', 'set vdev repeats (experimental)')
-  .option('-l, --layout, <layout>', 'vdev layout for mock pool (experimental)')
-  .option('-w, --width, <number>', 'vdev width for mock pool (experimental)')
-  .option('-v, --vdevscenario, <uniform | mixedCapacity | mixedLayout>', 'choose test scenario for mock pool (experimental)')
   .action(() => {
     const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-disks');
     const mockOptions = commandOpts(mockCommand);
     mockDisks(mockCommand, mockOptions);
+  });
+
+const mockPoolExamples = ``
+
+program
+  .command('mock-pool')
+  .name('mock-pool')
+  .alias('mp')
+  .description('Ignore all middleware pool related responses and create our own')
+  .addHelpText('after', mockPoolExamples)
+  .option('-e, --enable', 'enable mock disks')
+  .option('-d, --disable', 'disable mock disks')
+  .option('-s, --vdevdisksize <number>', 'set vdev member disk size (experimental)')
+  .option('-r, --vdevrepeats <number>', 'set vdev repeats (experimental)')
+  .option('-l, --layout, <layout>', 'vdev layout for mock pool (experimental)')
+  .option('-w, --width, <number>', 'vdev width for mock pool (experimental)')
+  .option('-v, --vdevscenario, <uniform | mixedCapacity | mixedLayout>', 'choose test scenario for mock pool (experimental)')
+  .action(() => {
+    const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-pool');
+    const mockOptions = commandOpts(mockCommand);
+    mockPool(mockCommand, mockOptions);
   });
 
 program
@@ -383,179 +395,6 @@ function wrap(key:string, value: any): string {
 }
 
 /*
-* Mock Options Command
-* */
-function mockConfigReport(options: ReportOptions): string {
-    if (!environment.mockConfig) {
-      console.info('Something is wrong. Environment variable not initialized');
-      console.info(environment);
-      process.exit(0);
-    }
-
-
-    const headers = generateHeaders('current mock configuration');
-    const header: string = options.showHeader ? headers.header : '';
-    const footer: string = options.showFooter ? headers.footer : '';
-    const file = typeof options.data !== 'undefined' ? '\n    * Config file: ' + options.data + '\n' : '\n';
-    const diskOptions = environment.mockConfig.diskOptions;
-
-    let report = `    * Enabled: ${environment?.mockConfig?.enabled}
-    * Controller: ${environment.mockConfig.systemProduct}
-    * Shelves: ${environment.mockConfig.enclosureOptions.expansionModels}
-    * Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}
-    * Mock Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}
- `;
-  if (diskOptions.enabled) {
-    report += `   * Disk Size: ${diskOptions.unassignedOptions.diskSize} TB`
-
-    report += `\n    * Repeats: ${diskOptions.unassignedOptions.repeats}`
-  }
-
-  if (diskOptions.enabled && diskOptions.mockPools) {
-   report += `
-
-    (EXPERIMENTAL MOCK POOL SUPPORT)
-
-    * Mock Pools: ${diskOptions.mockPools ? 'Enabled' : 'Disabled'}
-    * Storage Scenario: ${diskOptions.topologyOptions.scenario}
-    * VDEV Layout: ${diskOptions.topologyOptions.layout}
-    * VDEV Width: ${diskOptions.topologyOptions.width}
-    * VDEV Member Disk Size: ${diskOptions.topologyOptions.diskSize} TB
-    * VDEV Repeats: ${diskOptions.topologyOptions.repeats}
-    `
-  }
-  report += '\n';
-
-    const output = header + file + report + footer;
-
-    console.info(output);
-
-    return output;
-
-}
-
-function setMockEnabled(value: boolean): void {
-  environment.mockConfig.enabled = value;
-  saveEnvironment();
-}
-
-function setMockModel(value: string): void {
-  environment.mockConfig.systemProduct = models.controllers[value.toUpperCase()].systemProduct;
-  environment.mockConfig.enclosureOptions.controllerModel = models.controllers[value.toUpperCase()].model;
-  saveEnvironment();
-}
-
-function showAvailableModels(options: ReportOptions, key: string): void {
-  const modelKeys = Object.keys(models[key]);
-  let report = '\n';
-
-  modelKeys.forEach((model: string) => {
-    report += `    * ${model} \n`
-  })
-
-  const headers: Headers = generateHeaders('available mock ' + key);
-
-  const header: string = options.showHeader ? headers.header : '';
-  const footer: string = options.showFooter ? headers.footer : '';
-
-  const output = header + report + footer;
-
-  console.info(output)
-}
-
-function setMockDispersal(value: string): void {
-  if (value.toLowerCase() === 'existing') {
-    environment.mockConfig.enclosureOptions.dispersal = EnclosureDispersalStrategy.Existing;
-  } else {
-    environment.mockConfig.enclosureOptions.dispersal = EnclosureDispersalStrategy.Default;
-  }
-  saveEnvironment();
-}
-
-function setMockShelves(value: string): void {
-  environment.mockConfig.enclosureOptions.expansionModels = value.length ? value.toUpperCase().split(',') : [];
-  saveEnvironment();
-}
-
-function loadMockConfigFile(path: string): void {
-  console.info('Locating mock configuration file...');
-  const configStr = fs.readFileSync( path, 'utf8');
-  let config = JSON.parse(configStr);
-  if (typeof config.diskOptions === 'undefined') config.diskOptions = environment.mockConfig.diskOptions;
-
-  environment.mockConfig = config;
-  console.info('Mock config file found √\n');
-
-  environment.mockConfig = path ? config : originalEnvironment.mockConfig;
-  saveEnvironment();
-}
-
-function mock(command: Command, options: CommandOptions): void {
-  if (options.shelves?.length === 0) setMockShelves(options.shelves);
-
-  if (options.reset) {
-    environment.mockConfig = environmentTemplate.mockConfig;
-    saveEnvironment();
-  } else if (options.config) {
-    loadMockConfigFile(options.config);
-  } else {
-    for (let option in options) {
-      if (options.debug) {
-        console.info({
-          option: option,
-          value: options[option],
-        })
-      }
-
-      switch (option) {
-        case 'debug':
-        case 'reset':
-        case 'list':
-          break;
-        case 'enable':
-          setMockEnabled(true);
-          break;
-        case 'disable':
-          setMockEnabled(false);
-          break;
-        case 'model':
-          setMockModel(options[option]);
-          break;
-        case 'assign':
-          setMockDispersal(options[option]);
-          break;
-        case 'shelves':
-          setMockShelves(options[option]);
-          break;
-        case 'showcontrollers':
-          showAvailableModels({
-            showHeader: true,
-            showFooter: true,
-          }, 'controllers');
-          process.exit(0);
-          break;
-        case 'showshelves':
-          showAvailableModels({
-            showHeader: true,
-            showFooter: true,
-          }, 'shelves');
-          process.exit(0);
-          break;
-        default: {
-          console.info(options[option]);
-          break;
-        }
-      }
-    }
-  }
-
-  mockConfigReport({
-    showHeader : true,
-    showFooter: true,
-  });
-}
-
-/*
 * Mock Command
 * */
 function mockConfigGenerator(): void {
@@ -679,6 +518,7 @@ function mockConfigGenerator(): void {
       // Put it all together in our config
       let mockConfig: MockEnclosureConfig = {
         enabled: true,
+        mockEnclosure: true,
         enclosureOptions: enclosureOptions,
         systemProduct: models.controllers[answers.controller].systemProduct as string,
         diskOptions: diskOptions,
@@ -826,6 +666,185 @@ function mockConfig(command: Command, options: CommandOptions): void {
 }
 
 /*
+* Mock Enclosure Command
+* */
+function mockConfigReport(options: ReportOptions): string {
+  if (!environment.mockConfig) {
+    console.info('Something is wrong. Environment variable not initialized');
+    console.info(environment);
+    process.exit(0);
+  }
+
+
+  const headers = generateHeaders('current mock configuration');
+  const header: string = options.showHeader ? headers.header : '';
+  const footer: string = options.showFooter ? headers.footer : '';
+  const file = typeof options.data !== 'undefined' ? '\n    * Config file: ' + options.data + '\n' : '';
+  const pad = '\n';
+  const diskOptions = environment.mockConfig.diskOptions;
+
+  let report = `    * Mock Enabled: ${environment?.mockConfig?.enabled ? 'Enabled' : 'Disabled'}`
+
+  report += `\n    * Mock Enclosures: ${environment.mockConfig.mockEnclosure ? 'Enabled' : 'Disabled'}`;
+  if (environment?.mockConfig?.mockEnclosure) {
+    report += `
+      - Controller: ${environment.mockConfig.systemProduct}
+      - Shelves: ${environment.mockConfig.enclosureOptions.expansionModels}
+      - Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}`;
+  }
+
+  report += `\n    * Mock Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}`;
+  if (diskOptions.enabled) {
+    report += `\n      - Disk Size: ${diskOptions.unassignedOptions.diskSize} TB`
+
+    report += `\n      - Repeats: ${diskOptions.unassignedOptions.repeats}`
+  }
+
+  report += `\n    * Mock Pools: ${diskOptions.mockPools ? 'Enabled' : 'Disabled'}`
+  if (diskOptions.mockPools) {
+    report += `
+      - Storage Scenario: ${diskOptions.topologyOptions.scenario}
+      - VDEV Layout: ${diskOptions.topologyOptions.layout}
+      - VDEV Width: ${diskOptions.topologyOptions.width}
+      - VDEV Member Disk Size: ${diskOptions.topologyOptions.diskSize} TB
+      - VDEV Repeats: ${diskOptions.topologyOptions.repeats}`
+  }
+
+  const output = header + pad + file + report + pad + footer;
+
+  console.info(output);
+
+  return output;
+
+}
+
+function setMockEnabled(value: boolean): void {
+  environment.mockConfig.enabled = value;
+  saveEnvironment();
+}
+
+function setMockEnclosureEnabled(value: boolean): void {
+  environment.mockConfig.mockEnclosure = value;
+  saveEnvironment();
+}
+
+function setMockModel(value: string): void {
+  environment.mockConfig.systemProduct = models.controllers[value.toUpperCase()].systemProduct;
+  environment.mockConfig.enclosureOptions.controllerModel = models.controllers[value.toUpperCase()].model;
+  saveEnvironment();
+}
+
+function showAvailableModels(options: ReportOptions, key: string): void {
+  const modelKeys = Object.keys(models[key]);
+  let report = '\n';
+
+  modelKeys.forEach((model: string) => {
+    report += `    * ${model} \n`
+  })
+
+  const headers: Headers = generateHeaders('available mock ' + key);
+
+  const header: string = options.showHeader ? headers.header : '';
+  const footer: string = options.showFooter ? headers.footer : '';
+
+  const output = header + report + footer;
+
+  console.info(output)
+}
+
+function setMockDispersal(value: string): void {
+  if (value.toLowerCase() === 'existing') {
+    environment.mockConfig.enclosureOptions.dispersal = EnclosureDispersalStrategy.Existing;
+  } else {
+    environment.mockConfig.enclosureOptions.dispersal = EnclosureDispersalStrategy.Default;
+  }
+  saveEnvironment();
+}
+
+function setMockShelves(value: string): void {
+  environment.mockConfig.enclosureOptions.expansionModels = value.length ? value.toUpperCase().split(',') : [];
+  saveEnvironment();
+}
+
+function loadMockConfigFile(path: string): void {
+  console.info('Locating mock configuration file...');
+  const configStr = fs.readFileSync( path, 'utf8');
+  let config = JSON.parse(configStr);
+  if (typeof config.diskOptions === 'undefined') config.diskOptions = environment.mockConfig.diskOptions;
+
+  environment.mockConfig = config;
+  console.info('Mock config file found √\n');
+
+  environment.mockConfig = path ? config : originalEnvironment.mockConfig;
+  saveEnvironment();
+}
+
+function mock(command: Command, options: CommandOptions): void {
+  if (options.shelves?.length === 0) setMockShelves(options.shelves);
+
+  if (options.reset) {
+    environment.mockConfig = environmentTemplate.mockConfig;
+    saveEnvironment();
+  } else if (options.config) {
+    loadMockConfigFile(options.config);
+  } else {
+    for (let option in options) {
+      if (options.debug) {
+        console.info({
+          option: option,
+          value: options[option],
+        })
+      }
+
+      switch (option) {
+        case 'debug':
+        case 'reset':
+        case 'list':
+          break;
+        case 'enable':
+          setMockEnclosureEnabled(true);
+          break;
+        case 'disable':
+          setMockEnclosureEnabled(false);
+          break;
+        case 'model':
+          setMockModel(options[option]);
+          break;
+        case 'assign':
+          setMockDispersal(options[option]);
+          break;
+        case 'shelves':
+          setMockShelves(options[option]);
+          break;
+        case 'showcontrollers':
+          showAvailableModels({
+            showHeader: true,
+            showFooter: true,
+          }, 'controllers');
+          process.exit(0);
+          break;
+        case 'showshelves':
+          showAvailableModels({
+            showHeader: true,
+            showFooter: true,
+          }, 'shelves');
+          process.exit(0);
+          break;
+        default: {
+          console.info(options[option]);
+          break;
+        }
+      }
+    }
+  }
+
+  mockConfigReport({
+    showHeader : true,
+    showFooter: true,
+  });
+}
+
+/*
 * Mock Disks Command
 * */
 function setDiskOptionsEnabled(value: boolean): void {
@@ -845,7 +864,38 @@ function setUnassignedRepeats(value: number | string): void {
   saveEnvironment();
 }
 
-function setMockPools(value: boolean): void {
+function mockDisks(command: Command, options: CommandOptions): void {
+  for (let option in options) {
+    switch (option) {
+      case 'enable':
+        setDiskOptionsEnabled(true);
+        break;
+      case 'disable':
+        setDiskOptionsEnabled(false);
+        break;
+      case 'disksize':
+        setUnassignedDiskSize(options[option]);
+        break;
+      case 'diskrepeats':
+        setUnassignedRepeats(options[option]);
+        break;
+      default:
+        const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`
+        console.info(warning);
+        process.exit(0);
+    }
+  }
+
+  mockConfigReport({
+    showHeader : true,
+    showFooter: true,
+  });
+}
+
+/*
+* Mock Pool Command
+* */
+function setMockPoolEnabled(value: boolean): void {
   environment.mockConfig.diskOptions.mockPools = value;
   saveEnvironment();
 }
@@ -891,26 +941,14 @@ function setTopologyScenario(scenario: string): void {
   process.exit(1);
 }
 
-function mockDisks(command: Command, options: CommandOptions): void {
+function mockPool(command: Command, options: CommandOptions): void {
   for (let option in options) {
     switch (option) {
       case 'enable':
-        setDiskOptionsEnabled(true);
+        setMockPoolEnabled(true);
         break;
       case 'disable':
-        setDiskOptionsEnabled(false);
-        break;
-      case 'disksize':
-        setUnassignedDiskSize(options[option]);
-        break;
-      case 'diskrepeats':
-        setUnassignedRepeats(options[option]);
-        break;
-      case 'pool':
-        setMockPools(true);
-        break;
-      case 'nopool':
-        setMockPools(false);
+        setMockPoolEnabled(false);
         break;
       case 'vdevdisksize':
         setTopologyDiskSize(options[option]);

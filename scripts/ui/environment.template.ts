@@ -9,6 +9,7 @@ export const environmentTemplate: WebUiEnvironment = {
   sentryPublicDsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
   mockConfig: {
     enabled: false,
+    mockEnclosure: false,
     enclosureOptions: {
       controllerModel: 'M40',
       expansionModels: [],

@@ -31,6 +31,7 @@ export interface MockDiskOptions extends MockEnclosureConfigItem {
 
 export interface MockEnclosureConfig {
   enabled: boolean;
+  mockEnclosure: boolean;
   enclosureOptions: AddEnclosureOptions;
   systemProduct: string;
   diskOptions?: MockDiskOptions;

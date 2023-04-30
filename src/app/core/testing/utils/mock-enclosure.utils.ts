@@ -30,9 +30,10 @@ export class MockEnclosureUtils {
     }
 
     // Mock Enclosure Settings
-    if (this.mockConfig?.enclosureOptions) {
+    if (this.mockConfig?.mockEnclosure && this.mockConfig?.enclosureOptions) {
       this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
     }
+    console.warn(this.mockStorage);
   }
 
   overrideMessage<K extends ApiMethod>(data: ResultMessage, method: K): ResultMessage {
@@ -54,7 +55,7 @@ export class MockEnclosureUtils {
         break;
       }
       case 'pool.query': {
-        if (this.mockConfig.diskOptions.enabled && this.mockConfig.diskOptions.mockPools) {
+        if (this.mockConfig.diskOptions.mockPools) {
           mockPayload = [this.mockStorage.poolState];
           break;
         } else if (this.mockConfig.diskOptions.enabled && !this.mockConfig.diskOptions.mockPools) {
@@ -66,11 +67,11 @@ export class MockEnclosureUtils {
         }
       }
       case 'pool.dataset.query': {
-        if (this.mockConfig.diskOptions.enabled && this.mockConfig.diskOptions.mockPools) {
+        if (this.mockConfig.diskOptions.mockPools) {
           const rootDataset = mockRootDataset(this.mockStorage.poolState.name);
           mockPayload = [rootDataset];
           break;
-        } else if (this.mockConfig.diskOptions.enabled && !this.mockConfig.diskOptions.mockPools) {
+        } else if (this.mockConfig.diskOptions.enabled) {
           mockPayload = [];
           break;
         } else {
@@ -78,18 +79,26 @@ export class MockEnclosureUtils {
         }
       }
       case 'system.build_time': {
-        let sysBuildtimeClone: ApiTimestamp = { ...data as ApiTimestamp };
-        sysBuildtimeClone = { $date: 1676641039000 };
-        mockPayload = sysBuildtimeClone;
+        if (this.mockConfig.mockEnclosure) {
+          let sysBuildtimeClone: ApiTimestamp = { ...data as ApiTimestamp };
+          sysBuildtimeClone = { $date: 1676641039000 };
+          mockPayload = sysBuildtimeClone;
+        } else {
+          return data;
+        }
         break;
       }
       case 'system.info': {
-        const sysinfoClone: SystemInfo = { ...data as SystemInfo };
-        sysinfoClone.system_manufacturer = 'iXsystems';
-        sysinfoClone.buildtime = { $date: 1676641039000 };
-        sysinfoClone.system_product = this.mockConfig.systemProduct;
-        sysinfoClone.system_serial = 'abcdefgh12345678';
-        mockPayload = sysinfoClone;
+        if (this.mockConfig.mockEnclosure) {
+          const sysinfoClone: SystemInfo = { ...data as SystemInfo };
+          sysinfoClone.system_manufacturer = 'iXsystems';
+          sysinfoClone.buildtime = { $date: 1676641039000 };
+          sysinfoClone.system_product = this.mockConfig.systemProduct;
+          sysinfoClone.system_serial = 'abcdefgh12345678';
+          mockPayload = sysinfoClone;
+        } else {
+          return data;
+        }
         break;
       }
       case 'smart.test.results':
@@ -97,7 +106,7 @@ export class MockEnclosureUtils {
         // Sometimes response only has two keys "name" and "type"
         const keys = Object.keys([...data as Disk[]][0]);
 
-        if (this.mockConfig.diskOptions.enabled && keys.length > 2) {
+        if ((this.mockConfig.diskOptions.enabled || this.mockConfig.diskOptions.mockPools) && keys.length > 2) {
           mockPayload = this.mockStorage.disks;
         } else if (this.mockStorage.enclosures.length > 0 && data && keys.length > 2) {
           const sorted = (data as Disk[]).sort((a, b) => (a.name < b.name ? -1 : 1));
