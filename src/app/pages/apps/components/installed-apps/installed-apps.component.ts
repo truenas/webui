@@ -415,6 +415,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
     if (app) {
       this.selectApp(app);
+    } else {
+      this.router.navigate(['/apps', 'installed', this.dataSource[0]?.id]);
+      this.selectApp(this.dataSource[0]);
     }
 
     this.cdr.markForCheck();

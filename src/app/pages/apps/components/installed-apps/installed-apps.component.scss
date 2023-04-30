@@ -75,18 +75,14 @@ $scrollbar-offset: 20px;
 }
 
 .table-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  position: relative;
+  position: sticky;
+  top: -15px;
+  z-index: 1;
 }
 
 .app-search {
   background-color: var(--bg2);
   padding: 16px;
-  position: sticky;
-  top: -15px;
-  z-index: 1;
 }
 
 .app-wrapper {
