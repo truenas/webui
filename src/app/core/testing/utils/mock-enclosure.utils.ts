@@ -33,8 +33,6 @@ export class MockEnclosureUtils {
     if (this.mockConfig?.enclosureOptions) {
       this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
     }
-
-    console.warn(this.mockStorage);
   }
 
   overrideMessage<K extends ApiMethod>(data: ResultMessage, method: K): ResultMessage {
@@ -70,7 +68,7 @@ export class MockEnclosureUtils {
       case 'pool.dataset.query': {
         if (this.mockConfig.diskOptions.enabled && this.mockConfig.diskOptions.mockPools) {
           const rootDataset = mockRootDataset(this.mockStorage.poolState.name);
-          mockPayload = [rootDataset]; // [this.mockStorage.poolState];
+          mockPayload = [rootDataset];
           break;
         } else if (this.mockConfig.diskOptions.enabled && !this.mockConfig.diskOptions.mockPools) {
           mockPayload = [];

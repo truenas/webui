@@ -80,7 +80,7 @@ export class MockStorageGenerator {
 
   addUnassignedDisks(options: AddUnAssignedOptions): MockStorageGenerator {
     for (let i = 0; i < options.repeats; i++) {
-      this.disks.push(this.generateDisk(options.diskSize, this.disks.length + i));
+      this.disks.push(this.generateDisk(options.diskSize, this.disks.length + i, false));
     }
     return this;
   }
@@ -570,7 +570,7 @@ export class MockStorageGenerator {
     return diskNames;
   }
 
-  private generateDisk(size: number, offset: number): Disk {
+  private generateDisk(size: number, offset: number, isAssigned = true): Disk {
     const name = this.generateDiskName(2 + offset, offset)[0];
 
     return {
@@ -602,7 +602,7 @@ export class MockStorageGenerator {
       devname: 'sdc',
       enclosure: null,
       supports_smart: null,
-      pool: this.poolState ? this.poolState.name : null,
+      pool: isAssigned ? this.poolState.name : null,
     };
   }
 
