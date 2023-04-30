@@ -33,7 +33,6 @@ export class MockEnclosureUtils {
     if (this.mockConfig?.mockEnclosure && this.mockConfig?.enclosureOptions) {
       this.mockStorage.addEnclosures(this.mockConfig.enclosureOptions);
     }
-    console.warn(this.mockStorage);
   }
 
   overrideMessage<K extends ApiMethod>(data: ResultMessage, method: K): ResultMessage {

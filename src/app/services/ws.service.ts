@@ -59,17 +59,25 @@ export class WebSocketService {
           return throwError(() => data.error);
         }
 
-        // Mock Data
+        // Mock Data Response
+        const isEnabled = (
+          environment.mockConfig.mockEnclosure
+          || environment.mockConfig.diskOptions.enabled
+          || environment.mockConfig.diskOptions.mockPools
+        );
+
         if (
           environment
           && !environment.production
           && environment.mockConfig?.enabled
+          && isEnabled
           && data.msg === IncomingApiMessageType.Result
         ) {
           const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
           return of(mockResultMessage);
         }
-        // END Mock Data
+        // END Mock Data Response
+
         return of(data);
       }),
 

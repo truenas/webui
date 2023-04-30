@@ -5,9 +5,13 @@ import fs from 'fs';
 import {EnclosureDispersalStrategy, MockStorageScenario} from "../../src/app/core/testing/enums/mock-storage.enum";
 import {WebUiEnvironment} from "../../src/environments/environment.interface";
 import inquirer from 'inquirer';
-import {MockEnclosureConfig} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
+import {
+  MockDiskOptions,
+  MockEnclosureConfig
+} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
 import * as figlet from 'figlet';
 import {CreateVdevLayout, TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
+import {AddEnclosureOptions} from "../../src/app/core/testing/interfaces/mock-storage-generator.interface";
 
 interface CommandOptions {
   [p: string]: any;
@@ -26,15 +30,21 @@ interface Headers {
 
 interface ConfigGeneratorAnswers {
   fileName: string;
-  controller: string;
-  shelves: string;
-  dispersal: string;
+  mockEnclosure: string;
+  controller?: string;
+  shelves?: string;
+  dispersal?: string;
+  mockDisk: string;
+  diskSize?: string;
+  repeats?: string;
+  mockPool: string;
+  vdevScenario?: string;
+  vdevLayout?: string;
+  vdevWidth?: string;
+  vdevDiskSize?: string;
+  vdevRepeats?: string;
   loadAfterSave: string;
   saveOrCancel: string;
-  mockDisk: string;
-  mockPool: string;
-  diskSize: string;
-  repeats: string;
 }
 
 interface ConfigLoaderAnswers {
@@ -398,12 +408,23 @@ function wrap(key:string, value: any): string {
 * Mock Command
 * */
 function mockConfigGenerator(): void {
+  const mockEnclosureChoices: string[] = ['Create Enclosures', 'Skip'];
   const controllerChoices: string[] = Object.keys(models.controllers);
   const shelfChoices: string[] = Object.keys(models.shelves);
   const dispersalChoices: string[] = ['Default', 'Existing'];
   const loadAfterSaveChoices: string[] = ['Yes', 'No'];
-  const mockDiskChoices: string[] = ['Yes', 'No'];
-  const mockPoolChoices: string[] = ['Create Pool', 'Leave Unassigned'];
+  const mockDiskChoices: string[] = ['Yes', 'Skip'];
+  const diskSizeChoices: string[] = ['2', '4', '6', '8', '12', '16', '18', '20'];
+  const mockPoolChoices: string[] = ['Create Pool', 'Skip'];
+  const mockPoolLayoutChoices: string[] = ['Stripe', 'Mirror','Raidz1','Raidz2','Raidz3'];
+  const mockPoolScenarioChoices: string[] = [
+    'Uniform',
+    'MixedDiskCapacity',
+    'MixedVdevCapacity',
+    'MixedVdevLayout',
+    'MixedVdevWidth',
+    'NoRedundancy',
+  ];
   const saveChoices: string[] = ['Save', 'Cancel'];
   const saveLocation = mockConfigDir + 'custom/';
 
@@ -415,17 +436,30 @@ function mockConfigGenerator(): void {
       type: 'input',
     },
     {
+      name: 'mockEnclosure',
+      message: 'Mock Enclosures?',
+      type: 'list',
+      choices: mockEnclosureChoices,
+      default: 'Skip',
+    },
+    {
       name: 'controller',
       message: 'Choose a controller:',
       type: 'list',
       choices: controllerChoices,
       default: 'M40',
+      when: ( answers ) => {
+        return answers.mockEnclosure === mockEnclosureChoices[0];
+      },
     },
     {
       name: 'shelves',
       message: 'Specify shelves (' + shelfChoices.toString() + '):',
       type: 'input',
       default: '',
+      when: ( answers ) => {
+        return answers.mockEnclosure === mockEnclosureChoices[0];
+      },
     },
     {
       name: 'dispersal',
@@ -433,28 +467,22 @@ function mockConfigGenerator(): void {
       type: 'list',
       choices: dispersalChoices,
       default: 'Default',
+      when: ( answers ) => {
+        return answers.mockEnclosure === mockEnclosureChoices[0];
+      },
     },
     {
       name: 'mockDisk',
-      message: 'Do you want mock disks?',
+      message: 'Mock unassigned disks?',
       type: 'list',
       choices: mockDiskChoices,
-      default: 'Yes',
+      default: 'Skip',
     },
-/*    {
-      name: 'mockPool',
-      message: 'Create mock pool or leave disks unassigned?',
-      type: 'list',
-      choices: mockPoolChoices,
-      default: 'Leave Unassigned',
-      when: ( answers ) => {
-        return answers.mockDisk === 'Yes';
-      },
-    },*/
     {
       name: 'diskSize',
       message: 'Select HDD capacity in TB',
-      type: 'input',
+      type: 'list',
+      choices: diskSizeChoices,
       default: '4',
       when: ( answers ) => {
         return answers.mockDisk === 'Yes';
@@ -467,6 +495,61 @@ function mockConfigGenerator(): void {
       default: '12',
       when: ( answers ) => {
         return answers.mockDisk === 'Yes';
+      },
+    },
+    {
+      name: 'mockPool',
+      message: 'Create a mock pool?',
+      type: 'list',
+      choices: mockPoolChoices,
+      default: 'Skip',
+    },
+    {
+      name: 'vdevDiskSize',
+      message: 'Choose a minimum disk size for vdev members?',
+      type: 'list',
+      choices: diskSizeChoices,
+      default: '2',
+      when: ( answers ) => {
+        return answers.mockPool === 'Create Pool';
+      },
+    },
+    {
+      name: 'vdevScenario',
+      message: 'Choose a storage scenario',
+      type: 'list',
+      choices: mockPoolScenarioChoices,
+      default: 'Uniform',
+      when: ( answers ) => {
+        return answers.mockPool === 'Create Pool';
+      },
+    },
+    {
+      name: 'vdevLayout',
+      message: 'Choose a VDEV layout?',
+      type: 'list',
+      choices: mockPoolLayoutChoices,
+      default: 'Mirror',
+      when: ( answers ) => {
+        return answers.mockPool === 'Create Pool';
+      },
+    },
+    {
+      name: 'vdevWidth',
+      message: 'Choose a vdev width',
+      type: 'input',
+      default: '2',
+      when: ( answers ) => {
+        return answers.mockPool === 'Create Pool';
+      },
+    },
+    {
+      name: 'vdevRepeats',
+      message: 'How many VDEVs?',
+      type: 'input',
+      default: '2',
+      when: ( answers ) => {
+        return answers.mockPool === 'Create Pool';
       },
     },
     {
@@ -489,50 +572,59 @@ function mockConfigGenerator(): void {
       const filePath = saveLocation + answers.fileName + extension;
 
       // Setup enclosure stuff
-      const expansionModels: string[] = answers.shelves.length
-        ? [].concat(answers.shelves.toUpperCase().split(','))
-        : [];
+      let controllerModel = 'M40';
+      let expansionModels: string[] = [];
+      let dispersal = dispersalChoices[0];
+      if (answers.mockEnclosure === mockEnclosureChoices[0]) {
+         expansionModels = answers.shelves.length
+          ? [].concat(answers.shelves.toUpperCase().split(','))
+          : [];
+        controllerModel = answers.controller.toUpperCase();
+        dispersal = answers.dispersal;
+      }
 
-      const enclosureOptions = {
-        controllerModel: models.controllers[answers.controller.toUpperCase()].model,
+      const enclosureOptions: AddEnclosureOptions = {
+        controllerModel: models.controllers[controllerModel].model,
         expansionModels: expansionModels,
-        dispersal: dispersalAsEnum(answers.dispersal),
+        dispersal: dispersalAsEnum(dispersal),
       }
 
       // Setup disk stuff
-      let diskOptions = {...environmentTemplate.mockConfig.diskOptions}
+      let diskOptions: MockDiskOptions = {...environmentTemplate.mockConfig.diskOptions}
 
       if (answers.mockDisk === 'Yes') {
         diskOptions.enabled = true;
-        diskOptions.mockPools = answers.mockPool === 'Create Pool' ? true : false;
-        diskOptions.topologyOptions.diskSize = Number(answers.diskSize);
-        diskOptions.topologyOptions.repeats = Number(answers.repeats);
+        diskOptions.unassignedOptions.diskSize = Number(answers.diskSize);
+        diskOptions.unassignedOptions.repeats = Number(answers.repeats);
       }
 
-      let diskOptionsReport = answers.mockDisk === 'No'
-        ? '  * Mock Disks: Disabled'
-        : `  * MockDisks: Enabled (${Number(answers.repeats)} x ${Number(answers.diskSize)}TB disks)
+      // Setup pool stuff
+      diskOptions.mockPools = answers.mockPool === 'Create Pool';
 
-        `
+      if (answers.mockPool === 'Create Pool') {
+        diskOptions.topologyOptions.scenario = scenarioAsEnum(answers.vdevScenario);
+        diskOptions.topologyOptions.layout = layoutAsEnum(answers.vdevLayout);
+        diskOptions.topologyOptions.width = Number(answers.vdevWidth);
+        diskOptions.topologyOptions.diskSize = Number(answers.vdevDiskSize);
+        diskOptions.topologyOptions.repeats = Number(answers.vdevRepeats);
+      }
 
       // Put it all together in our config
       let mockConfig: MockEnclosureConfig = {
         enabled: true,
-        mockEnclosure: true,
+        mockEnclosure: answers.mockEnclosure === mockEnclosureChoices[0],
         enclosureOptions: enclosureOptions,
-        systemProduct: models.controllers[answers.controller].systemProduct as string,
+        systemProduct: models.controllers[controllerModel].systemProduct as string,
         diskOptions: diskOptions,
       }
 
       if (answers.saveOrCancel === 'Save'){
-        console.info(`
-        Saving configuration into ${filePath} with the following values.
+        mockConfigReport({
+          showHeader : true,
+          showFooter: true,
+        }, mockConfig);
 
-        * Enabled: true
-        * Controller: ${models.controllers[answers.controller].systemProduct as string}
-        * Shelves: ${answers.shelves.length ? answers.shelves.toUpperCase() : 'None'}
-        * Slot Assignment: ${answers.dispersal.toLowerCase()}
-      ` + diskOptionsReport);
+        console.info(`\nSaving configuration into ${filePath} with the following values.\n`);
 
         const contents = JSON.stringify(mockConfig, null,'  ');
         fs.writeFileSync(filePath, contents, 'utf8');
@@ -668,7 +760,7 @@ function mockConfig(command: Command, options: CommandOptions): void {
 /*
 * Mock Enclosure Command
 * */
-function mockConfigReport(options: ReportOptions): string {
+function mockConfigReport(options: ReportOptions, mockConfig: MockEnclosureConfig = environment.mockConfig): string {
   if (!environment.mockConfig) {
     console.info('Something is wrong. Environment variable not initialized');
     console.info(environment);
@@ -681,16 +773,16 @@ function mockConfigReport(options: ReportOptions): string {
   const footer: string = options.showFooter ? headers.footer : '';
   const file = typeof options.data !== 'undefined' ? '\n    * Config file: ' + options.data + '\n' : '';
   const pad = '\n';
-  const diskOptions = environment.mockConfig.diskOptions;
+  const diskOptions = mockConfig.diskOptions;
 
   let report = `    * Global Mock: ${environment?.mockConfig?.enabled ? 'Enabled' : 'Disabled'}`
 
-  report += `\n    * Mock Enclosures: ${environment.mockConfig.mockEnclosure ? 'Enabled' : 'Disabled'}`;
-  if (environment?.mockConfig?.mockEnclosure) {
+  report += `\n    * Mock Enclosures: ${mockConfig.mockEnclosure ? 'Enabled' : 'Disabled'}`;
+  if (mockConfig?.mockEnclosure) {
     report += `
-      - Controller: ${environment.mockConfig.systemProduct}
-      - Shelves: ${environment.mockConfig.enclosureOptions.expansionModels}
-      - Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}`;
+      - Controller: ${mockConfig.systemProduct}
+      - Shelves: ${mockConfig.enclosureOptions.expansionModels}
+      - Slot Assignment: ${mockConfig.enclosureOptions.dispersal}`;
   }
 
   report += `\n    * Mock Unassigned Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}`;
