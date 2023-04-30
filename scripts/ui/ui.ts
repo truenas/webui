@@ -683,7 +683,7 @@ function mockConfigReport(options: ReportOptions): string {
   const pad = '\n';
   const diskOptions = environment.mockConfig.diskOptions;
 
-  let report = `    * Mock Enabled: ${environment?.mockConfig?.enabled ? 'Enabled' : 'Disabled'}`
+  let report = `    * Global Mock: ${environment?.mockConfig?.enabled ? 'Enabled' : 'Disabled'}`
 
   report += `\n    * Mock Enclosures: ${environment.mockConfig.mockEnclosure ? 'Enabled' : 'Disabled'}`;
   if (environment?.mockConfig?.mockEnclosure) {
@@ -693,7 +693,7 @@ function mockConfigReport(options: ReportOptions): string {
       - Slot Assignment: ${environment.mockConfig.enclosureOptions.dispersal}`;
   }
 
-  report += `\n    * Mock Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}`;
+  report += `\n    * Mock Unassigned Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}`;
   if (diskOptions.enabled) {
     report += `\n      - Disk Size: ${diskOptions.unassignedOptions.diskSize} TB`
 
