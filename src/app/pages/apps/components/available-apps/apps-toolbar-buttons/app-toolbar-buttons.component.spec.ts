@@ -65,7 +65,7 @@ describe('AppsToolbarButtonsComponent', () => {
   });
 
   it('shows Custom App button which will navigate to ix-chart install page', () => {
-    const link = spectator.query('a[href="/apps/available/ix-chart/install"]');
+    const link = spectator.query('a[href="/apps/available/OFFICIAL/charts/ix-chart/install"]');
     expect(link).toHaveText('Custom App');
   });
 });
