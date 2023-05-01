@@ -6,7 +6,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, map, switchMap, take, takeWhile,
+  combineLatest, filter, map, switchMap, take, takeWhile, tap,
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -201,7 +201,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
     combineLatest([
       this.applicationsStore.selectedPool$,
-      this.applicationsStore.isLoading$.pipe(filter((isLoading) => !isLoading)),
+      this.applicationsStore.isLoading$.pipe(
+        tap((isLoading) => this.isLoading = isLoading),
+        filter((isLoading) => !isLoading),
+      ),
     ]).pipe(
       takeWhile(([pool]) => !pool, true),
       filter(([pool]) => {

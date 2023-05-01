@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, tap,
+  debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, take, tap,
 } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
@@ -116,6 +116,11 @@ export class AvailableAppsHeaderComponent implements OnInit {
       next: (isFilterApplied) => {
         this.showFilters = this.showFilters || isFilterApplied;
         this.cdr.markForCheck();
+      },
+    });
+    this.applicationsStore.searchQuery$.pipe(take(1), untilDestroyed(this)).subscribe({
+      next: (searchQuery) => {
+        this.searchControl.setValue(searchQuery);
       },
     });
   }
