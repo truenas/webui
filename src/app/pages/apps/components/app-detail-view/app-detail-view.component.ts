@@ -108,7 +108,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
           this.cdr.markForCheck();
 
           this.loadSimilarApps();
-          this.loadScreenshots();
         },
         error: () => {
           this.isLoading$.next(false);
@@ -128,10 +127,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
         this.similarAppsLoading$.next(false);
       },
     });
-  }
-
-  private loadScreenshots(): void {
-    console.warn('The Screenshot section is under construction.');
   }
 
   private loadIfPoolSet(): void {

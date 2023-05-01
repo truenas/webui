@@ -28,7 +28,9 @@ describe('AppInfoCardComponent', () => {
     chart_metadata: {
       name: 'ix-test-app',
       icon: '',
-      sources: [],
+      sources: [
+        'http://github.com/ix-test-app/ix-test-app',
+      ],
     },
     catalog: 'OFFICIAL',
     catalog_train: 'charts',
@@ -87,7 +89,7 @@ describe('AppInfoCardComponent', () => {
 
   it('shows details', () => {
     const details = spectator.queryAll('.details-item');
-    expect(details).toHaveLength(8);
+    expect(details).toHaveLength(5);
 
     expect(details[0].querySelector('.label')).toHaveText('Name:');
     expect(details[0].querySelector('.value')).toHaveText('ix-test-app');
@@ -95,23 +97,24 @@ describe('AppInfoCardComponent', () => {
     expect(details[1].querySelector('.label')).toHaveText('Version:');
     expect(details[1].querySelector('.value')).toHaveText('1.2.3_3.2.1');
 
-    expect(details[2].querySelector('.label')).toHaveText('Latest Updated:');
-    expect(details[2].querySelector('.value')).toHaveText('N/A');
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
+    // expect(details[2].querySelector('.label')).toHaveText('Latest Updated:');
+    // expect(details[2].querySelector('.value')).toHaveText('N/A');
 
-    expect(details[3].querySelector('.label')).toHaveText('Source:');
-    expect(details[3].querySelector('.value')).toHaveText('N/A');
+    expect(details[2].querySelector('.label')).toHaveText('Source:');
+    expect(details[2].querySelector('.value')).toHaveText('http://github.com/ix-test-app/ix-test-app');
 
-    expect(details[4].querySelector('.label')).toHaveText('Developer:');
-    expect(details[4].querySelector('.value')).toHaveText('N/A');
+    // expect(details[4].querySelector('.label')).toHaveText('Developer:');
+    // expect(details[4].querySelector('.value')).toHaveText('N/A');
 
-    expect(details[5].querySelector('.label')).toHaveText('Commits in the last 60 days:');
-    expect(details[5].querySelector('.value')).toHaveText('N/A');
+    // expect(details[5].querySelector('.label')).toHaveText('Commits in the last 60 days:');
+    // expect(details[5].querySelector('.value')).toHaveText('N/A');
 
-    expect(details[6].querySelector('.label')).toHaveText('Catalog:');
-    expect(details[6].querySelector('.value')).toHaveText('OFFICIAL');
+    expect(details[3].querySelector('.label')).toHaveText('Catalog:');
+    expect(details[3].querySelector('.value')).toHaveText('OFFICIAL');
 
-    expect(details[7].querySelector('.label')).toHaveText('Train:');
-    expect(details[7].querySelector('.value')).toHaveText('charts');
+    expect(details[4].querySelector('.label')).toHaveText('Train:');
+    expect(details[4].querySelector('.value')).toHaveText('charts');
   });
 
   it('opens upgrade app dialog when Update button is pressed', async () => {

@@ -62,11 +62,13 @@
             </ng-container>
           </ng-template>
         </div>
-        <div class="app-list-item">
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div *ngIf="false" class="app-list-item">
           {{ 'Train' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
         </div>
-        <div class="app-list-item">
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div *ngIf="false" class="app-list-item">
           {{ 'Home Page' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
         </div>
@@ -80,7 +82,8 @@
       </div>
     </section>
 
-    <section>
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+    <section *ngIf="false">
       <h2>{{ 'Screenshots' | translate }}</h2>
       <div fxLayout="row nowrap" fxLayoutGap="16px">
         <ng-container *ngIf="isLoading$ | async; else appScreenshots">
@@ -118,7 +121,8 @@
       </div>
     </section>
 
-    <section>
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+    <section *ngIf="false">
       <h2>{{ 'Similar Apps' | translate }}</h2>
 
       <div *ngIf="similarAppsLoading$ | async; else similarAppsTemplate" fxLayout="row wrap" fxLayoutGap="16px">
@@ -139,13 +143,14 @@
   </div>
 
   <div fxFlex fxLayoutAlign="end">
-
     <section class="app-info-cards">
-      <ix-app-resources-card [isLoading$]="isLoading$"></ix-app-resources-card>
-      <ix-app-helm-chart-card [isLoading$]="isLoading$"></ix-app-helm-chart-card>
-      <ix-app-available-info-card [isLoading$]="isLoading$"></ix-app-available-info-card>
+      <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+      <ix-app-resources-card *ngIf="false" [isLoading$]="isLoading$"></ix-app-resources-card>
+      <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+      <ix-app-helm-chart-card *ngIf="false" [isLoading$]="isLoading$"></ix-app-helm-chart-card>
+      <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+      <ix-app-available-info-card *ngIf="false" [isLoading$]="isLoading$"></ix-app-available-info-card>
     </section>
-
   </div>
 </div>
 
