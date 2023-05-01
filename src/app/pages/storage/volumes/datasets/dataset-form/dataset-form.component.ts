@@ -1264,7 +1264,7 @@ export class DatasetFormComponent implements Formconfiguration {
               edit_deduplication_collection = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
               edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
-              const edit_checksum_collection = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
+              const edit_checksum_collection = [{ label: `Inherit (${this.parent_dataset.checksum.rawvalue})`, value: 'INHERIT' }];
               edit_checksum.options = edit_checksum_collection.concat(edit_checksum.options);
 
               edit_exec_collection = [{ label: `Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT' }];
