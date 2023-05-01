@@ -4,7 +4,7 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MockStorageGenerator } from './mock-storage-generator.utils';
 import { mockRootDataset } from './other-templates/root-dataset.template';
@@ -117,9 +117,19 @@ export class MockEnclosureUtils {
       }
       case 'disk.get_unused': {
         if (this.mockConfig.diskOptions.enabled) {
-          mockPayload = this.mockStorage.disks.filter((disk: Disk) => {
+          const payload = this.mockStorage.disks.filter((disk: Disk) => {
             return !Object.keys(disk).includes('pool') || typeof disk.pool === 'undefined' || disk.pool === null;
+          }).map((disk: Disk) => {
+            const unusedDisk: UnusedDisk | Disk = { ...disk };
+            (unusedDisk as UnusedDisk).partitions = [{
+              path: '',
+            }];
+            (unusedDisk as UnusedDisk).exported_zpool = null;
+
+            return unusedDisk as UnusedDisk;
           });
+
+          mockPayload = payload;
           break;
         } else {
           return data;
