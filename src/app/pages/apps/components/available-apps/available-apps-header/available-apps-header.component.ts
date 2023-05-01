@@ -6,14 +6,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, tap,
+  debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, tap,
 } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import helptext from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
@@ -41,11 +39,10 @@ export class AvailableAppsHeaderComponent implements OnInit {
   showFilters = false;
 
   isFilterApplied$ = this.applicationsStore.isFilterApplied$;
-  availableApps: AvailableApp[] = [];
-  installedApps: ChartRelease[] = [];
   appsCategories: string[] = [];
   categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
     map((categories) => {
+      this.appsCategories = [...categories];
       return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
     }),
   );
@@ -130,30 +127,6 @@ export class AvailableAppsHeaderComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.applicationsStore.initialize();
-      this.cdr.markForCheck();
-    });
-  }
-
-  loadData(): void {
-    combineLatest([
-      this.applicationsStore.availableApps$,
-      this.applicationsStore.installedApps$,
-      this.applicationsStore.appsCategories$,
-    ]).pipe(untilDestroyed(this)).subscribe(([availableApps, releases, categories]) => {
-      this.availableApps = availableApps;
-      this.installedApps = releases;
-
-      const catalogs = new Set<string>();
-      availableApps.forEach((app) => catalogs.add(app.catalog));
-      this.installedCatalogs = Array.from(catalogs);
-      this.catalogsOptions$ = of(this.installedCatalogs.map((catalog) => ({ label: catalog, value: catalog })));
-
-      this.appsCategories = [...categories];
-
-      if (this.isFirstLoad) {
-        this.isFirstLoad = false;
-        this.form.controls.catalogs.patchValue(this.installedCatalogs);
-      }
       this.cdr.markForCheck();
     });
   }
