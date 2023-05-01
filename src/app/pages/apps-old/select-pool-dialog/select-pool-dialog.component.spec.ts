@@ -14,7 +14,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 
 describe('SelectPoolDialogComponent', () => {
@@ -44,10 +43,6 @@ describe('SelectPoolDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(AppLoaderService),
       mockProvider(Router),
-      mockProvider(AvailableAppsStore, {
-        updateSelectedPool: jest.fn(),
-        selectedPool$: of('pool1'),
-      }),
     ],
   });
 

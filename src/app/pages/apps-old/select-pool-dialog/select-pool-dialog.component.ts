@@ -11,7 +11,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -41,7 +40,6 @@ export class SelectPoolDialogComponent implements OnInit {
     private translate: TranslateService,
     private dialogRef: MatDialogRef<SelectPoolDialogComponent>,
     private snackbar: SnackbarService,
-    private applicationsStore: AvailableAppsStore,
   ) {}
 
   get canMigrateApplications(): boolean {
@@ -73,7 +71,6 @@ export class SelectPoolDialogComponent implements OnInit {
       this.snackbar.success(
         this.translate.instant('Using pool {name}', { name: this.form.value.pool }),
       );
-      this.applicationsStore.updateSelectedPool(params.pool);
       dialogRef.close();
       this.dialogRef.close(true);
     });
@@ -83,14 +80,14 @@ export class SelectPoolDialogComponent implements OnInit {
     this.loader.open();
 
     forkJoin(([
-      this.applicationsStore.selectedPool$,
+      this.appService.getKubernetesConfig(),
       this.appService.getPoolList(),
     ]))
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: ([selectedPool, pools]) => {
+        next: ([config, pools]) => {
           this.loader.close();
-          this.selectedPool = selectedPool;
+          this.selectedPool = config.pool;
           this.form.patchValue({
             pool: this.selectedPool,
           });
