@@ -13,9 +13,10 @@ import {
   BehaviorSubject, of, Subject, Subscription,
 } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
+import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
@@ -43,7 +44,11 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
 })
 export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   appId: string;
+  catalog: string;
+  train: string;
+
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
 
@@ -136,12 +141,14 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
+        filter((params) => !!(params.appId as string) && !!(params.catalog) && !!(params.train)),
         untilDestroyed(this),
       )
-      .subscribe((appId) => {
+      .subscribe(({ train, catalog, appId }: AppDetailsRouteParams) => {
         this.appId = appId;
+        this.train = train;
+        this.catalog = catalog;
+
         this._pageTitle$.next(appId);
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -160,7 +167,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.loader.open();
     this.appService
-      .getCatalogItem(this.appId, officialCatalog, chartsTrain)
+      .getCatalogItem(this.appId, this.catalog, this.train)
       .pipe(
         untilDestroyed(this),
       ).subscribe({
@@ -379,10 +386,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       const version = data.version;
       delete data.version;
       this.dialogRef.componentInstance.setCall('chart.release.create', [{
-        catalog: officialCatalog,
+        catalog: this.catalog,
         item: this.catalogApp.name,
         release_name: data.release_name,
-        train: chartsTrain,
+        train: this.train,
         version,
         values: data,
       } as ChartReleaseCreate]);
