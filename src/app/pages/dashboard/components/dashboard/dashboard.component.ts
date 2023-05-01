@@ -553,11 +553,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private saveState(state: DashConfigItem[]): void {
     this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
-      .subscribe((wasSet) => {
-        if (!wasSet) {
-          throw new Error('Unable to save Dashboard State');
-        }
-      });
+      .subscribe();
   }
 
   private loadPoolData(): void {
