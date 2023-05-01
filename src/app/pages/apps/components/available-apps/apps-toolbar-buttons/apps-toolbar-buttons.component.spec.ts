@@ -8,6 +8,7 @@ import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -24,6 +25,9 @@ describe('AppsToolbarButtonsComponent', () => {
       mockProvider(DialogService),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
+      }),
+      mockProvider(AvailableAppsStore, {
+        selectedPool$: of('pool'),
       }),
     ],
   });
@@ -52,8 +56,6 @@ describe('AppsToolbarButtonsComponent', () => {
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
-    spectator.component.wasPoolSet = true;
-
     await menu.open();
     await menu.clickItem({ text: 'Unset Pool' });
 
@@ -63,7 +65,7 @@ describe('AppsToolbarButtonsComponent', () => {
   });
 
   it('shows Custom App button which will navigate to ix-chart install page', () => {
-    const link = spectator.query('a[href="/apps/available/ix-chart/install"]');
+    const link = spectator.query('a[href="/apps/available/OFFICIAL/charts/ix-chart/install"]');
     expect(link).toHaveText('Custom App');
   });
 });

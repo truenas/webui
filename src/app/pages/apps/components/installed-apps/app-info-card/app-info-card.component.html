@@ -32,7 +32,8 @@
             </ng-container>
           </span>
         </div>
-        <div class="details-item">
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div *ngIf="false" class="details-item">
           <span class="label">{{ 'Latest Updated' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
@@ -48,13 +49,15 @@
             </ng-container>
           </span>
         </div>
-        <div class="details-item">
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div *ngIf="false" class="details-item">
           <span class="label">{{ 'Developer' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
         </div>
-        <div class="details-item">
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div *ngIf="false" class="details-item">
           <span class="label">{{ 'Commits in the last 60 days' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
@@ -76,17 +79,17 @@
             </ng-container>
           </span>
         </div>
+        <div *ngIf="app?.portals" class="portals">
+          <button
+            *ngFor="let portal of app.portals | keyvalue"
+            mat-button
+            [ixTest]="['portal', app.name, portal.key]"
+            (click)="portalLink(app, portal.key)"
+          >
+            {{ portalName(portal.key) }}
+          </button>
+        </div>
       </div>
-    </div>
-    <div *ngIf="app?.portals" fxLayout="row" fxLayoutAlign="center">
-      <button
-        *ngFor="let portal of app.portals | keyvalue"
-        mat-button
-        [ixTest]="['portal', app.name, portal.key]"
-        (click)="portalLink(app, portal.key)"
-      >
-        {{ portalName(portal.key) }}
-      </button>
     </div>
   </mat-card-content>
   <mat-card-actions>
