@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter, map, switchMap, take, takeWhile,
 } from 'rxjs';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -139,7 +138,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.listenForRouteChanges();
     this.loadChartReleases();
-    this.subscribeToChartReleaseUpdates();
   }
 
   ngAfterViewInit(): void {
@@ -267,33 +265,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.cdr.markForCheck();
         },
       });
-  }
-
-  subscribeToChartReleaseUpdates(): void {
-    this.appService.subscribeToAllChartReleases().pipe(untilDestroyed(this)).subscribe({
-      next: (apiEvent) => {
-        switch (apiEvent.msg) {
-          case IncomingApiMessageType.Removed:
-            this.dataSource = this.dataSource.filter((chartRelease) => chartRelease.name !== apiEvent.id.toString());
-            break;
-          case IncomingApiMessageType.Added:
-            this.dataSource = [...this.dataSource, apiEvent.fields];
-            break;
-          case IncomingApiMessageType.Changed:
-            this.dataSource = this.dataSource.map(
-              (chartRelease) => {
-                if (chartRelease.name === apiEvent.id.toString()) {
-                  return {
-                    ...apiEvent.fields,
-                  };
-                }
-                return chartRelease;
-              },
-            );
-            break;
-        }
-      },
-    });
   }
 
   refreshStatus(name: string): void {
