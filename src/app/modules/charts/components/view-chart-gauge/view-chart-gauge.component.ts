@@ -29,8 +29,8 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   subtitle = '';
   chartType = 'gauge';
   chartClass = 'view-chart-gauge';
-  private _data: GaugeData;
   private arc: d3.Arc<unknown, d3.DefaultArcObject>;
+  private _data: GaugeData;
   chartId = UUID.UUID();
   private doublePi = 2 * Math.PI;
   units = '%'; // default unit type
