@@ -267,7 +267,7 @@ program
   .option('-r, --vdevrepeats <number>', 'set vdev repeats (experimental)')
   .option('-l, --layout, <layout>', 'vdev layout for mock pool (experimental)')
   .option('-w, --width, <number>', 'vdev width for mock pool (experimental)')
-  .option('-v, --vdevscenario, <uniform | mixedCapacity | mixedLayout>', 'choose test scenario for mock pool (experimental)')
+  .option('-v, --vdevscenario, <scenario>', 'choose test scenario for mock pool (experimental)')
   .action(() => {
     const mockCommand = program.commands.find((command: Command) => command.name() === 'mock-pool');
     const mockOptions = commandOpts(mockCommand);
