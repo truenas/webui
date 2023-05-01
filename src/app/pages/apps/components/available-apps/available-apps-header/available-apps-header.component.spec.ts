@@ -57,7 +57,7 @@ describe('AvailableAppsHeaderComponent', () => {
           categories: ['storage', 'crypto', 'media', 'torrent'],
         }),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
-        isFilterApplied$: of(true),
+        isFilterApplied$: of(false),
         applySearchQuery: jest.fn(),
         applyFilters: jest.fn(),
         resetFilters: jest.fn(),

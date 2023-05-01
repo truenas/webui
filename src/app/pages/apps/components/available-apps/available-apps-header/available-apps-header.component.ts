@@ -15,7 +15,6 @@ import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 
@@ -84,7 +83,6 @@ export class AvailableAppsHeaderComponent implements OnInit {
   ]);
 
   constructor(
-    private appService: ApplicationsService,
     private fb: FormBuilder,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
