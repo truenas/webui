@@ -50,7 +50,7 @@ export class MockEnclosureUtils {
     const enclosureData: Enclosure[] = this.mockStorage.enclosures;
     switch (method) {
       case 'enclosure.query': {
-        mockPayload = enclosureData;
+        mockPayload = enclosureData === null ? [] : enclosureData;
         break;
       }
       case 'pool.query': {
@@ -121,11 +121,8 @@ export class MockEnclosureUtils {
             return !Object.keys(disk).includes('pool') || typeof disk.pool === 'undefined' || disk.pool === null;
           }).map((disk: Disk) => {
             const unusedDisk: UnusedDisk | Disk = { ...disk };
-            (unusedDisk as UnusedDisk).partitions = [{
-              path: '',
-            }];
-            (unusedDisk as UnusedDisk).exported_zpool = null;
-
+            (unusedDisk as UnusedDisk).partitions = [{ path: '' }];
+            (unusedDisk as UnusedDisk).exported_zpool = '';
             return unusedDisk as UnusedDisk;
           });
 

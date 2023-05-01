@@ -579,7 +579,7 @@ export class MockStorageGenerator {
     const name = this.generateDiskName(2 + offset, offset)[0];
 
     return {
-      identifier: '{uuid}d5433b0f-180b-4706-afd0-476915e8925f',
+      identifier: '{uuid}d5433b0f-180b-4706-afd0-476915e8925f' + offset.toString(),
       name,
       subsystem: 'scsi',
       number: 2080,
