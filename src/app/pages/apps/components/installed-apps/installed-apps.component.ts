@@ -50,18 +50,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     title: helptext.message.loading,
   };
 
-  emptySearchResultsConf: EmptyConfig = {
-    type: EmptyType.NoSearchResults,
-    title: helptext.message.no_search_result,
-    button: {
-      label: this.translate.instant('Reset Search'),
-      action: () => {
-        this.resetSearch();
-        this.cdr.markForCheck();
-      },
-    },
-  };
-
   get filteredApps(): ChartRelease[] {
     return this.dataSource
       .filter((app) => app.name.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
