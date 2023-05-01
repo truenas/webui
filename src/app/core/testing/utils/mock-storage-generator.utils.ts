@@ -427,7 +427,7 @@ export class MockStorageGenerator {
     for (let i = 0; i < vdevCount; i++) {
       const targetLayout = i === 0 ? altLayout : layout;
       const targetWidth = i === 0 ? altWidth : width;
-      const vdev: VDev = this.generateVdev(targetLayout, targetWidth, layout + '-' + i.toString()) as VDev;
+      const vdev: VDev = this.generateVdev(targetLayout, targetWidth, targetLayout + '-' + i.toString()) as VDev;
 
       vdev.children.forEach((child: TopologyDisk) => {
         const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
