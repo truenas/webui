@@ -35,6 +35,7 @@ export interface AvailableAppsState {
   searchQuery: string;
   selectedPool: string;
   installedApps: ChartRelease[];
+  isKubernetesStarted: boolean;
 }
 
 const initialState: AvailableAppsState = {
@@ -53,6 +54,7 @@ const initialState: AvailableAppsState = {
   searchQuery: '',
   installedApps: [],
   selectedPool: null,
+  isKubernetesStarted: false,
 };
 
 @UntilDestroy()
@@ -85,6 +87,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly selectedPool$ = this.select((state) => state.selectedPool);
   readonly filterValues$ = this.select((state) => state.filter);
+  readonly isKubernetesStarted$ = this.select((state) => state.isKubernetesStarted);
   readonly appsByCategories$ = this.select((state: AvailableAppsState): AppsByCategory[] => {
     const appsByCategory: AppsByCategory[] = [];
 
@@ -141,39 +144,19 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       }),
       switchMap(() => {
         return combineLatest([
-          this.loadInstalledApps(),
           this.loadLatestApps(),
           this.loadAvailableApps(),
           this.loadCategories(),
-          this.loadAppsPool(),
+          this.loadInstalledApps(),
         ]);
       }),
-      tap((
-        [
-          installedApps,
-          latestApps,
-          availableApps,
-          categories,
-          pool,
-        ]: [ChartRelease[], AvailableApp[], AvailableApp[], string[], string],
-      ) => {
-        this.subscribeToInstalledAppsUpdates();
+      tap(() => {
         this.patchState((state: AvailableAppsState): AvailableAppsState => {
-          categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
-          const newState: AvailableAppsState = {
+          return {
             ...state,
-            installedApps,
-            latestApps: [...latestApps],
-            availableApps: [...availableApps],
-            categories: [...categories],
             filteredApps: [],
-            recommendedApps: availableApps
-              .filter((app) => app.recommended)
-              .map((app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] })),
             isLoading: false,
-            selectedPool: pool,
           };
-          return newState;
         });
       }),
     );
@@ -257,15 +240,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     });
   };
 
-  private loadInstalledApps(): Observable<ChartRelease[]> {
-    return this.appsService.getAllChartReleases().pipe(
-      catchError((error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        return of([]);
-      }),
-    );
-  }
-
   private subscribeToInstalledAppsUpdates(): void {
     if (this.installedAppsSubscription) {
       return;
@@ -315,20 +289,41 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     });
   }
 
-  private loadLatestApps(): Observable<AvailableApp[]> {
+  private loadLatestApps(): Observable<unknown> {
     return this.appsService.getLatestApps().pipe(
       catchError((error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
         return of([]);
       }),
+    ).pipe(
+      tap((latestApps: AvailableApp[]) => {
+        this.patchState((state) => {
+          return {
+            ...state,
+            latestApps,
+          };
+        });
+      }),
     );
   }
 
-  private loadAvailableApps(): Observable<AvailableApp[]> {
+  private loadAvailableApps(): Observable<unknown> {
     return this.appsService.getAvailableApps().pipe(
       catchError((error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
         return of([]);
+      }),
+    ).pipe(
+      tap((availableApps: AvailableApp[]) => {
+        this.patchState((state) => {
+          return {
+            ...state,
+            availableApps: [...availableApps],
+            recommendedApps: availableApps
+              .filter((app) => app.recommended)
+              .map((app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] })),
+          };
+        });
       }),
     );
   }
@@ -340,16 +335,62 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     };
   });
 
-  private loadCategories(): Observable<string[]> {
+  private loadCategories(): Observable<unknown> {
     return this.appsService.getAllAppsCategories().pipe(
       catchError((error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
         return of([]);
       }),
+    ).pipe(
+      tap((categories: string[]) => {
+        categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
+        this.patchState((state) => {
+          return {
+            ...state,
+            categories: [...categories],
+          };
+        });
+      }),
     );
   }
 
-  private loadAppsPool(): Observable<string> {
-    return this.appsService.getKubernetesConfig().pipe(map((config) => config.pool));
+  private loadInstalledApps(): Observable<unknown> {
+    return this.appsService.getKubernetesConfig().pipe(
+      map((config) => config.pool),
+      tap((pool) => {
+        this.patchState((state) => {
+          return {
+            ...state,
+            selectedPool: pool,
+          };
+        });
+      }),
+      switchMap((pool) => (pool ? this.appsService.getKubernetesServiceStarted() : of(false))),
+      tap((isKubernetesStarted) => {
+        this.patchState((state) => {
+          return {
+            ...state,
+            isKubernetesStarted,
+            isLoading: !!isKubernetesStarted,
+          };
+        });
+      }),
+      switchMap((isKubernetesStarted) => {
+        return isKubernetesStarted ? this.appsService.getAllChartReleases().pipe(
+          tap((installedApps: ChartRelease[]) => {
+            this.patchState((state) => {
+              return {
+                ...state,
+                installedApps: [...installedApps],
+                isLoading: false,
+              };
+            });
+            if (isKubernetesStarted) {
+              this.subscribeToInstalledAppsUpdates();
+            }
+          }),
+        ) : of();
+      }),
+    );
   }
 }

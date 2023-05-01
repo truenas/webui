@@ -202,57 +202,56 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     combineLatest([
       this.applicationsStore.selectedPool$,
       this.applicationsStore.isLoading$.pipe(filter((isLoading) => !isLoading)),
-    ])
-      .pipe(
-        takeWhile(([pool]) => !pool, true),
-        filter(([pool]) => {
-          if (!pool) {
-            this.dataSource = [];
-            this.showLoadStatus(EmptyType.FirstUse);
-            this.isLoading = false;
-            this.cdr.markForCheck();
-          }
-          return !!pool;
-        }),
-        switchMap(() => this.appService.getKubernetesServiceStarted()),
-        filter((kubernetesStarted) => {
-          if (!kubernetesStarted) {
-            this.dataSource = [];
-            this.showLoadStatus(EmptyType.Errors);
-            this.isLoading = false;
-            this.cdr.markForCheck();
-          }
-          return !!kubernetesStarted;
-        }),
-        switchMap(() => this.appService.getAllChartReleases()),
-        filter((charts) => {
-          if (!charts.length) {
-            this.dataSource = [];
-            this.showLoadStatus(EmptyType.NoPageData);
-          }
-          return !!charts.length;
-        }),
-        untilDestroyed(this),
-      ).subscribe({
-        next: (charts) => {
-          this.dataSource = charts;
-          this.dataSource.forEach((app) => {
-            if (app.status === ChartReleaseStatus.Deploying) {
-              this.refreshStatus(app.name);
-            }
-          });
-          if (!this.routeAppIdForDetails) {
-            this.selectFirstRowForDetails();
-          } else {
-            this.selectAppForDetails(this.routeAppIdForDetails);
-          }
-          this.cdr.markForCheck();
-        },
-        complete: () => {
+    ]).pipe(
+      takeWhile(([pool]) => !pool, true),
+      filter(([pool]) => {
+        if (!pool) {
+          this.dataSource = [];
+          this.showLoadStatus(EmptyType.FirstUse);
           this.isLoading = false;
           this.cdr.markForCheck();
-        },
-      });
+        }
+        return !!pool;
+      }),
+      switchMap(() => this.applicationsStore.isKubernetesStarted$),
+      filter((kubernetesStarted) => {
+        if (!kubernetesStarted) {
+          this.dataSource = [];
+          this.showLoadStatus(EmptyType.Errors);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }
+        return !!kubernetesStarted;
+      }),
+      switchMap(() => this.applicationsStore.installedApps$),
+      filter((charts) => {
+        if (!charts.length) {
+          this.dataSource = [];
+          this.showLoadStatus(EmptyType.NoPageData);
+        }
+        return !!charts.length;
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (charts) => {
+        this.dataSource = charts;
+        this.dataSource.forEach((app) => {
+          if (app.status === ChartReleaseStatus.Deploying) {
+            this.refreshStatus(app.name);
+          }
+        });
+        if (!this.routeAppIdForDetails) {
+          this.selectFirstRowForDetails();
+        } else {
+          this.selectAppForDetails(this.routeAppIdForDetails);
+        }
+        this.cdr.markForCheck();
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   refreshStatus(name: string): void {
