@@ -114,6 +114,12 @@ export class AvailableAppsHeaderComponent implements OnInit {
         }
       },
     });
+    this.isFilterApplied$.pipe(untilDestroyed(this)).subscribe({
+      next: (isFilterApplied) => {
+        this.showFilters = this.showFilters || isFilterApplied;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   refreshCharts(): void {
