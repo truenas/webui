@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { RedirectDialogData } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog-data.interface';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
@@ -28,7 +28,7 @@ export class RedirectService {
     if (!url.includes('http://')) {
       return this.window.open(url, target);
     }
-    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForGeneralConfig, take(1), untilDestroyed(this)).subscribe((config) => {
       if (!config.ui_httpsredirect) {
         return this.window.open(url, target);
       }
