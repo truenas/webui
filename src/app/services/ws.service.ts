@@ -59,7 +59,6 @@ export class WebSocketService {
           return throwError(() => data.error);
         }
 
-        // Mock Data Response
         if (
           environment
           && !environment.production
@@ -70,7 +69,6 @@ export class WebSocketService {
           const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
           return of(mockResultMessage);
         }
-        // END Mock Data Response
 
         return of(data);
       }),
