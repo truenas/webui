@@ -14,7 +14,6 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { NgxOrderedListboxModule } from 'app/modules/common/ordered-list/ordered-list.module';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -76,7 +75,6 @@ import { routing } from './network.routing';
   ],
   providers: [
     NetworkService,
-    EntityFormService,
     TranslateService,
   ],
 })

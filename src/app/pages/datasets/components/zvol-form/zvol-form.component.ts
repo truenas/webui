@@ -15,10 +15,10 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import {

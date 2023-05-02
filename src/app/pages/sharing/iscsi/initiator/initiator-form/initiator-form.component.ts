@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { DialogService, NetworkService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -22,7 +21,7 @@ type InitiatorItem = {
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [FieldRelationService, NetworkService],
+  providers: [NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
   isFormLoading = false;

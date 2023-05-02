@@ -45,6 +45,7 @@ import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -124,6 +125,9 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatTooltipModule,
     MatMenuModule,
     CustomFormsModule,
+  ],
+  providers: [
+    AvailableAppsStore,
   ],
 })
 export class AppsModule { }

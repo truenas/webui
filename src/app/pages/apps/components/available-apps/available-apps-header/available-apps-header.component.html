@@ -56,7 +56,7 @@
         mat-button
         color="accent"
         ixTest="reset"
-        [disabled]="!form.dirty || !appliedFilters"
+        [disabled]="!form.dirty && !(isFilterApplied$ |async)"
         (click)="resetFilters()"
       >
         {{ 'Reset' | translate }}
@@ -68,28 +68,25 @@
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
-    <h2 *ngIf="!isLoading">{{ availableApps.length }}</h2>
-    <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
     <a class="header-link" ixTest="refresh-charts" (click)="refreshCharts()">
-      {{ 'Refresh Charts' | translate }}
+      <h2 *ixWithLoadingState="availableApps$ as availableApps">{{ availableApps.length }}</h2>
+      <span>{{ 'Refresh Charts' | translate }}</span>
     </a>
   </div>
 
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
-    <h2 *ngIf="!isLoading">{{ installedApps.length }}</h2>
-    <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
     <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
-      {{ 'Manage Installed Apps' | translate }}
+      <h2 *ixWithLoadingState="installedApps$ as installedApps">{{ installedApps.length }}</h2>
+      <span>{{ 'Manage Installed Apps' | translate }}</span>
     </a>
   </div>
 
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Catalogs' | translate }}</div>
-    <h2 *ngIf="!isLoading">{{ installedCatalogs.length }}</h2>
-    <mat-spinner *ngIf="isLoading" [diameter]="30"></mat-spinner>
     <a class="header-link" ixTest="manage-catalogs" [routerLink]="['/apps/catalogs']">
-      {{ 'Manage Catalogs' | translate }}
+      <h2 *ixWithLoadingState="installedCatalogs$ as installedCatalogs">{{ installedCatalogs.length }}</h2>
+      <span>{{ 'Manage Catalogs' | translate }}</span>
     </a>
   </div>
 </div>

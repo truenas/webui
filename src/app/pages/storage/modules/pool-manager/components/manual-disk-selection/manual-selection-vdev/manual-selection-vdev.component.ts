@@ -7,7 +7,6 @@ import { ManagerVdev } from 'app/classes/manager-vdev.class';
 import { PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { GiB, MiB } from 'app/constants/bytes.constant';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 
@@ -30,7 +29,6 @@ export class ManualSelectionVdevComponent implements OnInit {
         || !!this.nonEnclosureDisks.length);
   }
   constructor(
-    public ixFormatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     public store$: ManualDiskSelectionStore,
   ) { }
