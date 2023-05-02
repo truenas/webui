@@ -33,7 +33,7 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { ModalService, ReplicationService, WebSocketService } from 'app/services';
+import { ReplicationService, WebSocketService } from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -118,7 +118,6 @@ describe('ReplicationFormComponent', () => {
         mockCall('replication.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(ModalService),
       mockProvider(SnackbarService),
     ],
     componentProviders: [
@@ -147,7 +146,7 @@ describe('ReplicationFormComponent', () => {
     await switchButton.click();
 
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ReplicationWizardComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
   });
 
   it('creates a new replication task', async () => {

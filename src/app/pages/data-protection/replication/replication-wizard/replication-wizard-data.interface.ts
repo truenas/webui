@@ -9,7 +9,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 export interface ReplicationWizardData {
   exist_replication: number;
   source_datasets_from: DatasetSource;
-  ssh_credentials_source: number | string;
+  ssh_credentials_source: number;
   source_datasets: string[];
   recursive: boolean;
   custom_snapshots: boolean;
@@ -36,4 +36,8 @@ export interface ReplicationWizardData {
   lifetime_unit: LifetimeUnit;
   periodic_snapshot_tasks?: number[];
   sudo: boolean;
+}
+
+export enum SshCredentialsNewOption {
+  New = 'NEW',
 }

@@ -39,7 +39,6 @@ import { RedirectService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -82,7 +81,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public appService: ApplicationsService,
-    private modalService: ModalService,
     private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private redirect: RedirectService,
@@ -466,7 +464,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
             message = '<ul>' + message + '</ul>';
             this.dialogService.error({ title: helptext.bulkActions.title, message });
           }
-          this.modalService.closeSlideIn();
           this.refreshChartReleases();
         },
       );

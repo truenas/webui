@@ -2,18 +2,18 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { FileSizePipe } from 'ngx-filesize';
-import { combineLatest } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import {
+  ManualDiskSelectionFilters,
+} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 
 interface EnclosureDisk extends Disk {
@@ -39,37 +39,15 @@ const noEnclosureId = 'no-enclosure' as const;
   providers: [FileSizePipe],
 })
 export class ManualSelectionDisksComponent implements OnInit {
-  filterForm = this.formBuilder.group({
-    search: [''],
-    diskType: [''],
-    diskSize: [''],
-  });
-
   hasEnclosures = false;
   dataSource: NestedTreeDataSource<DiskOrGroup>;
   treeControl = new NestedTreeControl<DiskOrGroup, string>((node) => node.children, {
     trackBy: (node) => node.identifier,
   });
 
-  readonly typeOptions$ = this.store$.unusedDisks$.pipe(
-    map((disks) => {
-      const diskTypes = disks.map((disk) => disk.type);
-      const uniqueTypes = _.uniq(diskTypes);
-      // TODO: Consider extracting somewhere similar to arrayToOptions
-      return uniqueTypes.map((type) => ({ label: type, value: type }));
-    }),
-  );
-
-  readonly sizeOptions$ = this.store$.unusedDisks$.pipe(
-    map((disks) => {
-      const sizes = disks.map((disk) => this.filesizePipe.transform(disk.size, { standard: 'iec' }));
-      const uniqueSizes = _.uniq(sizes);
-      return uniqueSizes.map((size: string) => ({ label: size, value: size }));
-    }),
-  );
+  filtersUpdated = new BehaviorSubject<ManualDiskSelectionFilters>({});
 
   constructor(
-    private formBuilder: FormBuilder,
     private filesizePipe: FileSizePipe,
     private translate: TranslateService,
     public store$: ManualDiskSelectionStore,
@@ -97,7 +75,7 @@ export class ManualSelectionDisksComponent implements OnInit {
     combineLatest([
       this.store$.enclosures$,
       this.store$.unusedDisks$,
-      this.filterForm.valueChanges.pipe(startWith(this.filterForm.value)),
+      this.filtersUpdated,
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([enclosures, disks, filterValues]) => {
@@ -148,7 +126,7 @@ export class ManualSelectionDisksComponent implements OnInit {
     return disksInEnclosures;
   }
 
-  private filterDisks(disks: Disk[], filterValues: ManualSelectionDisksComponent['filterForm']['value']): Disk[] {
+  private filterDisks(disks: Disk[], filterValues: ManualDiskSelectionFilters): Disk[] {
     return disks.filter((disk) => {
       const typeMatches = filterValues.diskType ? disk.type === filterValues.diskType : true;
       const sizeMatches = filterValues.diskSize

@@ -1,13 +1,23 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'History' | translate }}</h3>
+    <button
+      mat-icon-button
+      ixTest="refresh-events"
+      [attr.aria-label]="'Refresh Events' | translate"
+      [matTooltip]="'Refresh Events' | translate"
+      [disabled]="isLoading"
+      (click)="loadEvents()"
+    >
+      <ix-icon name="mdi-refresh"></ix-icon>
+    </button>
   </mat-card-header>
   <mat-card-content>
     <div class="events">
       <h4>{{ 'Related Kubernetes Events' | translate }}</h4>
       <div class="event-list">
         <ng-container *ngIf="isLoading; else loaded">
-          <ngx-skeleton-loader></ngx-skeleton-loader>
+          <ngx-skeleton-loader [count]="5"></ngx-skeleton-loader>
         </ng-container>
       </div>
     </div>
@@ -26,5 +36,5 @@
 </ng-template>
 
 <ng-template #noEvents>
-  {{ 'No events are available.' | translate }}
+  <div class="no-events">{{ 'No events are available.' | translate }}</div>
 </ng-template>
