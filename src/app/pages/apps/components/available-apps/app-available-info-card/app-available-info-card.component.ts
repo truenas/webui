@@ -21,6 +21,9 @@ export class AppAvailableInfoCardComponent implements OnChanges {
   ) { }
 
   ngOnChanges(): void {
+    if (!this.app) {
+      return;
+    }
     this.relativeDate = formatRelative(new Date(this.app.last_update.$date), new Date());
     this.cdr.markForCheck();
   }
