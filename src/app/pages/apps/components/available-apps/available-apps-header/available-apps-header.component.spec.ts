@@ -42,12 +42,12 @@ describe('AvailableAppsHeaderComponent', () => {
         availableApps$: of([{
           catalog: 'OFFICIAL',
           categories: ['storage', 'crypto'],
-          last_update: '2023-03-01 13:26:19',
+          last_update: { $date: 452 },
           name: 'chia',
         }, {
           catalog: 'TEST',
           categories: ['media', 'torrent'],
-          last_update: '2023-02-28 16:37:54',
+          last_update: { $date: 343 },
           name: 'qbittorent',
         }] as AvailableApp[]),
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
