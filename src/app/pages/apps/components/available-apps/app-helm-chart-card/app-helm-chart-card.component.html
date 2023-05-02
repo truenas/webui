@@ -34,7 +34,7 @@
     <ng-container *ngIf="maintainerList; else notAvailable">
       <div class="inline">
         <ng-container *ngFor="let maintainer of app?.maintainers; index as index" >
-          <a [href]="maintainer.url" [ixTest]="{{maintainer.email}}">
+          <a [href]="maintainer.url" [ixTest]="[maintainer.email]">
             {{ maintainer.name }}
           </a>{{ '(' + maintainer.email + ')' }}
           <span *ngIf="index < (app.maintainers.length -1)">{{index}}{{app.maintainers.length -1}}, </span>
