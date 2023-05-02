@@ -234,7 +234,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
         return normalize(value).includes(search);
       }
       if (Array.isArray(value) && isStringsArray(value)) {
-        return value.some((indexVal) => normalize(indexVal).includes(search));
+        return value.some((indexVal) => (typeof indexVal === 'string' ? normalize(indexVal).includes(search) : false));
       }
       return false;
     });

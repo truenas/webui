@@ -100,6 +100,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
       map((apps: AvailableApp[]) => apps.find(
         (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
       )),
+      filter((app) => !!app),
     ).pipe(untilDestroyed(this)).subscribe({
       next: (app) => {
         this.app = app;

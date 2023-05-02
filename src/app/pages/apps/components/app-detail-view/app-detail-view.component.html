@@ -149,12 +149,9 @@
 
   <div fxFlex fxLayoutAlign="end">
     <section class="app-info-cards">
-      <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
       <ix-app-resources-card [isLoading$]="isLoading$"></ix-app-resources-card>
-      <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-      <ix-app-helm-chart-card *ngIf="false" [isLoading$]="isLoading$"></ix-app-helm-chart-card>
-      <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-      <ix-app-available-info-card *ngIf="false" [isLoading$]="isLoading$"></ix-app-available-info-card>
+      <ix-app-helm-chart-card [app]="app" [isLoading$]="isLoading$"></ix-app-helm-chart-card>
+      <ix-app-available-info-card [app]="app" [isLoading$]="isLoading$"></ix-app-available-info-card>
     </section>
   </div>
 </div>
