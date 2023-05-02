@@ -100,20 +100,19 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
       map((apps: AvailableApp[]) => apps.find(
         (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
       )),
-    )
-      .pipe(untilDestroyed(this)).subscribe({
-        next: (app) => {
-          this.app = app;
-          this.isLoading$.next(false);
-          this.cdr.markForCheck();
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (app) => {
+        this.app = app;
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
 
-          this.loadSimilarApps();
-        },
-        error: () => {
-          this.isLoading$.next(false);
-          this.cdr.markForCheck();
-        },
-      });
+        this.loadSimilarApps();
+      },
+      error: () => {
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   private loadSimilarApps(): void {
