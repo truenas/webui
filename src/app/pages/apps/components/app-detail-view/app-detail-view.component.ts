@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';

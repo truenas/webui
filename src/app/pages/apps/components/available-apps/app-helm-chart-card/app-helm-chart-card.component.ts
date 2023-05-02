@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AppMaintainer, AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AppMaintainer, AvailableApp } from 'app/interfaces/available-app.interface';
 
 @Component({
   selector: 'ix-app-helm-chart-card',

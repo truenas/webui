@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { formatRelative } from 'date-fns';
 import { Observable } from 'rxjs';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 
 @Component({
   selector: 'ix-app-available-info-card',
