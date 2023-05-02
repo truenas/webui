@@ -4,8 +4,16 @@
   "enclosureOptions": {
     "controllerModel": "M40",
     "expansionModels": [
-      "ES24",
-      "ES24"
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102"
     ],
     "dispersal": "default"
   },
@@ -14,15 +22,15 @@
     "enabled": true,
     "topologyOptions": {
       "scenario": "uniform",
-      "layout": "MIRROR",
-      "diskSize": 20,
-      "width": 2,
-      "repeats": 500
+      "layout": "RAIDZ2",
+      "diskSize": 16,
+      "width": 5,
+      "repeats": 200
     },
-    "mockPools": false,
+    "mockPools": true,
     "unassignedOptions": {
-      "diskSize": 12,
-      "repeats": 60
+      "diskSize": 4,
+      "repeats": 12
     }
   }
 }
