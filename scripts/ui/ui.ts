@@ -12,47 +12,25 @@ import {
 import * as figlet from 'figlet';
 import {CreateVdevLayout, TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
 import {AddEnclosureOptions} from "../../src/app/core/testing/interfaces/mock-storage-generator.interface";
-
-interface CommandOptions {
-  [p: string]: any;
-}
-
-interface ReportOptions {
-  data?: unknown;
-  showHeader: boolean;
-  showFooter: boolean;
-}
-
-interface Headers {
-  header: string;
-  footer: string;
-}
-
-interface ConfigGeneratorAnswers {
-  fileName: string;
-  mockEnclosure: string;
-  controller?: string;
-  shelves?: string;
-  dispersal?: string;
-  mockDisk: string;
-  diskSize?: string;
-  repeats?: string;
-  mockPool: string;
-  vdevScenario?: string;
-  vdevLayout?: string;
-  vdevWidth?: string;
-  vdevDiskSize?: string;
-  vdevRepeats?: string;
-  loadAfterSave: string;
-  saveOrCancel: string;
-}
-
-interface ConfigLoaderAnswers {
-  location: string;
-  customFile?: string;
-  includedFile?: string;
-}
-
+import {
+  mockDiskExamples,
+  mockEnclosureExamples,
+  mockExamples,
+  mockPoolExamples
+} from "./helptext";
+import {
+  CommandOptions,
+  ReportOptions,
+  Headers,
+  ConfigGeneratorAnswers,
+  ConfigLoaderAnswers,
+} from './interfaces/ui-command.interface';
+import {
+  capitalize,
+  commandOpts,
+  generateHeaders,
+  wrap,
+} from "./command-utils";
 
 /*
 * Nice Header
@@ -61,22 +39,6 @@ function banner(): string {
   const content = figlet.textSync('TrueNAS WebUI');
   return content;
 }
-
-function generateHeaders(content: string): Headers {
-  const width: number = 44;
-  const start = '\n ';
-  const finish = '\n';
-  const asterisk = '*';
-  const asterisksPerSide = (width - (content.length + 2)) / 2;
-  const asterisks = asterisk.repeat(asterisksPerSide);
-  const output = {
-    header: start +asterisks + ' ' + content.toUpperCase() + ' ' + asterisks + finish,
-    footer: start +asterisk.repeat(width) + '\n',
-  }
-
-  return output;
-}
-
 
 /*
 * Variables
@@ -95,26 +57,7 @@ const program: Command = new Command()
   .version('0.0.1')
   .description('TrueNAS webui setup utility')
   .usage('(Call from root directory of repo via yarn)')
-  .addHelpText('before', banner())
-
-const mockExamples = `
-The mock command sets mock related configurations through the use of json files.
-The repo includes some files for common configurations developers might need for testing.
-Developers can also create custom config files. See examples below...
-
-EXAMPLES:
-
-  * Load a custom or included configuration file (guided)
-
-  % ui mock | ui m
-
-  * Generating a custom config file (guided)
-
-  The --generate option will provide a series of prompts that results in the creation of a config.json file.
-  After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs
-
-    % ui mock --generate OR ui m -g
-`
+  .addHelpText('before', banner());
 
 program
   .command('mock')
@@ -130,42 +73,6 @@ program
     mockConfig(mockCommand, mockOptions);
 
   });
-
-const mockEnclosureExamples = `
-EXAMPLES:
-
-  * Retrieve a list of mockable controller models
-
-    % ui mock-opt -M OR ui mock-opt --showcontrollers
-
-  * Retrieve a list of mockable expansion shelf models
-
-    % ui mock-opt -S OR ui mock-opt --showshelves
-
-  * Set the controller model to mock
-
-    % ui mock-opt -m OR ui mock-opt --model
-
-  * Set the expansion shelf models to mock
-
-    NOTE: It will except no argument or empty string to specify no shelves.
-    Specifying shelves must be done via a comma separated string
-
-    % ui mock-opt -s 'es24,es24' OR ui mock-opt --shelves 'es24,es24'
-
-  * Enable mock functionality
-
-    % ui mock-opt -e OR ui mock-opt --enable
-
-  * Disable mock functionality
-
-    % ui mock-opt -d OR ui mock-opt --disable
-
-  * Complete configuration example that creates an M50 with two ES24 shelves
-
-    % ui mock-opt -e -m m50 -s 'es24,es24' -a default
-
-`
 
 program
   .command('mock-enclosure')
@@ -189,20 +96,6 @@ program
     mock(mockCommand, mockOptions);
   });
 
-const mockDiskExamples = `
-The mock-disk command allows developers to mock unassigned disks
-
-EXAMPLES:
-
-  * Create 150 x 12TB disks that are not assigned to any pool
-
-  % ui mock-disk --disksize 12 --diskrepeats 150
-
-  * Create 150 x 12TB disks that are not assigned to any pool using abbreviated syntax
-
-  % ui md -s 12 -r 150
-`
-
 program
   .command('mock-disks')
   .name('mock-disks')
@@ -218,42 +111,6 @@ program
     const mockOptions = commandOpts(mockCommand);
     mockDisks(mockCommand, mockOptions);
   });
-
-const mockPoolExamples = `
-The mock-pool command allows developers to mock a single pool with data topology.
-This command offers some different options to update certain aspects of the pool
-The most useful option however is the --vdevscenario option. This removes the need
-to manually specify every aspect and instead state typical conditions that need to
-be tested for.
-
-Supported scenarios include:
-
-- Uniform (default)
-- MixedDiskCapacity
-- MixedVdevCapacity
-- MixedVdevLayout
-- MixedVdevWidth
-- NoRedundancy
-
-
-EXAMPLES:
-
-  * Enable mock pool
-
-  % ui mock-pool -e
-
-  * Create 3 x two way mirrors using all 4TB disks
-
-  % ui mock-pool --vdevscenario Uniform --vdevdisksize 4 --vdevrepeats 3
-
-  * Create vdevs with mixed layouts (first vdev is different and subsequent vdevs honor the mock configuration settings)
-
-  % ui mock-pool -v MixedVdevLayout -l Raidz3 -r 150
-
-  * Create vdevs with mixed widths (first vdev has one extra member disk. Subsequent vdevs honor the mock configuration settings)
-
-  % ui mock-pool -v MixedVdevWidth -r 150
-`
 
 program
   .command('mock-pool')
@@ -304,24 +161,6 @@ program
 
 program.parse(process.argv);
 
-// How is this not built into commander.js?
-function commandOpts(command: Command): CommandOptions {
-  const keys: string[] = command.options.map((option: any) => {
-    const key = option.long.replace(/^--/ ,'');
-    return key;
-  });
-
-  let options: CommandOptions = {};
-
-  keys.forEach((key: string) => {
-    if (command.getOptionValue(key)) {
-      options[key] = command.getOptionValue(key);
-    }
-  });
-
-  return options;
-}
-
 /*
 * Reset Environment File
 * */
@@ -360,31 +199,6 @@ function makePrintable(src: WebUiEnvironment, prefix: string) {
   return output;
 }
 
-function enumAsString(value: string): string | null {
-  const trimmed = value.replace(/\"|\: /g, '');
-  let output: string;
-
-  for (const key in EnclosureDispersalStrategy) {
-    if (key.toLowerCase() === trimmed) {
-      output =  ': EnclosureDispersalStrategy.' + key;
-    }
-  }
-
-  for (const key in MockStorageScenario) {
-    if (key !== 'Default' && key === capitalize(trimmed, true)) {
-      output =  ': MockStorageScenario.' + key;
-    }
-  }
-
-  for (const key in TopologyItemType) {
-    if (key !== 'Default' && key.toUpperCase() === trimmed) {
-      output =  ': TopologyItemType.' + capitalize(key);
-    }
-  }
-
-  return output ? output : value.replace(/\"/g, '\'');
-}
-
 function dispersalAsEnum(dispersal: string): EnclosureDispersalStrategy {
   if (dispersal.toLowerCase() === 'default' || dispersal.toLowerCase() === 'existing') {
     return EnclosureDispersalStrategy[capitalize(dispersal) as keyof EnclosureDispersalStrategy];
@@ -409,44 +223,6 @@ function scenarioAsEnum(scenario: string): MockStorageScenario {
   } else {
     console.info(`ERROR: ${scenario} is not a valid scenario`);
     process.exit(1);
-  }
-}
-
-function capitalize(text: string, firstCharOnly: boolean = false): string {
-  if (firstCharOnly) {
-    return text[0].toUpperCase() + text.slice(1, text.length);
-  } else {
-    return text[0].toUpperCase() + text.slice(1, text.length).toLowerCase();
-  }
-}
-
-function wrap(key:string, value: any): string {
-  switch(typeof value){
-    case 'string':
-    return '\'' + value + '\'';
-    case 'boolean':
-    case 'number':
-    return value.toString();
-    case 'undefined':
-      console.error('Property not defined');
-    case 'object': {
-      if (key === 'mockConfig') {
-        const regexBefore = /\".*\"\:/g;
-        const regexAfter = /\: \".*\"/g;
-        const pretty = JSON.stringify(value, null, "  ")
-          .replace(regexBefore, (match) => {
-            return match.replace(/\"/g, '');
-          }).replace(regexAfter, (match) => {
-            const converted = enumAsString(match);
-            return converted;
-          }).replace(/\"/g, '\'') // Double quotes to single quotes
-          .replace(/\'true\'/g, 'true') // remove quotes from boolean true
-          .replace(/\'false\'/g, 'false') // remove quotes from boolean false
-          .replace(/\n/g, '\n  ') // fix indentation
-
-        return pretty;
-      }
-    }
   }
 }
 
