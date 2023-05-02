@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+} from '@angular/core';
+import { formatRelative } from 'date-fns';
 import { Observable } from 'rxjs';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 
 @Component({
   selector: 'ix-app-available-info-card',
@@ -7,6 +11,20 @@ import { Observable } from 'rxjs';
   styleUrls: ['./app-available-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppAvailableInfoCardComponent {
+export class AppAvailableInfoCardComponent implements OnChanges {
   @Input() isLoading$: Observable<boolean>;
+  @Input() app: AvailableApp;
+  relativeDate = '';
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+  ) { }
+
+  ngOnChanges(): void {
+    if (!this.app) {
+      return;
+    }
+    this.relativeDate = formatRelative(new Date(this.app.last_update.$date), new Date());
+    this.cdr.markForCheck();
+  }
 }
