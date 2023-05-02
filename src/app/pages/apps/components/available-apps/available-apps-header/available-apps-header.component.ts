@@ -77,6 +77,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
   );
 
   sortOptions$: Observable<Option[]> = of([
+    { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
     { label: this.translate.instant('Catalog Name'), value: AppsFiltersSort.Catalog },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },

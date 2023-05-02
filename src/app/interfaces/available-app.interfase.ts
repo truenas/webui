@@ -13,6 +13,8 @@ export interface AvailableApp {
   icon_url: string;
   train: string;
   catalog: string;
-  last_update: string;
+  last_update: {
+    $date: number;
+  };
   recommended: boolean;
 }

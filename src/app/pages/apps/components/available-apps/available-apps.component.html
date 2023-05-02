@@ -26,41 +26,45 @@
 
   <ng-container *ngIf="!(applicationsStore.isLoading$ | async)">
     <ng-container *ngIf="!(isFilterOrSearch$ | async)">
-      <ng-container *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle">
-        <section *ngIf="appSection.apps as apps">
-          <ng-container *ngIf="apps.length">
-            <h3 class="section-title">{{ appSection.title }}</h3>
-  
-            <div class="apps">
-              <ix-app-card
-                *ngFor="let app of apps; trackBy: trackByAppId"
-                [app]="app"
-                [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-              ></ix-app-card>
-            </div>
-  
-            <div *ngIf="appSection.totalApps > applicationsStore.appsPerCategory" class="view-all">
-              <button
-                mat-stroked-button
-                [ixTest]="[appSection.title, 'view-all']"
-                (click)="applyCategoryFilter(appSection.category)"
-              >
-                {{ 'View All' | translate }} {{ appSection.title | translate }}
-              </button>
-            </div>
-          </ng-container>
-        </section>
+      <ng-container
+        *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle"
+        [ngTemplateOutlet]="apps"
+        [ngTemplateOutletContext]="{ $implicit: appSection }"
+      >
+        <div *ngIf="appSection.totalApps > applicationsStore.appsPerCategory" class="view-all">
+          <button
+            mat-stroked-button
+            [ixTest]="[appSection.title, 'view-all']"
+            (click)="applyCategoryFilter(appSection.category)"
+          >
+            {{ 'View All' | translate }} {{ appSection.title | translate }}
+          </button>
+        </div>
       </ng-container>
     </ng-container>
-  
-    <div *ngIf="isFilterOrSearch$ | async" class="apps">
-      <ix-app-card
-        *ngFor="let app of (applicationsStore.searchedApps$ | async); trackBy: trackByAppId"
-        [app]="app"
-        [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-      ></ix-app-card>
+
+    <div *ngIf="isFilterOrSearch$ | async">
+      <ng-container
+        *ngFor="let appSection of (applicationsStore.searchedApps$ | async); trackBy: trackByAppSectionTitle"
+        [ngTemplateOutlet]="apps"
+        [ngTemplateOutletContext]="{ $implicit: appSection }"
+      ></ng-container>
     </div>
   </ng-container>
-
-  
 </div>
+
+<ng-template #apps let-appSection>
+  <section *ngIf="appSection.apps as apps">
+    <ng-container *ngIf="apps.length">
+      <h3 class="section-title">{{ appSection.title }}</h3>
+      <div class="apps">
+        <ix-app-card
+          *ngFor="let app of apps; trackBy: trackByAppId"
+          [app]="app"
+          [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+        ></ix-app-card>
+      </div>
+    </ng-container>
+  </section>
+  <ng-content></ng-content>
+</ng-template>

@@ -140,4 +140,47 @@ export class ApplicationsService {
   stopApplication(name: string): Observable<Job<ChartScaleResult>> {
     return this.ws.job('chart.release.scale', [name, { replica_count: 0 }]);
   }
+
+  convertDateToRelativeDate(date: Date): string {
+    const diff = Math.round(((new Date() as unknown as number) - (date as unknown as number)) / 1000);
+
+    const minute = 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+    const week = day * 7;
+    const month = day * 30;
+    const year = month * 12;
+
+    if (diff < 30) {
+      return 'just now';
+    }
+    if (diff < minute) {
+      return `${diff} seconds ago`;
+    }
+    if (diff < 2 * minute) {
+      return 'a minute ago';
+    }
+    if (diff < hour) {
+      return `${Math.floor(diff / minute)} minutes ago`;
+    }
+    if (Math.floor(diff / hour) === 1) {
+      return '1 hour ago';
+    }
+    if (diff < day) {
+      return `${Math.floor(diff / hour)} hours ago`;
+    }
+    if (diff < day * 2) {
+      return 'yesterday';
+    }
+    if (diff < week) {
+      return `${week} days ago`;
+    }
+    if (diff < month) {
+      return `${Math.floor(diff / week)} weeks ago`;
+    }
+    if (diff < year) {
+      return `${Math.floor(diff / month)} months ago`;
+    }
+    return `${Math.floor(diff / year)} years ago`;
+  }
 }

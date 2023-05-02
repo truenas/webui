@@ -53,7 +53,7 @@ describe('AvailableAppsHeaderComponent', () => {
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
         filterValues$: of({
           catalogs: ['OFFICIAL'],
-          sort: AppsFiltersSort.Name,
+          sort: null,
           categories: ['storage', 'crypto', 'media', 'torrent'],
         }),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
@@ -101,7 +101,7 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['OFFICIAL'],
-      sort: AppsFiltersSort.Name,
+      sort: null,
       categories: [
         'storage',
         'crypto',
@@ -133,7 +133,7 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['OFFICIAL', 'TEST'],
-      sort: AppsFiltersSort.Name,
+      sort: null,
       categories: ['storage'],
     });
   });
