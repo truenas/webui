@@ -22,9 +22,8 @@ import {
   CommandOptions,
   ReportOptions,
   Headers,
-  ConfigGeneratorAnswers,
-  ConfigLoaderAnswers,
 } from './interfaces/ui-command.interface';
+import { ConfigGeneratorAnswers, ConfigLoaderAnswers } from './interfaces/mock-command.interface';
 import {
   capitalize,
   commandOpts,

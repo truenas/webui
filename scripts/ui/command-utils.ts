@@ -1,4 +1,3 @@
-// How is this not built into commander.js?
 import {Command} from "commander";
 import {CommandOptions, Headers} from "./interfaces/ui-command.interface";
 import {EnclosureDispersalStrategy, MockStorageScenario} from "../../src/app/core/testing/enums/mock-storage.enum";
