@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -6,8 +6,9 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -19,9 +20,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   `,
   providers: [IscsiService],
 })
-export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnInit {
-  @Input() fcEnabled: boolean;
-
+export class TargetListComponent implements EntityTableConfig<IscsiTarget> {
   title = this.translate.instant('Targets');
   queryCall = 'iscsi.target.query' as const;
   wsDelete = 'iscsi.target.delete' as const;
@@ -53,17 +52,10 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
   constructor(
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
-
-  ngOnInit(): void {
-    if (this.fcEnabled) {
-      this.columns.push({
-        name: this.translate.instant('Mode'),
-        prop: 'mode',
-      });
-    }
-  }
 
   afterInit(entityList: EntityTableComponent<IscsiTarget>): void {
     this.entityList = entityList;
@@ -119,7 +111,7 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
               this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
                 next: () => this.entityList.getData(),
                 error: (error: WebsocketError) => {
-                  new EntityUtils().handleWsError(this, error, this.entityList.dialogService);
+                  this.dialogService.error(this.errorHandler.parseWsError(error));
                   this.entityList.loader.close();
                 },
               });

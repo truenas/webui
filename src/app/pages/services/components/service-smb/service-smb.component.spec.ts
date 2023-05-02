@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
@@ -22,7 +22,7 @@ describe('ServiceSmbComponent', () => {
   let loader: HarnessLoader;
   let ws: WebSocketService;
 
-  const createComponent = createComponentFactory({
+  const createComponent = createRoutingFactory({
     component: ServiceSmbComponent,
     imports: [
       IxFormsModule,

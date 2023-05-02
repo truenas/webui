@@ -8,7 +8,7 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   TruecommandConnectModalComponent,
@@ -20,6 +20,7 @@ import {
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -55,6 +56,7 @@ export class TruecommandButtonComponent implements OnInit {
     private dialogService: DialogService,
     private dialog: MatDialog,
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -112,9 +114,9 @@ export class TruecommandButtonComponent implements OnInit {
           next: () => {
             this.loader.close();
           },
-          error: (err) => {
+          error: (err: WebsocketError) => {
             this.loader.close();
-            new EntityUtils().handleWsError(this, err, this.dialogService);
+            this.dialogService.error(this.errorHandler.parseWsError(err));
           },
         });
       }

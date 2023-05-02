@@ -49,9 +49,9 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -150,7 +150,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     paging: true,
     sorting: { columns: this.columns },
   };
-  asyncView = false; // default table view is not async
   showDefaults = false;
   showSpinner = true;
   cardHeaderReady = false;
@@ -162,7 +161,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   loaderOpen = false;
   protected toDeleteRow: Row;
   private interval: Interval;
-  excuteDeletion = false;
+  executeDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
   checkboxLoaders = new Map<string, BehaviorSubject<boolean>>();
@@ -203,11 +202,11 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     public storageService: StorageService,
     protected store$: Store<AppState>,
     protected matDialog: MatDialog,
-    public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
     protected layoutService: LayoutService,
     protected slideIn: IxSlideInService,
     private snackbar: SnackbarService,
+    private errorHandler: ErrorHandlerService,
   ) {
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
@@ -300,8 +299,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         this.conf.afterInit(this);
       }
     }
-
-    this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
 
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
@@ -546,16 +543,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     } else {
       this.callGetFunction();
     }
-
-    if (this.asyncView) {
-      this.interval = setInterval(() => {
-        if (this.conf.callGetFunction) {
-          this.conf.callGetFunction(this);
-        } else {
-          this.callGetFunction(true);
-        }
-      }, 10000);
-    }
   }
 
   callGetFunction(skipActions = false): void {
@@ -571,9 +558,9 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           this.loaderOpen = false;
         }
         if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace') && error.hasOwnProperty('type'))) {
-          this.dialogService.errorReport(error.type || error.trace.class, error.reason, error.trace.formatted);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         } else {
-          new EntityUtils().handleError(this, error);
+          this.dialogService.error(this.errorHandler.parseError(error));
         }
       },
     });
@@ -614,6 +601,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     }
 
     this.rows = this.generateRows(response);
+    this.currentRows = this.rows;
+
     if (!skipActions) {
       this.storageService.tableSorter(this.rows, this.sortKey, 'asc');
     }
@@ -629,11 +618,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.paginationPageIndex = 0;
       this.showDefaults = true;
     }
-    if (this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) {
-      this.excuteDeletion = false;
+    if (this.expandedRows === 0 || this.executeDeletion || this.needRefreshTable) {
+      this.executeDeletion = false;
       this.needRefreshTable = false;
 
-      this.currentRows = this.rows;
       this.paginationPageIndex = 0;
     }
 
@@ -880,13 +868,13 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     ).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.getData();
-        this.excuteDeletion = true;
+        this.executeDeletion = true;
         if (this.conf.afterDelete) {
           this.conf.afterDelete();
         }
       },
       error: (error) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.loader.close();
       },
     });
@@ -923,7 +911,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
-              new EntityUtils().handleWsError(this, error, this.dialogService);
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               this.loader.close();
               return of(false);
             }),
@@ -1029,11 +1017,14 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
                   this.snackbar.success(this.translate.instant('Items deleted'));
                 } else {
                   message = '<ul>' + message + '</ul>';
-                  this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);
+                  this.dialogService.error({
+                    title: this.translate.instant('Items Delete Failed'),
+                    message,
+                  });
                 }
               },
               error: (res1) => {
-                new EntityUtils().handleWsError(this, res1, this.dialogService);
+                this.dialogService.error(this.errorHandler.parseWsError(res1));
                 this.loader.close();
                 this.loaderOpen = false;
               },

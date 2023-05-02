@@ -21,9 +21,8 @@
 
         <mat-divider class="header-divider"></mat-divider>
         <div class="vdevs-container">
-          <!-- TODO: see <ix-manual-selection-vdev> -->
           <ix-manual-selection-vdev
-            *ngFor="let vdev of store$.dataVdevs$ | async; trackBy: trackVdevById"
+            *ngFor="let vdev of manualDiskSelectionStore.dataVdevs$ | async; trackBy: trackVdevById"
             [vdev]="vdev"
           ></ix-manual-selection-vdev>
         </div>
@@ -38,11 +37,10 @@
           <button
             mat-button
             ixTest="cancel"
-            [matDialogClose]="undefined"
+            [matDialogClose]="false"
           >{{ 'Cancel' | translate }}</button>
         </div>
       </div>
-
     </div>
   </mat-card-content>
 </mat-card>

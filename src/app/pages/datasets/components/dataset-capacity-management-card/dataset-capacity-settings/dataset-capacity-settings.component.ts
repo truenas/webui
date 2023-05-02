@@ -10,6 +10,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services';
@@ -26,7 +27,10 @@ export class DatasetCapacitySettingsComponent {
   readonly defaultQuotaCritical = 95;
 
   form = this.formBuilder.group({
-    refquota: [null as number, Validators.min(GiB)],
+    refquota: [null as number, this.validators.withMessage(
+      Validators.min(GiB),
+      this.translate.instant(helptext.dataset_form_quota_too_small),
+    )],
     refquota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
@@ -38,7 +42,10 @@ export class DatasetCapacitySettingsComponent {
     ]],
     refquota_critical_inherit: [false],
 
-    quota: [null as number, Validators.min(GiB)],
+    quota: [null as number, this.validators.withMessage(
+      Validators.min(GiB),
+      this.translate.instant(helptext.dataset_form_quota_too_small),
+    )],
     quota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
@@ -76,6 +83,7 @@ export class DatasetCapacitySettingsComponent {
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     private slideIn: IxSlideInService,
+    private validators: IxValidatorsService,
   ) {
     this.setFormRelations();
   }

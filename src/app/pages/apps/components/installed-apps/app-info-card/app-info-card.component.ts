@@ -7,12 +7,13 @@ import { filter } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { RedirectService, AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +28,7 @@ export class AppInfoCardComponent {
   constructor(
     private appLoaderService: AppLoaderService,
     private redirect: RedirectService,
+    private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
@@ -51,7 +53,6 @@ export class AppInfoCardComponent {
     this.appLoaderService.open();
     this.appService.getChartUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe({
       next: (summary: UpgradeSummary) => {
-        console.info('summary', summary);
         this.appLoaderService.close();
 
         const dialogRef = this.matDialog.open(AppUpgradeDialogComponent, {
@@ -80,13 +81,13 @@ export class AppInfoCardComponent {
           });
           jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
             this.dialogService.closeAllDialogs();
-            new EntityUtils().handleWsError(this, error, this.dialogService);
+            this.dialogService.error(this.errorHandler.parseJobError(error));
           });
         });
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.appLoaderService.close();
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { forkJoin, lastValueFrom } from 'rxjs';
+import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
   IscsiAuthMethod,
@@ -31,12 +32,13 @@ import {
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import {
-  DialogService, IscsiService, ValidationService, WebSocketService,
+  DialogService, IscsiService, ValidationService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +61,11 @@ export class IscsiWizardComponent implements OnInit {
 
   form = this.fb.group({
     device: this.fb.group({
-      name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
+      name: ['', [
+        Validators.required,
+        forbiddenValues(this.namesInUse),
+        Validators.pattern(patterns.targetDeviceName),
+      ]],
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
@@ -196,8 +202,9 @@ export class IscsiWizardComponent implements OnInit {
     private fb: FormBuilder,
     private slideInService: IxSlideInService,
     private iscsiService: IscsiService,
-    private dialogService: DialogService,
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private validationService: ValidationService,
   ) {
@@ -310,7 +317,7 @@ export class IscsiWizardComponent implements OnInit {
 
   handleError(err: WebsocketError): void {
     this.toStop = true;
-    new EntityUtils().handleWsError(this, err, this.dialogService);
+    this.dialogService.error(this.errorHandler.parseWsError(err));
   }
 
   async onSubmit(): Promise<void> {

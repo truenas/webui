@@ -19,11 +19,10 @@ import { ChartFormValue, ChartSchema, ChartSchemaNode } from 'app/interfaces/cha
 import {
   DeleteListItemEvent, DynamicFormSchemaDict, DynamicFormSchemaNode, DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { Relation } from 'app/interfaces/field-relation.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
-import { cronValidator } from 'app/modules/entity/entity-form/validators/cron-validation';
 import {
   CustomUntypedFormArray,
 } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
@@ -34,6 +33,7 @@ import {
   CustomUntypedFormField,
 } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { cronValidator } from 'app/modules/ix-forms/validators/cron-validation';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -271,10 +271,7 @@ export class AppSchemaService {
     schema: ChartSchema['schema'],
   ): HierarchicalObjectMap<ChartFormValue>[] {
     return list.map((listItem: HierarchicalObjectMap<ChartFormValue>) => {
-      if (Object.keys(listItem).length > 1) {
-        return this.serializeFormValue(listItem, schema);
-      }
-      return this.serializeFormValue(listItem[Object.keys(listItem)[0]], schema);
+      return this.serializeFormValue(listItem, schema);
     }) as HierarchicalObjectMap<ChartFormValue>[];
   }
 

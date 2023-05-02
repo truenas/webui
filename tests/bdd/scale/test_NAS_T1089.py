@@ -105,8 +105,7 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     # Scroll to root
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    wait_for_value = wait_for_attribute_value(driver, 5, xpaths.add_User.root_Group_Option, 'class', 'mat-selected')
-    assert wait_for_value
+    assert wait_for_attribute_value(driver, 5, xpaths.add_User.root_Group_Option, 'class', 'mdc-list-item--selected')
     # return to dashboard
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
     time.sleep(0.5)

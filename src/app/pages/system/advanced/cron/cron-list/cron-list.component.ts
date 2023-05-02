@@ -11,12 +11,12 @@ import {
   EntityTableConfig,
   EntityTableConfigConfig,
 } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import {
   DialogService, TaskService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
@@ -70,6 +70,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
     public translate: TranslateService,
     protected taskService: TaskService,
     public dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
     public slideInService: IxSlideInService,
     private store$: Store<AppState>,
   ) {}
@@ -121,7 +122,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                   message,
                 );
               },
-              error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+              error: (error: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(error)),
             });
         },
       },

@@ -68,7 +68,7 @@ describe('IscsiWizardComponent', () => {
 
   it('creates objects when wizard is submitted', fakeAsync(async () => {
     await form.fillForm({
-      Name: 'testName',
+      Name: 'test-name',
       Device: 'Create New',
       'Pool/Dataset': '/mnt/new_pool',
       Size: 1024,
@@ -93,7 +93,7 @@ describe('IscsiWizardComponent', () => {
     tick();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
-      name: 'new_pool/testName',
+      name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
@@ -102,7 +102,7 @@ describe('IscsiWizardComponent', () => {
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
-      name: 'testName',
+      name: 'test-name',
       rpm: 'SSD',
       type: 'DISK',
       xen: false,
@@ -115,19 +115,19 @@ describe('IscsiWizardComponent', () => {
     }]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(11, 'iscsi.portal.create', [{
-      comment: 'testName',
+      comment: 'test-name',
       discovery_authgroup: 12,
       discovery_authmethod: 'CHAP',
       listen: [],
     }]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{
-      comment: 'testName',
+      comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(13, 'iscsi.target.create', [{
-      name: 'testName',
+      name: 'test-name',
       groups: [{
         auth: null,
         authmethod: 'NONE',

@@ -67,6 +67,7 @@ describe('VmWizardComponent', () => {
       mockProvider(VmGpuService),
       mockWebsocket([
         mockCall('vm.create', { id: 4 } as VirtualMachine),
+        mockCall('vm.query', []),
         mockCall('vm.port_wizard', { port: 13669 } as VmPortWizardResult),
         mockCall('vm.device.create'),
 

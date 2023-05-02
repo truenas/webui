@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,14 +16,15 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
 import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -93,18 +93,18 @@ export class OpenVpnServerConfigComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,
     private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
-    private router: Router,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private storageService: StorageService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private appLoaderService: AppLoaderService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -126,10 +126,11 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
+          this.snackbar.success(this.translate.instant('OpenVPN server configuration saved'));
           this.slideInService.close();
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -150,9 +151,9 @@ export class OpenVpnServerConfigComponent implements OnInit {
         });
         this.storageService.downloadText(download, 'openVPNStatic.key');
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -176,10 +177,10 @@ export class OpenVpnServerConfigComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -200,19 +201,19 @@ export class OpenVpnServerConfigComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.isLoading = true;
-        this.appLoaderService.open();
+        this.loader.open();
         this.cdr.markForCheck();
         return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
       }),
       catchError((error: WebsocketError) => {
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
     ).subscribe({
       complete: () => {
         this.isLoading = false;
-        this.appLoaderService.close();
+        this.loader.close();
         this.cdr.markForCheck();
         this.loadConfig();
       },

@@ -11,9 +11,9 @@ import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -68,11 +68,12 @@ export class VmwareSnapshotFormComponent implements OnInit {
   datastoreOptions$ = of([]);
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     protected dialogService: DialogService,
   ) {}
@@ -134,9 +135,12 @@ export class VmwareSnapshotFormComponent implements OnInit {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
-          this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg);
+          this.dialogService.error({
+            title: helptext.connect_err_dialog.title,
+            message: helptext.connect_err_dialog.msg,
+          });
         } else {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         }
         this.cdr.markForCheck();
       },
@@ -184,7 +188,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

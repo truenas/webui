@@ -6,13 +6,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -49,6 +50,7 @@ export class ChangePasswordDialogComponent {
     private authService: AuthService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
+    private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
   ) {
     this.authService.user$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
@@ -82,9 +84,9 @@ export class ChangePasswordDialogComponent {
         this.loader.close();
         this.dialogRef.close();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        (new EntityUtils()).errorReport(error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

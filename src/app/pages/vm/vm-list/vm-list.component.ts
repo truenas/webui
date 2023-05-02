@@ -5,7 +5,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { merge } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -24,7 +23,6 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
@@ -35,9 +33,11 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
+
+const noMemoryError = 'ENOMEM';
 
 @UntilDestroy()
 @Component({
@@ -108,7 +108,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private dialogService: DialogService,
     private router: Router,
     protected dialog: MatDialog,
-    private modalService: ModalService,
+    private errorHandler: ErrorHandlerService,
     private vmService: VmService,
     private translate: TranslateService,
     private layoutService: LayoutService,
@@ -117,7 +117,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   ) {}
 
   ngOnInit(): void {
-    merge(this.modalService.onClose$, this.slideIn.onClose$)
+    this.slideIn.onClose$
       .pipe(untilDestroyed(this))
       .subscribe(() => this.entityList.getData());
   }
@@ -287,16 +287,16 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         }
         this.checkMemory();
       },
-      error: (err: WebsocketError) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        if (method === this.wsMethods.start && err.error === 12) {
+        if (method === this.wsMethods.start && error.errname === noMemoryError) {
           this.onMemoryError(row);
           return;
         }
         if (method === this.wsMethods.update) {
           row.autostart = !row.autostart;
         }
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -308,9 +308,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           rows = this.resourceTransformIncomingRestData(vms);
           resolve(rows);
         },
-        error: (err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-          reject(err);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+          reject(error);
         },
       });
     });
@@ -419,9 +419,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
             this.loader.close();
             this.dialog.open(DisplayVmDialogComponent, { data: { vm, displayDevices } });
           },
-          error: (err) => {
+          error: (error: WebsocketError) => {
             this.loader.close();
-            new EntityUtils().handleError(this, err);
+            this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         });
       },
@@ -448,7 +448,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           }),
           untilDestroyed(this),
         ).subscribe({
-          error: (error) => new EntityUtils().handleWsError(this, error, this.dialogService),
+          error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
         });
       },
     }] as EntityTableAction[];

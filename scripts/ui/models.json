@@ -1,0 +1,41 @@
+{
+  "controllers": {
+    "M50": {
+      "model": "M50",
+      "systemProduct": "TRUENAS-M50"
+    },
+    "M40": {
+      "model": "M40",
+      "systemProduct": "TRUENAS-M40"
+    },
+    "R20": {
+      "model": "R20",
+      "systemProduct": "TRUENAS-R20"
+    },
+    "R40": {
+      "model": "R40",
+      "systemProduct": "TRUENAS-R40"
+    },
+    "R50": {
+      "model": "R50",
+      "systemProduct": "TRUENAS-R50"
+    },
+    "MINI-R": {
+      "model": "MINI-R",
+      "systemProduct": "TRUENAS-MINI-R"
+    },
+    "MINI-XL+": {
+      "model": "MINI-3.0-XL+",
+      "systemProduct": "TRUENAS-MINI-3.0-XL+"
+    }
+  },
+  "shelves": {
+    "ES24": {
+      "model": "ES24"
+    },
+    "ES102": {
+      "model": "ES102"
+    }
+  }
+}
+

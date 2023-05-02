@@ -11,17 +11,19 @@ import {
   combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap,
+  debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
+import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
 import { UserService, DialogService } from 'app/services';
@@ -60,7 +62,7 @@ export class UserFormComponent {
     username: ['', [
       Validators.required,
       Validators.pattern(UserService.namePattern),
-      Validators.maxLength(16),
+      Validators.maxLength(32),
     ]],
     email: ['', [Validators.email]],
     password: ['', [
@@ -92,6 +94,7 @@ export class UserFormComponent {
     sudo_commands_nopasswd: [[] as string[]],
     sudo_commands_nopasswd_all: [false],
     smb: [true],
+    ssh_password_enabled: [false],
   });
 
   readonly tooltips = {
@@ -118,9 +121,8 @@ export class UserFormComponent {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  readonly shellOptions$ = this.ws.call('user.shell_choices').pipe(choicesToOptions());
+  shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
-  readonly shellProvider = new SimpleAsyncComboboxProvider(this.shellOptions$);
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
   get homeCreateWarning(): string {
@@ -163,6 +165,7 @@ export class UserFormComponent {
     private validatorsService: IxValidatorsService,
     private filesystemService: FilesystemService,
     private slideIn: IxSlideInService,
+    private snackbar: SnackbarService,
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
@@ -191,6 +194,14 @@ export class UserFormComponent {
       untilDestroyed(this),
     ).subscribe((key) => {
       this.form.controls.sshpubkey.setValue(key);
+    });
+
+    this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
+      this.updateShellOptions(group, this.form.value.groups);
+    });
+
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
+      this.updateShellOptions(this.form.value.group, groups);
     });
 
     this.form.controls.password_conf.addValidators(
@@ -238,6 +249,7 @@ export class UserFormComponent {
       password_disabled: values.password_disabled,
       shell: values.shell,
       smb: values.smb,
+      ssh_password_enabled: values.ssh_password_enabled,
       sshpubkey: values.sshpubkey,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
@@ -283,8 +295,10 @@ export class UserFormComponent {
         ).subscribe({
           next: (user) => {
             if (this.isNewUser) {
+              this.snackbar.success(this.translate.instant('User added'));
               this.store$.dispatch(userAdded({ user }));
             } else {
+              this.snackbar.success(this.translate.instant('User updated'));
               this.store$.dispatch(userChanged({ user }));
             }
             this.isFormLoading = false;
@@ -308,13 +322,6 @@ export class UserFormComponent {
     const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
-  }
-
-  getUsernameHint(): string {
-    if (this.form.controls.username?.value?.length > 8) {
-      return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
-    }
-    return null;
   }
 
   private setupNewUserForm(): void {
@@ -402,7 +409,8 @@ export class UserFormComponent {
   }
 
   private setFirstShellOption(): void {
-    this.shellOptions$.pipe(
+    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
+      choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
       untilDestroyed(this),
@@ -434,5 +442,19 @@ export class UserFormComponent {
     }
 
     return username.toLocaleLowerCase();
+  }
+
+  private updateShellOptions(group: number, groups: number[]): void {
+    const ids = new Set<number>(groups);
+    if (group) {
+      ids.add(group);
+    }
+
+    this.ws.call('user.shell_choices', [Array.from(ids)])
+      .pipe(choicesToOptions(), take(1), untilDestroyed(this))
+      .subscribe((options) => {
+        this.shellOptions$ = of(options);
+        this.cdr.markForCheck();
+      });
   }
 }

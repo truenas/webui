@@ -8,7 +8,7 @@ import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { Disk, StorageDashboardDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 function isStringArray(items: unknown[]): items is string[] {
@@ -462,7 +462,7 @@ export class StorageService {
     return allVdevCapacities.size > 1;
   }
 
-  getVdevDiskCapacities(vdevs: TopologyItem[], disks: StorageDashboardDisk[]): Set<number>[] {
+  getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {
     const allDiskCapacities: Set<number>[] = [];
     vdevs?.forEach((vdev) => {
       const vdevDiskCapacities = new Set<number>(); // There should only be one value
@@ -503,7 +503,7 @@ export class StorageService {
 
   validateVdevs(category: PoolTopologyCategory,
     vdevs: TopologyItem[],
-    disks: StorageDashboardDisk[],
+    disks: Disk[],
     dataVdevs?: TopologyItem[]): string[] {
     const warnings: string[] = [];
     let isMixedVdevCapacity = false;

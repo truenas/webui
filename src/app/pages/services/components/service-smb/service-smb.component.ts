@@ -12,11 +12,13 @@ import { LogLevel } from 'app/enums/log-level.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -29,7 +31,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServiceSmbComponent implements OnInit {
   isFormLoading = false;
   isBasicMode = true;
-  hasSecondController = false;
   subscriptions: Subscription[] = [];
 
   form = this.fb.group({
@@ -100,14 +101,16 @@ export class ServiceSmbComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private router: Router,
     private dialogService: DialogService,
     private translate: TranslateService,
     private userService: UserService,
     private validatorsService: IxValidatorsService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -119,9 +122,9 @@ export class ServiceSmbComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -140,18 +143,15 @@ export class ServiceSmbComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.router.navigate(['/services']);
           this.cdr.markForCheck();
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
   }
 }

@@ -11,7 +11,7 @@
     {{ 'Advanced Settings' | translate }}
   </button>
   <button
-    *ngIf="wasPoolSet"
+    *ngIf="!!(applicationsStore.selectedPool$ | async)"
     mat-menu-item
     ixTest="unset-pool"
     (click)="onUnsetPool()"
@@ -24,8 +24,8 @@
   mat-button
   color="primary"
   ixTest="custom-app"
-  [disabled]="!wasPoolSet"
-  [routerLink]="['/apps', 'available', customIxChartApp, 'install']"
+  [disabled]="!(applicationsStore.selectedPool$ | async)"
+  [routerLink]="['/apps', 'available', officialCatalog, chartsTrain, customIxChartApp, 'install']"
 >
   {{ 'Custom App' | translate }}
 </a>

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
@@ -167,8 +168,12 @@ export class FileTicketFormComponent implements OnInit {
           this.fileUpload.onUploading$.pipe(
             untilDestroyed(this),
           ).subscribe({
-            error: () => {
-              this.dialog.errorReport('Ticket', 'Uploading screenshots has failed');
+            error: (error: HttpErrorResponse) => {
+              this.dialog.error({
+                title: this.translate.instant('Ticket'),
+                message: this.translate.instant('Uploading screenshots has failed'),
+                backtrace: `Error: ${error.status},\n ${error.error}\n ${error.message}`,
+              });
             },
           });
           this.fileUpload.onUploaded$.pipe(

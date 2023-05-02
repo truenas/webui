@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter, finalize, take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -22,21 +22,21 @@ import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -88,13 +88,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private systemGeneralService: SystemGeneralService,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private modalService: ModalService,
     private loader: AppLoaderService,
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
     private snackbar: SnackbarService,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
@@ -184,13 +184,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
     });
-
-    this.wsManager.websocket$.pipe(
-      finalize(() => {
-        this.modalService.closeSlideIn();
-      }),
-      untilDestroyed(this),
-    ).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -314,9 +307,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
           );
           this.waitingNetworkCheckin = false;
         },
-        error: (err) => {
+        error: (err: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
     });
@@ -395,7 +388,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.upgradeWaitingToFinish = false;
       });
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure) => {
-        new EntityUtils().errorReport(failure, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseJobError(failure));
       });
     });
   }

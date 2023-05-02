@@ -1,9 +1,7 @@
-@import 'mixins/grid';
 @import 'scss-imports/splitview';
 
 $level-offset: 25px;
 $padding-left: 8px;
-$columns: 7;
 
 :host {
   align-items: center;
@@ -15,10 +13,12 @@ $columns: 7;
 }
 
 .tree-node-grid {
-  @include grid-row($columns);
   align-items: center;
-
+  display: grid;
+  grid-gap: 8px;
   grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
+  min-width: fit-content;
+  width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0 0 30px;

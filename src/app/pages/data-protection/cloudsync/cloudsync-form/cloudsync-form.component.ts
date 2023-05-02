@@ -27,6 +27,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { CloudCredentialService, DialogService } from 'app/services';
@@ -35,6 +36,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const newStorjBucket = 'new_storj_bucket';
+const customOptionValue = -1;
 
 type FormValue = CloudsyncFormComponent['form']['value'];
 
@@ -99,7 +101,6 @@ export class CloudsyncFormComponent {
   bucketTooltip: string = helptext.bucket_tooltip;
   bucketInputPlaceholder: string = helptext.bucket_input_placeholder;
   bucketInputTooltip: string = helptext.bucket_input_tooltip;
-  isCustomTransfersSelected = false;
 
   readonly transferModeTooltip = `
     ${helptext.transfer_mode_warning_sync}<br><br>
@@ -153,7 +154,7 @@ export class CloudsyncFormComponent {
     { label: this.translate.instant('High Bandwidth (16)'), value: 16 },
   ];
 
-  transfersCustomOption = { label: this.translate.instant('Custom'), value: 1 };
+  transfersCustomOption = { label: this.translate.instant('Custom'), value: customOptionValue };
 
   transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
 
@@ -171,6 +172,7 @@ export class CloudsyncFormComponent {
     protected router: Router,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private snackbar: SnackbarService,
     protected dialog: DialogService,
     protected matDialog: MatDialog,
     protected slideInService: IxSlideInService,
@@ -421,18 +423,16 @@ export class CloudsyncFormComponent {
     });
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-      if (this.isCustomTransfers(value)) {
-        if (!this.isCustomTransfersSelected) {
-          const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
-          dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
-            if (this.isCustomTransfers(transfers)) {
-              this.setTransfersOptions(true, transfers);
-            }
-            this.form.controls.transfers.setValue(transfers || null);
-          });
-        }
-      } else {
-        this.setTransfersOptions(false);
+      if (value === customOptionValue) {
+        const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
+          if (this.isCustomTransfers(transfers)) {
+            this.setTransfersOptions(true, transfers);
+          }
+          this.form.controls.transfers.setValue(transfers || null);
+        });
+      } else if (!this.isCustomTransfers(value)) {
+        this.setTransfersOptions(false, value);
       }
     });
   }
@@ -534,10 +534,9 @@ export class CloudsyncFormComponent {
   }
 
   setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
-    this.isCustomTransfersSelected = isCustomTransfersSelected;
-    if (this.isCustomTransfersSelected) {
+    if (isCustomTransfersSelected) {
       const customOption = { label: this.translate.instant('Custom ({customTransfers})', { customTransfers }), value: customTransfers };
-      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption]);
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption, this.transfersCustomOption]);
     } else {
       this.transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
     }
@@ -696,6 +695,10 @@ export class CloudsyncFormComponent {
     }
 
     attributesToFill.forEach((name) => {
+      if (name === 'acknowledge_abuse' && this.form.controls.credentials.value !== this.googleDriveProviderId) {
+        return;
+      }
+
       if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
         if (name === 'task_encryption') {
           attributes[name] = formValue[name] === '' ? null : formValue[name];
@@ -750,8 +753,13 @@ export class CloudsyncFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Task created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Task updated'));
+        }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;

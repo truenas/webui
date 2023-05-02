@@ -7,8 +7,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +25,9 @@ export class LockDatasetDialogComponent {
 
   constructor(
     private matDialog: MatDialog,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     private dialogRef: MatDialogRef<LockDatasetDialogComponent>,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
@@ -43,20 +49,21 @@ export class LockDatasetDialogComponent {
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         jobDialogRef.close();
+        this.snackbar.success(this.translate.instant('Dataset locked'));
         this.dialogRef.close(true);
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
     jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         jobDialogRef.close();
         this.dialogRef.close(true);
-        this.dialogService.errorReport(job.error, job.state, job.exception);
+        this.dialogService.error(this.errorHandler.parseJobError(job));
       },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      error: (error: WebsocketError | Job) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

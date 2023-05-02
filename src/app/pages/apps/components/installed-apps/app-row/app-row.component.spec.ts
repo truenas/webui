@@ -1,31 +1,51 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponents } from 'ng-mocks';
+import { ImgFallbackModule } from 'ngx-img-fallback';
+import { officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
-  const application = {
+  const app = {
     name: 'app_name',
     status: ChartReleaseStatus.Active,
     chart_metadata: { icon: 'https://image/' },
+    catalog: officialCatalog,
   } as ChartRelease;
+
+  const appStatus = AppStatus.Started;
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
+    imports: [ImgFallbackModule],
+    declarations: [
+      MockComponents(AppStatusCellComponent),
+    ],
   });
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { application },
+      props: { app, appStatus },
     });
   });
 
-  it('shows "Application"', () => {
-    expect(spectator.query('.name')).toHaveText(application.name);
+  it('checks app logo, name and catalog', () => {
+    expect(spectator.query('.app-logo img')).toHaveAttribute('src', 'https://image/');
+    expect(spectator.query('.app-name')).toHaveText('app_name');
+    expect(spectator.query('.app-catalog')).toHaveText('Official');
   });
 
-  it('shows "Status"', () => {
-    expect(spectator.query('.cell-status .status')).toHaveText('Active');
+  it('checks app status column', () => {
+    const statusCell = spectator.query(AppStatusCellComponent);
+    expect(statusCell).toBeTruthy();
+    expect(statusCell.appStatus).toBe(appStatus);
+  });
+
+  it('checks app update column', () => {
+    expect(spectator.query('.cell-update')).toHaveText('Up to date');
   });
 });

@@ -6,6 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  Observable,
   from, of, switchMap, tap,
 } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
@@ -13,12 +14,13 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { RadioOption } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface DatasetFormValue {
   key?: string;
@@ -49,7 +51,7 @@ export class DatasetUnlockComponent implements OnInit {
     force: [false],
   });
 
-  useFileOptions$ = of([{
+  useFileOptions$: Observable<RadioOption[]> = of([{
     value: true,
     label: this.translate.instant('From a key file'),
   }, {
@@ -70,6 +72,7 @@ export class DatasetUnlockComponent implements OnInit {
     protected aroute: ActivatedRoute,
     private authService: AuthService,
     protected dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private dialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
@@ -172,7 +175,7 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    new EntityUtils().handleWsError(this, error, this.dialogService);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   unlockSubmit(payload: DatasetUnlockParams): void {
@@ -205,7 +208,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,
@@ -265,7 +268,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,

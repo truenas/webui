@@ -9,10 +9,11 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -50,7 +51,8 @@ export class SaveConfigDialogComponent {
     private loader: AppLoaderService,
     private datePipe: DatePipe,
     private dialogRef: MatDialogRef<SaveConfigDialogComponent>,
-    private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     private translate: TranslateService,
     @Optional() @Inject(MAT_DIALOG_DATA) messageOverrides: Partial<SaveConfigDialogMessages> = {},
   ) {
@@ -89,8 +91,8 @@ export class SaveConfigDialogComponent {
         this.loader.close();
         this.dialogRef.close(true);
       },
-      error: (error) => {
-        new EntityUtils().handleWsError(this, error, this.dialog);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.loader.close();
         this.dialogRef.close(false);
       },

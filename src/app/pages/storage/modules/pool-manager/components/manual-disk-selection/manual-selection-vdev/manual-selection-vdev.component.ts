@@ -3,12 +3,12 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DndDropEvent } from 'ngx-drag-drop';
+import { ManagerVdev } from 'app/classes/manager-vdev.class';
+import { PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
+import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { GiB, MiB } from 'app/constants/bytes.constant';
-import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
-import { VdevManagerDisk } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +18,7 @@ import { VdevManagerDisk } from 'app/pages/storage/modules/pool-manager/store/po
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualSelectionVdevComponent implements OnInit {
-  @Input() vdev: ManagerVdev;
+  @Input() vdev: PoolManagerVdev;
   @Input() swapondrive = 2;
   enclosuresDisks = new Map<number, ManagerDisk[]>();
   nonEnclosureDisks: ManagerDisk[] = [];
@@ -29,7 +29,6 @@ export class ManualSelectionVdevComponent implements OnInit {
         || !!this.nonEnclosureDisks.length);
   }
   constructor(
-    public ixFormatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     public store$: ManualDiskSelectionStore,
   ) { }
@@ -54,7 +53,7 @@ export class ManualSelectionVdevComponent implements OnInit {
     });
   }
 
-  getMovableDisk(disk: ManagerDisk): VdevManagerDisk {
+  getMovableDisk(disk: ManagerDisk): PoolManagerVdevDisk {
     return {
       ...disk,
       vdevUuid: this.vdev.uuid,
@@ -116,7 +115,10 @@ export class ManualSelectionVdevComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent): void {
-    const disk = event.data as VdevManagerDisk;
+    const disk = event.data as PoolManagerVdevDisk;
+    if (!disk.vdevUuid && disk.vdevUuid === this.vdev.uuid) {
+      return;
+    }
     if (disk.vdevUuid) {
       this.store$.removeDiskFromDataVdev(disk);
     }

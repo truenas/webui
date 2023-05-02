@@ -13,12 +13,13 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -89,9 +90,10 @@ export class NfsFormComponent implements OnInit {
     private userService: UserService,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
   ) {}
@@ -145,13 +147,18 @@ export class NfsFormComponent implements OnInit {
       )
       .subscribe({
         next: () => {
+          if (this.isNew) {
+            this.snackbar.success(this.translate.instant('NFS share created'));
+          } else {
+            this.snackbar.success(this.translate.instant('NFS share updated'));
+          }
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -200,7 +207,7 @@ export class NfsFormComponent implements OnInit {
             return undefined;
           }),
           catchError((error: WebsocketError) => {
-            this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
+            this.dialogService.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
         );

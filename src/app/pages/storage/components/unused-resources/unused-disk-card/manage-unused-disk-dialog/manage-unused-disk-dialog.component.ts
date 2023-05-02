@@ -8,7 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import * as _ from 'lodash';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
@@ -19,7 +20,7 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageUnusedDiskDialogComponent implements OnInit {
-  readonly toPoolOptions$ = of([
+  readonly toPoolOptions$: Observable<SelectOption<AddToPoolType>[]> = of([
     {
       label: this.translate.instant('New Pool'),
       value: AddToPoolType.New,
@@ -29,7 +30,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     },
   ]);
 
-  readonly poolOptions$ = of(
+  readonly poolOptions$: Observable<Option[]> = of(
     this.resource.pools.map((pool) => ({
       label: pool.name,
       value: pool.id,

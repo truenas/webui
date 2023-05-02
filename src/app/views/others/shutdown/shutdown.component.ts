@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -16,6 +17,7 @@ export class ShutdownComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
     private wsManager: WebsocketConnectionService,
+    private errorHandler: ErrorHandlerService,
     protected router: Router,
     protected dialogService: DialogService,
     private location: Location,
@@ -27,7 +29,7 @@ export class ShutdownComponent implements OnInit {
 
     this.ws.call('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe({
       error: (error: WebsocketError) => { // error on shutdown
-        this.dialogService.errorReport(error.error, error.reason, error.trace.formatted)
+        this.dialogService.error(this.errorHandler.parseWsError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);

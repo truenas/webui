@@ -19,8 +19,8 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DialogService, SystemGeneralService,
@@ -202,11 +202,11 @@ export class GuiFormComponent {
           },
           error: (error: WebsocketError) => {
             this.loader.close();
-            this.dialog.errorReport(
-              helptext.dialog_error_title,
-              error.reason,
-              error.trace.formatted,
-            );
+            this.dialog.error({
+              title: helptext.dialog_error_title,
+              message: error.reason,
+              backtrace: error.trace.formatted,
+            });
           },
         });
       });

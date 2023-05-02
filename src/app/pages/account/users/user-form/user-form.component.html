@@ -15,7 +15,6 @@
           formControlName="username"
           [label]="'Username' | translate"
           [tooltip]="tooltips.username | translate"
-          [hint]="getUsernameHint()"
           [required]="true"
         ></ix-input>
 
@@ -130,12 +129,18 @@
           [label]="'Upload SSH Key' | translate"
         ></ix-file-input>
 
-        <ix-combobox
+        <ix-checkbox
+          formControlName="ssh_password_enabled"
+          [label]="'SSH password login enabled' | translate"
+        ></ix-checkbox>
+
+        <ix-select
           formControlName="shell"
           [label]="'Shell' | translate"
           [tooltip]="tooltips.shell | translate"
-          [provider]="shellProvider"
-        ></ix-combobox>
+          [options]="shellOptions$"
+          [required]="true"
+        ></ix-select>
 
         <ix-checkbox
           formControlName="locked"

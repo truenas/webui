@@ -18,6 +18,7 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DialogService, NetworkService, VmService, WebSocketService,
 } from 'app/services';
@@ -219,6 +220,7 @@ export class DeviceFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     private networkService: NetworkService,
     private filesystemService: FilesystemService,
     private vmService: VmService,
@@ -345,6 +347,11 @@ export class DeviceFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          if (this.isNew) {
+            this.snackbar.success(this.translate.instant('Device added'));
+          } else {
+            this.snackbar.success(this.translate.instant('Device updated'));
+          }
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideIn.close();

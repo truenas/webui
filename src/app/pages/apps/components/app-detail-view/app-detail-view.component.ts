@@ -1,15 +1,19 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
-import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
+import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -21,8 +25,13 @@ import { LayoutService } from 'app/services/layout.service';
 export class AppDetailViewComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   app: AvailableApp;
+
   appId: string;
+  catalog: string;
+  train: string;
+
   isLoading$ = new BehaviorSubject<boolean>(false);
+  wasPoolSet = false;
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
@@ -52,12 +61,13 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private appService: ApplicationsService,
-  ) {
-
-  }
+    private matDialog: MatDialog,
+    private applicationsStore: AvailableAppsStore,
+  ) { }
 
   ngOnInit(): void {
     this.listenForRouteChanges();
+    this.loadIfPoolSet();
   }
 
   ngAfterViewInit(): void {
@@ -67,24 +77,30 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
+        filter((params) => {
+          return !!(params.appId as string) && !!(params.catalog as string) && !!(params.train as string);
+        }),
         tap(() => {
           this.isLoading$.next(true);
           this.similarAppsLoading$.next(true);
         }),
         untilDestroyed(this),
       )
-      .subscribe((appId) => {
+      .subscribe(({ appId, catalog, train }: AppDetailsRouteParams) => {
         this.appId = appId;
+        this.catalog = catalog;
+        this.train = train;
         this.loadAppInfo();
       });
   }
 
   private loadAppInfo(): void {
     this.isLoading$.next(true);
-    this.appService
-      .getAvailableItem(this.appId, officialCatalog, chartsTrain)
+    this.applicationsStore.availableApps$.pipe(
+      map((apps: AvailableApp[]) => apps.find(
+        (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
+      )),
+    )
       .pipe(untilDestroyed(this)).subscribe({
         next: (app) => {
           this.app = app;
@@ -92,7 +108,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
           this.cdr.markForCheck();
 
           this.loadSimilarApps();
-          this.loadScreenshots();
         },
         error: () => {
           this.isLoading$.next(false);
@@ -114,11 +129,21 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private loadScreenshots(): void {
-    console.warn('The Screenshot section is under construction.');
+  private loadIfPoolSet(): void {
+    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+      this.wasPoolSet = Boolean(pool);
+      this.cdr.markForCheck();
+    });
   }
 
-  installButtonPressed(): void {
-    this.router.navigate(['/apps', 'available', this.appId, 'install']);
+  navigateToInstallPage(): void {
+    this.router.navigate(['/apps', 'available', this.catalog, this.train, this.appId, 'install']);
+  }
+
+  showChoosePoolModal(): void {
+    const dialog = this.matDialog.open(SelectPoolDialogComponent);
+    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+      this.loadIfPoolSet();
+    });
   }
 }

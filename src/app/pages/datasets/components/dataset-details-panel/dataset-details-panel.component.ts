@@ -3,18 +3,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
-  getDatasetLabel,
-  isDatasetHasShares, isIocageMounted, isRootDataset, ixApplications,
+  isDatasetHasShares, isIocageMounted, ixApplications,
 } from 'app/pages/datasets/utils/dataset.utils';
-import { ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -30,38 +26,23 @@ export class DatasetDetailsPanelComponent implements OnInit {
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(
-    private modalService: ModalService,
-    private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
     private router: Router,
     private slideIn: IxSlideInService,
-    private snackbar: SnackbarService,
   ) { }
 
   ngOnInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe((value) => {
-      const dataset = value.response as Dataset;
-      if (value.modalType === DatasetFormComponent && dataset?.id) {
-        this.datasetStore.datasetUpdated();
-        this.router.navigate(['/datasets', dataset.id]).then(() => {
-          this.snackbar.success(
-            this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(dataset) }),
-          );
-        });
-      }
-    });
     this.slideIn.onClose$
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
-        const zvol = value.response as Dataset;
-        if (value.modalType === ZvolFormComponent && zvol?.id) {
-          this.datasetStore.datasetUpdated();
-          this.router.navigate(['/datasets', zvol.id]).then(() => {
-            this.snackbar.success(
-              this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(zvol) }),
-            );
-          });
+        const dataset = value.response as Dataset;
+
+        if ((value.modalType !== DatasetFormComponent && value.modalType !== ZvolFormComponent) || !dataset?.id) {
+          return;
         }
+
+        this.datasetStore.datasetUpdated();
+        this.router.navigate(['/datasets', dataset.id]);
       });
   }
 
@@ -96,10 +77,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
     return this.dataset.name.split('/').slice(-1)[0];
   }
 
-  get isRoot(): boolean {
-    return isRootDataset(this.dataset);
-  }
-
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
   }
@@ -109,10 +86,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
   }
 
   onAddDataset(): void {
-    const addDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent);
-    addDatasetComponent.setParent(this.dataset.id);
-    addDatasetComponent.setVolId(this.dataset.pool);
-    addDatasetComponent.setTitle(this.translate.instant('Add Dataset'));
+    const addDataset = this.slideIn.open(DatasetFormComponent, { wide: true });
+    addDataset.setForNew(this.dataset.id);
   }
 
   onAddZvol(): void {
