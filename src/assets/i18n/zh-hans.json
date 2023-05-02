@@ -268,7 +268,6 @@
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
   "{credentialName} (Newly Created)": "",
-  "{memoryUsed} GiB / {memoryTotal} GiB": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
   "{n, plural, one {# application} other {# applications} } have pending updates.": "",

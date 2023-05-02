@@ -2865,7 +2865,6 @@
   "{field} is required": "",
   "{interfaceName} must start with \"{prefix}\" followed by an unique number": "",
   "{key} Key": "",
-  "{memoryUsed} GiB / {memoryTotal} GiB": "",
   "{minute, plural, one {# minute} other {# minutes}}": "",
   "{n, plural, =0 {No Errors} one {# Error} other {# Errors}}": "",
   "{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured": "",

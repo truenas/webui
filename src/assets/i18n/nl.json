@@ -80,7 +80,6 @@
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
   "{credentialName} (Newly Created)": "",
-  "{memoryUsed} GiB / {memoryTotal} GiB": "",
   "{n, plural, one {# application} other {# applications} } have pending updates.": "",
   "{size} Total": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "\n            Het lijkt erop dat deze sessie langer dan {lifetime} seconden inactief is geweest.<br>\n            Om veiligheidsredenen zullen we u om {time} uitloggen.\n",

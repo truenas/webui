@@ -12,7 +12,7 @@
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else memoryUsage"></ngx-skeleton-loader>
   <ng-template #memoryUsage>
     <ng-container *ngIf="memoryUsed && memoryTotal; else notAvailable">
-      {{ "{memoryUsed} GiB / {memoryTotal} GiB" | translate: { memoryUsed, memoryTotal } }}
+      {{ memoryUsed | filesize: { standard: 'iec', round: 2 } }} / {{ memoryTotal | filesize: { standard: 'iec', round: 2 } }}
     </ng-container>
   </ng-template>
 </div>

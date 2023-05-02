@@ -27,6 +27,5 @@ export class AppHelmChartCardComponent implements OnChanges {
         return list + maintainerStr;
       }, '',
     ) || '';
-    this.cdr.markForCheck();
   }
 }

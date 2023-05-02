@@ -18,8 +18,8 @@ import { WebSocketService } from 'app/services';
 export class AppResourcesCardComponent implements OnInit {
   @Input() isLoading$: Observable<boolean>;
   cpuPercentage = 0;
-  memoryUsed: string;
-  memoryTotal: string;
+  memoryUsed: number;
+  memoryTotal: number;
   pool: string;
 
   constructor(
@@ -45,8 +45,8 @@ export class AppResourcesCardComponent implements OnInit {
           memStats.arc_size = update.zfs.arc_size;
         }
         const services = memStats.total - memStats.free - memStats.arc_size;
-        this.memoryUsed = this.bytesToGigabytes(memStats.arc_size + services).toFixed(2);
-        this.memoryTotal = this.bytesToGigabytes(memStats.total).toFixed(2);
+        this.memoryUsed = memStats.arc_size + services;
+        this.memoryTotal = memStats.total;
       }
       this.cdr.markForCheck();
     });
