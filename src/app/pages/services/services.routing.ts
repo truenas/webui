@@ -6,7 +6,6 @@ import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/s
 import { ServiceFtpComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from './components/service-lldp/service-lldp.component';
 import { ServiceRsyncComponent } from './components/service-rsync/service-rsync.component';
-import { ServiceS3Component } from './components/service-s3/service-s3.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from './components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from './components/service-snmp/service-snmp.component';
@@ -91,11 +90,6 @@ export const routes: Routes = [
     data: { title: 'WebDAV', breadcrumb: 'WebDAV' },
     path: 'webdav',
     component: ServiceWebdavComponent,
-  },
-  {
-    data: { title: 'S3', breadcrumb: 'S3' },
-    path: 's3',
-    component: ServiceS3Component,
   },
 ];
 
