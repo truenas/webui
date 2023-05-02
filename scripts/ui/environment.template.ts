@@ -3,6 +3,7 @@ import { WebUiEnvironment } from 'environments/environment.interface';
 import {TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
 
 export const environmentTemplate: WebUiEnvironment = {
+  environmentVersion: '0.0.2',
   remote: '$SERVER$',
   port: 4200,
   production: false,

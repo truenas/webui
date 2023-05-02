@@ -1,5 +1,6 @@
 import {environment} from '../../src/environments/environment';
 import {environmentTemplate} from './environment.template';
+import {environmentVersion} from "../../src/environments/environment.version";
 import {Command} from 'commander';
 import fs from 'fs';
 import {EnclosureDispersalStrategy, MockStorageScenario} from "../../src/app/core/testing/enums/mock-storage.enum";
@@ -54,7 +55,7 @@ const mockConfigDir = './src/assets/mock/configs/';
 * Command Setup* */
 const program: Command = new Command()
   .name('ui')
-  .version('0.0.1')
+  .version(environmentVersion)
   .description('TrueNAS webui setup utility')
   .usage('(Call from root directory of repo via yarn)')
   .addHelpText('before', banner());
@@ -660,7 +661,7 @@ function setTopologyWidth(value: number | string): void {
 function setTopologyScenario(scenario: string): void {
   for (const key in MockStorageScenario) {
     if (scenario === key) {
-      environment.mockConfig.diskOptions.topologyOptions.scenario = scenarioAsEnum(scenario); // MockStorageScenario[scenario as keyof MockStorageScenario];
+      environment.mockConfig.diskOptions.topologyOptions.scenario = scenarioAsEnum(scenario);
       saveEnvironment();
       return;
     }
