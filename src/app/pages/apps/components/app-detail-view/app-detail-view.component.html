@@ -62,7 +62,6 @@
             </ng-container>
           </ng-template>
         </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div class="app-list-item">
           {{ 'Train' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
