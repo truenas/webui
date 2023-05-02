@@ -60,17 +60,11 @@ export class WebSocketService {
         }
 
         // Mock Data Response
-        const isEnabled = (
-          environment.mockConfig.mockEnclosure
-          || environment.mockConfig.diskOptions.enabled
-          || environment.mockConfig.diskOptions.mockPools
-        );
-
         if (
           environment
           && !environment.production
           && environment.mockConfig?.enabled
-          && isEnabled
+          && this.mockUtils.canMock
           && data.msg === IncomingApiMessageType.Result
         ) {
           const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
