@@ -76,7 +76,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
           .map((service) => {
             return {
               ...service,
-              name: serviceNames.get(service.service),
+              name: serviceNames.has(service.service) ? serviceNames.get(service.service) : service.service,
             } as ServiceRow;
           });
 

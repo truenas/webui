@@ -206,7 +206,6 @@ import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-co
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
-import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
@@ -791,11 +790,6 @@ export type ApiDirectory = {
   'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
   'reporting.clear': { params: void; response: void };
-
-  // S3
-  's3.bindip_choices': { params: void; response: Choices };
-  's3.config': { params: void; response: S3Config };
-  's3.update': { params: [S3ConfigUpdate]; response: S3Config };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
