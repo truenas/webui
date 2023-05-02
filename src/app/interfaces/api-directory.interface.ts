@@ -324,7 +324,7 @@ export type ApiDirectory = {
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: DsUncachedUser };
-  'auth.set_attribute': { params: [key: string, value: unknown]; response: boolean };
+  'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
 
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
