@@ -53,7 +53,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
       }),
       switchMap(() => combineLatest([
         this.poolManagerStore$.select((state: PoolManagerState) => state.allUnusedDisks),
-        this.poolManagerStore$.unusedDisks$,
+        this.poolManagerStore$.usableUnusedDisks$,
         this.poolManagerStore$.enclosures$,
       ])),
       tap(([allUnusedDisks, unusedDisks, enclosures]) => {

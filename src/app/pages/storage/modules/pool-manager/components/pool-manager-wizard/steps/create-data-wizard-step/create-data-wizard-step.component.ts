@@ -9,13 +9,13 @@ import _ from 'lodash';
 import {
   Observable,
   filter,
-  of, switchMap, take, takeWhile,
+  of, skipUntil, switchMap, take,
 } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
-import { SelectOption } from 'app/interfaces/option.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { RadioOption, SelectOption } from 'app/interfaces/option.interface';
+import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import {
   ManualDiskSelectionComponent, ManualDiskSelectionLayout,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
@@ -37,7 +37,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['data'];
 
   readonly manualDiskSelectionMessage = helptext.manual_disk_selection_message;
-  unusedDisks: UnusedDisk[] = [];
+  unusedDisks: ManagerDisk[] = [];
   sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
 
   selectedDiskType: DiskType = null;
@@ -45,7 +45,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   selectedWidth: number = null;
   selectedVdevsCount: number = null;
 
-  vdevLayoutOptions$ = of([
+  vdevLayoutOptions$: Observable<SelectOption<CreateVdevLayout>[]> = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
 
@@ -54,7 +54,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   numberOptions$: Observable<SelectOption[]> = of([]);
 
   readonly totalUsableCapacity$ = this.poolManagerStore.totalUsableCapacity$;
-  readonly dispersalOptions$ = of([
+  readonly dispersalOptions$: Observable<RadioOption[]> = of([
     {
       label: this.translate.instant('Minimize Enclosure Dispersal'),
       value: true,
@@ -74,10 +74,9 @@ export class CreateDataWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.unusedDisks$.pipe(
-      takeWhile((unusedDisks) => {
-        return !unusedDisks?.length;
-      }, true),
+    this.poolManagerStore.usableUnusedDisks$.pipe(
+      skipUntil(this.poolManagerStore.isLoading$),
+      take(1),
       untilDestroyed(this),
     ).subscribe((disks) => {
       this.unusedDisks = disks;
