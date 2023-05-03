@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
@@ -84,7 +85,8 @@ describe('AppInfoCardComponent', () => {
 
   it('shows header', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('Application Info');
-    expect(spectator.query('mat-card-header button')).toHaveText('Update');
+    expect(spectator.query('mat-card-header button#edit-app')).toHaveText('Edit');
+    expect(spectator.query('mat-card-header button#update-app')).toHaveText('Update');
   });
 
   it('shows details', () => {
@@ -130,6 +132,16 @@ describe('AppInfoCardComponent', () => {
         upgradeSummary,
       },
     });
+  });
+
+  it('navigates to app edit page when Edit button is pressed', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockImplementation();
+
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    await editButton.click();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'available', app.catalog, app.catalog_train, app.id, 'edit']);
   });
 
   it('opens delete app dialog when Delete button is pressed', async () => {
