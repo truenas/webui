@@ -1,3 +1,5 @@
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+
 export interface AvailableApp {
   healthy: boolean;
   installed: boolean;
@@ -13,6 +15,13 @@ export interface AvailableApp {
   icon_url: string;
   train: string;
   catalog: string;
-  last_update: string;
+  last_update: ApiTimestamp;
   recommended: boolean;
+  maintainers: AppMaintainer[];
+}
+
+export interface AppMaintainer {
+  email: string;
+  name: string;
+  url: string;
 }

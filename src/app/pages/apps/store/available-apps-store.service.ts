@@ -9,7 +9,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -234,7 +234,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
         return normalize(value).includes(search);
       }
       if (Array.isArray(value) && isStringsArray(value)) {
-        return value.some((indexVal) => normalize(indexVal).includes(search));
+        return value.some((indexVal) => (typeof indexVal === 'string' ? normalize(indexVal).includes(search) : false));
       }
       return false;
     });

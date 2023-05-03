@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 
 @UntilDestroy()

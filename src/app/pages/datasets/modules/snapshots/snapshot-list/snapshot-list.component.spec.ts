@@ -6,7 +6,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { FileSizePipe } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -38,7 +38,7 @@ describe('SnapshotListComponent', () => {
       IxTableModule,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2021-11-05 10:52:06')),
+      FakeFormatDateTimePipe,
       MockPipe(FileSizePipe, jest.fn(() => '1.49 TiB')),
     ],
     providers: [
@@ -156,8 +156,8 @@ describe('SnapshotListComponent', () => {
     const tableData = await table.getCells(true);
     const expectedRows = [
       ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced', ''],
-      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', ''],
-      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', ''],
+      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-10-18 19:51:43', '1.49 TiB', ''],
+      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-10-18 19:51:54', '1.49 TiB', ''],
     ];
     expect(tableData).toEqual(expectedRows);
   });

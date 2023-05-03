@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -104,6 +105,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     ReactiveFormsModule,
     EntityModule,
     MatCardModule,
+    NgxFilesizeModule,
     CoreComponents,
     MatSelectModule,
     MatCheckboxModule,

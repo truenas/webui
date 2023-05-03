@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { RsyncModule } from 'app/interfaces/rsync-module.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -59,15 +60,16 @@ export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRo
     this.entityList = entityList;
   }
 
-  dataHandler(entityTable: EntityTableComponent<RsyncModuleRow>): void {
-    const rows = entityTable.rows;
-    rows.forEach((row) => {
-      row.details = [];
-      row.details.push({ label: this.translate.instant('Maximum connections'), value: row.maxconn },
-        { label: this.translate.instant('Host Allow'), value: row.hostsallow },
-        { label: this.translate.instant('Host Deny'), value: row.hostsdeny },
-        { label: this.translate.instant('Auxiliary parameters'), value: row.auxiliary });
-    });
+  dataHandler(entityTable: EntityTableComponent<RsyncModuleRow>): Observable<unknown> {
+    return of(
+      entityTable.rows.forEach((row) => {
+        row.details = [];
+        row.details.push({ label: this.translate.instant('Maximum connections'), value: row.maxconn },
+          { label: this.translate.instant('Host Allow'), value: row.hostsallow },
+          { label: this.translate.instant('Host Deny'), value: row.hostsdeny },
+          { label: this.translate.instant('Auxiliary parameters'), value: row.auxiliary });
+      }),
+    );
   }
 
   doAdd(): void {

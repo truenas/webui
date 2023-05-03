@@ -2,15 +2,28 @@
 
 <div class="app-list-item">
   {{ 'CPU Usage' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else cpu"></ngx-skeleton-loader>
+  <ng-template #cpu>
+    <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage } }}</div>
+  </ng-template>
 </div>
 <div class="app-list-item">
   {{ 'Memory Usage' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else memoryUsage"></ngx-skeleton-loader>
+  <ng-template #memoryUsage>
+    <ng-container *ngIf="memoryUsed && memoryTotal; else notAvailable">
+      {{ memoryUsed | filesize: { standard: 'iec', round: 2 } }} / {{ memoryTotal | filesize: { standard: 'iec', round: 2 } }}
+    </ng-container>
+  </ng-template>
 </div>
 <div class="app-list-item">
   {{ 'Pool' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else selectedPool"></ngx-skeleton-loader>
+  <ng-template #selectedPool>
+    <ng-container *ngIf="applicationsStore.selectedPool$ | async; else notAvailable">
+      {{ applicationsStore.selectedPool$ | async }}
+    </ng-container>
+  </ng-template>
 </div>
 <div class="app-list-item">
   {{ 'Available Space' | translate }}:

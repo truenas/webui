@@ -8,7 +8,7 @@ import {
   Observable, combineLatest, filter, map,
 } from 'rxjs';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsByCategory, AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
