@@ -47,19 +47,9 @@
         mat-button
         color="primary"
         ixTest="apply"
-        [disabled]="!form.dirty"
         (click)="applyFilters()"
       >
         {{ 'Apply' | translate }}
-      </button>
-      <button
-        mat-button
-        color="accent"
-        ixTest="reset"
-        [disabled]="!form.dirty && !(isFilterApplied$ |async)"
-        (click)="resetFilters()"
-      >
-        {{ 'Reset' | translate }}
       </button>
     </div>
   </div>

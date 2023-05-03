@@ -29,31 +29,21 @@
       <ng-container
         *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle"
         [ngTemplateOutlet]="apps"
-        [ngTemplateOutletContext]="{ $implicit: appSection }"
-      >
-        <div *ngIf="appSection.totalApps > applicationsStore.appsPerCategory" class="view-all">
-          <button
-            mat-stroked-button
-            [ixTest]="[appSection.title, 'view-all']"
-            (click)="applyCategoryFilter(appSection.category)"
-          >
-            {{ 'View All' | translate }} {{ appSection.title | translate }}
-          </button>
-        </div>
-      </ng-container>
+        [ngTemplateOutletContext]="{ $implicit: appSection, showViewAll: true }"
+      ></ng-container>
     </ng-container>
 
     <div *ngIf="isFilterOrSearch$ | async">
       <ng-container
         *ngFor="let appSection of (applicationsStore.searchedApps$ | async); trackBy: trackByAppSectionTitle"
         [ngTemplateOutlet]="apps"
-        [ngTemplateOutletContext]="{ $implicit: appSection }"
+        [ngTemplateOutletContext]="{ $implicit: appSection, showViewAll: false }"
       ></ng-container>
     </div>
   </ng-container>
 </div>
 
-<ng-template #apps let-appSection>
+<ng-template #apps let-appSection let-showViewAll="showViewAll">
   <section *ngIf="appSection.apps as apps">
     <ng-container *ngIf="apps.length">
       <h3 class="section-title">{{ appSection.title }}</h3>
@@ -66,5 +56,16 @@
       </div>
     </ng-container>
   </section>
-  <ng-content></ng-content>
+  <div
+    *ngIf="(appSection.totalApps > applicationsStore.appsPerCategory) && (showViewMoreButton$ | async)"
+    class="view-all"
+  >
+    <button
+      mat-stroked-button
+      [ixTest]="[appSection.title, 'view-all']"
+      (click)="applyCategoryFilter(appSection.category)"
+    >
+      {{ 'View All' | translate }} {{ appSection.title | translate }}
+    </button>
+  </div>
 </ng-template>

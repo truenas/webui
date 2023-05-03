@@ -63,104 +63,19 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly appsPerCategory = 6;
 
   readonly searchedApps$ = this.select((state): AppsByCategory[] => {
-    // if (!state.searchQuery) {
-    //   return [...state.filteredApps];
-    // }
-    let filteredApps: AvailableApp[] = [];
-    if (state.isFilterApplied) {
-      filteredApps = [...state.filteredApps];
+    const filteredApps: AvailableApp[] = [...state.filteredApps]
+      .filter((app) => this.doesAppContainString(state.searchQuery, app));
+
+    if (state.filter.sort === AppsFiltersSort.Name) {
+      return this.sortAppsByName(filteredApps);
     }
-    if (!filteredApps.length) {
-      filteredApps = [...state.availableApps];
+    if (state.filter.sort === AppsFiltersSort.Catalog) {
+      return this.sortAppsByCatalog(filteredApps);
     }
-
-    // return
-    filteredApps = filteredApps.filter((app) => this.doesAppContainString(state.searchQuery, app));
-
-    const appsByCategory: AppsByCategory[] = [];
-
-    // appsByCategory.push({
-    //   title: this.translate.instant('Recommended Apps'),
-    //   apps: state.recommendedApps.slice(0, this.appsPerCategory),
-    //   totalApps: state.recommendedApps.length,
-    //   category: AppExtraCategory.Recommended,
-    // },
-    // {
-    //   title: this.translate.instant('New & Updated Apps'),
-    //   apps: state.latestApps.slice(0, this.appsPerCategory),
-    //   totalApps: state.latestApps.length,
-    //   category: AppExtraCategory.NewAndUpdated,
-    // });
-
-    // console.log(state);
-
-    switch (true) {
-      case state.filter.sort === AppsFiltersSort.Name:
-        // eslint-disable-next-line no-case-declarations
-        const alphabet = [
-          'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-          'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        ];
-        alphabet.forEach((firstLetter) => {
-          const appsSortedByFirstLetter = filteredApps.filter(
-            (app) => app.name.toUpperCase().startsWith(firstLetter),
-          );
-
-          appsByCategory.push({
-            title: firstLetter,
-            apps: appsSortedByFirstLetter,
-            totalApps: appsSortedByFirstLetter.length,
-            category: firstLetter,
-          });
-        });
-        break;
-
-      case state.filter.sort === AppsFiltersSort.Catalog:
-        // eslint-disable-next-line no-case-declarations
-        const catalogs = [...new Set<string>(filteredApps.map((app) => app.catalog))]
-          .sort((a, b) => a.localeCompare(b));
-
-        catalogs.forEach((catalog) => {
-          const appsSortedByCatalog = filteredApps.filter((app) => app.catalog === catalog);
-
-          appsByCategory.push({
-            title: catalog,
-            apps: appsSortedByCatalog,
-            totalApps: appsSortedByCatalog.length,
-            category: catalog,
-          });
-        });
-        break;
-
-      case state.filter.sort === AppsFiltersSort.LastUpdate:
-        // eslint-disable-next-line no-case-declarations
-        const updateDates = [
-          ...new Set<string>(filteredApps.map(
-            (app) => this.appsService.convertDateToRelativeDate(new Date(app.last_update.$date)),
-          )),
-        ];
-
-        // console.log(updateDates);
-
-        updateDates.forEach((updateDate) => {
-          const appsSortedByLastUpdateDate = filteredApps.filter(
-            (app) => this.appsService.convertDateToRelativeDate(new Date(app.last_update.$date)) === updateDate,
-          );
-
-          appsByCategory.push({
-            title: updateDate.toString(),
-            apps: appsSortedByLastUpdateDate,
-            totalApps: appsSortedByLastUpdateDate.length,
-            category: updateDate.toString(),
-          });
-        });
-        break;
-
-      default:
-        break;
+    if (state.filter.sort === AppsFiltersSort.LastUpdate) {
+      return this.sortAppsByLastUpdate(filteredApps);
     }
-
-    return appsByCategory;
+    return this.sortAppsByCategory(filteredApps, state);
   });
 
   readonly isLoading$ = this.select((state) => state.isLoading);
@@ -173,35 +88,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly filterValues$ = this.select((state) => state.filter);
   readonly isKubernetesStarted$ = this.select((state) => state.isKubernetesStarted);
   readonly appsByCategories$ = this.select((state: AvailableAppsState): AppsByCategory[] => {
-    const appsByCategory: AppsByCategory[] = [];
-
-    appsByCategory.push({
-      title: this.translate.instant('Recommended Apps'),
-      apps: state.recommendedApps.slice(0, this.appsPerCategory),
-      totalApps: state.recommendedApps.length,
-      category: AppExtraCategory.Recommended,
-    },
-    {
-      title: this.translate.instant('New & Updated Apps'),
-      apps: state.latestApps.slice(0, this.appsPerCategory),
-      totalApps: state.latestApps.length,
-      category: AppExtraCategory.NewAndUpdated,
-    });
-
-    state.categories.forEach((category) => {
-      const categorizedApps = state.availableApps.filter(
-        (app) => app.categories.some((appCategory) => appCategory === category),
-      );
-
-      appsByCategory.push({
-        title: category,
-        apps: categorizedApps.slice(0, this.appsPerCategory),
-        totalApps: categorizedApps.length,
-        category,
-      });
-    });
-
-    return appsByCategory;
+    return this.sortAppsByCategory(state.availableApps, state);
   });
 
   private installedAppsSubscription: Subscription;
@@ -267,12 +154,10 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     });
 
     if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
-      request$ = this.appsService.getLatestApps(
-        {
-          ...filter,
-          categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated)),
-        },
-      );
+      request$ = this.appsService.getLatestApps({
+        ...filter,
+        categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated)),
+      });
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -288,6 +173,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
               ),
             ];
           }
+
           return {
             ...state,
             filter: { ...filter },
@@ -474,5 +360,121 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
         ) : of();
       }),
     );
+  }
+
+  private sortAppsByName(filteredApps: AvailableApp[]): AppsByCategory[] {
+    const appsByCategory: AppsByCategory[] = [];
+
+    const alphabet = [
+      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+      'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    ];
+
+    alphabet.forEach((firstLetter) => {
+      const appsSortedByFirstLetter = filteredApps.filter(
+        (app) => app.name.toUpperCase().startsWith(firstLetter),
+      );
+
+      appsByCategory.push({
+        title: firstLetter,
+        apps: appsSortedByFirstLetter,
+        totalApps: appsSortedByFirstLetter.length,
+        category: firstLetter,
+      });
+    });
+
+    return appsByCategory;
+  }
+
+  private sortAppsByCatalog(filteredApps: AvailableApp[]): AppsByCategory[] {
+    const appsByCategory: AppsByCategory[] = [];
+
+    const catalogs = [...new Set<string>(filteredApps.map((app) => app.catalog))].sort((a, b) => a.localeCompare(b));
+
+    catalogs.forEach((catalog) => {
+      const appsSortedByCatalog = filteredApps.filter((app) => app.catalog === catalog);
+
+      appsByCategory.push({
+        title: catalog,
+        apps: appsSortedByCatalog,
+        totalApps: appsSortedByCatalog.length,
+        category: catalog,
+      });
+    });
+
+    return appsByCategory;
+  }
+
+  private sortAppsByLastUpdate(filteredApps: AvailableApp[]): AppsByCategory[] {
+    const appsByCategory: AppsByCategory[] = [];
+
+    const updateDates = [...new Set<string>(filteredApps.map(
+      (app) => this.appsService.convertDateToRelativeDate(new Date(app.last_update?.$date)),
+    ))];
+
+    updateDates.forEach((updateDate) => {
+      const appsSortedByLastUpdateDate = filteredApps.filter(
+        (app) => this.appsService.convertDateToRelativeDate(new Date(app.last_update?.$date)) === updateDate,
+      );
+
+      appsByCategory.push({
+        title: updateDate.toString(),
+        apps: appsSortedByLastUpdateDate,
+        totalApps: appsSortedByLastUpdateDate.length,
+        category: updateDate.toString(),
+      });
+    });
+
+    return appsByCategory;
+  }
+
+  private sortAppsByCategory(filteredApps: AvailableApp[], state: AvailableAppsState): AppsByCategory[] {
+    const appsByCategory: AppsByCategory[] = [];
+
+    const hasCategoriesFilter = state.filter.categories.length > 0;
+
+    const availableCategories = hasCategoriesFilter
+      ? state.categories.filter((category) => state.filter.categories.includes(category))
+      : state.categories;
+
+    const filterApps = (apps: AvailableApp[]): AvailableApp[] => apps.filter((app) => {
+      return filteredApps.some((filteredApp) => filteredApp.train === app.train && filteredApp.name === app.name);
+    });
+
+    const filteredRecommendedApps = filterApps(state.recommendedApps);
+    const filteredLatestApps = filterApps(state.latestApps);
+
+    if (state.filter.categories.includes(AppExtraCategory.NewAndUpdated) || !hasCategoriesFilter) {
+      appsByCategory.push({
+        title: this.translate.instant('New & Updated Apps'),
+        apps: hasCategoriesFilter ? filteredLatestApps : filteredLatestApps.slice(0, this.appsPerCategory),
+        totalApps: filteredLatestApps.length,
+        category: AppExtraCategory.NewAndUpdated,
+      });
+    }
+
+    if (state.filter.categories.includes(AppExtraCategory.Recommended) || !hasCategoriesFilter) {
+      appsByCategory.push({
+        title: this.translate.instant('Recommended Apps'),
+        apps: hasCategoriesFilter ? filteredRecommendedApps : filteredRecommendedApps.slice(0, this.appsPerCategory),
+        totalApps: filteredRecommendedApps.length,
+        category: AppExtraCategory.Recommended,
+      });
+    }
+
+    availableCategories.forEach((category) => {
+      const categorizedApps = filteredApps.filter(
+        (app) => app.categories.some((appCategory) => appCategory === category),
+      );
+
+      appsByCategory.push({
+        title: category,
+        apps: categorizedApps.slice(0, this.appsPerCategory),
+        totalApps: categorizedApps.length,
+        category,
+      });
+    });
+
+    return appsByCategory;
   }
 }

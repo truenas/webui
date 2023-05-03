@@ -148,16 +148,9 @@ export class AvailableAppsHeaderComponent implements OnInit {
   applyFilters(): void {
     this.applicationsStore.applyFilters({
       catalogs: this.form.value.catalogs || [],
-      sort: this.form.value.sort || undefined,
+      sort: this.form.value.sort || null,
       categories: (this.form.value.categories || this.appsCategories),
     });
-  }
-
-  resetFilters(): void {
-    this.form.reset();
-    this.form.controls.catalogs.setValue(this.installedCatalogs);
-    this.form.controls.categories.setValue([]);
-    this.applicationsStore.resetFilters();
   }
 
   refreshAvailableApps(): void {

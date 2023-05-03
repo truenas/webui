@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, OperatorFunction, map, pipe,
 } from 'rxjs';
@@ -15,7 +16,7 @@ import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-re
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services';
 
 const ignoredAppsList = [ixChartApp];
@@ -28,7 +29,7 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  constructor(private ws: WebSocketService) {}
+  constructor(private ws: WebSocketService, private translate: TranslateService) {}
 
   getKubernetesConfig(): Observable<KubernetesConfig> {
     return this.ws.call('kubernetes.config');
@@ -84,13 +85,15 @@ export class ApplicationsService {
     if (filters.catalogs?.length) {
       firstOption.push(['catalog', 'in', filters.catalogs]);
     }
-    filters.categories?.forEach((category) => {
-      if (category === AppExtraCategory.Recommended) {
-        firstOption.push(['recommended', '=', true]);
-      } else {
-        firstOption.push(['categories', 'rin', category]);
-      }
-    });
+    if (filters.categories?.length) {
+      (firstOption as unknown as QueryParams<AvailableApp>[]).push(
+        ['OR', filters.categories.map((category) => ['categories', 'rin', category])] as unknown as QueryParams<AvailableApp>,
+      );
+    }
+    if (filters.categories?.includes(AppExtraCategory.Recommended)) {
+      firstOption.push(['recommended', '=', true]);
+    }
+
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
     return this.ws.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
@@ -151,36 +154,36 @@ export class ApplicationsService {
     const month = day * 30;
     const year = month * 12;
 
-    if (diff < 30) {
-      return 'just now';
-    }
-    if (diff < minute) {
-      return `${diff} seconds ago`;
-    }
-    if (diff < 2 * minute) {
-      return 'a minute ago';
-    }
     if (diff < hour) {
-      return `${Math.floor(diff / minute)} minutes ago`;
+      return this.translate.instant('Recently');
     }
     if (Math.floor(diff / hour) === 1) {
-      return '1 hour ago';
+      return this.translate.instant('1 hour ago');
     }
     if (diff < day) {
-      return `${Math.floor(diff / hour)} hours ago`;
+      return this.translate.instant('{timeAmount} hours ago', { timeAmount: Math.floor(diff / hour) || '' });
     }
     if (diff < day * 2) {
-      return 'yesterday';
+      return this.translate.instant('Yesterday');
     }
     if (diff < week) {
-      return `${week} days ago`;
+      return this.translate.instant('{timeAmount} days ago', { timeAmount: week || '' });
+    }
+    if ((diff < month) && Math.floor(diff / week) === 1) {
+      return this.translate.instant('Last week');
     }
     if (diff < month) {
-      return `${Math.floor(diff / week)} weeks ago`;
+      return this.translate.instant('{timeAmount} weeks ago', { timeAmount: Math.floor(diff / week) || '' });
     }
-    if (diff < year) {
-      return `${Math.floor(diff / month)} months ago`;
+    if ((diff < year) && Math.floor(diff / month) === 1) {
+      return this.translate.instant('Last month');
     }
-    return `${Math.floor(diff / year)} years ago`;
+    if ((diff < year) && Math.floor(diff / month) > 1) {
+      return this.translate.instant('{timeAmount} months ago', { timeAmount: Math.floor(diff / month) || '' });
+    }
+    if (Math.floor(diff / year) === 1) {
+      return this.translate.instant('Last year');
+    }
+    return this.translate.instant('{timeAmount} years ago', { timeAmount: Math.floor(diff / year) || '' });
   }
 }

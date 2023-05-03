@@ -1,13 +1,11 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { Router, RouterEvent, NavigationSkipped } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, combineLatest, filter, map,
 } from 'rxjs';
-import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interfase';
 import { AppsByCategory, AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -21,6 +19,14 @@ import { LayoutService } from 'app/services/layout.service';
 export class AvailableAppsComponent implements AfterViewInit, OnInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
+  showViewMoreButton$: Observable<boolean> = combineLatest([
+    this.applicationsStore.filterValues$,
+  ]).pipe(
+    map(([appsFilter]) => {
+      return !appsFilter.sort && !appsFilter.categories.length;
+    }),
+  );
+
   isFilterOrSearch$: Observable<boolean> = combineLatest([
     this.applicationsStore.searchQuery$,
     this.applicationsStore.isFilterApplied$,
@@ -32,8 +38,6 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
 
   constructor(
     private layoutService: LayoutService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
     protected applicationsStore: AvailableAppsStore,
     private router: Router,
   ) { }
@@ -70,7 +74,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
     this.applicationsStore.applyFilters({
       categories: [category],
       catalogs: [],
-      sort: AppsFiltersSort.Name,
+      sort: null,
     });
   }
 }
