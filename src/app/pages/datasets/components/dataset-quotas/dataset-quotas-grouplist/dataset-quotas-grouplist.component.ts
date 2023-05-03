@@ -229,20 +229,22 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       virtually removing any dataset quota entries for such groups. \
       Are you sure you want to proceed?'),
       buttonText: this.translate.instant('Remove'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.loader.open();
-      this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)])
-        .pipe(untilDestroyed(this))
-        .subscribe({
-          next: () => {
-            this.loader.close();
-            this.getGroupQuotas();
-          },
-          error: (error) => {
-            this.loader.close();
-            this.handleError(error);
-          },
-        });
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.loader.open();
+        return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.loader.close();
+        this.getGroupQuotas();
+      },
+      error: (error) => {
+        this.loader.close();
+        this.handleError(error);
+      },
     });
   }
 

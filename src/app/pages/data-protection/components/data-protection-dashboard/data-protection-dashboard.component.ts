@@ -534,7 +534,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             .map((identifier) => {
               const fullDisk = this.disks.find((item) => item.identifier === identifier);
               if (fullDisk) {
-                identifier = fullDisk.devname;
+                return fullDisk.devname;
               }
               return identifier;
             })

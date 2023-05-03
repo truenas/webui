@@ -14,7 +14,7 @@ import helptext from 'app/helptext/services/components/service-ftp';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { portRangeValidator, rangeValidator } from 'app/modules/ix-forms/validators/range-validation';
+import { portRangeValidator, rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
