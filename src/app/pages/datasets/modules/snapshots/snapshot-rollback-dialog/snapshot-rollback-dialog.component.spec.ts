@@ -4,8 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -26,7 +25,7 @@ describe('SnapshotRollbackDialogComponent', () => {
       IxFormsModule,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2021-11-05 10:52:06')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       {
@@ -49,7 +48,7 @@ describe('SnapshotRollbackDialogComponent', () => {
   });
 
   it('checks default messages', () => {
-    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back to 2021-11-05 10:52:06?');
+    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back to 2021-10-18 19:51:54?');
     expect(spectator.fixture.nativeElement).toHaveText('Rolling the dataset back destroys data on the dataset');
   });
 
