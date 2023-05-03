@@ -27,7 +27,7 @@ describe('AppCardComponent', () => {
         app: {
           name: 'SETI@home',
           icon_url: 'https://www.seti.org/logo.png',
-          app_readme: 'Use your computer to help SETI@home search for extraterrestrial intelligence.',
+          description: 'Use your computer to help SETI@home search for extraterrestrial intelligence.',
           latest_version: '1.0.0',
           catalog: 'official',
           train: 'charts',

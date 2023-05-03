@@ -3,14 +3,25 @@
     <h3 mat-card-title>
       {{ 'Application Info' | translate }}
     </h3>
-    <button
-      *ngIf="hasUpdates"
-      mat-button
-      [ixTest]="[app?.name, 'update']"
-      (click)="updateButtonPressed()"
-    >
-      {{ 'Update' | translate }}
-    </button>
+    <div>
+      <button
+        id="edit-app"
+        mat-button
+        [ixTest]="[app?.name, 'edit']"
+        (click)="editButtonPressed()"
+      >
+        {{ 'Edit' | translate }}
+      </button>
+      <button
+        *ngIf="hasUpdates"
+        id="update-app"
+        mat-button
+        [ixTest]="[app?.name, 'update']"
+        (click)="updateButtonPressed()"
+      >
+        {{ 'Update' | translate }}
+      </button>
+    </div>
   </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
@@ -33,8 +44,8 @@
           </span>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div *ngIf="false" class="details-item">
-          <span class="label">{{ 'Latest Updated' | translate }}:</span>
+        <div class="details-item">
+          <span class="label">{{ 'Last Updated' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
@@ -50,7 +61,7 @@
           </span>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div *ngIf="false" class="details-item">
+        <div class="details-item">
           <span class="label">{{ 'Developer' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>

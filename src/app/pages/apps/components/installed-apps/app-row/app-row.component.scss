@@ -9,8 +9,8 @@
   display: grid;
   font-weight: 500;
   grid-gap: 8px;
+  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) 40px 40px 40px minmax(100px, 115px) 60px;
   min-height: 48px;
-  min-width: fit-content;
   min-width: fit-content;
   padding: 0;
   position: relative;
