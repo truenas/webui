@@ -3,9 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -30,7 +29,7 @@ describe('ApiKeyListComponent', () => {
       IxTableModule,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+      FakeFormatDateTimePipe,
       ApiKeyFormDialogComponent,
     ],
     providers: [
@@ -56,7 +55,7 @@ describe('ApiKeyListComponent', () => {
           name: 'second-api-key',
           key: 'strong-key',
           created_at: {
-            $date: 1010101010101,
+            $date: 1011101010101,
           },
         }]),
         mockCall('api_key.delete'),
@@ -75,8 +74,8 @@ describe('ApiKeyListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'Created Date', ''],
-      ['first-api-key', 'Jan 10 2022 10:36', ''],
-      ['second-api-key', 'Jan 10 2022 10:36', ''],
+      ['first-api-key', '2002-01-04 01:36:50', ''],
+      ['second-api-key', '2002-01-15 15:23:30', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
