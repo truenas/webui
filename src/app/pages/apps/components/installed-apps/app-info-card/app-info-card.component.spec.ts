@@ -90,33 +90,43 @@ describe('AppInfoCardComponent', () => {
   });
 
   it('shows details', () => {
-    const details = spectator.queryAll('.details-item');
-    expect(details).toHaveLength(5);
-
-    expect(details[0].querySelector('.label')).toHaveText('Name:');
-    expect(details[0].querySelector('.value')).toHaveText('ix-test-app');
-
-    expect(details[1].querySelector('.label')).toHaveText('Version:');
-    expect(details[1].querySelector('.value')).toHaveText('1.2.3_3.2.1');
-
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
-    // expect(details[2].querySelector('.label')).toHaveText('Latest Updated:');
-    // expect(details[2].querySelector('.value')).toHaveText('N/A');
-
-    expect(details[2].querySelector('.label')).toHaveText('Source:');
-    expect(details[2].querySelector('.value')).toHaveText('http://github.com/ix-test-app/ix-test-app');
-
-    // expect(details[4].querySelector('.label')).toHaveText('Developer:');
-    // expect(details[4].querySelector('.value')).toHaveText('N/A');
-
-    // expect(details[5].querySelector('.label')).toHaveText('Commits in the last 60 days:');
-    // expect(details[5].querySelector('.value')).toHaveText('N/A');
-
-    expect(details[3].querySelector('.label')).toHaveText('Catalog:');
-    expect(details[3].querySelector('.value')).toHaveText('OFFICIAL');
-
-    expect(details[4].querySelector('.label')).toHaveText('Train:');
-    expect(details[4].querySelector('.value')).toHaveText('charts');
+    const detailsElements = spectator.queryAll('.details-item');
+    const details = detailsElements.map((element) => ({
+      label: element.querySelector('.label').textContent,
+      value: element.querySelector('.value').textContent,
+    }));
+    expect(details).toEqual([
+      {
+        label: 'Name:',
+        value: ' ix-test-app ',
+      },
+      {
+        label: 'Version:',
+        value: ' 1.2.3_3.2.1 ',
+      },
+      // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
+      {
+        label: 'Last Updated:',
+        value: ' N/A\n',
+      },
+      {
+        label: 'Source:',
+        value: 'http://github.com/ix-test-app/ix-test-app',
+      },
+      // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
+      {
+        label: 'Developer:',
+        value: ' N/A\n',
+      },
+      {
+        label: 'Catalog:',
+        value: ' OFFICIAL ',
+      },
+      {
+        label: 'Train:',
+        value: ' charts ',
+      },
+    ]);
   });
 
   it('opens upgrade app dialog when Update button is pressed', async () => {
