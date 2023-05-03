@@ -68,17 +68,15 @@ def on_the_users_page_expend_root_and_click_edit(driver):
     assert wait_on_element(driver, 10, xpaths.users.root_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.root_Edit_Button).click()
 
+
 @then('on Edit User click the "SSH password login enabled" checkbox')
 def on_edit_user_click_the_ssh_password_login_enabled_checkbox(driver):
     """on Edit User click the "SSH password login enabled" checkbox."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 5, xpaths.add_User.ssh_Pubkey_Textarea, 'inputable')
-    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).clear()
-    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).send_keys(ssh_key)
-    assert wait_on_element(driver, 2, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
+    assert wait_on_element(driver, 5, xpaths.add_User.ssh_Password_Enabled_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.ssh_Password_Enabled_Checkbox).click()
+
 
 @then('click the Save and go to Services page')
 def click_the_save_and_go_to_services_page(driver):

@@ -59,6 +59,7 @@ class add_User:
     shell_Select = '//mat-select[@data-test="select-shell"]'
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
     sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
+    ssh_Password_Enabled_Checkbox = '//*[@data-test="checkbox-ssh-password-enabled"]'
     email_Input = '//ix-input[@formcontrolname="email"]//input'
     auxiliary_Groups_Select = '//ix-select[@formcontrolname="groups"]//mat-select'
     root_Group_Option = '//mat-option[contains(.,"root")]'
