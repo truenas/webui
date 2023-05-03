@@ -15,12 +15,15 @@ export interface MockTopology {
   disks: Disk[];
 }
 
-export interface AddTopologyOptions {
+export interface AddUnAssignedOptions {
+  diskSize: number;
+  repeats: number;
+}
+
+export interface AddTopologyOptions extends AddUnAssignedOptions {
   scenario: MockStorageScenario;
   layout: TopologyItemType;
-  diskSize: number;
   width: number;
-  repeats: number;
 }
 
 export interface DispersedData {

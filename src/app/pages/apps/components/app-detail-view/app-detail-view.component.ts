@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
@@ -100,20 +100,20 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
       map((apps: AvailableApp[]) => apps.find(
         (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
       )),
-    )
-      .pipe(untilDestroyed(this)).subscribe({
-        next: (app) => {
-          this.app = app;
-          this.isLoading$.next(false);
-          this.cdr.markForCheck();
+      filter((app) => !!app),
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (app) => {
+        this.app = app;
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
 
-          this.loadSimilarApps();
-        },
-        error: () => {
-          this.isLoading$.next(false);
-          this.cdr.markForCheck();
-        },
-      });
+        this.loadSimilarApps();
+      },
+      error: () => {
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   private loadSimilarApps(): void {
@@ -133,6 +133,20 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
       this.wasPoolSet = Boolean(pool);
       this.cdr.markForCheck();
+    });
+  }
+
+  navigateToAllInstalledPage(): void {
+    this.applicationsStore.installedApps$.pipe(
+      map((apps) => apps.filter((app) => (app.chart_metadata.name === this.appId
+        && app.catalog === this.catalog && app.catalog_train === this.train))),
+      untilDestroyed(this),
+    ).subscribe((apps) => {
+      if (apps.length) {
+        this.router.navigate(['/apps', 'installed', apps[0].name]);
+      } else {
+        this.router.navigate(['/apps', 'installed']);
+      }
     });
   }
 

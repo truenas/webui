@@ -1,9 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -30,9 +28,6 @@ describe('DockerImagesListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
-    ],
-    declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2022-01-06 16:36:06')),
     ],
     providers: [
       DockerImagesComponentStore,

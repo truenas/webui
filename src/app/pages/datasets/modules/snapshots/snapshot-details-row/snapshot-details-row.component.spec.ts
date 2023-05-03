@@ -4,9 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -30,7 +29,7 @@ describe('SnapshotDetailsRowComponent', () => {
       IxTableModule,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2021-11-05 10:52:06')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       mockProvider(AppLoaderService),
@@ -64,9 +63,9 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(rows).toHaveLength(4);
 
     expect(rows[0]).toHaveText('Used: 1.49 TiB');
-    expect(rows[1]).toHaveText('Date created: 2021-11-05 10:52:06');
+    expect(rows[1]).toHaveText('Date created: 2021-10-18 19:51:54');
     expect(rows[2]).toHaveText('Referenced: 1.49 TiB');
-    expect(rows[3]).toHaveText('Retention: Will be automatically destroyed at 2021-11-05 10:52:06 by periodic snapshot task');
+    expect(rows[3]).toHaveText('Retention: Will be automatically destroyed at 2022-06-07 07:25:14 by periodic snapshot task');
   });
 
   it('should open clone dialog when `Clone To New Dataset` button click', async () => {

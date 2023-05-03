@@ -1,7 +1,7 @@
 import { environmentTemplate } from './environment.template';
 import * as fs from 'fs';
 import {Command} from "commander";
-
+import {environmentVersion} from "../../src/environments/environment.version";
 
 /*
 * Variables
@@ -40,8 +40,8 @@ export function checkEnv(suppress: boolean = false, quiet: boolean = false): boo
     const match = envStr.match(regex);
     wordCount = match !== null ? match.length : 0;
 
-    // Make it isn't deprecated and missing properties
-    isCurrent = envStr.includes('mockConfig');
+    // Make sure environment file is the currently supported version
+    isCurrent = getVersion(envStr) === environmentVersion;
   }
 
   const isRemoteSet = (suppress: boolean, quiet: boolean, envStr: string = '$SERVER$'): boolean => {
@@ -76,6 +76,15 @@ Use yarn ui script to set remote url: yarn ui remote -i <ip-address>
 
   return remoteIsSet;
 
+}
+
+function getVersion(envStr: string): string {
+  const property = /environmentVersion:.*/g;
+  const misc = /\{|\}|\'|\"|\`|\;|\,|\s/g;
+  const match = envStr.match(property)
+  const value = match === null ? 'undefined' : match[0].split(':')[1].replace(misc, '');
+  console.info('Environment version: ' + value);
+  return value;
 }
 
 
