@@ -48,7 +48,7 @@ describe('AvailableAppsHeaderComponent', () => {
           categories: ['media', 'torrent'],
           last_update: { $date: 343 },
           name: 'qbittorent',
-        }] as unknown as AvailableApp[]),
+        }] as AvailableApp[]),
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
         filterValues$: of({
           catalogs: ['OFFICIAL'],

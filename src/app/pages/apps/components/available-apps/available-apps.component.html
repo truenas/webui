@@ -29,7 +29,7 @@
       <ng-container
         *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle"
         [ngTemplateOutlet]="apps"
-        [ngTemplateOutletContext]="{ $implicit: appSection, showViewAll: true }"
+        [ngTemplateOutletContext]="{ $implicit: appSection }"
       ></ng-container>
     </ng-container>
 
@@ -37,13 +37,13 @@
       <ng-container
         *ngFor="let appSection of (applicationsStore.searchedApps$ | async); trackBy: trackByAppSectionTitle"
         [ngTemplateOutlet]="apps"
-        [ngTemplateOutletContext]="{ $implicit: appSection, showViewAll: false }"
+        [ngTemplateOutletContext]="{ $implicit: appSection }"
       ></ng-container>
     </div>
   </ng-container>
 </div>
 
-<ng-template #apps let-appSection let-showViewAll="showViewAll">
+<ng-template #apps let-appSection>
   <section *ngIf="appSection.apps as apps">
     <ng-container *ngIf="apps.length">
       <h3 class="section-title">{{ appSection.title }}</h3>
