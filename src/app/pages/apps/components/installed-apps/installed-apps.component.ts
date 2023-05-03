@@ -109,11 +109,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .some((app) => app.update_available || app.container_images_update_available);
   }
 
-  get startedSelectedApps(): ChartRelease[] {
-    return this.dataSource.filter((app) => app.status !== ChartReleaseStatus.Stopped && app.selected);
+  get startedCheckedApps(): ChartRelease[] {
+    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Active && app.selected);
   }
 
-  get stoppedSelectedApps(): ChartRelease[] {
+  get stoppedCheckedApps(): ChartRelease[] {
     return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Stopped && app.selected);
   }
 
@@ -275,12 +275,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkStart(): void {
-    this.stoppedSelectedApps.forEach((app) => this.start(app.name));
+    this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
   onBulkStop(): void {
-    this.startedSelectedApps.forEach((app) => this.stop(app.name));
+    this.startedCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
