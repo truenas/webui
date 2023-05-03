@@ -158,7 +158,7 @@ export class ApplicationsService {
       return this.translate.instant('Recently');
     }
     if (Math.floor(diff / hour) === 1) {
-      return this.translate.instant('1 hour ago');
+      return this.translate.instant('An hour ago');
     }
     if (diff < day) {
       return this.translate.instant('{timeAmount} hours ago', { timeAmount: Math.floor(diff / hour) || '' });
