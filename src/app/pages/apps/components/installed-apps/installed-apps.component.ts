@@ -73,13 +73,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get checkedAppsNames(): string[] {
-    const selectedItems: string[] = [];
-    this.dataSource.forEach((element) => {
-      if (element.selected) {
-        selectedItems.push(element.name);
-      }
-    });
-    return selectedItems;
+    return this.dataSource.filter((app) => app.selected).map((app) => app.name);
   }
 
   get isBulkStartDisabled(): boolean {
@@ -97,6 +91,14 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return !this.checkedAppsNames
       .map((name) => this.dataSource.find((app) => app.name === name))
       .some((app) => app.update_available || app.container_images_update_available);
+  }
+
+  get startedCheckedApps(): ChartRelease[] {
+    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Active && app.selected);
+  }
+
+  get stoppedCheckedApps(): ChartRelease[] {
+    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Stopped && app.selected);
   }
 
   constructor(
@@ -315,14 +317,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkStart(): void {
-    const checkedNames = this.checkedAppsNames;
-    checkedNames.forEach((name) => this.start(name));
+    this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
   onBulkStop(): void {
-    const checkedNames = this.checkedAppsNames;
-    checkedNames.forEach((name) => this.stop(name));
+    this.startedCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
