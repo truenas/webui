@@ -146,44 +146,12 @@ export class ApplicationsService {
 
   convertDateToRelativeDate(date: Date): string {
     const diff = Math.round(((new Date() as unknown as number) - (date as unknown as number)) / 1000);
+    const day = 60 * 60 * 24;
 
-    const minute = 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-    const week = day * 7;
-    const month = day * 30;
-    const year = month * 12;
-
-    if (diff < hour) {
-      return this.translate.instant('Recently');
-    }
-    if (Math.floor(diff / hour) === 1) {
-      return this.translate.instant('An hour ago');
-    }
-    if (diff < day) {
-      return this.translate.instant('{timeAmount} hours ago', { timeAmount: Math.floor(diff / hour) || '' });
-    }
-    if (diff < day * 2) {
-      return this.translate.instant('Yesterday');
-    }
-    if (diff < week) {
-      return this.translate.instant('{timeAmount} days ago', { timeAmount: week || '' });
-    }
-    if ((diff < month) && Math.floor(diff / week) === 1) {
-      return this.translate.instant('Last week');
-    }
-    if (diff < month) {
-      return this.translate.instant('{timeAmount} weeks ago', { timeAmount: Math.floor(diff / week) || '' });
-    }
-    if ((diff < year) && Math.floor(diff / month) === 1) {
-      return this.translate.instant('Last month');
-    }
-    if ((diff < year) && Math.floor(diff / month) > 1) {
-      return this.translate.instant('{timeAmount} months ago', { timeAmount: Math.floor(diff / month) || '' });
-    }
-    if (Math.floor(diff / year) === 1) {
-      return this.translate.instant('Last year');
-    }
-    return this.translate.instant('{timeAmount} years ago', { timeAmount: Math.floor(diff / year) || '' });
+    if (diff < day) { return this.translate.instant('Last 24 hours'); }
+    if (diff < day * 3) { return this.translate.instant('Last 3 days'); }
+    if (diff < day * 14) { return this.translate.instant('Last week'); }
+    if (diff < day * 60) { return this.translate.instant('Last month'); }
+    return this.translate.instant('Long time ago');
   }
 }

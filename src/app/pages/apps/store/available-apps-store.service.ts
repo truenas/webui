@@ -365,12 +365,11 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   private sortAppsByName(filteredApps: AvailableApp[]): AppsByCategory[] {
     const appsByCategory: AppsByCategory[] = [];
 
-    const alphabet = [
-      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-      'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    ];
+    const firstLetters = [
+      ...new Set<string>(filteredApps.map((app) => app.name.slice(0, 1).toUpperCase())),
+    ].sort((a, b) => a.localeCompare(b));
 
-    alphabet.forEach((firstLetter) => {
+    firstLetters.forEach((firstLetter) => {
       const appsSortedByFirstLetter = filteredApps.filter(
         (app) => app.name.toUpperCase().startsWith(firstLetter),
       );
