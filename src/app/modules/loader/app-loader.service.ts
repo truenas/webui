@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { EMPTY, Observable } from 'rxjs';
@@ -35,8 +35,4 @@ export class AppLoaderService {
 
     this.dialogRef.componentInstance.title = title;
   }
-
-  // These pass signals from various components to entity form component to start/stop progress spinner
-  callStarted = new EventEmitter<string>();
-  callDone = new EventEmitter<string>();
 }

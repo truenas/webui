@@ -10,7 +10,7 @@ import { DiskBus } from 'app/enums/disk-bus.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option } from 'app/interfaces/option.interface';
-import { forbiddenAsyncValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
+import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -25,7 +25,6 @@ import { DialogService, WebSocketService } from 'app/services';
 export class GeneralWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['general'];
 
-  isLoading$ = this.store.isLoading$;
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
 
   exportedPoolsWarning = this.translate.instant(
@@ -85,6 +84,10 @@ export class GeneralWizardStepComponent implements OnInit {
   ngOnInit(): void {
     this.form.controls.name.addAsyncValidators(forbiddenAsyncValues(this.poolNames$));
 
+    this.setFieldRelations();
+  }
+
+  private setFieldRelations(): void {
     this.form.controls.encryption_standard.disable();
     this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((isEncrypted) => {
       if (isEncrypted) {

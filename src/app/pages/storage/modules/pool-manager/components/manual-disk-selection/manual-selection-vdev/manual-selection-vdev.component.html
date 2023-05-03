@@ -16,7 +16,6 @@
           <ix-enclosure-wrapper
             *ngFor="let enclosureDisks of enclosuresDisks | keyvalue"
             [enclosure]="enclosureDisks.key"
-            [vdev]="vdev"
           >
             <div class="disk-icons">
               <ix-disk-icon *ngFor="let disk of enclosureDisks.value"

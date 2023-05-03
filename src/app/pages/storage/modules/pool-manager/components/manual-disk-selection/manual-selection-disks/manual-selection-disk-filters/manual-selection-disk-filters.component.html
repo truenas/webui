@@ -1,0 +1,21 @@
+<div class="filter-container">
+  <form [formGroup]="filterForm">
+    <ix-input
+      formControlName="search"
+      prefixIcon="search"
+      [placeholder]="'Search' | translate"
+    ></ix-input>
+    <div class="select-container">
+      <ix-select
+        formControlName="diskType"
+        [label]="'Filter by Disk Type' | translate"
+        [options]="typeOptions$"
+      ></ix-select>
+      <ix-select
+        formControlName="diskSize"
+        [label]="'Filter by Disk Size' | translate"
+        [options]="sizeOptions$"
+      ></ix-select>
+    </div>
+  </form>
+</div>

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, of, merge, Observable,
+  forkJoin, of, Observable,
 } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -26,7 +26,6 @@ import {
   DialogService, IdmapService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 
@@ -170,7 +169,6 @@ export class DirectoryServicesComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private idmapService: IdmapService,
-    private modalService: ModalService,
     private slideInService: IxSlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
@@ -180,11 +178,11 @@ export class DirectoryServicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshCards();
-    merge(
-      this.slideInService.onClose$.pipe(filter((slideInResult) => !!slideInResult)),
-      this.modalService.refreshTable$,
-    )
-      .pipe(untilDestroyed(this))
+    this.slideInService.onClose$
+      .pipe(
+        filter((slideInResult) => !!slideInResult),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
         this.refreshCards();
       });

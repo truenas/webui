@@ -86,7 +86,7 @@
                 {{ coreCount }} {{ 'cores' | translate }}
 
                 <span *ngIf="hyperthread">
-                  ({{ threadCount }}
+                  &nbsp;({{ threadCount }}
                   {{ 'threads' | translate }})
                 </span>
               </mat-list-item>
@@ -151,8 +151,16 @@
                 {{ cpuModel ? cpuModel : 'Unknown CPU' }}
               </mat-list-item>
               <mat-list-item>
-                <span class="label">{{ 'Threads:' | translate }}</span>
-                {{ coreCount }}
+                <span class="label">
+                  <strong>{{ 'Cores' | translate }}:</strong>
+                </span>
+
+                {{ coreCount }} {{ 'cores' | translate }}
+
+                <span *ngIf="hyperthread">
+                  &nbsp;({{ threadCount }}
+                  {{ 'threads' | translate }})
+                </span>
               </mat-list-item>
             </mat-list>
           </div>

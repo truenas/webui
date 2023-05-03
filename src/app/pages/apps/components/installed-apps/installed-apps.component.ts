@@ -2,10 +2,12 @@ import {
   Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take } from 'rxjs';
+import {
+  combineLatest, filter, map, switchMap, take, takeWhile, tap,
+} from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -20,7 +22,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -38,33 +42,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   isLoading = false;
   filterString = '';
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
+  routeAppIdForDetails: string;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
     title: helptext.message.loading,
   };
-
-  constructor(
-    private appService: ApplicationsService,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-    private layoutService: LayoutService,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private slideInService: IxSlideInService,
-  ) {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-      });
-  }
 
   get filteredApps(): ChartRelease[] {
     return this.dataSource
@@ -117,9 +101,33 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Stopped && app.selected);
   }
 
+  constructor(
+    private appService: ApplicationsService,
+    private cdr: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute,
+    private errorHandler: ErrorHandlerService,
+    private router: Router,
+    private layoutService: LayoutService,
+    private matDialog: MatDialog,
+    private dialogService: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
+    private applicationsStore: AvailableAppsStore,
+    private slideInService: IxSlideInService,
+  ) {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+      });
+  }
+
   ngOnInit(): void {
-    this.listenForSlideFormClosed();
-    this.updateChartReleases();
+    this.listenForRouteChanges();
+    this.loadChartReleases();
   }
 
   ngAfterViewInit(): void {
@@ -177,48 +185,82 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.entityEmptyConf.type = type;
   }
 
-  updateChartReleases(): void {
+  private listenForRouteChanges(): void {
+    this.activatedRoute.params
+      .pipe(
+        map((params) => params.appId as string),
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe((appId) => {
+        this.routeAppIdForDetails = appId;
+      });
+  }
+
+  loadChartReleases(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
-      if (!config.pool) {
-        this.dataSource = [];
-        this.showLoadStatus(EmptyType.FirstUse);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      } else {
-        this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((kubernetesStarted) => {
-          if (!kubernetesStarted) {
-            this.dataSource = [];
-            this.showLoadStatus(EmptyType.Errors);
-            this.isLoading = false;
-            this.cdr.markForCheck();
-          } else {
-            this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
-              if (charts.length) {
-                this.dataSource = charts;
-                this.dataSource.forEach((app) => {
-                  if (app.status === ChartReleaseStatus.Deploying) {
-                    this.refreshStatus(app.name);
-                  }
-                });
-                this.selectAppOnLoad();
-              } else {
-                this.dataSource = [];
-                this.showLoadStatus(EmptyType.NoPageData);
-              }
-              this.isLoading = false;
-              this.cdr.markForCheck();
-            });
+    combineLatest([
+      this.applicationsStore.selectedPool$,
+      this.applicationsStore.isLoading$.pipe(
+        tap((isLoading) => this.isLoading = isLoading),
+        filter((isLoading) => !isLoading),
+      ),
+    ]).pipe(
+      takeWhile(([pool]) => !pool, true),
+      filter(([pool]) => {
+        if (!pool) {
+          this.dataSource = [];
+          this.showLoadStatus(EmptyType.FirstUse);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }
+        return !!pool;
+      }),
+      switchMap(() => this.applicationsStore.isKubernetesStarted$),
+      filter((kubernetesStarted) => {
+        if (!kubernetesStarted) {
+          this.dataSource = [];
+          this.showLoadStatus(EmptyType.Errors);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }
+        return !!kubernetesStarted;
+      }),
+      switchMap(() => this.applicationsStore.installedApps$),
+      filter((charts) => {
+        if (!charts.length) {
+          this.dataSource = [];
+          this.showLoadStatus(EmptyType.NoPageData);
+        }
+        return !!charts.length;
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (charts) => {
+        this.dataSource = charts;
+        this.dataSource.forEach((app) => {
+          if (app.status === ChartReleaseStatus.Deploying) {
+            this.refreshStatus(app.name);
           }
         });
-      }
+        if (!this.routeAppIdForDetails) {
+          this.selectFirstRowForDetails();
+        } else {
+          this.selectAppForDetails(this.routeAppIdForDetails);
+        }
+        this.cdr.markForCheck();
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 
   refreshStatus(name: string): void {
-    this.appService.getChartReleases(name)
+    this.appService.getChartRelease(name)
       .pipe(filter(Boolean), take(1), untilDestroyed(this))
       .subscribe((releases) => {
         const installedApp = this.dataSource.find((app) => app.name === name);
@@ -287,12 +329,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource
       .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
-
-    const dialogRef = this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
-
-    dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.updateChartReleases();
-    });
+    this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
   }
 
   onBulkDelete(): void {
@@ -323,33 +360,37 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
             message = '<ul>' + message + '</ul>';
             this.dialogService.error({ title: helptext.bulkActions.title, message });
           }
-          this.updateChartReleases();
         },
       );
     });
   }
 
-  private selectAppOnLoad(): void {
+  private selectAppForDetails(appId: string): void {
     if (!this.dataSource.length) {
       return;
     }
 
-    const appId = this.router.url.split('/installed/')?.[1];
-
-    const app = this.dataSource.find((chart) => chart.id === appId);
+    let app: ChartRelease;
+    if (appId) {
+      app = this.dataSource.find((chart) => chart.id === appId);
+    }
     if (app) {
       this.selectApp(app);
     } else {
+      this.router.navigate(['/apps', 'installed', this.dataSource[0]?.id]);
       this.selectApp(this.dataSource[0]);
     }
 
     this.cdr.markForCheck();
   }
 
-  private listenForSlideFormClosed(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateChartReleases();
-    });
+  private selectFirstRowForDetails(): void {
+    if (!this.dataSource.length) {
+      return;
+    }
+
+    this.selectApp(this.dataSource[0]);
+    this.cdr.markForCheck();
   }
 
   private openAdvancedSettings(): void {
