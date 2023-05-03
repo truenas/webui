@@ -4,7 +4,7 @@
     class="installed-badge"
     [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
     [ixTest]="[app?.name, 'installed-badge']"
-    [routerLink]="['/apps', 'installed', app.name]"
+    (click)="navigateToAllInstalledPage()"
   >
     {{ 'Installed' | translate }}
   </a>

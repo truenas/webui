@@ -136,6 +136,20 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     });
   }
 
+  navigateToAllInstalledPage(): void {
+    this.applicationsStore.installedApps$.pipe(
+      map((apps) => apps.filter((app) => (app.chart_metadata.name === this.appId
+        && app.catalog === this.catalog && app.catalog_train === this.train))),
+      untilDestroyed(this),
+    ).subscribe((apps) => {
+      if (apps.length) {
+        this.router.navigate(['/apps', 'installed', apps[0].name]);
+      } else {
+        this.router.navigate(['/apps', 'installed']);
+      }
+    });
+  }
+
   navigateToInstallPage(): void {
     this.router.navigate(['/apps', 'available', this.catalog, this.train, this.appId, 'install']);
   }
