@@ -24,9 +24,20 @@ mat-slide-toggle {
 }
 
 .mat-mdc-list-item {
-  &:hover,
-  &:active {
+  cursor: move;
+  padding-left: 0;
+
+  .toggle-label {
+    align-items: center;
     cursor: move;
+    display: flex;
+    gap: 2px;
+  }
+
+  &:not(:hover) {
+    ix-icon {
+      visibility: hidden;
+    }
   }
 }
 

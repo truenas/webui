@@ -22,7 +22,10 @@
         (change)="onCheckboxChanged(item.value)"
         (blur)="onTouch()"
       >
-        {{ item.label }}
+        <div class="toggle-label">
+          <ix-icon name="drag_indicator"></ix-icon>
+          {{ item.label }}
+        </div>
       </mat-slide-toggle>
     </mat-list-item>
   </mat-list>
