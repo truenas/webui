@@ -51,69 +51,62 @@ def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
         driver.find_element_by_xpath(xpaths.button.close).click()
 
 
-@then('on the dashboard click on the System Settings side menu, then click services')
-def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(driver):
-    """on the dashboard click on the System Settings side menu, then click services."""
+@then('click on the Credentials side menu, then click Local Users')
+def click_on_the_credentials_side_menu_then_click_local_users(driver):
+    """click on the Credentials side menu, then click Local Users."""
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
+
+
+@then('on the Users page expend root and click Edit')
+def on_the_users_page_expend_root_and_click_edit(driver):
+    """on the Users page expend root and click Edit."""
+    assert wait_on_element(driver, 7, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.users.root_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_User).click()
+    assert wait_on_element(driver, 10, xpaths.users.root_Edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_Edit_Button).click()
+
+@then('on Edit User click the "SSH password login enabled" checkbox')
+def on_edit_user_click_the_ssh_password_login_enabled_checkbox(driver):
+    """on Edit User click the "SSH password login enabled" checkbox."""
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
+    assert wait_on_element(driver, 5, xpaths.add_User.ssh_Pubkey_Textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).clear()
+    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).send_keys(ssh_key)
+    assert wait_on_element(driver, 2, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
+
+@then('click the Save and go to Services page')
+def click_the_save_and_go_to_services_page(driver):
+    """click the Save and go to Services page."""
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     rsc.Go_To_Service(driver)
 
 
-@then('on the service page, press on configure(pencil) SSH')
-def on_the_service_page_press_on_configurepencil_ssh(driver):
-    """on the service page, press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, xpaths.services.title)
-    assert wait_on_element(driver, 5, '//td[contains(text(),"SSH")]')
-    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.services.ssh_Service_Button).click()
-
-
-@then('the SSH General Options page should open')
-def the_ssh_general_options_page_should_open(driver):
-    """the SSH General Options page should open."""
-    assert wait_on_element(driver, 5, '//h1[text()="SSH"]')
-    assert wait_on_element(driver, 5, '//legend[contains(.,"General Options")]')
-
-
-@then('click the checkbox "Log in as root with password"')
-def click_the_checkbox_log_in_as_root_with_password(driver):
-    """click the checkbox "Log in as root with password"."""
-    assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'clickable')
-    time.sleep(0.5)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-mdc-checkbox-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[contains(.,"Log in as Root with Password")]').click()
-
-
-@then('verify the checkbox works and click Save')
-def verify_the_checkbox_works_and_click_save(driver, nas_ip, root_password):
-    """verify the checkbox works and click Save."""
-    wait_for_value = wait_for_attribute_value(driver, 5, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-mdc-checkbox-checked')
-    assert wait_for_value
-    time.sleep(1)
-    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-
-
-@then('click the Start Automatically SSH checkbox and enable the SSH service')
-def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
-    """click the Start Automatically SSH checkbox and enable the SSH service."""
+@then('on the service page, click the Start Automatically SSH checkbox')
+def on_the_service_page_click_the_Start_Automatically_SSH_checkbox(driver):
+    """on the service page, click the Start Automatically SSH checkbox ."""
     assert wait_on_element(driver, 5, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.ssh_Service)
     assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Checkbox, 'clickable')
     value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath(xpaths.services.ssh_Service_Checkbox).click()
+
+
+@then('enable the SSH service the service should start without an error')
+def enable_the_ssh_service_the_service_should_start_without_an_error(driver):
+    """enable the SSH service the service should start without an error."""
     assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Toggle, 'clickable')
     value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
     if not value_exist:
         driver.find_element_by_xpath(xpaths.services.ssh_Service_Toggle).click()
-    time.sleep(1)
-
-
-@then('the service should be enabled with no errors')
-def the_service_should_be_enabled_with_no_errors(driver):
-    """the service should be enabled with no errors."""
-    wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
     assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
 
 
