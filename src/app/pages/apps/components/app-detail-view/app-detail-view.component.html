@@ -58,7 +58,7 @@
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
           <ng-template #appCategories>
             <ng-container *ngIf="app?.categories; else notAvailable">
-              {{ app?.categories.join(', ') }}
+              {{ app?.tags.join(', ') }}
             </ng-container>
           </ng-template>
         </div>
