@@ -28,7 +28,7 @@ def test_create_an_active_directory_dataset_on_a_system_dataset_pool():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['AD_Setup'], scope='session')
+    #depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -83,7 +83,7 @@ def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
 
 

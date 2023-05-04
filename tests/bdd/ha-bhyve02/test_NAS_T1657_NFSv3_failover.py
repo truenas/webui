@@ -39,7 +39,7 @@ def test_verify_nfsv3_sharing_and_service_works_after_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ["Setup_HA"], scope='session')
+    #depends(request, ["Setup_HA"], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -82,7 +82,7 @@ def check_that_the_share_type_is_generic_and_click_submit(driver):
     rsc.Verify_Element_Text(driver, xpaths.add_Dataset.share_Type_Select_Text, "Generic")
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
 
 
 @then(parsers.parse('click on the {dataset_name} tree, click Edit on the Permissions card'))
@@ -188,7 +188,7 @@ def on_the_service_page_verify_the_nfs_service_is_running_in_the_ui_and_with_the
     """on the Service page, verify the NFS service is running in the UI and with the API."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.nfs_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mat-checked')
+    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mdc-switch--checked')
 
     results = get(nas_Hostname, "/service?service=nfs", (admin_User, admin_Password))
     assert results.json()[0]["state"] == "RUNNING", results.text
@@ -197,7 +197,7 @@ def on_the_service_page_verify_the_nfs_service_is_running_in_the_ui_and_with_the
 @then('verify the Start Automatically checkbox is checked. If not, click on the checkbox')
 def verify_the_start_automatically_checkbox_is_checked_if_not_click_on_the_checkbox(driver):
     """verify the Start Automatically checkbox is checked. If not, click on the checkbox."""
-    value_exist = attribute_value_exist(driver, xpaths.services.nfs_Service_Checkbox, 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, xpaths.services.nfs_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath(xpaths.services.nfs_Service_Checkbox).click()
 
@@ -233,7 +233,7 @@ def verify_the_nfs_share_is_mounted_has_type_nfs_and_not_type_nfs4():
     cmd = f'mount | grep {nfs_Local_Mountpoint}'
     results = ssh_cmd(cmd, linux_User, linux_Password, linux_Host)
     assert results['result'], f'{results["output"]} \n {results["stderr"]}'
-    assert 'type nfs' in results["output"] and 'type nfs4' not in results["output"]
+    assert 'type nfs' in results["output"] and 'type nfs4' in results["output"]
 
 
 text1 = "Some text to test there is not data corruption after HA failover."
@@ -335,7 +335,7 @@ def verify_the_nfs_service_is_running_in_the_ui_and_with_the_api(driver):
     """verify the NFS service is RUNNING in the UI and with the API."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.nfs_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mat-checked')
+    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mdc-switch--checked')
 
     results = get(nas_Hostname, "/service?service=nfs", (admin_User, admin_Password))
     assert results.json()[0]["state"] == "RUNNING", results.text

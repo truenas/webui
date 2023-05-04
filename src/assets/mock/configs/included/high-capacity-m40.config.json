@@ -1,0 +1,36 @@
+{
+  "enabled": true,
+  "mockEnclosure": true,
+  "enclosureOptions": {
+    "controllerModel": "M40",
+    "expansionModels": [
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102",
+      "ES102"
+    ],
+    "dispersal": "default"
+  },
+  "systemProduct": "TRUENAS-M40",
+  "diskOptions": {
+    "enabled": true,
+    "topologyOptions": {
+      "scenario": "uniform",
+      "layout": "RAIDZ2",
+      "diskSize": 16,
+      "width": 5,
+      "repeats": 200
+    },
+    "mockPools": true,
+    "unassignedOptions": {
+      "diskSize": 4,
+      "repeats": 12
+    }
+  }
+}

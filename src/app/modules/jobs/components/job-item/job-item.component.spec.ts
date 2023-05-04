@@ -1,8 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
@@ -17,7 +16,7 @@ describe('JobItemComponent', () => {
       CoreComponents,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       provideMockStore({
@@ -68,7 +67,7 @@ describe('JobItemComponent', () => {
     });
 
     expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
-    expect(spectator.query('.job-time')).toHaveText('Stopped:  Jan 10 2022 10:36');
+    expect(spectator.query('.job-time')).toHaveText('Stopped:  1970-01-20 03:03:31');
     expect(spectator.query('.job-icon-failed')).toBeTruthy();
   });
 

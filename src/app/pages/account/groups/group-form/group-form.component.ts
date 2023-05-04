@@ -11,8 +11,9 @@ import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
 import { UserService } from 'app/services';
@@ -61,6 +62,7 @@ export class GroupFormComponent {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private store$: Store<GroupSlice>,
+    private snackbar: SnackbarService,
   ) { }
 
   /**
@@ -135,8 +137,10 @@ export class GroupFormComponent {
     ).subscribe({
       next: (group) => {
         if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Group added'));
           this.store$.dispatch(groupAdded({ group }));
         } else {
+          this.snackbar.success(this.translate.instant('Group updated'));
           this.store$.dispatch(groupChanged({ group }));
         }
         this.isFormLoading = false;

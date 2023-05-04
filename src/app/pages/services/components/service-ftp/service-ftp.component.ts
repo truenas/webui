@@ -12,9 +12,10 @@ import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { portRangeValidator, rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { portRangeValidator, rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -94,6 +95,7 @@ export class ServiceFtpComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private filesystemService: FilesystemService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     public iecFormatter: IxFormatterService,
   ) {}
 
@@ -119,6 +121,7 @@ export class ServiceFtpComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },

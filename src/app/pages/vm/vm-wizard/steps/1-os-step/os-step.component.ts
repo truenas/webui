@@ -17,7 +17,7 @@ import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import {
   forbiddenAsyncValues,
-} from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
+} from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { WebSocketService } from 'app/services/ws.service';
 

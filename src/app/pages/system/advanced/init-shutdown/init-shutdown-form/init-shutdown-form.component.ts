@@ -11,6 +11,7 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import helptext from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -77,6 +78,7 @@ export class InitShutdownFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
   ) {}
 
@@ -110,6 +112,11 @@ export class InitShutdownFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Init/Shutdown Script created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
+        }
         this.isFormLoading = false;
         this.slideInService.close();
       },

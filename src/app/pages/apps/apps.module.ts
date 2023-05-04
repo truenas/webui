@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -45,6 +46,7 @@ import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -103,6 +105,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     ReactiveFormsModule,
     EntityModule,
     MatCardModule,
+    NgxFilesizeModule,
     CoreComponents,
     MatSelectModule,
     MatCheckboxModule,
@@ -124,6 +127,9 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatTooltipModule,
     MatMenuModule,
     CustomFormsModule,
+  ],
+  providers: [
+    AvailableAppsStore,
   ],
 })
 export class AppsModule { }

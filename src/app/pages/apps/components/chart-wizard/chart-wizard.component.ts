@@ -9,11 +9,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { of, Subject, Subscription } from 'rxjs';
+import {
+  BehaviorSubject, of, Subject, Subscription,
+} from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
+import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
@@ -21,10 +24,10 @@ import {
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
@@ -41,7 +44,11 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
 })
 export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   appId: string;
+  catalog: string;
+  train: string;
+
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
 
@@ -62,22 +69,25 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly helptext = helptext;
 
-  get pageTitle(): string {
-    const prefix = this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
-    if (this.appId) {
-      return `${prefix}  ${this.appId}`;
-    }
+  private _pageTitle$ = new BehaviorSubject<string>('Loading');
+  pageTitle$ = this._pageTitle$.asObservable().pipe(
+    filter(Boolean),
+    map((name) => {
+      if (name === ixChartApp) {
+        return `${this.titlePrefix} ${this.translate.instant('Custom App')}`;
+      }
+      return `${this.titlePrefix} ${name}`;
+    }),
+  );
 
-    if (this.catalogApp) {
-      return `${prefix}  ${this.catalogApp.name}`;
-    }
-
-    return this.translate.instant('Loading');
+  get titlePrefix(): string {
+    return this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
   }
 
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
@@ -131,12 +141,15 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
+        filter((params) => !!(params.appId as string) && !!(params.catalog) && !!(params.train)),
         untilDestroyed(this),
       )
-      .subscribe((appId) => {
+      .subscribe(({ train, catalog, appId }: AppDetailsRouteParams) => {
         this.appId = appId;
+        this.train = train;
+        this.catalog = catalog;
+
+        this._pageTitle$.next(appId);
         this.isLoading = false;
         this.cdr.markForCheck();
 
@@ -154,7 +167,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.loader.open();
     this.appService
-      .getCatalogItem(this.appId, officialCatalog, chartsTrain)
+      .getCatalogItem(this.appId, this.catalog, this.train)
       .pipe(
         untilDestroyed(this),
       ).subscribe({
@@ -176,6 +189,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setChartCreate(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
+    this._pageTitle$.next(this.catalogApp.name);
     let hideVersion = false;
     if (this.catalogApp.name === ixChartApp) {
       hideVersion = true;
@@ -219,7 +233,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.buildDynamicForm(catalogApp.schema);
-    this.form.patchValue({ release_name: this.catalogApp.name });
+    if (this.catalogApp.name !== ixChartApp) {
+      this.form.patchValue({ release_name: this.catalogApp.name });
+    }
   }
 
   private setChartEdit(chart: ChartRelease): void {
@@ -364,15 +380,16 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         title: this.isNew ? helptext.installing : helptext.updating,
       },
     });
+    this.dialogRef.componentInstance.showCloseButton = false;
 
     if (this.isNew) {
       const version = data.version;
       delete data.version;
       this.dialogRef.componentInstance.setCall('chart.release.create', [{
-        catalog: officialCatalog,
+        catalog: this.catalog,
         item: this.catalogApp.name,
         release_name: data.release_name,
-        train: chartsTrain,
+        train: this.train,
         version,
         values: data,
       } as ChartReleaseCreate]);
@@ -384,11 +401,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
-  }
-
-  onFailure(failedJob: Job): void {
-    this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
+      this.dialogRef.close();
+      this.formErrorHandler.handleWsFormError(failedJob, this.form);
+    });
   }
 
   onSuccess(): void {

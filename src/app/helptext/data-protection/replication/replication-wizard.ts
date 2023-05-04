@@ -14,12 +14,12 @@ export default {
   target_dataset_from_tooltip: T('Storage location for the replicated \
  snapshots.'),
 
-  ssh_credentials_source_placeholder: T('SSH Connections'),
+  ssh_credentials_source_placeholder: T('SSH Connection'),
   ssh_credentials_source_tooltip: T('Select an existing SSH connection \
  to a remote system or choose <i>Create New</i> to create a new SSH \
  connection.'),
 
-  ssh_credentials_target_placeholder: T('SSH Connections'),
+  ssh_credentials_target_placeholder: T('SSH Connection'),
   ssh_credentials_target_tooltip: T('Select a saved remote system SSH \
  connection or choose <i>Create New</i> to create a new SSH connection.'),
 

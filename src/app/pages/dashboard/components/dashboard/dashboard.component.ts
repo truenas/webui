@@ -365,7 +365,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       conf.push({
         id: conf.length.toString(),
         name: 'Pool',
-        identifier: `name,${pool.name}`,
+        identifier: `name,Pool:${pool.name}`,
         rendered: false,
       });
     });
@@ -396,7 +396,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.volumeData;
     }
 
-    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
+    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value.split(':')[1]);
     if (!dashboardPool) {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
       return undefined;
@@ -427,7 +427,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'pool':
         if (spl) {
-          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value.split(':')[1]);
           if (pools.length) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -553,11 +553,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private saveState(state: DashConfigItem[]): void {
     this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
-      .subscribe((wasSet) => {
-        if (!wasSet) {
-          throw new Error('Unable to save Dashboard State');
-        }
-      });
+      .subscribe();
   }
 
   private loadPoolData(): void {

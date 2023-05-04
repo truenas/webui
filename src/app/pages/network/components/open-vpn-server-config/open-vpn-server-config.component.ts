@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,6 +17,7 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
@@ -99,13 +99,12 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private services: ServicesService,
     private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
-    private router: Router,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private storageService: StorageService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private appLoaderService: AppLoaderService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -127,6 +126,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
+          this.snackbar.success(this.translate.instant('OpenVPN server configuration saved'));
           this.slideInService.close();
         },
         error: (error) => {
@@ -201,7 +201,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.isLoading = true;
-        this.appLoaderService.open();
+        this.loader.open();
         this.cdr.markForCheck();
         return this.ws.call('openvpn.server.update', [{ remove_certificates: true } as OpenvpnServerConfigUpdate]);
       }),
@@ -213,7 +213,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
     ).subscribe({
       complete: () => {
         this.isLoading = false;
-        this.appLoaderService.close();
+        this.loader.close();
         this.cdr.markForCheck();
         this.loadConfig();
       },

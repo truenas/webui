@@ -14,7 +14,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -34,7 +33,7 @@ import {
   ReplicationService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ModalService, ModalServiceMessage } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
@@ -46,18 +45,17 @@ import { AppState } from 'app/store';
     TaskService,
     KeychainCredentialService,
     ReplicationService,
-    EntityFormService,
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements EntityTableConfig {
+export class ReplicationListComponent implements EntityTableConfig<ReplicationTaskUi> {
   title = this.translate.instant('Replication Tasks');
   queryCall = 'replication.query' as const;
   wsDelete = 'replication.delete' as const;
   routeAdd: string[] = ['tasks', 'replication', 'wizard'];
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
 
   columns = [
@@ -88,8 +86,8 @@ export class ReplicationListComponent implements EntityTableConfig {
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
-    protected modalService: ModalService,
     protected loader: AppLoaderService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
@@ -101,23 +99,13 @@ export class ReplicationListComponent implements EntityTableConfig {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(
-      filter((value) => !!value.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.entityList.getData();
-    });
-
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
-      if (message.action === 'open' && message.component === 'replicationForm') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
-      }
-      if (message.action === 'open' && message.component === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
-      }
-    });
+    this.slideInService.onClose$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.entityList.getData();
+      });
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
@@ -261,10 +249,12 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(ReplicationWizardComponent);
+    this.slideInService.open(ReplicationWizardComponent, { wide: true });
   }
 
   doEdit(id: number): void {
-    this.modalService.openInSlideIn(ReplicationFormComponent, id);
+    const replication = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
+    form.setForEdit(replication);
   }
 }

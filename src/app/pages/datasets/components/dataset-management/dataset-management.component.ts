@@ -130,7 +130,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
         this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-        if (this.router.getCurrentNavigation().extras.state?.hideMobileDetails) {
+        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
         }
       });
@@ -144,6 +144,97 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.listenForLoading();
     this.listenForDatasetScrolling();
     this.listenForTreeResizing();
+  }
+
+  ngAfterViewInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.markForCheck();
+      });
+
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    this.layoutService.pageHeaderUpdater$.next(null);
+  }
+
+  loadSystemDatasetConfig(): void {
+    this.ws
+      .call('systemdataset.config')
+      .pipe(
+        map((config) => config.pool),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (systemDataset) => {
+          this.systemDataset = systemDataset;
+        },
+        error: this.handleError,
+      });
+  }
+
+  listenForLoading(): void {
+    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+      this.isLoading = isLoading;
+      this.cdr.markForCheck();
+    });
+  }
+
+  handleError = (error: WebsocketError | Job): void => {
+    this.dialogService.error(this.errorHandler.parseError(error));
+  };
+
+  isSystemDataset(dataset: DatasetDetails): boolean {
+    return dataset.name.split('/').length === 1 && this.systemDataset === dataset.name;
+  }
+
+  treeHeaderScrolled(): void {
+    this.scrollSubject.next(this.ixTreeHeader.nativeElement.scrollLeft);
+  }
+
+  datasetTreeScrolled(scrollLeft: number): void {
+    this.scrollSubject.next(scrollLeft);
+  }
+
+  datasetTreeWidthChanged(event: ResizedEvent): void {
+    this.treeWidthChange$.next(event);
+  }
+
+  onSearch(query: string): void {
+    this.dataSource.filter(query);
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
+  }
+
+  createPool(): void {
+    this.router.navigate(['/storage', 'create']);
+  }
+
+  viewDetails(dataset: DatasetDetails): void {
+    this.router.navigate(['/datasets', dataset.id]);
+
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+
+      // focus on details container
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+    }
+  }
+
+  onImportData(): void {
+    this.slideIn.open(ImportDataComponent);
   }
 
   private setupTree(): void {
@@ -205,28 +296,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  loadSystemDatasetConfig(): void {
-    this.ws
-      .call('systemdataset.config')
-      .pipe(
-        map((config) => config.pool),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (systemDataset) => {
-          this.systemDataset = systemDataset;
-        },
-        error: this.handleError,
-      });
-  }
-
-  listenForLoading(): void {
-    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
-      this.isLoading = isLoading;
-      this.cdr.markForCheck();
-    });
-  }
-
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
@@ -250,72 +319,5 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           },
         }),
     );
-  }
-
-  handleError = (error: WebsocketError | Job): void => {
-    this.dialogService.error(this.errorHandler.parseError(error));
-  };
-
-  isSystemDataset(dataset: DatasetDetails): boolean {
-    return dataset.name.split('/').length === 1 && this.systemDataset === dataset.name;
-  }
-
-  treeHeaderScrolled(): void {
-    this.scrollSubject.next(this.ixTreeHeader.nativeElement.scrollLeft);
-  }
-
-  datasetTreeScrolled(scrollLeft: number): void {
-    this.scrollSubject.next(scrollLeft);
-  }
-
-  datasetTreeWidthChanged(event: ResizedEvent): void {
-    this.treeWidthChange$.next(event);
-  }
-
-  onSearch(query: string): void {
-    this.dataSource.filter(query);
-  }
-
-  ngAfterViewInit(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
-      .subscribe((state: BreakpointState) => {
-        if (state.matches) {
-          this.isMobileView = true;
-        } else {
-          this.closeMobileDetails();
-          this.isMobileView = false;
-        }
-        this.cdr.markForCheck();
-      });
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  closeMobileDetails(): void {
-    this.showMobileDetails = false;
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  createPool(): void {
-    this.router.navigate(['/storage', 'create']);
-  }
-
-  viewDetails(dataset: DatasetDetails): void {
-    this.router.navigate(['/datasets', dataset.id]);
-
-    if (this.isMobileView) {
-      this.showMobileDetails = true;
-
-      // focus on details container
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
-    }
-  }
-
-  onImportData(): void {
-    this.slideIn.open(ImportDataComponent);
   }
 }

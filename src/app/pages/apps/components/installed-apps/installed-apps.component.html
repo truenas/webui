@@ -1,13 +1,12 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="selectedApp?.name">
-    <div *ngIf="hasSelectionUpdates" class="global-update">
-      <span>{{ '{n, plural, one {# Application} other {# Applications} } have pending updates!' | translate: { n: hasSelectionUpdates } }}</span>
+  <ix-page-title-header [pageTitle]="'Installed' | translate">
+    <div *ngIf="hasUpdates" class="global-update">
+      <span>{{ '{n, plural, one {# application} other {# applications} } have pending updates.' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
         color="primary"
         ixTest="update-all"
-        [disabled]="!hasCheckedApps"
-        (click)="onBulkUpgrade()"
+        (click)="onBulkUpgrade(true)"
       >
         {{ 'Update All' | translate }}
       </button>
@@ -92,7 +91,7 @@
 
       <div class="app-wrapper">
         <div class="app-inner">
-          <div class="app-header">
+          <div class="app-header-row">
             <div>
               <span class="app-name-header">
                 <mat-checkbox
@@ -106,6 +105,7 @@
               </span>
             </div>
             <div>{{ 'Status' | translate }}</div>
+            <!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 -->
             <div>{{ 'CPU' | translate }}</div>
             <div>{{ 'RAM' | translate }}</div>
             <div>{{ 'Disk' | translate }}</div>
@@ -118,8 +118,9 @@
                 [matTooltip]="'Updates available' | translate"
               ></ix-icon>
             </div>
-            <div>{{ 'Action' | translate }}</div>
+            <div></div>
           </div>
+
           <div class="apps-rows">
             <ng-container *ngFor="let app of filteredApps">
               <ix-app-row
@@ -134,12 +135,9 @@
                 (keydown.enter)="selectApp(app)"
               ></ix-app-row>
             </ng-container>
-            <div *ngIf="!dataSource.length" class="no-apps">
+
+            <div *ngIf="(dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading)" class="no-apps">
               <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
-            </div>
-            <!-- TODO: Merge into one flow. This is temporary solution -->
-            <div *ngIf="dataSource.length && !filteredApps.length" class="no-apps">
-              <ix-entity-empty [conf]="emptySearchResultsConf"></ix-entity-empty>
             </div>
           </div>
         </div>

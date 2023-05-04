@@ -4,7 +4,7 @@ import {
 
 @Component({
   selector: 'ix-toolbar-slider',
-  styleUrls: ['./toolbar.component.scss'],
+  styleUrls: ['./toolbar-slider.component.scss'],
   templateUrl: './toolbar-slider.component.html',
 })
 export class ToolbarSliderComponent {

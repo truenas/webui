@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import {
-  merge, Observable, of, throwError,
+  merge, Observable, of, Subject, throwError,
 } from 'rxjs';
 import {
-  filter, map, share, switchMap, take, takeWhile, tap,
+  filter, map, share, switchMap, take, takeUntil, takeWhile, tap,
 } from 'rxjs/operators';
+import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -23,11 +25,19 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
   providedIn: 'root',
 })
 export class WebSocketService {
-  private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
+  private readonly eventSubscriptions = new Map<string, { obs$: Observable<unknown>; takeUntil$: Subject<void> }>();
+  mockUtils: MockEnclosureUtils;
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
-  ) { }
+  ) {
+    this.mockUtils = new MockEnclosureUtils();
+    this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+      if (!isConnected) {
+        this.clearSubscriptions();
+      }
+    });
+  }
 
   private get ws$(): Observable<unknown> {
     return this.wsManager.websocket$;
@@ -48,8 +58,21 @@ export class WebSocketService {
           console.error('Error: ', data.error);
           return throwError(() => data.error);
         }
+
+        if (
+          environment
+          && !environment.production
+          && environment.mockConfig?.enabled
+          && this.mockUtils.canMock
+          && data.msg === IncomingApiMessageType.Result
+        ) {
+          const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
+          return of(mockResultMessage);
+        }
+
         return of(data);
       }),
+
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
     );
@@ -86,11 +109,12 @@ export class WebSocketService {
   }
 
   subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    const oldObservable$ = this.eventSubscriptions.get(name);
+    const oldObservable$ = this.eventSubscriptions.get(name)?.obs$;
     if (oldObservable$) {
       return oldObservable$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
     }
 
+    const takeUntil$ = new Subject<void>();
     const subObs$ = this.wsManager.buildSubscriber(name).pipe(
       switchMap((apiEvent: unknown) => {
         const erroredEvent = apiEvent as { error: unknown };
@@ -101,14 +125,24 @@ export class WebSocketService {
         return of(apiEvent);
       }),
       share(),
+      takeUntil(takeUntil$),
     );
-    this.eventSubscriptions.set(name, subObs$);
+    this.eventSubscriptions.set(name, { obs$: subObs$, takeUntil$ });
     return subObs$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
+  }
+
+  clearSubscriptions(): void {
+    this.eventSubscriptions.forEach(
+      ({ takeUntil$ }: { takeUntil$: Subject<void> }) => {
+        takeUntil$.next();
+      },
+    );
+    this.eventSubscriptions.clear();
   }
 
   private subscribeToJobUpdates(jobId: number): Observable<Job> {

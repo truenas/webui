@@ -56,7 +56,6 @@ export interface ReplicationTask {
   retries?: number;
   schedule?: Schedule;
   schedule_method: ScheduleMethod;
-  schedule_picker: string;
   source_datasets?: string[];
   source_datasets_from: string;
   speed_limit?: number;

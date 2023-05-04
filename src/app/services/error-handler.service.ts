@@ -79,7 +79,7 @@ export class ErrorHandlerService implements ErrorHandler {
     return {
       title: error.type || error.trace.class,
       message: error.reason,
-      backtrace: error.trace.formatted,
+      backtrace: error.trace?.formatted || '',
     };
   }
 

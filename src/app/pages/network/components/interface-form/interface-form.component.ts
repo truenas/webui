@@ -24,10 +24,11 @@ import {
   NetworkInterfaceCreate,
   NetworkInterfaceUpdate,
 } from 'app/interfaces/network-interface.interface';
-import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
@@ -133,6 +134,7 @@ export class InterfaceFormComponent implements OnInit {
     private networkService: NetworkService,
     private errorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
+    private snackbar: SnackbarService,
     private core: CoreService,
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
@@ -225,6 +227,7 @@ export class InterfaceFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
+        this.snackbar.success(this.translate.instant('Network interface updated'));
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
         this.slideInService.close();
 

@@ -4,8 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -33,9 +31,6 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
       AppLoaderModule,
       ReactiveFormsModule,
       IxFormsModule,
-    ],
-    declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2021-11-05 10:52:06')),
     ],
     providers: [
       {

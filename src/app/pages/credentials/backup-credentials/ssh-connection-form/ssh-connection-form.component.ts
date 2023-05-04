@@ -21,6 +21,7 @@ import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, KeychainCredentialService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -141,6 +142,7 @@ export class SshConnectionFormComponent {
     private validatorsService: IxValidatorsService,
     private slideIn: IxSlideInService,
     public formatter: IxFormatterService,
+    private snackbar: SnackbarService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
   ) {}
@@ -197,6 +199,7 @@ export class SshConnectionFormComponent {
     ).subscribe({
       next: () => {
         this.isLoading = false;
+        this.snackbar.success(this.translate.instant('SSH Connection saved'));
         // TODO: Ideally this form shouldn't care about how it was called
         if (this.data?.dialog) {
           if (this.dialogRef) {

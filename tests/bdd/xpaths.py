@@ -1,9 +1,3 @@
-
-CHECKBOX = '//mat-checkbox'
-TOGGLE = '//mat-slide-toggle'
-BUTTON = '//button'
-
-
 def mat_Option(option):
     return f'//mat-option[contains(.,"{option}")]'
 
@@ -28,10 +22,10 @@ class add_Catalog:
 
 class add_Dataset:
     title = '//h3[text()="Add Dataset"]'
-    name_Textarea = '//div[@id="name"]//textarea'
-    share_Type_Select = '//mat-select[@ix-auto="select__Share Type"]'
-    share_Type_Select_Text = '//mat-select[@ix-auto="select__Share Type"]//span[contains(@class,"mat-select-min-line")]'
-    share_Type_SMB_Option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
+    name_Textarea = '//textarea[@data-test="textarea-name"]'
+    share_Type_Select = '//mat-select[@data-test="select-share-type"]'
+    share_Type_Select_Text = '//mat-select[@data-test="select-share-type"]//span[contains(@class,"mat-mdc-select-min-line")]'
+    share_Type_SMB_Option = '//mat-option[contains(.,"SMB")]'
 
 
 class add_Group:
@@ -62,7 +56,7 @@ class add_User:
     username_Input = '//ix-input[@formcontrolname="username"]//input'
     password_Input = '//ix-input[@formcontrolname="password"]//input'
     confirm_Password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
-    shell_Select = '//ix-combobox[@formcontrolname="shell"]//input'
+    shell_Select = '//mat-select[@data-test="select-shell"]'
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
     sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
     email_Input = '//ix-input[@formcontrolname="email"]//input'
@@ -74,15 +68,15 @@ class add_User:
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     create_Home_Directory_Checkbox = '//ix-checkbox[@formcontrolname="home_create"]//mat-checkbox'
     password_Disabled_Slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
-    home_Mode_Owner_Write_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
-    home_Mode_Owner_Read_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[2]'
-    home_Mode_Owner_Exec_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[3]'
-    home_Mode_Group_Read_Checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[1]'
-    home_Mode_Group_Write_Checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[2]'
-    home_Mode_Group_Exec_Checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[3]'
-    home_Mode_Other_Read_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[1]'
-    home_Mode_Other_Write_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[2]'
-    home_Mode_Other_Exec_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[3]'
+    home_Mode_Owner_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-user-read"]'
+    home_Mode_Owner_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-user-write"]'
+    home_Mode_Owner_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-user-execute"]'
+    home_Mode_Group_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-group-read"]'
+    home_Mode_Group_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-group-write"]'
+    home_Mode_Group_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-group-execute"]'
+    home_Mode_Other_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-other-read"]'
+    home_Mode_Other_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-other-write"]'
+    home_Mode_Other_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-other-execute"]'
     ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
 
 
@@ -94,7 +88,7 @@ class add_Zvol:
 
 class advanced:
     title = '//h1[contains(.,"Advanced")]'
-    system_Dataset_Pool_Card = '//h3[text()="System Dataset Pool"]'
+    system_Dataset_Pool_Card = '//h3[text()="Storage"]'
     system_Dataset_Pool_Configure_Button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
 
     def system_Dataset_Pool_Pool(pool_name):
@@ -146,10 +140,11 @@ class button:
     cancel = '//button[normalize-space(span/text())="Cancel"]'
     choose = '//button[normalize-space(span/text())="Choose"]'
     delete = '//button[contains(.,"Delete")]'
+    done = '//*[@data-test="button-done"]'
     edit = '//button[contains(.,"Edit")]'
     save = '//button[normalize-space(span/text())="Save"]'
     settings = '//button[contains(.,"Settings")]'
-    Continue = '//button[contains(*/text(),"Continue")]'
+    Continue = '//button[@data-test="button-dialog-confirm"]'
     CONTINUE = '//button[contains(*/text(),"CONTINUE")]'
     close = '//button[contains(.,"Close")]'
     CLOSE = '//button[contains(.,"CLOSE")]'
@@ -166,6 +161,7 @@ class button:
     launch_Docker_Image = '//span[contains(.,"Launch Docker Image")]'
     initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
     leave_Domain = '//button[contains(.,"Leave Domain")]'
+    reload_Now = '//button[@data-test="button-dialog-confirm"]'
 
 
 class certificates:
@@ -173,13 +169,46 @@ class certificates:
     csr_Card_Title = '//h3[contains(text(),"Certificate Signing Requests")]'
     csr_Add_Button = '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]'
     csr_Title = ''
-    email_Input = '//input[@ix-auto="input__Email"]'
+
+    def next_Button(name):
+        return f'//div[contains(.,"{name}") and contains(@class,"mat-step")]//button[@data-test="button-next"]'
+
+    identifier_Next_Button = next_Button('Identifier and Type')
+    cert_Options_Next_Button = next_Button('Certificate Options')
+    cert_Subject_Next_Button = next_Button('Certificate Subject')
+    import_Certificate_Next_Button = '(//div[contains(.,"Import Certificate") and contains(@class,"mat-step")]//button[@data-test="button-next"])[2]'
+    extra_Constraints_Next_Button = next_Button('Extra Constraints')
+    key_Type_Select = '//mat-select[@data-test="select-key-type"]'
+    key_Type_RSA_Option = '//mat-option[@data-test="option-key-type-rsa"]'
+    state_Input = '//input[@data-test="input-state"]'
+    locality_Input = '//input[@data-test="input-city"]'
+    organization_Input = '//input[@data-test="input-organization"]'
+    organizational_Unit_Input = '//input[@data-test="input-organizational-unit"]'
+    email_Input = '//input[@data-test="input-email"]'
+    common_Name_Input = '//input[@data-test="input-common"]'
+    subject_Alternate_Names_Input = '//input[@data-test="input-san"]'
+
+    extended_Key_Usage_Checkbox = '//mat-checkbox[contains(.,"Extended Key Usage")]'
+    usages_Select = '//mat-select[@data-test="select-usages"]'
+    usages_Any_Extended_Key_Usage_Option = '//mat-option[@data-test="option-usages-any-extended-key-usage"]'
+    critical_Extension_Checkbox = '//mat-checkbox[contains(.,"Critical Extension")]'
+    key_Usage_Checkbox = '//mat-checkbox[contains(.,"Key Usage") and not(contains(.,"Extended"))]'
+    key_Usage_Config_Select = '//mat-select[@data-test="select-key-usage"]'
+    Key_Usage_Config_Digital_Signature_Option = '//mat-option[@data-test="option-key-usage-digital-signature"]'
+    type_select = '//mat-select[@data-test="select-create-type"]'
+    type_Internal_CA_Option = '//mat-option[@data-test="option-create-type-internal-ca"]'
+    type_Internal_Certificate_Option = '//mat-option[@data-test="option-create-type-internal-certificate"]'
+    signing_Certificate_Authority_Select = '//mat-select[@data-test="select-signedby"]'
+    ca1_Delete_Button = '//tr[contains(.,"ca1")]//button[@data-test="button-table-delete"]'
+    csr1_Delete_Button = '//tr[contains(.,"csr1")]//button[@data-test="button-table-delete"]'
+    cert1_Delete_Button = '//tr[contains(.,"cert1")]//button[@data-test="button-table-delete"]'
 
 
 class checkbox:
     enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     old_Confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
+    new_Confirm = '//mat-checkbox[@data-test="checkbox-confirm"]'
     confirm = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
     sudo = '//ix-checkbox[@formcontrolname="sudo_commands_all"]//mat-checkbox'
     force = '//ix-checkbox[@formcontrolname="force"]//mat-checkbox'
@@ -189,6 +218,13 @@ class chosse_Pool_For_App:
     title = '//h1[contains(.,"Choose a pool for Apps")]'
     pool_Select = '//ix-select[@formcontrolname="pool"]//mat-select'
     tank_Pool_Option = '//mat-option[contains(.,"tank")]'
+
+
+class common_Input():
+    def get_Input(input_name):
+        return f'//*[@data-test="input-{input_name}"]'
+
+    name = get_Input('name')
 
 
 class dashboard:
@@ -202,7 +238,7 @@ class dataset:
     add_Dataset_Button = '//button[contains(*/text(),"Add Dataset")]'
     permission_Title = '//h3[text()="Permissions"]'
     permission_Edit_Button = '//mat-card-header[contains(.,"Permissions")]//a[normalize-space(*/text())="Edit"]'
-    add_Zvol_Button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
+    add_Zvol_Button = '//button[normalize-space(span/text())="Add Zvol"]'
     zfs_Encryption_Title = '//h3[text()="ZFS Encryption"]'
     zfs_Encryption_Edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
     lock_Button = '//button[contains(.,"Lock")]'
@@ -224,6 +260,9 @@ class dataset:
 
     def dataset_Tree(dataset_name):
         return f'//ix-dataset-node[contains(.,"{dataset_name}")]/div'
+
+    def dataset_expand(pool_name, dataset_name):
+        return f'//*[@data-test="button-toggle-row-{pool_name}-{dataset_name}"]'
 
     def permission_At_Owner(user_name):
         return f'//div[text()="owner@ - {user_name}"]'
@@ -266,10 +305,10 @@ class disks:
     wipe_Button = '//mat-dialog-container//button[contains(.,"Wipe")]'
 
     def disk_Expander(disk):
-        return f'//tr[@ix-auto="expander__{disk}"]/td[2]'
+        return f'//tr[@data-test="row-{disk}"]/td[2]'
 
     def wipe_Disk_Button(disk):
-        return f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]'
+        return f'//button[@data-test="button-{disk}-wipe"]'
 
     def confirm_Box_Title(disk):
         return f'//h1[contains(.,"Wipe Disk {disk}")]'
@@ -439,7 +478,7 @@ class pool_manager:
     vdev_Add_Button = '//button[@id="vdev__add-button"]'
     force_Checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
     create_Button = '//button[@name="create-button"]'
-    create_Pool_Button = '//button[@ix-auto="button__CREATE POOL"]'
+    create_Pool_Button = '//button[@data-test="button-dialog-confirm"]'
     create_Pool_Popup = '//h1[contains(.,"Create Pool")]'
     encryption_Checkbox = '//mat-checkbox[@id="pool-manager__encryption-checkbox"]'
 
@@ -454,10 +493,11 @@ class popup:
     active_Directory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
     saving_Permissions = '//h1[text()="Saving Permissions"]'
-    updatin_Acl = '//h1[text()="Updating ACL"]'
+    updating_Acl = '//h1[text()="Updating ACL"]'
     setting_Ldap = '//h1[text()="Setting up LDAP"]'
     configuring = '//h1[contains(.,"Configuring...")]'
     installing = '//h1[contains(.,"Installing")]'
+    deleting = '//*[contains(.,"Deleting")]'
 
 
 class progress:
@@ -467,6 +507,9 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
+    CHECKBOX = '//mat-checkbox'
+    TOGGLE = '//button[@role="switch"]'
+    BUTTON = '//button[@aria-label="Edit"]'
 
     def service_Tr(serivce):
         return f'//tr[contains(.,"{serivce}")]'
@@ -509,21 +552,29 @@ class sharing:
 
 
 class side_Menu:
+    def menu_Anchor(menu_Item):
+        return f'//a[@name="{menu_Item}-menu"]'
+
+    def submenu_Anchor(menu_Item):
+        return f'//div[contains(@class,"lidein-nav-md")]//a[normalize-space(text())="{menu_Item}"]'
+
     """xpath for the menu on the left side"""
-    dashboard = '//mat-list-item[@ix-auto="option__Dashboard"]'
-    datasets = '//mat-list-item[@ix-auto="option__Datasets"]'
-    shares = '//mat-list-item[@ix-auto="option__Shares"]'
-    system_Setting = '//mat-list-item[@ix-auto="option__System Settings"]'
-    advanced = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]'
-    services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
-    credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
-    local_Group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
-    local_User = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
-    certificates = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]'
-    directory_Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
-    network = '//mat-list-item[@ix-auto="option__Network"]'
-    storage = '//mat-list-item[@ix-auto="option__Storage"]'
-    apps = '//mat-list-item[@ix-auto="option__Apps"]'
+    dashboard = menu_Anchor('Dashboard')
+    storage = menu_Anchor('Storage')
+    datasets = menu_Anchor('Datasets')
+    shares = menu_Anchor('Shares')
+    network = menu_Anchor('Network')
+    credentials = menu_Anchor('Credentials')
+    local_User = submenu_Anchor('Local Users')
+    local_Group = submenu_Anchor('Local Groups')
+    certificates = submenu_Anchor('Certificates')
+    directory_Services = submenu_Anchor('Directory Services')
+    apps = menu_Anchor('Apps')
+    system_Setting = menu_Anchor('System_Settings')
+    general = submenu_Anchor('General')
+    advanced = submenu_Anchor('Advanced')
+    failover = submenu_Anchor('Failover')
+    services = submenu_Anchor('Services')
 
 
 class smb:
@@ -549,9 +600,9 @@ class storage:
         return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
 
 
-class systemDataset:
-    title = '//h3[text()="System Dataset Pool" and @class="ix-formtitle"]'
-    pool_Select = '//mat-select'
+class system_Dataset:
+    title = '//h3[text()="Storage Settings" and @class="ix-formtitle"]'
+    pool_Select = '//mat-select[@data-test="select-pool"]'
 
     def pool_Option(pool_name):
         return f'//mat-option[contains(.,"{pool_name}")]'
@@ -570,7 +621,7 @@ class toolbar:
 
 class unlock_Dataset:
     title = '//h1[contains(.,"Unlock Datasets")]'
-    dataset_Passphrase_Input = '//input[@ix-auto="input__Dataset Passphrase"]'
+    dataset_Passphrase_Input = '//input[@data-test="input-passphrase"]'
     unlock_Datasets_Message1 = '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]'
     unlock_Datasets_Message2 = '//p[contains(.,"These datasets were successfully unlocked.")]'
 
@@ -582,3 +633,4 @@ class users:
     eric_Allowed_Sudo_Commands = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Allowed Sudo Commands:")]/../dd'
     root_User = '//tr[contains(.,"root")]/td'
     root_Edit_Button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    user_Bash_Shell = '//dd[contains(.,"/usr/bin/bash")]'

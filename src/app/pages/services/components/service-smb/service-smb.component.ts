@@ -16,6 +16,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
@@ -30,7 +31,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServiceSmbComponent implements OnInit {
   isFormLoading = false;
   isBasicMode = true;
-  hasSecondController = false;
   subscriptions: Subscription[] = [];
 
   form = this.fb.group({
@@ -110,6 +110,7 @@ export class ServiceSmbComponent implements OnInit {
     private translate: TranslateService,
     private userService: UserService,
     private validatorsService: IxValidatorsService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -142,6 +143,7 @@ export class ServiceSmbComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.router.navigate(['/services']);
           this.cdr.markForCheck();
         },
@@ -151,9 +153,5 @@ export class ServiceSmbComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
   }
 }

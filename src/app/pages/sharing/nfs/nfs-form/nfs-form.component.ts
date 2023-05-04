@@ -13,10 +13,10 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -147,6 +147,11 @@ export class NfsFormComponent implements OnInit {
       )
       .subscribe({
         next: () => {
+          if (this.isNew) {
+            this.snackbar.success(this.translate.instant('NFS share created'));
+          } else {
+            this.snackbar.success(this.translate.instant('NFS share updated'));
+          }
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();

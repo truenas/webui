@@ -2,19 +2,46 @@
 
 <div class="app-list-item">
   {{ 'Catalog' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else catalog"></ngx-skeleton-loader>
+  <ng-template #catalog>
+    <ng-container *ngIf="app?.catalog; else notAvailable">
+      {{ app?.catalog }}
+    </ng-container>
+  </ng-template>
 </div>
 <div class="app-list-item">
   {{ 'Train' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
+  <ng-template #train>
+    <ng-container *ngIf="app?.train; else notAvailable">
+      {{ app?.train }}
+    </ng-container>
+  </ng-template>
 </div>
 <div class="app-list-item">
   {{ 'Chart Version' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else chartVersion"></ngx-skeleton-loader>
+  <ng-template #chartVersion>
+    <ng-container *ngIf="app?.latest_version; else notAvailable">
+      {{ app?.latest_version }}
+    </ng-container>
+  </ng-template>
 </div>
 <div class="app-list-item">
   {{ 'Maintainer' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else maintainersInfo"></ngx-skeleton-loader>
+  <ng-template #maintainersInfo>
+    <ng-container *ngIf="maintainerList; else notAvailable">
+      <div class="inline">
+        <ng-container *ngFor="let maintainer of app?.maintainers; index as index" >
+          <a [href]="maintainer.url" [ixTest]="[maintainer.email]">
+            {{ maintainer.name }}
+          </a>{{ '(' + maintainer.email + ')' }}
+          <span *ngIf="index < (app.maintainers.length -1)">{{index}}{{app.maintainers.length -1}}, </span>
+        </ng-container>
+      </div>
+    </ng-container>
+  </ng-template>
 </div>
 
 <ng-template #notAvailable>

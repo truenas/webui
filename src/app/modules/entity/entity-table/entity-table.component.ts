@@ -52,7 +52,6 @@ import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -162,7 +161,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   loaderOpen = false;
   protected toDeleteRow: Row;
   private interval: Interval;
-  excuteDeletion = false;
+  executeDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
   checkboxLoaders = new Map<string, BehaviorSubject<boolean>>();
@@ -203,7 +202,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     public storageService: StorageService,
     protected store$: Store<AppState>,
     protected matDialog: MatDialog,
-    public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
     protected layoutService: LayoutService,
     protected slideIn: IxSlideInService,
@@ -603,11 +601,15 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     }
 
     this.rows = this.generateRows(response);
+    this.currentRows = this.rows;
+
     if (!skipActions) {
       this.storageService.tableSorter(this.rows, this.sortKey, 'asc');
     }
     if (this.conf.dataHandler) {
-      this.conf.dataHandler(this);
+      this.conf.dataHandler(this).pipe(untilDestroyed(this)).subscribe(() => {
+        this.changeDetectorRef.markForCheck();
+      });
     }
 
     if (this.conf.addRows) {
@@ -618,11 +620,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.paginationPageIndex = 0;
       this.showDefaults = true;
     }
-    if (this.expandedRows === 0 || this.excuteDeletion || this.needRefreshTable) {
-      this.excuteDeletion = false;
+    if (this.expandedRows === 0 || this.executeDeletion || this.needRefreshTable) {
+      this.executeDeletion = false;
       this.needRefreshTable = false;
 
-      this.currentRows = this.rows;
       this.paginationPageIndex = 0;
     }
 
@@ -869,7 +870,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     ).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.getData();
-        this.excuteDeletion = true;
+        this.executeDeletion = true;
         if (this.conf.afterDelete) {
           this.conf.afterDelete();
         }

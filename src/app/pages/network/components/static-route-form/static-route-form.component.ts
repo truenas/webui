@@ -5,8 +5,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
-import { ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ipv4or6Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -42,6 +43,7 @@ export class StaticRouteFormComponent {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
   ) {}
@@ -67,6 +69,11 @@ export class StaticRouteFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Static route added'));
+        } else {
+          this.snackbar.success(this.translate.instant('Static route updated'));
+        }
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideInService.close();

@@ -13,7 +13,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -31,7 +30,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
-  providers: [TaskService, UserService, EntityFormService],
+  providers: [TaskService, UserService],
 })
 export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   title = this.translate.instant('Rsync Tasks');
