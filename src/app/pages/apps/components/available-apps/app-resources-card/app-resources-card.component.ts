@@ -42,6 +42,10 @@ export class AppResourcesCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getResourcesUsageUpdates();
+  }
+
+  getResourcesUsageUpdates(): void {
     this.ws.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       throttleTime(500),
