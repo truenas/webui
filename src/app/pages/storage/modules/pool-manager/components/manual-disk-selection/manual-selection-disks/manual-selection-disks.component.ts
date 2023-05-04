@@ -132,8 +132,14 @@ export class ManualSelectionDisksComponent implements OnInit {
       const sizeMatches = filterValues.diskSize
         ? this.filesizePipe.transform(disk.size, { standard: 'iec' }) === filterValues.diskSize
         : true;
+      const diskModalStringNormalized = disk.model?.toLowerCase().trim();
+      const searchStringNormalized = filterValues.search.toLowerCase().trim();
+      const diskSerialStringNormalized = disk.serial?.toLowerCase().trim();
       const searchMatches = filterValues.search
-        ? (disk.model?.includes(filterValues.search) || disk.serial?.includes(filterValues.search))
+        ? (
+          diskModalStringNormalized.includes(searchStringNormalized)
+          || diskSerialStringNormalized.includes(searchStringNormalized)
+        )
         : true;
 
       return typeMatches && sizeMatches && searchMatches;
