@@ -16,7 +16,7 @@ import {
   Inject,
   TemplateRef,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -120,7 +120,16 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private store$: Store<AppState>,
     private systemService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
-  ) {}
+  ) {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
+      .subscribe(() => {
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+          this.closeMobileDetails();
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
@@ -130,6 +139,111 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.loadSystemDatasetConfig();
     this.listenForLoading();
     this.listenForDatasetScrolling();
+  }
+
+  ngAfterViewInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.detectChanges();
+      });
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    this.layoutService.pageHeaderUpdater$.next(null);
+  }
+
+  loadSystemDatasetConfig(): void {
+    this.ws
+      .call('systemdataset.config')
+      .pipe(
+        map((config) => config.pool),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (systemDataset) => {
+          this.systemDataset = systemDataset;
+        },
+        error: this.handleError,
+      });
+  }
+
+  listenForLoading(): void {
+    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+      this.isLoading = isLoading;
+      this.cdr.markForCheck();
+    });
+  }
+
+  handleError = (error: WebsocketError | Job): void => {
+    this.dialogService.errorReportMiddleware(error);
+  };
+
+  isSystemDataset(dataset: DatasetDetails): boolean {
+    return isRootDataset(dataset) && this.systemDataset === dataset.name;
+  }
+
+  updateScroll(type: ScrollType): void {
+    this.scrollSubject.next(
+      type === ScrollType.IxTree ? this.ixTree.nativeElement.scrollLeft : this.ixTreeHeader.nativeElement.scrollLeft,
+    );
+  }
+
+  onIxTreeWidthChange(event: ResizedEvent): void {
+    this.ixTreeHeaderWidth = Math.round(event.newRect.width);
+  }
+
+  onSearch(query: string): void {
+    this.dataSource.filter(query);
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
+  }
+
+  createPool(): void {
+    this.router.navigate(['/storage', 'create']);
+  }
+
+  viewDetails(dataset: DatasetDetails): void {
+    this.router.navigate(['/datasets', dataset.id]);
+
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+
+      // focus on details container
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+    }
+  }
+
+  loadHaEnabled(): void {
+    if (this.systemService.isEnterprise) {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        if (isHaLicensed) {
+          this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe((haStatus) => {
+            this.isHaEnabled = haStatus.hasHa;
+            this.cdr.detectChanges();
+          });
+        } else {
+          this.isHaEnabled = false;
+        }
+      });
+    } else {
+      this.isHaEnabled = false;
+    }
+  }
+
+  onImportData(): void {
+    this.slideIn.open(ImportDataComponent);
   }
 
   private setupTree(): void {
@@ -192,28 +306,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  loadSystemDatasetConfig(): void {
-    this.ws
-      .call('systemdataset.config')
-      .pipe(
-        map((config) => config.pool),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (systemDataset) => {
-          this.systemDataset = systemDataset;
-        },
-        error: this.handleError,
-      });
-  }
-
-  listenForLoading(): void {
-    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
-      this.isLoading = isLoading;
-      this.cdr.markForCheck();
-    });
-  }
-
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
@@ -225,87 +317,5 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           },
         }),
     );
-  }
-
-  handleError = (error: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(error);
-  };
-
-  isSystemDataset(dataset: DatasetDetails): boolean {
-    return isRootDataset(dataset) && this.systemDataset === dataset.name;
-  }
-
-  updateScroll(type: ScrollType): void {
-    this.scrollSubject.next(
-      type === ScrollType.IxTree ? this.ixTree.nativeElement.scrollLeft : this.ixTreeHeader.nativeElement.scrollLeft,
-    );
-  }
-
-  onIxTreeWidthChange(event: ResizedEvent): void {
-    this.ixTreeHeaderWidth = Math.round(event.newRect.width);
-  }
-
-  onSearch(query: string): void {
-    this.dataSource.filter(query);
-  }
-
-  ngAfterViewInit(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
-      .subscribe((state: BreakpointState) => {
-        if (state.matches) {
-          this.isMobileView = true;
-        } else {
-          this.closeMobileDetails();
-          this.isMobileView = false;
-        }
-        this.cdr.detectChanges();
-      });
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  closeMobileDetails(): void {
-    this.showMobileDetails = false;
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  createPool(): void {
-    this.router.navigate(['/storage', 'create']);
-  }
-
-  viewDetails(dataset: DatasetDetails): void {
-    this.router.navigate(['/datasets', dataset.id]);
-
-    if (this.isMobileView) {
-      this.showMobileDetails = true;
-
-      // focus on details container
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
-    }
-  }
-
-  loadHaEnabled(): void {
-    if (this.systemService.isEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        if (isHaLicensed) {
-          this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe((haStatus) => {
-            this.isHaEnabled = haStatus.hasHa;
-            this.cdr.detectChanges();
-          });
-        } else {
-          this.isHaEnabled = false;
-        }
-      });
-    } else {
-      this.isHaEnabled = false;
-    }
-  }
-
-  onImportData(): void {
-    this.slideIn.open(ImportDataComponent);
   }
 }
