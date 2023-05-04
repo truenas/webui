@@ -67,8 +67,9 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         ]).pipe(
           tap(([acl, stat]) => {
             acl.acl.forEach((ace, aceIndex) => {
-              if ((!ace.who && [NfsAclTag.User, PosixAclTag.User].includes(ace.tag))
-                || (!ace.who && [NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag))) {
+              const unknownUser = !ace.who && [NfsAclTag.User, PosixAclTag.User].includes(ace.tag);
+              const unknownGroup = !ace.who && [NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag);
+              if (unknownUser || unknownGroup) {
                 this.patchState((state) => ({
                   ...state,
                   acesWithError: _.union(state.acesWithError, [aceIndex]),
