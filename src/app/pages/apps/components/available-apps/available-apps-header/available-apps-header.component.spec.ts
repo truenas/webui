@@ -24,7 +24,6 @@ describe('AvailableAppsHeaderComponent', () => {
   let sortItems: IxFilterSelectListHarness;
   let categoriesSelect: IxChipsHarness;
   let applyButton: MatButtonHarness;
-  let resetButton: MatButtonHarness;
   let availableAppsStore: AvailableAppsStore;
 
   const createComponent = createComponentFactory({
@@ -53,7 +52,7 @@ describe('AvailableAppsHeaderComponent', () => {
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
         filterValues$: of({
           catalogs: ['OFFICIAL'],
-          sort: AppsFiltersSort.Name,
+          sort: null,
           categories: ['storage', 'crypto', 'media', 'torrent'],
         }),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
@@ -61,7 +60,6 @@ describe('AvailableAppsHeaderComponent', () => {
         searchQuery$: of(''),
         applySearchQuery: jest.fn(),
         applyFilters: jest.fn(),
-        resetFilters: jest.fn(),
       }),
     ],
   });
@@ -78,7 +76,6 @@ describe('AvailableAppsHeaderComponent', () => {
     sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[1];
     categoriesSelect = await loader.getHarness(IxChipsHarness);
     applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
-    resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
     availableAppsStore = spectator.inject(AvailableAppsStore);
   });
 
@@ -101,7 +98,7 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['OFFICIAL'],
-      sort: AppsFiltersSort.Name,
+      sort: null,
       categories: [
         'storage',
         'crypto',
@@ -133,30 +130,8 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['OFFICIAL', 'TEST'],
-      sort: AppsFiltersSort.Name,
-      categories: ['storage'],
-    });
-  });
-
-  it('emits (filters) when reset button is pressed', async () => {
-    await catalogsItems.setValue(['OFFICIAL']);
-    await sortItems.setValue(['Updated Date']);
-    await categoriesSelect.setValue(['storage']);
-    await applyButton.click();
-
-    expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['OFFICIAL'],
-      sort: AppsFiltersSort.LastUpdate,
-      categories: ['storage'],
-    });
-
-    await resetButton.click();
-    expect(availableAppsStore.resetFilters).toHaveBeenCalled();
-
-    expect(spectator.component.form.value).toEqual({
-      catalogs: ['OFFICIAL', 'TEST'],
       sort: null,
-      categories: [],
+      categories: ['storage'],
     });
   });
 });
