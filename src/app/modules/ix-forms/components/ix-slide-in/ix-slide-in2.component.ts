@@ -72,10 +72,10 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     });
   }
 
-  openSlideIn<T, R>(
+  openSlideIn<T, D>(
     componentType: Type<T>,
-    params?: { wide?: boolean; data?: R },
-  ): IxSlideInRef<T, R> {
+    params?: { wide?: boolean; data?: D },
+  ): IxSlideInRef<T, D> {
     if (this.isSlideInOpen) {
       console.error('SlideIn is already open');
     }
@@ -90,14 +90,14 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     this.wasBodyCleared = false;
     // clear body and close all slides
 
-    return this.createSlideInRef<T, R>(componentType, params?.data);
+    return this.createSlideInRef<T, D>(componentType, params?.data);
   }
 
-  private createSlideInRef<T, R>(
+  private createSlideInRef<T, D>(
     componentType: Type<T>,
-    data?: R,
-  ): IxSlideInRef<T, R> {
-    const slideInRef = new IxSlideInRef<T, R>(this.slideIn2Service, this);
+    data?: D,
+  ): IxSlideInRef<T, D> {
+    const slideInRef = new IxSlideInRef<T, D>(this.slideIn2Service, this);
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
