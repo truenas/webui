@@ -24,7 +24,7 @@ pytestmark = [pytest.mark.debug_test]
 
 
 @pytest.mark.dependency(name='Setup_SSH')
-@scenario('features/NAS-T1062.feature', 'Verify SSH Access with root works')
+@scenario('features/NAS-T1665.feature', 'Verify SSH Access with root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with root works."""
 
@@ -46,9 +46,9 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
     """on the dashboard, verify the Welcome box is loaded, click Close."""
     rsc.Verify_The_Dashboard(driver)
-    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
-        driver.find_element_by_xpath(xpaths.button.close).click()
+    # if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+    #     assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+    #     driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('click on the Credentials side menu, then click Local Users')
@@ -74,6 +74,9 @@ def on_edit_user_click_the_ssh_password_login_enabled_checkbox(driver):
     """on Edit User click the "SSH password login enabled" checkbox."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
+    element = driver.find_element_by_xpath(xpaths.add_User.ssh_Password_Enabled_Checkbox)
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, xpaths.add_User.ssh_Password_Enabled_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.ssh_Password_Enabled_Checkbox).click()
 
