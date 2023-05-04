@@ -38,7 +38,7 @@ export class AppResourcesCardComponent implements OnInit {
         this.cpuPercentage = parseInt(update.cpu.average.usage.toFixed(1));
       }
 
-      if (update.virtual_memory) {
+      if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
         if (update.zfs && update.zfs.arc_size !== null) {

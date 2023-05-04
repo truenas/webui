@@ -266,7 +266,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
 
-      if (update.virtual_memory) {
+      if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
         if (update.zfs && update.zfs.arc_size !== null) {

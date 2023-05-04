@@ -119,10 +119,9 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadSimilarApps(): void {
     this.similarAppsLoading$.next(true);
-    this.appService.getAvailableApps().pipe(untilDestroyed(this)).subscribe({
+    this.appService.getAppSimilarApps(this.app).pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
         this.similarApps = shuffle(apps.filter((app) => app.name !== this.appId)).slice(0, 4);
-
         this.similarAppsLoading$.next(false);
       },
       error: () => {
