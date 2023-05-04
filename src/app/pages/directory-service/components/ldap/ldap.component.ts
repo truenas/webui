@@ -33,7 +33,7 @@ export class LdapComponent implements OnInit {
 
   form = this.formBuilder.group({
     hostname: [[] as string[], this.validatorsService.validateOnCondition(
-      (control) => (control.parent?.value as { enable: boolean }).enable,
+      (control) => (control.parent?.value as { enable: boolean })?.enable,
       Validators.required,
     )],
     basedn: [''],
