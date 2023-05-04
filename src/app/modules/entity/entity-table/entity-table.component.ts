@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';

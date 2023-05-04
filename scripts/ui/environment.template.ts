@@ -1,6 +1,6 @@
-import {EnclosureDispersalStrategy, MockStorageScenario} from '../../src/app/core/testing/enums/mock-storage.enum';
+import { EnclosureDispersalStrategy, MockStorageScenario } from '../../src/app/core/testing/enums/mock-storage.enum';
 import { WebUiEnvironment } from 'environments/environment.interface';
-import {TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
+import { TopologyItemType } from '../../src/app/enums/v-dev-type.enum';
 
 export const environmentTemplate: WebUiEnvironment = {
   environmentVersion: '0.0.2',
@@ -30,7 +30,7 @@ export const environmentTemplate: WebUiEnvironment = {
       unassignedOptions: {
         diskSize: 4,
         repeats: 4,
-      }
-    }
+      },
+    },
   },
 };

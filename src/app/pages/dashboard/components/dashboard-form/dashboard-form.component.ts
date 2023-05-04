@@ -3,7 +3,8 @@ import {
   Component,
   ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { ControlsOf } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -12,15 +13,17 @@ import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+interface DashboardFormValue {
+  [key: string]: boolean;
+}
+
 @UntilDestroy()
 @Component({
   templateUrl: './dashboard-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardFormComponent {
-  form: UntypedFormGroup = this.formBuilder.group({
-    name: ['default', []],
-  });
+  form = this.formBuilder.group<ControlsOf<DashboardFormValue>>({});
   isFormLoading = true;
 
   dashState: DashConfigItem[] = [];

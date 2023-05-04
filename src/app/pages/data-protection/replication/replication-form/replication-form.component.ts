@@ -10,6 +10,7 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -226,7 +227,7 @@ export class ReplicationFormComponent implements OnInit {
             this.isLoading = false;
             this.cdr.markForCheck();
           },
-          error: (error) => {
+          error: (error: WebsocketError) => {
             this.isEligibleSnapshotsMessageRed = true;
             this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
             if ('reason' in error) {

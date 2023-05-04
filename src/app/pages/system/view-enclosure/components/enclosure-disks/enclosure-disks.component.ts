@@ -756,7 +756,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Helper for createExtractedEnclosure
   extractEnclosure(enclosure: ChassisView, enclosureView: EnclosureView): void {
-    const canvas = (this.app.renderer.plugins.extract as CanvasExtract).canvas(enclosure.container);
+    const canvas = (this.app.renderer.plugins as { [name: string]: CanvasExtract }).extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, enclosureView }, sender: this });
     this.container.removeChild(enclosure.container);
   }
