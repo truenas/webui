@@ -120,7 +120,7 @@ expect {
 expect {
   "Web UI Authentication Method" {
     sleep .5
-    send "2"
+    send "1"
     send "\r"
   }
 
