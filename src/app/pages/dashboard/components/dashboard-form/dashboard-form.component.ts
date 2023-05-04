@@ -99,15 +99,11 @@ export class DashboardFormComponent {
     this.ws.call('auth.set_attribute', ['dashState', clone]).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (wasSet) => {
+      next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
         this.onSubmit$.next(this.dashState);
         this.slideInService.close();
-
-        if (!wasSet) {
-          throw new Error('Unable to save Dashboard State');
-        }
       },
       error: (err) => {
         console.error(err);

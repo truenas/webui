@@ -59,19 +59,19 @@ export class WebSocketService {
           return throwError(() => data.error);
         }
 
-        // Mock Data
         if (
           environment
           && !environment.production
           && environment.mockConfig?.enabled
+          && this.mockUtils.canMock
           && data.msg === IncomingApiMessageType.Result
         ) {
           const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
           return of(mockResultMessage);
         }
+
         return of(data);
       }),
-      // END Mock Data
 
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),

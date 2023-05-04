@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { startCase } from 'lodash';
@@ -33,6 +34,7 @@ export class AppInfoCardComponent {
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private router: Router,
   ) {}
 
   get hasUpdates(): boolean {
@@ -53,7 +55,6 @@ export class AppInfoCardComponent {
     this.appLoaderService.open();
     this.appService.getChartUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe({
       next: (summary: UpgradeSummary) => {
-        console.info('summary', summary);
         this.appLoaderService.close();
 
         const dialogRef = this.matDialog.open(AppUpgradeDialogComponent, {
@@ -91,6 +92,10 @@ export class AppInfoCardComponent {
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
+  }
+
+  editButtonPressed(): void {
+    this.router.navigate(['/apps', 'available', this.app.catalog, this.app.catalog_train, this.app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {

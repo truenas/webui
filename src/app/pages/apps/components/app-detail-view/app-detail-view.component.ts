@@ -8,10 +8,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
-import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
+import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -23,7 +25,11 @@ import { LayoutService } from 'app/services/layout.service';
 export class AppDetailViewComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   app: AvailableApp;
+
   appId: string;
+  catalog: string;
+  train: string;
+
   isLoading$ = new BehaviorSubject<boolean>(false);
   wasPoolSet = false;
   readonly imagePlaceholder = appImagePlaceholder;
@@ -56,9 +62,8 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private appService: ApplicationsService,
     private matDialog: MatDialog,
-  ) {
-
-  }
+    private applicationsStore: AvailableAppsStore,
+  ) { }
 
   ngOnInit(): void {
     this.listenForRouteChanges();
@@ -72,38 +77,43 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
+        filter((params) => {
+          return !!(params.appId as string) && !!(params.catalog as string) && !!(params.train as string);
+        }),
         tap(() => {
           this.isLoading$.next(true);
           this.similarAppsLoading$.next(true);
         }),
         untilDestroyed(this),
       )
-      .subscribe((appId) => {
+      .subscribe(({ appId, catalog, train }: AppDetailsRouteParams) => {
         this.appId = appId;
+        this.catalog = catalog;
+        this.train = train;
         this.loadAppInfo();
       });
   }
 
   private loadAppInfo(): void {
     this.isLoading$.next(true);
-    this.appService
-      .getAvailableItem(this.appId, officialCatalog, chartsTrain)
-      .pipe(untilDestroyed(this)).subscribe({
-        next: (app) => {
-          this.app = app;
-          this.isLoading$.next(false);
-          this.cdr.markForCheck();
+    this.applicationsStore.availableApps$.pipe(
+      map((apps: AvailableApp[]) => apps.find(
+        (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
+      )),
+      filter((app) => !!app),
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (app) => {
+        this.app = app;
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
 
-          this.loadSimilarApps();
-          this.loadScreenshots();
-        },
-        error: () => {
-          this.isLoading$.next(false);
-          this.cdr.markForCheck();
-        },
-      });
+        this.loadSimilarApps();
+      },
+      error: () => {
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   private loadSimilarApps(): void {
@@ -119,15 +129,29 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private loadScreenshots(): void {
-    console.warn('The Screenshot section is under construction.');
-  }
-
   private loadIfPoolSet(): void {
-    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
-      this.wasPoolSet = Boolean(config.pool);
+    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+      this.wasPoolSet = Boolean(pool);
       this.cdr.markForCheck();
     });
+  }
+
+  navigateToAllInstalledPage(): void {
+    this.applicationsStore.installedApps$.pipe(
+      map((apps) => apps.filter((app) => (app.chart_metadata.name === this.appId
+        && app.catalog === this.catalog && app.catalog_train === this.train))),
+      untilDestroyed(this),
+    ).subscribe((apps) => {
+      if (apps.length) {
+        this.router.navigate(['/apps', 'installed', apps[0].name]);
+      } else {
+        this.router.navigate(['/apps', 'installed']);
+      }
+    });
+  }
+
+  navigateToInstallPage(): void {
+    this.router.navigate(['/apps', 'available', this.catalog, this.train, this.appId, 'install']);
   }
 
   showChoosePoolModal(): void {

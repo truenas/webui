@@ -252,7 +252,7 @@ describe('ChartWizardComponent', () => {
       {
         provide: ActivatedRoute,
         useValue: {
-          params: of({ appId: 'ipfs' }),
+          params: of({ appId: 'ipfs', catalog: 'OFFICIAL', train: 'charts' }),
           routeConfig: { path: 'install' },
         },
       },

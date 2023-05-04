@@ -78,13 +78,22 @@
         ></ix-select>
 
         <ix-select
+          *ngIf="!isFailover"
           formControlName="lag_ports"
           [label]="'Link Aggregation Interfaces' | translate"
           [multiple]="true"
           [options]="lagPorts$"
           [required]="true"
-          [tooltip]="(isFailover ? helptext.lagg_interfaces_failover_tooltip : helptext.lagg_interfaces_tooltip) | translate"
+          [tooltip]="helptext.lagg_interfaces_tooltip | translate"
         ></ix-select>
+        <ix-ordered-listbox
+          *ngIf="isFailover"
+          formControlName="lag_ports"
+          [label]="'Link Aggregation Interfaces' | translate"
+          [options]="lagPorts$"
+          [required]="true"
+          [tooltip]="helptext.lagg_interfaces_failover_tooltip | translate"
+        ></ix-ordered-listbox>
       </ix-fieldset>
 
       <ix-fieldset *ngIf="isVlan" [title]="'VLAN Settings' | translate">

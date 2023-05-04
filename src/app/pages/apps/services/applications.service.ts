@@ -3,10 +3,12 @@ import {
   Observable, OperatorFunction, map, pipe,
 } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
+import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
@@ -83,7 +85,7 @@ export class ApplicationsService {
       firstOption.push(['catalog', 'in', filters.catalogs]);
     }
     filters.categories?.forEach((category) => {
-      if (category === 'recommended') {
+      if (category === AppExtraCategory.Recommended) {
         firstOption.push(['recommended', '=', true]);
       } else {
         firstOption.push(['categories', 'rin', category]);
@@ -94,13 +96,17 @@ export class ApplicationsService {
     return this.ws.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
   }
 
-  getChartReleases(name?: string): Observable<ChartRelease[]> {
+  getAllChartReleases(): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true } };
-
-    if (name) {
-      return this.ws.call('chart.release.query', [[['name', '=', name]]]);
-    }
     return this.ws.call('chart.release.query', [[], secondOption]);
+  }
+
+  getChartRelease(name: string): Observable<ChartRelease[]> {
+    return this.ws.call('chart.release.query', [[['name', '=', name]]]);
+  }
+
+  subscribeToAllChartReleases(): Observable<ApiEvent<ChartRelease>> {
+    return this.ws.subscribe('chart.release.query');
   }
 
   getChartReleaseWithResources(name: string): Observable<ChartRelease[]> {

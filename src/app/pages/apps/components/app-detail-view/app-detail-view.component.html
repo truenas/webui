@@ -13,7 +13,7 @@
           class="installed-badge"
           [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
           [ixTest]="[app?.name, 'installed-badge']"
-          [routerLink]="['/apps', 'installed', app.name]"
+          (click)="navigateToAllInstalledPage()"
         >
           {{ 'Installed' | translate }}
         </a>
@@ -35,7 +35,7 @@
           color="primary"
           [ixTest]="[app?.name, 'install']"
           [disabled]="!app"
-          [routerLink]="['/apps', 'available', appId, 'install']"
+          (click)="navigateToInstallPage()"
         >
           <ng-container *ngIf="!app?.installed">{{ 'Install' | translate }}</ng-container>
           <ng-container *ngIf="app?.installed">{{ 'Install another instance' | translate }}</ng-container>
@@ -43,7 +43,7 @@
       </div>
 
       <div class="app-info" fxFlex="240px">
-        <h5 class="catalog-header">{{ 'Official Catalog' | translate }}</h5>
+        <h5 class="catalog-header">{{ "Catalog: {catalog}" | translate: { catalog: app?.catalog } }}</h5>
         <div class="app-list-item">
           {{ 'App Version' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
@@ -64,8 +64,14 @@
         </div>
         <div class="app-list-item">
           {{ 'Train' | translate }}:
-          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
+          <ng-template #train>
+            <ng-container *ngIf="app?.train; else notAvailable">
+              {{ app?.train }}
+            </ng-container>
+          </ng-template>
         </div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div class="app-list-item">
           {{ 'Home Page' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
@@ -80,6 +86,7 @@
       </div>
     </section>
 
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
     <section>
       <h2>{{ 'Screenshots' | translate }}</h2>
       <div fxLayout="row nowrap" fxLayoutGap="16px">
@@ -118,6 +125,7 @@
       </div>
     </section>
 
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
     <section>
       <h2>{{ 'Similar Apps' | translate }}</h2>
 
@@ -139,13 +147,11 @@
   </div>
 
   <div fxFlex fxLayoutAlign="end">
-
     <section class="app-info-cards">
       <ix-app-resources-card [isLoading$]="isLoading$"></ix-app-resources-card>
-      <ix-app-helm-chart-card [isLoading$]="isLoading$"></ix-app-helm-chart-card>
-      <ix-app-available-info-card [isLoading$]="isLoading$"></ix-app-available-info-card>
+      <ix-app-helm-chart-card [app]="app" [isLoading$]="isLoading$"></ix-app-helm-chart-card>
+      <ix-app-available-info-card [app]="app" [isLoading$]="isLoading$"></ix-app-available-info-card>
     </section>
-
   </div>
 </div>
 
