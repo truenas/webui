@@ -30,10 +30,7 @@ export interface Command {
   options?: unknown[]; // Function parameters
 }
 
-const maxDecimals = (input: number, max?: number): number => {
-  if (!max) {
-    max = 2;
-  }
+const maxDecimals = (input: number, max = 2): number => {
   const str = input.toString().split('.');
   if (!str[1]) {
     // Not a float

@@ -348,14 +348,12 @@ export class CloudsyncFormComponent {
       if (!values) {
         return;
       }
-      if (!Array.isArray(values)) {
-        values = [values];
-      }
-      if (!values.length) {
+      const paths = Array.isArray(values) ? values : [values];
+      if (!paths.length) {
         return;
       }
 
-      const parentDirectories = values.map((value: string) => {
+      const parentDirectories = paths.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
         return sliced.join('/');
@@ -388,13 +386,11 @@ export class CloudsyncFormComponent {
       if (!values) {
         return;
       }
-      if (!Array.isArray(values)) {
-        values = [values];
-      }
-      if (!values.length) {
+      const sources = Array.isArray(values) ? values : [values];
+      if (!sources.length) {
         return;
       }
-      const parentDirectories = values.map((value: string) => {
+      const parentDirectories = sources.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
         return sliced.join('/');

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, OperatorFunction, map, pipe,
 } from 'rxjs';
@@ -15,7 +16,7 @@ import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-re
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services';
 
 const ignoredAppsList = [ixChartApp];
@@ -28,7 +29,7 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  constructor(private ws: WebSocketService) {}
+  constructor(private ws: WebSocketService, private translate: TranslateService) {}
 
   getKubernetesConfig(): Observable<KubernetesConfig> {
     return this.ws.call('kubernetes.config');
@@ -84,13 +85,15 @@ export class ApplicationsService {
     if (filters.catalogs?.length) {
       firstOption.push(['catalog', 'in', filters.catalogs]);
     }
-    filters.categories?.forEach((category) => {
-      if (category === AppExtraCategory.Recommended) {
-        firstOption.push(['recommended', '=', true]);
-      } else {
-        firstOption.push(['categories', 'rin', category]);
-      }
-    });
+    if (filters.categories?.length) {
+      (firstOption as unknown as QueryParams<AvailableApp>[]).push(
+        ['OR', filters.categories.map((category) => ['categories', 'rin', category])] as unknown as QueryParams<AvailableApp>,
+      );
+    }
+    if (filters.categories?.includes(AppExtraCategory.Recommended)) {
+      firstOption.push(['recommended', '=', true]);
+    }
+
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
     return this.ws.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
@@ -139,5 +142,16 @@ export class ApplicationsService {
 
   stopApplication(name: string): Observable<Job<ChartScaleResult>> {
     return this.ws.job('chart.release.scale', [name, { replica_count: 0 }]);
+  }
+
+  convertDateToRelativeDate(date: Date): string {
+    const diff = Math.round(((new Date() as unknown as number) - (date as unknown as number)) / 1000);
+    const day = 60 * 60 * 24;
+
+    if (diff < day) { return this.translate.instant('Last 24 hours'); }
+    if (diff < day * 3) { return this.translate.instant('Last 3 days'); }
+    if (diff < day * 14) { return this.translate.instant('Last week'); }
+    if (diff < day * 60) { return this.translate.instant('Last month'); }
+    return this.translate.instant('Long time ago');
   }
 }
