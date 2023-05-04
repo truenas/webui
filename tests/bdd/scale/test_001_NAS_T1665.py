@@ -9,9 +9,7 @@ from function import (
     attribute_value_exist,
     wait_for_attribute_value,
     wait_on_element_disappear,
-    ssh_cmd,
-    get,
-    put
+    ssh_cmd
 )
 from pytest_bdd import (
     given,

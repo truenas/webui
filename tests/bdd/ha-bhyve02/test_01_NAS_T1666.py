@@ -10,9 +10,7 @@ from function import (
     wait_for_attribute_value,
     attribute_value_exist,
     ssh_cmd,
-    wait_on_element_disappear,
-    get,
-    put
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -54,7 +52,7 @@ def login_appear_enter_root_and_password(driver, user, password):
 
 
 @then('on the dashboard Agree to the license')
-def on_the_dashboard_agree_to_the_license():
+def on_the_dashboard_agree_to_the_license(driver):
     """on the dashboard Agree to the license."""
     rsc.Verify_The_Dashboard(driver)
 
@@ -62,7 +60,7 @@ def on_the_dashboard_agree_to_the_license():
 
 
 @then('click on the Credentials side menu, then click Local Users')
-def click_on_the_credentials_side_menu_then_click_local_users():
+def click_on_the_credentials_side_menu_then_click_local_users(driver):
     """click on the Credentials side menu, then click Local Users."""
     driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')
@@ -70,7 +68,7 @@ def click_on_the_credentials_side_menu_then_click_local_users():
 
 
 @then('on the Users page expend root and click Edit')
-def on_the_users_page_expend_root_and_click_edit():
+def on_the_users_page_expend_root_and_click_edit(driver):
     """on the Users page expend root and click Edit."""
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.root_User, 'clickable')
@@ -80,7 +78,7 @@ def on_the_users_page_expend_root_and_click_edit():
 
 
 @then('on Edit User click the "SSH password login enabled" checkbox')
-def on_edit_user_click_the_ssh_password_login_enabled_checkbox():
+def on_edit_user_click_the_ssh_password_login_enabled_checkbox(driver):
     """on Edit User click the "SSH password login enabled" checkbox."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
@@ -92,7 +90,7 @@ def on_edit_user_click_the_ssh_password_login_enabled_checkbox():
 
 
 @then('click the Save and go to Services page')
-def click_the_save_and_go_to_services_page():
+def click_the_save_and_go_to_services_page(driver):
     """click the Save and go to Services page."""
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
@@ -101,7 +99,7 @@ def click_the_save_and_go_to_services_page():
 
 
 @then('on the service page, click the Start Automatically SSH checkbox')
-def on_the_service_page_click_the_start_automatically_ssh_checkbox():
+def on_the_service_page_click_the_start_automatically_ssh_checkbox(driver):
     """on the service page, click the Start Automatically SSH checkbox."""
     assert wait_on_element(driver, 5, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.ssh_Service)
@@ -112,7 +110,7 @@ def on_the_service_page_click_the_start_automatically_ssh_checkbox():
 
 
 @then('enable the SSH service the service should start without an error')
-def enable_the_ssh_service_the_service_should_start_without_an_error():
+def enable_the_ssh_service_the_service_should_start_without_an_error(driver):
     """enable the SSH service the service should start without an error."""
     assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Toggle, 'clickable')
     value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
