@@ -74,13 +74,6 @@ def Dismiss_All_Alerts(driver):
         driver.find_element_by_xpath('//ix-icon[contains(.,"clear")]').click()
 
 
-def Enable_SMB_Service(driver):
-    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.enable, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.enable).click()
-    driver.find_element_by_xpath(xpaths.checkbox.enable_Service_Button).click()
-
-
 def Encyrpted_Key_Waring(driver):
     assert wait_on_element(driver, 10, '//h1[contains(text(),"WARNING!")]')
     assert wait_on_element(driver, 7, xpaths.button.done, 'clickable')
@@ -160,6 +153,13 @@ def Restart_SMB_Service(driver):
 def Select_Option(driver, xpath):
     assert wait_on_element(driver, 5, xpath, 'clickable')
     driver.find_element_by_xpath(xpath).click()
+
+
+def Start_SMB_Service(driver):
+    assert wait_on_element(driver, 5, xpaths.popup.smb_Start_Title)
+    assert wait_on_element(driver, 5, xpaths.popup.enable, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+    driver.find_element_by_xpath(xpaths.checkbox.enable_Service_Button).click()
 
 
 def Trigger_Failover(driver):
