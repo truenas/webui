@@ -275,7 +275,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
       }
 
-      if (update.interfaces) {
+      if (update?.interfaces) {
         const keys = Object.keys(update.interfaces);
         keys.forEach((key) => {
           this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data: update.interfaces[key] });

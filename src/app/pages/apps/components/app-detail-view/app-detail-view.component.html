@@ -139,7 +139,7 @@
           <ix-app-card
             *ngFor="let app of similarApps; trackBy: trackByAppId"
             [app]="app"
-            [routerLink]="['/apps', 'available', app.name]"
+            [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
           ></ix-app-card>
 
         </div>

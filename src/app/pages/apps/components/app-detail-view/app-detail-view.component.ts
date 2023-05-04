@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { shuffle } from 'lodash';
 import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
@@ -121,7 +120,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     this.similarAppsLoading$.next(true);
     this.appService.getAppSimilarApps(this.app).pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
-        this.similarApps = shuffle(apps.filter((app) => app.name !== this.appId)).slice(0, 4);
+        this.similarApps = apps;
         this.similarAppsLoading$.next(false);
       },
       error: () => {
