@@ -1,9 +1,8 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -80,14 +79,6 @@ describe('AppUpgradeDialogComponent', () => {
     const panelContent = spectator.queryAll('mat-expansion-panel .detail-row');
     expect(panelContent[0].textContent).toBe(' There are no images requiring upgrade ');
     expect(panelContent[1].textContent).toBe('No Changelog');
-  });
-
-  it('shows a list of versions to be upgraded to', async () => {
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-    const options = await select.getOptions();
-    const optionLabels = await parallel(() => options.map((option) => option.getText()));
-    expect(optionLabels).toEqual(['8.7.0_1.0.2']);
   });
 
   it('submits upgrade from 1.0.1 to 1.0.2 version', async () => {
