@@ -17,7 +17,7 @@ import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface'
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation';
+import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';

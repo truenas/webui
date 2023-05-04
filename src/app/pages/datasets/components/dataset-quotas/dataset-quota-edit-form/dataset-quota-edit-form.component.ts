@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, Observable, of } from 'rxjs';
+import {
+  EMPTY, Observable, of, switchMap,
+} from 'rxjs';
 import { catchError, filter, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -160,23 +162,25 @@ export class DatasetQuotaEditFormComponent {
       canSubmit$ = this.getConfirmation(values.name);
     }
 
-    canSubmit$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = true;
-      this.ws.call('pool.dataset.set_quota', [this.datasetId, payload])
-        .pipe(untilDestroyed(this))
-        .subscribe({
-          next: () => {
-            this.snackbar.success(this.translate.instant('Quotas updated'));
-            this.isFormLoading = false;
-            this.slideIn.close();
-            this.cdr.markForCheck();
-          },
-          error: (error) => {
-            this.isFormLoading = false;
-            this.cdr.markForCheck();
-            this.errorHandler.handleWsFormError(error, this.form);
-          },
-        });
+    canSubmit$.pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.isFormLoading = true;
+        return this.ws.call('pool.dataset.set_quota', [this.datasetId, payload]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.snackbar.success(this.translate.instant('Quotas updated'));
+        this.isFormLoading = false;
+        this.slideIn.close();
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.errorHandler.handleWsFormError(error, this.form);
+      },
     });
   }
 

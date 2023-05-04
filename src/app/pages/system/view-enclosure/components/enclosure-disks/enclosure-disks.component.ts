@@ -941,9 +941,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Visualization Colors
-  setDisksEnabledState(chassisView?: ChassisView): void {
-    if (!chassisView) { chassisView = this.chassisView; }
-
+  setDisksEnabledState(chassisView: ChassisView = this.chassisView): void {
     chassisView.driveTrayObjects.forEach((dt) => {
       const disk = this.selectedEnclosureView.slots.filter((enclosureSlot: EnclosureSlot) => {
         return enclosureSlot.slot === Number(dt.id);

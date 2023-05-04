@@ -27,7 +27,7 @@ import {
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation';
+import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DefaultGatewayDialogComponent,

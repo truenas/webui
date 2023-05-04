@@ -9,10 +9,6 @@ export function rangeValidator(min: number, max?: number): ValidatorFn {
       regex = /^[1-9]\d*$/;
     }
 
-    if (!control.parent) {
-      return null;
-    }
-
     if (!control.value) {
       return null;
     }
