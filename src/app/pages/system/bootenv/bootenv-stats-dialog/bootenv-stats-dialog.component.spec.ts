@@ -75,8 +75,10 @@ describe('BootenvStatsDialogComponent', () => {
     return spectator.queryAll('.status-item').reduce((allItems, element) => {
       const label = element.querySelector('.status-name').textContent.trim();
       const value = element.querySelector('.status-value').textContent.trim();
-      allItems[label] = value;
-      return allItems;
+      return {
+        ...allItems,
+        [label]: value,
+      };
     }, {} as { [name: string]: string });
   }
 
