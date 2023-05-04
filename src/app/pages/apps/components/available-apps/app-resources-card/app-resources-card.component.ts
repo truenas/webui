@@ -48,7 +48,7 @@ export class AppResourcesCardComponent implements OnInit {
   getResourcesUsageUpdates(): void {
     this.ws.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
-      throttleTime(500),
+      throttleTime(2000),
       untilDestroyed(this),
     ).subscribe((update) => {
       if (update?.cpu?.average) {
