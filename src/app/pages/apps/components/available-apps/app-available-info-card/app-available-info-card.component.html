@@ -11,7 +11,15 @@
 </div>
 <div class="app-list-item">
   {{ 'App Source' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <ngx-skeleton-loader *ngIf="(isLoading$ | async) || loadingSources; else appSources"></ngx-skeleton-loader>
+  <ng-template #appSources>
+    <ng-container *ngIf="sources?.length; else notAvailable">
+      <ng-container *ngFor="let source of sources">
+        <a [href]="source" [title]="source" [ixTest]="[app.name, 'source']">{{ source }}</a>
+      </ng-container>
+    </ng-container>
+  </ng-template>
+  
 </div>
 <div class="app-list-item">
   {{ 'Last App Updated' }}:
