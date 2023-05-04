@@ -130,7 +130,7 @@ def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
     assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]/../dd')
     element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]/../dd').text
-    assert element_text == 'true'
+    assert element_text == 'Yes'
 
 
 @then('Try login with ssh')
