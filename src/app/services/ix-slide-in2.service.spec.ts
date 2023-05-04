@@ -66,7 +66,7 @@ describe('IxSlideIn2Service', () => {
       expect(instanceRef).toBeInstanceOf(IxSlideInRef);
     });
 
-    it('after emitted from closeEvent$ service call \'closeLast\' method', () => {
+    it('should be call \'closeLast\' method after emitted from closeEvent$', () => {
       service.open(TestComponent, { wide: true, data: '' });
 
       const lastKeySlideInRefMap = Array.from(service.slideInRefMap.keys()).pop();
@@ -78,7 +78,7 @@ describe('IxSlideIn2Service', () => {
       expect(lastSlideInRef.close).toHaveBeenCalled();
     });
 
-    it('service call \'closeAll\' method after route navigation', async () => {
+    it('should be call \'closeAll\' method after route navigation', async () => {
       jest.spyOn(service, 'closeAll');
       service.open(TestComponent, { wide: true, data: '' });
 
@@ -87,7 +87,7 @@ describe('IxSlideIn2Service', () => {
       expect(service.closeAll).toHaveBeenCalled();
     });
 
-    it('service call \'closeAll\' method after changing URL using location service', fakeAsync(() => {
+    it('should be call \'closeAll\' method after changing URL using location service', fakeAsync(() => {
       const location = spectator.inject(Location);
       location.go('/');
       jest.spyOn(service, 'closeAll');
@@ -100,7 +100,7 @@ describe('IxSlideIn2Service', () => {
   });
 
   describe('IxSlideInRef', () => {
-    it('the correct data will be passed to the dynamically created component after call \'open\'', () => {
+    it('should be passed the correct data to the dynamically created component after call \'open\'', () => {
       const slideInRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
       // check injected (SLIDE_IN_DATA)
       const componentInstance = slideInRef.componentInstance;
@@ -108,7 +108,7 @@ describe('IxSlideIn2Service', () => {
       expect(componentInstance.text).toBe('Component created dynamically');
     });
 
-    it('after calling \'open\', the dynamically created component will be injected IxSlideInRef', () => {
+    it('should be injected IxSlideInRef to the dynamically created component after calling \'open\',', () => {
       jest.spyOn(spectatorComponent.component, 'closeSlideIn');
       const slideInRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
       // check injected SlideInRef
