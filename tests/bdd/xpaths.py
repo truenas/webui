@@ -488,6 +488,8 @@ class popup:
     smb_Restart_Title = '//h3[text()="Restart SMB Service"]'
     smb_Restart_Button = '//button[contains(*/text(),"Restart Service")]'
     smb_Start_Title = '//h1[text()="Start SMB Service"]'
+    # data-test is not proper but work since it is the only one like that in the UI.
+    enable_Service_To_Start_Automatically_Checkbox = '//mat-checkbox[@data-test="checkbox"]'
     enable_Service_Title = '//h1[text()="Enable service"]'
     enable_Service_Button = '//button[contains(*/text(),"Enable Service")]'
     please_Wait = '//h6[contains(.,"Please wait")]'

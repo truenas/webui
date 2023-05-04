@@ -157,9 +157,9 @@ def Select_Option(driver, xpath):
 
 def Start_SMB_Service(driver):
     assert wait_on_element(driver, 5, xpaths.popup.smb_Start_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.enable, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.enable).click()
-    driver.find_element_by_xpath(xpaths.checkbox.enable_Service_Button).click()
+    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_To_Start_Automatically_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.enable_Service_To_Start_Automatically_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
 
 
 def Trigger_Failover(driver):
