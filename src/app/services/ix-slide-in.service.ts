@@ -41,8 +41,6 @@ export class IxSlideInService {
 
   close(error?: Error, response?: unknown): void {
     if (!this.slideInComponent?.isSlideInOpen) {
-      // closing via IxModalHeader
-      this.slideIn2Service.close();
       return;
     }
 

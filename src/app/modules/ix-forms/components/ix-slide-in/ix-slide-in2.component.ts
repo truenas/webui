@@ -26,10 +26,9 @@ import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 export class IxSlideIn2Component implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
-  @ViewChild('slideIn', { static: true, read: ElementRef }) slideIn: ElementRef<HTMLElement>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
-    this.slideInRefClose();
+    this.leave();
   }
 
   isSlideInOpen = false;
@@ -41,7 +40,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
   constructor(
     private el: ElementRef,
-    protected slideIn2Service: IxSlideIn2Service,
+    private slideIn2Service: IxSlideIn2Service,
   ) {
     this.element = this.el.nativeElement;
   }
@@ -54,25 +53,17 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
     // move element to bottom of page (just before </body>) so it can be displayed above everything else
     document.body.appendChild(this.element);
-    this.slideIn2Service.setModal(this);
+    this.slideIn2Service.setSlideComponent(this);
   }
 
-  slideInRefClose(): void {
+  leave(): void {
     if (!this.element || !this.isSlideInOpen) { return; }
-
-    const slideContentId = (this.slideIn.nativeElement.firstChild as HTMLElement).getAttribute('id');
-    const ixSlideInRef = this.slideIn2Service.slideInRefList.find((ref) => {
-      const instanceElementId = (ref.hostOfInstance as HTMLElement).getAttribute('id');
-      return instanceElementId === slideContentId;
-    });
-
-    ixSlideInRef.close();
+    this.slideIn2Service.closeEvent$.next(true);
   }
 
-  closeSlideIn(id: string): void {
+  closeSlideIn(): void {
     this.isSlideInOpen = false;
     this.wasBodyCleared = true;
-    this.slideIn2Service.slideInRefList = this.slideIn2Service.slideInRefList.filter((ref) => ref.uuid !== id);
     this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
       // Destroying child component later improves performance a little bit.
       // 200ms matches transition duration
@@ -102,11 +93,11 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     return this.createSlideInRef<T, R>(componentType, params?.data);
   }
 
-  createSlideInRef<T, R>(
+  private createSlideInRef<T, R>(
     componentType: Type<T>,
     data?: R,
   ): IxSlideInRef<T, R> {
-    const slideInRef = new IxSlideInRef<T, R>(this);
+    const slideInRef = new IxSlideInRef<T, R>(this.slideIn2Service, this);
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
@@ -114,8 +105,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
       ],
     });
     slideInRef.componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
-    slideInRef.uuid = UUID.UUID();
-    (slideInRef.hostOfInstance as HTMLElement).setAttribute('id', `inserted-content-${this.counterId += 1}`);
+    slideInRef.id = UUID.UUID();
 
     return slideInRef;
   }

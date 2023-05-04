@@ -1,15 +1,120 @@
-import { TestBed } from '@angular/core/testing';
+import { Location } from '@angular/common';
+import { Component, ElementRef, Inject } from '@angular/core';
+import { fakeAsync, tick } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import {
+  createServiceFactory, mockProvider, SpectatorService, createComponentFactory, Spectator,
+} from '@ngneat/spectator/jest';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in2.component';
+import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
-describe('IxSlideIn2Service', () => {
-  let service: IxSlideIn2Service;
+/** Simple component for testing IxSlideInComponent */
+@Component({
+  template: '<h1>{{text}}</h1>',
+})
+class TestComponent {
+  text: string;
+  constructor(
+    private slideInRef: IxSlideInRef<DiskFormComponent, string>,
+    @Inject(SLIDE_IN_DATA) private value: string,
+  ) {
+    this.text = value;
+  }
+  closeSlideIn(): void {
+    this.slideInRef.close();
+  }
+}
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(IxSlideIn2Service);
+describe('IxSlideIn2Service', () => {
+  let spectator: SpectatorService<IxSlideIn2Service>;
+  let service: IxSlideIn2Service;
+  let spectatorComponent: Spectator<IxSlideIn2Component>;
+
+  const createService = createServiceFactory({
+    service: IxSlideIn2Service,
+    providers: [
+      Location,
+      Router,
+    ],
+  });
+  const createComponent = createComponentFactory({
+    component: IxSlideIn2Component,
+    providers: [
+      mockProvider(ElementRef),
+      IxSlideIn2Service,
+    ],
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  beforeEach(() => {
+    spectator = createService();
+    service = spectator.service;
+    spectatorComponent = createComponent({
+      props: { id: 'ix-slide-in-form' },
+    });
+  });
+
+  describe('slideInService', () => {
+    it('the \'open\' method should return instance of IxSlideInRef', () => {
+      jest.spyOn(service.slideIn2Component, 'openSlideIn');
+
+      const instanceRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
+
+      expect(service.slideIn2Component.openSlideIn).toHaveBeenCalledWith(TestComponent, { wide: true, data: 'Component created dynamically' });
+      expect(instanceRef).toBeInstanceOf(IxSlideInRef);
+    });
+
+    it('after emitted from closeEvent$ service call \'closeLast\' method', () => {
+      service.open(TestComponent, { wide: true, data: '' });
+
+      const lastKeySlideInRefMap = Array.from(service.slideInRefMap.keys()).pop();
+      const lastSlideInRef = service.slideInRefMap.get(lastKeySlideInRefMap);
+
+      jest.spyOn(lastSlideInRef, 'close');
+      service.closeEvent$.next(true);
+
+      expect(lastSlideInRef.close).toHaveBeenCalled();
+    });
+
+    it('service call \'closeAll\' method after route navigation', async () => {
+      jest.spyOn(service, 'closeAll');
+      service.open(TestComponent, { wide: true, data: '' });
+
+      await spectator.inject(Router).navigate(['/']);
+
+      expect(service.closeAll).toHaveBeenCalled();
+    });
+
+    it('service call \'closeAll\' method after changing URL using location service', fakeAsync(() => {
+      const location = spectator.inject(Location);
+      location.go('/');
+      jest.spyOn(service, 'closeAll');
+      service.open(TestComponent, { wide: true, data: '' });
+
+      location.back();
+      tick(200);
+      expect(service.closeAll).toHaveBeenCalled();
+    }));
+  });
+
+  describe('IxSlideInRef', () => {
+    it('the correct data will be passed to the dynamically created component after call \'open\'', () => {
+      const slideInRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
+      // check injected (SLIDE_IN_DATA)
+      const componentInstance = slideInRef.componentInstance;
+
+      expect(componentInstance.text).toBe('Component created dynamically');
+    });
+
+    it('after calling \'open\', the dynamically created component will be injected IxSlideInRef', () => {
+      jest.spyOn(spectatorComponent.component, 'closeSlideIn');
+      const slideInRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
+      // check injected SlideInRef
+      slideInRef.componentInstance.closeSlideIn();
+
+      expect(spectatorComponent.component.closeSlideIn).toHaveBeenCalled();
+    });
   });
 });

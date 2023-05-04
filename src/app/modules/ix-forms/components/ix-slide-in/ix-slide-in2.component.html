@@ -3,7 +3,7 @@
   [class.open]="isSlideInOpen"
   [class.wide]="wide"
 >
-  <div #slideIn class="ix-slide-in-body">
+  <div class="ix-slide-in-body">
     <ng-template #body></ng-template>
   </div>
 </div>
@@ -11,5 +11,5 @@
 <div
   [class]="['ix-slide-in-background', 'ix-' + id + '-background']"
   [class.open]="isSlideInOpen"
-  (click)="slideInRefClose()"
+  (click)="leave()"
 ></div>
