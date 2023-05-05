@@ -1,0 +1,16 @@
+.similar-apps {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+
+  ix-app-card {
+    box-sizing: border-box;
+    flex-basis: calc(50% - 4px);
+  }
+}
+
+.similar-app-loader {
+  ::ng-deep span {
+    height: 100px;
+  }
+}

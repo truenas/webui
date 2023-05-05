@@ -30,6 +30,9 @@ import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
+import {
+  AppDetailsSimilarComponent,
+} from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
 import {
   CatalogAddFormComponent,
@@ -98,6 +101,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppsToolbarButtonsComponent,
     AppStatusCellComponent,
     AppDetailsHeaderComponent,
+    AppDetailsSimilarComponent,
   ],
   imports: [
     CommonModule,

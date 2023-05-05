@@ -10,7 +10,6 @@ import {
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -32,9 +31,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
-  similarApps: AvailableApp[] = [];
-  similarAppsLoading$ = new BehaviorSubject<boolean>(false);
-
   get pageTitle(): string {
     if (this.appId) {
       return this.appId;
@@ -52,7 +48,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     private translate: TranslateService,
-    private appService: ApplicationsService,
     private applicationsStore: AvailableAppsStore,
   ) { }
 
@@ -72,7 +67,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
         }),
         tap(() => {
           this.isLoading$.next(true);
-          this.similarAppsLoading$.next(true);
         }),
         untilDestroyed(this),
       )
@@ -94,32 +88,14 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     ).pipe(untilDestroyed(this)).subscribe({
       next: (app) => {
         this.app = app;
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         this.isLoading$.next(false);
         this.cdr.markForCheck();
-
-        this.loadSimilarApps();
       },
       error: () => {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
       },
     });
-  }
-
-  private loadSimilarApps(): void {
-    this.similarAppsLoading$.next(true);
-    this.appService.getAppSimilarApps(this.app).pipe(untilDestroyed(this)).subscribe({
-      next: (apps) => {
-        this.similarApps = apps;
-        this.similarAppsLoading$.next(false);
-      },
-      error: () => {
-        this.similarAppsLoading$.next(false);
-      },
-    });
-  }
-
-  trackByAppId(id: number, app: AvailableApp): string {
-    return `${app.catalog}-${app.train}-${app.name}`;
   }
 }

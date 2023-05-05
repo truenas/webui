@@ -105,7 +105,7 @@ describe('AppDetailsHeaderComponent', () => {
 
   describe('other elements', () => {
     it('shows app catalog', () => {
-      expect(spectator.query('.catalog-header')).toHaveText('Catalog: Official');
+      expect(spectator.query('.catalog-header')).toHaveText('Official Catalog');
     });
 
     it('shows app version', () => {

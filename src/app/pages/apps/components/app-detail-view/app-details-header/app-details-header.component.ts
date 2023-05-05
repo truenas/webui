@@ -4,7 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map, Observable, take } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
@@ -68,7 +68,7 @@ export class AppDetailsHeaderComponent implements OnInit {
   }
 
   private checkIfPoolSet(): void {
-    this.applicationsStore.selectedPool$.pipe(take(1), untilDestroyed(this)).subscribe((pool) => {
+    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
       this.wasPoolSet = Boolean(pool);
       this.cdr.markForCheck();
     });
