@@ -3,6 +3,7 @@
 import os
 import pytest
 import time
+import xpaths
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
@@ -111,7 +112,7 @@ def pytest_runtest_makereport(item):
             screenshot_name = f'screenshot/{report.nodeid.partition("[")[0].replace("::", "_")}.png'
             # look if there is a Error window
             if element_exist('//h1[contains(.,"Error")]') or element_exist('//h1[contains(.,"FAILED")]'):
-                web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
+                web_driver.find_element_by_xpath('//ix-icon[@fonticon="add_circle_outline"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.partition("[")[0].replace("::", "_")}_error.txt'
                 screenshot_error = f'screenshot/{report.nodeid.partition("[")[0].replace("::", "_")}_error.png'
@@ -119,14 +120,14 @@ def pytest_runtest_makereport(item):
                 # take a screenshot of the error
                 save_screenshot(screenshot_error)
                 # Press CLOSE if exist
-                if element_exist('//button[@ix-auto="button__CLOSE"]'):
-                    web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+                if element_exist(xpaths.button.close):
+                    web_driver.find_element_by_xpath(xpaths.button.close).click()
 
             # take screenshot after looking for error
             save_screenshot(screenshot_name)
 
             if element_exist('//h1[contains(text(),"Installing")]') and element_exist('//mat-dialog-content[contains(.,"Error:")]'):
-                web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+                web_driver.find_element_by_xpath(xpaths.button.close).click()
 
             if wait_on_element(1, '//ix-icon[@id="ix-close-icon"]', 'clickable'):
                 try:
