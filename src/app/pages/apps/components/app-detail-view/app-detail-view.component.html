@@ -97,29 +97,10 @@
         </ng-container>
 
         <ng-template #appScreenshots>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
-          </div>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
-          </div>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
+          <div class="screenshots" gallerize>
+            <div *ngFor="let image of images" class="screenshot">
+              <img class="screenshot-image" [src]="image.srcUrl" />
+            </div>
           </div>
         </ng-template>
       </div>
