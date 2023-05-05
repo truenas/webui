@@ -27,6 +27,9 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
+import {
+  AppDetailsHeaderComponent,
+} from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
 import {
   CatalogAddFormComponent,
@@ -94,6 +97,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppUpgradeDialogComponent,
     AppsToolbarButtonsComponent,
     AppStatusCellComponent,
+    AppDetailsHeaderComponent,
   ],
   imports: [
     CommonModule,
