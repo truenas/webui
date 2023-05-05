@@ -1436,7 +1436,6 @@ export class ReplicationFormComponent implements FormConfiguration {
           && prop !== 'dedup'
           && prop !== 'large_block'
           && data[prop] === undefined
-          && typeof data[prop] === 'boolean'
         ) {
           if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
             data[prop] = false;
