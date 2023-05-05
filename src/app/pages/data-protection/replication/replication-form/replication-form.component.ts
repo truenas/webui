@@ -1329,7 +1329,6 @@ export class ReplicationFormComponent implements FormConfiguration {
       data['properties'] = true;
       data['exclude'] = [];
     }
-    data['sudo'] = Boolean(data['sudo']);
 
     const propertiesExcludeObj: Record<string, string> = {};
     if (data['properties_override']) {
@@ -1437,6 +1436,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           && prop !== 'dedup'
           && prop !== 'large_block'
           && data[prop] === undefined
+          && typeof data[prop] === 'boolean'
         ) {
           if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
             data[prop] = false;
@@ -1447,6 +1447,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         if (prop === 'schedule' && data[prop] === false) {
           data[prop] = null;
         }
+        data['sudo'] = Boolean(data['sudo']);
       });
     }
   }
