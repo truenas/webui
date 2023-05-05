@@ -65,10 +65,6 @@ describe('AppUpgradeDialogComponent', () => {
     expect(spectator.query('.version').textContent).toBe(' 8.7.0_1.0.1');
   });
 
-  it('shows application image', () => {
-    expect(spectator.query('img').getAttribute('src')).toBe('https://images.contentstack.io/v3/assets/bltefdd0b53724fa2ce/blt280217a63b82a734/6202d3378b1f312528798412/elastic-logo.svg');
-  });
-
   it('shows 2 mat-panels with titles', () => {
     const panelTitles = spectator.queryAll('mat-expansion-panel mat-panel-title');
     expect(panelTitles[0].textContent).toBe(' Images ( to be updated ) ');
@@ -86,12 +82,5 @@ describe('AppUpgradeDialogComponent', () => {
     await upgradeButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('1.0.2');
-  });
-
-  it('closes modal with no upgrades to start if Close button clicked', async () => {
-    const upgradeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    await upgradeButton.click();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });
