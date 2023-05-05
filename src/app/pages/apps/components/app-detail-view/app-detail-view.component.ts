@@ -108,14 +108,18 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadSimilarApps(): void {
     this.similarAppsLoading$.next(true);
-    this.appService.getAvailableApps().pipe(untilDestroyed(this)).subscribe({
+    this.appService.getAppSimilarApps(this.app).pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
-        this.similarApps = apps.slice(0, 4);
+        this.similarApps = apps;
         this.similarAppsLoading$.next(false);
       },
       error: () => {
         this.similarAppsLoading$.next(false);
       },
     });
+  }
+
+  trackByAppId(id: number, app: AvailableApp): string {
+    return `${app.catalog}-${app.train}-${app.name}`;
   }
 }
