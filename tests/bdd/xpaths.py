@@ -79,6 +79,7 @@ class add_User:
     home_Mode_Other_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-other-write"]'
     home_Mode_Other_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-other-execute"]'
     ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
+    user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
 
 
 class add_Zvol:

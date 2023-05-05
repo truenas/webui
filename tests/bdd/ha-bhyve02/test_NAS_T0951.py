@@ -28,7 +28,7 @@ def test_edit_user_auxiliary_group(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open navigate to "{nas_user}"."""
-    depends(request, ['First_User'], scope='session')
+    #depends(request, ['First_User'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         time.sleep(1)
@@ -100,15 +100,15 @@ def the_user_edit_page_should_open(driver):
 def add_user_to_additional_groups_like_wheel_and_save_change(driver):
     """Add user to additional groups, like wheel and save change."""
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    element = driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select)
+    element = driver.find_element_by_xpath(xpaths.add_User.user_Id_And_Groups)
     driver.execute_script("arguments[0].scrollIntoView();", element)
 
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
-    assert wait_on_element(driver, 7, xpaths.add_User.games_Group_Option, 'clickable')
-    driver.find_element_by_xpath(xpaths.add_User.games_Group_Option).click()
-    driver.find_element_by_xpath(xpaths.add_User.games_Group_Option).send_keys(Keys.TAB)
-    assert wait_on_element(driver, 7, '//mat-select[contains(.,"games")]')
+    assert wait_on_element(driver, 7, xpaths.add_User.wheel_Group_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.wheel_Group_Option).click()
+    driver.find_element_by_xpath(xpaths.add_User.wheel_Group_Option).send_keys(Keys.TAB)
+    assert wait_on_element(driver, 7, xpaths.add_User.wheel_Is_Selected)
     wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -133,6 +133,6 @@ def reopen_the_user_edit_page_and_ensure_that_the_additional_group_was_saved(dri
 @then('Aux Group added should be visible')
 def aux_group_added_should_be_visible(driver):
     """Aux Group added should be visible."""
-    assert wait_on_element(driver, 7, '//mat-select[contains(.,"games")]')
+    assert wait_on_element(driver, 7, xpaths.add_User.wheel_Is_Selected)
     assert wait_on_element(driver, 7, xpaths.button.close_Icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()
