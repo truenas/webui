@@ -14,7 +14,7 @@ export class IxFormatterService {
       return '';
     }
     value = value.toString();
-    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytesToHumanReadable(value, 0);
+    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytesToHumanReadable(value, 2);
   };
 
   /**
@@ -27,9 +27,9 @@ export class IxFormatterService {
     if (!value) {
       return null;
     }
-    const humanStringToNum = this.convertHumanStringToNum(value);
+    const humanStringToNum = this.convertHumanStringToNum(value, true);
     // Default unit is MiB so if the user passed in no unit, we assume unit is MiB
-    return (humanStringToNum !== Number(value)) ? humanStringToNum : this.convertHumanStringToNum(value + 'mb');
+    return (humanStringToNum !== Number(value)) ? humanStringToNum : this.convertHumanStringToNum(value + 'mb', true);
   };
 
   /**
@@ -62,7 +62,7 @@ export class IxFormatterService {
     } else {
       units = hideBytes ? '' : 'B';
     }
-    return `${bytes.toFixed(dec)} ${units}`;
+    return `${parseFloat(bytes.toFixed(dec))} ${units}`;
   };
 
   /**
