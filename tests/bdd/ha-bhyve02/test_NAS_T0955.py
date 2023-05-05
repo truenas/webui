@@ -134,7 +134,7 @@ def user_should_not_be_able_to_log_in_ssh_with_the_old_password(driver):
 @then('Try to log back in ssh with the new password for that user')
 def try_to_log_back_in_ssh_with_the_new_password_for_that_user(driver):
     """Try to log back in ssh with the new password for that user."""
-    assert ssh_sudo_exptext('ls /', host, 'ericbsd', 'testing1234', 'sbin')
+    assert ssh_sudo_exptext('ls /', host, 'ericbsd', 'testing1', 'sbin')
 
 
 @then('User should be able to log in with new password')

@@ -130,7 +130,7 @@ def open_the_user_drop_down_to_verify_the_user_disable_password_is_false(driver)
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
     element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]/../dd').text
-    assert element_text == 'NO'
+    assert element_text == 'No'
 
 
 @then('Try login with ssh')

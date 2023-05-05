@@ -28,7 +28,7 @@ def test_edit_user_auxiliary_group(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open navigate to "{nas_user}"."""
-    #depends(request, ['First_User'], scope='session')
+    depends(request, ['First_User'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         time.sleep(1)
