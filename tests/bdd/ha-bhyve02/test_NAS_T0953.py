@@ -7,7 +7,7 @@ import xpaths
 from function import (
     wait_on_element,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_sudo_exptext
 )
 from pytest_bdd import (
     given,
@@ -136,12 +136,10 @@ def updated_value_should_be_visible(driver):
 @then('Try login with ssh')
 def try_login_with_ssh(driver):
     """Try login with ssh."""
-    global ssh_result
-    ssh_result = ssh_cmd('ls -la', 'ericbsd', 'testing', host)
+    assert ssh_sudo_exptext('ls /tmp', host, 'ericbsd', 'testing', 'Sorry, try again')
 
 
 @then('User should not be able to login')
 def user_should_not_be_able_to_login(driver):
     """User should not be able to login."""
-    assert not ssh_result['result'], ssh_result['output']
-    assert '..' not in ssh_result['output'], ssh_result['output']
+    pass

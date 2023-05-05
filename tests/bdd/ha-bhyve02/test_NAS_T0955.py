@@ -7,7 +7,7 @@ import xpaths
 from function import (
     wait_on_element,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_sudo_exptext
 )
 from pytest_bdd import (
     given,
@@ -121,26 +121,23 @@ def change_should_be_saved(driver):
 @then('Log out and try to log back in with the old password for that user')
 def log_out_and_try_to_log_back_in_with_the_old_password_for_that_user(driver):
     """Log out and try to log back in with the old password for that user."""
-    global ssh_result
-    ssh_result = ssh_cmd('ls -la', 'ericbsd', 'testing', host)
+    time.sleep(1)
+    assert ssh_sudo_exptext('ls /', host, 'ericbsd', 'testing', 'Sorry, try again')
 
 
 @then('User should not be able to log in ssh with the old password')
 def user_should_not_be_able_to_log_in_ssh_with_the_old_password(driver):
     """User should not be able to log in ssh with the old password."""
-    assert not ssh_result['result'], ssh_result['output']
-    assert '..' not in ssh_result['output'], ssh_result['output']
+    pass
 
 
 @then('Try to log back in ssh with the new password for that user')
 def try_to_log_back_in_ssh_with_the_new_password_for_that_user(driver):
     """Try to log back in ssh with the new password for that user."""
-    global ssh_result
-    ssh_result = ssh_cmd('ls -la', 'ericbsd', 'testing1', host)
+    assert ssh_sudo_exptext('ls /', host, 'ericbsd', 'testing1234', 'sbin')
 
 
 @then('User should be able to log in with new password')
 def user_should_be_able_to_log_in_with_new_password(driver):
     """User should be able to log in with new password."""
-    assert ssh_result['result'], ssh_result['output']
-    assert '..' in ssh_result['output'], ssh_result['output']
+    pass
