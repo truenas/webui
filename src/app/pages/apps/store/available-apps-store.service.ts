@@ -103,6 +103,15 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     this.initialize();
   }
 
+  private handleError(): void {
+    this.patchState((state: AvailableAppsState): AvailableAppsState => {
+      return {
+        ...state,
+        isLoading: false,
+      };
+    });
+  }
+
   readonly initialize = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
@@ -128,16 +137,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
           };
         });
       }),
-      catchError(() => {
-        return of(
-          this.patchState((state: AvailableAppsState): AvailableAppsState => {
-            return {
-              ...state,
-              isLoading: false,
-            };
-          }),
-        );
-      }),
+      catchError(() => of(this.handleError())),
     );
   });
 
@@ -193,16 +193,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
           };
         });
       },
-      error: () => catchError(() => {
-        return of(
-          this.patchState((state: AvailableAppsState): AvailableAppsState => {
-            return {
-              ...state,
-              isLoading: false,
-            };
-          }),
-        );
-      }),
+      error: () => of(this.handleError()),
     });
   }
 
