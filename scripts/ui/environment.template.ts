@@ -1,5 +1,7 @@
-import { EnclosureDispersalStrategy, MockStorageScenario } from '../../src/app/core/testing/enums/mock-storage.enum';
 import { WebUiEnvironment } from 'environments/environment.interface';
+// eslint-disable-next-line no-restricted-imports, import/no-useless-path-segments
+import { EnclosureDispersalStrategy, MockStorageScenario } from '../../src/app/core/testing/enums/mock-storage.enum';
+// eslint-disable-next-line no-restricted-imports, import/no-useless-path-segments
 import { TopologyItemType } from '../../src/app/enums/v-dev-type.enum';
 
 export const environmentTemplate: WebUiEnvironment = {
