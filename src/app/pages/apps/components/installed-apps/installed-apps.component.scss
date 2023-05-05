@@ -1,9 +1,10 @@
 @import 'scss-imports/splitview';
 @import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
-$card-width: 520px;
-$singlecolumn-max-width: ($card-width + $gap * 2);
+$singlecolumn-max-width: ($card-width-slim + $gap * 2);
+$dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 $scrollbar-offset: 20px;
+$header-height: 200px;
 
 :host {
   display: block;
@@ -11,15 +12,12 @@ $scrollbar-offset: 20px;
 
 .loader-bar {
   height: 2px;
-  position: absolute;
-  top: 0;
-  z-index: 10;
 }
 
 .container {
   display: flex;
   flex-direction: row;
-  min-height: 100%;
+  height: calc(100vh - #{$header-height});
 }
 
 .table-container {
@@ -46,9 +44,31 @@ $scrollbar-offset: 20px;
   }
 
   // One Cards Column
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
     max-width: calc(100% - $singlecolumn-max-width - 16px);
     min-width: calc($table-min-width + 0px);
+  }
+
+  // Two Cards Slim Columns
+  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
+    min-width: calc($table-min-width + 0px);
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    min-width: calc(98% - 2 * ($card-width + $gap));
+  }
+
+  // Three Cards Columns
+  @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    min-width: calc(98% - 3 * ($card-width + $gap));
+  }
+
+  // Cards spill to the right
+  @media (min-width: $breakpoint-flex) {
+    max-width: 1200px;
+    width: 50%;
   }
 
   .table-header {
@@ -72,12 +92,6 @@ $scrollbar-offset: 20px;
       gap: 6px;
     }
   }
-}
-
-.table-body {
-  position: sticky;
-  top: -15px;
-  z-index: 1;
 }
 
 .app-search {
@@ -131,14 +145,18 @@ ix-app-row,
   grid-gap: 8px;
   min-height: 48px;
   min-width: fit-content;
+
+  position: sticky;
+  top: 0;
   width: 100%;
+  z-index: 1;
 
   > div {
     font-weight: bold;
     padding: 4px 0;
 
     @media (max-width: $breakpoint-tablet) {
-      display: none;
+      display: none !important;
     }
 
     &:first-child {
@@ -146,12 +164,8 @@ ix-app-row,
       position: sticky;
 
       @media (max-width: $breakpoint-tablet) {
-        display: block;
+        display: block !important;
       }
-    }
-
-    &:last-child {
-      text-align: center;
     }
   }
 
@@ -184,9 +198,56 @@ ix-app-row,
   position: sticky;
   top: 0;
 
+  // Hide Details
+  @media (max-width: $breakpoint-hidden) {
+    display: none;
+  }
+
   // One Card Column
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
     max-width: $singlecolumn-max-width;
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn) {
+    max-width: 70%;
+  }
+}
+
+ix-app-details-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.details-container.details-container-mobile {
+  // Hide Details
+  @media (max-width: $breakpoint-hidden) {
+    background: var(--bg1);
+    display: flex;
+    height: 100% !important;
+    left: 0;
+    max-width: 100%;
+    padding-top: 24px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 3;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+    overflow-y: auto;
+    padding-bottom: 96px;
+  }
+
+  ::ng-deep .cards .scroll-window {
+    display: block;
   }
 }
 
