@@ -66,21 +66,21 @@ describe('IxSlideIn2Service', () => {
       expect(instanceRef).toBeInstanceOf(IxSlideInRef);
     });
 
-    it('should be call \'closeLast\' method after emitted from closeEvent$', () => {
-      service.open(TestComponent, { wide: true, data: '' });
+    it('the last slide from slideInRefMap should be closed after emitted from closeEvent$', () => {
+      service.open(TestComponent);
 
       const lastKeySlideInRefMap = Array.from(service.slideInRefMap.keys()).pop();
       const lastSlideInRef = service.slideInRefMap.get(lastKeySlideInRefMap);
 
       jest.spyOn(lastSlideInRef, 'close');
-      service.closeEvent$.next(true);
+      spectatorComponent.component.leave();
 
       expect(lastSlideInRef.close).toHaveBeenCalled();
     });
 
     it('should be call \'closeAll\' method after route navigation', async () => {
       jest.spyOn(service, 'closeAll');
-      service.open(TestComponent, { wide: true, data: '' });
+      service.open(TestComponent);
 
       await spectator.inject(Router).navigate(['/']);
 
@@ -115,6 +115,15 @@ describe('IxSlideIn2Service', () => {
       slideInRef.componentInstance.closeSlideIn();
 
       expect(spectatorComponent.component.closeSlideIn).toHaveBeenCalled();
+    });
+
+    it('observable \'afterClosed$\' should emit response after close slide', () => {
+      const response = { error: true };
+      const slideInRef = service.open(TestComponent);
+      slideInRef.afterClosed$.subscribe((value) => {
+        expect(value).toBe(response);
+      });
+      slideInRef.close();
     });
   });
 });
