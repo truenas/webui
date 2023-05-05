@@ -1,0 +1,61 @@
+<form [formGroup]="form">
+  <ix-radio-group
+    formControlName="schedule_method"
+    [label]="helptext.schedule_method_placeholder | translate"
+    [tooltip]="helptext.schedule_method_tooltip | translate"
+    [required]="true"
+    [options]="scheduleMethodOptions$"
+  ></ix-radio-group>
+  <ix-scheduler
+    *ngIf="form.controls.schedule_picker.enabled"
+    formControlName="schedule_picker"
+    [required]="true"
+    [label]="helptext.schedule_placeholder | translate"
+    [tooltip]="helptext.schedule_tooltip| translate"
+  ></ix-scheduler>
+  <ix-checkbox
+    *ngIf="form.controls.readonly.enabled"
+    formControlName="readonly"
+    [label]="helptext.readonly_placeholder | translate"
+    [tooltip]="helptext.readonly_tooltip | translate"
+  ></ix-checkbox>
+  <ix-radio-group
+    formControlName="retention_policy"
+    [label]="helptext.retention_policy_placeholder | translate"
+    [tooltip]="helptext.retention_policy_tooltip | translate"
+    [required]="true"
+    [options]="retentionPolicyOptions$"
+  ></ix-radio-group>
+  <div class="lifetime">
+    <ix-input
+      *ngIf="form.controls.lifetime_value.enabled"
+      class="value"
+      formControlName="lifetime_value"
+      type="number"
+      [required]="true"
+    ></ix-input>
+    <ix-select
+      *ngIf="form.controls.lifetime_unit.enabled"
+      class="unit"
+      formControlName="lifetime_unit"
+      [options]="lifetimeUnitOptions$"
+      [required]="true"
+    ></ix-select>
+  </div>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid"
+      (click)="onSave()"
+    >{{ 'Save' | translate }}</button>
+  </ix-form-actions>
+</form>

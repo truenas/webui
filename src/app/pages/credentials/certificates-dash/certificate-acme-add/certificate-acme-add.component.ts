@@ -73,8 +73,10 @@ export class CertificateAcmeAddComponent {
     const formValues = this.form.value;
 
     const dnsMapping = this.domains.reduce((mapping, domain, i) => {
-      mapping[domain] = formValues.domains[i];
-      return mapping;
+      return {
+        ...mapping,
+        [domain]: formValues.domains[i],
+      };
     }, {} as Record<string, string>);
 
     const payload = {

@@ -18,7 +18,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -34,7 +33,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 @UntilDestroy()
 @Component({
   templateUrl: './manual-update-form.component.html',
-  providers: [MessageService],
   styleUrls: ['manual-update-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

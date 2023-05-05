@@ -75,18 +75,14 @@ $scrollbar-offset: 20px;
 }
 
 .table-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  position: relative;
+  position: sticky;
+  top: -15px;
+  z-index: 1;
 }
 
 .app-search {
   background-color: var(--bg2);
   padding: 16px;
-  position: sticky;
-  top: -15px;
-  z-index: 1;
 }
 
 .app-wrapper {
@@ -119,7 +115,7 @@ $scrollbar-offset: 20px;
 
 ix-app-row,
 .app-header-row {
-  grid-template-columns: minmax(205px, auto) 125px 40px 40px 40px minmax(70px, 130px) 50px;
+  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) 40px 40px 40px minmax(100px, 115px) 60px;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0 0 0;

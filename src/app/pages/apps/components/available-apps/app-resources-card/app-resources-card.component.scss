@@ -22,3 +22,10 @@
     }
   }
 }
+
+.app-list-item {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+}

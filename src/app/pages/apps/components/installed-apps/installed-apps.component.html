@@ -105,6 +105,7 @@
               </span>
             </div>
             <div>{{ 'Status' | translate }}</div>
+            <!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 -->
             <div>{{ 'CPU' | translate }}</div>
             <div>{{ 'RAM' | translate }}</div>
             <div>{{ 'Disk' | translate }}</div>
@@ -117,7 +118,7 @@
                 [matTooltip]="'Updates available' | translate"
               ></ix-icon>
             </div>
-            <div>{{ 'Action' | translate }}</div>
+            <div></div>
           </div>
 
           <div class="apps-rows">
@@ -135,15 +136,10 @@
               ></ix-app-row>
             </ng-container>
 
-            <div *ngIf="!dataSource.length" class="no-apps">
+            <div *ngIf="(dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading)" class="no-apps">
               <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
             </div>
-            <!-- TODO: Merge into one flow. This is temporary solution -->
-            <div *ngIf="dataSource.length && !filteredApps.length" class="no-apps">
-              <ix-entity-empty [conf]="emptySearchResultsConf"></ix-entity-empty>
-            </div>
           </div>
-
         </div>
       </div>
     </div>

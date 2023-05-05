@@ -5,8 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockPipe } from 'ng-mocks';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -69,7 +68,7 @@ describe('JobsListComponent', () => {
     ],
     declarations: [
       JobLogsRowComponent,
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2022-05-28 00:00:01')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       mockProvider(DialogService),
@@ -109,8 +108,8 @@ describe('JobsListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'State', 'ID', 'Started', 'Finished', 'Logs', ''],
-      ['cloudsync.sync', 'Failed', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'Download Logs', ''],
-      ['cloudsync.sync', 'Success', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', '', ''],
+      ['cloudsync.sync', 'Failed', '446', '2022-05-28 10:00:01', '2022-05-28 10:00:01', 'Download Logs', ''],
+      ['cloudsync.sync', 'Success', '445', '2022-05-28 10:00:01', '2022-05-28 10:00:01', '', ''],
     ];
 
     expect(cells).toEqual(expectedRows);

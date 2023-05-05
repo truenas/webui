@@ -80,45 +80,51 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget> {
       icon: 'edit',
       name: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (rowinner: IscsiTarget) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (rowInner: IscsiTarget) => {
+        this.entityList.doEdit(rowInner.id);
+      },
     }, {
       id: row.name,
       icon: 'delete',
       name: 'delete',
       label: this.translate.instant('Delete'),
-      onClick: (rowinner: IscsiTarget) => {
-        let deleteMsg = this.entityList.getDeleteMessage(rowinner);
-        this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
-          (sessions) => {
-            const payload: [id: number, force?: boolean] = [rowinner.id];
-            let warningMsg = '';
-            for (const session of sessions) {
-              if (session.target.split(':')[1] === rowinner.name) {
-                warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
-                payload.push(true); // enable force delete
-                break;
-              }
-            }
-            deleteMsg = warningMsg + deleteMsg;
-
-            this.entityList.dialogService.confirm({
-              title: this.translate.instant('Delete'),
-              message: deleteMsg,
-              buttonText: this.translate.instant('Delete'),
-            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.entityList.loader.open();
-              this.entityList.loaderOpen = true;
-              this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
-                next: () => this.entityList.getData(),
-                error: (error: WebsocketError) => {
-                  this.dialogService.error(this.errorHandler.parseWsError(error));
-                  this.entityList.loader.close();
-                },
-              });
-            });
-          },
-        );
+      onClick: (rowInner: IscsiTarget) => {
+        this.deleteRow(rowInner);
       },
     }];
+  }
+
+  private deleteRow(rowInner: IscsiTarget): void {
+    let deleteMsg = this.entityList.getDeleteMessage(rowInner);
+    this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
+      (sessions) => {
+        const payload: [id: number, force?: boolean] = [rowInner.id];
+        let warningMsg = '';
+        for (const session of sessions) {
+          if (session.target.split(':')[1] === rowInner.name) {
+            warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
+            payload.push(true); // enable force delete
+            break;
+          }
+        }
+        deleteMsg = warningMsg + deleteMsg;
+
+        this.entityList.dialogService.confirm({
+          title: this.translate.instant('Delete'),
+          message: deleteMsg,
+          buttonText: this.translate.instant('Delete'),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.entityList.loader.open();
+          this.entityList.loaderOpen = true;
+          this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
+            next: () => this.entityList.getData(),
+            error: (error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
+              this.entityList.loader.close();
+            },
+          });
+        });
+      },
+    );
   }
 }

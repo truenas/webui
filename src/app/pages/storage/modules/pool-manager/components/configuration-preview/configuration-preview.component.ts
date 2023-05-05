@@ -40,7 +40,9 @@ export class ConfigurationPreviewComponent implements OnInit {
         this.formValue = formValue;
         this.disksSelectedManually = disksSelectedManually;
         this.vdevsCountString = `${dataVdevs.length} VDEVs`;
-        this.totalUsableCapacity = `${filesize(totalUsableCapacity, { standard: 'iec' })} ${this.translate.instant('Total')}`;
+        this.totalUsableCapacity = this.translate.instant('{size} Total', {
+          size: filesize(totalUsableCapacity, { standard: 'iec' }),
+        });
         this.cdr.markForCheck();
       });
   }

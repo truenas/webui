@@ -9,7 +9,6 @@ import { ApplicationTab } from 'app/pages/apps-old/application-tab.enum';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
@@ -31,7 +30,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private core: CoreService,
-    private modalService: ModalService,
     private slideInService: IxSlideInService,
     private appService: ApplicationsService,
   ) {}
@@ -40,7 +38,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     merge(
       this.core.register({ eventName: 'RefreshAppsTab', observerClass: this }),
       this.slideInService.onClose$,
-      this.modalService.refreshTable$,
     ).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTab();
     });

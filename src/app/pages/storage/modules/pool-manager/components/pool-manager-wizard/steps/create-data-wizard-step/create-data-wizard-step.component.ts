@@ -20,6 +20,7 @@ import {
   ManualDiskSelectionComponent, ManualDiskSelectionLayout,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
+import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
 import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
@@ -48,7 +49,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
 
-  diskSizeAndTypeOptions$ = of([]);
+  diskSizeAndTypeOptions$: Observable<SelectOption<SizeAndType>[]> = of([]);
   widthOptions$: Observable<SelectOption[]> = of([]);
   numberOptions$: Observable<SelectOption[]> = of([]);
 
@@ -120,15 +121,17 @@ export class CreateDataWizardStepComponent implements OnInit {
       [DiskType.Ssd]: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
     };
 
-    const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd]).map((size) => ({
-      label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Hdd})`,
-      value: [size, DiskType.Hdd],
-    }));
+    const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd])
+      .map((size): SelectOption<SizeAndType> => ({
+        label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Hdd})`,
+        value: [size, DiskType.Hdd],
+      }));
 
-    const ssdOptions = Object.keys(this.sizeDisksMap[DiskType.Ssd]).map((size) => ({
-      label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Ssd})`,
-      value: [size, DiskType.Ssd],
-    }));
+    const ssdOptions = Object.keys(this.sizeDisksMap[DiskType.Ssd])
+      .map((size): SelectOption<SizeAndType> => ({
+        label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Ssd})`,
+        value: [size, DiskType.Ssd],
+      }));
 
     this.diskSizeAndTypeOptions$ = of([...hddOptions, ...ssdOptions]);
   }

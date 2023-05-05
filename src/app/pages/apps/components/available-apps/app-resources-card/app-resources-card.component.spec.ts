@@ -1,7 +1,8 @@
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/available-apps/app-resources-card/app-resources-card.component';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 
 describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;
@@ -10,8 +11,9 @@ describe('AppResourcesCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
-    declarations: [],
-    providers: [],
+    providers: [
+      mockProvider(AvailableAppsStore),
+    ],
   });
 
   beforeEach(() => {

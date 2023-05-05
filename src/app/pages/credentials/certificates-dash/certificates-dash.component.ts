@@ -12,7 +12,6 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
@@ -40,7 +39,6 @@ import { CertificateEditComponent } from './certificate-edit/certificate-edit.co
 @UntilDestroy()
 @Component({
   templateUrl: './certificates-dash.component.html',
-  providers: [EntityFormService],
 })
 export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];

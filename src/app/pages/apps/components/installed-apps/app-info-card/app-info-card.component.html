@@ -3,14 +3,25 @@
     <h3 mat-card-title>
       {{ 'Application Info' | translate }}
     </h3>
-    <button
-      *ngIf="hasUpdates"
-      mat-button
-      [ixTest]="[app?.name, 'update']"
-      (click)="updateButtonPressed()"
-    >
-      {{ 'Update' | translate }}
-    </button>
+    <div>
+      <button
+        id="edit-app"
+        mat-button
+        [ixTest]="[app?.name, 'edit']"
+        (click)="editButtonPressed()"
+      >
+        {{ 'Edit' | translate }}
+      </button>
+      <button
+        *ngIf="hasUpdates"
+        id="update-app"
+        mat-button
+        [ixTest]="[app?.name, 'update']"
+        (click)="updateButtonPressed()"
+      >
+        {{ 'Update' | translate }}
+      </button>
+    </div>
   </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
@@ -32,8 +43,9 @@
             </ng-container>
           </span>
         </div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div class="details-item">
-          <span class="label">{{ 'Latest Updated' | translate }}:</span>
+          <span class="label">{{ 'Last Updated' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
@@ -48,13 +60,15 @@
             </ng-container>
           </span>
         </div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div class="details-item">
           <span class="label">{{ 'Developer' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
         </div>
-        <div class="details-item">
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div *ngIf="false" class="details-item">
           <span class="label">{{ 'Commits in the last 60 days' | translate }}:</span>
           <span class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
@@ -76,17 +90,17 @@
             </ng-container>
           </span>
         </div>
+        <div *ngIf="app?.portals" class="portals">
+          <button
+            *ngFor="let portal of app.portals | keyvalue"
+            mat-button
+            [ixTest]="['portal', app.name, portal.key]"
+            (click)="portalLink(app, portal.key)"
+          >
+            {{ portalName(portal.key) }}
+          </button>
+        </div>
       </div>
-    </div>
-    <div *ngIf="app?.portals" fxLayout="row" fxLayoutAlign="center">
-      <button
-        *ngFor="let portal of app.portals | keyvalue"
-        mat-button
-        [ixTest]="['portal', app.name, portal.key]"
-        (click)="portalLink(app, portal.key)"
-      >
-        {{ portalName(portal.key) }}
-      </button>
     </div>
   </mat-card-content>
   <mat-card-actions>

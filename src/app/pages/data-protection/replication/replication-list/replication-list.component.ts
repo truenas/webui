@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { merge } from 'rxjs';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -15,7 +14,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -36,7 +34,6 @@ import {
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
@@ -48,7 +45,6 @@ import { AppState } from 'app/store';
     TaskService,
     KeychainCredentialService,
     ReplicationService,
-    EntityFormService,
     DatePipe,
   ],
 })
@@ -90,13 +86,12 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
-    protected modalService: ModalService,
     protected loader: AppLoaderService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private route: ActivatedRoute,
-    private slideInService: IxSlideInService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
@@ -106,14 +101,11 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
 
   afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
-    merge([
-      this.slideInService.onClose$,
-      this.modalService.onClose$,
-    ]).pipe(
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.entityList.getData();
-    });
+    this.slideInService.onClose$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.entityList.getData();
+      });
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
@@ -257,7 +249,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(ReplicationWizardComponent);
+    this.slideInService.open(ReplicationWizardComponent, { wide: true });
   }
 
   doEdit(id: number): void {

@@ -31,7 +31,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServiceSmbComponent implements OnInit {
   isFormLoading = false;
   isBasicMode = true;
-  hasSecondController = false;
   subscriptions: Subscription[] = [];
 
   form = this.fb.group({

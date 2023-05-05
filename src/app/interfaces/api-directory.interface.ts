@@ -33,7 +33,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -206,7 +206,6 @@ import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-co
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
-import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
@@ -324,7 +323,7 @@ export type ApiDirectory = {
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: DsUncachedUser };
-  'auth.set_attribute': { params: [key: string, value: unknown]; response: boolean };
+  'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
 
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
@@ -354,6 +353,7 @@ export type ApiDirectory = {
   // App
   'app.categories': { params: void; response: string[] };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+  'app.similar': { params: [app_name: string, catalog: string, train: string]; response: AvailableApp[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
 
   // Catalog
@@ -791,11 +791,6 @@ export type ApiDirectory = {
   'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
   'reporting.clear': { params: void; response: void };
-
-  // S3
-  's3.bindip_choices': { params: void; response: Choices };
-  's3.config': { params: void; response: S3Config };
-  's3.update': { params: [S3ConfigUpdate]; response: S3Config };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };

@@ -24,10 +24,10 @@ import {
   NetworkInterfaceCreate,
   NetworkInterfaceUpdate,
 } from 'app/interfaces/network-interface.interface';
-import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DefaultGatewayDialogComponent,
