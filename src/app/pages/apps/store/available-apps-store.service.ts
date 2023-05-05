@@ -128,6 +128,16 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
           };
         });
       }),
+      catchError(() => {
+        return of(
+          this.patchState((state: AvailableAppsState): AvailableAppsState => {
+            return {
+              ...state,
+              isLoading: false,
+            };
+          }),
+        );
+      }),
     );
   });
 
@@ -183,6 +193,16 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
           };
         });
       },
+      error: () => catchError(() => {
+        return of(
+          this.patchState((state: AvailableAppsState): AvailableAppsState => {
+            return {
+              ...state,
+              isLoading: false,
+            };
+          }),
+        );
+      }),
     });
   }
 
