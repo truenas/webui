@@ -266,7 +266,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
 
-      if (update.virtual_memory) {
+      if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
         if (update.zfs && update.zfs.arc_size !== null) {
@@ -275,7 +275,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
       }
 
-      if (update.interfaces) {
+      if (update?.interfaces) {
         const keys = Object.keys(update.interfaces);
         keys.forEach((key) => {
           this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data: update.interfaces[key] });
