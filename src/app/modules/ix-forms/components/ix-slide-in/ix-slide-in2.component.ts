@@ -28,7 +28,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
-    this.leave();
+    this.onBackdropClicked();
   }
 
   isSlideInOpen = false;
@@ -56,9 +56,9 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     this.slideIn2Service.setSlideComponent(this);
   }
 
-  leave(): void {
+  onBackdropClicked(): void {
     if (!this.element || !this.isSlideInOpen) { return; }
-    this.slideIn2Service.closeEvent$.next(true);
+    this.slideIn2Service.closeLast();
   }
 
   closeSlideIn(): void {

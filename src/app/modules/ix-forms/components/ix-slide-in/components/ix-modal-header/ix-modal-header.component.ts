@@ -19,6 +19,6 @@ export class IxModalHeaderComponent {
 
   close(): void {
     this.slideInService.close();
-    this.slideIn2Service.closeEvent$.next(true);
+    this.slideIn2Service.closeLast();
   }
 }

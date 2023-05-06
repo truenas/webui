@@ -73,7 +73,7 @@ describe('IxSlideIn2Service', () => {
       const lastSlideInRef = service.slideInRefMap.get(lastKeySlideInRefMap);
 
       jest.spyOn(lastSlideInRef, 'close');
-      spectatorComponent.component.leave();
+      spectatorComponent.component.onBackdropClicked();
 
       expect(lastSlideInRef.close).toHaveBeenCalled();
     });

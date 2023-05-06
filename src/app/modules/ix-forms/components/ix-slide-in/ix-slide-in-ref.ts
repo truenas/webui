@@ -13,14 +13,14 @@ export class IxSlideInRef<T, D = unknown> {
   }
 
   constructor(
-    private slideIn2Service: IxSlideIn2Service,
+    private slideInService: IxSlideIn2Service,
     private slideIn2Component: IxSlideIn2Component,
   ) {}
 
   close(response?: D): void {
     this.slideInClosed$.next(response);
     this.slideInClosed$.complete();
-    this.slideIn2Service.slideInRefMap.delete(this.id);
+    this.slideInService.deleteRef(this.id);
     this.slideIn2Component.closeSlideIn();
   }
 
