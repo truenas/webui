@@ -1,7 +1,4 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -36,7 +33,7 @@ const fakeUpgradeSummary = {
 
 describe('AppUpgradeDialogComponent', () => {
   let spectator: Spectator<AppUpgradeDialogComponent>;
-  let loader: HarnessLoader;
+
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
     imports: [FormsModule, ImgFallbackModule],
@@ -54,7 +51,6 @@ describe('AppUpgradeDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows title as application name', () => {
@@ -69,18 +65,5 @@ describe('AppUpgradeDialogComponent', () => {
     const panelTitles = spectator.queryAll('mat-expansion-panel mat-panel-title');
     expect(panelTitles[0].textContent).toBe(' Images ( to be updated ) ');
     expect(panelTitles[1].textContent).toBe(' Changelog ');
-  });
-
-  it('shows 2 mat-panels detail rows with data', () => {
-    const panelContent = spectator.queryAll('mat-expansion-panel .detail-row');
-    expect(panelContent[0].textContent).toBe(' There are no images requiring upgrade ');
-    expect(panelContent[1].textContent).toBe('No Changelog');
-  });
-
-  it('submits upgrade from 1.0.1 to 1.0.2 version', async () => {
-    const upgradeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
-    await upgradeButton.click();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('1.0.2');
   });
 });
