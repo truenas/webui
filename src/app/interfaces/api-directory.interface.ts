@@ -699,6 +699,7 @@ export type ApiDirectory = {
     params: [path: string, params?: DatasetEncryptionSummaryQueryParams];
     response: DatasetEncryptionSummary[];
   };
+  'pool.dataset.get_instance': { params: [path: string]; response: DatasetDetails };
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
