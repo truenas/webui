@@ -40,6 +40,7 @@ export class AppAvailableInfoCardComponent implements OnChanges {
         },
         complete: () => {
           this.loadingSources = false;
+          this.cdr.markForCheck();
         },
       });
     this.relativeDate = formatRelative(new Date(this.app.last_update.$date), new Date());
