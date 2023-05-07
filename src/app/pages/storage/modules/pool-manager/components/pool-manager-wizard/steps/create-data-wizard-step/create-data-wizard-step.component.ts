@@ -14,7 +14,7 @@ import {
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
-import { SelectOption } from 'app/interfaces/option.interface';
+import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManualDiskSelectionComponent, ManualDiskSelectionLayout,
@@ -36,6 +36,14 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
 export class CreateDataWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['data'];
 
+  protected minDisks: { [key: string]: number } = {
+    [CreateVdevLayout.Stripe]: 1,
+    [CreateVdevLayout.Mirror]: 2,
+    [CreateVdevLayout.Raidz1]: 3,
+    [CreateVdevLayout.Raidz2]: 4,
+    [CreateVdevLayout.Raidz3]: 5,
+  };
+
   readonly manualDiskSelectionMessage = helptext.manual_disk_selection_message;
   unusedDisks: UnusedDisk[] = [];
   sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
@@ -45,7 +53,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   selectedWidth: number = null;
   selectedVdevsCount: number = null;
 
-  vdevLayoutOptions$ = of([
+  vdevLayoutOptions$: Observable<Option[]> = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
 
@@ -80,6 +88,13 @@ export class CreateDataWizardStepComponent implements OnInit {
       }, true),
       untilDestroyed(this),
     ).subscribe((disks) => {
+      const vdevLayoutOptions: Option[] = [];
+      for (const [key, value] of Object.entries(CreateVdevLayout)) {
+        if (disks.length >= this.minDisks[value]) {
+          vdevLayoutOptions.push({ label: key, value });
+        }
+      }
+      this.vdevLayoutOptions$ = of(vdevLayoutOptions);
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();
