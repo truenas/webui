@@ -8,6 +8,7 @@ import filesize from 'filesize';
 import _ from 'lodash';
 import {
   Observable,
+  combineLatest,
   filter,
   of, switchMap, take, takeWhile,
 } from 'rxjs';
@@ -94,14 +95,18 @@ export class CreateDataWizardStepComponent implements OnInit {
           vdevLayoutOptions.push({ label: key, value });
         }
       }
+      this.form.controls.type.setValue(vdevLayoutOptions[vdevLayoutOptions.length - 1]?.value as CreateVdevLayout);
       this.vdevLayoutOptions$ = of(vdevLayoutOptions);
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();
     });
 
-    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe(([size, type]) => {
-      this.selectedDiskType = type;
+    combineLatest([
+      this.form.controls.type.valueChanges,
+      this.form.controls.sizeAndType.valueChanges,
+    ]).pipe(untilDestroyed(this)).subscribe(([, [size, diskType]]) => {
+      this.selectedDiskType = diskType;
       this.selectedSize = size;
       this.updateWidthOptions();
       this.createVdevsAutomatically();
@@ -156,23 +161,15 @@ export class CreateDataWizardStepComponent implements OnInit {
       return;
     }
     const length: number = this.sizeDisksMap[this.selectedDiskType][this.selectedSize];
+    const minRequired = this.minDisks[this.form.controls.type.value as CreateVdevLayout];
 
-    if (length) {
-      switch (this.form.value.type) {
-        case CreateVdevLayout.Stripe:
-          this.widthOptions$ = of(
-            _.range(1, length + 1).map((item) => ({
-              label: `${item}`,
-              value: item,
-            })),
-          );
-          break;
-        case CreateVdevLayout.Mirror:
-        case CreateVdevLayout.Raidz1:
-        case CreateVdevLayout.Raidz2:
-        case CreateVdevLayout.Raidz3:
-          break;
-      }
+    if (length && minRequired) {
+      this.widthOptions$ = of(
+        _.range(minRequired, length + 1).map((item) => ({
+          label: `${item}`,
+          value: item,
+        })),
+      );
       this.form.controls.width.setValue(length);
     } else {
       this.widthOptions$ = of([]);
