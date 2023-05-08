@@ -127,7 +127,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   createVdevsAutomatically(): void {
     this.poolManagerStore.createDataVdevsAutomatically({
       size: +this.selectedSize,
-      type: this.selectedDiskType,
+      vdevType: this.form.controls.type.value,
       width: this.selectedWidth,
       count: this.selectedVdevsCount,
     });
@@ -240,7 +240,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     }
     this.poolManagerStore.createDataVdevsAutomatically({
       width: this.selectedWidth,
-      type: this.selectedDiskType,
+      vdevType: this.form.controls.type.value,
       count: this.selectedVdevsCount,
       size: +this.selectedSize,
     });

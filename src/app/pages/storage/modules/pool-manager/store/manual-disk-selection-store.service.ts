@@ -97,9 +97,12 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
         dataVdev.disks.push({ ...vdevUpdate.disk, vdevUuid: dataVdev.uuid });
         let vdevErrorMsg: string = null;
         if (dataVdev.disks?.length < minDisks[dataVdev.type]) {
+          const typeKey = Object.entries(CreateVdevLayout).filter(
+            ([, value]) => value === dataVdev.type,
+          ).map(([key]) => key)[0];
           vdevErrorMsg = this.translate.instant(
-            'Atleast {min} disk(s) are required for the selected vdev type',
-            { min: minDisks[dataVdev.type] },
+            'Atleast {min} disk(s) are required for {vdevType} vdevs',
+            { min: minDisks[dataVdev.type], vdevType: typeKey },
           );
         }
         dataVdev.errorMsg = vdevErrorMsg;
@@ -131,9 +134,12 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
         });
         let vdevErrorMsg: string = null;
         if (vdev.disks?.length < minDisks[vdev.type]) {
+          const typeKey = Object.entries(CreateVdevLayout).filter(
+            ([, value]) => value === vdev.type,
+          ).map(([key]) => key)[0];
           vdevErrorMsg = this.translate.instant(
-            'Atleast {min} disk(s) are required for the selected vdev type',
-            { min: minDisks[vdev.type] },
+            'Atleast {min} disk(s) are required for {vdevType} vdevs',
+            { min: minDisks[vdev.type], vdevType: typeKey },
           );
         }
         vdev.errorMsg = vdevErrorMsg;
@@ -162,6 +168,9 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
   });
 
   addDataVdev = this.updater((state: ManualDiskSelectionState, vdev: PoolManagerVdev) => {
+    const typeKey = Object.entries(CreateVdevLayout).filter(
+      ([, value]) => value === vdev.type,
+    ).map(([key]) => key)[0];
     return {
       ...state,
       vdevs: {
@@ -171,8 +180,8 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
           {
             ...vdev,
             errorMsg: this.translate.instant(
-              'Atleast {min} disk(s) are required for the selected vdev type',
-              { min: minDisks[vdev.type] },
+              'Atleast {min} disk(s) are required for {vdevType} vdevs',
+              { min: minDisks[vdev.type], vdevType: typeKey },
             ),
           },
         ],
