@@ -5,7 +5,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { bindCallback, merge, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 export interface ResponseOnClose {
   response?: unknown;
@@ -25,7 +24,6 @@ export class IxSlideInService {
   constructor(
     private location: Location,
     private router: Router,
-    private slideIn2Service: IxSlideIn2Service,
   ) {
     this.closeOnNavigation();
   }

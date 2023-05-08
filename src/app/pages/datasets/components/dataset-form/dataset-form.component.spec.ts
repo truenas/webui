@@ -11,6 +11,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclMode } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -66,6 +69,7 @@ describe('DatasetFormComponent', () => {
         EncryptionSectionComponent,
         QuotasSectionComponent,
         OtherOptionsSectionComponent,
+        IxModalHeaderComponent,
       ),
     ],
     providers: [

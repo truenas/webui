@@ -16,6 +16,9 @@ import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interf
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import {
+  IxModalHeaderComponent,
+} from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -56,6 +59,7 @@ describe('IdmapFormComponent', () => {
     ],
     declarations: [
       MockComponent(WithManageCertificatesLinkComponent),
+      MockComponent(IxModalHeaderComponent),
     ],
     providers: [
       mockWebsocket([
