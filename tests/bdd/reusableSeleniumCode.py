@@ -150,6 +150,12 @@ def Restart_SMB_Service(driver):
     driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
 
 
+def Scroll_To(driver, xpath):
+    element = driver.find_element_by_xpath(xpath)
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+
+
 def Select_Option(driver, xpath):
     assert wait_on_element(driver, 5, xpath, 'clickable')
     driver.find_element_by_xpath(xpath).click()

@@ -235,8 +235,6 @@ def on_the_dashboard_wait_for_the_active_Directory_service(driver):
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
-    if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Wait for the directories service manager button
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
     # Verify HA enabled again
@@ -269,7 +267,8 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)
-    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
+    rsc.Scroll_To(driver, xpaths.add_Dataset.share_Type_Select)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
