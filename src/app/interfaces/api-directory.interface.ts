@@ -353,6 +353,7 @@ export type ApiDirectory = {
   // App
   'app.categories': { params: void; response: string[] };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+  'app.similar': { params: [app_name: string, catalog: string, train: string]; response: AvailableApp[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
 
   // Catalog
@@ -698,6 +699,7 @@ export type ApiDirectory = {
     params: [path: string, params?: DatasetEncryptionSummaryQueryParams];
     response: DatasetEncryptionSummary[];
   };
+  'pool.dataset.get_instance': { params: [path: string]; response: DatasetDetails };
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };

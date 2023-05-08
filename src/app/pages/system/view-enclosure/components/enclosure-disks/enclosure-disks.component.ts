@@ -756,7 +756,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Helper for createExtractedEnclosure
   extractEnclosure(enclosure: ChassisView, enclosureView: EnclosureView): void {
-    const canvas = (this.app.renderer.plugins.extract as CanvasExtract).canvas(enclosure.container);
+    const canvas = (this.app.renderer.plugins as { [name: string]: CanvasExtract }).extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, enclosureView }, sender: this });
     this.container.removeChild(enclosure.container);
   }
@@ -941,9 +941,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Visualization Colors
-  setDisksEnabledState(chassisView?: ChassisView): void {
-    if (!chassisView) { chassisView = this.chassisView; }
-
+  setDisksEnabledState(chassisView: ChassisView = this.chassisView): void {
     chassisView.driveTrayObjects.forEach((dt) => {
       const disk = this.selectedEnclosureView.slots.filter((enclosureSlot: EnclosureSlot) => {
         return enclosureSlot.slot === Number(dt.id);

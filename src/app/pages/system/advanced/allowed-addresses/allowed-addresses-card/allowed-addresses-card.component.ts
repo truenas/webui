@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -92,15 +92,18 @@ export class AllowedAddressesCardComponent implements OnInit {
   }
 
   private deleteAllowedAddress(row: AllowedAddressRow): void {
-    this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      const addresses = config.ui_allowlist.filter((ip) => ip !== row.address);
-      this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.store$.dispatch(generalConfigUpdated());
-          this.tableConfig.tableComponent?.getData();
-        },
-        error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
-      });
+    this.ws.call('system.general.config').pipe(
+      switchMap((config) => {
+        const addresses = config.ui_allowlist.filter((ip) => ip !== row.address);
+        return this.ws.call('system.general.update', [{ ui_allowlist: addresses }]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.store$.dispatch(generalConfigUpdated());
+        this.tableConfig.tableComponent?.getData();
+      },
+      error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
     });
   }
 }

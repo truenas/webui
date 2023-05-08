@@ -45,7 +45,8 @@ export class FormErrorHandlerService {
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string>,
   ): void {
-    for (const extraItem of (error as WebsocketError).extra) {
+    const extra = (error as WebsocketError).extra as string[][];
+    for (const extraItem of extra) {
       const field = extraItem[0].split('.')[1];
       const errorMessage = extraItem[1];
 

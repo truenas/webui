@@ -27,7 +27,7 @@
   ></ix-app-status-cell>
 </div>
 <!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 -->
-<!-- <div class="cell cell-cpu">
+<div class="cell cell-cpu">
   <span [ngTemplateOutlet]="notAvailable"></span>
 </div>
 <div class="cell cell-ram">
@@ -35,7 +35,7 @@
 </div>
 <div class="cell cell-disk">
   <span [ngTemplateOutlet]="notAvailable"></span>
-</div> -->
+</div>
 <div class="cell cell-update">
   <ng-container *ngIf="hasUpdates; else upToDate">
     <span>{{ 'Update available' | translate }}</span>

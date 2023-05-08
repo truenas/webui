@@ -21,9 +21,7 @@ export class AppCardComponent {
   readonly officialCatalog = officialCatalog;
 
   get description(): string {
-    // TODO: This temporarily uses incorrect field. This is supposed to be a short description with no html tags.
-    const description = this.app.app_readme.replace(/<[^>]*>/g, '');
-    return description.length > 150 ? `${description.substring(0, 150)}...` : description;
+    return this.app.description.length > 150 ? `${this.app.description.substring(0, 150)}...` : this.app.description;
   }
 
   constructor(

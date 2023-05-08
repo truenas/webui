@@ -58,7 +58,7 @@
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
           <ng-template #appCategories>
             <ng-container *ngIf="app?.categories; else notAvailable">
-              {{ app?.categories.join(', ') }}
+              {{ app?.tags.join(', ') }}
             </ng-container>
           </ng-template>
         </div>
@@ -72,7 +72,7 @@
           </ng-template>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div *ngIf="false" class="app-list-item">
+        <div class="app-list-item">
           {{ 'Home Page' | translate }}:
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
         </div>
@@ -87,7 +87,7 @@
     </section>
 
     <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-    <section *ngIf="false">
+    <section>
       <h2>{{ 'Screenshots' | translate }}</h2>
       <div fxLayout="row nowrap" fxLayoutGap="16px">
         <ng-container *ngIf="isLoading$ | async; else appScreenshots">
@@ -126,7 +126,7 @@
     </section>
 
     <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-    <section *ngIf="false">
+    <section>
       <h2>{{ 'Similar Apps' | translate }}</h2>
 
       <div *ngIf="similarAppsLoading$ | async; else similarAppsTemplate" fxLayout="row wrap" fxLayoutGap="16px">
@@ -136,7 +136,12 @@
 
       <ng-template #similarAppsTemplate>
         <div *ngIf="similarApps.length; else emptySimilarApps" class="similar-apps">
-          <ix-app-card *ngFor="let app of similarApps" [app]="app"></ix-app-card>
+          <ix-app-card
+            *ngFor="let app of similarApps; trackBy: trackByAppId"
+            [app]="app"
+            [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+          ></ix-app-card>
+
         </div>
       </ng-template>
 

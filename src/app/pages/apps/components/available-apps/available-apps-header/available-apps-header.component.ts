@@ -77,6 +77,7 @@ export class AvailableAppsHeaderComponent implements OnInit {
   );
 
   sortOptions$: Observable<Option[]> = of([
+    { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
     { label: this.translate.instant('Catalog Name'), value: AppsFiltersSort.Catalog },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
@@ -147,16 +148,9 @@ export class AvailableAppsHeaderComponent implements OnInit {
   applyFilters(): void {
     this.applicationsStore.applyFilters({
       catalogs: this.form.value.catalogs || [],
-      sort: this.form.value.sort || undefined,
+      sort: this.form.value.sort || null,
       categories: (this.form.value.categories || this.appsCategories),
     });
-  }
-
-  resetFilters(): void {
-    this.form.reset();
-    this.form.controls.catalogs.setValue(this.installedCatalogs);
-    this.form.controls.categories.setValue([]);
-    this.applicationsStore.resetFilters();
   }
 
   refreshAvailableApps(): void {
