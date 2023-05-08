@@ -371,7 +371,8 @@ export class ReplicationWizardComponent {
         return this.createReplication(replicationPayload);
       }),
       switchMap((unmatchedSnapshots) => {
-        const hasBadSnapshots = Object.values(unmatchedSnapshots).some((snapshots) => snapshots.length > 0);
+        const hasBadSnapshots = Object.values(unmatchedSnapshots)
+          .some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
             title: helptext.clearSnapshotDialog_title,
