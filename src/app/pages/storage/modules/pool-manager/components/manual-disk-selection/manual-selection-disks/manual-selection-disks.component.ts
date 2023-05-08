@@ -95,8 +95,10 @@ export class ManualSelectionDisksComponent implements OnInit {
 
   private mapDisksToEnclosures(disks: Disk[], enclosures: Enclosure[]): DiskOrGroup[] {
     const disksInEnclosures = enclosures.map((enclosure) => {
+      // Match behavior of enclosure-disks component
+      const currentLabel = enclosure.label !== enclosure.name ? enclosure.label : enclosure.model;
       return {
-        group: `${enclosure.number}: ${enclosure.label}`,
+        group: `${enclosure.number}: ${currentLabel}`,
         identifier: String(enclosure.number),
         children: [],
       };
