@@ -40,7 +40,7 @@ def test_verify_host_sharing_permissions_on_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ["Setup_HA"], scope='session')
+    depends(request, ['Setup_HA', 'AD_SMB_SHARE'], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -94,7 +94,7 @@ def input_smb1_for_dataset_name_select_smb_for_share_type_and_click_save(driver)
 @then('when the new dataset is created click Add Dataset again')
 def when_the_new_dataset_is_created_click_add_dataset_again(driver):
     """when the new dataset is created click Add Dataset again."""
-    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name('smb1'))
 
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
@@ -119,7 +119,7 @@ def input_smb2_for_dataset_name_select_smb_for_share_type_and_click_save(driver)
 @then('when the new dataset is created select smb2 click Edit on Permission card')
 def when_the_new_dataset_is_created_select_smb2_click_edit_on_permission_card(driver):
     """when the new dataset is created select smb2 click Edit on Permission card."""
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name('smb2'))
     driver.find_element_by_xpath(xpaths.dataset.dataset_Tree('smb2')).click()
     assert wait_on_element(driver, 5, xpaths.dataset.permission_Edit_Button, 'clickable')
