@@ -54,12 +54,12 @@ import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/p
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
+import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
+import { AppHelmChartCardComponent } from './components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
+import { AppResourcesCardComponent } from './components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
-import { AppAvailableInfoCardComponent } from './components/available-apps/app-available-info-card/app-available-info-card.component';
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
-import { AppHelmChartCardComponent } from './components/available-apps/app-helm-chart-card/app-helm-chart-card.component';
-import { AppResourcesCardComponent } from './components/available-apps/app-resources-card/app-resources-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
