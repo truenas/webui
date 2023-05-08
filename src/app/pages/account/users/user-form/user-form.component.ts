@@ -60,7 +60,7 @@ export class UserFormComponent {
     username: ['', [
       Validators.required,
       Validators.pattern(UserService.namePattern),
-      Validators.maxLength(16),
+      Validators.maxLength(32),
     ]],
     email: ['', [Validators.email]],
     password: ['', [
@@ -317,13 +317,6 @@ export class UserFormComponent {
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
-  getUsernameHint(): string {
-    if (this.form.get('username')?.value?.length > 8) {
-      return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
-    }
-    return null;
-  }
-
   private setupNewUserForm(): void {
     this.setNamesInUseValidator();
     this.setHomeSharePath();
@@ -409,7 +402,7 @@ export class UserFormComponent {
   }
 
   private setFirstShellOption(): void {
-    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
+    this.ws.call('user.shell_choices', [null, this.form.value.groups]).pipe(
       choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
@@ -450,7 +443,7 @@ export class UserFormComponent {
       ids.add(group);
     }
 
-    this.ws.call('user.shell_choices', [Array.from(ids)])
+    this.ws.call('user.shell_choices', [null, Array.from(ids)])
       .pipe(choicesToOptions(), take(1), untilDestroyed(this))
       .subscribe((options) => {
         this.shellOptions$ = of(options);

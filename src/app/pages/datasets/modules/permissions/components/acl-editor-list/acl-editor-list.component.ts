@@ -97,6 +97,7 @@ export class AclEditorListComponent implements OnChanges {
   }
 
   onAceSelected(index: number): void {
-    this.store.selectAce(index);
+    this.store.selectAce(null);
+    setTimeout(() => this.store.selectAce(index));
   }
 }

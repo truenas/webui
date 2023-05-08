@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -142,14 +142,8 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
       type: formValues.type,
     } as NfsAclItem;
 
-    switch (formValues.tag) {
-      case NfsAclTag.User:
-        ace.who = formValues.user;
-        break;
-      case NfsAclTag.UserGroup:
-        ace.who = formValues.group;
-        break;
-    }
+    if (this.isUserTag) { ace.who = formValues.user; }
+    if (this.isGroupTag) { ace.who = formValues.group; }
 
     if (formValues.permissionType === NfsFormPermsType.Basic) {
       if (!formValues.basicPermission) {
@@ -175,11 +169,20 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   }
 
   private updateFormValues(): void {
+    const userField = this.form.get('user');
+    const groupField = this.form.get('group');
+
+    userField.clearValidators();
+    groupField.clearValidators();
+
+    if (this.isUserTag) { userField.addValidators(Validators.required); }
+    if (this.isGroupTag) { groupField.addValidators(Validators.required); }
+
     const formValues = {
       tag: this.ace.tag,
       type: this.ace.type,
-      user: this.ace.tag === NfsAclTag.User ? this.ace.who : '',
-      group: this.ace.tag === NfsAclTag.UserGroup ? this.ace.who : '',
+      user: this.isUserTag ? this.ace.who : null,
+      group: this.isGroupTag ? this.ace.who : null,
     } as EditNfsAceComponent['form']['value'];
 
     if (areNfsPermissionsBasic(this.ace.perms)) {
@@ -204,27 +207,9 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
         .map(([flag]) => flag as NfsAdvancedFlag);
     }
 
-    this.form.reset(formValues, { emitEvent: false });
-
-    if (this.arePermissionsBasic) {
-      this.form.controls.advancedPermissions.setErrors(null);
-    } else {
-      this.form.controls.basicPermission.setErrors(null);
-    }
-    if (this.isUserTag) {
-      this.form.controls.group.setErrors(null);
-    } else {
-      this.form.controls.user.setErrors(null);
-    }
-    if (!this.isUserTag && !this.isGroupTag) {
-      this.form.controls.group.setErrors(null);
-      this.form.controls.user.setErrors(null);
-    }
-
+    this.form.patchValue(formValues, { emitEvent: false });
     this.form.markAllAsTouched();
 
-    setTimeout(() => {
-      this.onFormStatusUpdated();
-    });
+    this.onFormStatusUpdated();
   }
 }

@@ -546,10 +546,10 @@ describe('AppSchemaService', () => {
       expect(service.serializeFormValue(12, null)).toBe(12);
       expect(service.serializeFormValue({}, null)).toEqual({});
       expect(service.serializeFormValue([], null)).toEqual([]);
-      expect(service.serializeFormValue([{ a: 1 }, { a: 2 }, { a: 3 }], null)).toEqual([1, 2, 3]);
+      expect(service.serializeFormValue([{ a: 1 }, { a: 2 }, { a: 3 }], null)).toEqual([{ a: 1 }, { a: 2 }, { a: 3 }]);
       expect(service.serializeFormValue({ a: 1 }, null)).toEqual({ a: 1 });
       expect(service.serializeFormValue({ a: { b: 1 } }, null)).toEqual({ a: { b: 1 } });
-      expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } }, null)).toEqual({ a: { b: ['test'] } });
+      expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } }, null)).toEqual({ a: { b: [{ c: 'test' }] } });
       expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null }, null)).toEqual({ a: { d: 'test' } });
       expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null }, {
         questions: [

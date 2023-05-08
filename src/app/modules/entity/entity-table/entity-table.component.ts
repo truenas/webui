@@ -160,7 +160,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   loaderOpen = false;
   protected toDeleteRow: Row;
   private interval: Interval;
-  excuteDeletion = false;
+  executeDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
   checkboxLoaders: Map<string, BehaviorSubject<boolean>> = new Map();
@@ -609,11 +609,15 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     }
 
     this.rows = this.generateRows(res);
+    this.currentRows = this.rows;
+
     if (!skipActions) {
       this.storageService.tableSorter(this.rows, this.sortKey, 'asc');
     }
     if (this.conf.dataHandler) {
-      this.conf.dataHandler(this);
+      this.conf.dataHandler(this).pipe(untilDestroyed(this)).subscribe(() => {
+        this.changeDetectorRef.markForCheck();
+      });
     }
 
     if (this.conf.addRows) {
@@ -624,11 +628,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.paginationPageIndex = 0;
       this.showDefaults = true;
     }
-    if (this.expandedRows === 0 || this.excuteDeletion || this.needRefreshTable) {
-      this.excuteDeletion = false;
+    if (this.expandedRows === 0 || this.executeDeletion || this.needRefreshTable) {
+      this.executeDeletion = false;
       this.needRefreshTable = false;
 
-      this.currentRows = this.rows;
       this.paginationPageIndex = 0;
     }
 
@@ -874,7 +877,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     ).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.getData();
-        this.excuteDeletion = true;
+        this.executeDeletion = true;
         if (this.conf.afterDelete) {
           this.conf.afterDelete();
         }
