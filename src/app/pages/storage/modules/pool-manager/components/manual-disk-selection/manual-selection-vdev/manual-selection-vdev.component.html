@@ -49,6 +49,7 @@
         </div>
       </div>
       <ix-label class="drag-hint" [label]="'Drag & drop disks to add or remove them' | translate"></ix-label>
+      <ix-label *ngIf="vdev.errorMsg" class="error" [label]="vdev.errorMsg"></ix-label>
     </div>
   </mat-card-content>
 </mat-card>

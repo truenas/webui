@@ -330,6 +330,7 @@
   "At least 1 GPU is required by the host for its functions.": "",
   "At least one pod must be available": "",
   "At least one pool must be available to use apps": "",
+  "Atleast {min} disk(s) are required for the selected vdev type": "",
   "Attach": "",
   "Attach Debug": "",
   "Attach NIC": "",

@@ -31,6 +31,7 @@
   "Apps (WIP)": "",
   "Are you sure you want to delete address {ip}?": "",
   "At least 1 GPU is required by the host for its functions.": "",
+  "Atleast {min} disk(s) are required for the selected vdev type": "",
   "Automated Disk Selection": "",
   "Available Apps": "",
   "Available Resources": "",

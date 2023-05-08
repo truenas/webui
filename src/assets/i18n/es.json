@@ -391,6 +391,7 @@
   "At least one module must be defined in <a                href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                target=\"_blank\">rsyncd.conf(5)</a> of the rsync                server or in the <b>Rsync Modules</b> of another                system.": "",
   "At least one pod must be available": "",
   "At least one pool must be available to use apps": "",
+  "Atleast {min} disk(s) are required for the selected vdev type": "",
   "Attach Debug": "",
   "Attach NIC": "",
   "Attach screenshots": "",

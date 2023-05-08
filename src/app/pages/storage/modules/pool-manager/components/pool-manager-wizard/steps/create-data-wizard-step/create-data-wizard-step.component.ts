@@ -187,19 +187,10 @@ export class CreateDataWizardStepComponent implements OnInit {
 
     if (width) {
       const maxNumber = Math.floor(length / width);
-      switch (this.form.value.type) {
-        case CreateVdevLayout.Stripe:
-          nextNumberOptions = Array.from({ length: maxNumber }).map((value, index) => ({
-            label: `${index + 1}`,
-            value: index + 1,
-          }));
-          break;
-        case CreateVdevLayout.Mirror:
-        case CreateVdevLayout.Raidz1:
-        case CreateVdevLayout.Raidz2:
-        case CreateVdevLayout.Raidz3:
-          break;
-      }
+      nextNumberOptions = Array.from({ length: maxNumber }).map((value, index) => ({
+        label: `${index + 1}`,
+        value: index + 1,
+      }));
       this.form.controls.vdevsNumber.setValue(maxNumber);
     } else {
       this.form.controls.vdevsNumber.setValue(null);
