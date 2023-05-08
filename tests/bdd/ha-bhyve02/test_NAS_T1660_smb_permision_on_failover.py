@@ -45,6 +45,11 @@ def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas
     nas_Hostname = nas_hostname
     admin_User = user
     admin_Password = password
+    # This 2 line are to refresh UI and give a system time to load to be remove
+    # when the Websocket disconnection issue
+    driver.refresh()
+    time.sleep(5)
+
     if nas_hostname not in driver.current_url:
         driver.get(f"http://{nas_hostname}/ui/sessions/signin")
 
