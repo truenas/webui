@@ -11,9 +11,6 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclMode } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import {
-  IxModalHeaderComponent,
-} from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -32,6 +29,7 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 describe('DatasetFormComponent', () => {
   let spectator: Spectator<DatasetFormComponent>;
@@ -69,7 +67,6 @@ describe('DatasetFormComponent', () => {
         EncryptionSectionComponent,
         QuotasSectionComponent,
         OtherOptionsSectionComponent,
-        IxModalHeaderComponent,
       ),
     ],
     providers: [
@@ -79,6 +76,7 @@ describe('DatasetFormComponent', () => {
         mockCall('filesystem.acl_is_trivial', false),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(IxSlideIn2Service),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

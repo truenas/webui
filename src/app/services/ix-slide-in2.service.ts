@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { bindCallback, merge } from 'rxjs';
+import { bindCallback, merge, take } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in2.component';
@@ -36,7 +36,10 @@ export class IxSlideIn2Service {
 
     const slideInRef = this.slideIn2Component.openSlideIn<T, D>(component, params);
     this.slideInRefMap.set(slideInRef.id, slideInRef);
-
+    slideInRef.onClose$.pipe(take(1), untilDestroyed(this)).subscribe((id) => {
+      this.slideInRefMap.delete(id);
+      this.slideIn2Component.closeSlideIn();
+    });
     return slideInRef;
   }
 
@@ -52,10 +55,6 @@ export class IxSlideIn2Service {
 
     this.slideInRefMap.forEach((ref) => ref.close());
     this.slideInRefMap.clear();
-  }
-
-  deleteRef(id: string): void {
-    this.slideInRefMap.delete(id);
   }
 
   private closeOnNavigation(): void {

@@ -16,9 +16,6 @@ import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interf
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import {
-  IxModalHeaderComponent,
-} from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -29,6 +26,7 @@ import {
   DialogService, IdmapService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('IdmapFormComponent', () => {
@@ -59,7 +57,6 @@ describe('IdmapFormComponent', () => {
     ],
     declarations: [
       MockComponent(WithManageCertificatesLinkComponent),
-      MockComponent(IxModalHeaderComponent),
     ],
     providers: [
       mockWebsocket([
@@ -99,6 +96,7 @@ describe('IdmapFormComponent', () => {
         } as unknown as IdmapBackendOptions),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(IxSlideIn2Service),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {

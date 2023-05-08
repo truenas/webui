@@ -97,7 +97,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     componentType: Type<T>,
     data?: D,
   ): IxSlideInRef<T, D> {
-    const slideInRef = new IxSlideInRef<T, D>(this.slideIn2Service, this);
+    const slideInRef = new IxSlideInRef<T, D>();
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },

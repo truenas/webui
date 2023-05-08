@@ -18,12 +18,12 @@ import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 class TestComponent {
   text: string;
   constructor(
-    private slideInRef: IxSlideInRef<DiskFormComponent, string>,
+    public slideInRef: IxSlideInRef<DiskFormComponent, string>,
     @Inject(SLIDE_IN_DATA) private value: string,
   ) {
     this.text = value;
   }
-  closeSlideIn(): void {
+  close(): void {
     this.slideInRef.close();
   }
 }
@@ -66,18 +66,6 @@ describe('IxSlideIn2Service', () => {
       expect(instanceRef).toBeInstanceOf(IxSlideInRef);
     });
 
-    it('the last slide from slideInRefMap should be closed after emitted from closeEvent$', () => {
-      service.open(TestComponent);
-
-      const lastKeySlideInRefMap = Array.from(service.slideInRefMap.keys()).pop();
-      const lastSlideInRef = service.slideInRefMap.get(lastKeySlideInRefMap);
-
-      jest.spyOn(lastSlideInRef, 'close');
-      spectatorComponent.component.onBackdropClicked();
-
-      expect(lastSlideInRef.close).toHaveBeenCalled();
-    });
-
     it('should be call \'closeAll\' method after route navigation', async () => {
       jest.spyOn(service, 'closeAll');
       service.open(TestComponent);
@@ -109,21 +97,21 @@ describe('IxSlideIn2Service', () => {
     });
 
     it('should be injected IxSlideInRef to the dynamically created component after calling \'open\',', () => {
-      jest.spyOn(spectatorComponent.component, 'closeSlideIn');
       const slideInRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
       // check injected SlideInRef
-      slideInRef.componentInstance.closeSlideIn();
 
-      expect(spectatorComponent.component.closeSlideIn).toHaveBeenCalled();
+      expect(slideInRef.componentInstance.slideInRef).toBeInstanceOf(IxSlideInRef);
     });
 
-    it('observable \'afterClosed$\' should emit response after close slide', () => {
+    it('observable \'afterClosed$\' should emit response and close slide after call \'close\'', () => {
+      jest.spyOn(spectatorComponent.component, 'closeSlideIn');
       const response = { error: true };
       const slideInRef = service.open(TestComponent);
       slideInRef.afterClosed$.subscribe((value) => {
         expect(value).toBe(response);
       });
       slideInRef.close();
+      expect(spectatorComponent.component.closeSlideIn).toHaveBeenCalled();
     });
   });
 });

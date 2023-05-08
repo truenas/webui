@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -18,9 +17,6 @@ import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/i
 import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import {
-  IxModalHeaderComponent,
-} from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -28,6 +24,7 @@ import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restar
 import { AppLoaderService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SmbFormComponent } from './smb-form.component';
 
@@ -141,6 +138,7 @@ describe('SmbFormComponent', () => {
         mockCall('pool.dataset.path_in_locked_datasets', false),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(IxSlideIn2Service),
       mockProvider(Router),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
@@ -154,9 +152,6 @@ describe('SmbFormComponent', () => {
         info: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-    ],
-    declarations: [
-      MockComponent(IxModalHeaderComponent),
     ],
   });
 

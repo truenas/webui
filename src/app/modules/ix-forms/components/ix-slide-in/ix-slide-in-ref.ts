@@ -1,10 +1,9 @@
 import { ComponentRef } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in2.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 export class IxSlideInRef<T, D = unknown> {
   slideInClosed$ = new Subject<D>();
+  onClose$ = new Subject<string>();
   componentRef: ComponentRef<T>;
   id: string;
 
@@ -12,16 +11,10 @@ export class IxSlideInRef<T, D = unknown> {
     return this.componentRef.instance;
   }
 
-  constructor(
-    private slideInService: IxSlideIn2Service,
-    private slideIn2Component: IxSlideIn2Component,
-  ) {}
-
   close(response?: D): void {
+    this.onClose$.next(this.id);
     this.slideInClosed$.next(response);
     this.slideInClosed$.complete();
-    this.slideInService.deleteRef(this.id);
-    this.slideIn2Component.closeSlideIn();
   }
 
   get afterClosed$(): Observable<D> {
