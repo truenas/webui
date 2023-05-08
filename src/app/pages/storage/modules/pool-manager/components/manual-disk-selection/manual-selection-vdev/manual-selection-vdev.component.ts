@@ -7,6 +7,7 @@ import { ManagerVdev } from 'app/classes/manager-vdev.class';
 import { PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { GiB, MiB } from 'app/constants/bytes.constant';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
 
@@ -22,6 +23,14 @@ export class ManualSelectionVdevComponent implements OnInit {
   @Input() swapondrive = 2;
   enclosuresDisks = new Map<number, ManagerDisk[]>();
   nonEnclosureDisks: ManagerDisk[] = [];
+  CreateVdevLayout = CreateVdevLayout;
+  minDisks: { [key: string]: number } = {
+    [CreateVdevLayout.Stripe]: 1,
+    [CreateVdevLayout.Mirror]: 2,
+    [CreateVdevLayout.Raidz1]: 3,
+    [CreateVdevLayout.Raidz2]: 4,
+    [CreateVdevLayout.Raidz3]: 5,
+  };
 
   get spansEnclosures(): boolean {
     return !!this.enclosuresDisks.size
@@ -83,19 +92,20 @@ export class ManualSelectionVdevComponent implements OnInit {
     }
     totalsize = smallestdisk * vdev.disks.length;
 
-    if (vdev.type === 'mirror') {
+    if (vdev.type === CreateVdevLayout.Mirror) {
       estimate = smallestdisk;
-    } else if (vdev.type === 'raidz') {
+    } else if (vdev.type === CreateVdevLayout.Raidz1) {
       estimate = totalsize - smallestdisk;
-    } else if (vdev.type === 'raidz2') {
+    } else if (vdev.type === CreateVdevLayout.Raidz2) {
       estimate = totalsize - 2 * smallestdisk;
-    } else if (vdev.type === 'raidz3') {
+    } else if (vdev.type === CreateVdevLayout.Raidz3) {
       estimate = totalsize - 3 * smallestdisk;
     } else {
       estimate = stripeSize; // stripe
     }
 
     vdev.rawSize = estimate;
+    this.cdr.markForCheck();
   }
 
   onDragStart(): void {
