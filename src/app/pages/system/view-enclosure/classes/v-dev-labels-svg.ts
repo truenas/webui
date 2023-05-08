@@ -1,6 +1,6 @@
 import { Selection } from 'd3';
 import * as d3 from 'd3';
-import { Application, Container } from 'pixi.js';
+import { Application, Container, DefaultRendererPlugins } from 'pixi.js';
 import { Subject } from 'rxjs';
 import { EnclosureSlot, SelectedEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -10,7 +10,6 @@ import { ThemeChangedEvent } from 'app/interfaces/events/theme-changed-event.int
 import { Disk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
-import InteractionManager = PIXI.interaction.InteractionManager;
 
 export class VDevLabelsSvg {
   /*
@@ -90,7 +89,7 @@ export class VDevLabelsSvg {
     const op = this.getParent();
     d3.select('#' + op.id + ' svg').remove();
     d3.select('#' + op.id + ' canvas.clickpad').remove();
-    (this.app.renderer.plugins.interaction as InteractionManager).setTargetElement(this.app.renderer.view);
+    (this.app.renderer.plugins as DefaultRendererPlugins).interaction.setTargetElement(this.app.renderer.view);
   }
 
   d3Init(): void {
@@ -108,7 +107,7 @@ export class VDevLabelsSvg {
       .attr('height', op.offsetHeight)
       .attr('style', 'position:absolute; top:0; left:0;');
 
-    (this.app.renderer.plugins.interaction as InteractionManager).setTargetElement(op.querySelector('canvas.clickpad'));
+    (this.app.renderer.plugins as DefaultRendererPlugins).interaction.setTargetElement(op.querySelector('canvas.clickpad'));
   }
 
   getParent(): HTMLElement {

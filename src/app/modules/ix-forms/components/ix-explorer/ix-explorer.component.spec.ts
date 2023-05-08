@@ -1,6 +1,7 @@
 import { EventEmitter } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TreeComponent as BaseTreeComponent, TreeModel } from '@circlon/angular-tree-component';
+import { IDTypeDictionary } from '@circlon/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
@@ -22,7 +23,7 @@ class TreeComponent extends BaseTreeComponent {
 describe('IxExplorerComponent', () => {
   const mockTreeMock = {
     selectedLeafNodeIds: {},
-    setState(newState) {
+    setState(newState: { selectedLeafNodeIds: IDTypeDictionary }) {
       this.selectedLeafNodeIds = newState.selectedLeafNodeIds;
     },
     getState() {

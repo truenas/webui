@@ -21,6 +21,7 @@ import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -456,13 +457,13 @@ export class CloudsyncFormComponent {
         this.form.controls.bucket_input.disable();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
         this.form.controls.bucket.disable();
         this.form.controls.bucket_input.enable();
         this.dialog.closeAllDialogs();
         this.dialog.confirm({
-          title: error.extra ? error.extra.excerpt : (this.translate.instant('Error: ') + error.error),
+          title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,
           message: error.reason,
           hideCheckbox: true,
           buttonText: this.translate.instant('Fix Credential'),

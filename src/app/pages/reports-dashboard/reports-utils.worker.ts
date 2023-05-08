@@ -340,22 +340,22 @@ function emit(evt: CoreEvent): void {
   postMessage(evt);
 }
 
-addEventListener('message', ({ data }) => { // eslint-disable-line no-restricted-globals
+addEventListener('message', ({ data }: { data: CoreEvent }) => { // eslint-disable-line no-restricted-globals
   const evt = data;
   let output;
 
   switch (evt.name) {
     case 'SayHello': {
-      const response = evt.data + ' World!';
+      const response = `${String(evt.data)} World!`;
       emit({ name: 'Response', data: response });
       break;
     }
     case 'ProcessCommands':
-      output = processCommands(evt.data);
+      output = processCommands(evt.data as Command[]);
       emit({ name: 'Response', data: output, sender: evt.sender });
       break;
     case 'ProcessCommandsAsReportData':
-      output = processCommands(evt.data);
+      output = processCommands(evt.data as Command[]);
       emit({ name: 'ReportData', data: output, sender: evt.sender });
       break;
     case 'FetchingError':

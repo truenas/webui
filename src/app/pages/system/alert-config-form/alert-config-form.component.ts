@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -72,7 +71,9 @@ export class AlertConfigFormComponent implements OnInit {
               level: cls.level,
               policy: AlertPolicy.Immediately,
             }));
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             this.form.controls[cls.id].controls.level.defaultValue = cls.level;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
           });
         });
@@ -105,8 +106,8 @@ export class AlertConfigFormComponent implements OnInit {
     this.isFormLoading = true;
     const payload: AlertClassesUpdate = { classes: {} };
     for (const [className, classControl] of Object.entries(this.form.controls)) {
-      const levelControl = classControl.controls.level as FormControl<AlertLevel>;
-      const policyControl = classControl.controls.policy as FormControl<AlertPolicy>;
+      const levelControl = (classControl as FormGroup<ControlsOf<AlertClassSettings>>).controls.level;
+      const policyControl = (classControl as FormGroup<ControlsOf<AlertClassSettings>>).controls.policy;
       if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
         payload.classes[className] = {};
         if (levelControl.value !== levelControl.defaultValue) {
