@@ -33,6 +33,11 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
     global host
     host = nas_url
+    # This 2 line are to refresh UI and give a system time to load to be remove
+    # when the Websocket disconnection issue
+    driver.refresh()
+    time.sleep(5)
+
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
