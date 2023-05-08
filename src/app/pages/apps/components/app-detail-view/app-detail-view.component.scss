@@ -89,6 +89,7 @@ $app-image-size: 144px;
   display: grid;
   gap: 14px;
   grid-template-columns: 1fr 1fr 1fr;
+  width: 100%;
 }
 
 .screenshot {
@@ -108,8 +109,10 @@ $app-image-size: 144px;
   .screenshot-image {
     display: block;
     height: 100%;
+    max-height: 200px;
     max-width: 100%;
     object-fit: cover;
+    width: 100%;
   }
 }
 
