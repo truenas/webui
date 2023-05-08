@@ -11,6 +11,7 @@ import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import {
@@ -25,6 +26,7 @@ import {
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { AppState } from 'app/store';
@@ -62,8 +64,9 @@ export class SupportCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private productImgServ: ProductImageService,
+    private productImageService: ProductImageService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -71,8 +74,8 @@ export class SupportCardComponent implements OnInit {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
-        const getImage = this.productImgServ.getMiniImagePath(systemInfo.system_product);
-        if (this.productImgServ.isRackmount(systemInfo.system_product)) {
+        const getImage = this.productImageService.getMiniImagePath(systemInfo.system_product);
+        if (this.productImageService.isRackmount(systemInfo.system_product)) {
           this.isProductImageRack = true;
           this.extraMargin = true;
         } else {
@@ -127,7 +130,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   getServerImage(sysProduct: string): void {
-    const imagePath = this.productImgServ.getServerProduct(sysProduct);
+    const imagePath = this.productImageService.getServerProduct(sysProduct);
 
     if (imagePath) {
       this.isProductImageRack = true;
@@ -189,13 +192,9 @@ export class SupportCardComponent implements OnInit {
             this.translate.instant(helptext.is_production_dialog.message),
           );
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialog.error({
-            title: helptext.is_production_error_dialog.title,
-            message: error.error.message,
-            backtrace: error.error.traceback,
-          });
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
   }

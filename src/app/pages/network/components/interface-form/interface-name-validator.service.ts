@@ -18,7 +18,7 @@ export class InterfaceNameValidatorService {
       return null;
     }
 
-    const type = control.parent.value.type;
+    const type = (control.parent.value as { type: NetworkInterfaceType }).type;
     const isPrefixRequired = [
       NetworkInterfaceType.Bridge,
       NetworkInterfaceType.LinkAggregation,

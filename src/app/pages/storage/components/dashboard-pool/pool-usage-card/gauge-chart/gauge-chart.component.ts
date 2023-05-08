@@ -18,14 +18,22 @@ interface ChartElement {
     draw: () => void;
   };
   _view: Chart.DoughnutModel;
+  getMeta: () => ({
+    data: ChartElement[];
+  });
+  chart: {
+    chart: {
+      ctx: CanvasRenderingContext2D;
+    };
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 Chart.defaults.roundedDoughnut = Chart.helpers.clone(Chart.defaults.doughnut);
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
 Chart.controllers.roundedDoughnut = Chart.controllers.doughnut.extend({
-  draw(ease: number) {
-    const ctx = this.chart.chart.ctx as CanvasRenderingContext2D;
+  draw(this: ChartElement, ease: number) {
+    const ctx = this.chart.chart.ctx;
 
     const easingDecimal = ease || 1;
     let tmpView: Chart.DoughnutModel;

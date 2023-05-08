@@ -257,7 +257,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
     this.getNetworkInterfaces();
     this.listenForPoolUpdates();
+    this.getResourcesUsageUpdates();
+  }
 
+  getResourcesUsageUpdates(): void {
     this.ws.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       untilDestroyed(this),

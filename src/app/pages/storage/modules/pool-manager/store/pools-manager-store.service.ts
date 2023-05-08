@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { forkJoin, Observable, tap } from 'rxjs';
+import _ from 'lodash';
+import {
+  forkJoin, Observable, tap,
+} from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PoolManagerDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
@@ -62,6 +65,36 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         .filter((disk) => !!disk.exported_zpool)
         .map((disk) => disk.exported_zpool)
         .filter((value, index, self) => self.indexOf(value) === index);
+    }),
+  );
+  readonly usableUnusedDisks$ = this.state$.pipe(
+    map((state) => {
+      const unusedDisks = [...state.unusedDisks];
+      const allowNonUniqueSerialDisks = state?.formValue?.general?.allowNonUniqueSerialDisks === 'true';
+      const allowUsageExportedPoolDisks = state?.formValue?.general?.allowDisksFromExportedPools?.length;
+      let usableDisks = unusedDisks.filter((disk) => !disk.duplicate_serial.length && !disk.exported_zpool);
+      if (allowNonUniqueSerialDisks) {
+        usableDisks = [
+          ...usableDisks,
+          ...unusedDisks
+            .filter((disk) => allowUsageExportedPoolDisks || !!disk.exported_zpool)
+            .filter((disk) => disk.duplicate_serial.length),
+        ];
+      }
+      if (allowUsageExportedPoolDisks) {
+        state.formValue.general.allowDisksFromExportedPools.forEach((poolName) => {
+          const exportedPoolDisks = unusedDisks
+            .filter((disk) => allowNonUniqueSerialDisks || !disk.duplicate_serial.length)
+            .filter((disk) => disk.exported_zpool === poolName);
+          if (exportedPoolDisks.length) {
+            usableDisks = _.uniq([
+              ...usableDisks,
+              ...exportedPoolDisks,
+            ]);
+          }
+        });
+      }
+      return usableDisks;
     }),
   );
 

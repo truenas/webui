@@ -21,8 +21,10 @@ describe('ValidationService', () => {
     formGroup.get(otherFormControlName).setValue(1);
     formGroup.updateValueAndValidity();
     expect(formGroup.valid).toBeFalsy();
-    expect(formGroup.get(formControlName).errors.greaterThan).toBeTruthy();
-    expect(formGroup.get(formControlName).errors.fields[0]).toBe(formControlPlaceholder);
+    expect(formGroup.get(formControlName).errors).toEqual({
+      greaterThan: true,
+      fields: [formControlPlaceholder],
+    });
   });
 
   it('should have greatherThan error when value1 is equal', () => {
@@ -30,8 +32,10 @@ describe('ValidationService', () => {
     formGroup.get(otherFormControlName).setValue(0);
     formGroup.updateValueAndValidity();
     expect(formGroup.valid).toBeFalsy();
-    expect(formGroup.get(formControlName).errors.greaterThan).toBeTruthy();
-    expect(formGroup.get(formControlName).errors.fields[0]).toBe(formControlPlaceholder);
+    expect(formGroup.get(formControlName).errors).toEqual({
+      greaterThan: true,
+      fields: [formControlPlaceholder],
+    });
   });
 
   it('should not have greatherThan error when value1 is greater', () => {

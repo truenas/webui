@@ -2,8 +2,11 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, map, throttleTime } from 'rxjs';
+import {
+  Observable, filter, map, switchMap, throttleTime,
+} from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { WebSocketService } from 'app/services';
@@ -22,6 +25,16 @@ export class AppResourcesCardComponent implements OnInit {
   memoryTotal: number;
   pool: string;
 
+  availableSpace$ = this.applicationsStore.selectedPool$.pipe(
+    filter((pool) => !!pool),
+    switchMap((pool) => {
+      return this.ws.call('pool.dataset.get_instance', [`${pool}/ix-applications`]);
+    }),
+    map((dataset) => dataset.available.rawvalue),
+  ).pipe(
+    toLoadingState(),
+  );
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -29,9 +42,13 @@ export class AppResourcesCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getResourcesUsageUpdates();
+  }
+
+  getResourcesUsageUpdates(): void {
     this.ws.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
-      throttleTime(500),
+      throttleTime(2000),
       untilDestroyed(this),
     ).subscribe((update) => {
       if (update?.cpu?.average) {

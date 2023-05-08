@@ -9,6 +9,10 @@ import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
+interface SomeError {
+  [key: string]: unknown;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'ix-errors',
@@ -67,8 +71,9 @@ export class IxErrorsComponent implements OnChanges {
         untilDestroyed(this),
       ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
-          if (this.control.errors[error].message) {
-            return this.control.errors[error].message;
+          const message = (this.control.errors[error] as SomeError).message as string;
+          if (message) {
+            return message;
           }
 
           return this.getDefaultError(error as DefaultValidationError);
@@ -90,19 +95,22 @@ export class IxErrorsComponent implements OnChanges {
   getDefaultError(error: DefaultValidationError): string {
     switch (error) {
       case DefaultValidationError.Min:
-        return this.defaultErrMessages.min(this.control.errors.min.min);
+        return this.defaultErrMessages.min((this.control.errors.min as SomeError).min as number);
       case DefaultValidationError.Max:
-        return this.defaultErrMessages.max(this.control.errors.max.max);
+        return this.defaultErrMessages.max((this.control.errors.max as SomeError).max as number);
       case DefaultValidationError.Required:
         return this.defaultErrMessages.required();
       case DefaultValidationError.Email:
         return this.defaultErrMessages.email();
       case DefaultValidationError.MinLength:
-        return this.defaultErrMessages.minlength(this.control.errors.minlength.requiredLength);
+        return this.defaultErrMessages.minlength((this.control.errors.minlength as SomeError).requiredLength as number);
       case DefaultValidationError.MaxLength:
-        return this.defaultErrMessages.maxlength(this.control.errors.maxlength.requiredLength);
+        return this.defaultErrMessages.maxlength((this.control.errors.maxlength as SomeError).requiredLength as number);
       case DefaultValidationError.Range:
-        return this.defaultErrMessages.range(this.control.errors.rangeValue.min, this.control.errors.rangeValue.max);
+        return this.defaultErrMessages.range(
+          (this.control.errors.rangeValue as SomeError).min as number,
+          (this.control.errors.rangeValue as SomeError).max as number,
+        );
       case DefaultValidationError.Pattern:
         return this.defaultErrMessages.pattern();
       case DefaultValidationError.Forbidden:

@@ -167,14 +167,14 @@ export class ErrorHandlerService implements ErrorHandler {
   private parseHttpErrorObject(error: HttpErrorResponse): ErrorReport[] {
     const errors: ErrorReport[] = [];
     Object.keys(error.error).forEach((fieldKey) => {
-      const errorEntity = error.error[fieldKey];
+      const errorEntity = (error.error as Record<string, string | string[]>)[fieldKey];
       if (typeof errorEntity === 'string') {
         errors.push({
           title: this.translate?.instant('Error') || 'Error',
           message: errorEntity,
         });
       } else {
-        (errorEntity as string[]).forEach((item: string) => {
+        errorEntity.forEach((item: string) => {
           errors.push({
             title: this.translate?.instant('Error') || 'Error',
             message: item,
@@ -201,11 +201,12 @@ export class ErrorHandlerService implements ErrorHandler {
         };
       }
       case 500: {
-        if (error.error.error_message) {
+        const errorMessage = (error.error as Record<string, string>)?.error_message;
+        if (errorMessage) {
           return {
             title: this.translate?.instant('Error ({code})', { code: error.status })
               || `Error (${error.status})`,
-            message: error.error.error_message,
+            message: errorMessage,
           };
         }
         return {
