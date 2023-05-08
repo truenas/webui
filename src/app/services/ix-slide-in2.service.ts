@@ -32,7 +32,6 @@ export class IxSlideIn2Service {
 
   open<T, D>(component: Type<T>, params?: { wide?: boolean; data?: D }): IxSlideInRef<T, D> {
     this.slideInRefMap.forEach((ref) => ref.close());
-    this.slideInRefMap.clear();
 
     const slideInRef = this.slideIn2Component.openSlideIn<T, D>(component, params);
     this.slideInRefMap.set(slideInRef.id, slideInRef);
