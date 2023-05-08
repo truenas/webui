@@ -52,13 +52,10 @@ export class IxSlideIn2Service {
     if (!this.isSlideInOpen) { return; }
 
     this.slideInRefMap.forEach((ref) => ref.close());
-    this.slideInRefMap.clear();
   }
 
   deleteRef(id: string): void {
-    if (this.slideInRefMap.has(id)) {
-      this.slideInRefMap.delete(id);
-    }
+    this.slideInRefMap.delete(id);
 
     if (this.isSlideInOpen) {
       this.slideIn2Component.closeSlideIn();
