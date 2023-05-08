@@ -166,8 +166,8 @@ def the_active_Directory_setup_should_successfully_save_without_an_error(driver)
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 60, xpaths.popup.active_Directory)
-    assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
-    assert wait_on_element(driver, 7, '//span[text()="HEALTHY" and @class="value"]')
+    assert wait_on_element(driver, 7, xpaths.directory_Services.ad_Domain(domain.upper()))
+    assert wait_on_element(driver, 7, xpaths.directory_Services.service_Status)
 
 
 @then(parsers.parse('run "{cmd}" on the NAS with ssh'))
@@ -340,8 +340,7 @@ def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
 @then(parsers.parse('on the permission card, verify the user is "{user_name}"'))
 def on_the_permission_card_verify_the_user_is_user_name(driver, user_name):
     """on the permission card, verify the user is "{user_name}"."""
-    element = driver.find_element_by_xpath(xpaths.dataset.permission_Title)
-    driver.execute_script("arguments[0].scrollIntoView();", element)
+    rsc.Scroll_To(xpaths.dataset.permission_Title)
     assert wait_on_element(driver, 5, xpaths.dataset.permission_At_Owner(user_name))
 
 

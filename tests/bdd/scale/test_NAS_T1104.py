@@ -153,8 +153,8 @@ def the_active_Directory_setup_should_successfully_save_without_an_error(driver)
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 60, xpaths.popup.active_Directory)
-    assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
-    assert wait_on_element(driver, 7, '//span[text()="HEALTHY" and @class="value"]')
+    assert wait_on_element(driver, 7, xpaths.directory_Services.ad_Domain(domain.upper()))
+    assert wait_on_element(driver, 7, xpaths.directory_Services.service_Status)
 
 
 @then(parsers.parse('run "{cmd1}" on the NAS with ssh and verify that "{ad_object1}" is in the output'))

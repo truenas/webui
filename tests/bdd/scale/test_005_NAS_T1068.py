@@ -1,8 +1,8 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
-import time
 import xpaths
+import reusableSeleniumCode as rsc
 from function import (
     wait_on_element,
     is_element_present,
@@ -74,9 +74,7 @@ def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
     """the User Edit Page should open, change the user shell and click save."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    element = driver.find_element_by_xpath(xpaths.button.save)
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    rsc.Scroll_To(xpaths.button.save)
     assert wait_on_element(driver, 5, xpaths.add_User.shell_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.shell_Select).click()
     assert wait_on_element(driver, 10, xpaths.add_User.bash_Shell_Option, 'clickable')

@@ -295,11 +295,14 @@ class directory_Services:
     delete_Confirm_Button = '//button[@id="confirm-dialog__action-button"]'
     delete_AD_Account_Button = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
     ldap_Card_Title = '//mat-card//h3[text()="LDAP"]'
-    ldap_Status = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
+    service_Status = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
     kerberos_Keytab_Add_Button = '//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]'
 
     def ldap_Hostname(hostname):
         return f'//span[contains(.,"Hostname:") and contains(.,"{hostname}")]'
+
+    def ad_Domain(domain):
+        return f'//span[contains(.,"Hostname:") and contains(.,"{domain}")]'
 
 
 class disks:
@@ -407,9 +410,9 @@ class interface:
 
 class iscsi:
     title = '//h1[text()="iSCSI"]'
-    protals_Tab = '//a[normalize-space(text())="Portals"]'
-    targets_Tab = '//a[normalize-space(text())="Targets"]'
-    extents_Tab = '//a[normalize-space(text())="Extents"]'
+    protals_Tab = '//a[@data-test="link-portals"]'
+    targets_Tab = '//a[@data-test="link-targets"]'
+    extents_Tab = '//a[@data-test="link-extents"]'
     iscsitest1_Text = '//div[normalize-space(text())="iscsitest1"]'
 
 
@@ -417,26 +420,27 @@ class iscsi_Wizard:
     """iscsi_Wizard contains xpaths for the iSCSI Wizard"""
     title = '//h3[text()="Wizard iSCSI"]'
     block_Device_Title = '//mat-step-header[contains(.,"Create or Choose Block Device") and @tabindex="0"]'
-    device_Name_Input = '//input[@ix-auto="input__Name"]'
-    extent_Type_Select = '//mat-select[@ix-auto="select__Extent Type"]'
+    device_Name_Input = '//input[@data-test="input-name"]'
+    extent_Type_Select = '//mat-select[@data-test="select-type"]'
     extent_Type_Device_Option = mat_Option('Device')
-    device_Dropdown = '//span[@id="disk-select"]'
-    create_New_Button = '//button[contains(.,"Create New")]'
-    pool_Dataset_Input = '//input[@data-placeholder="Pool/Dataset"]'
-    size_Input = '//input[@ix-auto="input__Size"]'
+    device_Dropdown = '//mat-select[@data-test="select-disk"]'
+    create_New_Button = '//mat-option[@data-test="option-disk-create-new"]'
+    pool_Dataset_Input = '//input[@data-test="input-dataset"]'
+    size_Input = '//input[@data-test="input-volsize"]'
     size_Select_Contain_GiB = '//mat-select[contains(.,"GiB")]'
-    block_Device_Next_Button = '//button[@id="goforward_button_0"]'
+    block_Device_Next_Button = '(//button[@data-test="button-next"])[1]'
     portal_Title = '//mat-step-header[contains(.,"Portal") and @tabindex="0"]'
-    portal_Select = '//mat-select[@ix-auto="select__Portal"]'
-    create_New_Option = '//mat-option[contains(.,"Create New")]'
-    discovery_Authentication_Method_Select = '//mat-select[@ix-auto="select__Discovery Authentication Method"]'
+    portal_Select = '//mat-select[@data-test="select-portal"]'
+    create_New_Option = '//mat-option[@data-test="option-portal-create-new"]'
+    discovery_Authentication_Method_Select = '//mat-select[@data-test="select-discovery-authmethod"]'
     none_Option = mat_Option('NONE')
-    ip_Address_Select = '//mat-select[@ix-auto="select__IP Address"]'
+    add_Ip_Address_Button = '//button[@data-test="button-add-item-ip-address"]'
+    ip_Address_Select = '//mat-select[@data-test="select"]'
     zero_Ip_Option = mat_Option('0.0.0.0')
-    portal_Next_Button = '//button[@id="goforward_button_1"]'
+    portal_Next_Button = '(//button[@data-test="button-next"])[2]'
     initiator_Title = '//mat-step-header[contains(.,"Initiator") and @tabindex="0"]'
-    initiator_Input = '//input[@placeholder="Initiators"]'
-    initiator_Next_Button = '//button[@id="goforward_button_2"]'
+    initiator_Input = '//input[@data-test="input-initiators"]'
+    initiator_Next_Button = '(//button[@data-test="button-save"])[2]'
     confirm_Options_Title = '//mat-step-header[contains(.,"Confirm Options") and @tabindex="0"]'
     iscsi_Summary = '//div[contains(text(),"iSCSI Summary")]'
     summary_Name = '//div[contains(text(),"Name: iscsitest1")]'
@@ -548,6 +552,7 @@ class sharing:
     nfs_Service_Status = '//span[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
 
     iscsi_Wizard_Button = '//button[contains(.,"Wizard")]'
+    iscsi_Configure_Button = '//button[@data-test="button-configure"]'
     iscsi_Burger_Button = '//span[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
     iscsi_Service_Status = '//span[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
     turn_On_Service_Button = '//button[contains(.,"Turn On Service")]'
