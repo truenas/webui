@@ -37,8 +37,7 @@ export class IxSlideIn2Service {
     const slideInRef = this.slideIn2Component.openSlideIn<T, D>(component, params);
     this.slideInRefMap.set(slideInRef.id, slideInRef);
     slideInRef.onClose$.pipe(take(1), untilDestroyed(this)).subscribe((id) => {
-      this.slideInRefMap.delete(id);
-      this.slideIn2Component.closeSlideIn();
+      this.deleteRef(id);
     });
     return slideInRef;
   }
@@ -55,6 +54,16 @@ export class IxSlideIn2Service {
 
     this.slideInRefMap.forEach((ref) => ref.close());
     this.slideInRefMap.clear();
+  }
+
+  deleteRef(id: string): void {
+    if (this.slideInRefMap.has(id)) {
+      this.slideInRefMap.delete(id);
+    }
+
+    if (this.isSlideInOpen) {
+      this.slideIn2Component.closeSlideIn();
+    }
   }
 
   private closeOnNavigation(): void {
