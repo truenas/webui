@@ -521,7 +521,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setDashState(dashState: DashConfigItem[]): void {
     this.dashState = this.sanitizeState(dashState);
-    this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    if (!this.reorderMode) {
+      this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    }
   }
 
   private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
