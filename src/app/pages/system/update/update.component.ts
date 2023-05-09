@@ -401,7 +401,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.updateService.setForHardRefresh();
-      this.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
