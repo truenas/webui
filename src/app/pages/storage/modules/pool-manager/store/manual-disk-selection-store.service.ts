@@ -6,6 +6,7 @@ import {
 import { PoolManagerDisk, PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 export interface ManualDiskSelectionState {
@@ -53,10 +54,10 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
       }),
       switchMap(() => combineLatest([
         this.poolManagerStore$.select((state: PoolManagerState) => state.allUnusedDisks),
-        this.poolManagerStore$.usableUnusedDisks$,
+        this.poolManagerStore$.inventory$,
         this.poolManagerStore$.enclosures$,
       ])),
-      tap(([allUnusedDisks, unusedDisks, enclosures]) => {
+      tap(([allUnusedDisks, unusedDisks, enclosures]: [ManagerDisk[], ManagerDisk[], Enclosure[]]) => {
         this.patchState({
           allUnusedDisks: [...allUnusedDisks],
           unusedDisks: [...unusedDisks],

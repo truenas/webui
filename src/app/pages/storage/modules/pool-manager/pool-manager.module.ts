@@ -33,6 +33,7 @@ import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { ManualSelectionDiskFiltersComponent } from './components/manual-disk-selection/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
 import { ManualSelectionDisksComponent } from './components/manual-disk-selection/manual-selection-disks/manual-selection-disks.component';
+import { DiskWarningsComponent } from './components/pool-manager-wizard/disk-warnings/disk-warnings.component';
 
 @NgModule({
   imports: [
@@ -71,6 +72,7 @@ import { ManualSelectionDisksComponent } from './components/manual-disk-selectio
     ManualDiskSelectionComponent,
     ManualSelectionDisksComponent,
     ManualSelectionDiskFiltersComponent,
+    DiskWarningsComponent,
   ],
   providers: [
     PoolManagerStore,

@@ -41,7 +41,6 @@ describe('GeneralWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         nonUniqueSerialDisks$: of([]),
-        exportedPools$: of([]),
       }),
     ],
   });

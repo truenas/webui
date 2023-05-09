@@ -9,13 +9,13 @@ import _ from 'lodash';
 import {
   Observable,
   filter,
-  of, skipUntil, switchMap, take,
+  map,
+  of, switchMap, take,
 } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { RadioOption, SelectOption } from 'app/interfaces/option.interface';
-import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import {
   ManualDiskSelectionComponent, ManualDiskSelectionLayout,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
@@ -37,7 +37,6 @@ export class CreateDataWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['data'];
 
   readonly manualDiskSelectionMessage = helptext.manual_disk_selection_message;
-  unusedDisks: ManagerDisk[] = [];
   sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
 
   selectedDiskType: DiskType = null;
@@ -49,7 +48,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
 
-  diskSizeAndTypeOptions$: Observable<SelectOption<SizeAndType>[]> = of([]);
+  // diskSizeAndTypeOptions$: Observable<SelectOption<SizeAndType>[]> = of([]);
   widthOptions$: Observable<SelectOption[]> = of([]);
   numberOptions$: Observable<SelectOption[]> = of([]);
 
@@ -64,6 +63,16 @@ export class CreateDataWizardStepComponent implements OnInit {
       value: false,
     },
   ]);
+  readonly diskSizeAndTypeOptions$ = this.poolManagerStore.inventory$.pipe(
+    filter(Boolean),
+    map((disks) => {
+      return _.uniqBy(disks, (disk) => `${disk.size.toString()} ${disk.type}`)
+        .map((disk): SelectOption<SizeAndType> => ({
+          label: `${filesize(Number(disk.size), { standard: 'iec' })} (${disk.type})`,
+          value: [disk.size.toString(), disk.type],
+        }));
+    }),
+  );
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -74,13 +83,14 @@ export class CreateDataWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.usableUnusedDisks$.pipe(
-      skipUntil(this.poolManagerStore.isLoading$),
-      take(1),
+    this.poolManagerStore.inventory$.pipe(
+      filter(Boolean),
       untilDestroyed(this),
     ).subscribe((disks) => {
-      this.unusedDisks = disks;
-      this.updateDiskSizeOptions();
+      this.sizeDisksMap = {
+        [DiskType.Hdd]: getSizeDisksMap(disks.filter((disk) => disk.type === DiskType.Hdd)),
+        [DiskType.Ssd]: getSizeDisksMap(disks.filter((disk) => disk.type === DiskType.Ssd)),
+      };
       this.cdr.markForCheck();
     });
 
@@ -113,26 +123,21 @@ export class CreateDataWizardStepComponent implements OnInit {
   }
 
   updateDiskSizeOptions(): void {
-    this.form.controls.sizeAndType.setValue([null, null]);
+    // this.form.controls.sizeAndType.setValue([null, null]);
 
-    this.sizeDisksMap = {
-      [DiskType.Hdd]: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
-      [DiskType.Ssd]: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
-    };
+    // const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd])
+    //   .map((size): SelectOption<SizeAndType> => ({
+    //     label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Hdd})`,
+    //     value: [size, DiskType.Hdd],
+    //   }));
 
-    const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd])
-      .map((size): SelectOption<SizeAndType> => ({
-        label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Hdd})`,
-        value: [size, DiskType.Hdd],
-      }));
+    // const ssdOptions = Object.keys(this.sizeDisksMap[DiskType.Ssd])
+    //   .map((size): SelectOption<SizeAndType> => ({
+    //     label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Ssd})`,
+    //     value: [size, DiskType.Ssd],
+    //   }));
 
-    const ssdOptions = Object.keys(this.sizeDisksMap[DiskType.Ssd])
-      .map((size): SelectOption<SizeAndType> => ({
-        label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Ssd})`,
-        value: [size, DiskType.Ssd],
-      }));
-
-    this.diskSizeAndTypeOptions$ = of([...hddOptions, ...ssdOptions]);
+    // this.diskSizeAndTypeOptions$ = of([...hddOptions, ...ssdOptions]);
   }
 
   updateWidthOptions(): void {

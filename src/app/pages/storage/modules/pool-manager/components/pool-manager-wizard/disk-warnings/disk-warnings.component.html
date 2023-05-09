@@ -1,0 +1,24 @@
+<ng-container [formGroup]="form">
+  <div *ngIf="(nonUniqueSerialDisks$ | async).length" class="spacer-top">
+    <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
+    <ix-radio-group
+      formControlName="allowNonUniqueSerialDisks"
+      [label]="'Allow non-unique serialed disks' | translate"
+      [tooltip]="nonUniqueSerialDisksTooltip"
+      [required]="true"
+      [options]="allowNonUniqueSerialDisksOptions$"
+      [inlineFields]="true"
+    ></ix-radio-group>
+  </div>
+  <div *ngIf="(exportedPoolDisks$ | async).length" class="spacer-bottom">
+    <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+    <ix-checkbox-list
+      formControlName="allowDisksFromExportedPools"
+      inlineFieldFlex="33%"
+      [label]="'Select disks you want to use' | translate"
+      [tooltip]="exportedPoolsTooltip"
+      [options]="exportedPoolDisksOptions$"
+      [inlineFields]="true"
+    ></ix-checkbox-list>
+  </div>
+</ng-container>

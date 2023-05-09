@@ -59,40 +59,31 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly nonUniqueSerialDisks$ = this.unusedDisks$.pipe(
     map((disks) => disks.filter((disk) => disk.duplicate_serial.length)),
   );
-  readonly exportedPools$ = this.unusedDisks$.pipe(
-    map((disks) => {
-      return disks
-        .filter((disk) => !!disk.exported_zpool)
-        .map((disk) => disk.exported_zpool)
-        .filter((value, index, self) => self.indexOf(value) === index);
-    }),
+  readonly exportedPoolDisks$ = this.unusedDisks$.pipe(
+    map((disks) => disks.filter((disk) => !!disk.exported_zpool)),
   );
-  readonly usableUnusedDisks$ = this.state$.pipe(
-    map((state) => {
-      const unusedDisks = [...state.unusedDisks];
-      const allowNonUniqueSerialDisks = state?.formValue?.general?.allowNonUniqueSerialDisks === 'true';
-      const allowUsageExportedPoolDisks = state?.formValue?.general?.allowDisksFromExportedPools?.length;
+  readonly inventory$ = this.state$.pipe(
+    map(({ unusedDisks, formValue }) => {
       let usableDisks = unusedDisks.filter((disk) => !disk.duplicate_serial.length && !disk.exported_zpool);
+      const allowNonUniqueSerialDisks = formValue?.general?.allowNonUniqueSerialDisks === 'true';
+      const selectedDisksWithExportedPool = formValue?.general?.allowDisksFromExportedPools;
       if (allowNonUniqueSerialDisks) {
-        usableDisks = [
+        usableDisks = _.uniq([
           ...usableDisks,
           ...unusedDisks
-            .filter((disk) => allowUsageExportedPoolDisks || !!disk.exported_zpool)
-            .filter((disk) => disk.duplicate_serial.length),
-        ];
+            .filter((disk) => disk.duplicate_serial.length && !disk.exported_zpool),
+        ]);
       }
-      if (allowUsageExportedPoolDisks) {
-        state.formValue.general.allowDisksFromExportedPools.forEach((poolName) => {
-          const exportedPoolDisks = unusedDisks
-            .filter((disk) => allowNonUniqueSerialDisks || !disk.duplicate_serial.length)
-            .filter((disk) => disk.exported_zpool === poolName);
-          if (exportedPoolDisks.length) {
-            usableDisks = _.uniq([
-              ...usableDisks,
-              ...exportedPoolDisks,
-            ]);
-          }
-        });
+      if (selectedDisksWithExportedPool?.length) {
+        const selectedDisks = formValue.general.allowDisksFromExportedPools.map((diskIdentifier) => {
+          return unusedDisks.find((disk) => disk.identifier === diskIdentifier);
+        }).filter(Boolean);
+        if (selectedDisks.length) {
+          usableDisks = _.uniq([
+            ...usableDisks,
+            ...selectedDisks,
+          ]);
+        }
       }
       return usableDisks;
     }),

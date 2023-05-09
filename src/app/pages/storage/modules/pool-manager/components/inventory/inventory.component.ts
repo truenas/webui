@@ -25,7 +25,7 @@ export class InventoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.usableUnusedDisks$.pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
+    this.poolManagerStore.inventory$.pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.sizeDisksMap = {
         [DiskType.Hdd]: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
         [DiskType.Ssd]: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
