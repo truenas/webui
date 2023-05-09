@@ -182,7 +182,7 @@ module.exports = {
         "@typescript-eslint/no-unsafe-argument": "off",
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
-        "sonarjs/cognitive-complexity": ["error", 60],
+        "sonarjs/cognitive-complexity": ["error", 45],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",

@@ -932,6 +932,8 @@ ix-root {
 
   .ix-tree-node:focus-visible,
   .ix-tree-node:focus,
+  ix-app-row:focus-visible,
+  ix-app-row:focus,
   .ix-nested-tree-node > div:focus-visible {
     @extend %focused-shared;
   }

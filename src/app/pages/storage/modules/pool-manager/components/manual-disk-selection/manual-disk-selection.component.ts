@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { map } from 'rxjs';
 import { ManagerVdev } from 'app/classes/manager-vdev.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -23,6 +24,9 @@ export interface ManualDiskSelectionLayout {
 })
 export class ManualDiskSelectionComponent implements OnInit {
   manualSelectionState: ManualDiskSelectionState;
+  isSaveDisabled$ = this.manualDiskSelectionStore.dataVdevs$.pipe(
+    map((vdevs) => vdevs.some((vdev) => !!vdev.errorMsg)),
+  );
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ManualDiskSelectionLayout,

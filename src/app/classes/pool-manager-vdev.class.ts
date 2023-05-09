@@ -4,6 +4,7 @@ import { ManagerVdevs } from 'app/pages/storage/components/manager/manager.compo
 
 export class PoolManagerVdev extends ManagerVdev {
   disks: PoolManagerVdevDisk[];
+  errorMsg: string;
 
   constructor(type: string, group: keyof ManagerVdevs) {
     super(type, group);
