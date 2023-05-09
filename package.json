@@ -119,6 +119,7 @@
     "messageformat": "~2.3.0",
     "messageformat-parser": "~4.1.3",
     "mime-types": "~2.1.35",
+    "ng-gallery": "~8.0.4",
     "ng-lazyload-image": "~9.1.3",
     "ng-mocks": "~14.5.2",
     "ng2-charts": "~2.4.1",

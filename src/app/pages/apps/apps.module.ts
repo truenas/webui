@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { GalleryModule } from 'ng-gallery';
+import { LightboxModule } from 'ng-gallery/lightbox';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -127,6 +129,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatTooltipModule,
     MatMenuModule,
     CustomFormsModule,
+    GalleryModule,
+    LightboxModule,
   ],
   providers: [
     AvailableAppsStore,
