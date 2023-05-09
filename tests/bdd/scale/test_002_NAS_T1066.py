@@ -132,8 +132,8 @@ def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     assert wait_on_element(driver, 10, '//h1[contains(.,"Test Changes")]')
     assert wait_on_element(driver, 7, xpaths.checkbox.new_Confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
-    assert wait_on_element(driver, 7, '//button[@data-test="button-dialog-confirm"]', 'clickable')
-    driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
 @then('when Save Changes appear click the "Save Changes" button')

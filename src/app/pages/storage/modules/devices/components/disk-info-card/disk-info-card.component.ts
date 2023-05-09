@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +13,7 @@ import {
   ReplaceDiskDialogComponent,
   ReplaceDiskDialogData,
 } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 @UntilDestroy()
 @Component({
@@ -22,14 +22,14 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./disk-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskInfoCardComponent implements OnInit {
+export class DiskInfoCardComponent {
   @Input() topologyDisk: TopologyDisk;
   @Input() disk: Disk;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
-    private slideInService: IxSlideInService,
+    private slideIn2Service: IxSlideIn2Service,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
   ) {}
@@ -42,18 +42,13 @@ export class DiskInfoCardComponent implements OnInit {
     return !!this.disk;
   }
 
-  ngOnInit(): void {
-    this.slideInService.onClose$?.pipe(
-      filter((value) => !!value.response && value.modalType === DiskFormComponent),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.devicesStore.reloadList();
-    });
-  }
-
   onEdit(): void {
-    const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-    editForm.setFormDisk(this.disk);
+    const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
+    slideInRef.componentInstance.setFormDisk(this.disk);
+    slideInRef.slideInClosed$.pipe(
+      filter((response) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => this.devicesStore.reloadList());
   }
 
   onReplace(): void {

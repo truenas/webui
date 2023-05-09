@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve06) feature tests."""
 
+import pytest
 import reusableSeleniumCode as rsc
 import time
 import xpaths
@@ -22,6 +23,7 @@ from function import (
 from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='AD_SMB_SHARE', scope='session')
 @scenario('features/NAS-T964.feature', 'Create an Active Directory SMB share and verify it still function after failover')
 def test_create_an_active_directory_smb_share_and_verify_it_still_function_after_failover(driver):
     """Create an Active Directory SMB share and verify it still function after failover."""

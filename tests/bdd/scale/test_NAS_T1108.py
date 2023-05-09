@@ -28,7 +28,7 @@ def test_create_an_active_directory_dataset_on_a_system_dataset_pool():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    #depends(request, ['AD_Setup'], scope='session')
+    depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
