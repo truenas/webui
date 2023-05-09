@@ -22,21 +22,15 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
   let loader: HarnessLoader;
-  const fakeModalRef = {
-    setParent: jest.fn(),
-    setVolId: jest.fn(),
-    setTitle: jest.fn(),
-    isNew: undefined as boolean,
-  };
   const fakeSlideInRef = {
     zvolFormInit: jest.fn(),
+    setForNew: jest.fn(),
   };
   const dataset = {
     id: 'root/parent/child',
@@ -66,10 +60,6 @@ describe('DatasetDetailsPanelComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(ModalService, {
-        openInSlideIn: jest.fn(() => fakeModalRef),
-        onClose$: of(),
-      }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => fakeSlideInRef),
         onClose$: of(),
@@ -110,9 +100,8 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a dataset form when Add Dataset is pressed', async () => {
     const addDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Dataset' }));
     await addDatasetButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(DatasetFormComponent);
-    expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
-    expect(fakeModalRef.setVolId).toHaveBeenCalledWith('my-pool');
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetFormComponent, { wide: true });
+    expect(fakeSlideInRef.setForNew).toHaveBeenCalledWith('root/parent/child');
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {

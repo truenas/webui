@@ -29,7 +29,6 @@ import { RsyncConfigureComponent } from 'app/pages/services/components/service-r
 import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
 import { RsyncModuleListComponent } from 'app/pages/services/components/service-rsync/rsync-module-list/rsync-module-list.component';
 import { ServiceRsyncComponent } from 'app/pages/services/components/service-rsync/service-rsync.component';
-import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
@@ -83,7 +82,6 @@ import { routing } from './services.routing';
     ServiceSmbComponent,
     ServiceSnmpComponent,
     ServiceWebdavComponent,
-    ServiceS3Component,
     AddSpnDialogComponent,
   ],
 })

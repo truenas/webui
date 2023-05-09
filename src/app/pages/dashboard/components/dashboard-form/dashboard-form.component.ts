@@ -3,12 +3,19 @@ import {
   Component,
   ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { ControlsOf } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+interface DashboardFormValue {
+  [key: string]: boolean;
+}
 
 @UntilDestroy()
 @Component({
@@ -16,9 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardFormComponent {
-  form: UntypedFormGroup = this.formBuilder.group({
-    name: ['default', []],
-  });
+  form = this.formBuilder.group<ControlsOf<DashboardFormValue>>({});
   isFormLoading = true;
 
   dashState: DashConfigItem[] = [];
@@ -32,6 +37,8 @@ export class DashboardFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
@@ -95,14 +102,11 @@ export class DashboardFormComponent {
     this.ws.call('auth.set_attribute', ['dashState', clone]).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (wasSet) => {
+      next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Dashboard settings saved'));
         this.onSubmit$.next(this.dashState);
         this.slideInService.close();
-
-        if (!wasSet) {
-          throw new Error('Unable to save Dashboard State');
-        }
       },
       error: (err) => {
         console.error(err);

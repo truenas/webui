@@ -15,10 +15,10 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi, shared } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -50,7 +50,8 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -78,7 +79,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
         },
         error: (error) => {
           this.setLoading(false);
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -92,8 +93,8 @@ export class TargetGlobalConfigurationComponent implements OnInit {
         this.form.patchValue(config);
         this.setLoading(false);
       },
-      error: (error) => {
-        new EntityUtils().handleWsError(this, error, this.dialog);
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.setLoading(false);
       },
     });
@@ -124,7 +125,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
             );
           }),
           catchError((error: WebsocketError) => {
-            this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
+            this.dialogService.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
         );

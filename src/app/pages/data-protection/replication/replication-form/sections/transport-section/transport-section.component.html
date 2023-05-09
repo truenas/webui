@@ -1,0 +1,67 @@
+<ix-fieldset [title]="'Transport Options' | translate" [formGroup]="form">
+  <ix-select
+    *ngIf="!isLocal"
+    formControlName="ssh_credentials"
+    [label]="'SSH Connection' | translate"
+    [required]="true"
+    [options]="sshCredentials$"
+    [tooltip]="helptext.ssh_credentials_tooltip | translate"
+  ></ix-select>
+  <ng-container *ngIf="isNetcat">
+    <ix-select
+      formControlName="netcat_active_side"
+      [label]="'Netcat Active Side' | translate"
+      [required]="true"
+      [options]="netcatActiveSides$"
+      [tooltip]="helptext.netcat_active_side_tooltip | translate"
+    ></ix-select>
+    <ix-input
+      formControlName="netcat_active_side_listen_address"
+      [label]="'Netcat Active Side Listen Address' | translate"
+      [tooltip]="helptext.netcat_active_side_listen_address_tooltip | translate"
+    ></ix-input>
+    <ix-input
+      formControlName="netcat_active_side_port_min"
+      type="number"
+      [label]="'Netcat Active Side Min Port' | translate"
+      [tooltip]="helptext.netcat_active_side_port_min_tooltip | translate"
+    ></ix-input>
+    <ix-input
+      formControlName="netcat_active_side_port_max"
+      type="number"
+      [label]="'Netcat Active Side Max Port' | translate"
+      [tooltip]="helptext.netcat_active_side_port_max_tooltip | translate"
+    ></ix-input>
+    <ix-input
+      formControlName="netcat_passive_side_connect_address"
+      [label]="'Netcat Active Side Connect Address' | translate"
+      [tooltip]="helptext.netcat_passive_side_connect_address_tooltip | translate"
+    ></ix-input>
+  </ng-container>
+  <ng-container *ngIf="isSsh">
+    <ix-select
+      formControlName="compression"
+      [label]="'Stream Compression' | translate"
+      [required]="true"
+      [options]="compressions$"
+      [tooltip]="helptext.compression_tooltip | translate"
+    ></ix-select>
+    <ix-input
+      formControlName="speed_limit"
+      [label]="('Limit' | translate) + sizeSuggestion"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+      [tooltip]="helptext.speed_limit_tooltip | translate"
+    ></ix-input>
+  </ng-container>
+  <ix-checkbox
+    formControlName="large_block"
+    [label]="'Allow Blocks Larger than 128KB' | translate"
+    [tooltip]="helptext.large_block_tooltip | translate"
+  ></ix-checkbox>
+  <ix-checkbox
+    formControlName="compressed"
+    [label]="'Allow Compressed WRITE Records' | translate"
+    [tooltip]="helptext.compressed_tooltip | translate"
+  ></ix-checkbox>
+</ix-fieldset>

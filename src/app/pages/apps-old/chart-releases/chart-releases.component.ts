@@ -19,8 +19,8 @@ import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationTab } from 'app/pages/apps-old/application-tab.enum';
@@ -36,9 +36,9 @@ import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { RedirectService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -78,9 +78,9 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     private mdDialog: MatDialog,
     private appLoaderService: AppLoaderService,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public appService: ApplicationsService,
-    private modalService: ModalService,
     private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private redirect: RedirectService,
@@ -272,7 +272,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
       this.refreshStatus(chartName);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWsError(this, error, this.dialogService);
+      this.dialogService.error(this.errorHandler.parseJobError(error));
     });
   }
 
@@ -314,13 +314,13 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
           });
           jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
             this.dialogService.closeAllDialogs();
-            new EntityUtils().handleWsError(this, error, this.dialogService);
+            this.dialogService.error(this.errorHandler.parseJobError(error));
           });
         });
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.appLoaderService.close();
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -462,9 +462,8 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
 
           if (message !== '') {
             message = '<ul>' + message + '</ul>';
-            this.dialogService.errorReport(helptext.bulkActions.title, message);
+            this.dialogService.error({ title: helptext.bulkActions.title, message });
           }
-          this.modalService.closeSlideIn();
           this.refreshChartReleases();
         },
       );

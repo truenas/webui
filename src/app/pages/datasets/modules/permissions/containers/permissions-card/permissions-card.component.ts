@@ -11,9 +11,11 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -39,6 +41,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   constructor(
     private store: PermissionsCardStore,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private router: Router,
   ) {}
@@ -78,9 +81,9 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
 
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

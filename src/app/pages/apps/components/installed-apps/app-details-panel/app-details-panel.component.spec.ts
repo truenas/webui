@@ -37,6 +37,6 @@ describe('AppDetailsPanelComponent', () => {
   });
 
   it('shows a title', () => {
-    expect(spectator.query('h2')).toHaveText('Application Details');
+    expect(spectator.query('h2')).toHaveText('Details');
   });
 });

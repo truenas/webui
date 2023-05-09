@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
-import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { Observable } from 'rxjs';
@@ -29,16 +28,17 @@ export class ErrorHandlerService implements ErrorHandler {
     }
     return this.dialogService;
   }
+
   constructor(private injector: Injector) { }
 
   handleError(error: unknown): void {
     console.error(error);
     const parsedError = this.parseError(error);
     if (parsedError) {
+      error = parsedError;
       this.dialog?.error(parsedError);
-    } else {
-      this.logToSentry(error);
     }
+    this.logToSentry(error);
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
@@ -77,9 +77,9 @@ export class ErrorHandlerService implements ErrorHandler {
 
   parseWsError(error: WebsocketError): ErrorReport {
     return {
-      title: error.trace.class,
+      title: error.type || error.trace.class,
       message: error.reason,
-      backtrace: error.trace.formatted,
+      backtrace: error.trace?.formatted || '',
     };
   }
 
@@ -90,43 +90,7 @@ export class ErrorHandlerService implements ErrorHandler {
     }
 
     if (errorJob.extra && Array.isArray(errorJob.extra)) {
-      const errors: ErrorReport[] = [];
-      errorJob.extra.forEach((extraItem: [string, unknown]) => {
-        const field = extraItem[0].split('.')[1];
-        const extractedError = extraItem[1] as string | WebsocketError | Job;
-
-        let parsedError: ErrorReport | ErrorReport[];
-        if (this.isTypeOfWebsocketError(extractedError)) {
-          parsedError = this.parseWsError(extractedError);
-        } else if (this.isTypeOfJobError(extractedError)) {
-          parsedError = this.parseJobError(extractedError);
-        } else if (typeof extractedError === 'string') {
-          parsedError = {
-            title: (this.translate?.instant('Error') || 'Error'),
-            message: extractedError,
-            backtrace: errorJob.exception,
-          };
-        }
-
-        if (Array.isArray(parsedError)) {
-          for (const err of parsedError) {
-            if (err.title === (this.translate?.instant('Error') || 'Error')) {
-              err.title = err.title + ': ' + field;
-            } else {
-              err.title = field + ': ' + err.title;
-            }
-            errors.push(err);
-          }
-        } else {
-          if (parsedError.title === (this.translate?.instant('Error') || 'Error')) {
-            parsedError.title = parsedError.title + ': ' + field;
-          } else {
-            parsedError.title = field + ': ' + parsedError.title;
-          }
-          errors.push(parsedError);
-        }
-      });
-      return errors;
+      return this.parseJobWithArrayExtra(errorJob);
     }
 
     return {
@@ -134,6 +98,54 @@ export class ErrorHandlerService implements ErrorHandler {
       message: errorJob.error,
       backtrace: errorJob.exception,
     };
+  }
+
+  private parseJobWithArrayExtra(errorJob: Job): ErrorReport[] {
+    const errors: ErrorReport[] = [];
+    (errorJob.extra as unknown as unknown[]).forEach((extraItem: [string, unknown]) => {
+      const field = extraItem[0].split('.')[1];
+      const extractedError = extraItem[1] as string | WebsocketError | Job;
+
+      const parsedError = this.parseJobExtractedError(errorJob, extractedError);
+
+      if (Array.isArray(parsedError)) {
+        for (const err of parsedError) {
+          if (err.title === (this.translate?.instant('Error') || 'Error')) {
+            err.title = err.title + ': ' + field;
+          } else {
+            err.title = field + ': ' + err.title;
+          }
+          errors.push(err);
+        }
+      } else {
+        if (parsedError.title === (this.translate?.instant('Error') || 'Error')) {
+          parsedError.title = parsedError.title + ': ' + field;
+        } else {
+          parsedError.title = field + ': ' + parsedError.title;
+        }
+        errors.push(parsedError);
+      }
+    });
+    return errors;
+  }
+
+  private parseJobExtractedError(
+    errorJob: Job,
+    extractedError: string | WebsocketError | Job,
+  ): ErrorReport | ErrorReport[] {
+    let parsedError: ErrorReport | ErrorReport[];
+    if (this.isTypeOfWebsocketError(extractedError)) {
+      parsedError = this.parseWsError(extractedError);
+    } else if (this.isTypeOfJobError(extractedError)) {
+      parsedError = this.parseJobError(extractedError);
+    } else if (typeof extractedError === 'string') {
+      parsedError = {
+        title: (this.translate?.instant('Error') || 'Error'),
+        message: extractedError,
+        backtrace: errorJob.exception,
+      };
+    }
+    return parsedError;
   }
 
   private parseErrorOrJob(errorOrJob: WebsocketError | Job | string): ErrorReport | ErrorReport[] {
@@ -152,17 +164,17 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  private handleObjError(error: HttpErrorResponse): ErrorReport[] {
+  private parseHttpErrorObject(error: HttpErrorResponse): ErrorReport[] {
     const errors: ErrorReport[] = [];
-    Object.keys(error.error).forEach((i) => {
-      const field = error.error[i];
-      if (typeof field === 'string') {
+    Object.keys(error.error).forEach((fieldKey) => {
+      const errorEntity = (error.error as Record<string, string | string[]>)[fieldKey];
+      if (typeof errorEntity === 'string') {
         errors.push({
           title: this.translate?.instant('Error') || 'Error',
-          message: field,
+          message: errorEntity,
         });
       } else {
-        (field as string[]).forEach((item: string) => {
+        errorEntity.forEach((item: string) => {
           errors.push({
             title: this.translate?.instant('Error') || 'Error',
             message: item,
@@ -174,43 +186,44 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseHttpError(error: HttpErrorResponse): ErrorReport | ErrorReport[] {
-    if (error.status === 409) {
-      this.handleObjError(error);
-    } else if (error.status === 400) {
-      if (typeof error.error === 'object') {
-        this.handleObjError(error);
-      } else {
+    switch (error.status) {
+      case 409: {
+        return this.parseHttpErrorObject(error);
+      }
+      case 400: {
+        if (typeof error.error === 'object') {
+          return this.parseHttpErrorObject(error);
+        }
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
-            || `Error (${error.status})`,
+              || `Error (${error.status})`,
           message: error.error,
         };
       }
-    } else if (error.status === 500) {
-      if (error.error.error_message) {
+      case 500: {
+        const errorMessage = (error.error as Record<string, string>)?.error_message;
+        if (errorMessage) {
+          return {
+            title: this.translate?.instant('Error ({code})', { code: error.status })
+              || `Error (${error.status})`,
+            message: errorMessage,
+          };
+        }
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
             || `Error (${error.status})`,
-          message: error.error.error_message,
+          message: this.translate?.instant('Server error: {error}', { error: error.error })
+            || `Server error: ${error.error}`,
         };
       }
-      return {
-        title: this.translate?.instant('Error ({code})', { code: error.status })
-          || `Error (${error.status})`,
-        message: this.translate?.instant('Server error: {error}', { error: error.error })
-          || `Server error: ${error.error}`,
-      };
+      default: {
+        console.error(this.translate?.instant('Unknown error code') || 'Unknown error code', error.status);
+        return {
+          title: this.translate?.instant('Error ({code})', { code: error.status })
+            || `Error (${error.status})`,
+          message: this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
+        };
+      }
     }
-    console.error(this.translate?.instant('Unknown error code') || 'Unknown error code', error.status);
-    return {
-      title: this.translate?.instant('Error ({code})', { code: error.status })
-        || `Error (${error.status})`,
-      message: this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
-    };
-  }
-
-  private getFormField(formGroup: UntypedFormGroup, field: string, fieldsMap: Record<string, string>): AbstractControl {
-    const fieldName = fieldsMap[field] ?? field;
-    return formGroup.get(fieldName);
   }
 }

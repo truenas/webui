@@ -38,7 +38,6 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   hasDetails?: boolean;
   rowDetailComponent?: Type<unknown>;
   cardHeaderComponent?: Type<unknown>;
-  asyncView?: boolean;
   wsDelete?: ApiMethod;
   wsMultiDelete?: ApiMethod;
   noAdd?: boolean;
@@ -66,7 +65,7 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   changeEvent?: (entity: EntityTableComponent<Row>) => void;
   preInit?: (entity: EntityTableComponent<Row>) => void;
   afterInit?: (entity: EntityTableComponent<Row>) => void;
-  dataHandler?: (entity: EntityTableComponent<Row>) => unknown;
+  dataHandler?: (entity: EntityTableComponent<Row>) => Observable<unknown>;
   resourceTransformIncomingRestData?: (data: unknown) => unknown;
   getActions?: (row: Row) => EntityTableAction<Row>[];
   getAddActions?: () => EntityTableAction<Row>[];

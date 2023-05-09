@@ -3,10 +3,13 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -25,11 +28,14 @@ export class ReplicationSettingsFormComponent implements OnInit {
   };
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -42,9 +48,9 @@ export class ReplicationSettingsFormComponent implements OnInit {
           this.form.patchValue(config);
           this.isFormLoading = false;
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -65,13 +71,14 @@ export class ReplicationSettingsFormComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideInService.close();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });

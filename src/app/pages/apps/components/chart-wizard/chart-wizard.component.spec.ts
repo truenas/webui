@@ -252,7 +252,7 @@ describe('ChartWizardComponent', () => {
       {
         provide: ActivatedRoute,
         useValue: {
-          params: of({ appId: 'ipfs' }),
+          params: of({ appId: 'ipfs', catalog: 'OFFICIAL', train: 'charts' }),
           routeConfig: { path: 'install' },
         },
       },
@@ -303,7 +303,7 @@ describe('ChartWizardComponent', () => {
       'Update Strategy': 'Kill existing pods before creating new ones',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
     await saveButton.click();
 
     expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(

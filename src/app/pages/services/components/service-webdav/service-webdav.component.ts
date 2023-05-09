@@ -8,13 +8,16 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-webdav';
 import { WebdavConfig, WebdavConfigUpdate, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ValidationService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -96,12 +99,15 @@ export class ServiceWebdavComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private errorHandler: ErrorHandlerService,
     protected router: Router,
     protected ws: WebSocketService,
     protected validationService: ValidationService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
+    private formErrorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -113,9 +119,9 @@ export class ServiceWebdavComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -165,18 +171,15 @@ export class ServiceWebdavComponent implements OnInit {
     this.ws.call('webdav.update', [values] as [WebdavConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Service configuration saved'));
         this.cdr.markForCheck();
         this.router.navigate(['/', 'services']);
       },
       error: (error) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
     });
-  }
-
-  cancel(): void {
-    this.router.navigate(['/', 'services']);
   }
 }

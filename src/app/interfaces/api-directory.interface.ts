@@ -33,7 +33,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interfase';
+import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -56,7 +56,9 @@ import {
   CertificateProfiles, CertificateUpdate,
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
-import { ChartReleaseEvent, ChartRollbackParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import {
+  ChartReleaseEvent, ChartRollbackParams, ChartScaleQueryParams, ChartScaleResult,
+} from 'app/interfaces/chart-release-event.interface';
 import {
   ChartRelease,
   ChartReleaseCreate,
@@ -112,7 +114,6 @@ import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interfa
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
-import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FilesystemPutParams, FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -205,7 +206,6 @@ import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-co
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
-import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
@@ -323,7 +323,7 @@ export type ApiDirectory = {
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: DsUncachedUser };
-  'auth.set_attribute': { params: [key: string, value: unknown]; response: boolean };
+  'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
 
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
@@ -353,6 +353,8 @@ export type ApiDirectory = {
   // App
   'app.categories': { params: void; response: string[] };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+  'app.similar': { params: [app_name: string, catalog: string, train: string]; response: AvailableApp[] };
+  'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
 
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
@@ -392,7 +394,7 @@ export type ApiDirectory = {
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
-  'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };
+  'chart.release.scale': { params: ChartScaleQueryParams; response: ChartScaleResult };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.nic_choices': { params: void; response: Choices };
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
@@ -513,14 +515,6 @@ export type ApiDirectory = {
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.upgrade_finish': { params: void; response: boolean };
   'failover.upgrade': { params: void; response: boolean };
-
-  // FCPort
-  'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
-  'fcport.update': { params: [id: string, update: FibreChannelPortUpdate]; response: unknown };
-
-  // DS Cache
-  'dscache.get_uncached_group': { params: [groupname: string]; response: DsUncachedGroup };
-  'dscache.get_uncached_user': { params: [username: string]; response: DsUncachedUser };
 
   // Keychain Credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
@@ -705,6 +699,7 @@ export type ApiDirectory = {
     params: [path: string, params?: DatasetEncryptionSummaryQueryParams];
     response: DatasetEncryptionSummary[];
   };
+  'pool.dataset.get_instance': { params: [path: string]; response: DatasetDetails };
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
@@ -797,11 +792,6 @@ export type ApiDirectory = {
   'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
   'reporting.clear': { params: void; response: void };
-
-  // S3
-  's3.bindip_choices': { params: void; response: Choices };
-  's3.config': { params: void; response: S3Config };
-  's3.update': { params: [S3ConfigUpdate]; response: S3Config };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
@@ -991,7 +981,7 @@ export type ApiDirectory = {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
-  'user.shell_choices': { params: void; response: Choices };
+  'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
 

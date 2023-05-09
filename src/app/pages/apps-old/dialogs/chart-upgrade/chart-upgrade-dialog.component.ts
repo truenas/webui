@@ -13,6 +13,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };
 
@@ -32,6 +33,7 @@ export class ChartUpgradeDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ChartUpgradeDialogComponent>,
     private appLoaderService: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public data: ChartUpgradeDialogConfig,
@@ -82,7 +84,7 @@ export class ChartUpgradeDialogComponent {
           },
           error: (error: WebsocketError) => {
             this.appLoaderService.close();
-            this.dialogService.errorReport(error.trace.class, error.reason, error.trace.formatted);
+            this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         });
     }

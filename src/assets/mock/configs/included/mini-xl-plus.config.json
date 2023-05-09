@@ -1,0 +1,25 @@
+{
+  "enabled": true,
+  "mockEnclosure": true,
+  "enclosureOptions": {
+    "controllerModel": "MINI-3.0-XL+",
+    "expansionModels": [],
+    "dispersal": "default"
+  },
+  "systemProduct": "TRUENAS-MINI-3.0-XL+",
+  "diskOptions": {
+    "enabled": true,
+    "topologyOptions": {
+      "scenario": "uniform",
+      "layout": "MIRROR",
+      "diskSize": 20,
+      "width": 2,
+      "repeats": 500
+    },
+    "mockPools": false,
+    "unassignedOptions": {
+      "diskSize": 12,
+      "repeats": 9
+    }
+  }
+}

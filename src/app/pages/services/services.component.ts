@@ -76,7 +76,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
           .map((service) => {
             return {
               ...service,
-              name: serviceNames.get(service.service),
+              name: serviceNames.has(service.service) ? serviceNames.get(service.service) : service.service,
             } as ServiceRow;
           });
 
@@ -203,7 +203,11 @@ export class ServicesComponent implements OnInit, AfterViewInit {
         if (rpc === 'service.stop') {
           message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
         }
-        this.dialog.errorReport(message, error.reason, error.trace.formatted);
+        this.dialog.error({
+          title: message,
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        });
         this.serviceLoadingMap.set(service.service, false);
         this.cdr.markForCheck();
       },

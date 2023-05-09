@@ -4,10 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -49,7 +48,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     ],
     declarations: [
       BulkListItemComponent,
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2022-31-05 10:52:06')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       {

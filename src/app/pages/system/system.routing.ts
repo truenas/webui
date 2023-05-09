@@ -6,6 +6,7 @@ import { ShellComponent } from 'app/pages/shell/shell.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
+import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
@@ -17,7 +18,6 @@ import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-lis
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
-import { SupportComponent } from './general-settings/support/support.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
 
@@ -114,7 +114,7 @@ export const routes: Routes = [
       children: [
         {
           path: '',
-          component: SupportComponent,
+          component: SupportCardComponent,
           data: { title: T('Support'), breadcrumb: T('Support') },
         }, {
           path: 'eula',

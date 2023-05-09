@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  Observable,
   from, of, switchMap, tap,
 } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
@@ -13,19 +15,20 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { RadioOption } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-interface DatasetFormValue {
-  key?: string;
-  passphrase?: string;
-  name: string;
-  is_passphrase: boolean;
-  file?: File[];
+interface DatasetFormGroup {
+  key?: FormControl<string>;
+  passphrase?: FormControl<string>;
+  name: FormControl<string>;
+  is_passphrase: FormControl<boolean>;
+  file?: FormControl<File[]>;
 }
 
 @UntilDestroy()
@@ -45,11 +48,11 @@ export class DatasetUnlockComponent implements OnInit {
     unlock_children: [true],
     file: [null as File[], [Validators.required]],
     key: [''],
-    datasets: this.formBuilder.array([]),
+    datasets: this.formBuilder.array<FormGroup<DatasetFormGroup>>([]),
     force: [false],
   });
 
-  useFileOptions$ = of([{
+  useFileOptions$: Observable<RadioOption[]> = of([{
     value: true,
     label: this.translate.instant('From a key file'),
   }, {
@@ -70,6 +73,7 @@ export class DatasetUnlockComponent implements OnInit {
     protected aroute: ActivatedRoute,
     private authService: AuthService,
     protected dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private dialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
@@ -131,14 +135,14 @@ export class DatasetUnlockComponent implements OnInit {
                   name: [''],
                   passphrase: ['', [Validators.minLength(8)]],
                   is_passphrase: [true],
-                }));
+                }) as FormGroup<DatasetFormGroup>);
               } else {
                 this.form.controls.datasets.push(this.formBuilder.group({
                   name: [''],
                   key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
                   file: [null as File[]],
                   is_passphrase: [false],
-                }));
+                }) as FormGroup<DatasetFormGroup>);
               }
 
               (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
@@ -153,7 +157,7 @@ export class DatasetUnlockComponent implements OnInit {
             (this.form.controls.datasets.controls[i].controls.is_passphrase as FormControl).setValue(isPassphrase);
           }
           this.hideFileInput = this.form.controls.datasets.value.every(
-            (dataset: DatasetFormValue) => dataset.is_passphrase,
+            (dataset) => dataset.is_passphrase,
           );
           this.form.controls.use_file.setValue(!this.hideFileInput);
         }
@@ -172,7 +176,7 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    new EntityUtils().handleWsError(this, error, this.dialogService);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   unlockSubmit(payload: DatasetUnlockParams): void {
@@ -205,7 +209,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,
@@ -217,7 +221,7 @@ export class DatasetUnlockComponent implements OnInit {
     const datasets: DatasetEncryptionSummaryQueryParamsDataset[] = [];
 
     if (!values.use_file) {
-      values.datasets.forEach((dataset: DatasetFormValue) => {
+      values.datasets.forEach((dataset) => {
         if (values.unlock_children || dataset.name === this.pk) {
           if (dataset.is_passphrase && dataset.passphrase) {
             datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
@@ -265,7 +269,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,

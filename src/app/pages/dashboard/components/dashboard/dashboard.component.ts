@@ -257,7 +257,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
     this.getNetworkInterfaces();
     this.listenForPoolUpdates();
+    this.getResourcesUsageUpdates();
+  }
 
+  getResourcesUsageUpdates(): void {
     this.ws.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       untilDestroyed(this),
@@ -266,7 +269,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
 
-      if (update.virtual_memory) {
+      if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
         if (update.zfs && update.zfs.arc_size !== null) {
@@ -275,7 +278,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
       }
 
-      if (update.interfaces) {
+      if (update?.interfaces) {
         const keys = Object.keys(update.interfaces);
         keys.forEach((key) => {
           this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data: update.interfaces[key] });
@@ -365,7 +368,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       conf.push({
         id: conf.length.toString(),
         name: 'Pool',
-        identifier: `name,${pool.name}`,
+        identifier: `name,Pool:${pool.name}`,
         rendered: false,
       });
     });
@@ -396,7 +399,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.volumeData;
     }
 
-    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
+    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value.split(':')[1]);
     if (!dashboardPool) {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
       return undefined;
@@ -427,7 +430,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'pool':
         if (spl) {
-          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value.split(':')[1]);
           if (pools.length) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -553,11 +556,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private saveState(state: DashConfigItem[]): void {
     this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
-      .subscribe((wasSet) => {
-        if (!wasSet) {
-          throw new Error('Unable to save Dashboard State');
-        }
-      });
+      .subscribe();
   }
 
   private loadPoolData(): void {

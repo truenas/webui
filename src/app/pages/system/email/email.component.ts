@@ -11,13 +11,14 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { GmailOauthConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -76,7 +77,8 @@ export class EmailComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -134,7 +136,10 @@ export class EmailComponent implements OnInit {
     const authenticationListener = (message: OauthMessage<GmailOauthConfig>): void => {
       if (message.data.oauth_portal) {
         if (message.data.error) {
-          this.dialogService.errorReport(this.translate.instant('Error'), message.data.error);
+          this.dialogService.error({
+            title: this.translate.instant('Error'),
+            message: message.data.error,
+          });
         } else {
           this.oauthCredentials = message.data.result;
           this.cdr.markForCheck();
@@ -160,7 +165,7 @@ export class EmailComponent implements OnInit {
         error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
   }
@@ -181,10 +186,10 @@ export class EmailComponent implements OnInit {
           }
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -44,6 +45,8 @@ import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-l
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
+import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -57,6 +60,7 @@ import { AppContainersCardComponent } from './components/installed-apps/app-cont
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
 import { AppNotesCardComponent } from './components/installed-apps/app-notes-card/app-notes-card.component';
+import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
 
@@ -89,6 +93,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     PodSelectLogsDialogComponent,
     AppUpgradeDialogComponent,
     AppsToolbarButtonsComponent,
+    AppStatusCellComponent,
   ],
   imports: [
     CommonModule,
@@ -100,6 +105,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     ReactiveFormsModule,
     EntityModule,
     MatCardModule,
+    NgxFilesizeModule,
     CoreComponents,
     MatSelectModule,
     MatCheckboxModule,
@@ -120,6 +126,10 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     TerminalModule,
     MatTooltipModule,
     MatMenuModule,
+    CustomFormsModule,
+  ],
+  providers: [
+    AvailableAppsStore,
   ],
 })
 export class AppsModule { }

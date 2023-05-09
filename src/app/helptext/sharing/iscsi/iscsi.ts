@@ -105,7 +105,7 @@ export const helptextSharingIscsi = {
 
   all_placeholder_initiators: T('Allow All Initiators'),
 
-  initiator_form_placeholder_initiators: T('Allowed Initiators (IQN)'),
+  initiator_form_placeholder_initiators: T('Add Allowed Initiators (IQN)'),
   initiator_form_tooltip_initiators: T(
     'Initiators allowed access to this system. Enter an\
  <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
@@ -307,7 +307,7 @@ export const helptextSharingIscsi = {
   step1_label: T('Create or Choose Block Device'),
 
   name_placeholder: T('Name'),
-  name_tooltip: T('Keep the name short. Using a name longer than 63 characters can prevent accessing the block device.'),
+  name_tooltip: T('Keep the name short. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).'),
 
   disk_placeholder: T('Device'),
   disk_tooltip: T('Select the unused zvol or zvol snapshot. Select\

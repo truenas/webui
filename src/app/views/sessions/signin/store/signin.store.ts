@@ -14,9 +14,9 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -65,6 +65,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private router: Router,
     private snackbar: MatSnackBar,
     private wsManager: WebsocketConnectionService,
+    private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
     @Inject(WINDOW) private window: Window,
@@ -100,7 +101,7 @@ export class SigninStore extends ComponentStore<SigninState> {
           () => this.setLoadingState(false),
           (error: WebsocketError) => {
             this.setLoadingState(false);
-            new EntityUtils().handleWsError(this, error, this.dialogService);
+            this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         ),
       );
@@ -122,11 +123,12 @@ export class SigninStore extends ComponentStore<SigninState> {
           this.disabledReasonsSubscription.unsubscribe();
           this.disabledReasonsSubscription = null;
         }
+        this.setLoadingState(false);
         this.router.navigateByUrl(this.getRedirectUrl());
       },
       (error: WebsocketError) => {
         this.setLoadingState(false);
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     ),
   ));

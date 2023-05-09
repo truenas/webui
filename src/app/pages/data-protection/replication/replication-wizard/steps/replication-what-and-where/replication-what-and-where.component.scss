@@ -1,0 +1,19 @@
+.replication {
+  display: flex;
+  gap: 10px;
+
+  .source,
+  .target {
+    width: 50%;
+  }
+
+  .snapshots-text {
+    background-color: var(--primary);
+    font-size: 12px;
+    padding: 4px 2px;
+  }
+
+  .warning {
+    background-color: var(--red);
+  }
+}

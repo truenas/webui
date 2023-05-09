@@ -4,14 +4,16 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import {
   filter, first, map, switchMap, tap,
 } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
-import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -45,6 +47,8 @@ export class ReportsConfigFormComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private slideIn: IxSlideInService,
   ) { }
@@ -75,6 +79,7 @@ export class ReportsConfigFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(this.translate.instant('Reporting configuration saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideIn.close();

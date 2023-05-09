@@ -1,0 +1,19 @@
+.mat-mdc-card-content {
+  color: var(--fg2);
+}
+
+.product-image {
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  max-height: 168px;
+  max-width: 80%;
+}
+
+.links-wrapper {
+  margin-bottom: 1rem;
+
+  .links {
+    margin-bottom: 5px;
+  }
+}

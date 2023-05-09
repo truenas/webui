@@ -28,6 +28,7 @@ import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dat
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -62,6 +63,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
+    private errorHandler: ErrorHandlerService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
@@ -93,7 +95,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(error);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
@@ -227,20 +229,22 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       virtually removing any dataset quota entries for such groups. \
       Are you sure you want to proceed?'),
       buttonText: this.translate.instant('Remove'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.loader.open();
-      this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)])
-        .pipe(untilDestroyed(this))
-        .subscribe({
-          next: () => {
-            this.loader.close();
-            this.getGroupQuotas();
-          },
-          error: (error) => {
-            this.loader.close();
-            this.handleError(error);
-          },
-        });
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.loader.open();
+        return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.loader.close();
+        this.getGroupQuotas();
+      },
+      error: (error) => {
+        this.loader.close();
+        this.handleError(error);
+      },
     });
   }
 
@@ -265,9 +269,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         this.loader.close();
         this.getGroupQuotas();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

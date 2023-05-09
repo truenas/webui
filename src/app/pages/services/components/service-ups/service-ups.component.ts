@@ -4,16 +4,18 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -103,11 +105,14 @@ export class ServiceUpsComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private dialogService: DialogService,
     private router: Router,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -144,7 +149,7 @@ export class ServiceUpsComponent implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -166,18 +171,15 @@ export class ServiceUpsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
   }
 }

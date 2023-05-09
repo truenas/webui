@@ -16,6 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { StorageService, TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -95,6 +96,7 @@ export class SnapshotTaskComponent {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
+    private snackbar: SnackbarService,
     protected storageService: StorageService,
   ) {}
 
@@ -141,8 +143,13 @@ export class SnapshotTaskComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Task created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Task updated'));
+        }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;

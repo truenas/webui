@@ -9,7 +9,7 @@ import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncOneDriveDrive } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -17,6 +17,7 @@ import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -66,6 +67,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     });
   }
   constructor(
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private dialogService: DialogService,
@@ -121,8 +123,8 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
             })),
           );
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

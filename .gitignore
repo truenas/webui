@@ -48,6 +48,7 @@ Thumbs.db
 #ip/port config
 proxy.config.json
 src/environments/environment.ts
+src/assets/mock/configs/custom/*.json
 
 # automation framework
 *.iso

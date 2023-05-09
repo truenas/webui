@@ -538,7 +538,7 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
 /* Material Cards*/
 body .mat-mdc-card {
   border: solid 1px var(--contrast-lighter);
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: var(--mdc-dialog-subhead-font);
   padding: 0 !important;
   position: relative;
 }
@@ -777,7 +777,7 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
 .mat-expansion-panel-header span.mat-expansion-indicator {
   margin-top: -4px;
   position: relative;
-  right: 4px;
+  right: 9px;
 }
 
 .mat-expansion-panel.no-padding .mat-expansion-panel-body {

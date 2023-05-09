@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, merge } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import {
   filter, switchMap, tap, catchError,
 } from 'rxjs/operators';
@@ -21,10 +21,10 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -42,12 +42,12 @@ import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scr
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
-  DialogService, ModalServiceMessage,
+  DialogService,
   StorageService,
   TaskService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -87,12 +87,12 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: ModalService,
     private slideInService: IxSlideInService,
-    private dialog: DialogService,
+    private dialogService: DialogService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,
     private router: Router,
+    private errorHandler: ErrorHandlerService,
     private taskService: TaskService,
     private storage: StorageService,
     private translate: TranslateService,
@@ -111,10 +111,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     this.getCardData();
     this.refreshAllTables();
 
-    merge(
-      this.modalService.onClose$,
-      this.slideInService.onClose$,
-    )
+    this.slideInService.onClose$
       .pipe(untilDestroyed(this))
       .subscribe(({ modalType }) => {
         switch (modalType) {
@@ -139,15 +136,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             break;
         }
       });
-
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
-      if (message.action === 'open' && message.component === 'replicationForm') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
-      }
-      if (message.action === 'open' && message.component === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
-      }
-    });
   }
 
   getCardData(): void {
@@ -286,10 +274,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(ReplicationWizardComponent);
+            this.slideInService.open(ReplicationWizardComponent, { wide: true });
           },
           edit: (row: ReplicationTaskUi) => {
-            this.modalService.openInSlideIn(ReplicationFormComponent, row.id);
+            const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
+            form.setForEdit(row);
           },
           onButtonClick: (row) => {
             this.stateButton(row);
@@ -545,7 +534,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             .map((identifier) => {
               const fullDisk = this.disks.find((item) => item.identifier === identifier);
               if (fullDisk) {
-                identifier = fullDisk.devname;
+                return fullDisk.devname;
               }
               return identifier;
             })
@@ -607,7 +596,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         name: 'run',
         matTooltip: this.translate.instant('Run Now'),
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
             hideCheckbox: true,
@@ -621,8 +610,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               );
             }),
             switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -660,7 +649,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Run this cloud sync now?'),
             hideCheckbox: true,
@@ -672,8 +661,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -692,7 +681,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Stop'),
         name: 'stop',
         onClick: (row) => {
-          this.dialog
+          this.dialogService
             .confirm({
               title: this.translate.instant('Stop'),
               message: this.translate.instant('Stop this cloud sync?'),
@@ -705,14 +694,14 @@ export class DataProtectionDashboardComponent implements OnInit {
             )
             .subscribe({
               next: () => {
-                this.dialog.info(
+                this.dialogService.info(
                   this.translate.instant('Task Stopped'),
                   this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
                   true,
                 );
               },
-              error: (err) => {
-                new EntityUtils().handleWsError(this, err);
+              error: (error: WebsocketError) => {
+                this.dialogService.error(this.errorHandler.parseWsError(error));
               },
             });
         },
@@ -722,7 +711,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: helptext_cloudsync.action_button_dry_run,
         name: 'dry_run',
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: helptext_cloudsync.dry_run_title,
             message: helptext_cloudsync.dry_run_dialog,
             hideCheckbox: true,
@@ -733,8 +722,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -772,7 +761,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Run this rsync now?'),
             hideCheckbox: true,
@@ -786,8 +775,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               }),
             )),
             switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -824,7 +813,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       dialogRef.close();
     });
     dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialog.info(helptext.task_aborted, '', true);
+      this.dialogService.info(helptext.task_aborted, '', true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
@@ -849,19 +838,22 @@ export class DataProtectionDashboardComponent implements OnInit {
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.dialog.info(this.translate.instant('Task Aborted'), '');
+          this.dialogService.info(this.translate.instant('Task Aborted'), '');
         });
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialog.errorReport(this.translate.instant('Warning'), `<pre>${list}</pre>`);
+        this.dialogService.error({
+          title: this.translate.instant('Warning'),
+          message: `<pre>${list}</pre>`,
+        });
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
-      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialogService.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 
@@ -898,9 +890,9 @@ export class DataProtectionDashboardComponent implements OnInit {
         next: (updatedEntity) => {
           row[param] = updatedEntity[param];
         },
-        error: (err) => {
+        error: (err: WebsocketError) => {
           row[param] = !row[param];
-          new EntityUtils().handleWsError(this, err, this.dialog);
+          this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
   }

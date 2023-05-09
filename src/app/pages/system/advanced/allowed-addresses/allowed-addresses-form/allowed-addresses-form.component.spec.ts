@@ -4,12 +4,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('AllowedAddressesComponent', () => {
@@ -25,11 +26,15 @@ describe('AllowedAddressesComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('system.general.update'),
+        mockCall('system.general.ui_restart'),
         mockCall('system.general.config', {
           ui_allowlist: ['1.1.1.1/32'],
         } as SystemGeneralConfig),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       provideMockStore(),
     ],
   });

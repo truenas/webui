@@ -4,8 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -26,6 +26,7 @@ export class GroupMembersComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +64,7 @@ export class GroupMembersComponent implements OnInit {
       },
       error: (error) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.dialog.error(this.errorHandler.parseWsError(error));
       },
     });
   }

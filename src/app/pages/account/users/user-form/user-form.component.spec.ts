@@ -34,6 +34,7 @@ const mockUser = {
   full_name: 'test',
   builtin: false,
   smb: true,
+  ssh_password_enabled: true,
   password_disabled: false,
   locked: false,
   sudo_commands_nopasswd: ['rm -rf /'],
@@ -200,6 +201,7 @@ describe('UserFormComponent', () => {
 
       expect(values).toEqual({
         'Auxiliary Groups': ['test-group'],
+        'SSH password login enabled': true,
         'Confirm New Password': '',
         'Create New Primary Group': false,
         'Disable Password': false,
@@ -260,6 +262,7 @@ describe('UserFormComponent', () => {
           home_create: true,
           shell: '/usr/bin/zsh',
           smb: false,
+          ssh_password_enabled: true,
           sshpubkey: null,
           sudo_commands: ['pwd'],
           sudo_commands_nopasswd: [allCommands],

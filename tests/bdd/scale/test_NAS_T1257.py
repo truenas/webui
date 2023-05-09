@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -68,8 +69,8 @@ def click_on_the_power_button_then_restart(driver):
     assert wait_on_element(driver, 5, xpaths.button.restart, 'clickable')
     driver.find_element_by_xpath(xpaths.button.restart).click()
     assert wait_on_element(driver, 5, '//h1[text()="Restart"]')
-    assert wait_on_element(driver, 5, xpaths.checkbox.old_Confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
+    assert wait_on_element(driver, 5, xpaths.checkbox.new_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 5, xpaths.button.ok, 'clickable')
     driver.find_element_by_xpath(xpaths.button.ok).click()
 
@@ -78,14 +79,9 @@ def click_on_the_power_button_then_restart(driver):
 def wait_for_the_login_ui_to_come_back_and_login(driver, root_password):
     """wait for the login UI to come back and login."""
     assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
-    time.sleep(5)
+    time.sleep(10)
     assert wait_on_element(driver, 300, xpaths.login.user_Input)
-    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
-    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-    assert wait_on_element(driver, 5, xpaths.login.signin_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
+    rsc.Login(driver, 'root', root_password)
 
 
 @then('on the Dashboard click on Systems Settings then Services')
@@ -103,7 +99,7 @@ def on_the_services_page_verify_ssh_is_enabled(driver):
     """on the Services page, verify SSH is enabled."""
     assert wait_on_element(driver, 10, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Button, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
+    assert attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
 
 
 @then('get the ssh host key again')

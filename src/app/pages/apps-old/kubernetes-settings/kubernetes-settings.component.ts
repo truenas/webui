@@ -13,12 +13,13 @@ import { JobState } from 'app/enums/job-state.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import {
   AppLoaderService, DialogService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -66,8 +67,9 @@ export class KubernetesSettingsComponent implements OnInit {
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private appService: ApplicationsService,
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -95,7 +97,7 @@ export class KubernetesSettingsComponent implements OnInit {
           }),
           catchError((error) => {
             this.loader.close();
-            this.errorHandler.handleWsFormError(error, this.form);
+            this.formErrorHandler.handleWsFormError(error, this.form);
             return EMPTY;
           }),
         );
@@ -121,10 +123,10 @@ export class KubernetesSettingsComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

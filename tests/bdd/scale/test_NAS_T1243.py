@@ -111,7 +111,6 @@ def click_the_confirm_checkbox_and_click_the_save_button(driver):
     driver.find_element_by_xpath(xpaths.edit_Encryption.confirm_Checkbox).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
 
 

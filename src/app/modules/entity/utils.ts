@@ -1,10 +1,3 @@
-import * as _ from 'lodash';
-import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityErrorHandler } from 'app/modules/entity/entity-form/interfaces/entity-error-handler.interface';
-import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { DialogService } from 'app/services';
-
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
 
@@ -21,156 +14,7 @@ export interface FlattenedData extends Record<string, unknown> {
   _parent?: string | number;
 }
 
-/**
- * TODO: Likely outdated.
- */
-interface HttpError {
-  code: number;
-  error: {
-    [field: string]: string[];
-  };
-}
-
 export class EntityUtils {
-  // TODO: error is probably of type HttpError
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleError(entity: any, error: any): void {
-    if (error.code === 409) {
-      this.handleObjError(entity, error);
-    } else if (error.code === 400) {
-      if (typeof error.error === 'object') {
-        this.handleObjError(entity, error);
-      } else {
-        entity.error = error.error;
-      }
-    } else if (error.code === 500) {
-      if (error.error.error_message) {
-        entity.error = error.error.error_message;
-      } else {
-        entity.error = 'Server error: ' + error.error;
-      }
-    } else {
-      entity.error = 'Fatal error! Check logs.';
-      console.error('Unknown error code', error.code);
-    }
-  }
-
-  handleObjError(entity: EntityErrorHandler, error: HttpError): void {
-    let scroll = false;
-    entity.error = '';
-    Object.keys(error.error).forEach((i) => {
-      const field = error.error[i];
-      const fc = _.find(entity.fieldConfig, { name: i });
-      if (fc) {
-        const element = document.getElementById(i);
-        if (element) {
-          if (entity.conf && entity.conf.advancedFields
-            && _.indexOf(entity.conf.advancedFields, i) > -1
-            && entity.conf.isBasicMode) {
-            entity.conf.isBasicMode = false;
-          }
-          if (!scroll) {
-            element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
-            scroll = true;
-          }
-        }
-        let errors = '';
-        field.forEach((item: string) => { errors += item + ' '; });
-        fc.hasErrors = true;
-        fc.errors = errors;
-      } else if (typeof field === 'string') {
-        entity.error = field;
-      } else {
-        field.forEach((item: string) => { entity.error += item + '<br />'; });
-      }
-    });
-  }
-
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-  handleWsError(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    entity: any,
-    errorOrJob: WebsocketError | Job,
-    dialogService?: DialogService,
-    targetFieldConfig?: FieldConfig[],
-  ): void {
-    let dialog: DialogService;
-    if (dialogService) {
-      dialog = dialogService;
-    } else if (entity) {
-      dialog = entity.dialog;
-    }
-    if ('exc_info' in errorOrJob && errorOrJob.exc_info?.extra) {
-      errorOrJob.extra = errorOrJob.exc_info.extra as Record<string, unknown>;
-    }
-
-    if ('extra' in errorOrJob && errorOrJob.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
-      let scroll = false;
-      if ((errorOrJob as Job).extra.excerpt) {
-        this.errorReport(errorOrJob, dialog);
-      } else if (Array.isArray(errorOrJob.extra)) {
-        errorOrJob.extra.forEach((extraItem) => {
-          const field = extraItem[0].split('.')[1];
-          const error = extraItem[1];
-
-          let fc = _.find(entity.fieldConfig, { name: field });
-          let stepIndex;
-          if (entity.wizardConfig) {
-            _.find(entity.wizardConfig, (step, index) => {
-              stepIndex = index;
-              fc = _.find(step.fieldConfig, { name: field });
-              return fc;
-            });
-          }
-          if (targetFieldConfig) {
-            fc = _.find(targetFieldConfig, { name: field });
-          }
-
-          if (fc && !fc.isHidden) {
-            const element = document.getElementById(field);
-            if (element) {
-              if (
-                entity.conf && entity.conf.advancedFields
-                && _.indexOf(entity.conf.advancedFields, field) > -1
-                && entity.conf.isBasicMode
-              ) {
-                entity.conf.isBasicMode = false;
-              }
-              if (!scroll) {
-                element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
-                scroll = true;
-              }
-            }
-            fc.hasErrors = true;
-            fc.errors = error;
-            if (entity.wizardConfig && entity.entityWizard) {
-              entity.entityWizard.stepper.selectedIndex = stepIndex;
-            }
-          } else if (entity.error) {
-            entity.error = error;
-          } else {
-            this.errorReport(errorOrJob, dialog);
-          }
-        });
-      } else {
-        this.errorReport(errorOrJob, dialog);
-      }
-    } else {
-      this.errorReport(errorOrJob, dialog);
-    }
-  }
-
-  errorReport(errorOrJob: WebsocketError | Job, dialog: DialogService): void {
-    if ('trace' in errorOrJob && errorOrJob.trace?.formatted && dialog) {
-      dialog.errorReport(errorOrJob.trace.class, errorOrJob.reason, errorOrJob.trace.formatted);
-    } else if ('state' in errorOrJob && errorOrJob.error && errorOrJob.exception && dialog) {
-      dialog.errorReport(errorOrJob.state, errorOrJob.error, errorOrJob.exception);
-    } else {
-      // if it can't print the error at least put it on the console.
-      console.error(errorOrJob);
-    }
-  }
-
   isObject = (something: unknown): something is Record<string, unknown> => {
     return (!!something) && (something.constructor === Object);
   };
@@ -241,14 +85,6 @@ export class EntityUtils {
     }
 
     return result;
-  }
-
-  changeNull2String<T>(value: T): T | typeof NULL_VALUE {
-    if (value === null) {
-      return NULL_VALUE;
-    }
-
-    return value;
   }
 
   changeNullString2Null(data: unknown): unknown {

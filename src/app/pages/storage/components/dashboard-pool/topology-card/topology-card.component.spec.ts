@@ -1,12 +1,15 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MockStorageGenerator, MockStorageScenario } from 'app/core/testing/utils/mock-storage-generator.utils';
+import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import { diskToDashboardDisk } from 'app/core/testing/utils/mock-storage-dashboard.utils';
+import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   PoolCardIconComponent,
@@ -56,7 +59,7 @@ describe('TopologyCardComponent', () => {
     spectator = createComponent({
       props: {
         poolState: storage.poolState as Pool,
-        disks: storage.disks,
+        disks: storage.disks.map((disk: Disk) => diskToDashboardDisk(disk)),
       },
     });
   });

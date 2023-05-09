@@ -9,10 +9,12 @@ import { forkJoin, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -60,9 +62,11 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private dialog: DialogService,
+    private snackbar: SnackbarService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -78,13 +82,14 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
         this.slideInService.close();
         this.store$.dispatch(advancedConfigUpdated());
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -111,8 +116,8 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(this, error, this.dialog);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

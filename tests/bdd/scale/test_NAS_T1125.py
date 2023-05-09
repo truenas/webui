@@ -17,6 +17,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @pytest.mark.dependency(name='LDAP_SETUP')
@@ -106,7 +107,7 @@ def click_advanced_options_then_click_enable_checkbox_then_check_samba_schema_se
     assert wait_on_element(driver, 10, xpaths.button.advanced_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.button.advanced_Option).click()
     assert wait_on_element(driver, 5, xpaths.ldap.samba_Schema_Checkbox, 'clickable')
-    checkbox_checked = attribute_value_exist(driver, xpaths.ldap.samba_Schema_Checkbox, 'class', 'mat-checkbox-checked')
+    checkbox_checked = attribute_value_exist(driver, xpaths.ldap.samba_Schema_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath(xpaths.ldap.samba_Schema_Checkbox).click()
     assert wait_on_element(driver, 10, xpaths.ldap.encryption_Mode_Select, 'clickable')

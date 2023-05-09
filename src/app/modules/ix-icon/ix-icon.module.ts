@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 // eslint-disable-next-line no-restricted-imports
-import { MatIcon, MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
 
@@ -11,10 +11,7 @@ import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
     MatIconModule,
   ],
   declarations: [IxIconComponent],
-  exports: [
-    IxIconComponent,
-    MatIcon, // For backward compatibility, replace all occurrences of `mat-icon` with `ix-icon` and remove it
-  ],
+  exports: [IxIconComponent],
   providers: [{
     provide: MatIconRegistry,
     useClass: IxIconRegistry,

@@ -32,9 +32,9 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   StartServiceDialogComponent, StartServiceDialogResult,
@@ -44,6 +44,7 @@ import {
   AppLoaderService,
   DialogService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -155,12 +156,13 @@ export class SmbFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private mdDialog: MatDialog,
-    private dialog: DialogService,
+    private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     private router: Router,
     protected loader: AppLoaderService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
   ) {}
@@ -196,7 +198,7 @@ export class SmbFormComponent implements OnInit {
         (value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew,
       ),
       take(1),
-      switchMap(() => this.dialog.confirm({
+      switchMap(() => this.dialogService.confirm({
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
         hideCheckbox: true,
@@ -315,7 +317,7 @@ export class SmbFormComponent implements OnInit {
   }
 
   showStripAclWarning(): void {
-    this.dialog
+    this.dialogService
       .confirm({
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
@@ -350,7 +352,7 @@ export class SmbFormComponent implements OnInit {
       return;
     }
     const afpControl = this.form.controls.afp;
-    this.dialog
+    this.dialogService
       .confirm({
         title: helptextSharingSmb.afpDialog_title,
         message: helptextSharingSmb.afpDialog_message,
@@ -401,7 +403,7 @@ export class SmbFormComponent implements OnInit {
             this.isLoading = false;
             this.cdr.markForCheck();
             if (redirect) {
-              this.dialog.confirm({
+              this.dialogService.confirm({
                 title: this.translate.instant('Configure ACL'),
                 message: this.translate.instant('Do you want to configure the ACL?'),
                 buttonText: this.translate.instant('Configure'),
@@ -422,9 +424,9 @@ export class SmbFormComponent implements OnInit {
           },
           error: (err: WebsocketError) => {
             if (err.reason.includes('[ENOENT]') || err.reason.includes('[EXDEV]')) {
-              this.dialog.closeAllDialogs();
+              this.dialogService.closeAllDialogs();
             } else {
-              this.dialog.errorReport(String(err.error), err.reason, err.trace.formatted);
+              this.dialogService.error(this.errorHandler.parseWsError(err));
             }
             this.isLoading = false;
             this.cdr.markForCheck();
@@ -435,7 +437,7 @@ export class SmbFormComponent implements OnInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
   }
