@@ -165,14 +165,14 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         if (!this.isHA) {
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
             this.updateService.setForHardRefresh();
-            this.router.navigate(['/others/reboot']);
+            this.router.navigate(['/others/reboot'], { skipLocationChange: true });
           } else {
             this.translate.get('Restart').subscribe((reboot: string) => {
               this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).subscribe((reboot_prompt: string) => {
                 this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
                   if (reboot_res) {
                     this.updateService.setForHardRefresh();
-                    this.router.navigate(['/others/reboot']);
+                    this.router.navigate(['/others/reboot'], { skipLocationChange: true });
                   }
                 });
               });
@@ -245,7 +245,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);

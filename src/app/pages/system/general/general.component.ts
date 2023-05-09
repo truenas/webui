@@ -620,7 +620,7 @@ export class GeneralComponent implements OnDestroy {
     dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.subscribe((res) => {
       dialogRef.close();
-      parent.router.navigate(['/others/reboot']);
+      parent.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
@@ -629,7 +629,7 @@ export class GeneralComponent implements OnDestroy {
 
   resetConfigSubmit(entityDialog) {
     const parent = entityDialog.parent;
-    parent.router.navigate(new Array('').concat(['others', 'config-reset']));
+    parent.router.navigate(['others', 'config-reset'], { skipLocationChange: true });
   }
 
   customSubmit(body) {

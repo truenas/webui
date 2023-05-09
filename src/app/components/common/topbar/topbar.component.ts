@@ -146,7 +146,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           if (res && res.fields && res.fields.arguments[0] && res.fields.arguments[0].reboot) {
             this.systemWillRestart = true;
             if (res.fields.state === 'SUCCESS') {
-              this.router.navigate(['/others/reboot']);
+              this.router.navigate(['/others/reboot'], { skipLocationChange: true });
             }
           }
         }
@@ -320,7 +320,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           buttonMsg: T('Shut Down'),
         }).subscribe((res) => {
           if (res) {
-            this.router.navigate(['/others/shutdown']);
+            this.router.navigate(['/others/shutdown'], { skipLocationChange: true });
           }
         });
       });
@@ -332,7 +332,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.translate.get('Restart the system?').subscribe((reboot_prompt: string) => {
         this.dialogService.confirm(reboot, reboot_prompt, false, T('Restart')).subscribe((res) => {
           if (res) {
-            this.router.navigate(['/others/reboot']);
+            this.router.navigate(['/others/reboot'], { skipLocationChange: true });
           }
         });
       });
