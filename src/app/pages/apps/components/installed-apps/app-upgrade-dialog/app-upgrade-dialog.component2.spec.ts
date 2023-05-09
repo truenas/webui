@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { ImgFallbackModule } from 'ngx-img-fallback';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService } from 'app/services';
@@ -37,13 +36,13 @@ const fakeUpgradeSummary = {
   upgrade_human_version: '8.7.0_1.0.2',
 };
 
-describe('AppUpgradeDialogComponent - test 1', () => {
+describe('AppUpgradeDialogComponent - test 2', () => {
   let spectator: Spectator<AppUpgradeDialogComponent>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
-    imports: [FormsModule, ImgFallbackModule],
+    imports: [FormsModule],
     providers: [
       mockProvider(MatDialogRef),
       mockProvider(AppLoaderService),

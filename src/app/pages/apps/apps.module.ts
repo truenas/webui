@@ -41,6 +41,9 @@ import {
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import {
+  AppUpgradeDialog2Component,
+} from 'app/pages/apps/components/installed-apps/app-upgrade-dialog2/app-upgrade-dialog.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
@@ -94,6 +97,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppUpgradeDialogComponent,
     AppsToolbarButtonsComponent,
     AppStatusCellComponent,
+    AppUpgradeDialog2Component,
   ],
   imports: [
     CommonModule,
