@@ -108,16 +108,8 @@ def Leave_Domain(driver, user, password):
 
 def License_Agrement(driver):
     if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
-        try:
-            assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
-            driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
-            if wait_on_element(driver, 2, xpaths.button.close, 'clickable'):
-                driver.find_element_by_xpath(xpaths.button.close).click()
-        except ElementClickInterceptedException:
-            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
-            driver.find_element_by_xpath(xpaths.button.close).click()
-            assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
-            driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
+        assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
+        driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
 
 
 def Login(driver, user, password):
