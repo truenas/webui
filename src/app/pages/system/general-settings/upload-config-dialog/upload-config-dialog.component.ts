@@ -43,7 +43,7 @@ export class UploadConfigDialogComponent {
     formData.append('file', this.form.value.config[0]);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);

@@ -143,7 +143,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         if (event?.fields?.arguments[0] && (event.fields.arguments[0] as { reboot: boolean }).reboot) {
           this.systemWillRestart = true;
           if (event.fields.state === JobState.Success) {
-            this.router.navigate(['/others/reboot']);
+            this.router.navigate(['/others/reboot'], { skipLocationChange: true });
           }
         }
       }
