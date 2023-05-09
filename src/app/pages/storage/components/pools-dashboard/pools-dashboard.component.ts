@@ -106,7 +106,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   onImportPool(): void {
     const slideinRef = this.slideInService2.open(ImportPoolComponent);
-    slideinRef.afterClosed$.pipe(untilDestroyed(this)).subscribe(() => this.store.loadDashboard());
+    slideinRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.store.loadDashboard());
   }
 
   createPool(): void {

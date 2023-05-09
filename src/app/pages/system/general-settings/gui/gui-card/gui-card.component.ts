@@ -39,7 +39,7 @@ export class GuiCardComponent {
 
   doAdd(): void {
     const slideInRef = this.slideIn2Service.open(GuiFormComponent);
-    slideInRef.afterClosed$.pipe(
+    slideInRef.slideInClosed$.pipe(
       filter((response) => !response),
       untilDestroyed(this),
     ).subscribe(() => this.store$.dispatch(guiFormClosedWithoutSaving()));

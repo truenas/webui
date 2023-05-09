@@ -65,7 +65,7 @@ describe('GuiFormComponent', () => {
         mockCall('system.general.ui_restart'),
       ]),
       mockProvider(IxSlideInRef, {
-        afterClosed$: of(),
+        slideInClosed$: of(),
       }),
       mockProvider(WebsocketConnectionService),
       mockProvider(DialogService, {

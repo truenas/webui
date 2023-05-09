@@ -243,7 +243,7 @@ export class GuiFormComponent {
 
   private setupThemePreview(): void {
     this.formGroup.controls.theme.valueChanges.pipe(
-      takeUntil(this.slideInRef.afterClosed$),
+      takeUntil(this.slideInRef.slideInClosed$),
       untilDestroyed(this),
     ).subscribe((theme) => {
       this.store$.dispatch(themeChangedInGuiForm({ theme }));

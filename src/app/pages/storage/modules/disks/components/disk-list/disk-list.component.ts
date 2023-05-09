@@ -85,14 +85,14 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       if (selected.length > 1) {
         const slideInRef = this.slideIn2Service.open(DiskBulkEditComponent);
         slideInRef.componentInstance.setFormDiskBulk(selected);
-        slideInRef.afterClosed$.pipe(
+        slideInRef.slideInClosed$.pipe(
           filter((response) => Boolean(response)),
           untilDestroyed(this),
         ).subscribe(() => this.updateData());
       } else {
         const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
         slideInRef.componentInstance.setFormDisk(selected[0]);
-        slideInRef.afterClosed$.pipe(
+        slideInRef.slideInClosed$.pipe(
           filter((response) => Boolean(response)),
           untilDestroyed(this),
         ).subscribe(() => this.updateData());
@@ -137,7 +137,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       onClick: (disk: Disk) => {
         const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
         slideInRef.componentInstance.setFormDisk(disk);
-        slideInRef.afterClosed$.pipe(
+        slideInRef.slideInClosed$.pipe(
           filter((response) => Boolean(response)),
           untilDestroyed(this),
         ).subscribe(() => this.updateData());

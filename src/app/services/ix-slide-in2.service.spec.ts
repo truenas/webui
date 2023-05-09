@@ -103,14 +103,19 @@ describe('IxSlideIn2Service', () => {
       expect(slideInRef.componentInstance.slideInRef).toBeInstanceOf(IxSlideInRef);
     });
 
-    it('observable \'afterClosed$\' should emit response and close slide after call \'close\'', () => {
+    it('after close slide observable \'slideInClosed$\' should emit response', () => {
       jest.spyOn(spectatorComponent.component, 'closeSlideIn');
-      const response = { error: true };
+
+      let response;
+      const data = { value: true };
       const slideInRef = service.open(TestComponent);
-      slideInRef.afterClosed$.subscribe((value) => {
-        expect(value).toBe(response);
+
+      slideInRef.slideInClosed$.subscribe((val) => {
+        response = val;
       });
-      slideInRef.close();
+      slideInRef.close(data);
+
+      expect(response).toBe(data);
       expect(spectatorComponent.component.closeSlideIn).toHaveBeenCalled();
     });
   });

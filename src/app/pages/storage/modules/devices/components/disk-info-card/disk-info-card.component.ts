@@ -45,7 +45,7 @@ export class DiskInfoCardComponent {
   onEdit(): void {
     const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
     slideInRef.componentInstance.setFormDisk(this.disk);
-    slideInRef.afterClosed$.pipe(
+    slideInRef.slideInClosed$.pipe(
       filter((response) => Boolean(response)),
       untilDestroyed(this),
     ).subscribe(() => this.devicesStore.reloadList());
