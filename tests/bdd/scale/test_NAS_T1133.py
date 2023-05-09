@@ -1,7 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-# from selenium.webdriver.common.keys import Keys
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -29,7 +29,7 @@ def test_create_a_wheel_group_smb_share_and_verify_only_wheel_group_can_send_fil
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['755_dataset', 'LDAP_SMB'], scope='session')
+    #depends(request, ['755_dataset', 'LDAP_SMB'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -101,9 +101,8 @@ def input_test_wheel_smb_share_as_description_and_click_save(driver, description
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+    rsc.Start_SMB_Service(driver)
+
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 

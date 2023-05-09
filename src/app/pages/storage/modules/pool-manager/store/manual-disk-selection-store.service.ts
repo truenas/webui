@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, switchMap, tap,
 } from 'rxjs';
 import { PoolManagerDisk, PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
@@ -17,6 +19,7 @@ export interface ManualDiskSelectionState {
   allUnusedDisks: PoolManagerDisk[];
   enclosures: Enclosure[];
   selectionChanged: boolean;
+  selectionErrorMsg: string;
 }
 
 const initialState: ManualDiskSelectionState = {
@@ -28,6 +31,15 @@ const initialState: ManualDiskSelectionState = {
   allUnusedDisks: [],
   enclosures: [],
   selectionChanged: false,
+  selectionErrorMsg: '',
+};
+
+const minDisks: { [key: string]: number } = {
+  [CreateVdevLayout.Stripe]: 1,
+  [CreateVdevLayout.Mirror]: 2,
+  [CreateVdevLayout.Raidz1]: 3,
+  [CreateVdevLayout.Raidz2]: 4,
+  [CreateVdevLayout.Raidz3]: 5,
 };
 
 @Injectable()
@@ -36,9 +48,10 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly dataVdevs$ = this.select((state) => state.vdevs.data);
   readonly dragActive$ = this.select((state) => state.dragActive);
-
+  readonly selectionErrorMsg$ = this.select((state) => state.selectionErrorMsg);
   constructor(
     private poolManagerStore$: PoolManagerStore,
+    private translate: TranslateService,
   ) {
     super(initialState);
     this.initialize();
@@ -82,6 +95,17 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
       if (dataVdev.uuid === vdevUpdate.vdev.uuid && !diskAlreadyExists) {
         didSelectionChange = true;
         dataVdev.disks.push({ ...vdevUpdate.disk, vdevUuid: dataVdev.uuid });
+        let vdevErrorMsg: string = null;
+        if (dataVdev.disks?.length < minDisks[dataVdev.type]) {
+          const typeKey = Object.entries(CreateVdevLayout).filter(
+            ([, value]) => value === dataVdev.type,
+          ).map(([key]) => key)[0];
+          vdevErrorMsg = this.translate.instant(
+            'Atleast {min} disk(s) are required for {vdevType} vdevs',
+            { min: minDisks[dataVdev.type], vdevType: typeKey },
+          );
+        }
+        dataVdev.errorMsg = vdevErrorMsg;
       }
     }
     const unusedDisks = [...state.unusedDisks].filter(
@@ -108,6 +132,17 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
           }
           return vdevDisk.identifier !== disk.identifier;
         });
+        let vdevErrorMsg: string = null;
+        if (vdev.disks?.length < minDisks[vdev.type]) {
+          const typeKey = Object.entries(CreateVdevLayout).filter(
+            ([, value]) => value === vdev.type,
+          ).map(([key]) => key)[0];
+          vdevErrorMsg = this.translate.instant(
+            'Atleast {min} disk(s) are required for {vdevType} vdevs',
+            { min: minDisks[vdev.type], vdevType: typeKey },
+          );
+        }
+        vdev.errorMsg = vdevErrorMsg;
       }
       return vdev;
     });
@@ -133,10 +168,32 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
   });
 
   addDataVdev = this.updater((state: ManualDiskSelectionState, vdev: PoolManagerVdev) => {
+    const typeKey = Object.entries(CreateVdevLayout).filter(
+      ([, value]) => value === vdev.type,
+    ).map(([key]) => key)[0];
     return {
       ...state,
-      vdevs: { ...state.vdevs, data: [...state.vdevs.data, { ...vdev }] },
+      vdevs: {
+        ...state.vdevs,
+        data: [
+          ...state.vdevs.data,
+          {
+            ...vdev,
+            errorMsg: this.translate.instant(
+              'Atleast {min} disk(s) are required for {vdevType} vdevs',
+              { min: minDisks[vdev.type], vdevType: typeKey },
+            ),
+          },
+        ],
+      },
       selectionChanged: true,
+    };
+  });
+
+  setSelectionErrorMsg = this.updater((state, errMsg: string) => {
+    return {
+      ...state,
+      selectionErrorMsg: errMsg,
     };
   });
 

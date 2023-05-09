@@ -226,13 +226,12 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
 
     rsc.Login(driver, admin_User, root_Password)
 
-    assert wait_on_element(driver, 60, xpaths.dashboard.title)
-    assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
 
-    rsc.License_Agrement(driver)
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
+    rsc.License_Agrement(driver)
     time.sleep(5)
 
 

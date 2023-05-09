@@ -1,5 +1,17 @@
 @import 'mixins/cards';
 
+.app-logo {
+  height: 80px;
+  margin-bottom: auto;
+  padding: 5px;
+  position: relative;
+  width: 110px;
+
+  img {
+    width: 100%;
+  }
+}
+
 .card {
   @include details-card();
   margin: 0;

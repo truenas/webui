@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, forkJoin } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
-import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { IscsiExtent, IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -76,7 +76,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     });
   }
 
-  dataHandler(entityList: EntityTableComponent): Observable<unknown> {
+  dataHandler(entityList: EntityTableComponent): Observable<[IscsiTarget[], IscsiExtent[]]> {
     entityList.rows.forEach((row) => {
       row.targetName = '...';
       row.extentName = '...';

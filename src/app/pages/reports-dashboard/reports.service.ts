@@ -5,6 +5,7 @@ import {
   map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { ReportDataRequestEvent } from 'app/interfaces/events/reporting-events.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
@@ -87,9 +88,9 @@ export class ReportsService implements OnDestroy {
         });
       });
 
-    this.reportsUtils.onmessage = ({ data }) => {
+    this.reportsUtils.onmessage = ({ data }: { data: CoreEvent }) => {
       if (data.name === 'ReportData') {
-        this.core.emit({ name: `ReportData-${data.sender}`, data: data.data, sender: this });
+        this.core.emit({ name: `ReportData-${String(data.sender)}`, data: data.data, sender: this });
       }
     };
 

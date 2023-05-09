@@ -366,7 +366,7 @@ export class AppSchemaService {
           formConfig.controls[idxItem] as FormGroup,
         );
       }
-      const keyItem = Object.keys(formConfig.value[idxItem])[0];
+      const keyItem = Object.keys((formConfig.value as unknown[])[idxItem])[0];
       return { [keyItem]: valueItem };
     });
 

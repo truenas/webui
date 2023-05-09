@@ -20,14 +20,16 @@
   {{ 'Pool' | translate }}:
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else selectedPool"></ngx-skeleton-loader>
   <ng-template #selectedPool>
-    <ng-container *ngIf="applicationsStore.selectedPool$ | async; else notAvailable">
-      {{ applicationsStore.selectedPool$ | async }}
+    <ng-container *ngIf="(applicationsStore.selectedPool$ | async) as selectedPool; else notAvailable">
+      {{ selectedPool }}
     </ng-container>
   </ng-template>
 </div>
 <div class="app-list-item">
   {{ 'Available Space' | translate }}:
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+  <span *ixWithLoadingState="availableSpace$ as availableSpaceu">
+    {{ +availableSpaceu | filesize: { standard: 'iec' } }}
+  </span>
 </div>
 
 <ng-template #notAvailable>

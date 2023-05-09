@@ -16,14 +16,13 @@ export class MockEnclosureUtils {
   get canMock(): boolean {
     return (
       environment.mockConfig.mockEnclosure
-      || environment.mockConfig.diskOptions.enabled
-      || environment.mockConfig.diskOptions.mockPools
+      || environment.mockConfig.diskOptions?.enabled
+      || environment.mockConfig.diskOptions?.mockPools
     );
   }
 
   constructor() {
     const diskOptions = this.mockConfig?.diskOptions;
-
     this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
 
     // Add Pools and VDEVs

@@ -77,7 +77,7 @@ export class PodSelectDialogComponent implements OnInit {
           this.form.controls.pods.patchValue(this.podList[0]);
           this.form.controls.containers.patchValue(this.podDetails[this.podList[0]][0]);
 
-          this.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+          this.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
             this.containers$ = of(this.podDetails[value].map((item) => ({ label: item, value: item })));
             this.form.controls.containers.patchValue(this.podDetails[value][0]);
           });

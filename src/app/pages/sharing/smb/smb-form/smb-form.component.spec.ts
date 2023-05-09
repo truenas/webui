@@ -24,6 +24,7 @@ import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restar
 import { AppLoaderService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SmbFormComponent } from './smb-form.component';
 
@@ -137,6 +138,7 @@ describe('SmbFormComponent', () => {
         mockCall('pool.dataset.path_in_locked_datasets', false),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(IxSlideIn2Service),
       mockProvider(Router),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),

@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
@@ -102,18 +102,19 @@ export class DatasetAclEditorComponent implements OnInit {
 
     this.saveParameters.get('recursive').valueChanges.pipe(
       filter(Boolean),
+      switchMap(() => {
+        return this.dialogService.confirm({
+          title: helptext.dataset_acl_recursive_dialog_warning,
+          message: helptext.dataset_acl_recursive_dialog_warning_message,
+        });
+      }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.dialogService.confirm({
-        title: helptext.dataset_acl_recursive_dialog_warning,
-        message: helptext.dataset_acl_recursive_dialog_warning_message,
-      }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-        if (confirmed) {
-          return;
-        }
+    ).subscribe((confirmed) => {
+      if (confirmed) {
+        return;
+      }
 
-        this.saveParameters.patchValue({ recursive: false });
-      });
+      this.saveParameters.patchValue({ recursive: false });
     });
   }
 

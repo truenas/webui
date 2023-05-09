@@ -58,7 +58,7 @@
           <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
           <ng-template #appCategories>
             <ng-container *ngIf="app?.categories; else notAvailable">
-              {{ app?.categories.join(', ') }}
+              {{ app?.tags.join(', ') }}
             </ng-container>
           </ng-template>
         </div>
@@ -97,29 +97,10 @@
         </ng-container>
 
         <ng-template #appScreenshots>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
-          </div>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
-          </div>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
+          <div class="screenshots" gallerize>
+            <div *ngFor="let image of images" class="screenshot">
+              <img class="screenshot-image" [src]="image.srcUrl" />
+            </div>
           </div>
         </ng-template>
       </div>
@@ -136,7 +117,12 @@
 
       <ng-template #similarAppsTemplate>
         <div *ngIf="similarApps.length; else emptySimilarApps" class="similar-apps">
-          <ix-app-card *ngFor="let app of similarApps" [app]="app"></ix-app-card>
+          <ix-app-card
+            *ngFor="let app of similarApps; trackBy: trackByAppId"
+            [app]="app"
+            [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+          ></ix-app-card>
+
         </div>
       </ng-template>
 

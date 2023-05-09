@@ -264,7 +264,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     driver.find_element_by_xpath('//button[contains(.,"Test Changes")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
-    driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, xpaths.popup.please_Wait)
     # sleep 5 second to let the changes to take effect
     time.sleep(5)
