@@ -156,18 +156,18 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   createDataVdevsAutomatically = this.updater((
     state: PoolManagerState,
     {
-      width, count, size, type,
-    }: { width: number; count: number; size: number; type: string },
+      width, count, size, vdevType,
+    }: { width: number; count: number; size: number; vdevType: string },
   ) => {
     const dataVdevs: PoolManagerVdev[] = [];
     let unusedDisks = state.allUnusedDisks;
-    if (!width || !count || !size || !type) {
+    if (!width || !count || !size || !vdevType) {
       return {
         ...state,
       };
     }
     for (let i = 0; i < count; i++) {
-      const dataVdev: PoolManagerVdev = new PoolManagerVdev(type, 'data');
+      const dataVdev: PoolManagerVdev = new PoolManagerVdev(vdevType, 'data');
       for (const disk of unusedDisks) {
         if (disk.size === size) {
           dataVdev.disks.push({ ...disk, vdevUuid: dataVdev.uuid });

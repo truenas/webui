@@ -1,9 +1,27 @@
-<h2>{{ 'Details' | translate }}</h2>
+<div class="header">
+  <h2 class="title">
+    <div class="mobile-prefix">
+      <a
+        tabindex="0"
+        class="mobile-back-button"
+        ixTest="disk-details-back"
+        (click)="onCloseMobileDetails()"
+        (keydown.enter)="onCloseMobileDetails()"
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
+      </a>
+      {{ 'Details' | translate }}
+    </div>
 
-<div *ngIf="app" class="app-cards">
-  <ix-app-info-card [app]="app"></ix-app-info-card>
-  <ix-app-containers-card [app]="app"></ix-app-containers-card>
-  <ix-app-history-card [app]="app"></ix-app-history-card>
-  <ix-app-notes-card [app]="app"></ix-app-notes-card>
+    <span class="prefix">{{ 'Details' | translate }}</span>
+  </h2>
 </div>
 
+<div *ngIf="app" class="cards">
+  <div class="scroll-window">
+    <ix-app-info-card [app]="app"></ix-app-info-card>
+    <ix-app-containers-card [app]="app"></ix-app-containers-card>
+    <ix-app-history-card [app]="app"></ix-app-history-card>
+    <ix-app-notes-card [app]="app"></ix-app-notes-card>
+  </div>
+</div>
