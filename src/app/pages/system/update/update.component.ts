@@ -383,7 +383,7 @@ export class UpdateComponent implements OnInit {
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateService.setForHardRefresh();
-      this.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWsError(this, err, this.dialogService);

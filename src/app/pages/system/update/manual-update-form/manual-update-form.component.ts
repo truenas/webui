@@ -139,7 +139,7 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWsError(this, err, this.dialogService);
@@ -232,7 +232,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   finishNonHaUpdate(): void {
     if (this.form.value.rebootAfterManualUpdate) {
-      this.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Restart'),
@@ -240,7 +240,7 @@ export class ManualUpdateFormComponent implements OnInit {
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
-      ).subscribe(() => this.router.navigate(['/others/reboot']));
+      ).subscribe(() => this.router.navigate(['/others/reboot'], { skipLocationChange: true }));
     }
   }
 

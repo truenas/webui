@@ -73,6 +73,6 @@ describe('UploadConfigDialogComponent', () => {
     formData.append('file', file);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.generate_token');
     expect(mockEntityJobComponentRef.componentInstance.wspost).toHaveBeenCalledWith('/_upload?auth_token=AUTH_TOKEN', formData);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot'], { skipLocationChange: true });
   });
 });
