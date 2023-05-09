@@ -6,7 +6,6 @@ from function import (
     wait_on_element,
     wait_on_element_disappear
 )
-from selenium.common.exceptions import ElementClickInterceptedException
 
 
 def Click_Clear_Input(driver, xpath, value):
@@ -107,9 +106,9 @@ def Leave_Domain(driver, user, password):
 
 
 def License_Agrement(driver):
-    if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
-        assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
-        driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
+    if wait_on_element(driver, 2, xpaths.popup.license_Agrement_title):
+        assert wait_on_element(driver, 2, xpaths.button.Continue, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
 def Login(driver, user, password):
