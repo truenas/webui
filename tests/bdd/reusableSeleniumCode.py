@@ -153,6 +153,13 @@ def Select_Option(driver, xpath):
     driver.find_element_by_xpath(xpath).click()
 
 
+def Start_Or_Restart_SMB_Service(driver):
+    if wait_on_element(driver, 5, xpaths.popup.smb_Start_Title):
+        Start_SMB_Service(driver)
+    else:
+        Restart_SMB_Service(driver)
+
+
 def Start_SMB_Service(driver):
     assert wait_on_element(driver, 5, xpaths.popup.smb_Start_Title)
     assert wait_on_element(driver, 5, xpaths.popup.enable_Service_To_Start_Automatically_Checkbox, 'clickable')

@@ -248,6 +248,7 @@ class dataset:
     unlock_Button = '//a[contains(.,"Unlock")]'
     lock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//ix-icon[@fonticon="mdi-lock"]'
     unlock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//ix-icon[@fonticon="mdi-lock-open-variant"]'
+    return_To_Pool_List_Button = '//button[contains(.,"Return to pool list")]'
 
     def pool_Tree_Name(pool_name):
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'

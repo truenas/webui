@@ -40,15 +40,11 @@ def test_verify_host_sharing_permissions_on_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ['Setup_HA', 'AD_SMB_SHARE'], scope='session')
+    #depends(request, ['Setup_HA', 'AD_SMB_SHARE'], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
     admin_Password = password
-    # This 2 line are to refresh UI and give a system time to load to be remove
-    # when the Websocket disconnection issue
-    driver.refresh()
-    time.sleep(5)
 
     if nas_hostname not in driver.current_url:
         driver.get(f"http://{nas_hostname}/ui/sessions/signin")
@@ -96,6 +92,8 @@ def when_the_new_dataset_is_created_click_add_dataset_again(driver):
     """when the new dataset is created click Add Dataset again."""
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name('smb1'))
+
+    driver.find_element_by_xpath(xpaths.dataset.pool_Tree('dozer')).click()
 
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
@@ -146,14 +144,14 @@ def on_the_edit_acl_page_set_ericbsd_to_read_only_and_save_acl(driver):
     driver.find_element_by_xpath(xpaths.edit_Acl.builtin_Users_Cancel).click()
     driver.find_element_by_xpath(xpaths.edit_Acl.builtin_Administrators_Cancel).click()
 
-    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
-    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
 
 
 @then('when the ACL Permission is save, click Shares on the left side menu')
 def when_the_acl_permision_is_save_click_shares_on_the_left_side_menu(driver):
     """when the ACL Permission is save, click Shares on the left side menu."""
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
     assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
 
     assert wait_on_element(driver, 5, xpaths.side_Menu.shares, 'clickable')
@@ -190,7 +188,7 @@ def click_save_if_restart_smb_service_box_appears_click_restart_service(driver):
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
-    rsc.Restart_SMB_Service(driver)
+    rsc.Start_Or_Restart_SMB_Service(driver)
 
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
