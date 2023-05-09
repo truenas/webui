@@ -58,6 +58,6 @@ describe('PowerMenuComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Shut down the system?',
     }));
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/shutdown']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/shutdown'], { skipLocationChange: true });
   });
 });
