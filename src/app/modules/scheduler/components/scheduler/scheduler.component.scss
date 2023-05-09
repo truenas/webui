@@ -1,4 +1,4 @@
-host {
+:host {
   display: block;
   margin-bottom: 12px;
 }
@@ -25,6 +25,10 @@ host {
   ::ng-deep {
     mat-select .mat-mdc-select-value {
       padding: 5px 8px;
+    }
+
+    mat-select .mat-mdc-select-value-text {
+      white-space: initial;
     }
   }
 

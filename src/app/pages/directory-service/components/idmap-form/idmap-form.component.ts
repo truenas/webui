@@ -53,7 +53,7 @@ export class IdmapFormComponent implements OnInit {
     idmap_backend: [IdmapBackend.Ad],
     name: [null as IdmapName | typeof customIdmapName, Validators.required],
     custom_name: ['', this.validationHelpers.validateOnCondition(
-      (control) => control.parent?.value.name === customIdmapName,
+      (control) => (control.parent?.value as { name: string })?.name === customIdmapName,
       Validators.required,
     )],
     dns_domain_name: [''],

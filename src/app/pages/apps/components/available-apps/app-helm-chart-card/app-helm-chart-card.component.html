@@ -31,7 +31,7 @@
   {{ 'Maintainer' | translate }}:
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else maintainersInfo"></ngx-skeleton-loader>
   <ng-template #maintainersInfo>
-    <ng-container *ngIf="maintainerList; else notAvailable">
+    <ng-container *ngIf="app?.maintainers?.length; else notAvailable">
       <div class="inline">
         <ng-container *ngFor="let maintainer of app?.maintainers; index as index" >
           <a [href]="maintainer.url" [ixTest]="[maintainer.email]">

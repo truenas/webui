@@ -138,9 +138,9 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadSimilarApps(): void {
     this.similarAppsLoading$.next(true);
-    this.appService.getAvailableApps().pipe(untilDestroyed(this)).subscribe({
+    this.appService.getAppSimilarApps(this.app).pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
-        this.similarApps = apps.slice(0, 4);
+        this.similarApps = apps;
         this.similarAppsLoading$.next(false);
       },
       error: () => {
@@ -184,5 +184,9 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   setLightbox(): void {
     this.items = this.images.map((image) => new ImageItem({ src: image.srcUrl, thumb: image.previewUrl }));
     this.gallery.ref('lightbox').load(this.items);
+  }
+
+  trackByAppId(id: number, app: AvailableApp): string {
+    return `${app.catalog}-${app.train}-${app.name}`;
   }
 }

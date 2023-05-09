@@ -36,7 +36,7 @@ export class IxDynamicFormItemComponent implements OnInit {
 
     dependsOn?.forEach((depend) => {
       this.dynamicForm?.valueChanges.pipe(
-        map((changes) => {
+        map((changes: Record<string, unknown>) => {
           return changes[depend];
         }),
         filter((x) => x != null),
