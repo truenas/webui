@@ -90,12 +90,14 @@ export class CreateDataWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.inventory$.pipe(
+    this.poolManagerStore.unusedDisks$.pipe(
+      // TODO: Fix infinite loop or add support for empty array in this stream
       takeWhile((unusedDisks) => {
         return !unusedDisks?.length;
       }, true),
       untilDestroyed(this),
     ).subscribe((disks) => {
+      // TODO: Calculate vdevLayout based on usable disks
       this.sizeDisksMap = {
         [DiskType.Hdd]: getSizeDisksMap(disks.filter((disk) => disk.type === DiskType.Hdd)),
         [DiskType.Ssd]: getSizeDisksMap(disks.filter((disk) => disk.type === DiskType.Ssd)),
