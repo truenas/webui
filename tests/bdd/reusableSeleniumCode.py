@@ -6,7 +6,6 @@ from function import (
     wait_on_element,
     wait_on_element_disappear
 )
-from selenium.common.exceptions import ElementClickInterceptedException
 
 
 def Click_Clear_Input(driver, xpath, value):
@@ -107,17 +106,9 @@ def Leave_Domain(driver, user, password):
 
 
 def License_Agrement(driver):
-    if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
-        try:
-            assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
-            driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
-            if wait_on_element(driver, 2, xpaths.button.close, 'clickable'):
-                driver.find_element_by_xpath(xpaths.button.close).click()
-        except ElementClickInterceptedException:
-            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
-            driver.find_element_by_xpath(xpaths.button.close).click()
-            assert wait_on_element(driver, 2, '//button[@data-test="button-dialog-confirm"]', 'clickable')
-            driver.find_element_by_xpath('//button[@data-test="button-dialog-confirm"]').click()
+    if wait_on_element(driver, 2, xpaths.popup.license_Agrement_title):
+        assert wait_on_element(driver, 2, xpaths.button.Continue, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
 def Login(driver, user, password):
@@ -150,9 +141,29 @@ def Restart_SMB_Service(driver):
     driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
 
 
+def Scroll_To(driver, xpath):
+    element = driver.find_element_by_xpath(xpath)
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+
+
 def Select_Option(driver, xpath):
     assert wait_on_element(driver, 5, xpath, 'clickable')
     driver.find_element_by_xpath(xpath).click()
+
+
+def Start_Or_Restart_SMB_Service(driver):
+    if wait_on_element(driver, 5, xpaths.popup.smb_Start_Title):
+        Start_SMB_Service(driver)
+    else:
+        Restart_SMB_Service(driver)
+
+
+def Start_SMB_Service(driver):
+    assert wait_on_element(driver, 5, xpaths.popup.smb_Start_Title)
+    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_To_Start_Automatically_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.enable_Service_To_Start_Automatically_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
 
 
 def Trigger_Failover(driver):

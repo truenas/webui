@@ -210,7 +210,7 @@ export class CreateDataWizardStepComponent implements OnInit {
           return {
             ...state,
             vdevs: hasAtleastOneVdevWithDisks
-              ? { ...state.vdevs, data: manualDiskSelectionState.vdevs.data }
+              ? { ...state.vdevs, data: manualDiskSelectionState.vdevs.data.filter((vdevs) => !!vdevs.disks?.length) }
               : { ...state.vdevs, data: [] },
             unusedDisks: manualDiskSelectionState.unusedDisks,
             disksSelectedManually: hasAtleastOneVdevWithDisks && manualDiskSelectionState.selectionChanged,

@@ -2,67 +2,71 @@
   (filtersUpdated)="filtersUpdated.next($event)"
 ></ix-manual-selection-disk-filters>
 
-<div
-  class="tree-container"
+<div 
+  class="dnd-wrapper"
   dndDropzone
   [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
-  (dndDrop)="onDrop($event)"
->
-  <ix-tree-view
-    [ixDataSource]="dataSource"
-    [ixTreeControl]="treeControl"
+  (dndDrop)="onDrop($event)">
+  <div
+    class="tree-container"
   >
-    <ix-tree-node
-      *treeNodeDef="let disk; dataSource: dataSource"
-      treeNodeToggle
-      routerLinkActive="selected"
+    <ix-tree-view
+      [ixDataSource]="dataSource"
+      [ixTreeControl]="treeControl"
     >
-      <div
-        class="unused-disk drag-handle"
-        [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
-        [dndDraggable]="asDisk(disk)"
-        [dndEffectAllowed]="'move'"
-        (dndStart)="onDragStart()"
-        (dndCanceled)="onDragCanceled()"
-        (dndEnd)="onDragEnd()"
-      >
-        <ix-disk-icon
-          class="disk-icon"
-          dndDragImageRef
-          [disk]="asDisk(disk)"
-        ></ix-disk-icon>
-
-        <ix-disk-info
-          class="disk-info"
-          [disk]="asDisk(disk)"
-        ></ix-disk-info>
-      </div>
-    </ix-tree-node>
-
-    <ix-nested-tree-node
-      *treeNodeDef="let group; dataSource: dataSource; when: isGroup"
-      [treeNodeDefDataSource]="dataSource"
-    >
-      <div
+      <ix-tree-node
+        *treeNodeDef="let disk; dataSource: dataSource"
         treeNodeToggle
-        class="group-row"
-        [class.group-row-empty]="!group.children.length"
+        routerLinkActive="selected"
       >
-        <ix-icon name="ix:enclosure" [title]="'Enclosure' | translate"></ix-icon>
-        <span class="group-name">{{ asEnclosureGroup(group).group }}</span>
-        <ix-icon
-          *ngIf="group.children.length"
-          [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
-        ></ix-icon>
-      </div>
+        <div
+          class="unused-disk drag-handle"
+          [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+          [dndDraggable]="asDisk(disk)"
+          [dndEffectAllowed]="'move'"
+          (dndStart)="onDragStart()"
+          (dndCanceled)="onDragCanceled()"
+          (dndEnd)="onDragEnd()"
+        >
+          <ix-disk-icon
+            class="disk-icon"
+            dndDragImageRef
+            [disk]="asDisk(disk)"
+          ></ix-disk-icon>
 
-      <ng-container
-        *ngIf="isExpanded(group)"
-        treeNodeOutlet
-      ></ng-container>
-    </ix-nested-tree-node>
-  </ix-tree-view>
-  <div *ngIf="!dataSource.data.length" class="empty-tree">
-    {{ 'No unused disks' | translate }}
+          <ix-disk-info
+            class="disk-info"
+            [disk]="asDisk(disk)"
+          ></ix-disk-info>
+        </div>
+      </ix-tree-node>
+
+      <ix-nested-tree-node
+        *treeNodeDef="let group; dataSource: dataSource; when: isGroup"
+        [treeNodeDefDataSource]="dataSource"
+      >
+        <div
+          treeNodeToggle
+          class="group-row"
+          [class.group-row-empty]="!group.children.length"
+        >
+          <ix-icon name="ix:enclosure" [title]="'Enclosure' | translate"></ix-icon>
+          <span class="group-name">{{ asEnclosureGroup(group).group }}</span>
+          <ix-icon
+            *ngIf="group.children.length"
+            [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
+          ></ix-icon>
+        </div>
+
+        <ng-container
+          *ngIf="isExpanded(group)"
+          treeNodeOutlet
+        ></ng-container>
+      </ix-nested-tree-node>
+    </ix-tree-view>
+    <div *ngIf="!dataSource.data.length" class="empty-tree">
+      {{ 'No unused disks' | translate }}
+    </div>
   </div>
 </div>
+
