@@ -33,7 +33,7 @@
               ></ix-disk-icon>
             </div>
           </ix-enclosure-wrapper>
-          <div class="disk-icons">
+          <div class="disk-icons no-enclosure">
             <ix-disk-icon *ngFor="let disk of nonEnclosureDisks"
               class="disk-icon drag-handle"
               [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
