@@ -4,8 +4,27 @@
   </ix-page-title-header>
 </ng-template>
 
-<div fxLayout="row nowrap">
-  <div fxFlex="70%">
+<div class="flex-container">
+  <div fxFlex fxLayoutAlign="end" class="cards-wrapper">
+    <section class="app-info-cards">
+      <ix-app-resources-card
+        class="app-info-card"
+        [isLoading$]="isLoading$"
+      ></ix-app-resources-card>
+      <ix-app-helm-chart-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-helm-chart-card>
+      <ix-app-available-info-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-available-info-card>
+    </section>
+  </div>
+
+  <div class="app-wrapper">
     <section fxLayout="row">
       <div class="app" fxFlex="200px">
         <a
@@ -129,14 +148,6 @@
       <ng-template #emptySimilarApps>
         <h4>{{ 'No apps are found.' | translate }}</h4>
       </ng-template>
-    </section>
-  </div>
-
-  <div fxFlex fxLayoutAlign="end">
-    <section class="app-info-cards">
-      <ix-app-resources-card [isLoading$]="isLoading$"></ix-app-resources-card>
-      <ix-app-helm-chart-card [app]="app" [isLoading$]="isLoading$"></ix-app-helm-chart-card>
-      <ix-app-available-info-card [app]="app" [isLoading$]="isLoading$"></ix-app-available-info-card>
     </section>
   </div>
 </div>
