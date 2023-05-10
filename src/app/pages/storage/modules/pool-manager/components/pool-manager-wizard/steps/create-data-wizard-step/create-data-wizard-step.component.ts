@@ -10,7 +10,7 @@ import {
   combineLatest,
   filter,
   map,
-  of, switchMap, take,
+  of, switchMap, take, takeWhile,
 } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -91,7 +91,9 @@ export class CreateDataWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.poolManagerStore.inventory$.pipe(
-      filter(Boolean),
+      takeWhile((unusedDisks) => {
+        return !unusedDisks?.length;
+      }, true),
       untilDestroyed(this),
     ).subscribe((disks) => {
       this.sizeDisksMap = {

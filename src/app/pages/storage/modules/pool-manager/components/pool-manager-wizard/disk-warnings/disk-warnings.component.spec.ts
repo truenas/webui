@@ -45,7 +45,8 @@ describe('DiskWarningsComponent', () => {
     ],
     providers: [
       mockProvider(PoolManagerStore, {
-        nonUniqueSerialDisks$: of([duplicateSerialDisk]),
+        unusedDisks$: of([exportedPoolDisk, duplicateSerialDisk, duplicateSerialAndExportedPoolDisk]),
+        nonUniqueSerialDisks$: of([duplicateSerialDisk, duplicateSerialAndExportedPoolDisk]),
         exportedPoolDisks$: of([exportedPoolDisk, duplicateSerialAndExportedPoolDisk]),
       }),
     ],
@@ -81,5 +82,11 @@ describe('DiskWarningsComponent', () => {
 
     const checkboxes = await exportedPoolDisks.getCheckboxes();
     expect(checkboxes).toHaveLength(2);
+  });
+
+  it('checks warning message', () => {
+    const [nonUnique, exportedDisks] = spectator.queryAll('ix-warning');
+    expect(nonUnique).toHaveText('There are 2 disks available that have non-unique serial numbers');
+    expect(exportedDisks).toHaveText('You will lose any and all data in selected disks.');
   });
 });
