@@ -66,6 +66,16 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           this.ws.call('filesystem.stat', [mountpoint]),
         ]).pipe(
           tap(([acl, stat]) => {
+            acl.acl.forEach((ace, aceIndex) => {
+              const unknownUser = !ace.who && [NfsAclTag.User, PosixAclTag.User].includes(ace.tag);
+              const unknownGroup = !ace.who && [NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag);
+              if (unknownUser || unknownGroup) {
+                this.patchState((state) => ({
+                  ...state,
+                  acesWithError: _.union(state.acesWithError, [aceIndex]),
+                }));
+              }
+            });
             this.patchState({
               acl,
               stat,
