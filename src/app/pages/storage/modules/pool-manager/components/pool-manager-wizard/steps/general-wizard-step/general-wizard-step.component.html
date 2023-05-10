@@ -16,7 +16,7 @@
     [required]="true"
   ></ix-select>
 
-  <div *ngIf="(nonUniqueSerialDisks$ | async).length" class="spacer-top">
+  <div *ngIf="nonUniqueSerialDisks.length" class="spacer-top">
     <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
     <ix-radio-group
       formControlName="allowNonUniqueSerialDisks"
@@ -27,7 +27,7 @@
       [inlineFields]="true"
     ></ix-radio-group>
   </div>
-  <div *ngIf="(exportedPools$ | async).length" class="spacer-bottom">
+  <div *ngIf="disksWithExportedPools.length" class="spacer-bottom">
     <ix-warning [message]="exportedPoolsWarning"></ix-warning>
     <ix-checkbox-list
       formControlName="allowDisksFromExportedPools"

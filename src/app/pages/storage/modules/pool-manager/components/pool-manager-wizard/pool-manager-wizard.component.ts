@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +19,7 @@ export class PoolManagerWizardComponent implements OnInit {
       name: ['', Validators.required],
       encryption: [false],
       encryption_standard: ['AES-256-GCM', Validators.required],
-      allowNonUniqueSerialDisks: ['false'],
+      allowNonUniqueSerialDisks: [false],
       allowDisksFromExportedPools: [[] as string[]],
     }),
     data: this.fb.group({
@@ -34,7 +34,6 @@ export class PoolManagerWizardComponent implements OnInit {
     spare: this.fb.group({}),
     cache: this.fb.group({}),
     metadata: this.fb.group({}),
-    review: this.fb.group({}),
   });
 
   constructor(
@@ -44,9 +43,5 @@ export class PoolManagerWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.initialize();
-
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((formValue) => {
-      this.store.updateFormValue(formValue);
-    });
   }
 }

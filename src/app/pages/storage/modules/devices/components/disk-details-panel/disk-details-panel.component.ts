@@ -5,7 +5,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 @Component({
@@ -19,7 +19,7 @@ export class DiskDetailsPanelComponent {
   @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
   @Input() poolId: number;
-  @Input() topologyCategory: PoolTopologyCategory;
+  @Input() topologyCategory: VdevType;
   @Input() hasTopLevelRaidz: boolean;
 
   @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();

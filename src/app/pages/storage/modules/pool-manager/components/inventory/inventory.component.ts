@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/pool-manager.utils';
 
 @UntilDestroy()
@@ -16,11 +16,11 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryComponent implements OnInit {
-  sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
-  DiskType = DiskType;
+  protected sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
+  protected readonly DiskType = DiskType;
 
   constructor(
-    private poolManagerStore: PoolManagerStore,
+    private poolManagerStore: OldPoolManagerStore,
     private cdr: ChangeDetectorRef,
   ) {}
 

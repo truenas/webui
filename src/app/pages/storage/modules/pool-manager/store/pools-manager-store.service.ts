@@ -24,7 +24,6 @@ export interface PoolManagerState {
   enclosures: Enclosure[];
   vdevs: { data: PoolManagerVdev[] };
   formValue: PoolManagerWizardFormValue;
-  dragActive: boolean;
   disksSelectedManually: boolean;
 }
 
@@ -34,13 +33,12 @@ const initialState: PoolManagerState = {
   vdevs: { data: [] },
   unusedDisks: [],
   enclosures: [],
-  dragActive: false,
   formValue: null,
   disksSelectedManually: false,
 };
 
 @Injectable()
-export class PoolManagerStore extends ComponentStore<PoolManagerState> {
+export class OldPoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly unusedDisks$ = this.select((state) => state.unusedDisks);
   readonly enclosures$ = this.select((state) => state.enclosures);

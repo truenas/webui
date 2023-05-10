@@ -3,8 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -30,7 +29,7 @@ export class ZfsInfoCardComponent {
   @Input() topologyItem: TopologyItem;
   @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
-  @Input() topologyCategory: PoolTopologyCategory;
+  @Input() topologyCategory: VdevType;
   @Input() poolId: number;
   @Input() hasTopLevelRaidz: boolean;
 
@@ -50,9 +49,9 @@ export class ZfsInfoCardComponent {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
       && !this.isRaidzParent
       && this.topologyItem.type === TopologyItemType.Disk
-      && (this.topologyCategory === PoolTopologyCategory.Data
-        || this.topologyCategory === PoolTopologyCategory.Dedup
-        || this.topologyCategory === PoolTopologyCategory.Special
+      && (this.topologyCategory === VdevType.Data
+        || this.topologyCategory === VdevType.Dedup
+        || this.topologyCategory === VdevType.Special
       ) && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
@@ -76,13 +75,13 @@ export class ZfsInfoCardComponent {
 
   get canOfflineDisk(): boolean {
     return this.topologyItem.status !== TopologyItemStatus.Offline
-      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory)
+      && ![VdevType.Spare, VdevType.Cache].includes(this.topologyCategory)
       && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   get canOnlineDisk(): boolean {
     return this.topologyItem.status !== TopologyItemStatus.Online
-      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory)
+      && ![VdevType.Spare, VdevType.Cache].includes(this.topologyCategory)
       && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 

@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { EnclosureSlot, EnclosureView } from 'app/interfaces/enclosure.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
@@ -66,7 +66,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     }
     let capacity = 0;
     view.slots.forEach((slot: EnclosureSlot) => {
-      if (slot.vdev && slot.topologyCategory === PoolTopologyCategory.Data) {
+      if (slot.vdev && slot.topologyCategory === VdevType.Data) {
         capacity += slot.disk.size;
       }
     });

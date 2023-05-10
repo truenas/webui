@@ -8,7 +8,7 @@ import { ManagerVdev } from 'app/classes/manager-vdev.class';
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
-import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { PoolManagerState, OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ManualDiskSelectionLayout {
@@ -32,7 +32,7 @@ export class ManualDiskSelectionComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ManualDiskSelectionLayout,
     private dialogRef: MatDialogRef<ManualDiskSelectionComponent>,
     public manualDiskSelectionStore: ManualDiskSelectionStore,
-    public poolManagerStore: PoolManagerStore,
+    public poolManagerStore: OldPoolManagerStore,
   ) {}
 
   ngOnInit(): void {

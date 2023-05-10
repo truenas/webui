@@ -15,7 +15,7 @@ import {
 import {
   GeneralWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/general-wizard-step/general-wizard-step.component';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { DialogService } from 'app/services';
 
 describe('GeneralWizardStepComponent', () => {
@@ -39,7 +39,7 @@ describe('GeneralWizardStepComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(PoolManagerStore, {
+      mockProvider(OldPoolManagerStore, {
         nonUniqueSerialDisks$: of([]),
         exportedPools$: of([]),
       }),

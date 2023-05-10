@@ -24,7 +24,7 @@ import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manag
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
 import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
-import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { PoolManagerState, OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/pool-manager.utils';
 
 @UntilDestroy()
@@ -78,7 +78,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private translate: TranslateService,
-    public poolManagerStore: PoolManagerStore,
+    public poolManagerStore: OldPoolManagerStore,
     private manualDiskSelectionStore: ManualDiskSelectionStore,
   ) {}
 

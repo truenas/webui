@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { combineLatest } from 'rxjs';
 import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +23,7 @@ export class ConfigurationPreviewComponent implements OnInit {
   private totalUsableCapacity: string;
 
   constructor(
-    private poolManagerStore: PoolManagerStore,
+    private poolManagerStore: OldPoolManagerStore,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
   ) {}

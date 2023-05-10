@@ -8,7 +8,7 @@ import { PoolManagerDisk, PoolManagerVdevDisk } from 'app/classes/pool-manager-d
 import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { PoolManagerState, OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 export interface ManualDiskSelectionState {
   vdevs: {
@@ -50,7 +50,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
   readonly dragActive$ = this.select((state) => state.dragActive);
   readonly selectionErrorMsg$ = this.select((state) => state.selectionErrorMsg);
   constructor(
-    private poolManagerStore$: PoolManagerStore,
+    private poolManagerStore$: OldPoolManagerStore,
     private translate: TranslateService,
   ) {
     super(initialState);

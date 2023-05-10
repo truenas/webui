@@ -32,3 +32,12 @@ export enum TopologyWarning {
   NoRedundancy = 'No Redundancy',
   RedundancyMismatch = 'Redundancy Mismatch',
 }
+
+export enum VdevType {
+  Cache = 'cache',
+  Data = 'data',
+  Dedup = 'dedup',
+  Log = 'log',
+  Spare = 'spare',
+  Special = 'special',
+}
