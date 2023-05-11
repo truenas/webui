@@ -13,6 +13,7 @@ describe('AppDetailsPanelComponent', () => {
 
   const app = {
     id: 'ix-test-app',
+    info: { notes: 'text' },
   } as ChartRelease;
 
   const createComponent = createComponentFactory({
