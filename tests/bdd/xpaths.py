@@ -499,6 +499,7 @@ class popup:
     enable_Service_To_Start_Automatically_Checkbox = '//mat-checkbox[@data-test="checkbox"]'
     enable_Service_Title = '//h1[text()="Enable service"]'
     enable_Service_Button = '//button[contains(*/text(),"Enable Service")]'
+    license_Agrement_Title = '//h1[contains(.,"End User License Agreement - TrueNAS")]'
     please_Wait = '//h6[contains(.,"Please wait")]'
     active_Directory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
