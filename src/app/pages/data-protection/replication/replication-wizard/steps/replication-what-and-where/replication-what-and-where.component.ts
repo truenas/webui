@@ -265,7 +265,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .pipe(untilDestroyed(this))
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
-        const isRootUser = selectedCredential.attributes?.username === 'root';
+        const isRootUser = selectedCredential?.attributes?.username === 'root';
 
         if (!selectedCredential || isRootUser || !(this.isRemoteSource || this.isRemoteTarget)) {
           return;
