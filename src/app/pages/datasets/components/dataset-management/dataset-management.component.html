@@ -65,11 +65,16 @@
         class="dataset-tree-wrapper"
       >
         <div class="dataset-tree-inner">
-          <ix-tree-view
+          <ix-tree-virtual-scroll-view
             class="dataset-tree"
             [ixDataSource]="dataSource"
             [ixTreeControl]="treeControl"
+            [ixItemSize]="48"
+            [ixMinBufferPx]="48"
+            [ixMaxBufferPx]="48"
             [trackBy]="trackById"
+            (viewportScrolled)="datasetTreeScrolled($event)"
+            (viewportResized)="datasetTreeWidthChanged($event)"
           >
             <ix-tree-node
               *treeNodeDef="let dataset; dataSource: dataSource"
@@ -119,7 +124,7 @@
 
               <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
-          </ix-tree-view>
+          </ix-tree-virtual-scroll-view>
         </div>
       </div>
     </div>
