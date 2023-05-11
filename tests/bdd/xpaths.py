@@ -303,7 +303,7 @@ class directory_Services:
         return f'//span[contains(.,"Hostname:") and contains(.,"{hostname}")]'
 
     def ad_Domain(domain):
-        return f'//span[contains(.,"Hostname:") and contains(.,"{domain}")]'
+        return f'//span[contains(.,"Domain:") and contains(.,"{domain}")]'
 
 
 class disks:
