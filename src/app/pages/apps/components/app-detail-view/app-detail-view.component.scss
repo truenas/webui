@@ -21,18 +21,20 @@
 }
 
 .hide-xs-md {
-  display: block;
+  display: flex;
+  flex: 1;
 
   @media(max-width: $breakpoint-md) {
     display: none !important;
   }
 }
 
-.show-xs {
-  display: none;
+.show-xs-md {
+  display: none !important;
 
   @media(max-width: $breakpoint-md) {
-    display: block !important;
+    display: flex !important;
+    flex: 1;
   }
 }
 
@@ -156,13 +158,14 @@ $app-image-size: 144px;
   }
 }
 
-.screenshots {
-  display: grid;
+.screenshots,
+.screenshots-loader {
+  display: grid !important;
   gap: 14px;
   grid-template-columns: repeat(3, 1fr);
   width: 100%;
 
-  @media(max-width: $breakpoint-sm) {
+  @media(max-width: $breakpoint-xs) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -190,8 +193,9 @@ $app-image-size: 144px;
   }
 }
 
-.similar-apps {
-  display: grid;
+.similar-apps,
+.similar-apps-loader {
+  display: grid !important;
   grid-gap: 16px;
   grid-template-columns: repeat(2, 1fr);
 
@@ -204,23 +208,11 @@ $app-image-size: 144px;
   }
 }
 
-.similar-apps-loader {
-  @media(max-width: $breakpoint-xs) {
-    display: grid !important;
-    grid-template-columns: 1fr;
-
-    .similar-app-loader {
-      margin-right: 0 !important;
-    }
-  }
-
-  .similar-app-loader {
-    ::ng-deep span {
-      height: 100px;
-    }
+.similar-app-loader {
+  ::ng-deep span {
+    height: 100px;
   }
 }
-
 
 .screenshot-loader {
   ::ng-deep span {
