@@ -72,6 +72,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     ssh_credentials_target: [null as number | SshCredentialsNewOption, [Validators.required]],
     target_dataset: [null as string, [Validators.required]],
     encryption: [false],
+    encryption_inherit: [false],
     encryption_key_format: [null as EncryptionKeyFormat, [Validators.required]],
     encryption_key_generate: [true],
     encryption_key_hex: ['', [Validators.required]],
@@ -202,10 +203,17 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
-    this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.encryption_inherit.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value) {
-        this.form.controls.encryption_key_format.enable();
-        this.form.controls.encryption_key_location_truenasdb.enable();
+        this.disableEncryption();
+      } else {
+        this.enableEncryption();
+      }
+    });
+
+    this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value && !this.form.controls.encryption_inherit.value) {
+        this.enableEncryption();
       } else {
         this.disableEncryption();
       }
@@ -433,6 +441,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.encryption_key_passphrase.disable();
     this.form.controls.encryption_key_location_truenasdb.disable();
     this.form.controls.encryption_key_location.disable();
+  }
+
+  private enableEncryption(): void {
+    this.form.controls.encryption_key_format.enable();
+    this.form.controls.encryption_key_location_truenasdb.enable();
   }
 
   private disableTransportAndSudo(source: DatasetSource, target: DatasetSource): void {
