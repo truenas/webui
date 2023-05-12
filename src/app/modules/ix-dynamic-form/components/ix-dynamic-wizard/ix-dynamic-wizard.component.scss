@@ -15,6 +15,16 @@
 
   @media (max-width: $breakpoint-sm) {
     flex-direction: column;
+
+    .fieldset {
+      order: 2;
+      padding: 0;
+    }
+
+    .help {
+      order: 1;
+      padding: 0 !important;
+    }
   }
 
   .fieldset {

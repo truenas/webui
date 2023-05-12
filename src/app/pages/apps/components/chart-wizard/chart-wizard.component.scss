@@ -6,14 +6,21 @@
 
 .wizard-container {
   width: 80%;
+
   @media (max-width: $breakpoint-sm) {
     width: 100%;
   }
 
   .actions {
     padding: 0 10px;
+
     @media (max-width: $breakpoint-xs) {
-      margin: 0 9px;
+      margin: 0 10px;
+      padding: 0;
+
+      button {
+        width: 100%;
+      }
     }
   }
 }
@@ -23,7 +30,7 @@
   min-width: 250px;
   width: 20%;
 
-  @media (max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-xs) {
     display: none;
   }
 
@@ -63,10 +70,6 @@
   position: sticky;
   top: -16px;
   z-index: 99;
-
-  @media (max-width: $breakpoint-sm) {
-    display: block;
-  }
 
   @media (max-width: $breakpoint-xs) {
     margin: 0 9px;
