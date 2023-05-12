@@ -1,29 +1,10 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle | titlecase">
+  <ix-page-title-header class="app-detail-page-title" [pageTitle]="pageTitle | titlecase">
     <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   </ix-page-title-header>
 </ng-template>
 
 <div class="flex-container">
-  <div fxFlex fxLayoutAlign="end" class="cards-wrapper">
-    <section class="app-info-cards">
-      <ix-app-resources-card
-        class="app-info-card"
-        [isLoading$]="isLoading$"
-      ></ix-app-resources-card>
-      <ix-app-helm-chart-card
-        class="app-info-card"
-        [app]="app"
-        [isLoading$]="isLoading$"
-      ></ix-app-helm-chart-card>
-      <ix-app-available-info-card
-        class="app-info-card"
-        [app]="app"
-        [isLoading$]="isLoading$"
-      ></ix-app-available-info-card>
-    </section>
-  </div>
-
   <div class="app-wrapper">
     <section fxLayout="row">
       <div class="app" fxFlex="200px">
@@ -125,11 +106,20 @@
       </div>
     </section>
 
+    <div class="show-xs-md">
+      <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+    </div>
+
     <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
     <section>
       <h2>{{ 'Similar Apps' | translate }}</h2>
 
-      <div *ngIf="similarAppsLoading$ | async; else similarAppsTemplate" fxLayout="row wrap" fxLayoutGap="16px">
+      <div
+        *ngIf="similarAppsLoading$ | async; else similarAppsTemplate"
+        class="similar-apps-loader"
+        fxLayout="row wrap"
+        fxLayoutGap="16px"
+      >
         <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
         <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
       </div>
@@ -150,7 +140,32 @@
       </ng-template>
     </section>
   </div>
+
+  <div class="hide-xs-md">
+    <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+  </div>
 </div>
+
+<ng-template #appDetailCards>
+  <div fxFlex fxLayoutAlign="end" class="cards-wrapper">
+    <section class="app-info-cards">
+      <ix-app-resources-card
+        class="app-info-card"
+        [isLoading$]="isLoading$"
+      ></ix-app-resources-card>
+      <ix-app-helm-chart-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-helm-chart-card>
+      <ix-app-available-info-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-available-info-card>
+    </section>
+  </div>
+</ng-template>
 
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}

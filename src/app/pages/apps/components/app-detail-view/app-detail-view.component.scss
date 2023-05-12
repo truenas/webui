@@ -7,20 +7,39 @@
   width: 100%;
 }
 
+::ng-deep {
+  @media(max-width: $breakpoint-xs) {
+    .app-detail-page-title {
+      border: 0;
+      margin-bottom: 0;
+
+      .actions-container {
+        padding: 0;
+      }
+    }
+  }
+}
+
+.hide-xs-md {
+  display: block;
+
+  @media(max-width: $breakpoint-md) {
+    display: none !important;
+  }
+}
+
+.show-xs {
+  display: none;
+
+  @media(max-width: $breakpoint-md) {
+    display: block !important;
+  }
+}
+
 .flex-container {
   box-sizing: border-box;
   display: flex;
   flex-flow: row nowrap;
-
-  @media(min-width: $breakpoint-md) {
-    .apps-wrapper {
-      order: 1;
-    }
-
-    .cards-wrapper {
-      order: 2;
-    }
-  }
 
   @media(max-width: $breakpoint-md) {
     flex-wrap: wrap;
@@ -177,7 +196,7 @@ $app-image-size: 144px;
   grid-template-columns: repeat(2, 1fr);
 
   @media(max-width: $breakpoint-xs) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 
   ix-app-card {
@@ -185,11 +204,23 @@ $app-image-size: 144px;
   }
 }
 
-.similar-app-loader {
-  ::ng-deep span {
-    height: 100px;
+.similar-apps-loader {
+  @media(max-width: $breakpoint-xs) {
+    display: grid !important;
+    grid-template-columns: 1fr;
+
+    .similar-app-loader {
+      margin-right: 0 !important;
+    }
+  }
+
+  .similar-app-loader {
+    ::ng-deep span {
+      height: 100px;
+    }
   }
 }
+
 
 .screenshot-loader {
   ::ng-deep span {
