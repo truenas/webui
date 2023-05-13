@@ -67,6 +67,6 @@ describe('UploadConfigDialogComponent', () => {
     }));
     formData.append('file', file);
     expect(mockEntityJobComponentRef.componentInstance.wspost).toHaveBeenCalledWith('/_upload?auth_token=token', formData);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot'], { skipLocationChange: true });
   });
 });

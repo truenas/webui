@@ -75,8 +75,10 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
 @then('delete nameserver 2 and nameserver 3 IPs in there input')
 def delete_nameserver_2_and_nameserver_3_ips_in_there_input(driver):
     """delete nameserver 2 and nameserver 3 IPs in there input."""
-    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Delete).click()
-    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Delete).click()
+    if is_element_present(driver, xpaths.global_Configuration.nameserver2_Delete):
+        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Delete).click()
+    if is_element_present(driver, xpaths.global_Configuration.nameserver3_Delete):
+        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Delete).click()
 
 
 @then('click Save, the progress bar should appear while settings are being applied')
@@ -151,8 +153,8 @@ def the_active_Directory_setup_should_successfully_save_without_an_error(driver)
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 60, xpaths.popup.active_Directory)
-    assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
-    assert wait_on_element(driver, 7, '//span[text()="HEALTHY" and @class="value"]')
+    assert wait_on_element(driver, 7, xpaths.directory_Services.ad_Domain(domain.upper()))
+    assert wait_on_element(driver, 7, xpaths.directory_Services.service_Status)
 
 
 @then(parsers.parse('run "{cmd1}" on the NAS with ssh and verify that "{ad_object1}" is in the output'))

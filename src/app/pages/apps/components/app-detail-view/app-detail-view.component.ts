@@ -4,6 +4,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
 import {
   map, filter, BehaviorSubject, tap,
 } from 'rxjs';
@@ -12,6 +13,21 @@ import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.i
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
+
+const fakeImages = [
+  {
+    srcUrl: 'assets/images/stars-sky-1200w.jpg',
+    previewUrl: 'assets/images/stars-sky-1200w.jpg',
+  },
+  {
+    srcUrl: 'assets/images/stars-sky-800w.jpg',
+    previewUrl: 'assets/images/stars-sky-800w.jpg',
+  },
+  {
+    srcUrl: 'assets/images/stars-sky-400w.jpg',
+    previewUrl: 'assets/images/stars-sky-400w.jpg',
+  },
+];
 
 @UntilDestroy()
 @Component({
@@ -31,6 +47,9 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
+  items: GalleryItem[];
+  images = fakeImages;
+
   get pageTitle(): string {
     if (this.appId) {
       return this.appId;
@@ -49,10 +68,12 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private translate: TranslateService,
     private applicationsStore: AvailableAppsStore,
+    private gallery: Gallery,
   ) { }
 
   ngOnInit(): void {
     this.listenForRouteChanges();
+    this.setLightbox();
   }
 
   ngAfterViewInit(): void {
@@ -97,5 +118,10 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  setLightbox(): void {
+    this.items = this.images.map((image) => new ImageItem({ src: image.srcUrl, thumb: image.previewUrl }));
+    this.gallery.ref('lightbox').load(this.items);
   }
 }

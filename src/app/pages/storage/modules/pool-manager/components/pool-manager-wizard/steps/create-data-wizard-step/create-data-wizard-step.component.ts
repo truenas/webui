@@ -8,14 +8,15 @@ import filesize from 'filesize';
 import _ from 'lodash';
 import {
   Observable,
+  combineLatest,
   filter,
-  of, skipUntil, switchMap, take,
+  of, switchMap, take, takeWhile,
 } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
-import { RadioOption, SelectOption } from 'app/interfaces/option.interface';
-import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
+import { Option, SelectOption } from 'app/interfaces/option.interface';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManualDiskSelectionComponent, ManualDiskSelectionLayout,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
@@ -36,8 +37,16 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
 export class CreateDataWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardComponent['form']['controls']['data'];
 
+  protected minDisks: { [key: string]: number } = {
+    [CreateVdevLayout.Stripe]: 1,
+    [CreateVdevLayout.Mirror]: 2,
+    [CreateVdevLayout.Raidz1]: 3,
+    [CreateVdevLayout.Raidz2]: 4,
+    [CreateVdevLayout.Raidz3]: 5,
+  };
+
   readonly manualDiskSelectionMessage = helptext.manual_disk_selection_message;
-  unusedDisks: ManagerDisk[] = [];
+  unusedDisks: UnusedDisk[] = [];
   sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
 
   selectedDiskType: DiskType = null;
@@ -45,7 +54,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   selectedWidth: number = null;
   selectedVdevsCount: number = null;
 
-  vdevLayoutOptions$: Observable<SelectOption<CreateVdevLayout>[]> = of([
+  vdevLayoutOptions$: Observable<Option[]> = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
 
@@ -54,7 +63,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   numberOptions$: Observable<SelectOption[]> = of([]);
 
   readonly totalUsableCapacity$ = this.poolManagerStore.totalUsableCapacity$;
-  readonly dispersalOptions$: Observable<RadioOption[]> = of([
+  readonly dispersalOptions$ = of([
     {
       label: this.translate.instant('Minimize Enclosure Dispersal'),
       value: true,
@@ -74,18 +83,30 @@ export class CreateDataWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.usableUnusedDisks$.pipe(
-      skipUntil(this.poolManagerStore.isLoading$),
-      take(1),
+    this.poolManagerStore.unusedDisks$.pipe(
+      takeWhile((unusedDisks) => {
+        return !unusedDisks?.length;
+      }, true),
       untilDestroyed(this),
     ).subscribe((disks) => {
+      const vdevLayoutOptions: Option[] = [];
+      for (const [key, value] of Object.entries(CreateVdevLayout)) {
+        if (disks.length >= this.minDisks[value]) {
+          vdevLayoutOptions.push({ label: key, value });
+        }
+      }
+      this.form.controls.type.setValue(vdevLayoutOptions[vdevLayoutOptions.length - 1]?.value as CreateVdevLayout);
+      this.vdevLayoutOptions$ = of(vdevLayoutOptions);
       this.unusedDisks = disks;
       this.updateDiskSizeOptions();
       this.cdr.markForCheck();
     });
 
-    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe(([size, type]) => {
-      this.selectedDiskType = type;
+    combineLatest([
+      this.form.controls.type.valueChanges,
+      this.form.controls.sizeAndType.valueChanges,
+    ]).pipe(untilDestroyed(this)).subscribe(([, [size, diskType]]) => {
+      this.selectedDiskType = diskType;
       this.selectedSize = size;
       this.updateWidthOptions();
       this.createVdevsAutomatically();
@@ -106,7 +127,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   createVdevsAutomatically(): void {
     this.poolManagerStore.createDataVdevsAutomatically({
       size: +this.selectedSize,
-      type: this.selectedDiskType,
+      vdevType: this.form.controls.type.value,
       width: this.selectedWidth,
       count: this.selectedVdevsCount,
     });
@@ -140,23 +161,15 @@ export class CreateDataWizardStepComponent implements OnInit {
       return;
     }
     const length: number = this.sizeDisksMap[this.selectedDiskType][this.selectedSize];
+    const minRequired = this.minDisks[this.form.controls.type.value as CreateVdevLayout];
 
-    if (length) {
-      switch (this.form.value.type) {
-        case CreateVdevLayout.Stripe:
-          this.widthOptions$ = of(
-            _.range(1, length + 1).map((item) => ({
-              label: `${item}`,
-              value: item,
-            })),
-          );
-          break;
-        case CreateVdevLayout.Mirror:
-        case CreateVdevLayout.Raidz1:
-        case CreateVdevLayout.Raidz2:
-        case CreateVdevLayout.Raidz3:
-          break;
-      }
+    if (length && minRequired) {
+      this.widthOptions$ = of(
+        _.range(minRequired, length + 1).map((item) => ({
+          label: `${item}`,
+          value: item,
+        })),
+      );
       this.form.controls.width.setValue(length);
     } else {
       this.widthOptions$ = of([]);
@@ -174,19 +187,10 @@ export class CreateDataWizardStepComponent implements OnInit {
 
     if (width) {
       const maxNumber = Math.floor(length / width);
-      switch (this.form.value.type) {
-        case CreateVdevLayout.Stripe:
-          nextNumberOptions = Array.from({ length: maxNumber }).map((value, index) => ({
-            label: `${index + 1}`,
-            value: index + 1,
-          }));
-          break;
-        case CreateVdevLayout.Mirror:
-        case CreateVdevLayout.Raidz1:
-        case CreateVdevLayout.Raidz2:
-        case CreateVdevLayout.Raidz3:
-          break;
-      }
+      nextNumberOptions = Array.from({ length: maxNumber }).map((value, index) => ({
+        label: `${index + 1}`,
+        value: index + 1,
+      }));
       this.form.controls.vdevsNumber.setValue(maxNumber);
     } else {
       this.form.controls.vdevsNumber.setValue(null);
@@ -220,7 +224,7 @@ export class CreateDataWizardStepComponent implements OnInit {
           return {
             ...state,
             vdevs: hasAtleastOneVdevWithDisks
-              ? { ...state.vdevs, data: manualDiskSelectionState.vdevs.data }
+              ? { ...state.vdevs, data: manualDiskSelectionState.vdevs.data.filter((vdevs) => !!vdevs.disks?.length) }
               : { ...state.vdevs, data: [] },
             unusedDisks: manualDiskSelectionState.unusedDisks,
             disksSelectedManually: hasAtleastOneVdevWithDisks && manualDiskSelectionState.selectionChanged,
@@ -236,7 +240,7 @@ export class CreateDataWizardStepComponent implements OnInit {
     }
     this.poolManagerStore.createDataVdevsAutomatically({
       width: this.selectedWidth,
-      type: this.selectedDiskType,
+      vdevType: this.form.controls.type.value,
       count: this.selectedVdevsCount,
       size: +this.selectedSize,
     });

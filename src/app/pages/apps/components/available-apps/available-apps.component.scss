@@ -1,11 +1,17 @@
+@import 'scss-imports/splitview';
+
 :host {
   .apps {
     column-gap: 40px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
     margin-bottom: 20px;
     margin-top: 15px;
     row-gap: 16px;
+
+    @media (max-width: $breakpoint-xs) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .section-title {
@@ -44,14 +50,22 @@
 
 .available-apps-list {
   position: relative;
+
+  @media (max-width: $breakpoint-xs) {
+    padding: 0 10px;
+  }
 }
 
 .fake-apps {
   column-gap: 40px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
   padding-top: 50px;
   row-gap: 16px;
+
+  @media (max-width: $breakpoint-xs) {
+    grid-template-columns: 1fr;
+  }
 
   ::ng-deep span {
     height: 153px;

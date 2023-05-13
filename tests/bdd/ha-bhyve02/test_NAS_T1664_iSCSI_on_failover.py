@@ -49,7 +49,7 @@ def test_iscsi_sharing_and_service_works_after_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ["Setup_HA"], scope='session')
+    #depends(request, ["Setup_HA"], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -99,14 +99,13 @@ def click_on_the_device_drop_select_create_new_and_input_and_tank_in_pooldataset
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.device_Dropdown).click()
     assert wait_on_element(driver, 5, xpaths.iscsi_Wizard.create_New_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.create_New_Button).click()
-    rsc.Wait_For_Inputable_And_Input_Value(driver, xpaths.iscsi_Wizard.pool_Dataset_Input, 'tank')
+    rsc.Wait_For_Inputable_And_Input_Value(driver, xpaths.iscsi_Wizard.pool_Dataset_Input, '/mnt/tank')
 
 
 @then('input 1 GiB for Size, leave the rest to default, and click Next')
 def input_1_gib_for_size_leave_the_rest_to_default_and_click_next(driver):
     """input "1" GiB for Size, leave the rest to default, and click Next."""
-    rsc.Input_Value(driver, xpaths.iscsi_Wizard.size_Input, '1')
-    assert is_element_present(driver, xpaths.iscsi_Wizard.size_Select_Contain_GiB)
+    rsc.Input_Value(driver, xpaths.iscsi_Wizard.size_Input, '1 GiB')
 
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.block_Device_Next_Button).click()
 
@@ -127,6 +126,9 @@ def on_portal_click_the_drop_and_create_new_then_select_discovery_auth_method_no
 @then('on Add listen, set the IP Address to 0.0.0.0 and click Next')
 def on_add_listen_set_the_ip_address_to_0000_and_click_next(driver):
     """on Add listen, set the IP Address to 0.0.0.0 and click Next."""
+    driver.find_element_by_xpath(xpaths.iscsi_Wizard.add_Ip_Address_Button).click()
+
+    assert wait_on_element(driver, 5, xpaths.iscsi_Wizard.ip_Address_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.ip_Address_Select).click()
     rsc.Select_Option(driver, xpaths.iscsi_Wizard.zero_Ip_Option)
 
@@ -146,20 +148,16 @@ def on_the_initiator_leave_the_input_blank_and_click_next(driver):
 @then('on the Confirm Options, verify and click Save')
 def on_the_confirm_options_verify_and_click_save(driver):
     """on the Confirm Options, verify and click Save."""
-    assert wait_on_element(driver, 5, xpaths.iscsi_Wizard.confirm_Options_Title)
-
-    assert is_element_present(driver, xpaths.iscsi_Wizard.iscsi_Summary)
-    assert is_element_present(driver, xpaths.iscsi_Wizard.summary_Name)
-    assert is_element_present(driver, xpaths.iscsi_Wizard.extent_new_Device)
-    assert is_element_present(driver, xpaths.iscsi_Wizard.portal_listen)
-
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    # This step was removed in Cobia
+    pass
 
 
 @then('when it is saved, verify the Portal, Target, and Extent')
 def when_it_is_saved_verify_the_portal_target_and_extent(driver):
     """when it is saved, verify the Portal, Target, and Extent"""
-    assert wait_on_element_disappear(driver, 5, xpaths.popup.please_Wait)
+    #assert wait_on_element_disappear(driver, 5, xpaths.progress.progressbar)
+    assert wait_on_element(driver, 5, xpaths.sharing.iscsi_Configure_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.sharing.iscsi_Configure_Button).click()
     assert wait_on_element(driver, 5, xpaths.iscsi.title)
     driver.find_element_by_xpath(xpaths.iscsi.protals_Tab).click()
     assert wait_on_element(driver, 5, xpaths.iscsi.iscsitest1_Text)

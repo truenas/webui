@@ -25,7 +25,9 @@
   </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
-      <ix-app-card-logo [url]="app?.chart_metadata?.icon"></ix-app-card-logo>
+      <div class="app-logo">
+        <img [src]="app?.chart_metadata?.icon" />
+      </div>
       <div class="details-list">
         <div class="details-item">
           <span class="label">{{ 'Name' | translate }}:</span>

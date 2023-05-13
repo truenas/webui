@@ -5,7 +5,9 @@ import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import {
+  Disk, TopologyDisk, TopologyItem,
+} from 'app/interfaces/storage.interface';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +39,7 @@ export class TopologyItemNodeComponent {
   }
 
   get capacity(): string {
-    return this.disk?.size ? filesize(this.disk.size, { standard: 'iec' }) : '';
+    return this.isDisk && this.disk?.size ? filesize(this.disk.size, { standard: 'iec' }) : '';
   }
 
   get errors(): string {

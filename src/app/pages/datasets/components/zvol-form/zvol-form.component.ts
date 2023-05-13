@@ -206,64 +206,30 @@ export class ZvolFormComponent {
 
   setupForm(): void {
     if (!this.isNew) {
-      this.setEncryptionFieldsDisabled(true);
-      this.form.controls.encryption.disable();
-      this.form.controls.inherit_encryption.disable();
+      this.disableEncryptionFields();
     }
 
     this.isLoading = true;
     this.ws.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (parents) => {
         const parent = parents[0];
-        this.encryptedParent = parent.encrypted;
-        this.encryptionAlgorithm = parent.encryption_algorithm.value;
+
         this.namesInUse = parent.children?.map((child) => {
           return /[^/]*$/.exec(child.name)[0];
         }) || [];
 
-        this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
-        if (this.encryptedParent) {
-          if (parent.key_format.value === DatasetEncryptionType.Passphrase) {
-            this.passphraseParent = true;
-            // if parent is passphrase this dataset cannot be a key type
-            this.encryptionType = 'passphrase';
-            this.form.controls.encryption_type.disable();
-          }
-          this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
-        }
+        this.inheritEncryptionProperties(parent);
 
-        if (this.isNew) {
-          if (this.encryptedParent && parent.encryption_algorithm) {
-            this.form.controls.algorithm.setValue(parent.encryption_algorithm.value);
-          }
-          this.form.controls.encryption.disable();
-          if (this.passphraseParent) {
-            this.form.controls.encryption_type.setValue('passphrase');
-          }
-          this.setEncryptionFieldsDisabled(true);
-          this.setupEncryptionFieldEvents();
-        } else {
+        if (!this.isNew) {
           this.form.controls.name.disable();
         }
 
         this.addMinimumBlocksizeWarning();
 
-        const inheritTr = this.translate.instant('Inherit');
         this.setReadonlyField(parent);
 
         if (parent?.type === DatasetType.Filesystem) {
-          this.syncOptions.unshift({ label: `${inheritTr} (${parent.sync.rawvalue})`, value: inherit });
-          this.compressionOptions.unshift({ label: `${inheritTr} (${parent.compression.rawvalue})`, value: inherit });
-          this.deduplicationOptions.unshift({ label: `${inheritTr} (${parent.deduplication.rawvalue})`, value: inherit });
-          this.volblocksizeOptions.unshift({ label: `${inheritTr}`, value: inherit });
-          this.snapdevOptions.unshift({ label: `${inheritTr} (${parent.snapdev.rawvalue})`, value: inherit });
-
-          this.form.controls.sync.setValue(inherit);
-          this.form.controls.compression.setValue(inherit);
-          this.form.controls.deduplication.setValue(inherit);
-          this.form.controls.readonly.setValue(inherit);
-          this.form.controls.snapdev.setValue(inherit);
-          this.loadRecommendedBlocksize();
+          this.inheritFileSystemProperties(parent);
         } else {
           let parentDatasetId: string | string[] = parent.name.split('/');
           parentDatasetId.pop();
@@ -276,71 +242,16 @@ export class ZvolFormComponent {
 
               this.customFilter = [[['id', '=', this.parentId]]];
 
-              const volumesize = parent.volsize.parsed;
+              this.copyParentProperties(parent);
 
-              // keep track of original volume size data so we can check to see if the user intended to change since
-              // decimal has to be truncated to three decimal places
-              this.origVolSize = volumesize;
+              this.inheritSyncSource(parent, parentDataset);
 
-              const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
-              this.origHuman = humansize;
+              this.inheritCompression(parent, parentDataset);
 
-              this.form.controls.name.setValue(parent.name);
-              if (parent.comments) {
-                this.form.controls.comments.setValue(parent.comments.value);
-              } else {
-                this.form.controls.comments.setValue('');
-              }
+              this.inheritDeduplication(parent, parentDataset);
 
-              this.form.controls.volsize.setValue(humansize);
+              this.inheritSnapdev(parent, parentDataset);
 
-              if (
-                parent.sync.source === ZfsPropertySource.Inherited
-                  || parent.sync.source === ZfsPropertySource.Default
-              ) {
-                this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: parentDataset[0].sync.value });
-              } else {
-                this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: inherit });
-                this.form.controls.sync.setValue(parent.sync.value);
-              }
-
-              if (parent.compression.source === ZfsPropertySource.Default) {
-                this.compressionOptions.unshift({ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: parentDataset[0].compression.value });
-              } else {
-                this.compressionOptions.unshift({ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: inherit });
-              }
-
-              if (parent.compression.source === ZfsPropertySource.Inherited) {
-                this.form.controls.compression.setValue(inherit);
-              } else {
-                this.form.controls.compression.setValue(parent.compression.value);
-              }
-
-              if (
-                parent.deduplication.source === ZfsPropertySource.Inherited
-                  || parent.deduplication.source === ZfsPropertySource.Default
-              ) {
-                this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: parentDataset[0].deduplication.value });
-              } else {
-                this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: inherit });
-                this.form.controls.deduplication.setValue(parent.deduplication.value);
-              }
-
-              this.form.controls.sync.setValue(parent.sync.value);
-              if (String(parent.compression.value) === 'GZIP') {
-                this.form.controls.compression.setValue(parent.compression.value + '-6');
-              }
-              this.form.controls.deduplication.setValue(parent.deduplication.value);
-
-              this.snapdevOptions.unshift({ label: `${inheritTr} (${parentDataset[0].snapdev.rawvalue})`, value: inherit });
-              if (
-                parent.snapdev.source === ZfsPropertySource.Inherited
-                  || parent.snapdev.source === ZfsPropertySource.Default
-              ) {
-                this.form.controls.snapdev.setValue(inherit);
-              } else {
-                this.form.controls.snapdev.setValue(parent.snapdev.value);
-              }
               this.cdr.markForCheck();
             },
             error: (error: WebsocketError): void => {
@@ -355,6 +266,136 @@ export class ZvolFormComponent {
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
+  }
+
+  copyParentProperties(parent: Dataset): void {
+    const volumesize = parent.volsize.parsed;
+
+    // keep track of original volume size data so we can check to see if the user intended to change since
+    // decimal has to be truncated to three decimal places
+    this.origVolSize = volumesize;
+
+    const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
+    this.origHuman = humansize;
+
+    this.form.controls.name.setValue(parent.name);
+    if (parent.comments) {
+      this.form.controls.comments.setValue(parent.comments.value);
+    } else {
+      this.form.controls.comments.setValue('');
+    }
+
+    this.form.controls.volsize.setValue(humansize);
+  }
+
+  disableEncryptionFields(): void {
+    this.setEncryptionFieldsDisabled(true);
+    this.form.controls.encryption.disable();
+    this.form.controls.inherit_encryption.disable();
+  }
+
+  inheritEncryptionProperties(parent: Dataset): void {
+    this.encryptedParent = parent.encrypted;
+    this.encryptionAlgorithm = parent.encryption_algorithm.value;
+
+    this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
+    if (this.encryptedParent) {
+      if (parent.key_format.value === DatasetEncryptionType.Passphrase) {
+        this.passphraseParent = true;
+        // if parent is passphrase this dataset cannot be a key type
+        this.encryptionType = 'passphrase';
+        this.form.controls.encryption_type.disable();
+      }
+      this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
+    }
+
+    if (this.isNew) {
+      if (this.encryptedParent && parent.encryption_algorithm) {
+        this.form.controls.algorithm.setValue(parent.encryption_algorithm.value);
+      }
+      this.form.controls.encryption.disable();
+      if (this.passphraseParent) {
+        this.form.controls.encryption_type.setValue('passphrase');
+      }
+      this.setEncryptionFieldsDisabled(true);
+      this.setupEncryptionFieldEvents();
+    }
+  }
+
+  inheritSyncSource(parent: Dataset, parentDataset: Dataset[]): void {
+    const inheritTr = this.translate.instant('Inherit');
+    if (
+      parent.sync.source === ZfsPropertySource.Inherited
+        || parent.sync.source === ZfsPropertySource.Default
+    ) {
+      this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: parentDataset[0].sync.value });
+    } else {
+      this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: inherit });
+      this.form.controls.sync.setValue(parent.sync.value);
+    }
+    this.form.controls.sync.setValue(parent.sync.value);
+  }
+
+  inheritFileSystemProperties(parent: Dataset): void {
+    const inheritTr = this.translate.instant('Inherit');
+    this.syncOptions.unshift({ label: `${inheritTr} (${parent.sync.rawvalue})`, value: inherit });
+    this.compressionOptions.unshift({ label: `${inheritTr} (${parent.compression.rawvalue})`, value: inherit });
+    this.deduplicationOptions.unshift({ label: `${inheritTr} (${parent.deduplication.rawvalue})`, value: inherit });
+    this.volblocksizeOptions.unshift({ label: `${inheritTr}`, value: inherit });
+    this.snapdevOptions.unshift({ label: `${inheritTr} (${parent.snapdev.rawvalue})`, value: inherit });
+
+    this.form.controls.sync.setValue(inherit);
+    this.form.controls.compression.setValue(inherit);
+    this.form.controls.deduplication.setValue(inherit);
+    this.form.controls.readonly.setValue(inherit);
+    this.form.controls.snapdev.setValue(inherit);
+    this.loadRecommendedBlocksize();
+  }
+
+  inheritCompression(parent: Dataset, parentDataset: Dataset[]): void {
+    const inheritTr = this.translate.instant('Inherit');
+    if (parent.compression.source === ZfsPropertySource.Default) {
+      this.compressionOptions.unshift({ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: parentDataset[0].compression.value });
+    } else {
+      this.compressionOptions.unshift({ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: inherit });
+    }
+
+    if (parent.compression.source === ZfsPropertySource.Inherited) {
+      this.form.controls.compression.setValue(inherit);
+    } else {
+      this.form.controls.compression.setValue(parent.compression.value);
+    }
+    if (String(parent.compression.value) === 'GZIP') {
+      this.form.controls.compression.setValue(parent.compression.value + '-6');
+    }
+  }
+
+  inheritDeduplication(parent: Dataset, parentDataset: Dataset[]): void {
+    const inheritTr = this.translate.instant('Inherit');
+    if (
+      parent.deduplication.source === ZfsPropertySource.Inherited
+        || parent.deduplication.source === ZfsPropertySource.Default
+    ) {
+      this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: parentDataset[0].deduplication.value });
+    } else {
+      this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: inherit });
+      this.form.controls.deduplication.setValue(parent.deduplication.value);
+    }
+
+    this.form.controls.deduplication.setValue(parent.deduplication.value);
+  }
+
+  inheritSnapdev(parent: Dataset, parentDataset: Dataset[]): void {
+    const inheritTr = this.translate.instant('Inherit');
+    this.snapdevOptions.unshift({ label: `${inheritTr} (${parentDataset[0].snapdev.rawvalue})`, value: inherit });
+    if (
+      parent.snapdev.source === ZfsPropertySource.Inherited
+        || parent.snapdev.source === ZfsPropertySource.Default
+    ) {
+      this.form.controls.snapdev.setValue(inherit);
+    } else {
+      this.form.controls.snapdev.setValue(parent.snapdev.value);
+    }
   }
 
   setupEncryptionFieldEvents(): void {

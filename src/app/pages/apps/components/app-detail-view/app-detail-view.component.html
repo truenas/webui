@@ -1,11 +1,11 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle | titlecase">
+  <ix-page-title-header class="app-detail-page-title" [pageTitle]="pageTitle | titlecase">
     <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   </ix-page-title-header>
 </ng-template>
 
-<div fxLayout="row nowrap">
-  <div fxFlex="70%">
+<div class="flex-container">
+  <div class="app-wrapper">
     <section fxLayout="row">
       <ix-app-details-header
         [app]="app"
@@ -17,51 +17,53 @@
     <section>
       <h2>{{ 'Screenshots' | translate }}</h2>
       <div fxLayout="row nowrap" fxLayoutGap="16px">
-        <ng-container *ngIf="isLoading$ | async; else appScreenshots">
+        <div *ngIf="isLoading$ | async; else appScreenshots" class="screenshots-loader">
           <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
           <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
           <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
-        </ng-container>
+        </div>
 
         <ng-template #appScreenshots>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
-          </div>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
-          </div>
-          <div class="screenshot">
-            <img
-              alt="Logo image background of stars and sky at night"
-              class="screenshot-image"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
+          <div class="screenshots" gallerize>
+            <div *ngFor="let image of images" class="screenshot">
+              <img class="screenshot-image" [src]="image.srcUrl" />
+            </div>
           </div>
         </ng-template>
       </div>
     </section>
+
+    <div class="show-xs-md">
+      <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+    </div>
 
     <section *ngIf="app">
       <ix-app-details-similar [app]="app"></ix-app-details-similar>
     </section>
   </div>
 
-  <div fxFlex fxLayoutAlign="end">
-    <section class="app-info-cards">
-      <ix-app-resources-card [isLoading$]="isLoading$"></ix-app-resources-card>
-      <ix-app-helm-chart-card [app]="app" [isLoading$]="isLoading$"></ix-app-helm-chart-card>
-      <ix-app-available-info-card [app]="app" [isLoading$]="isLoading$"></ix-app-available-info-card>
-    </section>
+  <div class="hide-xs-md">
+    <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
   </div>
 </div>
+
+<ng-template #appDetailCards>
+  <div fxFlex fxLayoutAlign="end" class="cards-wrapper">
+    <section class="app-info-cards">
+      <ix-app-resources-card
+        class="app-info-card"
+        [isLoading$]="isLoading$"
+      ></ix-app-resources-card>
+      <ix-app-helm-chart-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-helm-chart-card>
+      <ix-app-available-info-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-available-info-card>
+    </section>
+  </div>
+</ng-template>

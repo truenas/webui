@@ -31,7 +31,7 @@ export class WebSocketService {
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
   ) {
-    this.mockUtils = new MockEnclosureUtils();
+    if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
@@ -60,10 +60,9 @@ export class WebSocketService {
         }
 
         if (
-          environment
-          && !environment.production
+          this.mockUtils
           && environment.mockConfig?.enabled
-          && this.mockUtils.canMock
+          && this.mockUtils?.canMock
           && data.msg === IncomingApiMessageType.Result
         ) {
           const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
