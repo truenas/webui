@@ -127,7 +127,7 @@
   "Invalid format. Expected format: <property>=<value>": "",
   "Inventory": "",
   "Invisible": "",
-  "Keep the name short. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).": "",
+  "Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).": "",
   "Keywords": "",
   "Last 24 hours": "",
   "Last 3 days": "",
