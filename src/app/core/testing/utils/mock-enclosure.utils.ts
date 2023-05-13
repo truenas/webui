@@ -23,10 +23,7 @@ export class MockEnclosureUtils {
 
   constructor() {
     const diskOptions = this.mockConfig?.diskOptions;
-
-    if (diskOptions?.mockPools) {
-      this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
-    }
+    this.mockStorage = new MockStorageGenerator(diskOptions.mockPools);
 
     // Add Pools and VDEVs
     if (diskOptions?.mockPools && diskOptions?.topologyOptions) {

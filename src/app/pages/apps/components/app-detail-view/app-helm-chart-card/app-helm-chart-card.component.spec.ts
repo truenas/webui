@@ -1,15 +1,15 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
-import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/available-apps/app-available-info-card/app-available-info-card.component';
+import { AppHelmChartCardComponent } from 'app/pages/apps/components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 
-describe('AppAvailableInfoCardComponent', () => {
-  let spectator: Spectator<AppAvailableInfoCardComponent>;
+describe('AppHelmChartCardComponent', () => {
+  let spectator: Spectator<AppHelmChartCardComponent>;
 
   const isLoading$ = new BehaviorSubject(false);
 
   const createComponent = createComponentFactory({
-    component: AppAvailableInfoCardComponent,
+    component: AppHelmChartCardComponent,
     declarations: [],
     providers: [],
   });
@@ -23,6 +23,6 @@ describe('AppAvailableInfoCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('h3')).toHaveText('Application Info');
+    expect(spectator.query('h3')).toHaveText('Helm Chart Info');
   });
 });

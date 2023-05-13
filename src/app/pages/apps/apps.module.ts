@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { GalleryModule } from 'ng-gallery';
+import { LightboxModule } from 'ng-gallery/lightbox';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -27,6 +29,12 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
+import {
+  AppDetailsHeaderComponent,
+} from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
+import {
+  AppDetailsSimilarComponent,
+} from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
 import {
   CatalogAddFormComponent,
@@ -41,9 +49,6 @@ import {
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
-import {
-  AppUpgradeDialog2Component,
-} from 'app/pages/apps/components/installed-apps/app-upgrade-dialog2/app-upgrade-dialog.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
@@ -51,12 +56,12 @@ import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/p
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
+import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
+import { AppHelmChartCardComponent } from './components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
+import { AppResourcesCardComponent } from './components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
-import { AppAvailableInfoCardComponent } from './components/available-apps/app-available-info-card/app-available-info-card.component';
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
-import { AppHelmChartCardComponent } from './components/available-apps/app-helm-chart-card/app-helm-chart-card.component';
-import { AppResourcesCardComponent } from './components/available-apps/app-resources-card/app-resources-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
@@ -97,7 +102,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppUpgradeDialogComponent,
     AppsToolbarButtonsComponent,
     AppStatusCellComponent,
-    AppUpgradeDialog2Component,
+    AppDetailsHeaderComponent,
+    AppDetailsSimilarComponent,
   ],
   imports: [
     CommonModule,
@@ -131,6 +137,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatTooltipModule,
     MatMenuModule,
     CustomFormsModule,
+    GalleryModule,
+    LightboxModule,
   ],
   providers: [
     AvailableAppsStore,

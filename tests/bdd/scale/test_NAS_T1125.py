@@ -125,7 +125,7 @@ def wait_for_please_wait_should_appear_while_settings_are_applied_then_after_set
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 30, xpaths.popup.setting_Ldap)
     assert wait_on_element(driver, 5, xpaths.directory_Services.ldap_Card_Title)
-    assert wait_on_element(driver, 5, xpaths.directory_Services.ldap_Status)
+    assert wait_on_element(driver, 5, xpaths.directory_Services.service_Status)
     assert wait_on_element(driver, 20, xpaths.directory_Services.ldap_Hostname(hostname))
 
 

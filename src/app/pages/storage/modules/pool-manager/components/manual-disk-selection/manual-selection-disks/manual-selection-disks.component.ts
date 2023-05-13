@@ -95,8 +95,10 @@ export class ManualSelectionDisksComponent implements OnInit {
 
   private mapDisksToEnclosures(disks: Disk[], enclosures: Enclosure[]): DiskOrGroup[] {
     const disksInEnclosures = enclosures.map((enclosure) => {
+      // Match behavior of enclosure-disks component
+      const currentLabel = enclosure.label !== enclosure.name ? enclosure.label : enclosure.model;
       return {
-        group: `${enclosure.number}: ${enclosure.label}`,
+        group: `${enclosure.number}: ${currentLabel}`,
         identifier: String(enclosure.number),
         children: [],
       };
@@ -132,8 +134,16 @@ export class ManualSelectionDisksComponent implements OnInit {
       const sizeMatches = filterValues.diskSize
         ? this.filesizePipe.transform(disk.size, { standard: 'iec' }) === filterValues.diskSize
         : true;
+      const diskModalStringNormalized = disk.model?.toLowerCase().trim() || '';
+      const searchStringNormalized = filterValues.search?.toLowerCase().trim() || '';
+      const diskSerialStringNormalized = disk.serial?.toLowerCase().trim() || '';
+      const diskNameNormalized = disk.name?.toLowerCase().trim() || '';
       const searchMatches = filterValues.search
-        ? (disk.model?.includes(filterValues.search) || disk.serial?.includes(filterValues.search))
+        ? (
+          diskModalStringNormalized.includes(searchStringNormalized)
+          || diskSerialStringNormalized.includes(searchStringNormalized)
+          || diskNameNormalized.includes(searchStringNormalized)
+        )
         : true;
 
       return typeMatches && sizeMatches && searchMatches;

@@ -12,7 +12,7 @@ describe('TopologyItemNodeComponent', () => {
   let spectator: Spectator<TopologyItemNodeComponent>;
   const topologyDisk = {
     type: TopologyItemType.Disk,
-    path: null,
+    path: '/path/to/disk',
     guid: '123',
     status: TopologyItemStatus.Offline,
     stats: {

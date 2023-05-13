@@ -48,6 +48,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
+import { IxSlideIn2Component } from './components/ix-slide-in/ix-slide-in2.component';
 import { WithManageCertificatesLinkComponent } from './components/with-manage-certificates-link/with-manage-certificates-link.component';
 
 @NgModule({
@@ -86,6 +87,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxSelectComponent,
     IxFieldsetComponent,
     IxSlideInComponent,
+    IxSlideIn2Component,
     IxModalHeaderComponent,
     IxCheckboxComponent,
     IxTextareaComponent,
@@ -110,6 +112,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxInputComponent,
     IxSelectComponent,
     IxSlideInComponent,
+    IxSlideIn2Component,
     IxModalHeaderComponent,
     IxFieldsetComponent,
     IxCheckboxComponent,

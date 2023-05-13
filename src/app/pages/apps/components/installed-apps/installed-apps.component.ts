@@ -1,16 +1,28 @@
+import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  ChangeDetectorRef,
+  TemplateRef,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  Inject,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import {
+  ActivatedRoute, NavigationEnd, NavigationStart, Router,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, map, switchMap, take, takeWhile, tap,
+  combineLatest, filter, switchMap, take, takeWhile, tap,
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/apps/apps';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -34,15 +46,16 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./installed-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstalledAppsComponent implements OnInit, AfterViewInit {
+export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   dataSource: ChartRelease[] = [];
   selectedApp: ChartRelease;
   isLoading = false;
   filterString = '';
+  showMobileDetails = false;
+  isMobileView = false;
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
-  routeAppIdForDetails: string;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -114,24 +127,60 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private applicationsStore: AvailableAppsStore,
     private slideInService: IxSlideInService,
+    private breakpointObserver: BreakpointObserver,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
       .pipe(
-        filter((event) => event instanceof NavigationEnd),
+        filter((event) => event instanceof NavigationStart || event instanceof NavigationEnd),
         untilDestroyed(this),
       )
       .subscribe(() => {
         this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+          this.closeMobileDetails();
+          this.selectedApp = undefined;
+        }
       });
   }
 
   ngOnInit(): void {
-    this.listenForRouteChanges();
     this.loadChartReleases();
   }
 
   ngAfterViewInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.markForCheck();
+      });
+
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  ngOnDestroy(): void {
+    this.layoutService.pageHeaderUpdater$.next(null);
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
+  }
+
+  viewDetails(app: ChartRelease): void {
+    this.selectAppForDetails(app.id);
+
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+    }
   }
 
   onSearch(query: string): void {
@@ -144,10 +193,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   toggleAppsChecked(checked: boolean): void {
     this.dataSource.forEach((app) => app.selected = checked);
-  }
-
-  selectApp(app: ChartRelease): void {
-    this.selectedApp = app;
   }
 
   showLoadStatus(type: EmptyType): void {
@@ -183,18 +228,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
 
     this.entityEmptyConf.type = type;
-  }
-
-  private listenForRouteChanges(): void {
-    this.activatedRoute.params
-      .pipe(
-        map((params) => params.appId as string),
-        filter(Boolean),
-        untilDestroyed(this),
-      )
-      .subscribe((appId) => {
-        this.routeAppIdForDetails = appId;
-      });
   }
 
   loadChartReleases(): void {
@@ -245,11 +278,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
             this.refreshStatus(app.name);
           }
         });
-        if (!this.routeAppIdForDetails) {
-          this.selectFirstRowForDetails();
-        } else {
-          this.selectAppForDetails(this.routeAppIdForDetails);
-        }
+
+        this.selectAppForDetails(this.activatedRoute.snapshot.firstChild?.params['appId']);
         this.cdr.markForCheck();
       },
       complete: () => {
@@ -375,21 +405,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       app = this.dataSource.find((chart) => chart.id === appId);
     }
     if (app) {
-      this.selectApp(app);
+      this.selectedApp = app;
     } else {
       this.router.navigate(['/apps', 'installed', this.dataSource[0]?.id]);
-      this.selectApp(this.dataSource[0]);
+      this.selectedApp = this.dataSource[0];
     }
 
-    this.cdr.markForCheck();
-  }
-
-  private selectFirstRowForDetails(): void {
-    if (!this.dataSource.length) {
-      return;
-    }
-
-    this.selectApp(this.dataSource[0]);
     this.cdr.markForCheck();
   }
 

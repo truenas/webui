@@ -1,10 +1,12 @@
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppLoaderService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
 
 const fakeAppInfo = {
   name: 'elastic-search',
@@ -38,9 +40,10 @@ describe('AppUpgradeDialogComponent - test 1', () => {
 
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
-    imports: [FormsModule, ImgFallbackModule],
+    imports: [AppLoaderModule, ReactiveFormsModule, IxFormsModule, ImgFallbackModule],
     providers: [
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockProvider(AppLoaderService),
       mockProvider(ApplicationsService),
       {

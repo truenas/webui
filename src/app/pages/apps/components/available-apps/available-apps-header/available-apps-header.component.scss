@@ -7,7 +7,7 @@
   justify-content: space-between;
   padding: 0 10px 25px;
 
-  @media (max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-md) {
     flex-direction: column-reverse;
   }
 }
@@ -17,7 +17,6 @@
 }
 
 .search-filters {
-  max-width: 800px;
   width: 100%;
 
   .filters-btn {
@@ -30,13 +29,25 @@
       display: flex;
       gap: 18px;
 
+      @media (max-width: $breakpoint-xs) {
+        display: grid;
+      }
+
       .catalogs,
       .sort {
         width: 30%;
+
+        @media (max-width: $breakpoint-xs) {
+          width: 100%;
+        }
       }
 
       .сategories {
         width: 40%;
+
+        @media (max-width: $breakpoint-xs) {
+          width: 100%;
+        }
 
         ix-chips {
           margin-top: 0;
@@ -55,6 +66,10 @@
     .actions {
       display: flex;
       gap: 12px;
+
+      @media (max-width: $breakpoint-xs) {
+        margin-top: 24px;
+      }
     }
   }
 }
@@ -67,7 +82,12 @@
   margin-top: -4px;
   white-space: nowrap;
 
-  @media (max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-md) {
+    gap: 2em;
+    margin-left: 3em;
+  }
+
+  @media (max-width: $breakpoint-xs) {
     flex-wrap: wrap;
     justify-content: center;
     margin: 0;

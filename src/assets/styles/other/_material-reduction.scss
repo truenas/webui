@@ -543,12 +543,14 @@ body .mat-mdc-card {
   position: relative;
 }
 
+#ix-slide-in-form2 .mat-mdc-card,
 #ix-slide-in-form .mat-mdc-card,
 #slide-in-form .mat-mdc-card {
   border: none;
   box-shadow: none;
 }
 
+#ix-slide-in-form2 .ix-form-container,
 #ix-slide-in-form .ix-form-container,
 #slide-in-form .ix-form-container {
   padding: 0;
@@ -932,6 +934,8 @@ ix-root {
 
   .ix-tree-node:focus-visible,
   .ix-tree-node:focus,
+  ix-app-row:focus-visible,
+  ix-app-row:focus,
   .ix-nested-tree-node > div:focus-visible {
     @extend %focused-shared;
   }

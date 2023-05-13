@@ -18,6 +18,7 @@ export interface AvailableApp {
   last_update: ApiTimestamp;
   recommended: boolean;
   maintainers: AppMaintainer[];
+  tags: string[];
 }
 
 export interface AppMaintainer {
