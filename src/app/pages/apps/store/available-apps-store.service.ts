@@ -235,10 +235,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
                 installedApps: state.installedApps.filter(
                   (chartRelease) => chartRelease.name !== apiEvent.id.toString(),
                 ),
-                availableApps: this.isAppInstalled(state.availableApps, apiEvent.id, false),
-                latestApps: this.isAppInstalled(state.latestApps, apiEvent.id, false),
-                recommendedApps: this.isAppInstalled(state.recommendedApps, apiEvent.id, false),
-                filteredApps: this.isAppInstalled(state.filteredApps, apiEvent.id, false),
               };
             });
             break;
@@ -490,16 +486,5 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     });
 
     return appsByCategory;
-  }
-
-  private isAppInstalled(availableApps: AvailableApp[], apiEventId: number, installed: boolean): AvailableApp[] {
-    return availableApps.map(
-      (availableApp) => {
-        if (availableApp.name === apiEventId.toString()) {
-          availableApp.installed = installed;
-        }
-        return availableApp;
-      },
-    );
   }
 }
