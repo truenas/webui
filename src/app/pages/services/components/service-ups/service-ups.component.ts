@@ -80,7 +80,13 @@ export class ServiceUpsComponent implements OnInit {
 
   readonly tooltips = {
     identifier: helptext.ups_identifier_tooltip,
-    mode: helptext.ups_mode_tooltip,
+    mode: this.translate.instant('Choose <i>Master</i> if the UPS is plugged directly\
+      into the system serial port. The UPS will remain the\
+      last item to shut down. Choose <i>Slave</i> to have\
+      this system shut down before <i>Master</i>. See the\
+      <a href="{url}"\
+      target="_blank">Network UPS Tools Overview</a>.',
+    { url: 'https://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client' }),
     remotehost: helptext.ups_remotehost_tooltip,
     remoteport: helptext.ups_remoteport_tooltip,
     driver: helptext.ups_driver_tooltip,
