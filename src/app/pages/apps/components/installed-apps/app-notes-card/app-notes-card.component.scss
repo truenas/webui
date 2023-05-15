@@ -15,6 +15,42 @@
   background-color: rgba(0, 0, 0, 0.1);
   overflow: hidden;
   padding: 12px;
+
+  markdown ::ng-deep {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--fg2);
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 28px;
+    }
+
+    h2 {
+      font-size: 25px;
+    }
+
+    h3 {
+      font-size: 22px;
+    }
+
+    h4 {
+      font-size: 19px;
+    }
+
+    h5 {
+      font-size: 16px;
+    }
+
+    h6 {
+      font-size: 13px;
+    }
+  }
 }
 
 .gradient {
@@ -31,7 +67,7 @@
   justify-content: flex-end;
   padding-top: 6px;
 
-  span {
+  a {
     color: var(--primary);
     cursor: pointer;
     text-decoration: underline;
