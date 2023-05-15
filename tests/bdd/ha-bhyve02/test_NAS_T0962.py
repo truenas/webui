@@ -336,7 +336,7 @@ def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
 @then(parsers.parse('on the permission card, verify the user is "{user_name}"'))
 def on_the_permission_card_verify_the_user_is_user_name(driver, user_name):
     """on the permission card, verify the user is "{user_name}"."""
-    rsc.Scroll_To(xpaths.dataset.permission_Title)
+    rsc.Scroll_To(driver, xpaths.dataset.permission_Title)
     assert wait_on_element(driver, 5, xpaths.dataset.permission_At_Owner(user_name))
 
 

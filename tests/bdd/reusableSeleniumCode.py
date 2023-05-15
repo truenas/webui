@@ -106,7 +106,7 @@ def Leave_Domain(driver, user, password):
 
 
 def License_Agrement(driver):
-    if wait_on_element(driver, 2, xpaths.popup.license_Agrement_title):
+    if wait_on_element(driver, 2, xpaths.popup.license_Agrement_Title):
         assert wait_on_element(driver, 2, xpaths.button.Continue, 'clickable')
         driver.find_element_by_xpath(xpaths.button.Continue).click()
 
