@@ -227,14 +227,29 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       untilDestroyed(this),
     ).subscribe({
       next: (apiEvent) => {
+        const handleRemovedApps = (apps: unknown[]): AvailableApp[] => apps.map((chartRelease) => {
+          if ((chartRelease as { name: string }).name === apiEvent.id.toString()) {
+            return { ...chartRelease as object, installed: false } as AvailableApp;
+          }
+          return chartRelease as AvailableApp;
+        });
+
+        const handleChangedApps = (apps: unknown[]): AvailableApp[] => apps.map((chartRelease) => {
+          if ((chartRelease as { name: string }).name === apiEvent.id.toString()) {
+            return { ...chartRelease as object, ...apiEvent.fields } as unknown as AvailableApp;
+          }
+          return chartRelease as AvailableApp;
+        });
+
         switch (apiEvent.msg) {
           case IncomingApiMessageType.Removed:
             this.patchState((state) => {
               return {
                 ...state,
-                installedApps: state.installedApps.filter(
-                  (chartRelease) => chartRelease.name !== apiEvent.id.toString(),
-                ),
+                installedApps: state.installedApps.filter((app) => app.name !== apiEvent.id.toString()),
+                availableApps: handleRemovedApps(state.availableApps),
+                recommendedApps: handleRemovedApps(state.recommendedApps),
+                latestApps: handleRemovedApps(state.latestApps),
               };
             });
             break;
@@ -243,6 +258,9 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
               return {
                 ...state,
                 installedApps: [...state.installedApps, apiEvent.fields],
+                availableApps: handleChangedApps(state.availableApps),
+                recommendedApps: handleChangedApps(state.recommendedApps),
+                latestApps: handleChangedApps(state.latestApps),
               };
             });
             break;
@@ -250,16 +268,10 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
             this.patchState((state) => {
               return {
                 ...state,
-                installedApps: state.installedApps.map(
-                  (chartRelease) => {
-                    if (chartRelease.name === apiEvent.id.toString()) {
-                      return {
-                        ...apiEvent.fields,
-                      };
-                    }
-                    return chartRelease;
-                  },
-                ),
+                installedApps: handleChangedApps(state.installedApps) as unknown as ChartRelease[],
+                availableApps: handleChangedApps(state.availableApps),
+                recommendedApps: handleChangedApps(state.recommendedApps),
+                latestApps: handleChangedApps(state.latestApps),
               };
             });
             break;
