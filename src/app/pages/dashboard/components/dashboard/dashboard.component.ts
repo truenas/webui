@@ -537,12 +537,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private exitReorderMode(): void {
+    this.reorderMode = false;
+
     if (this.previousState) {
       this.setDashState(this.previousState);
       delete this.previousState;
     }
-
-    this.reorderMode = false;
   }
 
   private enableReorderMode(): void {
