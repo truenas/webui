@@ -1,20 +1,26 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs/operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
+import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -38,9 +44,11 @@ export class CertificateEditComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
+    private slideInService: IxSlideIn2Service,
+    private slideInRef: IxSlideInRef<CertificateEditComponent>,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
+    @Inject(SLIDE_IN_DATA) private certificatesDashComponent: CertificatesDashComponent,
   ) {}
 
   get isCsr(): boolean {
@@ -74,9 +82,13 @@ export class CertificateEditComponent {
   }
 
   onCreateAcmePressed(): void {
-    this.slideInService.close();
-    const acmeForm = this.slideInService.open(CertificateAcmeAddComponent);
-    acmeForm.setCsr(this.certificate);
+    this.slideInRef.close(true);
+    const slideInRef = this.slideInService.open(CertificateAcmeAddComponent);
+    slideInRef.componentInstance.setCsr(this.certificate);
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.certificatesDashComponent.getCards());
   }
 
   onSubmit(): void {
@@ -88,7 +100,7 @@ export class CertificateEditComponent {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close(true);
         },
         error: (error) => {
           this.isLoading = false;

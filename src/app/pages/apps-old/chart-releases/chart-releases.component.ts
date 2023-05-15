@@ -37,7 +37,7 @@ import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-fo
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { RedirectService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -81,7 +81,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public appService: ApplicationsService,
-    private slideInService: IxSlideInService,
+    private slideInService: IxSlideIn2Service,
     protected ws: WebSocketService,
     private redirect: RedirectService,
     private layoutService: LayoutService,
@@ -109,10 +109,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.addChartReleaseChangedEventListener();
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshChartReleases();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -344,15 +340,19 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
       { extra: { include_chart_schema: true } },
     ]).pipe(untilDestroyed(this)).subscribe((releases: ChartRelease[]) => {
       this.appLoaderService.close();
-      const form = this.slideInService.open(ChartFormComponent, { wide: true });
+      const slideInRef = this.slideInService.open(ChartFormComponent, { wide: true });
       if (catalogApp.chart_metadata.name === ixChartApp) {
-        form.setTitle(helptext.launch);
+        slideInRef.componentInstance.setTitle(helptext.launch);
       } else {
-        form.setTitle(catalogApp.chart_metadata.name);
+        slideInRef.componentInstance.setTitle(catalogApp.chart_metadata.name);
       }
       if (releases.length) {
-        form.setChartEdit(releases[0]);
+        slideInRef.componentInstance.setChartEdit(releases[0]);
       }
+
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshChartReleases();
+      });
     });
   }
 

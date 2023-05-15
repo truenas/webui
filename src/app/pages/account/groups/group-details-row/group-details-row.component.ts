@@ -9,7 +9,7 @@ import {
   DeleteGroupDialogComponent,
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +24,7 @@ export class GroupDetailsRowComponent {
   @Output() delete = new EventEmitter<number>();
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideIn: IxSlideIn2Service,
     private router: Router,
     private matDialog: MatDialog,
   ) {}
@@ -32,7 +32,7 @@ export class GroupDetailsRowComponent {
   doEdit(group: Group): void {
     const groupEdit = this.slideIn.open(GroupFormComponent);
     if (groupEdit) {
-      groupEdit.setupForm(group);
+      groupEdit.componentInstance.setupForm(group);
     }
   }
 

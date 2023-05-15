@@ -9,11 +9,11 @@ import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authen
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('AcmednsFormComponent', () => {
@@ -39,7 +39,7 @@ describe('AcmednsFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockWebsocket([
         mockCall('acme.dns.authenticator.create'),
@@ -139,7 +139,7 @@ describe('AcmednsFormComponent', () => {
         cloudflare_email: 'aaa@aaa.com',
       },
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('edits existing DNS Authenticator when form opened for edit is submitted', async () => {
@@ -168,6 +168,6 @@ describe('AcmednsFormComponent', () => {
         },
       ],
     );
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

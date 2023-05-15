@@ -21,10 +21,10 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/in
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
 @UntilDestroy()
@@ -52,7 +52,7 @@ export class ChartFormComponent implements OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<ChartFormComponent>,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private appSchemaService: AppSchemaService,
@@ -285,6 +285,6 @@ export class ChartFormComponent implements OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInService.close();
+    this.slideInRef.close();
   }
 }

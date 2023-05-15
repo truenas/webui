@@ -23,7 +23,7 @@ import { CommonAppsToolbarButtonsComponent } from 'app/pages/apps-old/common-app
 import { CatalogSummaryDialogComponent } from 'app/pages/apps-old/dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -73,7 +73,7 @@ export class CatalogComponent implements OnInit, AfterViewInit {
     private mdDialog: MatDialog,
     private ws: WebSocketService,
     private appService: ApplicationsService,
-    private slideInService: IxSlideInService,
+    private slideInService: IxSlideIn2Service,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
   ) {}
@@ -205,8 +205,8 @@ export class CatalogComponent implements OnInit, AfterViewInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        const chartWizard = this.slideInService.open(ChartFormComponent, { wide: true });
-        chartWizard.setChartCreate(catalogAppInfo);
+        const slideInRef = this.slideInService.open(ChartFormComponent, { wide: true });
+        slideInRef.componentInstance.setChartCreate(catalogAppInfo);
       }
     });
   }

@@ -8,10 +8,10 @@ import {
   ChartFormValue, ChartRelease, ChartSchemaNodeConf,
 } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ChartFormComponent', () => {
   let spectator: Spectator<ChartFormComponent>;
@@ -333,7 +333,7 @@ describe('ChartFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockWebsocket([
         mockCall('chart.release.create'),

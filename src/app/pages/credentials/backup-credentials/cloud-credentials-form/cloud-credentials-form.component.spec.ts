@@ -12,6 +12,7 @@ import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,7 +26,6 @@ import {
   TokenProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CloudCredentialsFormComponent } from './cloud-credentials-form.component';
 
@@ -85,7 +85,7 @@ describe('CloudCredentialsFormComponent', () => {
       S3ProviderFormComponent,
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockWebsocket([
@@ -240,7 +240,7 @@ describe('CloudCredentialsFormComponent', () => {
           s3attribute: 's3 value',
         },
       }]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalledWith();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
@@ -271,7 +271,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalledWith();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 

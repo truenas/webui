@@ -9,13 +9,13 @@ import helptext from 'app/helptext/apps/apps';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { AppLoaderService, DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('KubernetesSettingsComponent', () => {
@@ -60,7 +60,7 @@ describe('KubernetesSettingsComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(AppLoaderService),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
     ],
   });

@@ -8,6 +8,8 @@ import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   CertificateAcmeAddComponent,
@@ -22,7 +24,7 @@ import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit.component';
 
@@ -46,7 +48,9 @@ describe('CertificateEditComponent', () => {
         mockCall('certificate.update'),
       ]),
       mockProvider(MatDialog),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: {} },
       mockProvider(DialogService),
     ],
     declarations: [
@@ -84,7 +88,7 @@ describe('CertificateEditComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('opens modal for certificate when View/Download Certificate is pressed', async () => {
@@ -124,15 +128,17 @@ describe('CertificateEditComponent', () => {
     });
 
     it('opens slidein for creating ACME certificates when Create ACME Certificate is pressed', async () => {
-      const slideInService = spectator.inject(IxSlideInService);
+      const slideInService = spectator.inject(IxSlideIn2Service);
       const mockSetCsr = jest.fn();
       slideInService.open.mockReturnValue({
-        setCsr: mockSetCsr,
-      });
+        componentInstance: {
+          setCsr: mockSetCsr,
+        },
+      } as IxSlideInRef<unknown>);
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create ACME Certificate' }));
       await createButton.click();
 
-      expect(slideInService.close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(slideInService.open).toHaveBeenCalledWith(CertificateAcmeAddComponent);
       expect(mockSetCsr).toHaveBeenCalledWith({
         ...certificate,

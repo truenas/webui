@@ -16,7 +16,7 @@ import { ManageCatalogSummaryDialogComponent } from 'app/pages/apps-old/dialogs/
 import { CatalogAddFormComponent } from 'app/pages/apps-old/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/apps-old/forms/catalog-edit-form/catalog-edit-form.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -69,7 +69,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     private mdDialog: MatDialog,
     private dialogService: DialogService,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInService: IxSlideIn2Service,
     private layoutService: LayoutService,
   ) {}
 
@@ -87,10 +87,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
         this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
       }
-    });
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refresh();
     });
   }
 
@@ -157,14 +153,16 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       message: helptext.thirdPartyRepoWarning.message,
       buttonText: helptext.thirdPartyRepoWarning.btnMsg,
       hideCheckbox: true,
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
-      () => this.slideInService.open(CatalogAddFormComponent),
-    );
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      const slideInRef = this.slideInService.open(CatalogAddFormComponent);
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
+    });
   }
 
   edit(catalog: Catalog): void {
-    const modal = this.slideInService.open(CatalogEditFormComponent);
-    modal.setCatalogForEdit(catalog);
+    const slideInRef = this.slideInService.open(CatalogEditFormComponent);
+    slideInRef.componentInstance.setCatalogForEdit(catalog);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   refreshRow(row: Catalog): void {

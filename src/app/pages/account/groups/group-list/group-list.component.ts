@@ -22,7 +22,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
@@ -71,7 +71,7 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideIn: IxSlideIn2Service,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
@@ -128,7 +128,8 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(GroupFormComponent).setupForm();
+    const slideInRef = this.slideIn.open(GroupFormComponent);
+    slideInRef.componentInstance.setupForm();
   }
 
   onToggle(row: Group): void {

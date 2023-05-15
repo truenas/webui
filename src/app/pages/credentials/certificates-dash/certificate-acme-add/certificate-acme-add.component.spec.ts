@@ -12,13 +12,13 @@ import {
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CertificateAcmeAddComponent', () => {
@@ -50,7 +50,7 @@ describe('CertificateAcmeAddComponent', () => {
         mockJob('certificate.create', fakeSuccessfulJob()),
         mockCall('certificate.get_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockProvider(MatDialog, {
         open: () => mockEntityJobComponentRef,
@@ -103,6 +103,6 @@ describe('CertificateAcmeAddComponent', () => {
       }],
     );
     expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

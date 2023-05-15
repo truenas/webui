@@ -14,6 +14,7 @@ import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -22,7 +23,6 @@ import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserFormComponent } from './user-form.component';
 
 const mockUser = {
@@ -81,9 +81,7 @@ describe('UserFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        onClose$: of(true),
-      }),
+      mockProvider(IxSlideInRef),
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({ mode: 16832 })),
         downloadBlob: jest.fn(),

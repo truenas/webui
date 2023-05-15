@@ -37,7 +37,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -126,7 +126,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private applicationsStore: AvailableAppsStore,
-    private slideInService: IxSlideInService,
+    private slideInService: IxSlideIn2Service,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
   ) {

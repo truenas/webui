@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -14,7 +15,6 @@ import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credential
 import {
   AppLoaderService, DialogService, StorageService,
 } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairFormComponent', () => {
@@ -36,7 +36,7 @@ describe('SshKeypairFormComponent', () => {
         mockCall('keychaincredential.create'),
         mockCall('keychaincredential.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(StorageService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),

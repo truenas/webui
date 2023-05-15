@@ -14,13 +14,13 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import {
   AppLoaderService, DialogService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -65,7 +65,7 @@ export class KubernetesSettingsComponent implements OnInit {
     protected ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<KubernetesSettingsComponent>,
     private appService: ApplicationsService,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
@@ -93,7 +93,7 @@ export class KubernetesSettingsComponent implements OnInit {
               return;
             }
             this.loader.close();
-            this.slideInService.close();
+            this.slideInRef.close();
           }),
           catchError((error) => {
             this.loader.close();

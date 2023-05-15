@@ -8,11 +8,11 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('GroupFormComponent', () => {
@@ -32,7 +32,7 @@ describe('GroupFormComponent', () => {
         mockCall('group.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
       provideMockStore(),
     ],
