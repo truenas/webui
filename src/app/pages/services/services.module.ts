@@ -20,7 +20,6 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -78,7 +77,6 @@ import { routing } from './services.routing';
     ServiceNfsComponent,
     ServiceTftpComponent,
     ServiceUpsComponent,
-    ServiceDynamicDnsComponent,
     ServiceSmbComponent,
     ServiceSnmpComponent,
     ServiceWebdavComponent,
