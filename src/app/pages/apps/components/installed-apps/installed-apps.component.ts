@@ -65,7 +65,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   get filteredApps(): ChartRelease[] {
     return this.dataSource
-      .filter((app) => app.name.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
+      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
   }
 
   get allAppsChecked(): boolean {
