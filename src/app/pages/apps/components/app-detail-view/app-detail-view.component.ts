@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
@@ -12,8 +11,6 @@ import {
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -47,12 +44,9 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   train: string;
 
   isLoading$ = new BehaviorSubject<boolean>(false);
-  wasPoolSet = false;
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
-  similarApps: AvailableApp[] = [];
-  similarAppsLoading$ = new BehaviorSubject<boolean>(false);
   items: GalleryItem[];
   images = fakeImages;
 
@@ -68,25 +62,17 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     return this.translate.instant('Loading');
   }
 
-  get description(): string {
-    return this.app?.app_readme?.replace(/<[^>]*>/g, '');
-  }
-
   constructor(
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
-    private router: Router,
     private translate: TranslateService,
-    private appService: ApplicationsService,
-    private matDialog: MatDialog,
     private applicationsStore: AvailableAppsStore,
     private gallery: Gallery,
   ) { }
 
   ngOnInit(): void {
     this.listenForRouteChanges();
-    this.loadIfPoolSet();
     this.setLightbox();
   }
 
@@ -102,7 +88,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
         }),
         tap(() => {
           this.isLoading$.next(true);
-          this.similarAppsLoading$.next(true);
         }),
         untilDestroyed(this),
       )
@@ -124,69 +109,19 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     ).pipe(untilDestroyed(this)).subscribe({
       next: (app) => {
         this.app = app;
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         this.isLoading$.next(false);
         this.cdr.markForCheck();
-
-        this.loadSimilarApps();
       },
       error: () => {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
       },
-    });
-  }
-
-  private loadSimilarApps(): void {
-    this.similarAppsLoading$.next(true);
-    this.appService.getAppSimilarApps(this.app).pipe(untilDestroyed(this)).subscribe({
-      next: (apps) => {
-        this.similarApps = apps;
-        this.similarAppsLoading$.next(false);
-      },
-      error: () => {
-        this.similarAppsLoading$.next(false);
-      },
-    });
-  }
-
-  private loadIfPoolSet(): void {
-    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      this.wasPoolSet = Boolean(pool);
-      this.cdr.markForCheck();
-    });
-  }
-
-  navigateToAllInstalledPage(): void {
-    this.applicationsStore.installedApps$.pipe(
-      map((apps) => apps.filter((app) => (app.chart_metadata.name === this.appId
-        && app.catalog === this.catalog && app.catalog_train === this.train))),
-      untilDestroyed(this),
-    ).subscribe((apps) => {
-      if (apps.length) {
-        this.router.navigate(['/apps', 'installed', apps[0].name]);
-      } else {
-        this.router.navigate(['/apps', 'installed']);
-      }
-    });
-  }
-
-  navigateToInstallPage(): void {
-    this.router.navigate(['/apps', 'available', this.catalog, this.train, this.appId, 'install']);
-  }
-
-  showChoosePoolModal(): void {
-    const dialog = this.matDialog.open(SelectPoolDialogComponent);
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.loadIfPoolSet();
     });
   }
 
   setLightbox(): void {
     this.items = this.images.map((image) => new ImageItem({ src: image.srcUrl, thumb: image.previewUrl }));
     this.gallery.ref('lightbox').load(this.items);
-  }
-
-  trackByAppId(id: number, app: AvailableApp): string {
-    return `${app.catalog}-${app.train}-${app.name}`;
   }
 }

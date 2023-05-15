@@ -1,8 +1,77 @@
+@import 'scss-imports/splitview';
+
 :host {
   color: var(--fg1);
   display: block;
   position: relative;
   width: 100%;
+}
+
+::ng-deep {
+  @media(max-width: $breakpoint-xs) {
+    .app-detail-page-title {
+      border: 0;
+      margin-bottom: 0;
+
+      .actions-container {
+        padding: 0;
+      }
+    }
+  }
+}
+
+.hide-xs-md {
+  display: flex;
+  flex: 1;
+
+  @media(max-width: $breakpoint-md) {
+    display: none !important;
+  }
+}
+
+.show-xs-md {
+  display: none !important;
+
+  @media(max-width: $breakpoint-md) {
+    display: flex !important;
+    flex: 1;
+  }
+}
+
+.flex-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+
+  @media(max-width: $breakpoint-md) {
+    flex-wrap: wrap;
+  }
+
+  @media(max-width: $breakpoint-xs) {
+    padding: 0 10px;
+  }
+
+  .app-wrapper {
+    position: relative;
+    width: 70%;
+
+    @media(max-width: $breakpoint-xs) {
+      > section:first-child {
+        display: block !important;
+
+        > div {
+          margin-top: 16px;
+          max-height: inherit;
+          max-width: 100% !important;
+          padding: 0;
+        }
+      }
+    }
+
+    @media(max-width: $breakpoint-md) {
+      width: 100%;
+    }
+  }
 }
 
 ::ng-deep ix-page-title-header {
@@ -16,85 +85,20 @@
   }
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-
-  .installed-badge {
-    background-color: var(--contrast-darkest);
-    color: var(--green);
-    cursor: pointer;
-    font-family: var(--font-family-header);
-    font-size: 1.3em;
-    font-weight: bold;
-    left: -10px;
-    line-height: 1.3em;
-    padding: 2px 13px 2px 11px;
-    position: absolute;
-    top: 6px;
-    z-index: 1;
-  }
-}
-
-.app-info {
-  padding-left: 2rem;
-
-  .catalog-header {
-    margin-bottom: 0.5rem;
-  }
-}
-
-.app-list-item {
-  align-items: center;
-  display: flex;
-  gap: 0.5rem;
-  margin: 0.25rem 0;
-}
-
-.app-description {
-  flex-basis: 1;
-  max-height: 180px;
-  overflow-y: auto;
-  padding-left: 2rem;
-}
-
-$app-image-size: 144px;
-
-.app-image-holder {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
-  min-height: $app-image-size;
-  width: 100%;
-
-  img {
-    display: inline-block;
-    height: auto;
-    object-fit: contain;
-    width: 100%;
-  }
-}
-
-.app-image-loader {
-  ::ng-deep span {
-    border-radius: 50%;
-    height: $app-image-size;
-    margin: 0;
-    width: $app-image-size;
-  }
-}
-
-.screenshots {
-  display: grid;
+.screenshots,
+.screenshots-loader {
+  display: grid !important;
   gap: 14px;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   width: 100%;
+
+  @media(max-width: $breakpoint-xs) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .screenshot {
   position: relative;
-
 
   ix-icon {
     display: inline-flex;
@@ -113,23 +117,6 @@ $app-image-size: 144px;
     max-width: 100%;
     object-fit: cover;
     width: 100%;
-  }
-}
-
-.similar-apps {
-  display: flex;
-  flex-flow: row wrap;
-  gap: 8px;
-
-  ix-app-card {
-    box-sizing: border-box;
-    flex-basis: calc(50% - 4px);
-  }
-}
-
-.similar-app-loader {
-  ::ng-deep span {
-    height: 100px;
   }
 }
 
@@ -154,6 +141,31 @@ $app-image-size: 144px;
 .app-info-cards {
   flex: 1;
   padding: 0 1rem 0 2rem;
+
+  @media(max-width: $breakpoint-md) {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0;
+
+    .app-info-card {
+      margin: 0;
+      max-width: 100%;
+    }
+  }
+
+  @media(max-width: $breakpoint-xs) {
+    display: block;
+    margin-bottom: 16px;
+
+    .app-info-card {
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 
 section {

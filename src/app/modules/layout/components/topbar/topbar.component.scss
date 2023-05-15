@@ -47,9 +47,12 @@
   width: 50px;
 }
 
-.topbar-button-right {
-  &.overflow-visible {
-    overflow: visible;
+::ng-deep .topbar-button-right {
+  &.mat-badge.mat-badge-small.mat-badge-overlap.mat-badge-after {
+    .mat-badge-content {
+      right: 0;
+      top: 0;
+    }
   }
 }
 

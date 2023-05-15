@@ -37,7 +37,7 @@ export class FailoverComponent implements OnInit {
         if (isConnected) {
           this.loader.close();
           // ws is connected
-          this.router.navigate(['/session/signin']);
+          this.router.navigate(['/sessions/signin']);
         } else {
           setTimeout(() => {
             this.isWsConnected();
@@ -49,14 +49,14 @@ export class FailoverComponent implements OnInit {
 
   ngOnInit(): void {
     // Replace URL so that we don't reboot again if page is refreshed.
-    this.location.replaceState('/session/signin');
+    this.location.replaceState('/sessions/signin');
     this.dialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (error: WebsocketError) => { // error on reboot
         this.dialogService.error(this.errorHandler.parseWsError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
-            this.router.navigate(['/session/signin']);
+            this.router.navigate(['/sessions/signin']);
           });
       },
       complete: () => { // show reboot screen
