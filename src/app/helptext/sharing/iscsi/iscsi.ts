@@ -307,7 +307,7 @@ export const helptextSharingIscsi = {
   step1_label: T('Create or Choose Block Device'),
 
   name_placeholder: T('Name'),
-  name_tooltip: T('Keep the name short. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).'),
+  name_tooltip: T('Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).'),
 
   disk_placeholder: T('Device'),
   disk_tooltip: T('Select the unused zvol or zvol snapshot. Select\

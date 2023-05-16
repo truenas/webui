@@ -117,7 +117,7 @@ export class DialogService {
   }
 
   closeAllDialogs(): void {
-    for (const openDialog of this.dialog.openDialogs) {
+    for (const openDialog of (this.dialog.openDialogs || [])) {
       openDialog.close();
     }
   }
