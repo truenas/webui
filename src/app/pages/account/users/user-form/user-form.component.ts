@@ -250,7 +250,7 @@ export class UserFormComponent {
       shell: values.shell,
       smb: values.smb,
       ssh_password_enabled: values.ssh_password_enabled,
-      sshpubkey: values.sshpubkey.trim(),
+      sshpubkey: values.sshpubkey ? values.sshpubkey.trim() : values.sshpubkey,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       username: values.username,
