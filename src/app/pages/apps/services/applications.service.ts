@@ -47,15 +47,6 @@ export class ApplicationsService {
     return this.ws.call('app.categories');
   }
 
-  getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
-    const queryFilters: QueryFilter<AvailableApp>[] = [
-      ['name', '=', name],
-      ['catalog', '=', catalog],
-      ['train', '=', train],
-    ];
-    return this.ws.call('app.available', [queryFilters]).pipe(map((app) => app[0]));
-  }
-
   getLatestApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
     return this.getAppsFetchCall('app.latest', filters).pipe(filterIgnoredApps());
   }
@@ -89,13 +80,17 @@ export class ApplicationsService {
     if (filters.catalogs?.length) {
       firstOption.push(['catalog', 'in', filters.catalogs]);
     }
+
+    if (filters.categories?.includes(AppExtraCategory.Recommended)) {
+      firstOption.push(['recommended', '=', true]);
+    }
+
+    filters.categories = filters.categories?.filter((category) => !category.includes(AppExtraCategory.Recommended));
+
     if (filters.categories?.length) {
       (firstOption as unknown as QueryParams<AvailableApp>[]).push(
         ['OR', filters.categories.map((category) => ['categories', 'rin', category])] as unknown as QueryParams<AvailableApp>,
       );
-    }
-    if (filters.categories?.includes(AppExtraCategory.Recommended)) {
-      firstOption.push(['recommended', '=', true]);
     }
 
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
