@@ -1,5 +1,9 @@
 @import 'scss-imports/cssvars';
 
+h2 {
+  margin-bottom: 16px;
+}
+
 .similar-apps,
 .similar-apps-loader {
   display: grid !important;
