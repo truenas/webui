@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,6 +32,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     target_dataset: [null as string, Validators.required],
     readonly: [ReadOnlyMode.Require],
     encryption: [false],
+    encryption_inherit: [false],
     encryption_key_format: [EncryptionKeyFormat.Hex],
     encryption_key_generate: [true],
     encryption_key_hex: [''],
@@ -57,7 +58,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
 
   constructor(
-    private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private replicationService: ReplicationService,
@@ -65,6 +65,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
   get hasEncryption(): boolean {
     return this.form.value.encryption;
+  }
+
+  get hasEncryptionInherit(): boolean {
+    return this.form.value.encryption_inherit;
   }
 
   get isHex(): boolean {
@@ -100,6 +104,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     };
 
     if (values.encryption) {
+      payload.encryption_inherit = values.encryption_inherit;
+    }
+
+    if (values.encryption && !values.encryption_inherit) {
       payload.encryption_key_format = values.encryption_key_format;
       payload.encryption_key_location = values.encryption_key_location_truenasdb
         ? truenasDbKeyLocation
