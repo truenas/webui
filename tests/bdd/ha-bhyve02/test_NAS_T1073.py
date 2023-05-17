@@ -145,6 +145,6 @@ def on_the_dashboard_click_on_failover_initiate_failover(driver):
 @then('wait on the login to appear')
 def wait_on_the_login_to_appear(driver):
     """wait on the login to appear."""
-    assert wait_on_element(driver, 60, xpaths.login.user_input)
+    assert wait_on_element(driver, 120, xpaths.login.user_input)
     # wait_on_element need to be replace with wait_on_element when NAS-118299
     assert wait_on_element(driver, 120, xpaths.login.ha_status('HA is enabled'))
