@@ -15,7 +15,17 @@
   <ng-template #appSources>
     <ng-container *ngIf="sources?.length; else notAvailable">
       <ng-container *ngFor="let source of sources; index as i">
-        <a [href]="source" [title]="source" [ixTest]="[app.name, 'source']">{{ 'Source {srcNo}{space}' | translate: { srcNo: i +1, space: i +1 >= sources.length ? '' : ', ' } }}</a>
+        <a
+          [href]="source" 
+          [title]="source" 
+          [ixTest]="[app.name, 'source']">
+          {{
+            '{src}{space}' | translate: {
+                src: source.replace('http://', '').replace('https://', '').replace('www.', ''), 
+                space: i +1 >= sources.length ? '' : ', ' 
+              } 
+          }}
+        </a>
       </ng-container>
     </ng-container>
   </ng-template>
