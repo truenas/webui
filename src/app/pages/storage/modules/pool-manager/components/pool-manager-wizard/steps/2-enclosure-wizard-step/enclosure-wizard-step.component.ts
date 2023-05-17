@@ -19,7 +19,6 @@ export enum DispersalStrategy {
 @Component({
   selector: 'ix-enclosure-wizard-step',
   templateUrl: './enclosure-wizard-step.component.html',
-  styleUrls: ['./enclosure-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureWizardStepComponent implements OnInit {

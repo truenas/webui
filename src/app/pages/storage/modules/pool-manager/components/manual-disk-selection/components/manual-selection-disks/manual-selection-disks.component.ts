@@ -7,13 +7,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { FileSizePipe } from 'ngx-filesize';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import {
   ManualDiskSelectionFilters,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
+import {
+  ManualSelectionDisk,
+} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 
 interface EnclosureDisk extends Disk {
@@ -149,7 +151,7 @@ export class ManualSelectionDisksComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent): void {
-    const disk = event.data as PoolManagerVdevDisk;
+    const disk = event.data as ManualSelectionDisk;
     this.store$.toggleActivateDrag(false);
     this.store$.removeDiskFromVdev(disk);
   }

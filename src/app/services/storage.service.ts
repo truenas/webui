@@ -500,10 +500,12 @@ export class StorageService {
     return vdevTypes.size > 1;
   }
 
-  validateVdevs(category: VdevType,
+  validateVdevs(
+    category: VdevType,
     vdevs: TopologyItem[],
     disks: Disk[],
-    dataVdevs?: TopologyItem[]): string[] {
+    dataVdevs?: TopologyItem[],
+  ): string[] {
     const warnings: string[] = [];
     let isMixedVdevCapacity = false;
     let isMixedDiskCapacity = false;

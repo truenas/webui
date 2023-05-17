@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { PoolManagerVdevDisk } from 'app/classes/pool-manager-disk.class';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import {
@@ -128,7 +127,7 @@ export class ManualSelectionVdevComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent): void {
-    const disk = event.data as PoolManagerVdevDisk;
+    const disk = event.data as ManualSelectionDisk;
     if (!disk.vdevUuid && disk.vdevUuid === this.vdev.uuid) {
       return;
     }
