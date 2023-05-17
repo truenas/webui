@@ -123,8 +123,8 @@ def end_user_license_agreement_truenas_should_appear(driver, agreement):
 @then('click Agree')
 def click_agree(driver):
     """click Agree."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.i_Agree, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.i_Agree).click()
     if wait_on_element(driver, 2, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close)
         driver.find_element_by_xpath(xpaths.button.close).click()

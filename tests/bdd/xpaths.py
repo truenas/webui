@@ -10,6 +10,7 @@ class button:
     initiate_failover = '//button[@ix-auto="button__INITIATE FAILOVER"]'
     failover = '//button[span/text()="Failover"]'
     leave_Domain = '//button[@ix-auto="button__LEAVE DOMAIN"]'
+    i_Agree = '//button[@ix-auto="button__I AGREE"]'
 
 
 class checkbox:

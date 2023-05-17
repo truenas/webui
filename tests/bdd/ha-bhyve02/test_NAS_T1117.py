@@ -52,8 +52,8 @@ def you_see_the_dashboard_go_to_directory_services_and_select_nis(driver):
     """you see the Dashboard go to Directory Services and select NIS."""
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
     assert wait_on_element(driver, 5, xpaths.dashboard.system_information)
-    if wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    if wait_on_element(driver, 5, xpaths.button.i_Agree, 'clickable'):
+        driver.find_element_by_xpath(xpaths.button.i_Agree).click()
     if wait_on_element(driver, 2, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close)
         driver.find_element_by_xpath(xpaths.button.close).click()
@@ -147,8 +147,8 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
     """on the Dashboard, make sure HA is enabled."""
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
     assert wait_on_element(driver, 60, xpaths.dashboard.system_information)
-    if wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    if wait_on_element(driver, 5, xpaths.button.i_Agree, 'clickable'):
+        driver.find_element_by_xpath(xpaths.button.i_Agree).click()
     if wait_on_element(driver, 3, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()

@@ -115,6 +115,9 @@ def disable_twofactor_authentication_with_api_and_login(driver):
     assert wait_on_element(driver, 5, xpaths.login.signin_button)
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
+    if wait_on_element(driver, 5, xpaths.button.i_Agree, 'clickable'):
+        driver.find_element_by_xpath(xpaths.button.i_Agree).click()
+
 
 @then('enable Two-Factor Authentication with API')
 def enable_twofactor_authentication_with_api(driver):
