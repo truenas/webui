@@ -105,7 +105,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   }
 
   setLightbox(): void {
-    this.items = this.app.screenshots.map((image) => new ImageItem({ src: image, thumb: image }));
+    this.items = this.app?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
     this.gallery.ref('lightbox').load(this.items);
   }
 }

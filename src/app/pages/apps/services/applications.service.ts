@@ -47,15 +47,6 @@ export class ApplicationsService {
     return this.ws.call('app.categories');
   }
 
-  getAvailableItem(name: string, catalog: string, train: string): Observable<AvailableApp> {
-    const queryFilters: QueryFilter<AvailableApp>[] = [
-      ['name', '=', name],
-      ['catalog', '=', catalog],
-      ['train', '=', train],
-    ];
-    return this.ws.call('app.available', [queryFilters]).pipe(map((app) => app[0]));
-  }
-
   getLatestApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
     return this.getAppsFetchCall('app.latest', filters).pipe(filterIgnoredApps());
   }
