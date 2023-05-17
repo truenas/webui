@@ -40,6 +40,7 @@ def the_browser_is_open_on_virtal_hostname_and_logged_in(driver, virtal_hostname
         assert wait_on_element(driver, 4, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, xpaths.breadcrumb.dashboard):
+        driver.refresh()
         assert wait_on_element(driver, 10, xpaths.sideMenu.root)
         element = driver.find_element_by_xpath(xpaths.sideMenu.root)
         driver.execute_script("arguments[0].scrollIntoView();", element)
