@@ -7,7 +7,6 @@ from function import (
     wait_on_element,
     wait_on_element_disappear,
     is_element_present,
-    refresh_if_element_missing,
     get
 )
 from pytest_bdd import (
@@ -468,8 +467,8 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"truenas")]')
-    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 300, '//div[contains(.,"truenas-b")]')
+    # wait_on_element need to be replace with wait_on_element when NAS-118299
+    assert wait_on_element(driver, 300, '//div[contains(.,"truenas-b")]')
     assert wait_on_element(driver, 60, xpaths.topToolbar.ha_enable)
     time.sleep(5)
 
