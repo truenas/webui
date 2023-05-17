@@ -7,6 +7,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const fakeAppInfo = {
   name: 'elastic-search',
@@ -45,6 +46,7 @@ describe('AppUpgradeDialogComponent - test 1', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(AppLoaderService),
+      mockProvider(ErrorHandlerService),
       mockProvider(ApplicationsService),
       {
         provide: MAT_DIALOG_DATA,
