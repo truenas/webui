@@ -24,32 +24,16 @@
     h5,
     h6 {
       color: var(--fg2);
+      font-weight: 500;
       margin: 0;
     }
 
-    h1 {
-      font-size: 28px;
-    }
-
-    h2 {
-      font-size: 25px;
-    }
-
-    h3 {
-      font-size: 22px;
-    }
-
-    h4 {
-      font-size: 19px;
-    }
-
-    h5 {
-      font-size: 16px;
-    }
-
-    h6 {
-      font-size: 13px;
-    }
+    h1 { font-size: 19px; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 15px; }
+    h4 { font-size: 14px; }
+    h5 { font-size: 13px; }
+    h6 { font-size: 12px; }
   }
 }
 
@@ -66,10 +50,4 @@
   display: flex;
   justify-content: flex-end;
   padding-top: 6px;
-
-  a {
-    color: var(--primary);
-    cursor: pointer;
-    text-decoration: underline;
-  }
 }

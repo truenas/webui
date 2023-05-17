@@ -9,13 +9,13 @@
       </div>
       <div *ngIf="isCollapsed && showMoreLess" class="gradient"></div>
       <div *ngIf="showMoreLess" class="more-less">
-        <a
-          class="link"
+        <button
+          mat-button
           ixTest="show-more-less"
           (click)="changeCollapsed()"
         >
           {{ isCollapsed ? ('View More' | translate) : ('Collapse' | translate) }}
-        </a>
+        </button>
       </div>
     </div>
   </mat-card-content>
