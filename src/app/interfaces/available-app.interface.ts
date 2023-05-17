@@ -17,6 +17,7 @@ export interface AvailableApp {
   catalog: string;
   last_update: ApiTimestamp;
   recommended: boolean;
+  screenshots: string[];
   maintainers: AppMaintainer[];
   tags: string[];
 }
