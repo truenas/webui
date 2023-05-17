@@ -1,12 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { combineLatest } from 'rxjs';
-import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
-import { OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import {
+  PoolManagerStore,
+  PoolManagerTopologyCategory,
+} from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @UntilDestroy()
 @Component({
@@ -15,99 +17,29 @@ import { OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/stor
   styleUrls: ['./configuration-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfigurationPreviewComponent implements OnInit {
-  formValue: PoolManagerWizardFormValue;
+export class ConfigurationPreviewComponent {
+  protected readonly vdevTypeLabels = vdevTypeLabels;
 
-  private disksSelectedManually = false;
-  private vdevsCountString: string;
-  private totalUsableCapacity: string;
+  protected name$ = this.store.name$;
+  protected encryption$ = this.store.encryption$;
+  protected topology$ = this.store.topology$;
+  protected totalCapacity$ = this.store.totalUsableCapacity$;
 
   constructor(
-    private poolManagerStore: OldPoolManagerStore,
+    private store: PoolManagerStore,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
   ) {}
-
-  ngOnInit(): void {
-    combineLatest([
-      this.poolManagerStore.formValue$,
-      this.poolManagerStore.disksSelectedManually$,
-      this.poolManagerStore.dataVdevs$,
-      this.poolManagerStore.totalUsableCapacity$,
-    ])
-      .pipe(untilDestroyed(this))
-      .subscribe(([formValue, disksSelectedManually, dataVdevs, totalUsableCapacity]) => {
-        this.formValue = formValue;
-        this.disksSelectedManually = disksSelectedManually;
-        this.vdevsCountString = `${dataVdevs.length} VDEVs`;
-        this.totalUsableCapacity = this.translate.instant('{size} Total', {
-          size: filesize(totalUsableCapacity, { standard: 'iec' }),
-        });
-        this.cdr.markForCheck();
-      });
-  }
 
   get unknownProp(): string {
     return this.translate.instant('None');
   }
 
-  get name(): string {
-    return this.formValue.general?.name || this.unknownProp;
-  }
-
-  private get vdevTypeConfiguration(): string {
-    if (!this.formValue?.data?.vdevsNumber || !this.formValue?.data?.type) {
-      return '';
+  protected getCategoryDescription(category: PoolManagerTopologyCategory): string {
+    if (category.hasCustomDiskSelection) {
+      return `${this.translate.instant('Manual layout')} | ${category.vdevs.length} VDEVs`;
     }
 
-    if (this.disksSelectedManually) {
-      return this.translate.instant('Manual layout');
-    }
-
-    return `${this.formValue.data.vdevsNumber} × ${this.formValue.data.type}`;
-  }
-
-  private get formattedDiskSize(): string {
-    return filesize(Number(this.formValue.data.sizeAndType[0] || 0), { standard: 'iec' });
-  }
-
-  private get disksConfiguration(): string {
-    if (!this.formValue?.data?.sizeAndType) {
-      return '';
-    }
-
-    if (this.disksSelectedManually) {
-      return `${this.vdevsCountString} | ${this.totalUsableCapacity}`;
-    }
-
-    return `${this.formValue.data.width} × ${this.formattedDiskSize} (${this.formValue.data.sizeAndType[1]})`;
-  }
-
-  get data(): string {
-    if (!this.vdevTypeConfiguration || !this.disksConfiguration) {
-      return this.unknownProp;
-    }
-
-    return `${this.vdevTypeConfiguration} | ${this.disksConfiguration}`;
-  }
-
-  get log(): string {
-    return this.unknownProp;
-  }
-
-  get spare(): string {
-    return this.unknownProp;
-  }
-
-  get cache(): string {
-    return this.unknownProp;
-  }
-
-  get metadata(): string {
-    return this.unknownProp;
-  }
-
-  get encryption(): string {
-    return this.formValue.general?.encryption_standard || this.unknownProp;
+    const diskSize = filesize(Number(category.diskSize || 0), { standard: 'iec' });
+    return `${category.vdevsNumber} × ${category.layout} | ${category.width} × ${diskSize} (${category.diskType})`;
   }
 }

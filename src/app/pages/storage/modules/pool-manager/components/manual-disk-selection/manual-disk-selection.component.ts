@@ -4,16 +4,23 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
-import { ManagerVdev } from 'app/classes/manager-vdev.class';
-import { PoolManagerVdev } from 'app/classes/pool-manager-vdev.class';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/store/manual-disk-selection-store.service';
-import { PoolManagerState, OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
+import {
+  ManualSelectionVdev,
+} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
+import { ManualDiskSelectionState, ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import {
+  manualSelectionVdevsToVdevs,
+  vdevsToManualSelectionVdevs,
+} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/utils/vdevs-to-manual-selection-vdevs.utils';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ManualDiskSelectionLayout {
-  type: CreateVdevLayout;
-  // TODO:
+export interface ManualDiskSelectionParams {
+  layout: CreateVdevLayout;
+  enclosures: Enclosure[];
+  inventory: UnusedDisk[];
+  vdevs: UnusedDisk[][];
 }
 
 @UntilDestroy()
@@ -24,15 +31,16 @@ export interface ManualDiskSelectionLayout {
 })
 export class ManualDiskSelectionComponent implements OnInit {
   manualSelectionState: ManualDiskSelectionState;
-  isSaveDisabled$ = this.manualDiskSelectionStore.dataVdevs$.pipe(
+  isSaveDisabled$ = this.manualDiskSelectionStore.vdevs$.pipe(
     map((vdevs) => vdevs.some((vdev) => !!vdev.errorMsg)),
   );
 
+  private oldVdevs: UnusedDisk[][] = [];
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ManualDiskSelectionLayout,
+    @Inject(MAT_DIALOG_DATA) protected data: ManualDiskSelectionParams,
     private dialogRef: MatDialogRef<ManualDiskSelectionComponent>,
-    public manualDiskSelectionStore: ManualDiskSelectionStore,
-    public poolManagerStore: OldPoolManagerStore,
+    protected manualDiskSelectionStore: ManualDiskSelectionStore,
   ) {}
 
   ngOnInit(): void {
@@ -40,32 +48,25 @@ export class ManualDiskSelectionComponent implements OnInit {
     this.manualDiskSelectionStore.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.manualSelectionState = state;
     });
-    this.poolManagerStore.select((state: PoolManagerState) => {
-      return {
-        vdevs: state.vdevs,
-        allUnusedDisks: state.allUnusedDisks,
-        unusedDisks: state.unusedDisks,
-      };
-    }).pipe(untilDestroyed(this)).subscribe(({ vdevs, allUnusedDisks, unusedDisks }) => {
-      this.manualDiskSelectionStore.patchState((state: ManualDiskSelectionState) => {
-        return {
-          ...state,
-          vdevs: { ...vdevs },
-          unusedDisks: [...unusedDisks],
-          allUnusedDisks: [...allUnusedDisks],
-        };
-      });
+
+    this.oldVdevs = this.data.vdevs;
+    this.manualDiskSelectionStore.initialize({
+      vdevs: vdevsToManualSelectionVdevs(this.data.vdevs),
+      inventory: this.data.inventory,
+      layout: this.data.layout,
     });
   }
 
   onSaveSelection(): void {
-    this.dialogRef.close(true);
+    const newVdevs = this.manualSelectionState.vdevs;
+    // TODO: Compare if there are any changes.
+
+    this.dialogRef.close(manualSelectionVdevsToVdevs(newVdevs));
   }
 
-  trackVdevById = (_: number, vdev: ManagerVdev): string => vdev.uuid;
+  trackVdevById = (_: number, vdev: ManualSelectionVdev): string => vdev.uuid;
 
   addVdev(): void {
-    const vdev = new PoolManagerVdev(this.data.type, 'data');
-    this.manualDiskSelectionStore.addDataVdev(vdev);
+    this.manualDiskSelectionStore.addVdev();
   }
 }

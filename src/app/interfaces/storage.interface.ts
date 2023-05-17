@@ -60,7 +60,6 @@ export interface TopologyItemStats {
   physical_ashift: number;
 }
 
-// As returned by disk.query
 export interface EnclosureAndSlot {
   number: number;
   slot: number;

@@ -4,9 +4,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
-import { OldPoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
-import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/pool-manager.utils';
+import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
 
 @UntilDestroy()
 @Component({
@@ -16,20 +16,17 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryComponent implements OnInit {
-  protected sizeDisksMap: SizeDisksMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
+  protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected readonly DiskType = DiskType;
 
   constructor(
-    private poolManagerStore: OldPoolManagerStore,
+    private poolManagerStore: PoolManagerStore,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.unusedDisks$.pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
-      this.sizeDisksMap = {
-        [DiskType.Hdd]: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
-        [DiskType.Ssd]: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
-      };
+    this.poolManagerStore.inventory$.pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
+      this.sizeDisksMap = getDiskTypeSizeMap(unusedDisks);
       this.cdr.markForCheck();
     });
   }

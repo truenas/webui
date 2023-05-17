@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 // TODO: This may actually be several enums. Consider splitting.
 export enum TopologyItemType {
   Disk = 'DISK',
@@ -41,3 +43,12 @@ export enum VdevType {
   Spare = 'spare',
   Special = 'special',
 }
+
+export const vdevTypeLabels = new Map<VdevType, string>([
+  [VdevType.Data, T('Data')],
+  [VdevType.Log, T('Log')],
+  [VdevType.Special, T('Special')],
+  [VdevType.Spare, T('Spare')],
+  [VdevType.Dedup, T('Dedup')],
+  [VdevType.Cache, T('Cache')],
+]);

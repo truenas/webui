@@ -65,6 +65,10 @@ export class SystemGeneralService {
 
   getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
 
+  isEnterprise$ = this.getProductType$.pipe(
+    map((productType) => productType === ProductType.ScaleEnterprise),
+  );
+
   getCopyrightYear$ = this.ws.call('system.build_time').pipe(
     map((buildTime) => {
       return fromUnixTime(buildTime.$date / 1000).getFullYear();

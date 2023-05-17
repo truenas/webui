@@ -1,0 +1,56 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+  ></ix-input>
+  <ix-checkbox
+    formControlName="encryption"
+    [label]="'Encryption' | translate"
+  ></ix-checkbox>
+  <ix-select
+    *ngIf="form.controls.encryption.value"
+    formControlName="encryptionStandard"
+    [label]="'Encryption Standard' | translate"
+    [options]="encryptionAlgorithmOptions$"
+    [required]="true"
+  ></ix-select>
+
+  <div *ngIf="nonUniqueSerialDisks.length" class="spacer-top">
+    <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
+    <ix-radio-group
+      formControlName="allowNonUniqueSerialDisks"
+      [label]="'Allow non-unique serialed disks' | translate"
+      [tooltip]="nonUniqueSerialDisksTooltip"
+      [required]="true"
+      [options]="allowNonUniqueSerialDisksOptions$"
+      [inlineFields]="true"
+    ></ix-radio-group>
+  </div>
+  <div *ngIf="disksWithExportedPools.length" class="spacer-bottom">
+    <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+    <ix-checkbox-list
+      formControlName="allowDisksFromExportedPools"
+      inlineFieldFlex="33%"
+      [label]="'Select disks you want to use' | translate"
+      [tooltip]="exportedPoolsTooltip"
+      [options]="exportedPoolsOptions$"
+      [inlineFields]="true"
+    ></ix-checkbox-list>
+  </div>
+
+  <ix-form-actions>
+    <div class="step-buttons">
+      <button
+        mat-button
+        matStepperNext
+        color="primary"
+        type="button"
+        ixTest="next"
+        [disabled]="form.invalid"
+      >
+        {{ 'Next' | translate }}
+      </button>
+    </div>
+  </ix-form-actions>
+</ng-container>
