@@ -32,7 +32,7 @@ export class ConfigResetComponent implements OnInit {
       next: (isConnected) => {
         if (isConnected) {
           this.loader.close();
-          this.router.navigate(['/session/signin']);
+          this.router.navigate(['/sessions/signin']);
         } else {
           setTimeout(() => {
             this.isWsConnected();
@@ -44,7 +44,7 @@ export class ConfigResetComponent implements OnInit {
 
   ngOnInit(): void {
     // Replace URL so that we don't reset config again if page is refreshed.
-    this.location.replaceState('/session/signin');
+    this.location.replaceState('/sessions/signin');
 
     this.dialog.closeAll();
     this.resetConfigSubmit();

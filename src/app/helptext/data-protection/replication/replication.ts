@@ -160,6 +160,8 @@ to determine snapshots creation order.'),
 
   encryption_tooltip: repwizardhelptext.encryption_tooltip,
 
+  encryption_inherit_tooltip: repwizardhelptext.encryption_inherit_tooltip,
+
   encryption_key_format_tooltip: repwizardhelptext.encryption_key_format_tooltip,
 
   encryption_key_generate_tooltip: repwizardhelptext.encryption_key_generate_tooltip,
