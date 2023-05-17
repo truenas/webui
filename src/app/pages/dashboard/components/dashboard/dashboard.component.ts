@@ -64,6 +64,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   reorderMode = false;
+  isSavingState = false;
   screenType = ScreenType.Desktop;
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
@@ -477,7 +478,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onConfirm(): void {
     this.saveState(this.dashState);
     delete this.previousState;
-    this.exitReorderMode();
   }
 
   private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
@@ -538,6 +538,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private exitReorderMode(): void {
     this.reorderMode = false;
+    this.isSavingState = false;
 
     if (this.previousState) {
       this.setDashState(this.previousState);
@@ -556,9 +557,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
+    this.isSavingState = true;
+
     this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
-      .subscribe();
+      .subscribe({
+        next: () => this.exitReorderMode(),
+        error: () => this.exitReorderMode(),
+      });
   }
 
   private loadPoolData(): void {
