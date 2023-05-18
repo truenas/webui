@@ -116,6 +116,8 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
           nextElement = document.getElementById(id);
           if (idx === path.length - 1) {
             nextElement?.scrollIntoView({ block: 'center' });
+            nextElement.classList.add('highlighted');
+            setTimeout(() => nextElement.classList.remove('highlighted'), 999);
           }
         });
       }

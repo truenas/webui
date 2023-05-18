@@ -1062,4 +1062,10 @@ body {
   .mdc-checkbox__background {
     transform: scale(0.9);
   }
+
+  ix-dynamic-form-item.highlighted {
+    > div:first-child {
+      outline: 1px solid var(--primary);
+    }
+  }
 }
