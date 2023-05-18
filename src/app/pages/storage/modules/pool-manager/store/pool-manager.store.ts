@@ -9,7 +9,7 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
-import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs.service';
+import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import {
   categoryCapacity,
   topologyCategoryToDisks,

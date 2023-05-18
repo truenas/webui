@@ -1,10 +1,11 @@
+import { GiB } from 'app/constants/bytes.constant';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   PoolManagerTopology,
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { topologyCategoryToDisks, topologyToDisks } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { categoryCapacity, topologyCategoryToDisks, topologyToDisks } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 describe('topologyCategoryToDisks', () => {
   it('converts topology category to an array of disks', () => {
@@ -47,5 +48,18 @@ describe('topologyToDisks', () => {
     } as PoolManagerTopology;
 
     expect(topologyToDisks(topology)).toEqual([disk1, disk2, disk3, disk4, disk5]);
+  });
+});
+
+describe('categoryCapacity', () => {
+  it('returns the sum of all disks in a category', () => {
+    const category = {
+      vdevs: [
+        [{ size: GiB }, { size: 2 * GiB }],
+        [{ size: 3 * GiB }],
+      ],
+    } as PoolManagerTopologyCategory;
+
+    expect(categoryCapacity(category)).toEqual(6 * GiB);
   });
 });
