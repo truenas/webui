@@ -231,7 +231,7 @@ def input_a_name_leaving_the_inherit_encrypted_option_checked(driver):
 @then('click the SUBMIT button, the dataset should be created')
 def click_the_submit_button_the_dataset_should_be_created(driver):
     """click the SUBMIT button, the dataset should be created."""
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"encryptdataset")]')
 
@@ -278,8 +278,7 @@ def input_in_the_dataset_passphrase_and_click_the_submit_button(driver):
     """input in the Dataset Passphrase and click the Submit button."""
     assert wait_on_element(driver, 7, '//input[@placeholder="Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Dataset Passphrase"]').send_keys('jfads7uop89tw5j')
-    assert wait_on_element(driver, 5, xpaths.button.summit
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()

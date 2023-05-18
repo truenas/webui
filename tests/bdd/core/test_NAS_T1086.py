@@ -82,8 +82,7 @@ def select_add_dataset_input_a_name_leaving_the_inherit_encrypted_option_checked
 @then('click the SUBMIT button, the inherit encrypted dataset should be created')
 def click_the_submit_button_the_inherit_encrypted_dataset_should_be_created(driver):
     """click the SUBMIT button, the inherit encrypted dataset should be created."""
-    assert wait_on_element(driver, 7, npsmhs., 'cli.summit
-    driver.find_element_by_xpath(npsmhs.).clic.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"encrypted1")]')
 
@@ -121,8 +120,7 @@ def set_new_encryption_propertiespassword(driver):
 @then('click the SUBMIT button, the dataset should be created')
 def click_the_submit_button_the_dataset_should_be_created(driver):
     """click the SUBMIT button, the dataset should be created."""
-    assert wait_on_element(driver, 7, npsmhs., 'cli.summit
-    driver.find_element_by_xpath(npsmhs.).clic.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"encrypted2")]')
 
@@ -166,8 +164,7 @@ def unlock_the_root_dataset_enable_unlock_child_datasets(driver):
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Unlock Children"]', 'class', 'mat-checkbox-checked')
     driver.find_element_by_xpath('(//input[@placeholder="Dataset Passphrase"])[1]').send_keys('abcd1234')
     driver.find_element_by_xpath('(//input[@placeholder="Dataset Passphrase"])[2]').send_keys('Abcd1234!')
-    assert wait_on_element(driver, 5, npsmhs., 'cli.summit
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
@@ -198,8 +195,7 @@ def unlock_the_root_dataset_disable_unlock_child_datasets(driver):
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Unlock Children"]', 'class', 'mat-checkbox-checked')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Unlock Children"]').click()
     driver.find_element_by_xpath('//input[@placeholder="Dataset Passphrase"]').send_keys('abcd1234')
-    assert wait_on_element(driver, 5, xpaths.button.summit
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
@@ -293,8 +289,7 @@ def unlock_the_child_dataset(driver):
     assert wait_on_element(driver, 5, '//h4[contains(.,"Unlock Datasets")]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Dataset Passphrase"]').send_keys('abcd1234!')
-    assert wait_on_element(driver, 5, xpaths.button.summit
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
