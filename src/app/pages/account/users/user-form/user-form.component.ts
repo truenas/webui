@@ -272,7 +272,7 @@ export class UserFormComponent {
         this.isFormLoading = true;
         this.cdr.markForCheck();
 
-        let request$: Observable<unknown>;
+        let request$: Observable<number>;
         if (this.isNewUser) {
           request$ = this.ws.call('user.create', [{
             ...body,
@@ -289,6 +289,12 @@ export class UserFormComponent {
         }
 
         request$.pipe(
+          switchMap((id) => {
+            if (!this.isNewUser && body.home_create && body.sshpubkey) {
+              return this.ws.call('user.update', [id, { sshpubkey: body.sshpubkey }]);
+            }
+            return of(id);
+          }),
           switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
           map((users) => users[0]),
           untilDestroyed(this),
