@@ -111,8 +111,7 @@ def click_verify_credential_to_verify_it_is_valid(driver):
 @then(parsers.parse('click Summit, {account_name} should be added to the list'))
 def click_summit_account_name_should_be_added_to_the_list(driver, account_name):
     """click Summit, account_name should be added to the list."""
-    assert wait_on_element(driver, 5, xpaths.button.summit
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[normalize-space(text())="amazons3creds"]')
 
