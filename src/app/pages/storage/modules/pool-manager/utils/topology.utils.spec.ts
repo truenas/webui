@@ -5,7 +5,11 @@ import {
   PoolManagerTopology,
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { categoryCapacity, topologyCategoryToDisks, topologyToDisks } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import {
+  categoryCapacity,
+  topologyCategoryToDisks,
+  topologyToDisks,
+} from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 describe('topologyCategoryToDisks', () => {
   it('converts topology category to an array of disks', () => {
