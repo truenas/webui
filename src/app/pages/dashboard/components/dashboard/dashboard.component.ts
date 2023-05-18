@@ -6,7 +6,9 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  filter, map, take,
+} from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -69,6 +71,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
   dashStateReady = false;
+  preferencesApplied = false;
   dashState: DashConfigItem[]; // Saved State
   previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
@@ -562,7 +565,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => this.exitReorderMode(),
+        next: () => {
+          this.exitReorderMode();
+          this.store$.dispatch(dashboardStateLoaded({ dashboardState: state }));
+        },
         error: () => this.exitReorderMode(),
       });
   }
@@ -601,7 +607,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe((preferences: PreferencesState) => {
       if (preferences.dashboardState) {
-        this.applyState(preferences.dashboardState);
+        if (!this.preferencesApplied) {
+          this.applyState(preferences.dashboardState);
+          this.preferencesApplied = true;
+        }
       } else {
         this.availableWidgets = this.generateDefaultConfig();
         this.setDashState(this.availableWidgets);
