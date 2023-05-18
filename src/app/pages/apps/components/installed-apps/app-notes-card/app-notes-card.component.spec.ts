@@ -1,5 +1,6 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { MarkdownModule } from 'ngx-markdown';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppNotesCardComponent } from './app-notes-card.component';
 
@@ -13,12 +14,23 @@ describe('AppNotesCardComponent', () => {
       name: 'rude-cardinal',
     },
     update_available: true,
+    info: {
+      notes: `
+      # Welcome to TrueNAS SCALE
+      Thank you for installing MinIO App.
+      # Documentation
+      Documentation for this app can be found at https://docs.ixsystems.com.
+      # Bug reports
+      If you find a bug in this app, please file an issue at https://jira.ixsystems.com
+      `,
+    },
   } as ChartRelease;
 
   const createComponent = createComponentFactory({
     component: AppNotesCardComponent,
-    declarations: [],
-    providers: [],
+    imports: [
+      MarkdownModule.forRoot(),
+    ],
   });
 
   beforeEach(() => {
@@ -33,13 +45,21 @@ describe('AppNotesCardComponent', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('Notes');
   });
 
-  it('shows notes', () => {
-    const notes = spectator.queryAll('.notes-item');
-    expect(notes).toHaveLength(4);
+  it('shows titles', () => {
+    const titles = spectator.queryAll('.notes-list h1');
+    expect(titles).toHaveLength(3);
 
-    expect(notes[0]).toHaveText('Thank you for installing test-app');
-    expect(notes[1]).toHaveText('Your release is named rude-cardinal');
-    expect(notes[2]).toHaveText('To learn more about the release, try:');
-    expect(notes[3]).toHaveText('$ mychart cli command');
+    expect(titles[0]).toHaveText('Welcome to TrueNAS SCALE');
+    expect(titles[1]).toHaveText('Documentation');
+    expect(titles[2]).toHaveText('Bug reports');
+  });
+
+  it('shows paragraphs', () => {
+    const paragraphs = spectator.queryAll('.notes-list p');
+    expect(paragraphs).toHaveLength(3);
+
+    expect(paragraphs[0]).toHaveText('Thank you for installing MinIO App.');
+    expect(paragraphs[1]).toHaveText('Documentation for this app can be found at https://docs.ixsystems.com.');
+    expect(paragraphs[2]).toHaveText('If you find a bug in this app, please file an issue at https://jira.ixsystems.com');
   });
 });
