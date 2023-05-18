@@ -40,9 +40,6 @@ def the_browser_is_open_on_virtal_hostname_and_logged_in(driver, virtal_hostname
         assert wait_on_element(driver, 4, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, xpaths.breadcrumb.dashboard):
-        driver.refresh()
-        if wait_on_element(driver, 7, xpaths.button.i_Agree, 'clickable'):
-            driver.find_element_by_xpath(xpaths.button.i_Agree).click()
         assert wait_on_element(driver, 10, xpaths.sideMenu.root)
         element = driver.find_element_by_xpath(xpaths.sideMenu.root)
         driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -133,7 +130,6 @@ def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
 def on_the_login_wait_to_see_ha_is_enabled_before_login(driver):
     """on the login, wait to see HA is enabled before login."""
     assert wait_on_element(driver, 120, xpaths.login.user_input)
-    driver.refresh()
     assert wait_on_element(driver, 300, xpaths.login.ha_status('HA is enabled'))
     assert wait_on_element(driver, 7, xpaths.login.user_input)
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
