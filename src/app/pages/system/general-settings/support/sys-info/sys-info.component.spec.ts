@@ -67,7 +67,7 @@ describe('SysInfoComponent', () => {
     expect(infoRows).toEqual({
       'Customer Name:': licenseInfo.customer_name,
       'Model:': systemInfo.model,
-      'System Serial:': systemInfo.serial,
+      'Licensed Serials:': systemInfo.serial,
       'Features:': licenseInfo.features.join(', '),
       'Contract Type:': licenseInfo.contract_type,
       'Expiration Date:': `${licenseInfo.expiration_date} ( EXPIRED )`,
