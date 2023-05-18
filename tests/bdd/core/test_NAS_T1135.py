@@ -96,8 +96,8 @@ def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name,
     driver.find_element_by_xpath('//a[text()="Proceed"]').click()
     assert wait_on_element(driver, 10, '//div[@class="login-header" and contains(.,"Sign in to Dropbox to link with TrueNAS CloudSync")]')
 
-    if wait_on_element(driver, 7, '//iframe[@id="consent-iframe"]'):
-        driver.switch_to.frame('consent-iframe')
+    if wait_on_element(driver, 7, '//iframe[@id="ccpa-iframe"]'):
+        driver.switch_to.frame('ccpa-iframe')
         wait_on_element(driver, 7, '//button[contains(text(),"Accept All")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(text(),"Accept All")]').click()
         driver.switch_to.default_content()
