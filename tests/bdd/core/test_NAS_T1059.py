@@ -98,8 +98,7 @@ def input_ftptest_for_name_select_generic_as_share_type_and_click_submit(driver)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Share Type_Generic"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_Generic"]').click()
-    assert wait_on_element(driver, 7, xpaths.button.summit
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('the dataset should be created without error')

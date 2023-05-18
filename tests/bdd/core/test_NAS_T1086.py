@@ -254,8 +254,7 @@ def set_paraphrase_encryption_with_a_password(driver):
 @then('click the SUBMIT button, the new dataset should be created')
 def click_the_submit_button_the_new_dataset_should_be_created(driver):
     """click the SUBMIT button, the new dataset should be created."""
-    assert wait_on_element(driver, 7, xpaths.button.summit
-    driver.find_element_by_xpath(xpaths.button.summit
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"encrypted3")]')
 
