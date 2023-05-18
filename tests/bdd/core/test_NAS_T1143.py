@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -82,8 +83,8 @@ def input_backblaze_b2_for_name_select_generic_as_share_type_and_click_submit(dr
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_Generic"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_Generic"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('the dataset should be created without error')
@@ -212,8 +213,8 @@ def select_the_path_folder_then_under_directoryfiles_choose_backblaze_b2(driver,
 def under_directory_files_choose_backblaze_b2_and_under_transfer_mode_select_copy(driver):
     """under Directory/Files, choose backblaze_b2 and under Transfer Mode select COPY."""
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 

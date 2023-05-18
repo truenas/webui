@@ -11,6 +11,7 @@ class button:
     failover = '//button[span/text()="Failover"]'
     leave_Domain = '//button[@ix-auto="button__LEAVE DOMAIN"]'
     i_Agree = '//button[@ix-auto="button__I AGREE"]'
+    summit = '//button[@ix-auto="button__SUBMIT"]'
 
 
 class checkbox:
@@ -30,6 +31,10 @@ class domain_Credentials:
 class input:
     username = '//input[@ix-auto="input__Username"]'
     password = '//input[@ix-auto="input__Password"]'
+
+
+class isqsi:
+    authorized_Access_Title = '//div[contains(text(),"Authorized Access")]'
 
 
 class login:

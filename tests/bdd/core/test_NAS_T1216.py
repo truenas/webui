@@ -4,6 +4,7 @@
 import time
 import glob
 import os
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -103,7 +104,7 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
     # save
     time.sleep(2)
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 

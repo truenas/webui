@@ -3,6 +3,7 @@
 
 import time
 from selenium.webdriver import ActionChains
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -87,8 +88,8 @@ def input_dropbox_cloud_for_name_select_generic_as_share_type_and_click_submit(d
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_Generic"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_Generic"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('the dataset should be created without error')
@@ -150,8 +151,8 @@ def select_the_path_folder_then_under_directoryfiles_choose_dropbox_cloud(driver
 def under_transfer_mode_select_copy_click_save(driver):
     """under Transfer Mode, select COPY, click Save."""
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 

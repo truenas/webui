@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -95,8 +96,7 @@ def input_nopeer1_for_zvol_name_and_1_gib_for_zvol_size(driver, zvol_name, zvol_
 @then('click the SUBMIT button, Please wait should appear')
 def click_the_submit_button_Please_wait_should_appear(driver):
     """click the SUBMIT button, Please wait should appear."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 

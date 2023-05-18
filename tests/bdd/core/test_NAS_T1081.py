@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -88,7 +89,7 @@ def confirm_the_dataset_will_be_unencrypted_click_the_submit_button(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
@@ -132,8 +133,8 @@ def confirm_encryption_and_generate_key_is_set_and_click_the_submit_button(drive
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Encryption"]', 'class', 'mat-checkbox-checked')
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'clickable')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit)
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 

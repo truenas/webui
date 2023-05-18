@@ -2,6 +2,7 @@
 """High Availability (tn-bhyve02) feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from selenium.webdriver.common.action_chains import ActionChains
@@ -342,7 +343,7 @@ def input_dataset_name_my_acl_dataset_and_click_save(driver, dataset_name):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then(parsers.parse('"{dataset_name}" should be created'))

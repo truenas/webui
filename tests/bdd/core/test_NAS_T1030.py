@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -186,7 +187,7 @@ def all_associated_target_should_be_already_deleted(driver):
 @then("click on the Authorized Access tab, the Authorized Access tab should appear")
 def click_on_the_Authorized_Access_tab_the_Authorized_Access_tab_should_appear(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element(driver, 7, xpaths.isqsi.authorized_Access_Title)
 
 
 @then("click on the Authorized Acces three-dot button and click Delete")

@@ -3,6 +3,7 @@
 
 import time
 from selenium.webdriver.common.keys import Keys
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -93,8 +94,8 @@ def set_compression_level_to_lz4_and_zfs_deduplication_to_off(driver):
 @then(parsers.parse('click the SUBMIT button, {zvol_name} zvol should be created and in the Tank list'))
 def click_the_submit_button_testzvol_zvol_should_be_created_and_in_the_tank_list(driver, zvol_name):
     """click the SUBMIT button, testzvol zvol should be created and in the Tank list."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, f'//span[contains(.,"{zvol_name}")]')
 

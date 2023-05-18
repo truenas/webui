@@ -1,6 +1,7 @@
 # coding=utf-8
 """Enterprise HA UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from function import (

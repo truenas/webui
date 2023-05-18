@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from selenium.webdriver import ActionChains
@@ -122,8 +123,8 @@ def input_my_smb_test_share_as_description(driver, description):
 @then('Click Summit')
 def click_summit(driver):
     """Click Summit."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.summit
+    driver.find_element_by_xpath(xpaths.button.summit
     assert wait_on_element(driver, 7, '//h1[contains(.,"Configure ACL")]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 

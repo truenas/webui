@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from function import (
@@ -93,8 +94,8 @@ def input_ds1_for_zvol_name_and_1_gib_for_zvol_size(driver, zvol_name, zvol_size
     driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').send_keys(zvol_name)
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Size for this zvol"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_size)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.summit)
+    rsc.click_The_Summit_Button(driver)
 
 
 @then(parsers.parse('"{zvol_name}" should be created'))

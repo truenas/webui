@@ -4,6 +4,7 @@
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -90,8 +91,7 @@ def input_guest_for_name_select_smb_as_share_type_and_click_submit(driver):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Share Type_SMB"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('the dataset should be created without error')
@@ -150,8 +150,7 @@ def click_advanced_options_and_check_the_allow_guest_access_box(driver):
 @then('click Submit, the new share should be created without error')
 def click_submit_the_new_share_should_be_created_without_error(driver):
     """click Submit, the new share should be created without error."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"guest_share")]')
 

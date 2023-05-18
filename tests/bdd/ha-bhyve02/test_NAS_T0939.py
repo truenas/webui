@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from function import (
@@ -121,8 +122,8 @@ def input_my_smb_test_share_as_description(driver, description):
 @then('Click Summit')
 def click_summit(driver):
     """Click Summit."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
 
 
 @then(parsers.parse('The "{smbname}" should be added'))

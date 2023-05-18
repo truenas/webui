@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (bhyve02) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from function import (

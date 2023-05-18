@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from function import (
@@ -92,7 +93,7 @@ def input_dataset_name_my_wheel_dataset_and_click_save(driver, dataset_name):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then(parsers.parse('"{dataset_name}" should be created'))
