@@ -5,6 +5,6 @@ from function import (
 )
 
 
-def click_theSommit_button(driver):
+def click_The_Summit_Button(driver):
     assert wait_on_element(driver, 7, xpaths.button.summit, 'clickable')
     driver.find_element_by_xpath(xpaths.button.summit).click()
