@@ -9,14 +9,16 @@ export function atLeastOne(otherControlName: string, fieldPlacehoders: [string, 
     // Initializing the validator.
     const thisControl = control;
     const otherControl = control.parent.get(otherControlName) as FormControl;
-    if (!otherControl) {
-      throw new Error(
-        'matchOtherValidator(): other control is not found in parent group',
+    if (!thisControl) {
+      if (!otherControl) {
+        throw new Error(
+          'matchOtherValidator(): other control is not found in parent group',
+        );
+      }
+      otherControl.valueChanges.subscribe(
+        () => { thisControl.updateValueAndValidity(); },
       );
     }
-    otherControl.valueChanges.subscribe(
-      () => { thisControl.updateValueAndValidity(); },
-    );
 
     if (!otherControl) {
       return null;
