@@ -14,7 +14,7 @@
     </section>
 
     <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-    <section>
+    <section *ngIf="(isLoading$ | async) || app.screenshots?.length">
       <h2>{{ 'Screenshots' | translate }}</h2>
       <div fxLayout="row nowrap" fxLayoutGap="16px">
         <div *ngIf="isLoading$ | async; else appScreenshots" class="screenshots-loader">
@@ -24,15 +24,11 @@
         </div>
 
         <ng-template #appScreenshots>
-          <div *ngIf="app.screenshots?.length; else emptyScreenshots" class="screenshots" gallerize>
+          <div class="screenshots" gallerize>
             <div *ngFor="let image of app.screenshots" class="screenshot">
               <img class="screenshot-image" [src]="image" />
             </div>
           </div>
-        </ng-template>
-
-        <ng-template #emptyScreenshots>
-          <h4>{{ 'No screenshots found.' | translate }}</h4>
         </ng-template>
       </div>
     </section>
