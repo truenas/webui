@@ -1,5 +1,5 @@
 import { EnclosureSlotTopologyStatus } from 'app/enums/enclosure-slot-status.enum';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk, TopologyItem, TopologyItemStats } from './storage.interface';
 
 export interface Enclosure {
@@ -57,7 +57,7 @@ export interface EnclosureSlot {
   fault: boolean;
   identify: boolean;
   pool?: string | null;
-  topologyCategory?: PoolTopologyCategory | null;
+  topologyCategory?: VdevType | null;
   vdev?: TopologyItem | null;
 }
 

@@ -3,12 +3,14 @@
     <div class="inner-container">
       <div class="left-pane">
         <div class="header dialog-header"><h3>{{ 'Manual Selection' | translate }}</h3></div>
-        <ix-manual-selection-disks></ix-manual-selection-disks>
+        <ix-manual-selection-disks
+          [enclosures]="data.enclosures"
+        ></ix-manual-selection-disks>
       </div>
       <mat-divider class="divider" [vertical]="true"></mat-divider>
       <div class="right-pane">
         <div class="header vdevs-header">
-          <h3>{{ 'Data VDevs' | translate }}</h3>
+          <h3>{{ 'VDevs' | translate }}</h3>
           <div class="header-actions">
             <button
               mat-button
@@ -22,8 +24,9 @@
         <mat-divider class="header-divider"></mat-divider>
         <div class="vdevs-container">
           <ix-manual-selection-vdev
-            *ngFor="let vdev of manualDiskSelectionStore.dataVdevs$ | async; trackBy: trackVdevById"
+            *ngFor="let vdev of manualDiskSelectionStore.vdevs$ | async; trackBy: trackVdevById"
             [vdev]="vdev"
+            [layout]="data.layout"
           ></ix-manual-selection-vdev>
         </div>
         <mat-divider class="divider actions-divider"></mat-divider>
