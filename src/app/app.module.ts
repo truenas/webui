@@ -15,6 +15,7 @@ import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
+import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -115,6 +116,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     }),
     MatButtonModule,
     TestIdModule,
+    MarkdownModule.forRoot({ loader: HttpClient }),
   ],
   declarations: [
     AppComponent,
