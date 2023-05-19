@@ -93,15 +93,13 @@ def confirm_the_dataset_will_be_unencrypted_click_the_submit_button(driver):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
-@then('verify that the new dataset is not encrypted')
-def verify_that_the_new_dataset_is_not_encrypted(driver):
-    """verify that the new dataset is not encrypted."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Pools")]')
-    assert wait_on_element(driver, 7, '//td[@id="tbody__name_encrypted"]/span/span/mat-icon')
-    time.sleep(0.5)
-    assert attribute_value_exist(driver, '//td[@id="tbody__name_encrypted"]/span/span/mat-icon', 'fonticon', 'mdi-lock-open-variant')
-    assert wait_on_element(driver, 7, '//td[contains(.,"notencrypteddataset")]/span/span/mat-icon')
-    assert attribute_value_exist(driver, '//td[contains(.,"notencrypteddataset")]/span/span/mat-icon', 'svgicon', 'anti-lock')
+@then('verify that the unencrypted dataset can\'t be create and go back to the pool page')
+def verify_that_the_unencrypted_dataset_cant_be_create_and_go_back_to_the_pool_page(driver):
+    """verify that the unencrypted dataset can't be create and go back to the pool page."""
+    assert wait_on_element(driver, 5, '//mat-error[contains(.,"Cannot create an unencrypted dataset within an encrypted dataset (encrypted)")]')
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(text(),"Pools")]')
 
 
 @then('click on tank three dots button, select Add Dataset')
