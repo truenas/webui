@@ -37,7 +37,32 @@ export class AppUpgradeDialogComponent {
     private appService: ApplicationsService,
     public dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public data: ChartUpgradeDialogConfig,
-  ) {}
+  ) {
+    this.dialogConfig = data;
+
+    this.versionOptions.set(this.dialogConfig.upgradeSummary.latest_version, {
+      ...this.dialogConfig.upgradeSummary,
+      fetched: true,
+    });
+
+    if (this.dialogConfig.upgradeSummary.available_versions_for_upgrade) {
+      this.dialogConfig.upgradeSummary.available_versions_for_upgrade.forEach((availableVersion) => {
+        if (!this.versionOptions.has(availableVersion.version)) {
+          this.versionOptions.set(availableVersion.version, {
+            latest_version: availableVersion.version,
+            latest_human_version: availableVersion.human_version,
+            changelog: null,
+            container_images_to_update: null,
+            item_update_available: null,
+            available_versions_for_upgrade: null,
+          });
+        }
+      });
+    }
+
+    this.selectedVersionKey = Array.from(this.versionOptions.keys())[0];
+    this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
+  }
 
   hasUpdateImages(): boolean {
     return this.selectedVersion?.container_images_to_update
