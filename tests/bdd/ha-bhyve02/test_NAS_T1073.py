@@ -32,8 +32,8 @@ def the_browser_is_open_navigate_to_tnbhyve03tnixsystemsnet(driver, nas_host):
     global hostname
     hostname = nas_host
     if nas_host not in driver.current_url:
-        driver.get(f"http://{nas_host}/ui/sessions/signin")
-        time.sleep(1)
+        driver.get(f"http://{nas_host}")
+        time.sleep(2)
 
 
 @when(parsers.parse('if the login page appears, enter "{user}" and "{password}"'))
@@ -109,7 +109,9 @@ def disable_twofactor_authentication_with_api_and_login(driver):
     """disable Two-Factor Authentication with API and login."""
     results = put(hostname, 'auth/twofactor/', ('root', passwd), {"enabled": False})
     assert results.status_code == 200, results.text
-    assert wait_on_element(driver, 5, xpaths.login.user_input)
+    driver.refresh()
+    time.sleep(2)
+    assert wait_on_element(driver, 7, xpaths.login.user_input)
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
     driver.find_element_by_xpath(xpaths.login.password_input).clear()
