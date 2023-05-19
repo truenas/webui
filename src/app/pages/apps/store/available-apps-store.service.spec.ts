@@ -2,6 +2,7 @@ import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/sp
 import { Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
+import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
@@ -333,7 +334,7 @@ describe('AvailableAppsStore', () => {
           ...initialState,
           availableApps: [...availableApps],
           categories: [
-            'New and Updated', 'Recommended', 'storage', 'media',
+            'storage', 'media',
           ],
           installedApps: [...installedChartReleases],
           isKubernetesStarted: true,
@@ -350,27 +351,33 @@ describe('AvailableAppsStore', () => {
   it('returns the correct searched apps from string', () => {
     spectator.service.applySearchQuery('plex');
     testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.searchedApps$).toBe('a', {
-        a: [
+      expectObservable(spectator.service.searchedApps$).toBe('b', {
+        b: [
           {
             apps: [],
-            category: 'New and Updated',
+            category: AppExtraCategory.NewAndUpdated,
             title: 'New & Updated Apps',
             totalApps: 0,
           },
           {
             apps: [],
-            category: 'Recommended',
+            category: AppExtraCategory.Recommended,
             title: 'Recommended Apps',
             totalApps: 0,
           },
-          // {
-          //   title: 'P',
-          //   category: 'P',
-          //   totalApps: 1,
-          //   apps: [{...plexApp}]
-          // }
-        ] as AppsByCategory[],
+          {
+            apps: [],
+            category: 'storage',
+            title: 'storage',
+            totalApps: 0,
+          },
+          {
+            apps: [{ ...plexApp }],
+            category: 'media',
+            title: 'media',
+            totalApps: 1,
+          },
+        ],
       });
     });
   });
