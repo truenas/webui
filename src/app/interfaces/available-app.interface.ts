@@ -19,6 +19,11 @@ export interface AvailableApp {
   recommended: boolean;
   maintainers: AppMaintainer[];
   tags: string[];
+  home: string;
+  latest_human_version: string;
+  screenshots: string[];
+  sources: string[];
+  versions: unknown;
 }
 
 export interface AppMaintainer {
