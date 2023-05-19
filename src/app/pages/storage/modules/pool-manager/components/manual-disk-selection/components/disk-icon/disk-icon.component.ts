@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/storage.interface';
 
 @Component({
@@ -9,4 +10,6 @@ import { Disk } from 'app/interfaces/storage.interface';
 })
 export class DiskIconComponent {
   @Input() disk: Disk;
+
+  protected readonly DiskType = DiskType;
 }
