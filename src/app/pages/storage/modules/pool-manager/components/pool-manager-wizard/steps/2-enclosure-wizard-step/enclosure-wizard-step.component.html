@@ -4,16 +4,18 @@
     [options]="dispersalOptions$"
   ></ix-radio-group>
 
-  <ix-select
-    *ngIf="isLimitingToSingle"
-    formControlName="limitToEnclosure"
-    [required]="true"
-    [options]="enclosureOptions$"
-    [label]="'Enclosure' | translate"
-  ></ix-select>
+  <div class="limiting">
+    <ix-select
+      *ngIf="isLimitingToSingle"
+      formControlName="limitToEnclosure"
+      [required]="true"
+      [options]="enclosureOptions$"
+      [label]="'Enclosure' | translate"
+    ></ix-select>
 
-  <div class="description">
-    {{ helptext.enclosureOptionsDescription | translate }}
+    <div *ngIf="isLimitingToSingle" class="description">
+      {{ helptext.enclosureOptionsDescription | translate }}
+    </div>
   </div>
 </ng-container>
 
