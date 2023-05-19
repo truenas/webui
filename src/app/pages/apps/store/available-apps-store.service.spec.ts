@@ -5,7 +5,7 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
+import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
@@ -485,6 +485,96 @@ describe('AvailableAppsStore', () => {
           'media',
           AppExtraCategory.NewAndUpdated,
           AppExtraCategory.Recommended,
+        ],
+      });
+    });
+  });
+
+  it('emits the available apps returned by middleware', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.availableApps$).toBe('a', {
+        a: [...availableApps],
+      });
+    });
+  });
+
+  it('emits the installed apps returned by middleware', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.installedApps$).toBe('a', {
+        a: [...installedChartReleases],
+      });
+    });
+  });
+
+  it('emits the pool returned by middleware', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.selectedPool$).toBe('a', {
+        a: 'ix-applications-pool',
+      });
+    });
+  });
+
+  it('emits the correct filter values when they are updated', () => {
+    testScheduler.run(({ expectObservable }) => {
+      spectator.service.applyFilters({
+        categories: ['storage'],
+        catalogs: ['OFFICIAL'],
+        sort: AppsFiltersSort.Name,
+      });
+      expectObservable(spectator.service.filterValues$).toBe('a', {
+        a: {
+          categories: ['storage'],
+          catalogs: ['OFFICIAL'],
+          sort: AppsFiltersSort.Name,
+        } as AppsFiltersValues,
+      });
+    });
+  });
+
+  it('emits the kubernetes status', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isKubernetesStarted$).toBe('a', {
+        a: true,
+      });
+    });
+  });
+
+  it('emits apps grouped by categories for dashboard', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.appsByCategories$).toBe('a', {
+        a: [
+          {
+            apps: [
+              { ...installedAndRecommendedApp },
+            ],
+            category: 'New and Updated',
+            title: 'New & Updated Apps',
+            totalApps: 1,
+          },
+          {
+            apps: [
+              { ...installedAndRecommendedApp, categories: ['storage', AppExtraCategory.Recommended] },
+            ],
+            category: 'Recommended',
+            title: 'Recommended Apps',
+            totalApps: 1,
+          },
+          {
+            apps: [
+              { ...installedAndRecommendedApp },
+            ],
+            category: 'storage',
+            title: 'storage',
+            totalApps: 1,
+          },
+          {
+            apps: [
+              { ...plexApp },
+            ],
+            category: 'media',
+            title: 'media',
+            totalApps: 1,
+          },
         ],
       });
     });
