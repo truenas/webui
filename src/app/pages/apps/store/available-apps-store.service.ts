@@ -82,10 +82,11 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly isFilterApplied$ = this.select((state) => state.isFilterApplied);
   readonly searchQuery$ = this.select((state) => state.searchQuery);
-  readonly appsCategories$ = this.select((state) => state.categories.unshift(
+  readonly appsCategories$ = this.select((state) => [
+    ...state.categories,
     AppExtraCategory.NewAndUpdated,
     AppExtraCategory.Recommended,
-  ));
+  ]);
   readonly availableApps$ = this.select((state) => state.availableApps);
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly selectedPool$ = this.select((state) => state.selectedPool);

@@ -467,4 +467,26 @@ describe('AvailableAppsStore', () => {
       });
     });
   });
+
+  it('emits the updated search query when search query is applied', () => {
+    testScheduler.run(({ expectObservable }) => {
+      spectator.service.applySearchQuery('plex');
+      expectObservable(spectator.service.searchQuery$).toBe('a', {
+        a: 'plex',
+      });
+    });
+  });
+
+  it('emits the categories with the extra categories added in', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.appsCategories$).toBe('a', {
+        a: [
+          'storage',
+          'media',
+          AppExtraCategory.NewAndUpdated,
+          AppExtraCategory.Recommended,
+        ],
+      });
+    });
+  });
 });
