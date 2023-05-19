@@ -17,6 +17,8 @@ from pytest_bdd import (
     then,
     when,
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1088.feature', 'Verify an exception is raised when entering the wrong passphrase for an encrypted pool')

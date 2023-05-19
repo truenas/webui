@@ -19,9 +19,6 @@ from pytest_bdd import (
     parsers
 )
 
-import pytest
-#pytestmark = [pytest.mark.debug_test]
-
 
 @scenario('features/NAS-T1132.feature', 'Verify Box Cloud Sync task works')
 def test_verify_box_cloud_sync_task_works(driver):

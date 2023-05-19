@@ -17,9 +17,6 @@ from pytest_bdd import (
     parsers
 )
 
-import pytest
-pytestmark = [pytest.mark.debug_test]
-
 
 @scenario('features/NAS-T1140.feature', 'Verify Google Drive credentials can be added')
 def test_verify_google_drive_credentials_can_be_added(driver):

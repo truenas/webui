@@ -17,7 +17,7 @@ from pytest_bdd import (
     parsers
 )
 import pytest
-#pytestmark = [pytest.mark.debug_test]
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1142.feature', 'Verify Backblaze B2 credentials can be added')

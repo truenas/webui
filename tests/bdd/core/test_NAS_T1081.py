@@ -16,7 +16,8 @@ from pytest_bdd import (
     then,
     when,
 )
-
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1081.feature', 'Verify dataset Encryption Inheritance')
 def test_verify_dataset_encryption_inheritance(driver):
