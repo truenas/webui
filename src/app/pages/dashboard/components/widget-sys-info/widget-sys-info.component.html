@@ -205,7 +205,7 @@
                   <mat-list-item>
                     <strong>{{ 'Platform' | translate }}:</strong>
                     <span>
-                      {{ data.system_product && manufacturer === 'ixsystems' ? data.system_product : 'Generic' }}
+                      {{ data.system_product && isIxHardware ? data.system_product : 'Generic' }}
                     </span>
                   </mat-list-item>
                   <mat-list-item>
@@ -230,8 +230,8 @@
                     {{ data.license.contract_end.$value }}
                   </mat-list-item>
 
-                  <mat-list-item *ngIf="data.system_serial && manufacturer === 'ixsystems'">
-                    <strong>{{ 'Serial Number' | translate }}:</strong>
+                  <mat-list-item *ngIf="data.system_serial && isIxHardware">
+                    <strong>{{ 'System Serial' | translate }}:</strong>
                     <span>{{ data.system_serial }}</span>
                   </mat-list-item>
 

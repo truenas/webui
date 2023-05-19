@@ -107,6 +107,11 @@ export class MockEnclosureUtils {
         }
         break;
       }
+      case 'system.is_ix_hardware':
+        if (this.mockConfig.mockEnclosure) {
+          return true;
+        }
+        return data;
       case 'smart.test.results':
       case 'disk.query': {
         // Sometimes response only has two keys "name" and "type"

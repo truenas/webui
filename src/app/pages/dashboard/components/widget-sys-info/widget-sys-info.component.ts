@@ -24,7 +24,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   productEnclosure = ''; // rackmount || tower
   certified = false;
   updateAvailable = false;
-  manufacturer = '';
+  isIxHardware = false;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
   hasHa: boolean;
@@ -136,6 +136,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         this.checkForRunningUpdate();
       });
     }
+    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
+      this.isIxHardware = isIxHardware;
+    });
   }
 
   checkForRunningUpdate(): void {
@@ -179,13 +182,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
 
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
-
-    // PLATFORM INFO
-    if (this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() === 'ixsystems') {
-      this.manufacturer = 'ixsystems';
-    } else {
-      this.manufacturer = 'other';
-    }
 
     // PRODUCT IMAGE
     this.setProductImage(systemInfo);
@@ -234,7 +230,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   }
 
   setProductImage(data: SystemInfo): void {
-    if (this.manufacturer !== 'ixsystems') return;
+    if (!this.isIxHardware) return;
 
     if (data.system_product.includes('MINI')) {
       this.setMiniImage(data.system_product);
