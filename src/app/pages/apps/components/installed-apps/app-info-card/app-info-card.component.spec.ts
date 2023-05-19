@@ -33,7 +33,7 @@ describe('AppInfoCardComponent', () => {
         'http://github.com/ix-test-app/ix-test-app',
       ],
     },
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     catalog_train: 'charts',
   } as unknown as ChartRelease;
 

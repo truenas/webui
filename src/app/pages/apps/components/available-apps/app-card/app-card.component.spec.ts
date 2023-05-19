@@ -55,7 +55,7 @@ describe('AppCardComponent', () => {
   });
 
   it('shows catalog name', () => {
-    expect(spectator.query('.catalog')).toHaveText('Official');
+    expect(spectator.query('.catalog')).toHaveText('Truenas');
   });
 
   it('shows train name', () => {

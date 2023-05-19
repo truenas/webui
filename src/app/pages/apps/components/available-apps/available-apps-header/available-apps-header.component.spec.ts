@@ -39,7 +39,7 @@ describe('AvailableAppsHeaderComponent', () => {
       ]),
       mockProvider(AvailableAppsStore, {
         availableApps$: of([{
-          catalog: 'OFFICIAL',
+          catalog: 'TRUENAS',
           categories: ['storage', 'crypto'],
           last_update: { $date: 452 },
           name: 'chia',
@@ -51,7 +51,7 @@ describe('AvailableAppsHeaderComponent', () => {
         }] as AvailableApp[]),
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
         filterValues$: of({
-          catalogs: ['OFFICIAL'],
+          catalogs: ['TRUENAS'],
           sort: null,
           categories: ['storage', 'crypto', 'media', 'torrent'],
         }),
@@ -93,11 +93,11 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('calls applyFilters when user selects catalogs', async () => {
-    await catalogsItems.setValue(['OFFICIAL']);
+    await catalogsItems.setValue(['TRUENAS']);
     await applyButton.click();
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['OFFICIAL'],
+      catalogs: ['TRUENAS'],
       sort: null,
       categories: [
         'storage',
@@ -113,7 +113,7 @@ describe('AvailableAppsHeaderComponent', () => {
     await applyButton.click();
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['OFFICIAL', 'TEST'],
+      catalogs: ['TRUENAS', 'TEST'],
       sort: AppsFiltersSort.LastUpdate,
       categories: [
         'storage',
@@ -129,7 +129,7 @@ describe('AvailableAppsHeaderComponent', () => {
     await applyButton.click();
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['OFFICIAL', 'TEST'],
+      catalogs: ['TRUENAS', 'TEST'],
       sort: null,
       categories: ['storage'],
     });
