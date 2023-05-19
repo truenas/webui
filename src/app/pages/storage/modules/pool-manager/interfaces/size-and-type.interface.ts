@@ -1,6 +1,6 @@
 import { DiskType } from 'app/enums/disk-type.enum';
 
 export type SizeAndType = [
-  size: string,
+  size: number,
   type: DiskType,
 ];

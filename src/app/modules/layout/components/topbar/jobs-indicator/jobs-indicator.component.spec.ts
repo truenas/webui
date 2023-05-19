@@ -49,7 +49,7 @@ describe('JobsIndicatorComponent', () => {
     const icon = await iconButton.getHarness(MatIconHarness);
     expect(await icon.getName()).toMatch('assignment');
 
-    const badge = await iconButton.getHarness(MatBadgeHarness);
+    const badge = await loader.getHarness(MatBadgeHarness);
     expect(await badge.getText()).toBe('4');
   });
 

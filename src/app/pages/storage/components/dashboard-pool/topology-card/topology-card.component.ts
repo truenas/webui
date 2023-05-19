@@ -7,8 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { VdevType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
@@ -94,26 +93,26 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.topologyState.data = this.parseDevs(topology.data, PoolTopologyCategory.Data);
-    this.topologyState.log = this.parseDevs(topology.log, PoolTopologyCategory.Log);
-    this.topologyState.cache = this.parseDevs(topology.cache, PoolTopologyCategory.Cache);
-    this.topologyState.spare = this.parseDevs(topology.spare, PoolTopologyCategory.Spare);
+    this.topologyState.data = this.parseDevs(topology.data, VdevType.Data);
+    this.topologyState.log = this.parseDevs(topology.log, VdevType.Log);
+    this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache);
+    this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare);
 
     this.topologyState.metadata = this.parseDevs(
       topology.special,
-      PoolTopologyCategory.Special,
+      VdevType.Special,
       topology.data,
     );
     this.topologyState.dedup = this.parseDevs(
       topology.dedup,
-      PoolTopologyCategory.Dedup,
+      VdevType.Dedup,
       topology.data,
     );
   }
 
   private parseDevs(
     vdevs: TopologyItem[],
-    category: PoolTopologyCategory,
+    category: VdevType,
     dataVdevs?: TopologyItem[],
   ): string {
     const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
@@ -132,8 +131,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     let isSingleDeviceCategory = false;
 
     switch (category) {
-      case PoolTopologyCategory.Spare:
-      case PoolTopologyCategory.Cache:
+      case VdevType.Spare:
+      case VdevType.Cache:
         isSingleDeviceCategory = true;
     }
 

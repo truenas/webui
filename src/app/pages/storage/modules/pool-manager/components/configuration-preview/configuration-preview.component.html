@@ -6,31 +6,28 @@
     <div>
       <div class="details-item">
         <span class="label">{{ 'Name' | translate }}:</span>
-        <span class="value">{{ name | translate }}</span>
+        <span class="value">{{ (name$ | async) || unknownProp }}</span>
       </div>
-      <div class="details-item">
-        <span class="label">{{ 'Data' | translate }}:</span>
-        <span class="value">{{ data }}</span>
-      </div>
-      <div class="details-item">
-        <span class="label">{{ 'Log' | translate }}:</span>
-        <span class="value">{{ log }}</span>
-      </div>
-      <div class="details-item">
-        <span class="label">{{ 'Spare' | translate }}:</span>
-        <span class="value">{{ spare }}</span>
-      </div>
-      <div class="details-item">
-        <span class="label">{{ 'Cache' | translate }}:</span>
-        <span class="value">{{ cache }}</span>
-      </div>
-      <div class="details-item">
-        <span class="label">{{ 'Metadata' | translate }}:</span>
-        <span class="value">{{ metadata }}</span>
+      <div *ngFor="let category of topology$ | async | keyvalue" class="details-item">
+        <span class="label">
+          {{ category.key | mapValue: vdevTypeLabels | translate }}:
+        </span>
+        <span class="value">
+          <ng-container *ngIf="category.value.vdevs.length; else none">
+            {{ getCategoryDescription(category.value) }}
+          </ng-container>
+          <ng-template #none>
+            {{ unknownProp }}
+          </ng-template>
+        </span>
       </div>
       <div class="details-item">
         <span class="label">{{ 'Encryption' | translate }}:</span>
-        <span class="value">{{ encryption }}</span>
+        <span class="value">{{ (encryption$ | async) || unknownProp }}</span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Total Capacity' | translate }}:</span>
+        <span class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</span>
       </div>
     </div>
   </mat-card-content>

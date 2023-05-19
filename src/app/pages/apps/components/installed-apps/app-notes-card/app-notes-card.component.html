@@ -4,19 +4,18 @@
   </mat-card-header>
   <mat-card-content>
     <div class="notes">
-      <div class="notes-list">
-        <div class="notes-item">
-          {{ 'Thank you for installing {app}' | translate: { app: app.name } }}
-        </div>
-        <div class="notes-item">
-          {{ 'Your release is named {name}' | translate: { name: app.chart_metadata.name } }}
-        </div>
-        <div class="notes-item">
-          {{ 'To learn more about the release, try:' | translate }}
-        </div>
-        <div class="notes-item">
-          {{ '$ mychart cli command' | translate }}
-        </div>
+      <div #notes class="notes-list">
+        <markdown [data]="app.info.notes"></markdown>
+      </div>
+      <div *ngIf="isCollapsed && showMoreLess" class="gradient"></div>
+      <div *ngIf="showMoreLess" class="more-less">
+        <button
+          mat-button
+          ixTest="show-more-less"
+          (click)="changeCollapsed()"
+        >
+          {{ isCollapsed ? ('View More' | translate) : ('Collapse' | translate) }}
+        </button>
       </div>
     </div>
   </mat-card-content>

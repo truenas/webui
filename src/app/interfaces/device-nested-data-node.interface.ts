@@ -1,9 +1,9 @@
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 
 export interface VDevGroup {
   group: string;
-  guid: PoolTopologyCategory;
+  guid: VdevType;
   children: TopologyItem[];
 }
 

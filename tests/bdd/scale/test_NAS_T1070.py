@@ -77,7 +77,7 @@ def click_enable_permit_sudo_Checkbox_and_click_save(driver):
     """click Enable Permit Sudo checkbox and click save."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    rsc.Scroll_To(xpaths.button.save)
+    rsc.Scroll_To(driver, xpaths.button.save)
     value_exist = attribute_value_exist(driver, xpaths.add_User.sudo_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox).click()
@@ -110,7 +110,7 @@ def updated_value_should_be_visible(driver):
     """updated value should be visible."""
     assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    rsc.Scroll_To(xpaths.add_User.sudo_Checkbox)
+    rsc.Scroll_To(driver, xpaths.add_User.sudo_Checkbox)
     assert attribute_value_exist(driver, xpaths.add_User.sudo_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     assert wait_on_element(driver, 5, xpaths.button.close_Icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()

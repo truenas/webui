@@ -19,8 +19,14 @@
     [label]="'Encryption' | translate"
     [tooltip]="helptext.encryption_tooltip | translate"
   ></ix-checkbox>
+  <ix-checkbox
+    *ngIf="hasEncryption"
+    formControlName="encryption_inherit"
+    [label]="'Encryption inherit' | translate"
+    [tooltip]="helptext.encryption_inherit_tooltip | translate"
+  ></ix-checkbox>
 
-  <ng-container *ngIf="hasEncryption">
+  <ng-container *ngIf="hasEncryption && !hasEncryptionInherit">
     <ix-select
       formControlName="encryption_key_format"
       [label]="'Encryption Key Format' | translate"

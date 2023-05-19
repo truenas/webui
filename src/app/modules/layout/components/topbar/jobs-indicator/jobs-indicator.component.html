@@ -1,17 +1,15 @@
 <button
+  *appLet="jobBadgeCount$ | async as jobBadgeCount"
+  matBadgeSize="small"
+  matBadgeColor="warn"
   mat-icon-button
   id="task-manager"
   class="topbar-button-right"
   ixTest="jobs-manager"
+  [matBadge]="jobBadgeCount"
+  [matBadgeHidden]="jobBadgeCount === 0"
   [matTooltip]="tooltips.task_manager | translate"
   (click)="onIndicatorPressed()"
 >
-  <ix-icon
-    *appLet="jobBadgeCount$ | async as jobBadgeCount"
-    name="assignment"
-    matBadgeSize="small"
-    matBadgeColor="warn"
-    [matBadge]="jobBadgeCount"
-    [matBadgeHidden]="jobBadgeCount === 0"
-  ></ix-icon>
+  <ix-icon name="assignment"></ix-icon>
 </button>

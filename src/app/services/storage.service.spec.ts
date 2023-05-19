@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { AddTopologyOptions } from 'app/core/testing/interfaces/mock-storage-generator.interface';
 import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -300,7 +299,7 @@ describe('StorageService', () => {
       });
 
       const warnings = storageService.validateVdevs(
-        PoolTopologyCategory.Data,
+        VdevType.Data,
         stripeStorage.poolState.topology.data,
         stripeStorage.disks,
       );
@@ -321,7 +320,7 @@ describe('StorageService', () => {
       });
 
       const warnings = storageService.validateVdevs(
-        PoolTopologyCategory.Data,
+        VdevType.Data,
         storage.poolState.topology.data,
         storage.disks,
       );
@@ -342,7 +341,7 @@ describe('StorageService', () => {
       });
 
       const warnings = storageService.validateVdevs(
-        PoolTopologyCategory.Data,
+        VdevType.Data,
         storage.poolState.topology.data,
         storage.disks,
       );
@@ -363,7 +362,7 @@ describe('StorageService', () => {
       });
 
       const warnings = storageService.validateVdevs(
-        PoolTopologyCategory.Data,
+        VdevType.Data,
         storage.poolState.topology.data,
         storage.disks,
       );
@@ -384,7 +383,7 @@ describe('StorageService', () => {
       });
 
       const warnings = storageService.validateVdevs(
-        PoolTopologyCategory.Data,
+        VdevType.Data,
         storage.poolState.topology.data,
         storage.disks,
       );
@@ -416,7 +415,7 @@ describe('StorageService', () => {
       });
 
       const warnings = storageService.validateVdevs(
-        PoolTopologyCategory.Special,
+        VdevType.Special,
         storage.poolState.topology.special,
         storage.disks,
         storage.poolState.topology.data,
