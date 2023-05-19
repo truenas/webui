@@ -7,7 +7,7 @@
 ></ix-label>
 
 <div class="permissions-container">
-  <table [class.disabled]="isDisabled">
+  <table ixTest="permissions-table" [class.disabled]="isDisabled">
     <tr [ixTest]="[controlDirective.name, 'permissions-header']">
       <td></td>
       <td>

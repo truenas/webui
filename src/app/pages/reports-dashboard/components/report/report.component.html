@@ -108,7 +108,7 @@
           </div>
 
           <div *ngIf="report && data?.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)">
-            <table class="legend-table">
+            <table class="legend-table" [ixTest]="['reports-table', report.title]">
               <!-- Table Header-->
               <tr class="legend-group header" ixTest="table-header">
                 <th class="legend-label">
