@@ -94,6 +94,7 @@ def when_twofactor_authentication_is_enabled_logout(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="option__Log Out"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Log Out"]').click()
     assert wait_on_element(driver, 5, xpaths.login.user_input)
+    driver.refresh()
     assert wait_on_element(driver, 60, xpaths.login.ha_status('HA is enabled'))
 
 
