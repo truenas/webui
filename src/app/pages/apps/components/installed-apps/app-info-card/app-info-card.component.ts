@@ -79,7 +79,6 @@ export class AppInfoCardComponent {
           jobDialogRef.componentInstance.submit();
           jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogService.closeAllDialogs();
-            // this.refreshChartReleases();
           });
           jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
             this.dialogService.closeAllDialogs();
@@ -155,7 +154,6 @@ export class AppInfoCardComponent {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      // this.refreshChartReleases();
     });
   }
 }
