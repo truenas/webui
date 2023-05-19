@@ -384,6 +384,11 @@ describe('AvailableAppsStore', () => {
 
   it('returns the correct searched apps with the name sorting', () => {
     testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
+        a: false,
+      });
+    });
+    testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         catalogs: [],
         categories: ['media'],
@@ -405,9 +410,18 @@ describe('AvailableAppsStore', () => {
           },
         ] as AppsByCategory[],
       });
+      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
+        a: true,
+      });
     });
   });
+
   it('returns the correct searched apps with the catalog sorting', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
+        a: false,
+      });
+    });
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         catalogs: [],
@@ -422,9 +436,18 @@ describe('AvailableAppsStore', () => {
           apps: [...availableApps],
         }],
       });
+      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
+        a: true,
+      });
     });
   });
-  it('returns the correct searched apps with the update sorting', () => {
+
+  it('returns the correct searched and filtered apps with the update sorting', () => {
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
+        a: false,
+      });
+    });
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         catalogs: [],
@@ -438,6 +461,9 @@ describe('AvailableAppsStore', () => {
           totalApps: 2,
           apps: [...availableApps],
         }],
+      });
+      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
+        a: true,
       });
     });
   });
