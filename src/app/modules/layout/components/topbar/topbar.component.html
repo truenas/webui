@@ -122,20 +122,18 @@
 
       <!-- Alert toggle button -->
       <button
+        *appLet="alertBadgeCount$ | async as alertBadgeCount"
+        matBadgeSize="small"
+        matBadgeColor="warn"
         mat-icon-button
-        class="topbar-button-right overflow-visible"
+        class="topbar-button-right"
         ixTest="alerts-indicator"
+        [matBadge]="alertBadgeCount"
+        [matBadgeHidden]="alertBadgeCount === 0"
         [matTooltip]="tooltips.alerts | translate"
         (click)="onAlertIndicatorPressed()"
       >
-        <ix-icon
-          *appLet="alertBadgeCount$ | async as alertBadgeCount"
-          name="notifications"
-          matBadgeSize="small"
-          matBadgeColor="warn"
-          [matBadge]="alertBadgeCount"
-          [matBadgeHidden]="alertBadgeCount === 0"
-        ></ix-icon>
+        <ix-icon name="notifications"></ix-icon>
       </button>
 
       <ix-user-menu></ix-user-menu>

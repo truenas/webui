@@ -45,6 +45,8 @@ export default {
   edit your selections, press the "Edit Manual Disk Selection" button below. To start again with the\
   automated disk selection, hit the "Reset" button.'),
 
+  enclosureOptionsDescription: T('Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.'),
+
   manager_duplicate_vdevs_tooltip: T('Create more data vdevs like the first.'),
 
   force_title: T('Warning'),

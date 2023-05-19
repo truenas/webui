@@ -1,0 +1,27 @@
+<ix-layout-step
+  [type]="VdevType.Data"
+  [inventory]="inventory$ | async"
+  [canChangeLayout]="true"
+></ix-layout-step>
+
+<ix-form-actions>
+  <button
+    mat-button
+    matStepperPrevious
+    color="accent"
+    type="button"
+    ixTest="back"
+  >
+    {{ 'Back' | translate }}
+  </button>
+  <button
+    mat-button
+    matStepperNext
+    color="primary"
+    type="button"
+    ixTest="next"
+    [disabled]="!(hasDataVdevs$ | async)"
+  >
+    {{ 'Next' | translate }}
+  </button>
+</ix-form-actions>

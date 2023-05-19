@@ -1,0 +1,17 @@
+<ix-automated-disk-selection
+  *ngIf="!topologyCategory.hasCustomDiskSelection; else customLayout"
+  class="content-container"
+  [limitLayouts]="limitLayouts"
+  [type]="type"
+  [canChangeLayout]="canChangeLayout"
+  [inventory]="inventory"
+  (manualSelectionClicked)="openManualDiskSelection()"
+></ix-automated-disk-selection>
+
+<ng-template #customLayout>
+  <ix-custom-layout-applied
+    [type]="type"
+    [vdevs]="topologyCategory.vdevs"
+    (manualSelectionClicked)="openManualDiskSelection()"
+  ></ix-custom-layout-applied>
+</ng-template>

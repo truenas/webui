@@ -1,0 +1,22 @@
+<ng-container>
+  <h2>{{ 'Similar Apps' | translate }}</h2>
+
+  <div *ngIf="similarAppsLoading$ | async; else similarAppsTemplate" fxLayout="row wrap" fxLayoutGap="16px">
+    <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
+  </div>
+
+  <ng-template #similarAppsTemplate>
+    <div *ngIf="similarApps.length; else emptySimilarApps" class="similar-apps">
+      <ix-app-card
+        *ngFor="let app of similarApps; trackBy: trackByAppId"
+        [app]="app"
+        [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+      ></ix-app-card>
+    </div>
+  </ng-template>
+
+  <ng-template #emptySimilarApps>
+    <h4 class="no-similar">{{ 'No similar apps found.' | translate }}</h4>
+  </ng-template>
+</ng-container>

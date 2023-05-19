@@ -36,7 +36,6 @@ xpaths = {
 services_switch_xpath = {
     'afp': "//div[@id='overlay__AFP']",
     'dc': "//div[@id='overlay__Domain Controller']",
-    'dns': "//div[@id='overlay__Dynamic DNS']",
     'nfs': "//div[@id='overlay__NFS']",
     'ftp': "//div[@id='overlay__FTP']",
     'iscsi': "//div[@id='overlay__iSCSI']",

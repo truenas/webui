@@ -6,8 +6,7 @@ import {
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
   Enclosure,
@@ -316,22 +315,22 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return updatedData;
   }
 
-  findVdevByDisk(disk: Disk, pool: Pool): { category: PoolTopologyCategory | null; vdev: TopologyItem | null } | null {
+  findVdevByDisk(disk: Disk, pool: Pool): { category: VdevType | null; vdev: TopologyItem | null } | null {
     if (!disk || !pool) return null;
 
     let topologyItem: TopologyItem | null = null;
-    let topologyCategory: PoolTopologyCategory | null;
+    let topologyCategory: VdevType | null;
 
-    const categories: PoolTopologyCategory[] = [
-      PoolTopologyCategory.Data,
-      PoolTopologyCategory.Cache,
-      PoolTopologyCategory.Spare,
-      PoolTopologyCategory.Special,
-      PoolTopologyCategory.Log,
-      PoolTopologyCategory.Dedup,
+    const categories: VdevType[] = [
+      VdevType.Data,
+      VdevType.Cache,
+      VdevType.Spare,
+      VdevType.Special,
+      VdevType.Log,
+      VdevType.Dedup,
     ];
 
-    categories.forEach((category: PoolTopologyCategory) => {
+    categories.forEach((category: VdevType) => {
       const found: TopologyItem = pool.topology[category].find((item: TopologyItem) => {
         switch (item.type) {
           case TopologyItemType.Disk:
