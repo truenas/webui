@@ -189,11 +189,12 @@ def run_cmd(command):
         return {'result': True, 'output': output}
 
 
-def get(url, api_path, auth):
+def get(url, api_path, auth, payload=None):
     get_it = requests.get(
         f'http://{url}/api/v2.0/{api_path}',
         headers=header,
-        auth=auth
+        auth=auth,
+        data=json.dumps(payload) if payload else None
     )
     return get_it
 
