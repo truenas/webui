@@ -1,6 +1,5 @@
 export enum ServiceName {
   Afp = 'afp',
-  DynamicDns = 'dynamicdns',
   Ftp = 'ftp',
   Gluster = 'glusterd',
   Iscsi = 'iscsitarget',
@@ -22,7 +21,6 @@ export enum ServiceName {
 
 export const serviceNames = new Map<ServiceName, string>([
   [ServiceName.Afp, 'AFP'],
-  [ServiceName.DynamicDns, 'Dynamic DNS'],
   [ServiceName.Ftp, 'FTP'],
   [ServiceName.Gluster, 'Gluster'],
   [ServiceName.Iscsi, 'iSCSI'],

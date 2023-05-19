@@ -13,6 +13,7 @@ describe('AppDetailsPanelComponent', () => {
 
   const app = {
     id: 'ix-test-app',
+    info: { notes: 'text' },
   } as ChartRelease;
 
   const createComponent = createComponentFactory({
@@ -38,5 +39,23 @@ describe('AppDetailsPanelComponent', () => {
 
   it('shows a title', () => {
     expect(spectator.query('h2')).toHaveText('Details');
+  });
+
+  it('shows all the cards', () => {
+    const appInfoCard = spectator.query(AppInfoCardComponent);
+    expect(appInfoCard).toBeTruthy();
+    expect(appInfoCard.app).toBe(app);
+
+    const appContainersCard = spectator.query(AppContainersCardComponent);
+    expect(appContainersCard).toBeTruthy();
+    expect(appContainersCard.app).toStrictEqual(app);
+
+    const appHistoryCard = spectator.query(AppHistoryCardComponent);
+    expect(appHistoryCard).toBeTruthy();
+    expect(appHistoryCard.app).toStrictEqual(app);
+
+    const appNotesCard = spectator.query(AppNotesCardComponent);
+    expect(appNotesCard).toBeTruthy();
+    expect(appNotesCard.app).toStrictEqual(app);
   });
 });

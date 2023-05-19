@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceFtpComponent } from './components/service-ftp/service-ftp.component';
@@ -70,11 +69,6 @@ export const routes: Routes = [
     data: { title: 'UPS', breadcrumb: 'UPS' },
     path: 'ups',
     component: ServiceUpsComponent,
-  },
-  {
-    data: { title: 'DynamicDNS', breadcrumb: 'DynamicDNS' },
-    path: 'dynamicdns',
-    component: ServiceDynamicDnsComponent,
   },
   {
     data: { title: 'SMB', breadcrumb: 'SMB' },

@@ -99,6 +99,12 @@
         [label]="helptext.encryption_placeholder | translate"
         [tooltip]="helptext.encryption_tooltip | translate"
       ></ix-checkbox>
+      <ix-checkbox
+        *ngIf="form.controls.encryption.enabled && form.controls.encryption.value"
+        formControlName="encryption_inherit"
+        [label]="helptext.encryption_inherit_placeholder | translate"
+        [tooltip]="helptext.encryption_inherit_tooltip | translate"
+      ></ix-checkbox>
       <ix-select
         *ngIf="form.controls.encryption_key_format.enabled"
         formControlName="encryption_key_format"

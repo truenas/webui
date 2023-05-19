@@ -163,6 +163,7 @@ def click_on_system_dataset(driver):
 def the_system_dataset_page_should_open(driver):
     """the System Dataset page should open."""
     assert wait_on_element(driver, 5, xpaths.system_Dataset.title)
+    time.sleep(1)
 
 
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))

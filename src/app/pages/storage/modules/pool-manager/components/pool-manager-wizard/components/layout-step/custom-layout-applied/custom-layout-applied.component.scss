@@ -1,0 +1,32 @@
+.content-container {
+  border: 1px solid var(--lines);
+  display: flex;
+  margin: 20px 0;
+  padding: 20px 0;
+
+  .left-column {
+    border-right: 1px solid var(--lines);
+    padding: 0 30px;
+    width: 100%;
+  }
+
+  .right-column {
+    padding: 0 30px;
+    width: 100%;
+  }
+}
+
+.manual-disk-selection {
+  margin-top: 25px;
+}
+
+.description-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.selection-actions {
+  column-gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+}

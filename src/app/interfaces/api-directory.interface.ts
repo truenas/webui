@@ -111,7 +111,6 @@ import {
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
-import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
@@ -451,11 +450,6 @@ export type ApiDirectory = {
 
   // Cluster
   'cluster.utils.is_clustered': { params: void; response: boolean };
-
-  // DynDNS
-  'dyndns.provider_choices': { params: void; response: Choices };
-  'dyndns.update': { params: [DynamicDnsUpdate]; response: DynamicDnsConfig };
-  'dyndns.config': { params: void; response: DynamicDnsConfig };
 
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };

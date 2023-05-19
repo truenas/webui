@@ -17,6 +17,24 @@
         padding: 0;
       }
     }
+
+    ix-app-details-header {
+      display: block !important;
+
+      .app,
+      .app-info {
+        max-width: 100% !important;
+        width: 100%;
+      }
+
+      .app-info {
+        margin: 16px 0;
+      }
+
+      .app-description {
+        padding: 0 !important;
+      }
+    }
   }
 }
 

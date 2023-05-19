@@ -13,8 +13,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -93,7 +92,7 @@ export class MockStorageGenerator {
     width: 1,
     repeats: 1,
   }): MockStorageGenerator {
-    this.addRaidzCapableTopology(PoolTopologyCategory.Data, options);
+    this.addRaidzCapableTopology(VdevType.Data, options);
     return this;
   }
 
@@ -105,7 +104,7 @@ export class MockStorageGenerator {
     repeats: 1,
   }): MockStorageGenerator {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
-    this.addRaidzCapableTopology(PoolTopologyCategory.Special, options);
+    this.addRaidzCapableTopology(VdevType.Special, options);
     return this;
   }
 
@@ -117,11 +116,11 @@ export class MockStorageGenerator {
     repeats: 1,
   }): MockStorageGenerator {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
-    this.addRaidzCapableTopology(PoolTopologyCategory.Dedup, options);
+    this.addRaidzCapableTopology(VdevType.Dedup, options);
     return this;
   }
 
-  private addRaidzCapableTopology(category: PoolTopologyCategory, options: AddTopologyOptions = {
+  private addRaidzCapableTopology(category: VdevType, options: AddTopologyOptions = {
     scenario: MockStorageScenario.NoRedundancy,
     layout: TopologyItemType.Stripe,
     diskSize: 4,
@@ -203,7 +202,7 @@ export class MockStorageGenerator {
   // Can create DISK or MIRROR devices. ZFS does not support RAIDZ for log devices
   addLogTopology(deviceCount: number, isMirror = false, diskSize = 4): MockStorageGenerator {
     if (isMirror) {
-      this.addRaidzCapableTopology(PoolTopologyCategory.Log, {
+      this.addRaidzCapableTopology(VdevType.Log, {
         scenario: MockStorageScenario.Uniform,
         layout: TopologyItemType.Mirror,
         diskSize,
@@ -211,24 +210,24 @@ export class MockStorageGenerator {
         repeats: deviceCount,
       });
     } else {
-      this.addSingleDeviceTopology(PoolTopologyCategory.Log, deviceCount, diskSize);
+      this.addSingleDeviceTopology(VdevType.Log, deviceCount, diskSize);
     }
     return this;
   }
 
   // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for cache devices
   addCacheTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
-    this.addSingleDeviceTopology(PoolTopologyCategory.Cache, deviceCount, diskSize);
+    this.addSingleDeviceTopology(VdevType.Cache, deviceCount, diskSize);
     return this;
   }
 
   // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for spares
   addSpareTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
-    this.addSingleDeviceTopology(PoolTopologyCategory.Spare, deviceCount, diskSize);
+    this.addSingleDeviceTopology(VdevType.Spare, deviceCount, diskSize);
     return this;
   }
 
-  private addSingleDeviceTopology(category: PoolTopologyCategory, deviceCount: number, diskSize = 4): void {
+  private addSingleDeviceTopology(category: VdevType, deviceCount: number, diskSize = 4): void {
     // Only DISK devices allowed. ZFS does not support MIRROR or RAIDZ
     const topology: MockTopology = this.generateNoRedundancyTopology(deviceCount, diskSize, deviceCount);
     this.disks = this.disks.concat(topology.disks);

@@ -6,6 +6,7 @@
     ></ix-search-input>
     <mat-slide-toggle
       color="primary"
+      ixTest="show-built-in-groups"
       [checked]="!hideBuiltinGroups"
       [disabled]="isLoading$ | async"
       (change)="toggleBuiltins()"
