@@ -68,12 +68,12 @@ describe('AppUpgradeDialogComponent - test 1', () => {
 
   it('shows title as application name', () => {
     spectator.detectChanges();
-    // expect(spectator.query('.chart-name').textContent).toBe('elastic-search');
+    expect(spectator.query('.chart-name').textContent).toBe('elastic-search');
     expect(1).toBe(1);
   });
 
   it('shows current application version', () => {
-    // expect(spectator.query('.version').textContent).toBe(' 8.7.0_1.0.1');
+    expect(spectator.query('.version').textContent).toBe(' 8.7.0_1.0.1');
     expect(2).toBe(2);
   });
 });
