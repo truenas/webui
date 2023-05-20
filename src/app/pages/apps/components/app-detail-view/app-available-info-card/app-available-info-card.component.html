@@ -19,12 +19,7 @@
           [href]="source" 
           [title]="source" 
           [ixTest]="[app.name, 'source']">
-          {{
-            source
-              .replace('http://', '')
-              .replace('https://', '')
-              .replace('www.', '') + (i +1 >= sources.length) ? '' : ', '
-          }}
+          {{ getCleanSource(source, i) }}
         </a>
       </ng-container>
     </ng-container>

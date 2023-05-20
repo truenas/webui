@@ -46,4 +46,16 @@ export class AppAvailableInfoCardComponent implements OnChanges {
     this.relativeDate = formatRelative(new Date(this.app.last_update.$date), new Date());
     this.cdr.markForCheck();
   }
+
+  getCleanSource(source: string, index: number): string {
+    let cleanSrc = source
+      .replace('http://', '')
+      .replace('https://', '')
+      .replace('www.', '');
+    while (cleanSrc.endsWith('/')) {
+      cleanSrc = cleanSrc.substring(0, cleanSrc.length - 1);
+    }
+    const spaces = (index + 1 >= this.sources.length) ? '' : ', ';
+    return cleanSrc + spaces;
+  }
 }
