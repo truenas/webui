@@ -20,10 +20,10 @@
           [title]="source" 
           [ixTest]="[app.name, 'source']">
           {{
-            '{src}{space}' | translate: {
-                src: source.replace('http://', '').replace('https://', '').replace('www.', ''), 
-                space: i +1 >= sources.length ? '' : ', ' 
-              } 
+            source
+              .replace('http://', '')
+              .replace('https://', '')
+              .replace('www.', '') + (i +1 >= sources.length) ? '' : ', '
           }}
         </a>
       </ng-container>

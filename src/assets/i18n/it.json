@@ -3983,7 +3983,6 @@
   "{service} Service is not currently running. Start the service now?": "",
   "{size} Total": "",
   "{size} {type} at {location}": "",
-  "{src}{space}": "",
   "{type} at {location}": "",
   "{uptimeString} as of {dateTime}": "",
   "{used} of {total} ({used_pct})": "",

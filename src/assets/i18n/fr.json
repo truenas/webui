@@ -208,7 +208,6 @@
   "{n}% Uploaded": "",
   "{size} Total": "",
   "{size} {type} at {location}": "",
-  "{src}{space}": "",
   "{type} at {location}": "",
   "{version} is available!": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "\n            Il semble que votre session soit inactive depuis plus de {lifetime} secondes.<br>\n            Pour des raisons de sécurité, nous vous déconnecterons à {time}.\n          ",
