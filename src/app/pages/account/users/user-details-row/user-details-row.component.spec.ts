@@ -97,10 +97,14 @@ describe('UserDetailsRowComponent', () => {
   });
 
   it('should open edit user form', async () => {
+    const user = spectator.component.user;
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(UserFormComponent, { wide: true });
+    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(
+      UserFormComponent,
+      { wide: true, data: user },
+    );
   });
 
   it('should open DeleteUserDialog when Delete button is pressed', async () => {

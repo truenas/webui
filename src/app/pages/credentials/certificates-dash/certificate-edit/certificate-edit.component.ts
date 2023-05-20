@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,13 +23,18 @@ import {
 import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+export interface SlideInDataCertificateEdit {
+  certificatesDash: CertificatesDashComponent;
+  certificate: Certificate;
+}
+
 @UntilDestroy()
 @Component({
   templateUrl: './certificate-edit.component.html',
   styleUrls: ['./certificate-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateEditComponent {
+export class CertificateEditComponent implements OnInit {
   isLoading = false;
 
   form = this.formBuilder.group({
@@ -48,16 +53,20 @@ export class CertificateEditComponent {
     private slideInRef: IxSlideInRef<CertificateEditComponent>,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
-    @Inject(SLIDE_IN_DATA) private certificatesDashComponent: CertificatesDashComponent,
+    @Inject(SLIDE_IN_DATA) private slideInData: SlideInDataCertificateEdit,
   ) {}
 
   get isCsr(): boolean {
     return this.certificate?.cert_type_CSR;
   }
 
-  setCertificate(certificate: Certificate): void {
-    this.certificate = certificate;
-    this.form.patchValue(certificate);
+  ngOnInit(): void {
+    this.setCertificate();
+  }
+
+  setCertificate(): void {
+    this.certificate = this.slideInData.certificate;
+    this.form.patchValue(this.certificate);
     this.cdr.markForCheck();
   }
 
@@ -83,12 +92,11 @@ export class CertificateEditComponent {
 
   onCreateAcmePressed(): void {
     this.slideInRef.close(true);
-    const slideInRef = this.slideInService.open(CertificateAcmeAddComponent);
-    slideInRef.componentInstance.setCsr(this.certificate);
+    const slideInRef = this.slideInService.open(CertificateAcmeAddComponent, { data: this.certificate });
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.certificatesDashComponent.getCards());
+    ).subscribe(() => this.slideInData.certificatesDash.getCards());
   }
 
   onSubmit(): void {

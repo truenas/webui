@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -20,6 +20,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -41,7 +42,7 @@ const defaultHomePath = '/nonexistent';
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserFormComponent {
+export class UserFormComponent implements OnInit {
   private editingUser: User;
 
   isFormLoading = false;
@@ -169,7 +170,9 @@ export class UserFormComponent {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
+    @Inject(SLIDE_IN_DATA) private slideInData: User,
   ) {
+    this.editingUser = slideInData;
     this.form.controls.smb.errors$.pipe(
       filter((error) => error?.manualValidateErrorMsg),
       switchMap(() => this.form.controls.password.valueChanges),
@@ -181,12 +184,11 @@ export class UserFormComponent {
     });
   }
 
-  /**
-   * @param user Skip argument to add new user.
-   */
-  setupForm(user?: User): void {
-    this.editingUser = user;
+  ngOnInit(): void {
+    this.setupForm();
+  }
 
+  setupForm(): void {
     this.form.controls.sshpubkey_file.valueChanges.pipe(
       switchMap((files: File[]) => {
         return !files?.length ? of('') : from(files[0].text());
@@ -211,8 +213,8 @@ export class UserFormComponent {
       ),
     );
 
-    if (user?.home && user.home !== defaultHomePath) {
-      this.storageService.filesystemStat(user.home).pipe(untilDestroyed(this)).subscribe((stat) => {
+    if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
+      this.storageService.filesystemStat(this.editingUser.home).pipe(untilDestroyed(this)).subscribe((stat) => {
         this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
         this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
       });
@@ -231,7 +233,7 @@ export class UserFormComponent {
     if (this.isNewUser) {
       this.setupNewUserForm();
     } else {
-      this.setupEditUserForm(user);
+      this.setupEditUserForm(this.editingUser);
     }
   }
 

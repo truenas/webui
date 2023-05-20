@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import {
   FormBuilder, Validators,
@@ -14,6 +14,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
@@ -62,10 +63,9 @@ export class CertificateAcmeAddComponent {
     private slideInRef: IxSlideInRef<CertificateAcmeAddComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private mdDialog: MatDialog,
-  ) { }
-
-  setCsr(csr: Certificate): void {
-    this.csr = csr;
+    @Inject(SLIDE_IN_DATA) private certificate: Certificate,
+  ) {
+    this.csr = certificate;
     this.loadDomains();
   }
 

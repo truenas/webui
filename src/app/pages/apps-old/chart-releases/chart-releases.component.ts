@@ -21,6 +21,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationTab } from 'app/pages/apps-old/application-tab.enum';
@@ -340,17 +341,27 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
       { extra: { include_chart_schema: true } },
     ]).pipe(untilDestroyed(this)).subscribe((releases: ChartRelease[]) => {
       this.appLoaderService.close();
-      const slideInRef = this.slideInService.open(ChartFormComponent, { wide: true });
+
+      let slideInRef: IxSlideInRef<ChartFormComponent>;
       if (catalogApp.chart_metadata.name === ixChartApp) {
-        slideInRef.componentInstance.setTitle(helptext.launch);
+        slideInRef = this.slideInService.open(
+          ChartFormComponent,
+          { wide: true, data: { title: helptext.launch, releases } },
+        );
+        slideInRef.componentInstance.setTitle();
       } else {
-        slideInRef.componentInstance.setTitle(catalogApp.chart_metadata.name);
-      }
-      if (releases.length) {
-        slideInRef.componentInstance.setChartEdit(releases[0]);
+        slideInRef = this.slideInService.open(
+          ChartFormComponent,
+          { wide: true, data: { title: catalogApp.chart_metadata.name, releases } },
+        );
+        slideInRef.componentInstance.setTitle();
       }
 
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      if (releases.length) {
+        slideInRef.componentInstance.setChartEdit();
+      }
+
+      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.refreshChartReleases();
       });
     });

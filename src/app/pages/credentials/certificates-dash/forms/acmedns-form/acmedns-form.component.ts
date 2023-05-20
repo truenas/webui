@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { UntypedFormGroup, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
@@ -13,6 +13,7 @@ import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authen
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -69,9 +70,14 @@ export class AcmednsFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private changeDetectorRef: ChangeDetectorRef,
+    @Inject(SLIDE_IN_DATA) private acmedns: DnsAuthenticator,
   ) {}
 
   ngOnInit(): void {
+    if (this.acmedns) {
+      this.editingAcmedns = this.acmedns;
+    }
+
     this.loadSchemas();
   }
 
@@ -127,10 +133,6 @@ export class AcmednsFormComponent implements OnInit {
   parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
     const variables = schema.schema.map((input) => input._name_);
     return { key: schema.key, variables };
-  }
-
-  setAcmednsForEdit(acmedns: DnsAuthenticator): void {
-    this.editingAcmedns = acmedns;
   }
 
   onAuthenticatorTypeChanged(event: DnsAuthenticatorType): void {

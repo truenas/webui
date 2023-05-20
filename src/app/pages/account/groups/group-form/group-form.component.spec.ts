@@ -2,13 +2,16 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+} from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -19,34 +22,36 @@ describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  const createComponent = createComponentFactory({
-    component: GroupFormComponent,
-    imports: [
-      IxFormsModule,
-      ReactiveFormsModule,
-    ],
-    providers: [
-      mockWebsocket([
-        mockCall('group.query', [{ group: 'existing' }] as Group[]),
-        mockCall('group.create'),
-        mockCall('group.update'),
-        mockCall('group.get_next_gid', 1234),
-      ]),
-      mockProvider(IxSlideInRef),
-      mockProvider(FormErrorHandlerService),
-      provideMockStore(),
-    ],
-  });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-  });
+  function configurationComponent(config?: Group): SpectatorFactory<GroupFormComponent> {
+    return createComponentFactory({
+      component: GroupFormComponent,
+      imports: [
+        IxFormsModule,
+        ReactiveFormsModule,
+      ],
+      providers: [
+        mockWebsocket([
+          mockCall('group.query', [{ group: 'existing' }] as Group[]),
+          mockCall('group.create'),
+          mockCall('group.update'),
+          mockCall('group.get_next_gid', 1234),
+        ]),
+        mockProvider(IxSlideInRef),
+        mockProvider(FormErrorHandlerService),
+        { provide: SLIDE_IN_DATA, useValue: config },
+        provideMockStore(),
+      ],
+    });
+  }
 
   describe('adding a group', () => {
+    const createComponent = configurationComponent();
+
     beforeEach(() => {
-      spectator.component.setupForm();
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('loads names of existing groups and makes sure new name is unique', async () => {
@@ -90,15 +95,20 @@ describe('GroupFormComponent', () => {
   });
 
   describe('editing a group', () => {
+    const fakeDataGroup = {
+      id: 13,
+      gid: 1111,
+      group: 'editing',
+      sudo_commands: [],
+      sudo_commands_nopasswd: [allCommands],
+      smb: false,
+    } as Group;
+    const createComponent = configurationComponent(fakeDataGroup);
+
     beforeEach(() => {
-      spectator.component.setupForm({
-        id: 13,
-        gid: 1111,
-        group: 'editing',
-        sudo_commands: [],
-        sudo_commands_nopasswd: [allCommands],
-        smb: false,
-      } as Group);
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('does not show Allow Duplicate Gid on edit', async () => {

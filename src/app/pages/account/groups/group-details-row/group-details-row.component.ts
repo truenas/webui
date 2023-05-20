@@ -30,10 +30,7 @@ export class GroupDetailsRowComponent {
   ) {}
 
   doEdit(group: Group): void {
-    const groupEdit = this.slideIn.open(GroupFormComponent);
-    if (groupEdit) {
-      groupEdit.componentInstance.setupForm(group);
-    }
+    this.slideIn.open(GroupFormComponent, { data: group });
   }
 
   openGroupMembersForm(): void {

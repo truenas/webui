@@ -205,8 +205,11 @@ export class CatalogComponent implements OnInit, AfterViewInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        const slideInRef = this.slideInService.open(ChartFormComponent, { wide: true });
-        slideInRef.componentInstance.setChartCreate(catalogAppInfo);
+        const slideInRef = this.slideInService.open(
+          ChartFormComponent,
+          { wide: true, data: { catalogApp: catalogAppInfo } },
+        );
+        slideInRef.componentInstance.setChartCreate();
       }
     });
   }

@@ -9,6 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   CertificateDetailsComponent,
@@ -45,6 +46,10 @@ describe('CertificateAuthorityEditComponent', () => {
       mockProvider(MatDialog),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService),
+      {
+        provide: SLIDE_IN_DATA,
+        useValue: certificateAuthority,
+      },
     ],
     declarations: [
       MockComponent(ViewCertificateDialogComponent),
@@ -54,9 +59,7 @@ describe('CertificateAuthorityEditComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    spectator.component.setCertificateAuthority(certificateAuthority);
     spectator.detectChanges();
-
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

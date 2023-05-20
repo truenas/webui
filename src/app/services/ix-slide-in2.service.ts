@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { bindCallback, merge } from 'rxjs';
+import { bindCallback, merge, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in2.component';
@@ -14,6 +14,8 @@ import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in
 export class IxSlideIn2Service {
   slideIn2Component: IxSlideIn2Component;
   slideInRefMap = new Map<string, IxSlideInRef<unknown>>();
+  // use slideInClosed$ in IxSlideInRef instead onClose$
+  readonly onClose$ = new Subject<unknown>();
 
   constructor(
     private location: Location,
@@ -35,8 +37,9 @@ export class IxSlideIn2Service {
 
     const slideInRef = this.slideIn2Component.openSlideIn<T, D>(component, params);
     this.slideInRefMap.set(slideInRef.id, slideInRef);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe((response) => {
       this.deleteRef(slideInRef.id);
+      this.onClose$.next(response);
     });
     return slideInRef;
   }

@@ -3,11 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+} from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -21,36 +24,50 @@ describe('SshKeypairFormComponent', () => {
   let spectator: Spectator<SshKeypairFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  const createComponent = createComponentFactory({
-    component: SshKeypairFormComponent,
-    imports: [
-      IxFormsModule,
-      ReactiveFormsModule,
-    ],
-    providers: [
-      mockWebsocket([
-        mockCall('keychaincredential.generate_ssh_key_pair', {
-          private_key: 'Generated private key',
-          public_key: 'Generated public key',
-        } as SshKeyPair),
-        mockCall('keychaincredential.create'),
-        mockCall('keychaincredential.update'),
-      ]),
-      mockProvider(IxSlideInRef),
-      mockProvider(StorageService),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(DialogService),
-      mockProvider(AppLoaderService),
-    ],
-  });
+  const fakeSshKeyPair = {
+    id: 23,
+    name: 'existing key',
+    attributes: {
+      public_key: 'Existing public key',
+      private_key: 'Existing private key',
+    },
+  } as KeychainSshKeyPair;
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-  });
+  function configurationComponent(config?: KeychainSshKeyPair): SpectatorFactory<SshKeypairFormComponent> {
+    return createComponentFactory({
+      component: SshKeypairFormComponent,
+      imports: [
+        IxFormsModule,
+        ReactiveFormsModule,
+      ],
+      providers: [
+        mockWebsocket([
+          mockCall('keychaincredential.generate_ssh_key_pair', {
+            private_key: 'Generated private key',
+            public_key: 'Generated public key',
+          } as SshKeyPair),
+          mockCall('keychaincredential.create'),
+          mockCall('keychaincredential.update'),
+        ]),
+        mockProvider(IxSlideInRef),
+        mockProvider(StorageService),
+        mockProvider(FormErrorHandlerService),
+        mockProvider(DialogService),
+        mockProvider(AppLoaderService),
+        { provide: SLIDE_IN_DATA, useValue: config },
+      ],
+    });
+  }
 
   describe('adding an ssh key pair', () => {
+    const createComponent = configurationComponent();
+
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+    });
+
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -71,18 +88,66 @@ describe('SshKeypairFormComponent', () => {
         },
       }]);
     });
+
+    describe('other', () => {
+      it('fills textareas for public and private textareas when Generate Keypair is pressed', async () => {
+        const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate Keypair' }));
+        await generateButton.click();
+
+        const form = await loader.getHarness(IxFormHarness);
+        const values = await form.getValues();
+
+        expect(ws.call).toHaveBeenLastCalledWith('keychaincredential.generate_ssh_key_pair');
+        expect(values).toMatchObject({
+          'Private Key': 'Generated private key',
+          'Public Key': 'Generated public key',
+        });
+      });
+
+      it('allows public key to be downloaded when name and public key are not empty', async () => {
+        const form = await loader.getHarness(IxFormHarness);
+        await form.fillForm({
+          Name: 'downloadname',
+          'Public Key': 'Downloaded public key',
+        });
+
+        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download actions"]' }));
+        await actionsMenu.open();
+        await actionsMenu.clickItem({ text: 'Download Public Key' });
+
+        expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(
+          new Blob(['Downloaded public key'], { type: 'text/plain' }),
+          'downloadname_public_key_rsa',
+        );
+      });
+
+      it('allows private key to be downloaded when name and private key are not empty', async () => {
+        const form = await loader.getHarness(IxFormHarness);
+        await form.fillForm({
+          Name: 'downloadname',
+          'Private Key': 'Downloaded private key',
+        });
+
+        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download actions"]' }));
+        await actionsMenu.open();
+        await actionsMenu.clickItem({ text: 'Download Private Key' });
+
+        expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(
+          new Blob(['Downloaded private key'], { type: 'text/plain' }),
+          'downloadname_private_key_rsa',
+        );
+      });
+    });
   });
 
   describe('editing an ssh key pair', () => {
+    const createComponent = configurationComponent(fakeSshKeyPair);
+
     beforeEach(() => {
-      spectator.component.setKeypairForEditing({
-        id: 23,
-        name: 'existing key',
-        attributes: {
-          public_key: 'Existing public key',
-          private_key: 'Existing private key',
-        },
-      } as KeychainSshKeyPair);
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+      spectator.component.setKeypairForEditing();
     });
 
     it('shows current values when form is being edited', async () => {
@@ -117,56 +182,6 @@ describe('SshKeypairFormComponent', () => {
           },
         },
       ]);
-    });
-  });
-
-  describe('other', () => {
-    it('fills textareas for public and private textareas when Generate Keypair is pressed', async () => {
-      const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate Keypair' }));
-      await generateButton.click();
-
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
-
-      expect(ws.call).toHaveBeenLastCalledWith('keychaincredential.generate_ssh_key_pair');
-      expect(values).toMatchObject({
-        'Private Key': 'Generated private key',
-        'Public Key': 'Generated public key',
-      });
-    });
-
-    it('allows public key to be downloaded when name and public key are not empty', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'downloadname',
-        'Public Key': 'Downloaded public key',
-      });
-
-      const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download actions"]' }));
-      await actionsMenu.open();
-      await actionsMenu.clickItem({ text: 'Download Public Key' });
-
-      expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(
-        new Blob(['Downloaded public key'], { type: 'text/plain' }),
-        'downloadname_public_key_rsa',
-      );
-    });
-
-    it('allows private key to be downloaded when name and private key are not empty', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'downloadname',
-        'Private Key': 'Downloaded private key',
-      });
-
-      const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download actions"]' }));
-      await actionsMenu.open();
-      await actionsMenu.clickItem({ text: 'Download Private Key' });
-
-      expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(
-        new Blob(['Downloaded private key'], { type: 'text/plain' }),
-        'downloadname_private_key_rsa',
-      );
     });
   });
 });

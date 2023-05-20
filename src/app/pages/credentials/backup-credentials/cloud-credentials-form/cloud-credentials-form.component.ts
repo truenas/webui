@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
+  Component, Inject,
   OnInit,
   Type,
   ViewChild,
@@ -19,6 +19,7 @@ import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -105,6 +106,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
+    @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
@@ -128,11 +130,11 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProviders();
+    this.existingCredential = this.credential;
   }
 
-  setCredentialsForEdit(credential: CloudsyncCredential): void {
-    this.existingCredential = credential;
-    this.commonForm.patchValue(credential);
+  setCredentialsForEdit(): void {
+    this.commonForm.patchValue(this.existingCredential);
 
     if (this.providerForm) {
       this.providerForm.getFormSetter$().next(this.existingCredential.attributes);

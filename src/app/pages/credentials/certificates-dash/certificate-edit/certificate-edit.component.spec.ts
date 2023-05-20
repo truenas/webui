@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+} from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -17,6 +19,7 @@ import {
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
+import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
@@ -26,105 +29,119 @@ import {
 import { DialogService } from 'app/services';
 import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { CertificateEditComponent } from './certificate-edit.component';
+import { CertificateEditComponent, SlideInDataCertificateEdit } from './certificate-edit.component';
 
 describe('CertificateEditComponent', () => {
   let spectator: Spectator<CertificateEditComponent>;
   let loader: HarnessLoader;
+  const mockCertificatesDashComponent = {} as CertificatesDashComponent;
   const certificate = {
     id: 1,
     name: 'ray',
     certificate: '--BEGIN CERTIFICATE--',
     privatekey: '--BEGIN RSA PRIVATE KEY--',
   } as Certificate;
-  const createComponent = createComponentFactory({
-    component: CertificateEditComponent,
-    imports: [
-      ReactiveFormsModule,
-      IxFormsModule,
-    ],
-    providers: [
-      mockWebsocket([
-        mockCall('certificate.update'),
-      ]),
-      mockProvider(MatDialog),
-      mockProvider(IxSlideIn2Service),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: {} },
-      mockProvider(DialogService),
-    ],
-    declarations: [
-      MockComponent(ViewCertificateDialogComponent),
-      MockComponent(CertificateDetailsComponent),
-      MockComponent(CertificateAcmeAddComponent),
-    ],
-  });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    spectator.component.setCertificate(certificate);
-    spectator.detectChanges();
-
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
-
-  it('shows the name of the certificate', async () => {
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
-    expect(await nameInput.getValue()).toBe('ray');
-  });
-
-  it('shows details of a certificate', () => {
-    const certificateDetails = spectator.query(CertificateDetailsComponent);
-    expect(certificateDetails).toBeTruthy();
-    expect(certificateDetails.certificate).toEqual(certificate);
-    expect(certificateDetails.showSignedBy).toBe(true);
-  });
-
-  it('saves certificate name when it is changed and Save is pressed', async () => {
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
-    await nameInput.setValue('New Name');
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-  });
-
-  it('opens modal for certificate when View/Download Certificate is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Certificate' }));
-    await button.click();
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialogComponent, {
-      data: {
-        certificate: '--BEGIN CERTIFICATE--',
-        name: 'ray',
-        extension: 'crt',
-      } as ViewCertificateDialogData,
+  function configurationComponent(config: SlideInDataCertificateEdit): SpectatorFactory<CertificateEditComponent> {
+    return createComponentFactory({
+      component: CertificateEditComponent,
+      imports: [
+        ReactiveFormsModule,
+        IxFormsModule,
+      ],
+      providers: [
+        mockWebsocket([
+          mockCall('certificate.update'),
+        ]),
+        mockProvider(MatDialog),
+        mockProvider(IxSlideIn2Service),
+        mockProvider(IxSlideInRef),
+        { provide: SLIDE_IN_DATA, useValue: config },
+        mockProvider(DialogService),
+      ],
+      declarations: [
+        MockComponent(ViewCertificateDialogComponent),
+        MockComponent(CertificateDetailsComponent),
+        MockComponent(CertificateAcmeAddComponent),
+      ],
     });
-  });
+  }
 
-  it('opens modals for certificate key when View/Download Key is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Key' }));
-    await button.click();
+  describe('Edit certificate', () => {
+    const createComponent = configurationComponent({ certificatesDash: mockCertificatesDashComponent, certificate });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialogComponent, {
-      data: {
-        certificate: '--BEGIN RSA PRIVATE KEY--',
-        name: 'ray',
-        extension: 'crt',
-      } as ViewCertificateDialogData,
+    beforeEach(() => {
+      spectator = createComponent();
+      spectator.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows the name of the certificate', async () => {
+      spectator.component.ngOnInit();
+      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
+      expect(await nameInput.getValue()).toBe('ray');
+    });
+
+    it('shows details of a certificate', () => {
+      const certificateDetails = spectator.query(CertificateDetailsComponent);
+      expect(certificateDetails).toBeTruthy();
+      expect(certificateDetails.certificate).toEqual(certificate);
+      expect(certificateDetails.showSignedBy).toBe(true);
+    });
+
+    it('saves certificate name when it is changed and Save is pressed', async () => {
+      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
+      await nameInput.setValue('New Name');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('opens modal for certificate when View/Download Certificate is pressed', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Certificate' }));
+      await button.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialogComponent, {
+        data: {
+          certificate: '--BEGIN CERTIFICATE--',
+          name: 'ray',
+          extension: 'crt',
+        } as ViewCertificateDialogData,
+      });
+    });
+
+    it('opens modals for certificate key when View/Download Key is pressed', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Key' }));
+      await button.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialogComponent, {
+        data: {
+          certificate: '--BEGIN RSA PRIVATE KEY--',
+          name: 'ray',
+          extension: 'crt',
+        } as ViewCertificateDialogData,
+      });
     });
   });
 
   describe('CSR', () => {
+    const certificateCsr = {
+      ...certificate,
+      cert_type_CSR: true,
+      CSR: '--BEGIN CERTIFICATE REQUEST--',
+    };
+    const createComponent = configurationComponent({
+      certificatesDash: mockCertificatesDashComponent,
+      certificate: certificateCsr,
+    });
+
     beforeEach(() => {
-      spectator.component.setCertificate({
-        ...certificate,
-        cert_type_CSR: true,
-        CSR: '--BEGIN CERTIFICATE REQUEST--',
-      });
+      spectator = createComponent();
       spectator.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('opens slidein for creating ACME certificates when Create ACME Certificate is pressed', async () => {
@@ -139,12 +156,10 @@ describe('CertificateEditComponent', () => {
       await createButton.click();
 
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-      expect(slideInService.open).toHaveBeenCalledWith(CertificateAcmeAddComponent);
-      expect(mockSetCsr).toHaveBeenCalledWith({
-        ...certificate,
-        cert_type_CSR: true,
-        CSR: '--BEGIN CERTIFICATE REQUEST--',
-      });
+      expect(slideInService.open).toHaveBeenCalledWith(
+        CertificateAcmeAddComponent,
+        { data: spectator.component.certificate },
+      );
     });
   });
 });

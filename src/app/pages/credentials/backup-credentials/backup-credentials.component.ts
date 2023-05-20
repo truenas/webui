@@ -75,8 +75,8 @@ export class BackupCredentialsComponent implements OnInit {
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (credential: CloudsyncCredential) => {
-            const slideInRef = this.slideInService.open(CloudCredentialsFormComponent);
-            slideInRef.componentInstance.setCredentialsForEdit(credential);
+            const slideInRef = this.slideInService.open(CloudCredentialsFormComponent, { data: credential });
+            slideInRef.componentInstance.setCredentialsForEdit();
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
@@ -91,8 +91,8 @@ export class BackupCredentialsComponent implements OnInit {
               return;
             }
 
-            const slideInRef = this.slideInService.open(CloudCredentialsFormComponent);
-            slideInRef.componentInstance.setCredentialsForEdit(credentialToEdit);
+            const slideInRef = this.slideInService.open(CloudCredentialsFormComponent, { data: credentialToEdit });
+            slideInRef.componentInstance.setCredentialsForEdit();
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
             this.isFirstCredentialsLoad = false;
           },
@@ -115,8 +115,8 @@ export class BackupCredentialsComponent implements OnInit {
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: KeychainSshCredentials) => {
-            const slideInRef = this.slideInService.open(SshConnectionFormComponent);
-            slideInRef.componentInstance.setConnectionForEdit(row);
+            const slideInRef = this.slideInService.open(SshConnectionFormComponent, { data: row });
+            slideInRef.componentInstance.setConnectionForEdit();
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },
@@ -139,8 +139,8 @@ export class BackupCredentialsComponent implements OnInit {
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: KeychainSshKeyPair) => {
-            const slideInRef = this.slideInService.open(SshKeypairFormComponent);
-            slideInRef.componentInstance.setKeypairForEditing(row);
+            const slideInRef = this.slideInService.open(SshKeypairFormComponent, { data: row });
+            slideInRef.componentInstance.setKeypairForEditing();
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },

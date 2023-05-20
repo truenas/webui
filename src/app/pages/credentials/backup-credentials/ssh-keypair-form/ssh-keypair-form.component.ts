@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,9 +9,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import helptext from 'app/helptext/system/ssh-keypairs';
-import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import {
+  KeychainCredentialUpdate,
+  KeychainSshKeyPair,
+} from 'app/interfaces/keychain-credential.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -62,10 +68,12 @@ export class SshKeypairFormComponent {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private storage: StorageService,
-  ) {}
-
-  setKeypairForEditing(keypair: KeychainSshKeyPair): void {
+    @Inject(SLIDE_IN_DATA) private keypair: KeychainSshKeyPair,
+  ) {
     this.editingKeypair = keypair;
+  }
+
+  setKeypairForEditing(): void {
     this.form.patchValue({
       name: this.editingKeypair.name,
       private_key: this.editingKeypair.attributes.private_key,

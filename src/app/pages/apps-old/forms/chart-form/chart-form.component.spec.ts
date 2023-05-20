@@ -1,7 +1,9 @@
 import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+} from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
@@ -9,8 +11,9 @@ import {
 } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
+import { ChartFormComponent, SlideInDataChartForm } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
 import { DialogService } from 'app/services';
 
 describe('ChartFormComponent', () => {
@@ -326,142 +329,157 @@ describe('ChartFormComponent', () => {
     },
   } as ChartRelease;
 
-  const createComponent = createComponentFactory({
-    component: ChartFormComponent,
-    imports: [
-      IxFormsModule,
-      ReactiveFormsModule,
-    ],
-    providers: [
-      mockProvider(IxSlideInRef),
-      mockProvider(DialogService),
-      mockWebsocket([
-        mockCall('chart.release.create'),
-        mockCall('chart.release.update'),
-      ]),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockDialogRef),
-      }),
-    ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-  });
-
-  it('shows values for an existing data when form is opened for create', () => {
-    spectator.component.setChartCreate(existingChartCreate);
-    const values = spectator.component.form.value;
-
-    expect(values).toEqual({
-      release_name: 'ipfs',
-      service: {
-        apiPort: 9501,
-        gatewayPort: 9880,
-        swarmPort: 9401,
-      },
-      version: '1.2.1',
-      updateStrategy: 'RollingUpdate',
-      externalInterfaces: [],
-      hostNetwork: false,
-      portForwardingList: [],
+  function configurationComponent(config: SlideInDataChartForm): SpectatorFactory<ChartFormComponent> {
+    return createComponentFactory({
+      component: ChartFormComponent,
+      imports: [
+        IxFormsModule,
+        ReactiveFormsModule,
+      ],
+      providers: [
+        mockProvider(IxSlideInRef),
+        mockProvider(DialogService),
+        mockWebsocket([
+          mockCall('chart.release.create'),
+          mockCall('chart.release.update'),
+        ]),
+        mockProvider(MatDialog, {
+          open: jest.fn(() => mockDialogRef),
+        }),
+        { provide: SLIDE_IN_DATA, useValue: config },
+      ],
     });
-  });
+  }
 
-  it('shows values of a dynamic fields when the form value changes.', () => {
-    spectator.component.setChartCreate(existingChartCreate);
+  describe('Create chart', () => {
+    const createComponent = configurationComponent({ catalogApp: existingChartCreate });
 
-    spectator.component.form.patchValue({
-      hostNetwork: true,
-      updateStrategy: 'Recreate',
+    beforeEach(() => {
+      spectator = createComponent();
     });
 
-    const values = spectator.component.form.value;
+    it('shows values for an existing data when form is opened for create', () => {
+      spectator.component.setChartCreate();
+      const values = spectator.component.form.value;
 
-    expect(values).toEqual({
-      release_name: 'ipfs',
-      service: {
-        apiPort: 9501,
-        gatewayPort: 9880,
-        swarmPort: 9401,
-      },
-      version: '1.2.1',
-      updateStrategy: 'Recreate',
-      hostNetwork: true,
-    });
-  });
-
-  it('creating when form is submitted', () => {
-    spectator.component.setChartCreate(existingChartCreate);
-
-    spectator.component.form.patchValue({
-      release_name: 'app_name',
-      service: {
-        apiPort: 9599,
-        gatewayPort: 9888,
-        swarmPort: 9477,
-      },
-    });
-
-    spectator.component.onSubmit();
-
-    expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
-      'chart.release.create', [{
-        catalog: 'OFFICIAL',
-        item: 'ipfs',
-        release_name: 'app_name',
-        train: 'charts',
-        values: {
-          release_name: 'app_name',
-          service: {
-            apiPort: 9599,
-            gatewayPort: 9888,
-            swarmPort: 9477,
-          },
-          updateStrategy: 'RollingUpdate',
-          externalInterfaces: [],
-          hostNetwork: false,
-          portForwardingList: [],
+      expect(values).toEqual({
+        release_name: 'ipfs',
+        service: {
+          apiPort: 9501,
+          gatewayPort: 9880,
+          swarmPort: 9401,
         },
         version: '1.2.1',
-      }],
-    );
-  });
-
-  it('shows values for an existing data when form is opened for edit', () => {
-    spectator.component.setChartEdit(existingChartEdit);
-    const values = spectator.component.form.value;
-
-    expect(values).toEqual({
-      release_name: 'app_name',
-      timezone: 'America/Los_Angeles',
-    });
-  });
-
-  it('disables immutable fields when form is opened for edit', () => {
-    const existingChartEditWithImmutable = { ...existingChartEdit };
-    existingChartEditWithImmutable.chart_schema.schema.questions[0].schema.immutable = true;
-    spectator.component.setChartEdit(existingChartEditWithImmutable);
-    spectator.detectComponentChanges();
-
-    expect(spectator.component.form.controls.timezone.disabled).toBeTruthy();
-  });
-
-  it('editing when form is submitted', () => {
-    spectator.component.setChartEdit(existingChartEdit);
-
-    spectator.component.form.patchValue({
-      timezone: 'Europe/Paris',
+        updateStrategy: 'RollingUpdate',
+        externalInterfaces: [],
+        hostNetwork: false,
+        portForwardingList: [],
+      });
     });
 
-    spectator.component.onSubmit();
+    it('shows values of a dynamic fields when the form value changes.', () => {
+      spectator.component.setChartCreate();
 
-    expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
-      'chart.release.update', ['app_name', {
-        values: {
-          timezone: 'Europe/Paris',
+      spectator.component.form.patchValue({
+        hostNetwork: true,
+        updateStrategy: 'Recreate',
+      });
+
+      const values = spectator.component.form.value;
+
+      expect(values).toEqual({
+        release_name: 'ipfs',
+        service: {
+          apiPort: 9501,
+          gatewayPort: 9880,
+          swarmPort: 9401,
         },
-      }],
-    );
+        version: '1.2.1',
+        updateStrategy: 'Recreate',
+        hostNetwork: true,
+      });
+    });
+
+    it('creating when form is submitted', () => {
+      spectator.component.setChartCreate();
+
+      spectator.component.form.patchValue({
+        release_name: 'app_name',
+        service: {
+          apiPort: 9599,
+          gatewayPort: 9888,
+          swarmPort: 9477,
+        },
+      });
+
+      spectator.component.onSubmit();
+
+      expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
+        'chart.release.create', [{
+          catalog: 'OFFICIAL',
+          item: 'ipfs',
+          release_name: 'app_name',
+          train: 'charts',
+          values: {
+            release_name: 'app_name',
+            service: {
+              apiPort: 9599,
+              gatewayPort: 9888,
+              swarmPort: 9477,
+            },
+            updateStrategy: 'RollingUpdate',
+            externalInterfaces: [],
+            hostNetwork: false,
+            portForwardingList: [],
+          },
+          version: '1.2.1',
+        }],
+      );
+    });
+  });
+
+  describe('Edit chart', () => {
+    const createComponent = configurationComponent({ title: 'App title', releases: [existingChartEdit] });
+
+    beforeEach(() => {
+      spectator = createComponent();
+    });
+
+    it('shows values for an existing data when form is opened for edit', () => {
+      spectator.component.setChartEdit();
+      const values = spectator.component.form.value;
+
+      expect(values).toEqual({
+        release_name: 'app_name',
+        timezone: 'America/Los_Angeles',
+      });
+    });
+
+    it('disables immutable fields when form is opened for edit', () => {
+      const existingChartEditWithImmutable = { ...existingChartEdit };
+      existingChartEditWithImmutable.chart_schema.schema.questions[0].schema.immutable = true;
+      spectator.component.setChartEdit();
+      spectator.detectComponentChanges();
+
+      expect(spectator.component.form.controls.timezone.disabled).toBeTruthy();
+    });
+
+    it('editing when form is submitted', () => {
+      spectator.component.setChartEdit();
+
+      spectator.component.form.patchValue({
+        timezone: 'Europe/Paris',
+      });
+
+      spectator.component.onSubmit();
+
+      expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
+        'chart.release.update', ['app_name', {
+          values: {
+            timezone: 'Europe/Paris',
+          },
+        }],
+      );
+    });
   });
 });

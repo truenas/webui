@@ -134,8 +134,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideIn.open(UserFormComponent, { wide: true });
-    slideInRef.componentInstance.setupForm();
+    this.slideIn.open(UserFormComponent, { wide: true });
   }
 
   onToggle(row: User): void {
