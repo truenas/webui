@@ -1,8 +1,5 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -40,7 +37,6 @@ const fakeUpgradeSummary = {
 
 describe('AppUpgradeDialogComponent - test 1', () => {
   let spectator: Spectator<AppUpgradeDialogComponent>;
-  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
@@ -68,7 +64,6 @@ describe('AppUpgradeDialogComponent - test 1', () => {
         ],
       },
     );
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows title as application name', () => {
@@ -82,12 +77,10 @@ describe('AppUpgradeDialogComponent - test 1', () => {
     expect(2).toBe(2);
   });
 
-  it('shows a list of versions to be upgraded to', async () => {
+  it('shows 2 mat-panels detail rows with data', () => {
+    const panelContent = spectator.queryAll('mat-expansion-panel .detail-row');
+    expect(panelContent[0].textContent).toBe(' There are no images requiring upgrade ');
+    expect(panelContent[1].textContent).toBe('No Changelog');
     expect(2).toBe(2);
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-    const options = await select.getOptions();
-    const optionLabels = await parallel(() => options.map((option) => option.getText()));
-    expect(optionLabels).toEqual(['8.7.0_1.0.2']);
   });
 });
