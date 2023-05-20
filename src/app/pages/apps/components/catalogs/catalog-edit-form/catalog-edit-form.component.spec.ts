@@ -39,7 +39,7 @@ describe('CatalogEditFormComponent', () => {
     ws = spectator.inject(WebSocketService);
 
     spectator.component.setCatalogForEdit({
-      id: 'official',
+      id: 'truenas',
       label: 'Truenas',
       trains: {
         test: {},
@@ -70,7 +70,7 @@ describe('CatalogEditFormComponent', () => {
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('catalog.update', [
-      'official',
+      'truenas',
       { preferred_trains: ['stable', 'incubator'] },
     ]);
   });
