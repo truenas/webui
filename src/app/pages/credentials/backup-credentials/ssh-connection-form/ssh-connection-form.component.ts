@@ -130,8 +130,6 @@ export class SshConnectionFormComponent {
 
   readonly helptext = helptext;
 
-  private existingConnection: KeychainSshCredentials;
-
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -146,10 +144,8 @@ export class SshConnectionFormComponent {
     private snackbar: SnackbarService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
-    @Inject(SLIDE_IN_DATA) private connection: KeychainSshCredentials,
-  ) {
-    this.existingConnection = connection;
-  }
+    @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
+  ) { }
 
   get isManualAuthFormValid(): boolean {
     return this.form.controls.host.valid

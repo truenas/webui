@@ -43,8 +43,6 @@ const defaultHomePath = '/nonexistent';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserFormComponent implements OnInit {
-  private editingUser: User;
-
   isFormLoading = false;
   subscriptions: Subscription[] = [];
 
@@ -170,9 +168,8 @@ export class UserFormComponent implements OnInit {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-    @Inject(SLIDE_IN_DATA) private slideInData: User,
+    @Inject(SLIDE_IN_DATA) private editingUser: User,
   ) {
-    this.editingUser = slideInData;
     this.form.controls.smb.errors$.pipe(
       filter((error) => error?.manualValidateErrorMsg),
       switchMap(() => this.form.controls.password.valueChanges),

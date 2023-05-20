@@ -10,9 +10,9 @@ import {
   mockCall, mockJob, mockWebsocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
-import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
@@ -55,14 +55,15 @@ describe('CertificateAcmeAddComponent', () => {
       mockProvider(MatDialog, {
         open: () => mockEntityJobComponentRef,
       }),
+      {
+        provide: SLIDE_IN_DATA,
+        useValue: { id: 2 },
+      },
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
-    spectator.component.setCsr({
-      id: 2,
-    } as Certificate);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   });

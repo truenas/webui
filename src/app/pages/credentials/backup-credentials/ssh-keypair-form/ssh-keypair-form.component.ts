@@ -32,7 +32,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshKeypairFormComponent {
-  private editingKeypair: KeychainSshKeyPair;
   get isNew(): boolean {
     return !this.editingKeypair;
   }
@@ -68,10 +67,8 @@ export class SshKeypairFormComponent {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private storage: StorageService,
-    @Inject(SLIDE_IN_DATA) private keypair: KeychainSshKeyPair,
-  ) {
-    this.editingKeypair = keypair;
-  }
+    @Inject(SLIDE_IN_DATA) private editingKeypair: KeychainSshKeyPair,
+  ) { }
 
   setKeypairForEditing(): void {
     this.form.patchValue({

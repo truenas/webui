@@ -50,8 +50,6 @@ export class CertificateAcmeAddComponent {
 
   readonly helptext = helptextSystemCertificates;
 
-  private csr: Certificate;
-
   constructor(
     private formBuilder: FormBuilder,
     private validatorsService: IxValidatorsService,
@@ -63,9 +61,8 @@ export class CertificateAcmeAddComponent {
     private slideInRef: IxSlideInRef<CertificateAcmeAddComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private mdDialog: MatDialog,
-    @Inject(SLIDE_IN_DATA) private certificate: Certificate,
+    @Inject(SLIDE_IN_DATA) private csr: Certificate,
   ) {
-    this.csr = certificate;
     this.loadDomains();
   }
 
