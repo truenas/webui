@@ -1,0 +1,29 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+  margin: 0;
+}
+
+section {
+  margin-bottom: 12px;
+}
+
+.card-subtitle {
+  margin-bottom: 12px;
+}
+
+.details-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 12px;
+}
+
+table {
+  background-color: rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
+  width: 100%;
+
+  th {
+    text-align: left;
+  }
+}

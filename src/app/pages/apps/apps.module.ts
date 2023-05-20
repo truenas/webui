@@ -68,6 +68,7 @@ import { AvailableAppsComponent } from './components/available-apps/available-ap
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
+import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppNotesCardComponent } from './components/installed-apps/app-notes-card/app-notes-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -105,6 +106,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppStatusCellComponent,
     AppDetailsHeaderComponent,
     AppDetailsSimilarComponent,
+    AppMetadataCardComponent,
   ],
   imports: [
     CommonModule,

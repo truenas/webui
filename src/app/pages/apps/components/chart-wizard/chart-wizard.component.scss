@@ -76,3 +76,12 @@
     top: 0;
   }
 }
+
+ix-app-metadata-card ::ng-deep {
+  display: block;
+  margin-bottom: 16px;
+
+  mat-card.card {
+    background: transparent;
+  }
+}

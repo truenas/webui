@@ -23,7 +23,9 @@ import {
   ChartFormValues,
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
-import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
@@ -141,10 +143,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        filter((params) => !!(params.appId as string) && !!(params.catalog) && !!(params.train)),
+        filter((params: AppDetailsRouteParams) => !!(params.appId) && !!(params.catalog) && !!(params.train)),
         untilDestroyed(this),
       )
-      .subscribe(({ train, catalog, appId }: AppDetailsRouteParams) => {
+      .subscribe(({ train, catalog, appId }) => {
         this.appId = appId;
         this.train = train;
         this.catalog = catalog;
@@ -173,8 +175,25 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       ).subscribe({
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
+          // TODO: Mock data. Remove before merge.
+          app.app_metadata = {
+            capabilities: Array.from({ length: 30 }).map((value, index) => ({
+              name: `X${index}`,
+              description: `This is being used to do X${index} thing`,
+            })),
+            hostMounts: Array.from({ length: 30 }).map((value, index) => ({
+              hostPath: `/dev/proc${index}`,
+              description: 'Required by netdata for xyz',
+            })),
+            runAsContext: Array.from({ length: 100 }).map((value, index) => ({
+              uid: index,
+              gid: index,
+              userName: `ix-test-${index}`,
+              groupName: `ix-test-${index}`,
+              description: 'Why this needs to be done',
+            })),
+          };
           this.appsLoaded = true;
-          this.cdr.detectChanges();
           this.setChartCreate(app);
           this.isLoading = false;
           this.loader.close();
@@ -233,6 +252,21 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.buildDynamicForm(catalogApp.schema);
+
+    if (catalogApp.app_metadata) {
+      this.form.addControl('has_metadata', new FormControl(true, []));
+      this.dynamicSection.push({
+        name: 'Application Metadata',
+        description: '',
+        help: 'This information is provided by the catalog maintainer.',
+        schema: [{
+          controlName: 'has_metadata',
+          type: DynamicFormSchemaType.Checkbox,
+          hidden: true,
+        }],
+      });
+    }
+
     if (this.catalogApp.name !== ixChartApp) {
       this.form.patchValue({ release_name: this.catalogApp.name });
     }

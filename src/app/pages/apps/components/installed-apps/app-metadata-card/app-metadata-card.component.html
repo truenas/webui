@@ -1,0 +1,52 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      <span>{{ 'Application Metadata' | translate }}</span>
+      <ix-icon
+        name="mdi-information"
+        [matTooltip]="'This information is provided by the catalog maintainer.' | translate"
+      ></ix-icon>
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    <section *ngIf="appMetadata?.hostMounts">
+      <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
+      <div class="details-list">
+        <div *ngFor="let item of appMetadata.hostMounts" class="details-item">
+          <span class="label">{{ item.hostPath }}</span>
+          <span class="value">{{ item.description }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="appMetadata?.capabilities">
+      <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
+      <div class="details-list">
+        <div *ngFor="let item of appMetadata.capabilities" class="details-item">
+          <span class="label">{{ item.name }}</span>
+          <span class="value">{{ item.description }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="appMetadata?.runAsContext">
+      <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
+      <table>
+        <tr ixTest="app-runAsContext-table-header-row">
+          <th>{{ 'UID' | translate }}</th>
+          <th>{{ 'Username' | translate }}</th>
+          <th>{{ 'GID' | translate }}</th>
+          <th>{{ 'Groupname' | translate }}</th>
+          <th>{{ 'Description' | translate }}</th>
+        </tr>
+        <tr *ngFor="let item of appMetadata.runAsContext" [ixTest]="['app-runAsContext-table-body-row', item.userName]">
+          <td>{{ item.uid }}</td>
+          <td>{{ item.userName }}</td>
+          <td>{{ item.gid }}</td>
+          <td>{{ item.groupName }}</td>
+          <td>{{ item.description }}</td>
+        </tr>
+      </table>
+    </section>
+  </mat-card-content>
+</mat-card>

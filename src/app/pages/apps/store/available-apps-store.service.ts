@@ -368,6 +368,29 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       }),
       switchMap((isKubernetesStarted) => {
         return isKubernetesStarted ? this.appsService.getAllChartReleases().pipe(
+          map((installedApps) => {
+            // TODO: Mock data. Remove before merge.
+            return installedApps.map((app) => {
+              app.app_metadata = {
+                capabilities: Array.from({ length: 30 }).map((value, index) => ({
+                  name: `X${index}`,
+                  description: `This is being used to do X${index} thing`,
+                })),
+                hostMounts: Array.from({ length: 30 }).map((value, index) => ({
+                  hostPath: `/dev/proc${index}`,
+                  description: 'Required by netdata for xyz',
+                })),
+                runAsContext: Array.from({ length: 100 }).map((value, index) => ({
+                  uid: index,
+                  gid: index,
+                  userName: `ix-test-${index}`,
+                  groupName: `ix-test-${index}`,
+                  description: 'Why this needs to be done',
+                })),
+              };
+              return app;
+            });
+          }),
           tap((installedApps: ChartRelease[]) => {
             this.patchState((state) => {
               return {
