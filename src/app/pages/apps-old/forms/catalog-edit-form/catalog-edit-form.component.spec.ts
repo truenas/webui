@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -16,6 +16,16 @@ describe('CatalogEditFormComponent', () => {
   let spectator: Spectator<CatalogEditFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  const catalog = {
+    id: 'official',
+    label: 'Official',
+    trains: {
+      test: {},
+      stable: {},
+      incubator: {},
+    },
+    preferred_trains: ['test'],
+  };
   const createComponent = createComponentFactory({
     component: CatalogEditFormComponent,
     imports: [
@@ -28,6 +38,7 @@ describe('CatalogEditFormComponent', () => {
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
+      { provide: SLIDE_IN_DATA, useValue: catalog },
     ],
   });
 
@@ -35,17 +46,6 @@ describe('CatalogEditFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-
-    spectator.component.setCatalogForEdit({
-      id: 'official',
-      label: 'Official',
-      trains: {
-        test: {},
-        stable: {},
-        incubator: {},
-      } as { [trainName: string]: CatalogTrain },
-      preferred_trains: ['test'],
-    } as Catalog);
   });
 
   it('shows catalog name and preferred trains when catalog is open for editing', async () => {
