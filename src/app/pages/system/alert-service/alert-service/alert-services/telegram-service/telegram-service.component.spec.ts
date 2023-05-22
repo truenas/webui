@@ -46,7 +46,7 @@ describe('TelegramServiceComponent', () => {
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({
       bot_token: 'token2',
-      chat_ids: ['2222', '3333'],
+      chat_ids: [2222, 3333],
     });
   });
 
@@ -56,5 +56,13 @@ describe('TelegramServiceComponent', () => {
 
     const error = await chatIdsInput.getErrorText();
     expect(error).toBe('Only numeric ids are allowed.');
+  });
+
+  it('allows minus sign in front of Chat IDs', async () => {
+    const chatIdsInput = await form.getControl('List of chat IDs') as IxChipsHarness;
+    await chatIdsInput.setValue(['-12345']);
+
+    const error = await chatIdsInput.getErrorText();
+    expect(error).toBe('');
   });
 });
