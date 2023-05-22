@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -22,32 +22,36 @@ describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  const fakeDataGroup = {
+    id: 13,
+    gid: 1111,
+    group: 'editing',
+    sudo_commands: [],
+    sudo_commands_nopasswd: [allCommands],
+    smb: false,
+  } as Group;
 
-  function configurationComponent(config?: Group): SpectatorFactory<GroupFormComponent> {
-    return createComponentFactory({
-      component: GroupFormComponent,
-      imports: [
-        IxFormsModule,
-        ReactiveFormsModule,
-      ],
-      providers: [
-        mockWebsocket([
-          mockCall('group.query', [{ group: 'existing' }] as Group[]),
-          mockCall('group.create'),
-          mockCall('group.update'),
-          mockCall('group.get_next_gid', 1234),
-        ]),
-        mockProvider(IxSlideInRef),
-        mockProvider(FormErrorHandlerService),
-        { provide: SLIDE_IN_DATA, useValue: config },
-        provideMockStore(),
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: GroupFormComponent,
+    imports: [
+      IxFormsModule,
+      ReactiveFormsModule,
+    ],
+    providers: [
+      mockWebsocket([
+        mockCall('group.query', [{ group: 'existing' }] as Group[]),
+        mockCall('group.create'),
+        mockCall('group.update'),
+        mockCall('group.get_next_gid', 1234),
+      ]),
+      mockProvider(IxSlideInRef),
+      mockProvider(FormErrorHandlerService),
+      provideMockStore(),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
+    ],
+  });
 
   describe('adding a group', () => {
-    const createComponent = configurationComponent();
-
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -95,18 +99,12 @@ describe('GroupFormComponent', () => {
   });
 
   describe('editing a group', () => {
-    const fakeDataGroup = {
-      id: 13,
-      gid: 1111,
-      group: 'editing',
-      sudo_commands: [],
-      sudo_commands_nopasswd: [allCommands],
-      smb: false,
-    } as Group;
-    const createComponent = configurationComponent(fakeDataGroup);
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: fakeDataGroup },
+        ],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       ws = spectator.inject(WebSocketService);
     });

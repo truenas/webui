@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
@@ -34,57 +34,58 @@ describe('AcmednsFormComponent', () => {
     },
   } as DnsAuthenticator;
 
-  function configurationComponent(config?: DnsAuthenticator): SpectatorFactory<AcmednsFormComponent> {
-    return createComponentFactory({
-      component: AcmednsFormComponent,
-      imports: [
-        IxFormsModule,
-        IxDynamicFormModule,
-        ReactiveFormsModule,
-      ],
-      providers: [
-        mockProvider(IxSlideInRef),
-        mockProvider(DialogService),
-        {
-          provide: SLIDE_IN_DATA,
-          useValue: config,
-        },
-        mockWebsocket([
-          mockCall('acme.dns.authenticator.create'),
-          mockCall('acme.dns.authenticator.update'),
-          mockCall('acme.dns.authenticator.authenticator_schemas', [{
-            key: 'cloudflare' as DnsAuthenticatorType,
-            schema: [
-              {
-                _name_: 'cloudflare_email', _required_: false, title: 'Cloudflare Email', type: 'string',
-              },
-              {
-                _name_: 'api_key', _required_: false, title: 'API Key', type: 'string',
-              },
-              {
-                _name_: 'api_token', _required_: false, title: 'API Token', type: 'string',
-              },
-            ] as Schema[],
-          }, {
-            key: 'route53' as DnsAuthenticatorType,
-            schema: [
-              {
-                _name_: 'access_key_id', _required_: true, title: 'Access Key Id', type: 'string',
-              },
-              {
-                _name_: 'secret_access_key', _required_: true, title: 'Secret Access Key', type: 'string',
-              },
-            ] as Schema[],
-          }] as AuthenticatorSchema[]),
-        ]),
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: AcmednsFormComponent,
+    imports: [
+      IxFormsModule,
+      IxDynamicFormModule,
+      ReactiveFormsModule,
+    ],
+    providers: [
+      mockProvider(IxSlideInRef),
+      mockProvider(DialogService),
+      {
+        provide: SLIDE_IN_DATA,
+        useValue: undefined,
+      },
+      mockWebsocket([
+        mockCall('acme.dns.authenticator.create'),
+        mockCall('acme.dns.authenticator.update'),
+        mockCall('acme.dns.authenticator.authenticator_schemas', [{
+          key: 'cloudflare' as DnsAuthenticatorType,
+          schema: [
+            {
+              _name_: 'cloudflare_email', _required_: false, title: 'Cloudflare Email', type: 'string',
+            },
+            {
+              _name_: 'api_key', _required_: false, title: 'API Key', type: 'string',
+            },
+            {
+              _name_: 'api_token', _required_: false, title: 'API Token', type: 'string',
+            },
+          ] as Schema[],
+        }, {
+          key: 'route53' as DnsAuthenticatorType,
+          schema: [
+            {
+              _name_: 'access_key_id', _required_: true, title: 'Access Key Id', type: 'string',
+            },
+            {
+              _name_: 'secret_access_key', _required_: true, title: 'Secret Access Key', type: 'string',
+            },
+          ] as Schema[],
+        }] as AuthenticatorSchema[]),
+      ]),
+    ],
+  });
 
   describe('Edit DNS', () => {
-    const createComponent = configurationComponent(existingAcmedns);
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: existingAcmedns },
+        ],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
@@ -155,7 +156,6 @@ describe('AcmednsFormComponent', () => {
   });
 
   describe('Add new DNS', () => {
-    const createComponent = configurationComponent();
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

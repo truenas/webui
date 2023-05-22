@@ -130,10 +130,10 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProviders();
-    this.existingCredential = this.credential;
   }
 
   setCredentialsForEdit(): void {
+    this.existingCredential = this.credential;
     this.commonForm.patchValue(this.existingCredential);
 
     if (this.providerForm) {

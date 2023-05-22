@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory, mockProvider, SpectatorFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -26,87 +26,82 @@ import {
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserFormComponent } from './user-form.component';
 
-const mockUser = {
-  id: 69,
-  uid: 1004,
-  username: 'test',
-  home: '/home/test',
-  shell: '/usr/bin/bash',
-  full_name: 'test',
-  builtin: false,
-  smb: true,
-  ssh_password_enabled: true,
-  password_disabled: false,
-  locked: false,
-  sudo_commands_nopasswd: ['rm -rf /'],
-  sudo_commands: [allCommands],
-  email: null,
-  sshpubkey: null,
-  group: {
-    id: 101,
-  },
-  groups: [101],
-  immutable: false,
-} as User;
-
 describe('UserFormComponent', () => {
+  const mockUser = {
+    id: 69,
+    uid: 1004,
+    username: 'test',
+    home: '/home/test',
+    shell: '/usr/bin/bash',
+    full_name: 'test',
+    builtin: false,
+    smb: true,
+    ssh_password_enabled: true,
+    password_disabled: false,
+    locked: false,
+    sudo_commands_nopasswd: ['rm -rf /'],
+    sudo_commands: [allCommands],
+    email: null,
+    sshpubkey: null,
+    group: {
+      id: 101,
+    },
+    groups: [101],
+    immutable: false,
+  } as User;
+  const builtinUser = { ...mockUser, builtin: true, immutable: true };
   let spectator: Spectator<UserFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-
-  function configurationComponent(config?: User): SpectatorFactory<UserFormComponent> {
-    return createComponentFactory({
-      component: UserFormComponent,
-      imports: [
-        IxFormsModule,
-        ReactiveFormsModule,
-      ],
-      providers: [
-        mockWebsocket([
-          mockCall('user.query'),
-          mockCall('user.create'),
-          mockCall('user.update'),
-          mockCall('user.shell_choices', {
-            '/usr/bin/bash': 'bash',
-            '/usr/bin/zsh': 'zsh',
-          } as Choices),
-          mockCall('user.get_next_uid', 1234),
-          mockCall('group.query', [{
-            id: 101,
-            group: 'test-group',
-          }, {
-            id: 102,
-            group: 'mock-group',
-          }] as Group[]),
-          mockCall('sharing.smb.query', [{ path: '/mnt/users' }] as SmbShare[]),
-        ]),
-        mockProvider(DialogService, {
-          confirm: jest.fn(() => of(true)),
-        }),
-        mockProvider(IxSlideInRef),
-        mockProvider(StorageService, {
-          filesystemStat: jest.fn(() => of({ mode: 16832 })),
-          downloadBlob: jest.fn(),
-        }),
-        mockProvider(FormErrorHandlerService),
-        mockProvider(UserService),
-        mockProvider(FilesystemService, {
-          getFilesystemNodeProvider: jest.fn(() => of()),
-        }),
-        provideMockStore({
-          selectors: [{
-            selector: selectUsers,
-            value: [mockUser],
-          }],
-        }),
-        { provide: SLIDE_IN_DATA, useValue: config },
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: UserFormComponent,
+    imports: [
+      IxFormsModule,
+      ReactiveFormsModule,
+    ],
+    providers: [
+      mockWebsocket([
+        mockCall('user.query'),
+        mockCall('user.create'),
+        mockCall('user.update'),
+        mockCall('user.shell_choices', {
+          '/usr/bin/bash': 'bash',
+          '/usr/bin/zsh': 'zsh',
+        } as Choices),
+        mockCall('user.get_next_uid', 1234),
+        mockCall('group.query', [{
+          id: 101,
+          group: 'test-group',
+        }, {
+          id: 102,
+          group: 'mock-group',
+        }] as Group[]),
+        mockCall('sharing.smb.query', [{ path: '/mnt/users' }] as SmbShare[]),
+      ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(IxSlideInRef),
+      mockProvider(StorageService, {
+        filesystemStat: jest.fn(() => of({ mode: 16832 })),
+        downloadBlob: jest.fn(),
+      }),
+      mockProvider(FormErrorHandlerService),
+      mockProvider(UserService),
+      mockProvider(FilesystemService, {
+        getFilesystemNodeProvider: jest.fn(() => of()),
+      }),
+      provideMockStore({
+        selectors: [{
+          selector: selectUsers,
+          value: [mockUser],
+        }],
+      }),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
+    ],
+  });
 
   describe('adding a user', () => {
-    const createComponent = configurationComponent();
-
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -173,10 +168,12 @@ describe('UserFormComponent', () => {
   });
 
   describe('editing a user', () => {
-    const createComponent = configurationComponent(mockUser);
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: mockUser },
+        ],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       ws = spectator.inject(WebSocketService);
       spectator.component.setupForm();
@@ -293,11 +290,12 @@ describe('UserFormComponent', () => {
   });
 
   describe('checks form states', () => {
-    const builtinUser = { ...mockUser, builtin: true, immutable: true };
-    const createComponent = configurationComponent(builtinUser);
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: builtinUser },
+        ],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       ws = spectator.inject(WebSocketService);
       spectator.component.setupForm();

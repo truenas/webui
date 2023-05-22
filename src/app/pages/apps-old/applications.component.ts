@@ -4,7 +4,6 @@ import {
 import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { ApplicationTab } from 'app/pages/apps-old/application-tab.enum';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
@@ -38,8 +37,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     merge(
       this.core.register({ eventName: 'RefreshAppsTab', observerClass: this }),
-      this.slideInService.onClose$
-        .pipe(filter(Boolean)),
+      this.slideInService.onClose$,
     ).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTab();
     });

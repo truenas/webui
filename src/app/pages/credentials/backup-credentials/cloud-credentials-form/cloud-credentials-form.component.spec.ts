@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
@@ -86,37 +86,33 @@ describe('CloudCredentialsFormComponent', () => {
     },
   } as CloudsyncCredential;
 
-  function configurationComponent(config?: CloudsyncCredential): SpectatorFactory<CloudCredentialsFormComponent> {
-    return createComponentFactory({
-      component: CloudCredentialsFormComponent,
-      imports: [
-        ReactiveFormsModule,
-        IxFormsModule,
-      ],
-      declarations: [
-        TokenProviderFormComponent,
-        S3ProviderFormComponent,
-      ],
-      providers: [
-        mockProvider(IxSlideInRef),
-        mockProvider(SnackbarService),
-        mockProvider(DialogService),
-        { provide: SLIDE_IN_DATA, useValue: config },
-        mockWebsocket([
-          mockCall('cloudsync.credentials.create'),
-          mockCall('cloudsync.credentials.update'),
-          mockCall('cloudsync.credentials.verify', {
-            valid: true,
-          }),
-          mockCall('cloudsync.providers', [s3Provider, boxProvider]),
-        ]),
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: CloudCredentialsFormComponent,
+    imports: [
+      ReactiveFormsModule,
+      IxFormsModule,
+    ],
+    declarations: [
+      TokenProviderFormComponent,
+      S3ProviderFormComponent,
+    ],
+    providers: [
+      mockProvider(IxSlideInRef),
+      mockProvider(SnackbarService),
+      mockProvider(DialogService),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockWebsocket([
+        mockCall('cloudsync.credentials.create'),
+        mockCall('cloudsync.credentials.update'),
+        mockCall('cloudsync.credentials.verify', {
+          valid: true,
+        }),
+        mockCall('cloudsync.providers', [s3Provider, boxProvider]),
+      ]),
+    ],
+  });
 
   describe('rendering', () => {
-    const createComponent = configurationComponent();
-
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -268,10 +264,10 @@ describe('CloudCredentialsFormComponent', () => {
   });
 
   describe('saving with credentials', () => {
-    const createComponent = configurationComponent(fakeCloudsyncCredential);
-
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [{ provide: SLIDE_IN_DATA, useValue: fakeCloudsyncCredential }],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });

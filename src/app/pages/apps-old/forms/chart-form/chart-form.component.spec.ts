@@ -2,7 +2,7 @@ import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
@@ -13,7 +13,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { ChartFormComponent, SlideInDataChartForm } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
+import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
 import { DialogService } from 'app/services';
 
 describe('ChartFormComponent', () => {
@@ -329,33 +329,31 @@ describe('ChartFormComponent', () => {
     },
   } as ChartRelease;
 
-  function configurationComponent(config: SlideInDataChartForm): SpectatorFactory<ChartFormComponent> {
-    return createComponentFactory({
-      component: ChartFormComponent,
-      imports: [
-        IxFormsModule,
-        ReactiveFormsModule,
-      ],
-      providers: [
-        mockProvider(IxSlideInRef),
-        mockProvider(DialogService),
-        mockWebsocket([
-          mockCall('chart.release.create'),
-          mockCall('chart.release.update'),
-        ]),
-        mockProvider(MatDialog, {
-          open: jest.fn(() => mockDialogRef),
-        }),
-        { provide: SLIDE_IN_DATA, useValue: config },
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: ChartFormComponent,
+    imports: [
+      IxFormsModule,
+      ReactiveFormsModule,
+    ],
+    providers: [
+      mockProvider(IxSlideInRef),
+      mockProvider(DialogService),
+      mockWebsocket([
+        mockCall('chart.release.create'),
+        mockCall('chart.release.update'),
+      ]),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => mockDialogRef),
+      }),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
+    ],
+  });
 
   describe('Create chart', () => {
-    const createComponent = configurationComponent({ catalogApp: existingChartCreate });
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [{ provide: SLIDE_IN_DATA, useValue: { catalogApp: existingChartCreate } }],
+      });
     });
 
     it('shows values for an existing data when form is opened for create', () => {
@@ -439,10 +437,12 @@ describe('ChartFormComponent', () => {
   });
 
   describe('Edit chart', () => {
-    const createComponent = configurationComponent({ title: 'App title', releases: [existingChartEdit] });
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: { title: 'App title', releases: [existingChartEdit] } },
+        ],
+      });
     });
 
     it('shows values for an existing data when form is opened for edit', () => {

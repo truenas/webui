@@ -14,8 +14,11 @@ import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in
 export class IxSlideIn2Service {
   slideIn2Component: IxSlideIn2Component;
   slideInRefMap = new Map<string, IxSlideInRef<unknown>>();
-  // use slideInClosed$ in IxSlideInRef instead onClose$
-  readonly onClose$ = new Subject<unknown>();
+  /**
+   * Emits when any slide in has been closed.
+   * Prefer to use slideInClosed$ in slideInRef to tell when an individual slide in is closed.
+   */
+  readonly onClose$ = new Subject();
 
   constructor(
     private location: Location,
@@ -37,9 +40,9 @@ export class IxSlideIn2Service {
 
     const slideInRef = this.slideIn2Component.openSlideIn<T, D>(component, params);
     this.slideInRefMap.set(slideInRef.id, slideInRef);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe((response) => {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.deleteRef(slideInRef.id);
-      this.onClose$.next(response);
+      this.onClose$.next('');
     });
     return slideInRef;
   }

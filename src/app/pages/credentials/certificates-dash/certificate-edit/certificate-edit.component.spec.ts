@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -29,7 +29,7 @@ import {
 import { DialogService } from 'app/services';
 import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { CertificateEditComponent, SlideInDataCertificateEdit } from './certificate-edit.component';
+import { CertificateEditComponent } from './certificate-edit.component';
 
 describe('CertificateEditComponent', () => {
   let spectator: Spectator<CertificateEditComponent>;
@@ -41,37 +41,42 @@ describe('CertificateEditComponent', () => {
     certificate: '--BEGIN CERTIFICATE--',
     privatekey: '--BEGIN RSA PRIVATE KEY--',
   } as Certificate;
+  const certificateCsr = {
+    ...certificate,
+    cert_type_CSR: true,
+    CSR: '--BEGIN CERTIFICATE REQUEST--',
+  };
 
-  function configurationComponent(config: SlideInDataCertificateEdit): SpectatorFactory<CertificateEditComponent> {
-    return createComponentFactory({
-      component: CertificateEditComponent,
-      imports: [
-        ReactiveFormsModule,
-        IxFormsModule,
-      ],
-      providers: [
-        mockWebsocket([
-          mockCall('certificate.update'),
-        ]),
-        mockProvider(MatDialog),
-        mockProvider(IxSlideIn2Service),
-        mockProvider(IxSlideInRef),
-        { provide: SLIDE_IN_DATA, useValue: config },
-        mockProvider(DialogService),
-      ],
-      declarations: [
-        MockComponent(ViewCertificateDialogComponent),
-        MockComponent(CertificateDetailsComponent),
-        MockComponent(CertificateAcmeAddComponent),
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: CertificateEditComponent,
+    imports: [
+      ReactiveFormsModule,
+      IxFormsModule,
+    ],
+    providers: [
+      mockWebsocket([
+        mockCall('certificate.update'),
+      ]),
+      mockProvider(MatDialog),
+      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(DialogService),
+    ],
+    declarations: [
+      MockComponent(ViewCertificateDialogComponent),
+      MockComponent(CertificateDetailsComponent),
+      MockComponent(CertificateAcmeAddComponent),
+    ],
+  });
 
   describe('Edit certificate', () => {
-    const createComponent = configurationComponent({ certificatesDash: mockCertificatesDashComponent, certificate });
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: { certificatesDash: mockCertificatesDashComponent, certificate } },
+        ],
+      });
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -128,18 +133,18 @@ describe('CertificateEditComponent', () => {
   });
 
   describe('CSR', () => {
-    const certificateCsr = {
-      ...certificate,
-      cert_type_CSR: true,
-      CSR: '--BEGIN CERTIFICATE REQUEST--',
-    };
-    const createComponent = configurationComponent({
-      certificatesDash: mockCertificatesDashComponent,
-      certificate: certificateCsr,
-    });
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              certificatesDash: mockCertificatesDashComponent,
+              certificate: certificateCsr,
+            },
+          },
+        ],
+      });
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });

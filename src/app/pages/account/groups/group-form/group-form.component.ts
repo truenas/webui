@@ -27,7 +27,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupFormComponent implements OnInit {
-  private editingGroup: Group;
   get isNew(): boolean {
     return !this.editingGroup;
   }
@@ -64,11 +63,10 @@ export class GroupFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<GroupSlice>,
     private snackbar: SnackbarService,
-    @Inject(SLIDE_IN_DATA) private slideInData: Group,
+    @Inject(SLIDE_IN_DATA) private editingGroup: Group,
   ) { }
 
   ngOnInit(): void {
-    this.editingGroup = this.slideInData;
     this.setupForm();
   }
 

@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -33,35 +33,31 @@ describe('SshKeypairFormComponent', () => {
     },
   } as KeychainSshKeyPair;
 
-  function configurationComponent(config?: KeychainSshKeyPair): SpectatorFactory<SshKeypairFormComponent> {
-    return createComponentFactory({
-      component: SshKeypairFormComponent,
-      imports: [
-        IxFormsModule,
-        ReactiveFormsModule,
-      ],
-      providers: [
-        mockWebsocket([
-          mockCall('keychaincredential.generate_ssh_key_pair', {
-            private_key: 'Generated private key',
-            public_key: 'Generated public key',
-          } as SshKeyPair),
-          mockCall('keychaincredential.create'),
-          mockCall('keychaincredential.update'),
-        ]),
-        mockProvider(IxSlideInRef),
-        mockProvider(StorageService),
-        mockProvider(FormErrorHandlerService),
-        mockProvider(DialogService),
-        mockProvider(AppLoaderService),
-        { provide: SLIDE_IN_DATA, useValue: config },
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: SshKeypairFormComponent,
+    imports: [
+      IxFormsModule,
+      ReactiveFormsModule,
+    ],
+    providers: [
+      mockWebsocket([
+        mockCall('keychaincredential.generate_ssh_key_pair', {
+          private_key: 'Generated private key',
+          public_key: 'Generated public key',
+        } as SshKeyPair),
+        mockCall('keychaincredential.create'),
+        mockCall('keychaincredential.update'),
+      ]),
+      mockProvider(IxSlideInRef),
+      mockProvider(StorageService),
+      mockProvider(FormErrorHandlerService),
+      mockProvider(DialogService),
+      mockProvider(AppLoaderService),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
+    ],
+  });
 
   describe('adding an ssh key pair', () => {
-    const createComponent = configurationComponent();
-
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -141,10 +137,12 @@ describe('SshKeypairFormComponent', () => {
   });
 
   describe('editing an ssh key pair', () => {
-    const createComponent = configurationComponent(fakeSshKeyPair);
-
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: fakeSshKeyPair },
+        ],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       ws = spectator.inject(WebSocketService);
       spectator.component.setKeypairForEditing();

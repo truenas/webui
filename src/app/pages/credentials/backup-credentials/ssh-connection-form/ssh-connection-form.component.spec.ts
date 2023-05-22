@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -40,42 +40,40 @@ describe('SshConnectionFormComponent', () => {
     },
   } as KeychainSshCredentials;
 
-  function configurationComponent(config?: KeychainSshCredentials): SpectatorFactory<SshConnectionFormComponent> {
-    return createComponentFactory({
-      component: SshConnectionFormComponent,
-      imports: [
-        ReactiveFormsModule,
-        IxFormsModule,
-        AppLoaderModule,
-      ],
-      providers: [
-        mockWebsocket([
-          mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
-          mockCall('keychaincredential.setup_ssh_connection'),
-          mockCall('keychaincredential.update'),
+  const createComponent = createComponentFactory({
+    component: SshConnectionFormComponent,
+    imports: [
+      ReactiveFormsModule,
+      IxFormsModule,
+      AppLoaderModule,
+    ],
+    providers: [
+      mockWebsocket([
+        mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
+        mockCall('keychaincredential.setup_ssh_connection'),
+        mockCall('keychaincredential.update'),
+      ]),
+      mockProvider(KeychainCredentialService, {
+        getSshKeys: () => of([
+          { id: 1, name: 'key1' },
+          { id: 2, name: 'key2' },
         ]),
-        mockProvider(KeychainCredentialService, {
-          getSshKeys: () => of([
-            { id: 1, name: 'key1' },
-            { id: 2, name: 'key2' },
-          ]),
-        }),
-        mockProvider(IxSlideInRef),
-        mockProvider(DialogService),
-        mockProvider(MatDialogRef),
-        {
-          provide: SLIDE_IN_DATA,
-          useValue: config,
-        },
-      ],
-    });
-  }
+      }),
+      mockProvider(IxSlideInRef),
+      mockProvider(DialogService),
+      mockProvider(MatDialogRef),
+      {
+        provide: SLIDE_IN_DATA,
+        useValue: undefined,
+      },
+    ],
+  });
 
   describe('Edit existing SSH', () => {
-    const createComponent = configurationComponent(existingConnection);
-
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [{ provide: SLIDE_IN_DATA, useValue: existingConnection }],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       websocket = spectator.inject(WebSocketService);
@@ -128,8 +126,6 @@ describe('SshConnectionFormComponent', () => {
   });
 
   describe('Add new SSH', () => {
-    const createComponent = configurationComponent();
-
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
