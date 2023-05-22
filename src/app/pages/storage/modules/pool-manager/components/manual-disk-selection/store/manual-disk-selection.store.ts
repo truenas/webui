@@ -86,11 +86,12 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
 
       return newVdev;
     });
-    const newDisk = _.cloneDeep(disk);
-    newDisk.vdevUuid = null;
 
     const inventory = _.cloneDeep(state.inventory);
-    if (!inventory.some((unusedDisk) => unusedDisk.identifier === newDisk.identifier)) {
+    const isDiskAlreadyInInventory = inventory.some((unusedDisk) => unusedDisk.identifier === disk.identifier);
+    if (!isDiskAlreadyInInventory) {
+      const newDisk = _.cloneDeep(disk);
+      newDisk.vdevUuid = null;
       inventory.push(newDisk);
     }
     return {
@@ -120,8 +121,11 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     const vdevs = _.cloneDeep(state.vdevs).filter((vdev) => vdev.uuid !== vdevToRemove.uuid);
     const inventory = _.cloneDeep(state.inventory);
     for (const disk of vdevToRemove.disks) {
-      if (!inventory.some((unusedDisk) => unusedDisk.identifier === disk.identifier)) {
-        inventory.push(_.cloneDeep(disk));
+      const isDiskAlreadyInInventory = inventory.some((unusedDisk) => unusedDisk.identifier === disk.identifier);
+      if (!isDiskAlreadyInInventory) {
+        const newDisk = _.cloneDeep(disk);
+        newDisk.vdevUuid = null;
+        inventory.push(newDisk);
       }
     }
     return {
