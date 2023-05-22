@@ -62,6 +62,7 @@ import { AppDetailViewComponent } from './components/app-detail-view/app-detail-
 import { AppHelmChartCardComponent } from './components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 import { AppResourcesCardComponent } from './components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
+import { AppSectionExpandCollapseComponent } from './components/app-section-expand-collapse/app-section-expand-collapse.component';
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
@@ -107,6 +108,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppDetailsHeaderComponent,
     AppDetailsSimilarComponent,
     AppMetadataCardComponent,
+    AppSectionExpandCollapseComponent,
   ],
   imports: [
     CommonModule,

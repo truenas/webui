@@ -9,7 +9,7 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <section *ngIf="appMetadata?.hostMounts" id="hostMounts">
+    <ix-app-section-expand-collapse *ngIf="appMetadata?.hostMounts" id="hostMounts" [maxHeight]="maxHeight">
       <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
       <div class="details-list">
         <div *ngFor="let item of appMetadata.hostMounts" class="details-item">
@@ -17,9 +17,9 @@
           <span class="value">{{ item.description }}</span>
         </div>
       </div>
-    </section>
+    </ix-app-section-expand-collapse>
 
-    <section *ngIf="appMetadata?.capabilities" id="capabilities">
+    <ix-app-section-expand-collapse *ngIf="appMetadata?.capabilities" id="capabilities" [maxHeight]="maxHeight">
       <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
       <div class="details-list">
         <div *ngFor="let item of appMetadata.capabilities" class="details-item">
@@ -27,26 +27,34 @@
           <span class="value">{{ item.description }}</span>
         </div>
       </div>
-    </section>
+    </ix-app-section-expand-collapse>
 
-    <section *ngIf="appMetadata?.runAsContext" id="runAsContext">
+    <ix-app-section-expand-collapse *ngIf="appMetadata?.runAsContext" id="runAsContext" [maxHeight]="maxHeight">
       <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
-      <table class="runAsContext">
-        <tr ixTest="app-runAsContext-table-header-row">
-          <th>{{ 'UID' | translate }}</th>
-          <th>{{ 'Username' | translate }}</th>
-          <th>{{ 'GID' | translate }}</th>
-          <th>{{ 'Groupname' | translate }}</th>
-          <th>{{ 'Description' | translate }}</th>
-        </tr>
-        <tr *ngFor="let item of appMetadata.runAsContext" [ixTest]="['app-runAsContext-table-body-row', item.userName]">
-          <td>{{ item.uid }}</td>
-          <td>{{ item.userName }}</td>
-          <td>{{ item.gid }}</td>
-          <td>{{ item.groupName }}</td>
-          <td>{{ item.description }}</td>
-        </tr>
-      </table>
-    </section>
+      <div class="details-list">
+        <div *ngFor="let item of appMetadata.runAsContext" class="details-entry">
+          <div class="details-item">
+            <span class="label">{{ 'UID' | translate }}:</span>
+            <span class="value">{{ item.uid }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'GID' | translate }}:</span>
+            <span class="value">{{ item.gid }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'Username' | translate }}:</span>
+            <span class="value">{{ item.userName }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'Groupname' | translate }}:</span>
+            <span class="value">{{ item.groupName }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'Description' | translate }}:</span>
+            <span class="value">{{ item.description }}</span>
+          </div>
+        </div>
+      </div>
+    </ix-app-section-expand-collapse>
   </mat-card-content>
 </mat-card>

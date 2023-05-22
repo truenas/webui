@@ -11,4 +11,5 @@ import { AppMetadata } from 'app/interfaces/chart-release.interface';
 })
 export class AppMetadataCardComponent {
   @Input() appMetadata: AppMetadata;
+  @Input() maxHeight = 250;
 }

@@ -1,0 +1,14 @@
+<div #section class="content-wrapper">
+  <ng-content></ng-content>
+</div>
+<div *ngIf="isCollapsed && showMoreLess" class="gradient"></div>
+<div *ngIf="showMoreLess" class="more-less">
+  <button
+    type="button"
+    mat-button
+    ixTest="show-more-less"
+    (click)="changeCollapsed()"
+  >
+    {{ isCollapsed ? ('View More' | translate) : ('Collapse' | translate) }}
+  </button>
+</div>

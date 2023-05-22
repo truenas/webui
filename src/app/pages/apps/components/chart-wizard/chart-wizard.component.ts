@@ -253,17 +253,21 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.buildDynamicForm(catalogApp.schema);
 
-    if (catalogApp.app_metadata) {
-      this.form.addControl('has_metadata', new FormControl(true, []));
+    const appMetadata = { ...catalogApp.app_metadata };
+    if (appMetadata) {
+      Object.keys(appMetadata).forEach((key) => {
+        this.form.addControl(key, new FormControl(true, []));
+      });
       this.dynamicSection.push({
         name: 'Application Metadata',
         description: '',
-        help: 'This information is provided by the catalog maintainer.',
-        schema: [{
-          controlName: 'has_metadata',
+        help: this.translate.instant('This information is provided by the catalog maintainer.'),
+        schema: Object.keys(appMetadata).map((key) => ({
+          controlName: key,
+          title: `Show ${key}`,
           type: DynamicFormSchemaType.Checkbox,
           hidden: true,
-        }],
+        })),
       });
     }
 

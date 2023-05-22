@@ -5,10 +5,6 @@
   margin: 0;
 }
 
-section {
-  margin-bottom: 12px;
-}
-
 .card-subtitle {
   margin-bottom: 12px;
 }
@@ -18,12 +14,15 @@ section {
   padding: 12px;
 }
 
-table {
-  background-color: rgba(0, 0, 0, 0.1);
-  table-layout: fixed;
-  width: 100%;
+ix-app-section-expand-collapse {
+  display: block;
+  margin-bottom: 12px;
+}
 
-  th {
-    text-align: left;
+.details-entry {
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--lines);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
   }
 }
