@@ -120,10 +120,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     const vdevs = _.cloneDeep(state.vdevs).filter((vdev) => vdev.uuid !== vdevToRemove.uuid);
     const inventory = _.cloneDeep(state.inventory);
     for (const disk of vdevToRemove.disks) {
-      const diskAlreadyExists = inventory.some(
-        (unusedDisk) => unusedDisk.identifier === disk.identifier,
-      );
-      if (!diskAlreadyExists) {
+      if (!inventory.some((unusedDisk) => unusedDisk.identifier === disk.identifier)) {
         inventory.push(_.cloneDeep(disk));
       }
     }
