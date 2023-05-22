@@ -54,9 +54,9 @@
         </div>
       </div>
       <ix-label class="drag-hint" [label]="'Drag & drop disks to add or remove them' | translate"></ix-label>
-      <ix-label *ngIf="vdev.errorMsg" class="error" [label]="vdev.errorMsg"></ix-label>
+      <ix-label *ngIf="vdevErrMsg" class="error" [label]="vdevErrMsg"></ix-label>
       <ix-label
-        *ngIf="vdev.showDiskSizeError"
+        *ngIf="showDiskSizeError"
         class="error"
         [label]="'Mixing disks of different sizes in a vdev is not recommended.' | translate"
       ></ix-label>
