@@ -10,6 +10,7 @@ import {
   ManualSelectionDisk,
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
+import { ManualDiskDragToggleStore as ManualDiskSelectionDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
@@ -38,8 +39,9 @@ export class ManualSelectionVdevComponent implements OnChanges {
   }
   constructor(
     private cdr: ChangeDetectorRef,
-    public store$: ManualDiskSelectionStore,
+    protected store$: ManualDiskSelectionStore,
     private translate: TranslateService,
+    protected dragToggleStore$: ManualDiskSelectionDragToggleStore,
   ) { }
 
   ngOnChanges(): void {
@@ -124,15 +126,15 @@ export class ManualSelectionVdevComponent implements OnChanges {
   }
 
   onDragStart(): void {
-    this.store$.toggleActivateDrag(true);
+    this.dragToggleStore$.toggleActivateDrag(true);
   }
 
   onDragEnd(): void {
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
   }
 
   onDragCanceled(): void {
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
   }
 
   deleteVdev(): void {
@@ -148,7 +150,7 @@ export class ManualSelectionVdevComponent implements OnChanges {
       this.store$.removeDiskFromVdev(disk);
     }
     this.store$.addDiskToVdev({ disk, vdev: this.vdev });
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
     this.cdr.markForCheck();
   }
 }

@@ -3,7 +3,7 @@
     <div
       dndDropzone
       class="drag-container"
-      [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
+      [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
       (dndDrop)="onDrop($event)"
     >
       <div class="outer-container">
@@ -25,7 +25,7 @@
             <div class="disk-icons">
               <ix-disk-icon *ngFor="let disk of enclosureDisks.value"
                 class="disk-icon drag-handle"
-                [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+                [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
                 [dndDraggable]="getMovableDisk(disk)"
                 [dndEffectAllowed]="'move'"
                 [disk]="disk"
@@ -38,7 +38,7 @@
           <div class="disk-icons no-enclosure">
             <ix-disk-icon *ngFor="let disk of nonEnclosureDisks"
               class="disk-icon drag-handle"
-              [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+              [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
               [dndDraggable]="getMovableDisk(disk)"
               [dndEffectAllowed]="'move'"
               [disk]="disk"
