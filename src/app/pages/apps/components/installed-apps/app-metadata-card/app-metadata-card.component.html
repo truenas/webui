@@ -9,7 +9,7 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <section *ngIf="appMetadata?.hostMounts">
+    <section *ngIf="appMetadata?.hostMounts" id="hostMounts">
       <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
       <div class="details-list">
         <div *ngFor="let item of appMetadata.hostMounts" class="details-item">
@@ -19,7 +19,7 @@
       </div>
     </section>
 
-    <section *ngIf="appMetadata?.capabilities">
+    <section *ngIf="appMetadata?.capabilities" id="capabilities">
       <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
       <div class="details-list">
         <div *ngFor="let item of appMetadata.capabilities" class="details-item">
@@ -29,9 +29,9 @@
       </div>
     </section>
 
-    <section *ngIf="appMetadata?.runAsContext">
+    <section *ngIf="appMetadata?.runAsContext" id="runAsContext">
       <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
-      <table>
+      <table class="runAsContext">
         <tr ixTest="app-runAsContext-table-header-row">
           <th>{{ 'UID' | translate }}</th>
           <th>{{ 'Username' | translate }}</th>

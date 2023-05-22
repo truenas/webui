@@ -80,8 +80,15 @@
 ix-app-metadata-card ::ng-deep {
   display: block;
   margin-bottom: 16px;
+  margin-top: -32px;
 
   mat-card.card {
     background: transparent;
+  }
+
+  mat-card-header {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
   }
 }
