@@ -249,6 +249,10 @@ describe('UserFormComponent', () => {
       await saveButton.click();
 
       expect(ws.call).toHaveBeenCalledWith('user.update', [
+        69, { home: '/home/updated', home_create: true },
+      ]);
+
+      expect(ws.call).toHaveBeenCalledWith('user.update', [
         69,
         {
           email: null,
@@ -256,10 +260,8 @@ describe('UserFormComponent', () => {
           group: 102,
           groups: [102],
           home_mode: '755',
-          home: '/home/updated',
           locked: true,
           password_disabled: false,
-          home_create: true,
           shell: '/usr/bin/zsh',
           smb: false,
           ssh_password_enabled: true,

@@ -22,6 +22,6 @@
     <ix-app-info-card [app]="app"></ix-app-info-card>
     <ix-app-containers-card [app]="app"></ix-app-containers-card>
     <ix-app-history-card [app]="app"></ix-app-history-card>
-    <ix-app-notes-card [app]="app"></ix-app-notes-card>
+    <ix-app-notes-card *ngIf="app.info?.notes" [app]="app"></ix-app-notes-card>
   </div>
 </div>

@@ -15,8 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -32,7 +31,7 @@ interface Slide {
   index?: string;
   dataSource?: TopologyItem;
   template: TemplateRef<void>;
-  topology?: PoolTopologyCategory;
+  topology?: VdevType;
 }
 
 interface PoolDiagnosis {
@@ -82,11 +81,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   readonly TopologyItemStatus = TopologyItemStatus;
   readonly PoolStatus = PoolStatus;
-  readonly PoolTopologyCategory = PoolTopologyCategory;
+  readonly PoolTopologyCategory = VdevType;
 
   currentSlide = '0';
 
-  get currentSlideTopology(): PoolTopologyCategory {
+  get currentSlideTopology(): VdevType {
     return this.path[parseInt(this.currentSlide)].topology;
   }
 
@@ -267,7 +266,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     verified: boolean,
     slideIndex: number,
     dataIndex?: number,
-    topology?: PoolTopologyCategory,
+    topology?: VdevType,
     vdev?: TopologyItem,
   ): void {
     if (name !== 'overview' && !verified) { return; }

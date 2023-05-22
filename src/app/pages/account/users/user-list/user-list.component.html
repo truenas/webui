@@ -3,6 +3,7 @@
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
     <mat-slide-toggle
       color="primary"
+      ixTest="show-built-in-users"
       [checked]="!this.hideBuiltinUsers"
       (change)="toggleBuiltins()"
     >

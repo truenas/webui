@@ -1,0 +1,37 @@
+<div class="content-container">
+  <div class="left-column">
+    <h3>{{ 'Manually Configured VDEVs' | translate }}</h3>
+    <p>{{ manualDiskSelectionMessage }}</p>
+    <div class="selection-actions">
+      <button
+        mat-button
+        type="button"
+        class="manual-disk-selection"
+        ixTest="manual"
+        (click)="openManualDiskSelection()"
+      >
+        {{ 'Edit Manual Disk Selection' | translate }}
+      </button>
+      <button
+        mat-button
+        class="manual-disk-selection"
+        type="button"
+        ixTest="reset"
+        (click)="resetLayout()"
+      >
+        {{ 'Reset' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="right-column">
+    <h3>{{ 'Description' | translate }}</h3>
+    <ul class="description-list">
+      <li class="vdevs-length">
+        <strong>{{ 'VDEVs' | translate }}: </strong>{{ vdevs.length }}
+      </li>
+      <li>
+        <strong>{{ 'No warnings' | translate }}</strong>
+      </li>
+    </ul>
+  </div>
+</div>

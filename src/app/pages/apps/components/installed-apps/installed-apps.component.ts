@@ -266,6 +266,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         if (!charts.length) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
+          this.cdr.markForCheck();
         }
         return !!charts.length;
       }),
@@ -295,7 +296,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       .subscribe((releases) => {
         const installedApp = this.dataSource.find((app) => app.name === name);
         if (installedApp) {
-          installedApp.status = releases[0].status;
+          installedApp.status = releases[0]?.status;
           this.cdr.markForCheck();
           if (installedApp.status === ChartReleaseStatus.Deploying) {
             setTimeout(() => {

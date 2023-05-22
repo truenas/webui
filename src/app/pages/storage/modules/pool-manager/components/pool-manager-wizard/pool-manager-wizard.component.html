@@ -1,72 +1,22 @@
 <mat-card class="card">
   <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
-  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+  <form (keydown.enter)="$event.preventDefault()">
     <mat-vertical-stepper [linear]="isLoading$ | async">
       <mat-step>
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
-        <ix-general-wizard-step
-          [form]="form.controls.general"
-        ></ix-general-wizard-step>
-        <div class="step-buttons">
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-            [disabled]="!form.controls.general.valid"
-          >
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+        <ix-general-wizard-step></ix-general-wizard-step>
+      </mat-step>
+      <mat-step *ngIf="hasEnclosureStep$">
+        <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
+        <ix-enclosure-wizard-step></ix-enclosure-wizard-step>
       </mat-step>
       <mat-step>
-        <ng-template matStepLabel>{{ 'Create Data VDEVs' | translate }}</ng-template>
-        <ix-create-data-wizard-step [form]="form.controls.data"></ix-create-data-wizard-step>
-        <div class="step-buttons">
-          <button
-            mat-button
-            matStepperPrevious
-            color="accent"
-            type="button"
-            ixTest="back"
-          >
-            {{ 'Back' | translate }}
-          </button>
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-            [disabled]="form.controls.data.invalid"
-          >
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+        <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
+        <ix-data-wizard-step></ix-data-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Log' | translate }}</ng-template>
-        <div class="step-buttons">
-          <button
-            mat-button
-            matStepperPrevious
-            color="accent"
-            type="button"
-            ixTest="back"
-          >
-            {{ 'Back' | translate }}
-          </button>
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-          >
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+        <ix-log-wizard-step></ix-log-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Spare' | translate }}</ng-template>
@@ -148,6 +98,16 @@
             ixTest="back"
           >
             {{ 'Back' | translate }}
+          </button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="create-pool"
+            (click)="createPool()"
+          >
+            {{ 'Create Pool' | translate }}
           </button>
         </div>
       </mat-step>
