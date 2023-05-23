@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DndModule } from 'ngx-drag-drop';
 import { NgxFilesizeModule } from 'ngx-filesize';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -64,6 +65,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CastModule,
     AppLoaderModule,
     CoreComponents,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     PoolManagerComponent,
