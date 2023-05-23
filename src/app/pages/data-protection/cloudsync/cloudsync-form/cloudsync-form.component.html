@@ -189,34 +189,25 @@
             [tooltip]="helptext.remote_encryption_tooltip | translate"
           ></ix-checkbox>
           <ix-checkbox
-            *ngIf="hasEncryption"
-            formControlName="encryption_inherit"
-            [label]="helptext.encryption_inherit_placeholder| translate"
-            [tooltip]="helptext.encryption_inherit_tooltip | translate"
+            *ngIf="form.controls.filename_encryption.enabled"
+            formControlName="filename_encryption"
+            [label]="helptext.filename_encryption_placeholder | translate"
+            [tooltip]="helptext.filename_encryption_tooltip | translate"
           ></ix-checkbox>
-
-          <ng-container *ngIf="hasEncryption && !hasEncryptionInherit">
-            <ix-checkbox
-              *ngIf="form.controls.filename_encryption.enabled"
-              formControlName="filename_encryption"
-              [label]="helptext.filename_encryption_placeholder | translate"
-              [tooltip]="helptext.filename_encryption_tooltip | translate"
-            ></ix-checkbox>
-            <ix-input
-              *ngIf="form.controls.encryption_password.enabled"
-              formControlName="encryption_password"
-              type="password"
-              [label]="helptext.encryption_password_placeholder | translate"
-              [tooltip]="helptext.encryption_password_tooltip | translate"
-            ></ix-input>
-            <ix-input
-              *ngIf="form.controls.encryption_salt.enabled"
-              formControlName="encryption_salt"
-              type="password"
-              [label]="helptext.encryption_salt_placeholder | translate"
-              [tooltip]="helptext.encryption_salt_tooltip | translate"
-            ></ix-input>
-          </ng-container>
+          <ix-input
+            *ngIf="form.controls.encryption_password.enabled"
+            formControlName="encryption_password"
+            type="password"
+            [label]="helptext.encryption_password_placeholder | translate"
+            [tooltip]="helptext.encryption_password_tooltip | translate"
+          ></ix-input>
+          <ix-input
+            *ngIf="form.controls.encryption_salt.enabled"
+            formControlName="encryption_salt"
+            type="password"
+            [label]="helptext.encryption_salt_placeholder | translate"
+            [tooltip]="helptext.encryption_salt_tooltip | translate"
+          ></ix-input>
           <ix-select
             *ngIf="form.controls.transfers.enabled"
             formControlName="transfers"

@@ -62,7 +62,7 @@ export class CloudsyncFormComponent {
     transfer_mode: [TransferMode.Copy, Validators.required],
     path_destination: [[mntPath], Validators.required],
     path_source: [[mntPath], Validators.required],
-    encryption_inherit: [false],
+
     credentials: [null as number, Validators.required],
     bucket: [''],
     bucket_input: ['', Validators.required],
@@ -157,14 +157,6 @@ export class CloudsyncFormComponent {
 
   private editingTask: CloudSyncTaskUi;
 
-  get hasEncryption(): boolean {
-    return this.form.value.encryption;
-  }
-
-  get hasEncryptionInherit(): boolean {
-    return this.form.value.encryption_inherit;
-  }
-
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
@@ -181,18 +173,6 @@ export class CloudsyncFormComponent {
     this.setupForm();
   }
 
-  enableEncryption(): void {
-    this.form.controls.filename_encryption.enable();
-    this.form.controls.encryption_password.enable();
-    this.form.controls.encryption_salt.enable();
-  }
-
-  disableEncryption(): void {
-    this.form.controls.filename_encryption.disable();
-    this.form.controls.encryption_password.disable();
-    this.form.controls.encryption_salt.disable();
-  }
-
   setupForm(): void {
     this.form.controls.path_source.disable();
     this.form.controls.bucket.disable();
@@ -205,8 +185,9 @@ export class CloudsyncFormComponent {
     this.form.controls.chunk_size.disable();
     this.form.controls.storage_class.disable();
     this.form.controls.fast_list.disable();
-
-    this.disableEncryption();
+    this.form.controls.filename_encryption.disable();
+    this.form.controls.encryption_password.disable();
+    this.form.controls.encryption_salt.disable();
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
       if (selectedOption !== newStorjBucket) {
@@ -260,19 +241,15 @@ export class CloudsyncFormComponent {
       }
     });
 
-    this.form.controls.encryption_inherit.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value) {
-        this.disableEncryption();
+    this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption) => {
+      if (encryption) {
+        this.form.controls.filename_encryption.enable();
+        this.form.controls.encryption_password.enable();
+        this.form.controls.encryption_salt.enable();
       } else {
-        this.enableEncryption();
-      }
-    });
-
-    this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value && !this.form.controls.encryption_inherit.value) {
-        this.enableEncryption();
-      } else {
-        this.disableEncryption();
+        this.form.controls.filename_encryption.disable();
+        this.form.controls.encryption_password.disable();
+        this.form.controls.encryption_salt.disable();
       }
     });
 

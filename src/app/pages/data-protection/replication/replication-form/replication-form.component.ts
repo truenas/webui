@@ -714,11 +714,11 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: false,
         },
         {
-          type: 'select',
-          name: 'encryption_key_format',
-          placeholder: helptext.encryption_key_format_placeholder,
-          tooltip: repwizardhelptext.encryption_key_format_tooltip,
-          options: mapToOptions(encryptionKeyFormatNames, this.translate),
+          type: 'checkbox',
+          name: 'encryption_inherit',
+          placeholder: helptext.encryption_inherit_placeholder,
+          tooltip: repwizardhelptext.encryption_inherit_tooltip,
+          value: false,
           relation: [
             {
               action: RelationAction.Show,
@@ -727,6 +727,24 @@ export class ReplicationFormComponent implements FormConfiguration {
                   name: 'encryption',
                   value: true,
                 },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'select',
+          name: 'encryption_key_format',
+          placeholder: helptext.encryption_key_format_placeholder,
+          tooltip: repwizardhelptext.encryption_key_format_tooltip,
+          options: mapToOptions(encryptionKeyFormatNames, this.translate),
+          value: EncryptionKeyFormat.Hex,
+          relation: [
+            {
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
+              when: [
+                { name: 'encryption', value: false },
+                { name: 'encryption_inherit', value: true },
               ],
             },
           ],
@@ -739,17 +757,12 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: true,
           relation: [
             {
-              action: RelationAction.Show,
-              connective: RelationConnection.And,
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [
-                {
-                  name: 'encryption',
-                  value: true,
-                },
-                {
-                  name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Hex,
-                },
+                { name: 'encryption', value: false },
+                { name: 'encryption_inherit', value: true },
+                { name: 'encryption_key_format', value: EncryptionKeyFormat.Passphrase },
               ],
             },
           ],
@@ -761,21 +774,13 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: repwizardhelptext.encryption_key_hex_tooltip,
           relation: [
             {
-              action: RelationAction.Show,
-              connective: RelationConnection.And,
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [
-                {
-                  name: 'encryption',
-                  value: true,
-                },
-                {
-                  name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Hex,
-                },
-                {
-                  name: 'encryption_key_generate',
-                  value: false,
-                },
+                { name: 'encryption', value: false },
+                { name: 'encryption_inherit', value: true },
+                { name: 'encryption_key_format', value: EncryptionKeyFormat.Passphrase },
+                { name: 'encryption_key_generate', value: true },
               ],
             },
           ],
@@ -789,17 +794,12 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: repwizardhelptext.encryption_key_passphrase_tooltip,
           relation: [
             {
-              action: RelationAction.Show,
-              connective: RelationConnection.And,
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [
-                {
-                  name: 'encryption',
-                  value: true,
-                },
-                {
-                  name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Passphrase,
-                },
+                { name: 'encryption', value: false },
+                { name: 'encryption_inherit', value: true },
+                { name: 'encryption_key_format', value: EncryptionKeyFormat.Hex },
               ],
             },
           ],
@@ -812,12 +812,11 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: true,
           relation: [
             {
-              action: RelationAction.Show,
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [
-                {
-                  name: 'encryption',
-                  value: true,
-                },
+                { name: 'encryption', value: false },
+                { name: 'encryption_inherit', value: true },
               ],
             },
           ],
@@ -829,17 +828,12 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: repwizardhelptext.encryption_key_location_tooltip,
           relation: [
             {
-              action: RelationAction.Show,
-              connective: RelationConnection.And,
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [
-                {
-                  name: 'encryption',
-                  value: true,
-                },
-                {
-                  name: 'encryption_key_location_truenasdb',
-                  value: false,
-                },
+                { name: 'encryption', value: false },
+                { name: 'encryption_inherit', value: true },
+                { name: 'encryption_key_location_truenasdb', value: true },
               ],
             },
           ],

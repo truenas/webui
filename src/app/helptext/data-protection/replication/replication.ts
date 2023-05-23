@@ -203,6 +203,9 @@ to determine snapshots creation order.'),
   encryption_placeholder: T('Encryption'),
   encryption_tooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
 
+  encryption_inherit_placeholder: T('Encryption inherit'),
+  encryption_inherit_tooltip: T('Target dataset encryption will be inherited from its parent dataset.'),
+
   encryption_key_format_placeholder: T('Encryption Key Format'),
   encryption_key_format_tooltip: T(''),
 
