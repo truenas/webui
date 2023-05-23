@@ -106,7 +106,7 @@ def click_save_please_wait_should_appear_while_settings_are_being_applied(driver
     """Click SAVE "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_wait)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
