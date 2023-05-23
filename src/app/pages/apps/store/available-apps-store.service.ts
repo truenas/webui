@@ -63,7 +63,8 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly appsPerCategory = 6;
 
   readonly searchedApps$ = this.select((state): AppsByCategory[] => {
-    const filteredApps: AvailableApp[] = [...state.availableApps]
+    const allApps: AvailableApp[] = state.filteredApps?.length ? [...state.filteredApps] : [...state.availableApps];
+    const filteredApps: AvailableApp[] = allApps
       .filter((app) => this.doesAppContainString(state.searchQuery, app));
 
     if (state.filter.sort === AppsFiltersSort.Name) {
@@ -81,7 +82,11 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly isFilterApplied$ = this.select((state) => state.isFilterApplied);
   readonly searchQuery$ = this.select((state) => state.searchQuery);
-  readonly appsCategories$ = this.select((state) => state.categories);
+  readonly appsCategories$ = this.select((state) => [
+    ...state.categories,
+    AppExtraCategory.NewAndUpdated,
+    AppExtraCategory.Recommended,
+  ]);
   readonly availableApps$ = this.select((state) => state.availableApps);
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly selectedPool$ = this.select((state) => state.selectedPool);
@@ -334,7 +339,6 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       }),
     ).pipe(
       tap((categories: string[]) => {
-        categories.unshift(AppExtraCategory.NewAndUpdated, AppExtraCategory.Recommended);
         this.patchState((state) => {
           return {
             ...state,
