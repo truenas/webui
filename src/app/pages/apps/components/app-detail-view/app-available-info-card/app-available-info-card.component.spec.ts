@@ -23,7 +23,7 @@ describe('AppAvailableInfoCardComponent', () => {
         email: 'dev@ixsystems.com',
       },
     ],
-  } as unknown as AvailableApp;
+  } as AvailableApp;
 
   const createComponent = createComponentFactory({
     component: AppAvailableInfoCardComponent,
