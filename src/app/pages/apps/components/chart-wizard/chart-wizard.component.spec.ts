@@ -252,7 +252,7 @@ describe('ChartWizardComponent', () => {
       {
         provide: ActivatedRoute,
         useValue: {
-          params: of({ appId: 'ipfs', catalog: 'OFFICIAL', train: 'charts' }),
+          params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
           routeConfig: { path: 'install' },
         },
       },
@@ -308,7 +308,7 @@ describe('ChartWizardComponent', () => {
 
     expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
       'chart.release.create', [{
-        catalog: 'OFFICIAL',
+        catalog: 'TRUENAS',
         item: 'ipfs',
         release_name: 'appname',
         train: 'charts',

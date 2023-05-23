@@ -9,13 +9,12 @@ import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { helptextSharingWebdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
+import { helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   ExpandableTableComponent,
@@ -31,7 +30,6 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   DialogService,
   IscsiService,
@@ -44,10 +42,9 @@ enum ShareType {
   Smb = 'smb',
   Nfs = 'nfs',
   Iscsi = 'iscsi',
-  WebDav = 'webdav',
 }
 
-type ShareTableRow = Partial<SmbShare> | Partial<WebDavShare> | Partial<NfsShare>;
+type ShareTableRow = Partial<SmbShare> | Partial<NfsShare>;
 
 @UntilDestroy()
 @Component({
@@ -56,34 +53,29 @@ type ShareTableRow = Partial<SmbShare> | Partial<WebDavShare> | Partial<NfsShare
   providers: [IscsiService],
 })
 export class SharesDashboardComponent implements AfterViewInit {
-  webdavTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.WebDav);
   nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Nfs);
   smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Smb);
   iscsiTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
 
-  @ViewChild('webdavTable', { static: false }) webdavTable: ExpandableTableComponent;
   @ViewChild('nfsTable', { static: false }) nfsTable: ExpandableTableComponent;
   @ViewChild('smbTable', { static: false }) smbTable: ExpandableTableComponent;
   @ViewChild('iscsiTable', { static: false }) iscsiTable: ExpandableTableComponent;
 
-  webdavHasItems = 0;
   nfsHasItems = 0;
   smbHasItems = 0;
   iscsiHasItems = 0;
 
   get noOfPopulatedTables(): number {
-    return this.nfsHasItems + this.smbHasItems + this.iscsiHasItems + this.webdavHasItems;
+    return this.nfsHasItems + this.smbHasItems + this.iscsiHasItems;
   }
 
-  webdavExpandableState: ExpandableTableState;
   nfsExpandableState: ExpandableTableState;
   smbExpandableState: ExpandableTableState;
   iscsiExpandableState: ExpandableTableState;
   smbServiceStatus = ServiceStatus.Loading;
-  webdavServiceStatus = ServiceStatus.Loading;
   nfsServiceStatus = ServiceStatus.Loading;
   iscsiServiceStatus = ServiceStatus.Loading;
-  readonly servicesToCheck = [ServiceName.Cifs, ServiceName.Iscsi, ServiceName.WebDav, ServiceName.Nfs];
+  readonly servicesToCheck = [ServiceName.Cifs, ServiceName.Iscsi, ServiceName.Nfs];
   readonly ServiceStatus = ServiceStatus;
 
   isClustered = false;
@@ -141,9 +133,6 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (this.webdavHasItems) {
-      this.webdavExpandableState = ExpandableTableState.Expanded;
-    }
     if (this.nfsHasItems) {
       this.nfsExpandableState = ExpandableTableState.Expanded;
     }
@@ -158,12 +147,6 @@ export class SharesDashboardComponent implements AfterViewInit {
   handleSlideInClosed(slideIn: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
     slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       switch (modalType) {
-        case WebdavFormComponent:
-          if (!this.webdavTable.tableComponent) {
-            this.refreshDashboard();
-          }
-          this.webdavTable.tableComponent.getData();
-          break;
         case SmbFormComponent:
         case SmbAclComponent:
           if (!this.smbTable.tableComponent) {
@@ -191,7 +174,6 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   refreshDashboard(): void {
-    this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDav);
     this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
     this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
     this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
@@ -292,67 +274,6 @@ export class SharesDashboardComponent implements AfterViewInit {
           configure: () => {
             this.router.navigate(['/', 'sharing', 'iscsi']);
           },
-        };
-      }
-      case ShareType.WebDav: {
-        return {
-          title: this.translate.instant('WebDAV'),
-          titleHref: '/sharing/webdav',
-          queryCall: 'sharing.webdav.query',
-          deleteCall: 'sharing.webdav.delete',
-          deleteMsg: {
-            title: this.translate.instant('WebDAV Share'),
-            key_props: ['name'],
-          },
-          emptyEntityLarge: false,
-          hideEntityEmpty: true,
-          parent: this,
-          columns: [
-            { prop: 'name', name: helptextSharingWebdav.column_name },
-            { prop: 'comment', name: helptextSharingWebdav.column_comment, hiddenIfEmpty: true },
-            { prop: 'path', name: helptextSharingWebdav.column_path, showLockedStatus: true },
-            {
-              prop: 'perm',
-              name: helptextSharingWebdav.column_perm,
-              slideToggle: true,
-              width: '70px',
-              tooltip: helptextSharingWebdav.column_perm_tooltip,
-            },
-            {
-              prop: 'ro',
-              name: helptextSharingWebdav.column_ro,
-              width: '60px',
-              slideToggle: true,
-              onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'ro'),
-            },
-            {
-              prop: 'enabled',
-              name: helptextSharingWebdav.column_enabled,
-              width: '100px',
-              slideToggle: true,
-              onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'enabled'),
-            },
-          ],
-          add: () => {
-            const slideIn = this.slideInService.open(WebdavFormComponent);
-            this.handleSlideInClosed(slideIn, WebdavFormComponent);
-          },
-          limitRowsByMaxHeight: true,
-          edit: (row: WebDavShare) => {
-            const slideIn = this.slideInService.open(WebdavFormComponent);
-            this.handleSlideInClosed(slideIn, WebdavFormComponent);
-            slideIn.componentInstance.setWebdavForEdit(row);
-          },
-          afterGetData: (data: WebDavShare[]) => {
-            this.webdavHasItems = 0;
-            this.webdavExpandableState = ExpandableTableState.Collapsed;
-            if (data.length > 0) {
-              this.webdavHasItems = 1;
-              this.webdavExpandableState = ExpandableTableState.Expanded;
-            }
-          },
-          detailsHref: '/sharing/webdav',
-          limitRows: 5,
         };
       }
       case ShareType.Smb: {
@@ -473,7 +394,7 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   getTablesOrder(): string[] {
-    const order: string[] = [ShareType.Smb, ShareType.Nfs, ShareType.Iscsi, ShareType.WebDav];
+    const order: string[] = [ShareType.Smb, ShareType.Nfs, ShareType.Iscsi];
     // Note: The order of these IFs is important. One can't come before the other
     if (!this.smbHasItems) {
       order.splice(order.findIndex((share) => share === ShareType.Smb), 1);
@@ -487,10 +408,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       order.splice(order.findIndex((share) => share === ShareType.Iscsi), 1);
       order.push(ShareType.Iscsi);
     }
-    if (!this.webdavHasItems) {
-      order.splice(order.findIndex((share) => share === ShareType.WebDav), 1);
-      order.push(ShareType.WebDav);
-    }
     return order;
   }
 
@@ -502,18 +419,9 @@ export class SharesDashboardComponent implements AfterViewInit {
         return 'one-table-container';
       case 2:
         return 'two-table-container';
-      case 3:
-        return 'three-table-container';
-      case 4:
-        return 'four-table-container';
       default:
-        return 'four-table-container';
+        return 'three-table-container';
     }
-  }
-
-  getWebdavOrder(): string {
-    const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.WebDav));
   }
 
   getNfsOrder(): string {
@@ -552,9 +460,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       case ShareType.Smb:
         updateCall = 'sharing.smb.update';
         break;
-      case ShareType.WebDav:
-        updateCall = 'sharing.webdav.update';
-        break;
       case ShareType.Nfs:
         updateCall = 'sharing.nfs.update';
         break;
@@ -582,10 +487,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       case ServiceName.Nfs:
         this.nfsServiceStatus = service.state;
         this.nfsTableConf.tableExtraActions = this.getTableExtraActions(service);
-        break;
-      case ServiceName.WebDav:
-        this.webdavServiceStatus = service.state;
-        this.webdavTableConf.tableExtraActions = this.getTableExtraActions(service);
         break;
       case ServiceName.Iscsi:
         this.iscsiServiceStatus = service.state;
