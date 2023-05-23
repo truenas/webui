@@ -36,6 +36,5 @@ export const ixSvgIcons = {
   logo_mark: 'assets/customicons/ix_logomark.svg',
   logo_full_rgb: 'assets/customicons/ix_full_logo_rgb.svg',
   logo_full: 'assets/customicons/ix_full_logo.svg',
-  webdav_share: 'assets/customicons/webdav-share.svg',
   enclosure: 'assets/customicons/enclosure.svg',
 };

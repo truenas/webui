@@ -22,7 +22,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
@@ -74,7 +74,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideIn: IxSlideIn2Service,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
@@ -134,8 +134,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    const modal = this.slideIn.open(UserFormComponent, { wide: true });
-    modal.setupForm();
+    this.slideIn.open(UserFormComponent, { wide: true });
   }
 
   onToggle(row: User): void {

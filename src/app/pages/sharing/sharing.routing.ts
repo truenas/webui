@@ -6,8 +6,6 @@ import { IscsiComponent } from './iscsi/iscsi.component';
 import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
-import { WebdavFormComponent } from './webdav/webdav-form/webdav-form.component';
-import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component';
 
 export const routes: Routes = [
   {
@@ -29,22 +27,6 @@ export const routes: Routes = [
         }],
       },
       {
-        path: 'webdav',
-        data: { title: 'WebDAV', breadcrumb: 'WebDAV', icon: 'share' },
-        children: [{
-          path: '',
-          component: WebdavListComponent,
-          data: { title: 'WebDAV', breadcrumb: 'WebDAV' },
-        }, {
-          path: 'add',
-          component: WebdavFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
-        }, {
-          path: 'edit/:pk',
-          component: WebdavFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
-        }],
-      }, {
         path: 'smb',
         data: { title: 'SMB', breadcrumb: 'SMB', icon: 'share' },
         children: [{

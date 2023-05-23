@@ -1,29 +1,5 @@
 <div class="container" [ngClass]="getContainerClass()">
   <ix-expandable-table
-    #webdavTable
-    [ngClass]="getWebdavOrder()"
-    [expandableTableState]="webdavExpandableState"
-    [disabled]="true"
-    [conf]="webdavTableConf"
-  >
-    <ng-container
-      *ngTemplateOutlet="
-        webdavServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: webdavServiceStatus, count: webdavHasItems, service: 'webdav' }
-      "
-      headerCustomContent
-    ></ng-container>
-
-    <ng-container
-      *ngTemplateOutlet="
-        extraAction;
-        context: { tableExtraActions: webdavTableConf?.tableExtraActions, service: 'webdav' }
-      "
-      headerCustomActions
-    ></ng-container>
-  </ix-expandable-table>
-
-  <ix-expandable-table
     #nfsTable
     [ngClass]="getNfsOrder()"
     [expandableTableState]="nfsExpandableState"

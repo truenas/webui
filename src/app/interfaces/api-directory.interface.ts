@@ -242,7 +242,6 @@ import {
   SystemUpdateTrains,
   UpdateParams,
 } from 'app/interfaces/system-update.interface';
-import { TftpConfig, TftpConfigUpdate } from 'app/interfaces/tftp-config.interface';
 import {
   TrueCommandConfig,
   TrueCommandConnectionState, TrueCommandUpdateResponse,
@@ -266,8 +265,6 @@ import {
   MatchDatastoresWithDatasetsParams,
   VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
-import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
-import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
@@ -890,10 +887,6 @@ export type ApiDirectory = {
   'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };
   'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
-  'sharing.webdav.query': { params: QueryParams<WebDavShare>; response: WebDavShare[] };
-  'sharing.webdav.update': { params: [id: number, update: WebDavShareUpdate]; response: WebDavShare };
-  'sharing.webdav.create': { params: [WebDavShareUpdate]; response: WebDavShare };
-  'sharing.webdav.delete': { params: [id: number]; response: boolean };
 
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
@@ -901,11 +894,6 @@ export type ApiDirectory = {
   'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
   'tunable.create': { params: [TunableCreate]; response: Tunable };
   'tunable.delete': { params: [id: number]; response: true };
-
-  // TFTP
-  'tftp.update': { params: [TftpConfigUpdate]; response: TftpConfig };
-  'tftp.config': { params: void; response: TftpConfig };
-  'tftp.host_choices': { params: void; response: Choices };
 
   // FTP
   'ftp.update': { params: [FtpConfigUpdate]; response: FtpConfig };
@@ -1013,11 +1001,6 @@ export type ApiDirectory = {
   // SNMP
   'snmp.config': { params: void; response: SnmpConfig };
   'snmp.update': { params: [SnmpConfigUpdate]; response: SnmpConfig };
-
-  // WEBDAV
-  'webdav.config': { params: void; response: WebdavConfig };
-  'webdav.update': { params: [WebdavConfigUpdate]; response: WebdavConfig };
-  'webdav.cert_choices': { params: void; response: Choices };
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };

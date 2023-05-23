@@ -30,10 +30,9 @@ export class GenerateVdevsService {
     maximizeDispersal: boolean;
   }): GeneratedVdevs {
     let disks = this.excludeManualSelectionDisks([...allowedDisks], topology);
+    disks = this.sortDisksByEnclosure(disks);
     if (maximizeDispersal) {
       disks = this.sortDisksToMaximizeDispersal(disks);
-    } else {
-      disks = this.sortDisksByEnclosure(disks);
     }
     const groupedDisks = getDiskTypeSizeMap(disks);
 
@@ -48,7 +47,7 @@ export class GenerateVdevsService {
       }
 
       const suitableDisks = this.findSuitableDisks(groupedDisks, category);
-      if (suitableDisks.length < this.getDisksNeeded(category)) {
+      if (suitableDisks?.length < this.getDisksNeeded(category)) {
         throw new Error('Not enough disks to generate vdevs');
       }
 
@@ -88,10 +87,20 @@ export class GenerateVdevsService {
     return dispersedDisks;
   }
 
+  /**
+   * Sort by enclosure and slot, and if empty by devname
+   */
   private sortDisksByEnclosure(disks: UnusedDisk[]): UnusedDisk[] {
+    const largeNumber = Number.MAX_VALUE;
     return disks.sort((a, b) => {
-      if (a.enclosure?.number !== b.enclosure?.number) return a.enclosure?.number - b.enclosure?.number;
-      return a.enclosure?.slot - b.enclosure?.slot;
+      if (a.enclosure?.number === b.enclosure?.number) {
+        if (a.enclosure?.slot === b.enclosure?.slot) {
+          return a.devname.localeCompare(b.devname);
+        }
+        return (a.enclosure?.slot || largeNumber) - (b.enclosure?.slot || largeNumber);
+      }
+
+      return (a.enclosure?.number || largeNumber) - (b.enclosure?.number || largeNumber);
     });
   }
 
