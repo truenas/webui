@@ -40,6 +40,8 @@ export default {
 
   encryption_placeholder: T('Server Side Encryption'),
   encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
+  encryption_inherit_placeholder: T('Encryption inherit'),
+  encryption_inherit_tooltip: T('Target dataset encryption will be inherited from its parent dataset.'),
 
   storage_class_placeholder: T('Storage Class'),
   storage_class_tooltip: T('Classification for each S3 object. Choose a\

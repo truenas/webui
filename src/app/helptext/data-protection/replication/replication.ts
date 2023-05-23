@@ -201,7 +201,7 @@ to determine snapshots creation order.'),
  <code>readonly</code> property during replication.'),
 
   encryption_placeholder: T('Encryption'),
-  encryption_tooltip: T(''),
+  encryption_tooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
 
   encryption_key_format_placeholder: T('Encryption Key Format'),
   encryption_key_format_tooltip: T(''),

@@ -24,6 +24,7 @@ export interface ReplicationTask {
   embed?: boolean;
   enabled?: boolean;
   encryption?: boolean;
+  encryption_inherit?: boolean;
   encryption_key?: string;
   encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
@@ -91,6 +92,7 @@ export interface ReplicationCreate {
   properties_override?: Record<string, string | number | boolean>;
   replicate?: boolean;
   encryption?: boolean;
+  encryption_inherit?: boolean;
   encryption_key?: string;
   encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
