@@ -1,6 +1,12 @@
 <ng-template #pageHeader>
-  <ix-page-title-header>
+  <ix-page-title-header
+    [pageTitle]="searchInput.value.length
+      ? ('Snapshots' | translate) + ': ' + searchInput.value
+      : ('Snapshots' | translate)
+    "
+  >
     <ix-search-input
+      #searchInput
       [disabled]="isLoading$ | async"
       [value]="datasetFilter"
       (search)="onSearch($event)"
@@ -13,6 +19,7 @@
 
     <ng-template #slider>
       <mat-slide-toggle
+        ixTest="show-extra-columns"
         color="primary"
         [checked]="showExtraColumns"
         [disabled]="isLoading$ | async"

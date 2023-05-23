@@ -82,6 +82,25 @@ describe('ReplicationWhatAndWhereComponent', () => {
     });
   });
 
+  it('generates payload which will inherit dataset encryption from its parent dataset', async () => {
+    await form.fillForm({ 'Encryption inherit': true });
+
+    expect(spectator.component.getPayload()).toEqual({
+      exist_replication: null,
+      source_datasets_from: DatasetSource.Local,
+      target_dataset_from: DatasetSource.Local,
+      source_datasets: ['pool1/', 'pool2/'],
+      target_dataset: 'pool3/',
+      custom_snapshots: true,
+      recursive: true,
+      schema_or_regex: SnapshotNamingOption.NamingSchema,
+      naming_schema: 'auto-%Y-%m-%d_%H-%M',
+      encryption: true,
+      encryption_inherit: true,
+      name: 'pool1/,pool2/ - pool3/',
+    });
+  });
+
   it('returns fields when getPayload() is called', () => {
     expect(spectator.component.getPayload()).toEqual({
       exist_replication: null,
@@ -94,6 +113,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       schema_or_regex: SnapshotNamingOption.NamingSchema,
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       encryption: true,
+      encryption_inherit: false,
       encryption_key_format: EncryptionKeyFormat.Hex,
       encryption_key_generate: true,
       encryption_key_location_truenasdb: true,
@@ -143,6 +163,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       custom_snapshots: false,
       recursive: true,
       encryption: true,
+      encryption_inherit: false,
       encryption_key_format: EncryptionKeyFormat.Hex,
       encryption_key_generate: true,
       encryption_key_location_truenasdb: true,

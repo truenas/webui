@@ -4,8 +4,7 @@ import { SortDirection } from '@angular/material/sort';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
@@ -15,8 +14,8 @@ function isStringArray(items: unknown[]): items is string[] {
   return typeof items[0] === 'string';
 }
 
-const specialRedundancyCategories = [PoolTopologyCategory.Dedup, PoolTopologyCategory.Special];
-const redundancyCategories = [...specialRedundancyCategories, PoolTopologyCategory.Data];
+const specialRedundancyCategories = [VdevType.Dedup, VdevType.Special];
+const redundancyCategories = [...specialRedundancyCategories, VdevType.Data];
 
 @Injectable()
 export class StorageService {
@@ -501,10 +500,12 @@ export class StorageService {
     return vdevTypes.size > 1;
   }
 
-  validateVdevs(category: PoolTopologyCategory,
+  validateVdevs(
+    category: VdevType,
     vdevs: TopologyItem[],
     disks: Disk[],
-    dataVdevs?: TopologyItem[]): string[] {
+    dataVdevs?: TopologyItem[],
+  ): string[] {
     const warnings: string[] = [];
     let isMixedVdevCapacity = false;
     let isMixedDiskCapacity = false;

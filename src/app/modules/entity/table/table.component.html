@@ -112,6 +112,7 @@
                   <mat-slide-toggle
                     *ngSwitchCase="'slide-toggle'"
                     color="primary"
+                    [ixTest]="element[column.prop]"
                     [disabled]="!column.onChange || column.disabled"
                     [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"

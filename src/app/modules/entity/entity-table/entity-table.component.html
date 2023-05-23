@@ -304,6 +304,7 @@
                   *ngIf="currentColumns[i].toggle"
                   color="primary"
                   [id]="'slide-toggle__' + column + '_' + getRowIdentifier(element)"
+                  [ixTest]="[column, getRowIdentifier(element)]"
                   [checked]="element[column] === EntityJobState.Running"
                 >
                 </mat-slide-toggle>

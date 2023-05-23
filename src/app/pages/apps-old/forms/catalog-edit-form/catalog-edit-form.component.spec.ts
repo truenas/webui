@@ -17,8 +17,8 @@ describe('CatalogEditFormComponent', () => {
   let loader: HarnessLoader;
   let ws: WebSocketService;
   const catalog = {
-    id: 'official',
-    label: 'Official',
+    id: 'truenas',
+    label: 'Truenas',
     trains: {
       test: {},
       stable: {},
@@ -53,7 +53,7 @@ describe('CatalogEditFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'Catalog Name': 'Official',
+      'Catalog Name': 'Truenas',
       'Preferred Trains': ['test'],
     });
   });
@@ -68,7 +68,7 @@ describe('CatalogEditFormComponent', () => {
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('catalog.update', [
-      'official',
+      'truenas',
       { preferred_trains: ['stable', 'incubator'] },
     ]);
   });

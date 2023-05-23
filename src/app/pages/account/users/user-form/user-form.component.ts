@@ -249,7 +249,7 @@ export class UserFormComponent implements OnInit {
       shell: values.shell,
       smb: values.smb,
       ssh_password_enabled: values.ssh_password_enabled,
-      sshpubkey: values.sshpubkey,
+      sshpubkey: values.sshpubkey ? values.sshpubkey.trim() : values.sshpubkey,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       username: values.username,
@@ -271,7 +271,8 @@ export class UserFormComponent implements OnInit {
         this.isFormLoading = true;
         this.cdr.markForCheck();
 
-        let request$: Observable<unknown>;
+        let request$: Observable<number>;
+        let nextRequest$: Observable<number>;
         if (this.isNewUser) {
           request$ = this.ws.call('user.create', [{
             ...body,
@@ -284,10 +285,18 @@ export class UserFormComponent implements OnInit {
           if (passwordNotEmpty && !values.password_disabled) {
             body.password = values.password;
           }
-          request$ = this.ws.call('user.update', [this.editingUser.id, body]);
+          if (body.home_create) {
+            request$ = this.ws.call('user.update', [this.editingUser.id, { home_create: true, home: body.home }]);
+            delete body.home_create;
+            delete body.home;
+            nextRequest$ = this.ws.call('user.update', [this.editingUser.id, body]);
+          } else {
+            request$ = this.ws.call('user.update', [this.editingUser.id, body]);
+          }
         }
 
         request$.pipe(
+          switchMap((id) => nextRequest$ || of(id)),
           switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
           map((users) => users[0]),
           untilDestroyed(this),

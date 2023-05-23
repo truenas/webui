@@ -72,7 +72,7 @@ def on_edit_user_click_the_ssh_password_login_enabled_checkbox(driver):
     """on Edit User click the "SSH password login enabled" checkbox."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    rsc.Scroll_To(xpaths.add_User.ssh_Password_Enabled_Checkbox)
+    rsc.Scroll_To(driver, xpaths.add_User.ssh_Password_Enabled_Checkbox)
     time.sleep(0.5)
     assert wait_on_element(driver, 5, xpaths.add_User.ssh_Password_Enabled_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.ssh_Password_Enabled_Checkbox).click()

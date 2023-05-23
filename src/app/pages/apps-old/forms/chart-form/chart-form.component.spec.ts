@@ -38,7 +38,7 @@ describe('ChartFormComponent', () => {
       },
     },
     catalog: {
-      id: 'OFFICIAL',
+      id: 'TRUENAS',
       train: 'charts',
     },
     schema: {
@@ -414,7 +414,7 @@ describe('ChartFormComponent', () => {
 
       expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
         'chart.release.create', [{
-          catalog: 'OFFICIAL',
+          catalog: 'TRUENAS',
           item: 'ipfs',
           release_name: 'app_name',
           train: 'charts',

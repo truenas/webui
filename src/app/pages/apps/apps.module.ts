@@ -17,6 +17,7 @@ import { LightboxModule } from 'ng-gallery/lightbox';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -139,6 +140,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CustomFormsModule,
     GalleryModule,
     LightboxModule,
+    MarkdownModule,
   ],
   providers: [
     AvailableAppsStore,
