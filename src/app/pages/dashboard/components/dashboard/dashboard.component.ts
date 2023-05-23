@@ -34,7 +34,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
+import { dashboardStateLoaded, dashboardStateUpdated } from 'app/store/preferences/preferences.actions';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -567,7 +567,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe({
         next: () => {
           this.exitReorderMode();
-          this.store$.dispatch(dashboardStateLoaded({ dashboardState: state }));
+          this.store$.dispatch(dashboardStateUpdated({ dashboardState: state }));
         },
         error: () => this.exitReorderMode(),
       });
