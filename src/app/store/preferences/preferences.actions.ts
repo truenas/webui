@@ -26,6 +26,7 @@ export const guiFormSubmitted = createAction('[Preferences] GUI Form Submitted',
 export const guiFormClosedWithoutSaving = createAction('[Preferences] GUI Form Closed Without Saving');
 
 export const dashboardStateLoaded = createAction('[Preferences API] Dashboard State Loaded', props<{ dashboardState: DashConfigItem[] }>());
+export const dashboardStateUpdated = createAction('[Preferences API] Dashboard State Updated', props<{ dashboardState: DashConfigItem[] }>());
 export const noDashboardStateFound = createAction('[Preferences API] No Dashboard State Found');
 
 export const updateRebootAfterManualUpdate = createAction(
