@@ -23,7 +23,7 @@ describe('AppAvailableInfoCardComponent', () => {
         email: 'dev@ixsystems.com',
       },
     ],
-  } as unknown as AvailableApp;
+  } as AvailableApp;
 
   const createComponent = createComponentFactory({
     component: AppAvailableInfoCardComponent,
@@ -65,7 +65,6 @@ describe('AppAvailableInfoCardComponent', () => {
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Source:');
     expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Last App Update:  05/15/2023');
 
-    expect(spectator.component.relativeDate).toBe('05/15/2023');
     expect(spectator.component.sources).toStrictEqual([
       'https://github.com/home-assistant/home-assistant',
       'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',
