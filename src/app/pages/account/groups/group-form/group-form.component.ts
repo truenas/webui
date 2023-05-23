@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,13 +11,14 @@ import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
 import { UserService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,8 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './group-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupFormComponent {
-  private editingGroup: Group;
+export class GroupFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingGroup;
   }
@@ -57,21 +57,22 @@ export class GroupFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<GroupFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private store$: Store<GroupSlice>,
     private snackbar: SnackbarService,
+    @Inject(SLIDE_IN_DATA) private editingGroup: Group,
   ) { }
 
-  /**
-   * @param group Skip argument to add new group.
-   */
-  setupForm(group?: Group): void {
+  ngOnInit(): void {
+    this.setupForm();
+  }
+
+  setupForm(): void {
     this.setFormRelations();
 
-    this.editingGroup = group;
     if (this.isNew) {
       this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
         this.form.patchValue({
@@ -83,13 +84,15 @@ export class GroupFormComponent {
     } else {
       this.form.controls.gid.disable();
       this.form.patchValue({
-        gid: group.gid,
-        name: group.group,
-        sudo_commands: group.sudo_commands.includes(allCommands) ? [] : group.sudo_commands,
-        sudo_commands_all: group.sudo_commands.includes(allCommands),
-        sudo_commands_nopasswd: group.sudo_commands_nopasswd?.includes(allCommands) ? [] : group.sudo_commands_nopasswd,
-        sudo_commands_nopasswd_all: group.sudo_commands_nopasswd?.includes(allCommands),
-        smb: group.smb,
+        gid: this.editingGroup.gid,
+        name: this.editingGroup.group,
+        sudo_commands: this.editingGroup.sudo_commands.includes(allCommands) ? [] : this.editingGroup.sudo_commands,
+        sudo_commands_all: this.editingGroup.sudo_commands.includes(allCommands),
+        sudo_commands_nopasswd: this.editingGroup.sudo_commands_nopasswd?.includes(allCommands)
+          ? []
+          : this.editingGroup.sudo_commands_nopasswd,
+        sudo_commands_nopasswd_all: this.editingGroup.sudo_commands_nopasswd?.includes(allCommands),
+        smb: this.editingGroup.smb,
         allowDuplicateGid: true,
       });
       this.setNamesInUseValidator(this.editingGroup.group);
@@ -144,7 +147,7 @@ export class GroupFormComponent {
           this.store$.dispatch(groupChanged({ group }));
         }
         this.isFormLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
         this.cdr.markForCheck();
       },
       error: (error) => {

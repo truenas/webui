@@ -23,7 +23,7 @@ describe('AppDetailsHeaderComponent', () => {
     icon_url: 'http://github.com/truenas/icon.png',
     name: 'SETI@home',
     latest_app_version: '1.0.0',
-    catalog: 'Official',
+    catalog: 'Truenas',
     tags: ['aliens', 'ufo'],
     train: 'stable',
     app_readme: 'Find aliens without leaving your home.',
@@ -71,7 +71,7 @@ describe('AppDetailsHeaderComponent', () => {
       const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
       await installButton.click();
 
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Official', 'stable', 'SETI@home', 'install']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
     });
 
     it('shows Setup Pool To Install instead if pool is not set', async () => {
@@ -95,7 +95,7 @@ describe('AppDetailsHeaderComponent', () => {
       expect(installButton).toExist();
 
       await installButton.click();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Official', 'stable', 'SETI@home', 'install']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
 
       const installedBadge = spectator.query('.installed-badge');
       expect(installedBadge).toExist();
@@ -105,7 +105,7 @@ describe('AppDetailsHeaderComponent', () => {
 
   describe('other elements', () => {
     it('shows app catalog', () => {
-      expect(spectator.query('.catalog-container')).toHaveText('Official Catalog');
+      expect(spectator.query('.catalog-header')).toHaveText('Truenas Catalog');
     });
 
     it('shows app version', () => {

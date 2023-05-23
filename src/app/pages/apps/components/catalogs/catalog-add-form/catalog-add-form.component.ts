@@ -6,10 +6,10 @@ import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogCreate } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ export class CatalogAddFormComponent {
   };
 
   constructor(
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<CatalogAddFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -65,7 +65,7 @@ export class CatalogAddFormComponent {
       this.snackbar.success(
         this.translate.instant('Catalog is being added. This may take some time. You can minimize this dialog and process will continue in background'),
       );
-      this.slideInService.close();
+      this.slideInRef.close();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;

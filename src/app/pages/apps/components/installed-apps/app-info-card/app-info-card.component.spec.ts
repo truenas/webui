@@ -33,7 +33,7 @@ describe('AppInfoCardComponent', () => {
         'http://github.com/ix-test-app/ix-test-app',
       ],
     },
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     catalog_train: 'charts',
   } as unknown as ChartRelease;
 
@@ -93,21 +93,21 @@ describe('AppInfoCardComponent', () => {
     const detailsElements = spectator.queryAll('.details-item');
     const details = detailsElements.map((element) => ({
       label: element.querySelector('.label').textContent,
-      value: element.querySelector('.value').textContent,
+      value: element.querySelector('.value').textContent.trim(),
     }));
     expect(details).toEqual([
       {
         label: 'Name:',
-        value: ' ix-test-app ',
+        value: 'ix-test-app',
       },
       {
         label: 'Version:',
-        value: ' 1.2.3_3.2.1 ',
+        value: '1.2.3_3.2.1',
       },
       // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
       {
         label: 'Last Updated:',
-        value: ' N/A\n',
+        value: 'N/A',
       },
       {
         label: 'Source:',
@@ -116,15 +116,15 @@ describe('AppInfoCardComponent', () => {
       // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
       {
         label: 'Developer:',
-        value: ' N/A\n',
+        value: 'N/A',
       },
       {
         label: 'Catalog:',
-        value: ' OFFICIAL ',
+        value: 'TRUENAS',
       },
       {
         label: 'Train:',
-        value: ' charts ',
+        value: 'charts',
       },
     ]);
   });

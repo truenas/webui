@@ -10,7 +10,7 @@ import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 describe('AppsToolbarButtonsComponent', () => {
   let spectator: Spectator<AppsToolbarButtonsComponent>;
@@ -21,7 +21,7 @@ describe('AppsToolbarButtonsComponent', () => {
     component: AppsToolbarButtonsComponent,
     providers: [
       mockProvider(MatDialog),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideIn2Service),
       mockProvider(DialogService),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
@@ -52,7 +52,7 @@ describe('AppsToolbarButtonsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Advanced Settings' });
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(KubernetesSettingsComponent);
+    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(KubernetesSettingsComponent);
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
@@ -65,7 +65,7 @@ describe('AppsToolbarButtonsComponent', () => {
   });
 
   it('shows Custom App button which will navigate to ix-chart install page', () => {
-    const link = spectator.query('a[href="/apps/available/OFFICIAL/charts/ix-chart/install"]');
+    const link = spectator.query('a[href="/apps/available/TRUENAS/charts/ix-chart/install"]');
     expect(link).toHaveText('Custom App');
   });
 });

@@ -8,7 +8,7 @@ import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/a
 import { ApplicationTab } from 'app/pages/apps-old/application-tab.enum';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { CoreService } from 'app/services/core-service/core.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
@@ -30,7 +30,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private core: CoreService,
-    private slideInService: IxSlideInService,
+    private slideInService: IxSlideIn2Service,
     private appService: ApplicationsService,
   ) {}
 

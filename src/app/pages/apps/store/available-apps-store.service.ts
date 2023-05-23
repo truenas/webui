@@ -63,7 +63,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly appsPerCategory = 6;
 
   readonly searchedApps$ = this.select((state): AppsByCategory[] => {
-    const filteredApps: AvailableApp[] = [...state.filteredApps]
+    const filteredApps: AvailableApp[] = [...state.availableApps]
       .filter((app) => this.doesAppContainString(state.searchQuery, app));
 
     if (state.filter.sort === AppsFiltersSort.Name) {

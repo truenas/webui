@@ -8,9 +8,7 @@ import { ServiceRsyncComponent } from './components/service-rsync/service-rsync.
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from './components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from './components/service-snmp/service-snmp.component';
-import { ServiceTftpComponent } from './components/service-tftp/service-tftp.component';
 import { ServiceUpsComponent } from './components/service-ups/service-ups.component';
-import { ServiceWebdavComponent } from './components/service-webdav/service-webdav.component';
 import { ServicesComponent } from './services.component';
 
 export const routes: Routes = [
@@ -61,11 +59,6 @@ export const routes: Routes = [
     component: ServiceNfsComponent,
   },
   {
-    data: { title: 'TFTP', breadcrumb: 'TFTP' },
-    path: 'tftp',
-    component: ServiceTftpComponent,
-  },
-  {
     data: { title: 'UPS', breadcrumb: 'UPS' },
     path: 'ups',
     component: ServiceUpsComponent,
@@ -79,11 +72,6 @@ export const routes: Routes = [
     data: { title: 'SNMP', breadcrumb: 'SNMP' },
     path: 'snmp',
     component: ServiceSnmpComponent,
-  },
-  {
-    data: { title: 'WebDAV', breadcrumb: 'WebDAV' },
-    path: 'webdav',
-    component: ServiceWebdavComponent,
   },
 ];
 
