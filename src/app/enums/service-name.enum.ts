@@ -12,9 +12,7 @@ export enum ServiceName {
   Snmp = 'snmp',
   Ssh = 'ssh',
   Cifs = 'cifs',
-  Tftp = 'tftp',
   Ups = 'ups',
-  WebDav = 'webdav',
   Http = 'http',
   Kubernetes = 'kubernetes',
 }
@@ -33,7 +31,5 @@ export const serviceNames = new Map<ServiceName, string>([
   [ServiceName.Snmp, 'SNMP'],
   [ServiceName.Ssh, 'SSH'],
   [ServiceName.Cifs, 'SMB'],
-  [ServiceName.Tftp, 'TFTP'],
   [ServiceName.Ups, 'UPS'],
-  [ServiceName.WebDav, 'WebDAV'],
 ]);

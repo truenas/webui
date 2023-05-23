@@ -51,8 +51,6 @@ import { routing } from './sharing.routing';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
-import { WebdavFormComponent } from './webdav/webdav-form/webdav-form.component';
-import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component';
 
 @NgModule({
   imports: [
@@ -85,8 +83,6 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     NfsListComponent,
     NfsFormComponent,
     SharesDashboardComponent,
-    WebdavListComponent,
-    WebdavFormComponent,
     SmbListComponent,
     SmbFormComponent,
     RestartSmbDialogComponent,
