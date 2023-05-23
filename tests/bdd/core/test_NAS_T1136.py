@@ -21,6 +21,7 @@ from pytest_bdd import (
 import pytest
 pytestmark = [pytest.mark.debug_test]
 
+
 @scenario('features/NAS-T1136.feature', 'Verify Dropbox Cloud Sync task works')
 def test_verify_dropox_cloud_sync_task_works():
     """Verify Dropox Cloud Sync task works."""

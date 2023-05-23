@@ -19,6 +19,7 @@ from pytest_bdd import (
 import pytest
 pytestmark = [pytest.mark.debug_test]
 
+
 @scenario('features/NAS-T1081.feature', 'Verify dataset Encryption Inheritance')
 def test_verify_dataset_encryption_inheritance(driver):
     """Verify dataset Encryption Inheritance."""
@@ -97,10 +98,10 @@ def confirm_the_dataset_will_be_unencrypted_click_the_submit_button(driver):
 @then('verify that the unencrypted dataset can\'t be create and go back to the pool page')
 def verify_that_the_unencrypted_dataset_cant_be_create_and_go_back_to_the_pool_page(driver):
     """verify that the unencrypted dataset can't be create and go back to the pool page."""
-    assert wait_on_element(driver, 5, '//mat-error[contains(.,"Cannot create an unencrypted dataset within an encrypted dataset (encrypted)")]')
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Pools")]')
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.unencrypted_Error_Message)
+    assert wait_on_element(driver, 5, xpaths.sideMenu.pools, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.pools).click()
+    assert wait_on_element(driver, 5, xpaths.pool.title)
 
 
 @then('click on tank three dots button, select Add Dataset')

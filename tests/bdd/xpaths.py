@@ -1,4 +1,8 @@
 
+class add_Dataset:
+    unencrypted_Error_Message = '//mat-error[contains(.,"Cannot create an unencrypted dataset within an encrypted dataset (encrypted)")]'
+
+
 class breadcrumb:
     dashboard = '//a[text()="Dashboard"]'
 
@@ -46,6 +50,10 @@ class login:
         return f'//p[contains(.,"{message}")]'
 
 
+class pool:
+    title = '//div[contains(text(),"Pools")]'
+
+
 class popup:
     please_wait = '//h6[contains(.,"Please wait")]'
     initiate_failover = '//h1[text()="Initiate Failover"]'
@@ -62,6 +70,7 @@ class sideMenu:
     directory_services = '//mat-list-item[@ix-auto="option__Directory Services"]'
     directory_services_ldap = '//mat-list-item[@ix-auto="option__LDAP"]'
     directory_services_nis = '//mat-list-item[@ix-auto="option__NIS"]'
+    pools = '//mat-list-item[@ix-auto="option__Pools"]'
 
 
 class topToolbar:
