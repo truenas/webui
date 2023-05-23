@@ -63,9 +63,9 @@ describe('AppAvailableInfoCardComponent', () => {
   it('shows card details', () => {
     expect(spectator.queryAll('.app-list-item')[0]).toHaveText('Version:  2023.5.3');
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Source:');
-    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Last App Update:  last Monday at 10:08 AM');
+    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Last App Update:  05/15/2023');
 
-    expect(spectator.component.relativeDate).toBe('last Monday at 10:08 AM');
+    expect(spectator.component.relativeDate).toBe('05/15/2023');
     expect(spectator.component.sources).toStrictEqual([
       'https://github.com/home-assistant/home-assistant',
       'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',
