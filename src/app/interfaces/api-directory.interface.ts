@@ -601,8 +601,8 @@ export type ApiDirectory = {
 
   // IPMI
   'ipmi.is_loaded': { params: void; response: boolean };
-  'ipmi.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
-  'ipmi.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
+  'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
+  'ipmi.lan.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
 
   // IPMI Chassis
   'ipmi.chassis.identify': { params: [OnOff]; response: void };
