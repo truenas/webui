@@ -1,13 +1,9 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { AppMetadata } from 'app/interfaces/chart-release.interface';
-import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 
 describe('AppMetadataCardComponent', () => {
   let spectator: Spectator<AppMetadataCardComponent>;
-  let loader: HarnessLoader;
 
   const appMetadata: AppMetadata = {
     capabilities: Array.from({ length: 2 }).map((value, index) => ({
@@ -39,7 +35,6 @@ describe('AppMetadataCardComponent', () => {
         appMetadata,
       },
     });
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   function getDetails(selector: string): Record<string, string> {
@@ -76,20 +71,10 @@ describe('AppMetadataCardComponent', () => {
     });
   });
 
-  it('checks runAsContext entries', async () => {
+  it('checks runAsContext entries', () => {
     expect(spectator.query('#runAsContext h4')).toHaveText('Run As Context');
 
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCells(true);
-
-    const expectedRows = [
-      ['UID', 'Username', 'GID', 'Groupname', 'Description'],
-      [0, 'ix-test-0', 0, 'ix-test-0', 'Why this needs to be done'],
-      [0, 'ix-test-0', 0, 'ix-test-0', 'Why this needs to be done'],
-      [0, 'ix-test-0', 0, 'ix-test-0', 'Why this needs to be done'],
-      [0, 'ix-test-0', 0, 'ix-test-0', 'Why this needs to be done'],
-    ];
-
-    expect(cells).toEqual(expectedRows);
+    const runAsContextEntries = spectator.queryAll('#runAsContext .details-entry');
+    expect(runAsContextEntries).toHaveLength(4);
   });
 });

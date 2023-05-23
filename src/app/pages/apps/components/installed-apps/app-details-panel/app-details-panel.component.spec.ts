@@ -6,6 +6,7 @@ import { AppContainersCardComponent } from 'app/pages/apps/components/installed-
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from 'app/pages/apps/components/installed-apps/app-history-card/app-history-card.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
+import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 
 describe('AppDetailsPanelComponent', () => {
@@ -14,6 +15,23 @@ describe('AppDetailsPanelComponent', () => {
   const app = {
     id: 'ix-test-app',
     info: { notes: 'text' },
+    app_metadata: {
+      capabilities: Array.from({ length: 1 }).map((value, index) => ({
+        name: `X${index}`,
+        description: `This is being used to do X${index} thing`,
+      })),
+      hostMounts: Array.from({ length: 2 }).map((value, index) => ({
+        hostPath: `/dev/proc${index}`,
+        description: 'Required by netdata for xyz',
+      })),
+      runAsContext: Array.from({ length: 3 }).map((value, index) => ({
+        uid: index,
+        gid: index,
+        userName: `ix-test-${index}`,
+        groupName: `ix-test-${index}`,
+        description: 'Why this needs to be done',
+      })),
+    },
   } as ChartRelease;
 
   const createComponent = createComponentFactory({
@@ -24,6 +42,7 @@ describe('AppDetailsPanelComponent', () => {
         AppContainersCardComponent,
         AppHistoryCardComponent,
         AppNotesCardComponent,
+        AppMetadataCardComponent,
       ),
     ],
     providers: [],
@@ -57,5 +76,9 @@ describe('AppDetailsPanelComponent', () => {
     const appNotesCard = spectator.query(AppNotesCardComponent);
     expect(appNotesCard).toBeTruthy();
     expect(appNotesCard.app).toStrictEqual(app);
+
+    const appMetadataCard = spectator.query(AppMetadataCardComponent);
+    expect(appMetadataCard).toBeTruthy();
+    expect(appMetadataCard.appMetadata).toStrictEqual(app.app_metadata);
   });
 });

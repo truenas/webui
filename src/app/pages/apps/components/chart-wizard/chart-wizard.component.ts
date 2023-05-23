@@ -86,6 +86,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
   }
 
+  get showAppMetadata(): boolean {
+    return Boolean(this.catalogApp?.app_metadata && this.form?.controls['show_metadata']?.value);
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
@@ -175,24 +179,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       ).subscribe({
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
-          // TODO: Mock data. Remove before merge.
-          app.app_metadata = {
-            capabilities: Array.from({ length: 30 }).map((value, index) => ({
-              name: `X${index}`,
-              description: `This is being used to do X${index} thing`,
-            })),
-            hostMounts: Array.from({ length: 30 }).map((value, index) => ({
-              hostPath: `/dev/proc${index}`,
-              description: 'Required by netdata for xyz',
-            })),
-            runAsContext: Array.from({ length: 100 }).map((value, index) => ({
-              uid: index,
-              gid: index,
-              userName: `ix-test-${index}`,
-              groupName: `ix-test-${index}`,
-              description: 'Why this needs to be done',
-            })),
-          };
           this.appsLoaded = true;
           this.setChartCreate(app);
           this.isLoading = false;
@@ -253,21 +239,19 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.buildDynamicForm(catalogApp.schema);
 
-    const appMetadata = { ...catalogApp.app_metadata };
-    if (appMetadata) {
-      Object.keys(appMetadata).forEach((key) => {
-        this.form.addControl(key, new FormControl(true, []));
-      });
+    if (catalogApp?.app_metadata) {
+      const controlName = 'show_metadata';
+      this.form.addControl(controlName, new FormControl(true, []));
       this.dynamicSection.push({
         name: 'Application Metadata',
         description: '',
         help: this.translate.instant('This information is provided by the catalog maintainer.'),
-        schema: Object.keys(appMetadata).map((key) => ({
-          controlName: key,
-          title: `Show ${key}`,
+        schema: [{
+          controlName,
+          title: 'Show Metadata',
           type: DynamicFormSchemaType.Checkbox,
           hidden: true,
-        })),
+        }],
       });
     }
 

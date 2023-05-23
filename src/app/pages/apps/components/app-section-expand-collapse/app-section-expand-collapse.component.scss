@@ -1,14 +1,28 @@
-.gradient {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), var(--bg2));
-  height: 25px;
-  margin-top: -25px;
+:host {
+  display: block;
   position: relative;
+}
+
+.gradient {
+  background: linear-gradient(rgba(0, 0, 0, 0) 0%, var(--bg2) 90%);
+  bottom: 0;
+  height: 64px;
+  left: 0;
+  position: absolute;
+  right: 0;
 }
 
 .more-less {
   display: flex;
-  justify-content: flex-end;
-  padding-top: 6px;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.gradient ~ .more-less {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
 }
 
 .content-wrapper {
