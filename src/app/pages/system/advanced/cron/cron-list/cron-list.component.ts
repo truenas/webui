@@ -77,21 +77,25 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
 
   afterInit(entityList: EntityTableComponent<CronjobRow>): void {
     this.entityList = entityList;
+  }
 
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+  doAdd(): void {
+    const slideIn = this.slideInService.open(CronFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
     });
   }
 
-  doAdd(): void {
-    this.slideInService.open(CronFormComponent);
-  }
-
   openEditForm(row: CronjobRow): void {
-    const cronForm = this.slideInService.open(CronFormComponent);
-    cronForm.setCronForEdit(row);
+    const slideIn = this.slideInService.open(CronFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.loaderOpen = true;
+      this.entityList.needRefreshTable = true;
+      this.entityList.getData();
+    });
+    slideIn.componentInstance.setCronForEdit(row);
   }
 
   getActions(tableRow: CronjobRow): EntityTableAction<CronjobRow>[] {

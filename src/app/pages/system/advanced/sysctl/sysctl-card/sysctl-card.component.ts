@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
@@ -15,7 +15,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './sysctl-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SysctlCardComponent implements OnInit {
+export class SysctlCardComponent {
   readonly tableConfig: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_sysctl,
     titleHref: '/system/sysctl',
@@ -34,24 +34,24 @@ export class SysctlCardComponent implements OnInit {
     ],
     add: async () => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
-      this.slideIn.open(TunableFormComponent);
+      const slideIn = this.slideInService.open(TunableFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.tableConfig.tableComponent?.getData();
+      });
     },
     edit: async (tunable: Tunable) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
-      const dialog = this.slideIn.open(TunableFormComponent);
-      dialog.setTunableForEdit(tunable);
+      const slideIn = this.slideInService.open(TunableFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.tableConfig.tableComponent?.getData();
+      });
+      slideIn.componentInstance.setTunableForEdit(tunable);
     },
   };
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
-
-  ngOnInit(): void {
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.tableConfig.tableComponent?.getData();
-    });
-  }
 }

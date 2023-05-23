@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -13,28 +12,22 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './data-protection-card.component.html',
   styleUrls: ['./data-protection-card.component.scss'],
 })
-export class DataProtectionCardComponent implements OnInit {
+export class DataProtectionCardComponent {
   @Input() dataset: DatasetDetails;
 
   readonly console = console;
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
   ) {}
 
-  ngOnInit(): void {
-    this.slideIn.onClose$.pipe(
-      filter((value) => value.modalType === SnapshotAddFormComponent && value.response === true),
-      untilDestroyed(this),
-    ).subscribe(() => {
+  addSnapshot(): void {
+    const slideIn = this.slideInService.open(SnapshotAddFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
     });
-  }
-
-  addSnapshot(): void {
-    const addForm = this.slideIn.open(SnapshotAddFormComponent);
-    addForm.setDataset(this.dataset.id);
+    slideIn.componentInstance.setDataset(this.dataset.id);
   }
 }

@@ -102,7 +102,7 @@ export class CronFormComponent {
           this.snackbar.success(this.translate.instant('Cron job updated'));
         }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.closeLast();
       },
       error: (error) => {
         this.isLoading = false;

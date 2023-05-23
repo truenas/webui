@@ -91,10 +91,6 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
         this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
       }
     });
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refresh();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -160,14 +156,25 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
       message: helptext.thirdPartyRepoWarning.message,
       buttonText: helptext.thirdPartyRepoWarning.btnMsg,
       hideCheckbox: true,
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
-      () => this.slideInService.open(CatalogAddFormComponent),
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(
+      () => {
+        const slideIn = this.slideInService.open(CatalogAddFormComponent);
+        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          this.refresh();
+        });
+      },
     );
   }
 
   edit(catalog: Catalog): void {
-    const modal = this.slideInService.open(CatalogEditFormComponent);
-    modal.setCatalogForEdit(catalog);
+    const slideIn = this.slideInService.open(CatalogEditFormComponent);
+    slideIn.componentInstance.setCatalogForEdit(catalog);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refresh();
+    });
   }
 
   refreshRow(row: Catalog): void {

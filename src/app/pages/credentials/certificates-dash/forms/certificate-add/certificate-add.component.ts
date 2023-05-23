@@ -56,7 +56,7 @@ export class CertificateAddComponent {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -88,7 +88,7 @@ export class CertificateAddComponent {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
-          this.slideIn.close();
+          this.slideInService.closeLast();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

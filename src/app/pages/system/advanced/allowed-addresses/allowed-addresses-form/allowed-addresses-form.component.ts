@@ -79,7 +79,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
       message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
     }).pipe(
-      tap(() => this.slideInService.close()),
+      tap(() => this.slideInService.closeLast()),
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {

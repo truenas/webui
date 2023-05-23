@@ -48,7 +48,7 @@ export class LicenseComponent {
         this.isFormLoading = false;
         // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
         this.window.localStorage.setItem('upgrading_status', 'upgrading');
-        this.slideInService.close();
+        this.slideInService.closeLast();
         this.cdr.markForCheck();
         setTimeout(() => {
           this.dialogService.confirm({

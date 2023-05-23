@@ -117,12 +117,12 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('opens settings form when Settings button is clicked', async () => {
-    const ixSlideInService = spectator.inject(IxSlideInService);
-    jest.spyOn(ixSlideInService, 'open').mockImplementation();
+    const slideIn = spectator.inject(IxSlideInService);
+    jest.spyOn(slideIn, 'open').mockImplementation();
 
     const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await settingsButton.click();
 
-    expect(ixSlideInService.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
+    expect(slideIn.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
   });
 });

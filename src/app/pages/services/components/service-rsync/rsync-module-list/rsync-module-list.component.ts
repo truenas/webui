@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -19,7 +19,7 @@ interface RsyncModuleRow extends RsyncModule {
   selector: 'ix-rsync-module-list',
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRow>, OnInit {
+export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRow> {
   title = this.translate.instant('RSYNC Modules');
   queryCall = 'rsyncmod.query' as const;
   hasDetails = true;
@@ -50,12 +50,6 @@ export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRo
     private slideInService: IxSlideInService,
   ) {}
 
-  ngOnInit(): void {
-    this.slideInService.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.entityList.getData());
-  }
-
   afterInit(entityList: EntityTableComponent<RsyncModuleRow>): void {
     this.entityList = entityList;
   }
@@ -73,12 +67,14 @@ export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRo
   }
 
   doAdd(): void {
-    this.slideInService.open(RsyncModuleFormComponent, { wide: true });
+    const slideIn = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const rsyncModule = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
-    form.setModuleForEdit(rsyncModule);
+    const slideIn = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideIn.componentInstance.setModuleForEdit(rsyncModule);
   }
 }

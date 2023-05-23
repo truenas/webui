@@ -164,7 +164,7 @@ export class UserFormComponent {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private filesystemService: FilesystemService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
     private storageService: StorageService,
     private store$: Store<AppState>,
@@ -311,7 +311,7 @@ export class UserFormComponent {
               this.store$.dispatch(userChanged({ user }));
             }
             this.isFormLoading = false;
-            this.slideIn.close();
+            this.slideInService.closeLast();
             this.cdr.markForCheck();
           },
           error: (error) => {

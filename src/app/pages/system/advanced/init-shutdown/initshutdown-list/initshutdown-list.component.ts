@@ -43,12 +43,6 @@ export class InitshutdownListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.loaderOpen = true;
-      this.entityList.needRefreshTable = true;
-      this.entityList.getData();
-    });
   }
 
   getActions(row: InitShutdownScript): EntityTableAction<InitShutdownScript>[] {
@@ -59,8 +53,13 @@ export class InitshutdownListComponent implements EntityTableConfig {
         name: 'edit',
         actionName: 'edit',
         onClick: (rowToEdit: InitShutdownScript) => {
-          const modal = this.slideInService.open(InitShutdownFormComponent);
-          modal.setScriptForEdit(rowToEdit);
+          const slideIn = this.slideInService.open(InitShutdownFormComponent);
+          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+            this.entityList.loaderOpen = true;
+            this.entityList.needRefreshTable = true;
+            this.entityList.getData();
+          });
+          slideIn.componentInstance.setScriptForEdit(rowToEdit);
         },
       },
       {
@@ -76,6 +75,11 @@ export class InitshutdownListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.slideInService.open(InitShutdownFormComponent);
+    const slideIn = this.slideInService.open(InitShutdownFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.loaderOpen = true;
+      this.entityList.needRefreshTable = true;
+      this.entityList.getData();
+    });
   }
 }

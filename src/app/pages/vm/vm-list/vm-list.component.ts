@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -45,7 +45,7 @@ const noMemoryError = 'ENOMEM';
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService],
 })
-export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit, AfterViewInit {
+export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   title = this.translate.instant('Virtual Machines');
@@ -113,14 +113,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private translate: TranslateService,
     private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
-
-  ngOnInit(): void {
-    this.slideIn.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.entityList.getData());
-  }
 
   afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
     this.checkMemory();
@@ -358,8 +352,11 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (vm: VirtualMachineRow) => {
-        const slideIn = this.slideIn.open(VmEditFormComponent);
-        slideIn.setVmForEdit(vm);
+        const slideIn = this.slideInService.open(VmEditFormComponent);
+        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          this.entityList.getData();
+        });
+        slideIn.componentInstance.setVmForEdit(vm);
       },
     },
     {
@@ -475,7 +472,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   doAdd(): void {
-    this.slideIn.open(VmWizardComponent);
+    const slideIn = this.slideInService.open(VmWizardComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {

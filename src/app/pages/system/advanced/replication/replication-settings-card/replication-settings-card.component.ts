@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   ReplicationSettingsFormComponent,
@@ -15,21 +16,22 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsCardComponent {
-  taskLimit$ = this.slideIn.onClose$.pipe(
-    startWith(undefined),
-    switchMap(() => this.ws.call('replication.config.config')),
-    map((config) => config.max_parallel_replication_tasks),
-    toLoadingState(),
-  );
+  taskLimit$: Observable<LoadingState<number>>;
 
   constructor(
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(ReplicationSettingsFormComponent);
+    const slideIn = this.slideInService.open(ReplicationSettingsFormComponent);
+    this.taskLimit$ = slideIn.slideInClosed$.pipe(
+      startWith(undefined),
+      switchMap(() => this.ws.call('replication.config.config')),
+      map((config) => config.max_parallel_replication_tasks),
+      toLoadingState(),
+    );
   }
 }

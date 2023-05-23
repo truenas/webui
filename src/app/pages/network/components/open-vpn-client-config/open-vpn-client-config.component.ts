@@ -125,7 +125,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
         next: () => {
           this.snackbar.success(this.translate.instant('OpenVPN client configuration saved'));
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInService.closeLast();
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

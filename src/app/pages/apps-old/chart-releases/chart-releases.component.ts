@@ -109,10 +109,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.addChartReleaseChangedEventListener();
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshChartReleases();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -344,14 +340,18 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
       { extra: { include_chart_schema: true } },
     ]).pipe(untilDestroyed(this)).subscribe((releases: ChartRelease[]) => {
       this.appLoaderService.close();
-      const form = this.slideInService.open(ChartFormComponent, { wide: true });
+      const slideIn = this.slideInService.open(ChartFormComponent, { wide: true });
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshChartReleases();
+      });
+
       if (catalogApp.chart_metadata.name === ixChartApp) {
-        form.setTitle(helptext.launch);
+        slideIn.componentInstance.setTitle(helptext.launch);
       } else {
-        form.setTitle(catalogApp.chart_metadata.name);
+        slideIn.componentInstance.setTitle(catalogApp.chart_metadata.name);
       }
       if (releases.length) {
-        form.setChartEdit(releases[0]);
+        slideIn.componentInstance.setChartEdit(releases[0]);
       }
     });
   }

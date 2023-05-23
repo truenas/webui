@@ -101,11 +101,6 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
 
   afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.entityList.getData();
-      });
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
@@ -249,12 +244,15 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   doAdd(): void {
-    this.slideInService.open(ReplicationWizardComponent, { wide: true });
+    const slideIn = this.slideInService.open(ReplicationWizardComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   doEdit(id: number): void {
     const replication = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
-    form.setForEdit(replication);
+    const slideIn = this.slideInService.open(ReplicationFormComponent, { wide: true });
+    slideIn.componentInstance.setForEdit(replication);
   }
 }

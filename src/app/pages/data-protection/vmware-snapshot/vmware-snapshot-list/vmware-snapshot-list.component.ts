@@ -41,9 +41,6 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   isActionVisible(actionId: string): boolean {
@@ -54,7 +51,10 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.slideInService.open(VmwareSnapshotFormComponent);
+    const slideIn = this.slideInService.open(VmwareSnapshotFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   getActions(vmwareSnapshot: VmwareSnapshot): EntityTableAction[] {
@@ -74,8 +74,11 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         name: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (row: VmwareSnapshot) => {
-          const form = this.slideInService.open(VmwareSnapshotFormComponent);
-          form.setSnapshotForEdit(row);
+          const slideIn = this.slideInService.open(VmwareSnapshotFormComponent);
+          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+            this.entityList.getData();
+          });
+          slideIn.componentInstance.setSnapshotForEdit(row);
         },
       },
     ] as EntityTableAction[];

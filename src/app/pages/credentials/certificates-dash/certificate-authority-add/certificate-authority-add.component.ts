@@ -62,7 +62,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
   ) {}
 
@@ -121,7 +121,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate authority created'));
-          this.slideIn.close();
+          this.slideInService.closeLast();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

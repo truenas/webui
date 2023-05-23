@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextSharingWebdav } from 'app/helptext/sharing';
@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class WebdavListComponent implements EntityTableConfig<WebDavShare>, OnInit {
+export class WebdavListComponent implements EntityTableConfig<WebDavShare> {
   title = this.translate.instant('WebDAV');
   queryCall = 'sharing.webdav.query' as const;
   updateCall = 'sharing.webdav.update' as const;
@@ -62,21 +62,21 @@ export class WebdavListComponent implements EntityTableConfig<WebDavShare>, OnIn
     private slideInService: IxSlideInService,
   ) {}
 
-  ngOnInit(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+  doAdd(id: string, tableComponent: EntityTableComponent<WebDavShare>): void {
+    this.tableComponent = tableComponent;
+    const slideIn = this.slideInService.open(WebdavFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.tableComponent.getData();
     });
   }
 
-  doAdd(id: string, tableComponent: EntityTableComponent<WebDavShare>): void {
-    this.tableComponent = tableComponent;
-    this.slideInService.open(WebdavFormComponent);
-  }
-
   doEdit(rowId: number, tableComponent: EntityTableComponent<WebDavShare>): void {
     this.tableComponent = tableComponent;
-    const webdavForm = this.slideInService.open(WebdavFormComponent);
-    webdavForm.setWebdavForEdit(tableComponent.rows.find((row) => row.id === rowId));
+    const slideIn = this.slideInService.open(WebdavFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.tableComponent.getData();
+    });
+    slideIn.componentInstance.setWebdavForEdit(tableComponent.rows.find((row) => row.id === rowId));
   }
 
   onCheckboxChange(row: WebDavShare): void {

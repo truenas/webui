@@ -76,7 +76,7 @@ export class VmEditFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private errorHandler: ErrorHandlerService,
@@ -134,7 +134,7 @@ export class VmEditFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.snackbar.success(this.translate.instant('VM updated successfully.'));
-          this.slideIn.close();
+          this.slideInService.closeLast();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

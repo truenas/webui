@@ -98,7 +98,7 @@ export class DatasetQuotaEditFormComponent {
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
     protected dialogService: DialogService,
   ) {}
@@ -173,7 +173,7 @@ export class DatasetQuotaEditFormComponent {
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
         this.isFormLoading = false;
-        this.slideIn.close();
+        this.slideInService.closeLast();
         this.cdr.markForCheck();
       },
       error: (error) => {

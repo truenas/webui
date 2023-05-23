@@ -90,7 +90,7 @@ export class DatasetQuotaAddFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private userService: UserService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
 
   setupAddQuotaForm(quotaType: DatasetQuotaType, datasetId: string): void {
@@ -109,7 +109,7 @@ export class DatasetQuotaAddFormComponent {
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
           this.isLoading = false;
-          this.slideIn.close();
+          this.slideInService.closeLast();
           this.cdr.markForCheck();
         },
         error: (error) => {

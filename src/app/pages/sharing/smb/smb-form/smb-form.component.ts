@@ -430,10 +430,10 @@ export class SmbFormComponent implements OnInit {
                     { queryParams: { homeShare, path: smbShareResponse.path_local } },
                   );
                 }
-                this.slideInService.close();
+                this.slideInService.closeLast();
               });
             } else {
-              this.slideInService.close();
+              this.slideInService.closeLast();
             }
           },
           error: (err: WebsocketError) => {
@@ -444,7 +444,7 @@ export class SmbFormComponent implements OnInit {
             }
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInService.close();
+            this.slideInService.closeLast();
           },
         });
       },

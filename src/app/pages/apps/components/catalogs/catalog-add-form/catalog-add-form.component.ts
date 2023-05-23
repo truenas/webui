@@ -65,7 +65,7 @@ export class CatalogAddFormComponent {
       this.snackbar.success(
         this.translate.instant('Catalog is being added. This may take some time. You can minimize this dialog and process will continue in background'),
       );
-      this.slideInService.close();
+      this.slideInService.closeLast();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;

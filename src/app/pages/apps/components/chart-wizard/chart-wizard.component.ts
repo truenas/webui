@@ -31,7 +31,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -86,7 +85,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
@@ -409,7 +407,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInService.close();
+    this.slideInService.closeLast();
     this.router.navigate(['/apps/installed']);
   }
 }

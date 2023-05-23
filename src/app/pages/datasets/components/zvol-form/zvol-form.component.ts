@@ -672,7 +672,7 @@ export class ZvolFormComponent {
             title: helptext.zvol_save_errDialog.title,
             message: helptext.zvol_save_errDialog.msg,
           });
-          this.slideInService.close(null, false);
+          this.slideInService.closeLast(false);
         }
       },
       error: (error: WebsocketError): void => {
@@ -741,7 +741,7 @@ export class ZvolFormComponent {
 
   private handleZvolCreateUpdate(dataset: Dataset): void {
     this.isLoading = false;
-    this.slideInService.close(null, dataset);
+    this.slideInService.closeLast(dataset);
 
     this.snackbar.success(
       this.isNew

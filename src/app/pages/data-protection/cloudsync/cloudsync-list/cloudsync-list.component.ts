@@ -106,12 +106,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
 
   afterInit(entityList: EntityTableComponent<CloudSyncTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(
-      filter((value) => !!value.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
@@ -317,12 +311,21 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   }
 
   doAdd(): void {
-    this.slideInService.open(CloudsyncFormComponent, { wide: true });
+    const slideIn = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   doEdit(id: number): void {
     const cloudSyncTask = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-    form.setTaskForEdit(cloudSyncTask);
+    const slideIn = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(
+      filter((value: { response: unknown }) => !!value.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.entityList.getData();
+    });
+    slideIn.componentInstance.setTaskForEdit(cloudSyncTask);
   }
 }

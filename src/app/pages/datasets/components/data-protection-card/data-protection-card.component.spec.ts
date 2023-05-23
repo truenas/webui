@@ -53,12 +53,12 @@ describe('DataProtectionComponent', () => {
   });
 
   it('opens the snapshot add from when button clicked', async () => {
-    const ixSlideInService = spectator.inject(IxSlideInService);
-    jest.spyOn(ixSlideInService, 'open').mockImplementation();
+    const slideIn = spectator.inject(IxSlideInService);
+    jest.spyOn(slideIn, 'open').mockImplementation();
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Snapshot' }));
     await editButton.click();
 
-    expect(ixSlideInService.open).toHaveBeenCalledWith(SnapshotAddFormComponent);
+    expect(slideIn.open).toHaveBeenCalledWith(SnapshotAddFormComponent);
   });
 });

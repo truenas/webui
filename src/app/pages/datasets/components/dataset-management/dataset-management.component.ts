@@ -122,7 +122,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
     private layoutService: LayoutService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -234,7 +234,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   onImportData(): void {
-    this.slideIn.open(ImportDataComponent);
+    this.slideInService.open(ImportDataComponent);
   }
 
   private setupTree(): void {

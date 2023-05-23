@@ -71,7 +71,7 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
@@ -128,7 +128,7 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(GroupFormComponent).setupForm();
+    this.slideInService.open(GroupFormComponent).componentInstance.setupForm();
   }
 
   onToggle(row: Group): void {

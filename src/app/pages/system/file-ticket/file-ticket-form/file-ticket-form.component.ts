@@ -76,7 +76,7 @@ export class FileTicketFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private sysGeneralService: SystemGeneralService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
@@ -231,7 +231,7 @@ export class FileTicketFormComponent implements OnInit {
         if (shouldOpen) {
           this.window.open(params.url, '_blank');
         }
-        this.slideIn.close();
+        this.slideInService.closeLast();
       });
   }
 

@@ -226,7 +226,7 @@ export class DeviceFormComponent implements OnInit {
     private vmService: VmService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
   ) {}
 
@@ -354,7 +354,7 @@ export class DeviceFormComponent implements OnInit {
           }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideIn.close();
+          this.slideInService.closeLast();
         },
         error: (error) => {
           this.errorHandler.handleWsFormError(error, this.typeSpecificForm);

@@ -62,11 +62,6 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
 
   preInit(entityList: EntityTableComponent<Tunable>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.loaderOpen = true;
-      this.entityList.needRefreshTable = true;
-      this.entityList.getData();
-    });
   }
 
   wsMultiDeleteParams(selected: Tunable[]): [string, number[][]?] {
@@ -77,7 +72,12 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
   }
 
   doAdd(): void {
-    this.slideInService.open(TunableFormComponent);
+    const slideIn = this.slideInService.open(TunableFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.loaderOpen = true;
+      this.entityList.needRefreshTable = true;
+      this.entityList.getData();
+    });
   }
 
   getActions(tunable: Tunable): EntityTableAction<Tunable>[] {
@@ -88,8 +88,13 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
         name: 'edit',
         actionName: 'edit',
         onClick: (row: Tunable) => {
-          const tunableForm = this.slideInService.open(TunableFormComponent);
-          tunableForm.setTunableForEdit(row);
+          const slideIn = this.slideInService.open(TunableFormComponent);
+          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+            this.entityList.loaderOpen = true;
+            this.entityList.needRefreshTable = true;
+            this.entityList.getData();
+          });
+          slideIn.componentInstance.setTunableForEdit(row);
         },
       },
       {

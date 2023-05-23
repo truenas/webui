@@ -113,7 +113,7 @@ export class AuthorizedAccessFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.closeLast();
       },
       error: (error) => {
         this.isLoading = false;

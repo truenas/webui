@@ -154,7 +154,7 @@ export class NfsFormComponent implements OnInit {
           }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInService.closeLast();
         },
         error: (error) => {
           this.isLoading = false;

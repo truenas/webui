@@ -84,7 +84,7 @@ describe('CertificateEditComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
   });
 
   it('opens modal for certificate when View/Download Certificate is pressed', async () => {
@@ -127,12 +127,14 @@ describe('CertificateEditComponent', () => {
       const slideInService = spectator.inject(IxSlideInService);
       const mockSetCsr = jest.fn();
       slideInService.open.mockReturnValue({
-        setCsr: mockSetCsr,
-      });
+        componentInstance: {
+          setCsr: mockSetCsr,
+        },
+      } as never);
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create ACME Certificate' }));
       await createButton.click();
 
-      expect(slideInService.close).toHaveBeenCalled();
+      expect(slideInService.closeLast).toHaveBeenCalled();
       expect(slideInService.open).toHaveBeenCalledWith(CertificateAcmeAddComponent);
       expect(mockSetCsr).toHaveBeenCalledWith({
         ...certificate,

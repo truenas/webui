@@ -68,7 +68,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
@@ -80,10 +80,6 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     this.datasetId = paramMap.datasetId;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getGroupQuotas();
-
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getGroupQuotas();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -249,13 +245,19 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   doAdd(): void {
-    const form = this.slideIn.open(DatasetQuotaAddFormComponent);
-    form.setupAddQuotaForm(DatasetQuotaType.Group, this.datasetId);
+    const slideIn = this.slideInService.open(DatasetQuotaAddFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.getGroupQuotas();
+    });
+    slideIn.componentInstance.setupAddQuotaForm(DatasetQuotaType.Group, this.datasetId);
   }
 
   doEdit(row: DatasetQuota): void {
-    const form = this.slideIn.open(DatasetQuotaEditFormComponent);
-    form.setupEditQuotaForm(DatasetQuotaType.Group, this.datasetId, row.id);
+    const slideIn = this.slideInService.open(DatasetQuotaEditFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.getGroupQuotas();
+    });
+    slideIn.componentInstance.setupEditQuotaForm(DatasetQuotaType.Group, this.datasetId, row.id);
   }
 
   doDelete(row: DatasetQuota): void {

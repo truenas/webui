@@ -86,7 +86,7 @@ export class StorageSettingsFormComponent implements OnInit {
             this.store$.dispatch(advancedConfigUpdated());
             this.cdr.markForCheck();
             this.snackbar.success(this.translate.instant('System dataset updated.'));
-            this.slideInService.close();
+            this.slideInService.closeLast();
           }),
           catchError((error) => {
             this.isFormLoading = false;

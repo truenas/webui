@@ -50,7 +50,7 @@ export class ReportsConfigFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) { }
 
   ngOnInit(): void {
@@ -82,7 +82,7 @@ export class ReportsConfigFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Reporting configuration saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close();
+        this.slideInService.closeLast();
       },
       error: (error) => {
         this.isFormLoading = false;

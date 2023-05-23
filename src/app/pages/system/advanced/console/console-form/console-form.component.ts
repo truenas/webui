@@ -105,7 +105,7 @@ export class ConsoleFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInService.closeLast();
       },
       error: (error) => {
         this.isFormLoading = false;

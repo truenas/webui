@@ -43,7 +43,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
     private router: Router,
     private store$: Store<AppState>,
     private reportsService: ReportsService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +53,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   }
 
   showConfigForm(): void {
-    this.slideIn.open(ReportsConfigFormComponent);
+    this.slideInService.open(ReportsConfigFormComponent);
   }
 
   onNavigateToTab(tab: ReportTab): void {

@@ -106,7 +106,7 @@ export class DashboardFormComponent {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
         this.onSubmit$.next(this.dashState);
-        this.slideInService.close();
+        this.slideInService.closeLast(this.dashState);
       },
       error: (err) => {
         console.error(err);

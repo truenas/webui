@@ -82,7 +82,7 @@ export class DatasetCapacitySettingsComponent {
     private errorHandler: FormErrorHandlerService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private validators: IxValidatorsService,
   ) {
     this.setFormRelations();
@@ -139,7 +139,7 @@ export class DatasetCapacitySettingsComponent {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideIn.close();
+          this.slideInService.closeLast();
           this.cdr.markForCheck();
         },
         error: (error) => {

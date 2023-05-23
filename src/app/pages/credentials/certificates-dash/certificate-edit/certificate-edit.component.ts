@@ -74,9 +74,9 @@ export class CertificateEditComponent {
   }
 
   onCreateAcmePressed(): void {
-    this.slideInService.close();
-    const acmeForm = this.slideInService.open(CertificateAcmeAddComponent);
-    acmeForm.setCsr(this.certificate);
+    this.slideInService.closeLast();
+    const slideIn = this.slideInService.open(CertificateAcmeAddComponent);
+    slideIn.componentInstance.setCsr(this.certificate);
   }
 
   onSubmit(): void {
@@ -88,7 +88,7 @@ export class CertificateEditComponent {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInService.closeLast();
         },
         error: (error) => {
           this.isLoading = false;

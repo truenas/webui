@@ -31,7 +31,7 @@ export class IsolatedGpusFormComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private modal: IxSlideInService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -62,7 +62,7 @@ export class IsolatedGpusFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.modal.close();
+        this.slideInService.closeLast();
       },
       error: (error) => {
         this.isFormLoading = false;

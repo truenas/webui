@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
@@ -21,7 +21,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './cron-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CronCardComponent implements OnInit {
+export class CronCardComponent {
   readonly tableConfig: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_cron,
     titleHref: '/system/cron',
@@ -74,30 +74,30 @@ export class CronCardComponent implements OnInit {
     add: async () => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      this.slideIn.open(CronFormComponent);
+      const slideIn = this.slideInService.open(CronFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.tableConfig.tableComponent?.getData();
+      });
     },
     edit: async (cron: CronjobRow) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const modal = this.slideIn.open(CronFormComponent);
-      modal.setCronForEdit(cron);
+      const slideIn = this.slideInService.open(CronFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.tableConfig.tableComponent?.getData();
+      });
+      slideIn.componentInstance.setCronForEdit(cron);
     },
   };
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
-
-  ngOnInit(): void {
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.tableConfig.tableComponent?.getData();
-    });
-  }
 
   private cronDataSourceHelper(data: Cronjob[]): CronjobRow[] {
     return data.map((job) => {

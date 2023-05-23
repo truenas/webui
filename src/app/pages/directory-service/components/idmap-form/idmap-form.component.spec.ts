@@ -26,7 +26,6 @@ import {
   DialogService, IdmapService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('IdmapFormComponent', () => {
@@ -96,7 +95,7 @@ describe('IdmapFormComponent', () => {
         } as unknown as IdmapBackendOptions),
       }),
       mockProvider(IxSlideInService),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { syslogLevelLabels } from 'app/enums/syslog.enum';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { WebSocketService } from 'app/services';
@@ -22,24 +23,25 @@ export class SyslogCardComponent {
     toLoadingState(),
   );
 
-  readonly syslog$ = this.slideIn.onClose$.pipe(
-    startWith(undefined),
-    switchMap(() => this.ws.call('systemdataset.config')),
-    map((config) => config.syslog),
-    toLoadingState(),
-  );
+  syslog$: Observable<LoadingState<unknown>>;
 
   readonly syslogLevelLabels = syslogLevelLabels;
 
   constructor(
     private store$: Store<AppState>,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(SyslogFormComponent);
+    const slideIn = this.slideInService.open(SyslogFormComponent);
+    this.syslog$ = slideIn.slideInClosed$.pipe(
+      startWith(undefined),
+      switchMap(() => this.ws.call('systemdataset.config')),
+      map((config) => config.syslog),
+      toLoadingState(),
+    );
   }
 }

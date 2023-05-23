@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -65,15 +65,10 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   dataHandler(entityList: EntityTableComponent): Observable<[IscsiTarget[], IscsiExtent[]]> {
@@ -96,7 +91,10 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.slideInService.open(AssociatedTargetFormComponent);
+    const slideIn = this.slideInService.open(AssociatedTargetFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   getActions(row: IscsiTargetExtent): EntityTableAction[] {
@@ -120,8 +118,11 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
   }
 
   private editRow(extent: IscsiTargetExtent): void {
-    const form = this.slideInService.open(AssociatedTargetFormComponent);
-    form.setTargetForEdit(extent);
+    const slideIn = this.slideInService.open(AssociatedTargetFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+    slideIn.componentInstance.setTargetForEdit(extent);
   }
 
   private deleteRow(rowInner: IscsiTargetExtent): void {

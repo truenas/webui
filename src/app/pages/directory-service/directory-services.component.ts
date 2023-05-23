@@ -67,12 +67,18 @@ export class DirectoryServicesComponent implements OnInit {
       this.ensureActiveDirectoryIsEnabledForIdmap()
         .pipe(untilDestroyed(this))
         .subscribe(() => {
-          this.slideInService.open(IdmapFormComponent);
+          const slideIn = this.slideInService.open(IdmapFormComponent);
+          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+            this.refreshCards();
+          });
         });
     },
     edit: (row: Idmap) => {
       const slideIn = this.slideInService.open(IdmapFormComponent);
-      slideIn.setIdmapForEdit(row);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshCards();
+      });
+      slideIn.componentInstance.setIdmapForEdit(row);
     },
     getActions: () => {
       return [
@@ -128,11 +134,17 @@ export class DirectoryServicesComponent implements OnInit {
       { name: this.translate.instant('Password Server'), prop: 'kpasswd_server' },
     ],
     add: () => {
-      this.slideInService.open(KerberosRealmsFormComponent);
+      const slideIn = this.slideInService.open(KerberosRealmsFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshCards();
+      });
     },
     edit: (realm: KerberosRealm) => {
-      const modal = this.slideInService.open(KerberosRealmsFormComponent);
-      modal.setRealmForEdit(realm);
+      const slideIn = this.slideInService.open(KerberosRealmsFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshCards();
+      });
+      slideIn.componentInstance.setRealmForEdit(realm);
     },
   };
 
@@ -151,11 +163,17 @@ export class DirectoryServicesComponent implements OnInit {
       { name: 'Name', prop: 'name' },
     ],
     add: () => {
-      this.slideInService.open(KerberosKeytabsFormComponent);
+      const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshCards();
+      });
     },
     edit: (row: KerberosKeytab) => {
       const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
-      slideIn.setKerberosKeytabsForEdit(row);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshCards();
+      });
+      slideIn.componentInstance.setKerberosKeytabsForEdit(row);
     },
   };
 
@@ -178,14 +196,6 @@ export class DirectoryServicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshCards();
-    this.slideInService.onClose$
-      .pipe(
-        filter((slideInResult) => !!slideInResult),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.refreshCards();
-      });
   }
 
   refreshCards(): void {
@@ -286,15 +296,24 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   openActiveDirectoryForm(): void {
-    this.slideInService.open(ActiveDirectoryComponent, { wide: true });
+    const slideIn = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshCards();
+    });
   }
 
   openLdapForm(): void {
-    this.slideInService.open(LdapComponent, { wide: true });
+    const slideIn = this.slideInService.open(LdapComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshCards();
+    });
   }
 
   openKerberosSettingsForm(): void {
-    this.slideInService.open(KerberosSettingsComponent);
+    const slideIn = this.slideInService.open(KerberosSettingsComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshCards();
+    });
   }
 
   refreshTables(): void {

@@ -158,7 +158,7 @@ export class AlertServiceComponent implements OnInit {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.snackbar.success(this.translate.instant('Alert service saved'));
-          this.slideInService.close();
+          this.slideInService.closeLast();
         },
         error: (error) => {
           this.isLoading = false;

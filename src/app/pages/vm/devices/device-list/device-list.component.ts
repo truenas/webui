@@ -54,7 +54,7 @@ export class DeviceListComponent implements EntityTableConfig {
     private matDialog: MatDialog,
     private cdRef: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
 
   isActionVisible(actionId: string): boolean {
@@ -69,9 +69,12 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (device: VmDevice) => {
-        const slideIn = this.slideIn.open(DeviceFormComponent);
-        slideIn.setVirtualMachineId(Number(this.pk));
-        slideIn.setDeviceForEdit(device);
+        const slideIn = this.slideInService.open(DeviceFormComponent);
+        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          this.entityList.getData();
+        });
+        slideIn.componentInstance.setVirtualMachineId(Number(this.pk));
+        slideIn.componentInstance.setDeviceForEdit(device);
       },
     });
     actions.push({
@@ -133,14 +136,13 @@ export class DeviceListComponent implements EntityTableConfig {
       this.cdRef.detectChanges();
       this.queryCallOption[0][0].push(parseInt(this.pk, 10));
     });
-
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   doAdd(): void {
-    const slideIn = this.slideIn.open(DeviceFormComponent);
-    slideIn.setVirtualMachineId(Number(this.pk));
+    const slideIn = this.slideInService.open(DeviceFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+    slideIn.componentInstance.setVirtualMachineId(Number(this.pk));
   }
 }

@@ -70,7 +70,7 @@ export class SmbAclComponent {
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private validatorService: IxValidatorsService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
   ) {}
 
@@ -109,7 +109,7 @@ export class SmbAclComponent {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideIn.close();
+          this.slideInService.closeLast();
         },
         error: (error) => {
           this.isLoading = false;

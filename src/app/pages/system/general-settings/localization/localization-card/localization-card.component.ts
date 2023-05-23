@@ -49,9 +49,9 @@ export class LocalizationCardComponent {
   }
 
   doAdd(config: SystemGeneralConfig): void {
-    const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
+    const slideIn = this.slideInService.open(LocalizationFormComponent);
 
-    localizationFormModal.setupForm({
+    slideIn.componentInstance.setupForm({
       language: config.language,
       kbdMap: config.kbdmap,
       timezone: config.timezone,

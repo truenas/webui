@@ -24,15 +24,15 @@ export class GroupDetailsRowComponent {
   @Output() delete = new EventEmitter<number>();
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private router: Router,
     private matDialog: MatDialog,
   ) {}
 
   doEdit(group: Group): void {
-    const groupEdit = this.slideIn.open(GroupFormComponent);
-    if (groupEdit) {
-      groupEdit.setupForm(group);
+    const slideIn = this.slideInService.open(GroupFormComponent);
+    if (slideIn) {
+      slideIn.componentInstance.setupForm(group);
     }
   }
 

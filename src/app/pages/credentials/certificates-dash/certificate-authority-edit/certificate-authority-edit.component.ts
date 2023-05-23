@@ -11,7 +11,6 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -35,7 +34,6 @@ export class CertificateAuthorityEditComponent {
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    private dialogService: DialogService,
     private matDialog: MatDialog,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -77,7 +75,7 @@ export class CertificateAuthorityEditComponent {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInService.closeLast();
         },
         error: (error) => {
           this.isLoading = false;

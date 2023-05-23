@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
@@ -16,7 +16,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './init-shutdown-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InitShutdownCardComponent implements OnInit {
+export class InitShutdownCardComponent {
   readonly tableConfig: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_initshutdown,
     titleHref: '/system/initshutdown',
@@ -39,25 +39,25 @@ export class InitShutdownCardComponent implements OnInit {
     add: async () => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      this.slideIn.open(InitShutdownFormComponent);
+      const slideIn = this.slideInService.open(InitShutdownFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.tableConfig.tableComponent?.getData();
+      });
     },
     edit: async (script: InitShutdownScript) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const modal = this.slideIn.open(InitShutdownFormComponent);
-      modal.setScriptForEdit(script);
+      const slideIn = this.slideInService.open(InitShutdownFormComponent);
+      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.tableConfig.tableComponent?.getData();
+      });
+      slideIn.componentInstance.setScriptForEdit(script);
     },
   };
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
-
-  ngOnInit(): void {
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.tableConfig.tableComponent?.getData();
-    });
-  }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,7 +32,7 @@ interface AuthSessionRow {
   templateUrl: './sessions-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SessionsCardComponent implements OnInit {
+export class SessionsCardComponent {
   readonly tokenLifetime$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {
@@ -101,7 +101,7 @@ export class SessionsCardComponent implements OnInit {
 
   constructor(
     private store$: Store<AppState>,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -110,15 +110,12 @@ export class SessionsCardComponent implements OnInit {
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
-  ngOnInit(): void {
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.sessionsTableConf.tableComponent?.getData();
-    });
-  }
-
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(TokenSettingsComponent);
+    const slideIn = this.slideInService.open(TokenSettingsComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.sessionsTableConf.tableComponent?.getData();
+    });
   }
 
   terminateOtherSessions(): void {

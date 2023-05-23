@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { map, switchMap } from 'rxjs';
+import { Observable, map, switchMap } from 'rxjs';
 import { startWith } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   StorageSettingsFormComponent,
@@ -19,12 +19,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorageCardComponent {
-  readonly systemDatasetPool$ = this.slideIn.onClose$.pipe(
-    startWith(undefined),
-    switchMap(() => this.ws.call('systemdataset.config')),
-    map((config) => config.pool),
-    toLoadingState(),
-  );
+  systemDatasetPool$: Observable<LoadingState<string>>;
 
   readonly swapSize$ = this.store$.pipe(
     waitForAdvancedConfig,
@@ -33,7 +28,7 @@ export class StorageCardComponent {
   );
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
     private store$: Store<AppState>,
     private ws: WebSocketService,
@@ -41,6 +36,12 @@ export class StorageCardComponent {
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(StorageSettingsFormComponent);
+    const slideIn = this.slideInService.open(StorageSettingsFormComponent);
+    this.systemDatasetPool$ = slideIn.slideInClosed$.pipe(
+      startWith(undefined),
+      switchMap(() => this.ws.call('systemdataset.config')),
+      map((config) => config.pool),
+      toLoadingState(),
+    );
   }
 }

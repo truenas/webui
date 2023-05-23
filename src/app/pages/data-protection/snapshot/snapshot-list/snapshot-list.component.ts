@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take } from 'rxjs';
+import { take } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   PeriodicSnapshotTask,
@@ -89,12 +89,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   afterInit(entityList: EntityTableComponent<PeriodicSnapshotTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(
-      filter((value) => !!value.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
@@ -147,12 +141,18 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   doAdd(): void {
-    this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   doEdit(id: number): void {
     const snapshotTask = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-    form.setTaskForEdit(snapshotTask);
+    const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+    slideIn.componentInstance.setTaskForEdit(snapshotTask);
   }
 }

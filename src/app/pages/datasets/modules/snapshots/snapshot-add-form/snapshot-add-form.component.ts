@@ -61,7 +61,7 @@ export class SnapshotAddFormComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private datasetStore: DatasetTreeStore,
   ) {}
 
@@ -119,7 +119,7 @@ export class SnapshotAddFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideIn.close(null, true);
+        this.slideInService.closeLast(true);
         this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },

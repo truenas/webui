@@ -144,7 +144,7 @@ export class GroupFormComponent {
           this.store$.dispatch(groupChanged({ group }));
         }
         this.isFormLoading = false;
-        this.slideInService.close();
+        this.slideInService.closeLast();
         this.cdr.markForCheck();
       },
       error: (error) => {

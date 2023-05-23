@@ -123,7 +123,7 @@ export class ReplicationWizardComponent {
     ).subscribe(() => {
       this.isLoading = false;
       this.cdr.markForCheck();
-      this.slideInService.close();
+      this.slideInService.closeLast();
     });
   }
 

@@ -84,7 +84,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInService.closeLast();
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: WebsocketError) => {

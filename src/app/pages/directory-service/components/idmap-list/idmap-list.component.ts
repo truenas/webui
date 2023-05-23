@@ -58,7 +58,7 @@ export class IdmapListComponent implements EntityTableConfig {
     protected idmapService: IdmapService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     protected dialogService: DialogService,
     protected translate: TranslateService,
   ) { }
@@ -84,9 +84,6 @@ export class IdmapListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   prerequisite(): Promise<boolean> {
@@ -112,7 +109,10 @@ export class IdmapListComponent implements EntityTableConfig {
       onClick: () => {
         this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
-            this.slideIn.open(IdmapFormComponent);
+            const slideIn = this.slideInService.open(IdmapFormComponent);
+            slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+              this.entityList.getData();
+            });
           } else {
             this.dialogService.confirm({
               title: helptext.idmap.enable_ad_dialog.title,
@@ -137,8 +137,11 @@ export class IdmapListComponent implements EntityTableConfig {
       label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
       onClick: (rowToEdit: IdmapRow) => {
-        const form = this.slideIn.open(IdmapFormComponent);
-        form.setIdmapForEdit(rowToEdit);
+        const slideIn = this.slideInService.open(IdmapFormComponent);
+        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          this.entityList.getData();
+        });
+        slideIn.componentInstance.setIdmapForEdit(rowToEdit);
       },
     });
     if (!requiredIdmapDomains.includes(row.name as IdmapName)) {
@@ -163,6 +166,9 @@ export class IdmapListComponent implements EntityTableConfig {
   }
 
   showActiveDirectoryForm(): void {
-    this.slideIn.open(ActiveDirectoryComponent, { wide: true });
+    const slideIn = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 }

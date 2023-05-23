@@ -54,7 +54,7 @@ export class CsrAddComponent {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
   ) { }
 
@@ -109,7 +109,7 @@ export class CsrAddComponent {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate signing request created'));
-          this.slideIn.close();
+          this.slideInService.closeLast();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

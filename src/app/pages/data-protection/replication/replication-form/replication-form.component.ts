@@ -69,7 +69,7 @@ export class ReplicationFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
     private snackbar: SnackbarService,
@@ -140,7 +140,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideIn.close();
+            this.slideInService.closeLast();
           },
           error: (error) => {
             this.isLoading = false;
@@ -152,8 +152,8 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideIn.close();
-    this.slideIn.open(ReplicationWizardComponent, { wide: true });
+    this.slideInService.closeLast();
+    this.slideInService.open(ReplicationWizardComponent, { wide: true });
   }
 
   private getPayload(): ReplicationCreate {

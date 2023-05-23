@@ -51,7 +51,7 @@ export class DatasetFormComponent {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
     private router: Router,
@@ -173,7 +173,7 @@ export class DatasetFormComponent {
       next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close(null, createdDataset);
+        this.slideInService.closeLast(createdDataset);
         this.snackbar.success(
           this.isNew
             ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })

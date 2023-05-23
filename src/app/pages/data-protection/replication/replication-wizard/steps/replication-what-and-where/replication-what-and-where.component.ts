@@ -537,7 +537,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInService.close();
+    this.slideInService.closeLast();
     this.slideInService.open(ReplicationFormComponent, { wide: true });
   }
 

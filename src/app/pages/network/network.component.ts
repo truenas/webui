@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -25,6 +24,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
@@ -83,11 +83,13 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
     add: () => {
-      this.slideInService.open(InterfaceFormComponent);
+      const slideIn = this.slideInService.open(InterfaceFormComponent);
+      this.handleSlideInClosed(slideIn);
     },
     edit: (row: NetworkInterfaceUi) => {
-      const interfacesForm = this.slideInService.open(InterfaceFormComponent);
-      interfacesForm.setInterfaceForEdit(row);
+      const slideIn = this.slideInService.open(InterfaceFormComponent);
+      this.handleSlideInClosed(slideIn);
+      slideIn.componentInstance.setInterfaceForEdit(row);
     },
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
@@ -130,11 +132,13 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     ],
     parent: this,
     add: () => {
-      this.slideInService.open(StaticRouteFormComponent);
+      const slideIn = this.slideInService.open(StaticRouteFormComponent);
+      this.handleSlideInClosed(slideIn);
     },
     edit: (route: StaticRoute) => {
-      const modal = this.slideInService.open(StaticRouteFormComponent);
-      modal.setEditingStaticRoute(route);
+      const slideIn = this.slideInService.open(StaticRouteFormComponent);
+      this.handleSlideInClosed(slideIn);
+      slideIn.componentInstance.setEditingStaticRoute(route);
     },
     deleteMsg: {
       title: 'static route',
@@ -157,18 +161,22 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     isActionVisible: this.isOpenVpnActionVisible,
     edit: (row: Service) => {
       if (row.service === ServiceName.OpenVpnClient) {
-        this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
+        const slideIn = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
+        this.handleSlideInClosed(slideIn);
       } else if (row.service === ServiceName.OpenVpnServer) {
-        this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
+        const slideIn = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
+        this.handleSlideInClosed(slideIn);
       }
     },
     afterGetData: () => {
       const state = this.navigation?.extras?.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         if (state.configureOpenVPN === 'client') {
-          this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
+          const slideIn = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
+          this.handleSlideInClosed(slideIn);
         } else {
-          this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
+          const slideIn = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
+          this.handleSlideInClosed(slideIn);
         }
       }
     },
@@ -184,8 +192,9 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit: (row: IpmiRow) => {
-      const ipmiEditForm = this.slideInService.open(IpmiFormComponent);
-      ipmiEditForm.setIdIpmi(row.id);
+      const slideIn = this.slideInService.open(IpmiFormComponent);
+      this.handleSlideInClosed(slideIn);
+      slideIn.componentInstance.setIdIpmi(row.id);
     },
   };
 
@@ -199,7 +208,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private tableService: TableService,
-    private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private core: CoreService,
     private snackbar: SnackbarService,
@@ -212,12 +220,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.staticRoutesTableConf.tableComponent.getData();
-      this.getInterfaces();
-      this.checkInterfacePendingChanges();
-    });
-
     this.getInterfaces();
     this.checkInterfacePendingChanges();
     this.core
@@ -246,6 +248,14 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
+    });
+  }
+
+  handleSlideInClosed(slideIn: IxSlideInRef<unknown, unknown>): void {
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.staticRoutesTableConf.tableComponent.getData();
+      this.getInterfaces();
+      this.checkInterfacePendingChanges();
     });
   }
 
@@ -696,8 +706,9 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
           }
 
-          const form = this.slideInService.open(InterfaceFormComponent);
-          form.setInterfaceForEdit(interfaces[0]);
+          const slideIn = this.slideInService.open(InterfaceFormComponent);
+          this.handleSlideInClosed(slideIn);
+          slideIn.componentInstance.setInterfaceForEdit(interfaces[0]);
         },
         error: (error: WebsocketError) => {
           this.loader.close();

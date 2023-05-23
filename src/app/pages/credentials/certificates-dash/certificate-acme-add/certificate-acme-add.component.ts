@@ -59,7 +59,7 @@ export class CertificateAcmeAddComponent {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private formErrorHandler: FormErrorHandlerService,
     private mdDialog: MatDialog,
   ) { }
@@ -99,7 +99,7 @@ export class CertificateAcmeAddComponent {
       this.isLoading = false;
       this.mdDialog.closeAll();
       this.cdr.markForCheck();
-      this.slideIn.close();
+      this.slideInService.closeLast();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isLoading = false;

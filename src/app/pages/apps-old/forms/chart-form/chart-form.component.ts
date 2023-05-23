@@ -285,6 +285,6 @@ export class ChartFormComponent implements OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInService.close();
+    this.slideInService.closeLast();
   }
 }

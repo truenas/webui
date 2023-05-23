@@ -74,7 +74,7 @@ export class PullImageFormComponent {
       this.isFormLoading = false;
       this.cdr.markForCheck();
       dialogRef.close();
-      this.slideInService.close();
+      this.slideInService.closeLast();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;

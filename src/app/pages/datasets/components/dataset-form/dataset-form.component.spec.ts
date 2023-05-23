@@ -29,7 +29,6 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 describe('DatasetFormComponent', () => {
   let spectator: Spectator<DatasetFormComponent>;
@@ -76,7 +75,7 @@ describe('DatasetFormComponent', () => {
         mockCall('filesystem.acl_is_trivial', false),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

@@ -38,19 +38,22 @@ export class KerberosKeytabsListComponent implements EntityTableConfig<KerberosK
 
   afterInit(entityList: EntityTableComponent<KerberosKeytab>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityList.getData();
-    });
   }
 
   doAdd(): void {
-    this.slideInService.open(KerberosKeytabsFormComponent);
+    const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   doEdit(id: number): void {
     const kerberosKeytab = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(KerberosKeytabsFormComponent);
-    form.setKerberosKeytabsForEdit(kerberosKeytab);
+    const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+    slideIn.componentInstance.setKerberosKeytabsForEdit(kerberosKeytab);
   }
 
   getActions(): EntityTableAction<KerberosKeytab>[] {

@@ -179,7 +179,7 @@ export class PortalFormComponent {
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInService.closeLast();
       },
       error: (error) => {
         this.isLoading = false;

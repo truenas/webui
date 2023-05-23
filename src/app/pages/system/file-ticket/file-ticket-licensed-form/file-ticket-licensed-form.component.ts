@@ -92,7 +92,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
@@ -202,7 +202,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
         if (shouldOpen) {
           this.window.open(params.url, '_blank');
         }
-        this.slideIn.close();
+        this.slideInService.closeLast();
       });
   }
 
@@ -218,7 +218,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
   }
 
   onEulaPressed(): void {
-    this.slideIn.close();
+    this.slideInService.closeLast();
     this.router.navigate(['system', 'support', 'eula']);
   }
 }

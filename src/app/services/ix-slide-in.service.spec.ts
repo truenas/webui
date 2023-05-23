@@ -6,10 +6,10 @@ import {
   createServiceFactory, mockProvider, SpectatorService, createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in2.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 /** Simple component for testing IxSlideInComponent */
 @Component({
@@ -28,23 +28,23 @@ class TestComponent {
   }
 }
 
-describe('IxSlideIn2Service', () => {
-  let spectator: SpectatorService<IxSlideIn2Service>;
-  let service: IxSlideIn2Service;
-  let spectatorComponent: Spectator<IxSlideIn2Component>;
+describe('IxSlideInService', () => {
+  let spectator: SpectatorService<IxSlideInService>;
+  let service: IxSlideInService;
+  let spectatorComponent: Spectator<IxSlideInComponent>;
 
   const createService = createServiceFactory({
-    service: IxSlideIn2Service,
+    service: IxSlideInService,
     providers: [
       Location,
       Router,
     ],
   });
   const createComponent = createComponentFactory({
-    component: IxSlideIn2Component,
+    component: IxSlideInComponent,
     providers: [
       mockProvider(ElementRef),
-      IxSlideIn2Service,
+      IxSlideInService,
     ],
   });
 
@@ -58,11 +58,11 @@ describe('IxSlideIn2Service', () => {
 
   describe('slideInService', () => {
     it('the \'open\' method should return instance of IxSlideInRef', () => {
-      jest.spyOn(service.slideIn2Component, 'openSlideIn');
+      jest.spyOn(service.slideInComponent, 'openSlideIn');
 
       const instanceRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
 
-      expect(service.slideIn2Component.openSlideIn).toHaveBeenCalledWith(TestComponent, { wide: true, data: 'Component created dynamically' });
+      expect(service.slideInComponent.openSlideIn).toHaveBeenCalledWith(TestComponent, { wide: true, data: 'Component created dynamically' });
       expect(instanceRef).toBeInstanceOf(IxSlideInRef);
     });
 

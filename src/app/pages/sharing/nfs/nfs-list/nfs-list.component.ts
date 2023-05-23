@@ -66,10 +66,6 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
 
   afterInit(entityList: EntityTableComponent<NfsShare>): void {
     this.entityList = entityList;
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   confirmDeleteDialog = {
@@ -80,13 +76,19 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   };
 
   doAdd(): void {
-    this.slideInService.open(NfsFormComponent);
+    const slideIn = this.slideInService.open(NfsFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   doEdit(id: number): void {
     const nfsShare = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(NfsFormComponent);
-    form.setNfsShareForEdit(nfsShare);
+    const slideIn = this.slideInService.open(NfsFormComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+    slideIn.componentInstance.setNfsShareForEdit(nfsShare);
   }
 
   onCheckboxChange(row: NfsShare, loader$: Subject<boolean>): void {

@@ -24,6 +24,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   protected routeSuccess: string[] = ['system', 'alertservice'];
   routeAdd: string[] = ['system', 'alertservice', 'add'];
   routeEdit: string[] = ['system', 'alertservice', 'edit'];
+  entityTable: EntityTableComponent<AlertService>;
 
   columns = [
     { name: 'Service Name', prop: 'name', always_display: true },
@@ -71,20 +72,24 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   }
 
   afterInit(entityTable: EntityTableComponent<AlertService>): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityTable.getData();
-    });
+    this.entityTable = entityTable;
   }
 
   doAdd(): void {
-    this.slideInService.open(AlertServiceComponent);
+    const slideIn = this.slideInService.open(AlertServiceComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityTable.getData();
+    });
   }
 
   doEdit(id: number, entityTable: EntityTableComponent<AlertService>): void {
     const alertService = entityTable.rows.find((row) => row.id === id);
 
-    const form = this.slideInService.open(AlertServiceComponent);
-    form.setAlertServiceForEdit(alertService);
+    const slideIn = this.slideInService.open(AlertServiceComponent);
+    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityTable.getData();
+    });
+    slideIn.componentInstance.setAlertServiceForEdit(alertService);
   }
 
   onCheckboxChange(row: AlertService): void {

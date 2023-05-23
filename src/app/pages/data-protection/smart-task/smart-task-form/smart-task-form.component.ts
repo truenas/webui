@@ -101,7 +101,7 @@ export class SmartTaskFormComponent {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.closeLast();
       },
       error: (error) => {
         this.isLoading = false;

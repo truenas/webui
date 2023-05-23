@@ -74,7 +74,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInService.closeLast();
       },
       error: (error: WebsocketError) => {
         this.isFormLoading = false;

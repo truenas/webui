@@ -140,7 +140,7 @@ export class SshConnectionFormComponent {
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     public formatter: IxFormatterService,
     private snackbar: SnackbarService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
@@ -206,7 +206,7 @@ export class SshConnectionFormComponent {
             this.dialogRef.close();
           }
         } else {
-          this.slideIn.close();
+          this.slideInService.closeLast();
         }
       },
       error: (error) => {

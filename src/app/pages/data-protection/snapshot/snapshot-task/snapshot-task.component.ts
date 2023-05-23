@@ -149,7 +149,7 @@ export class SnapshotTaskComponent {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInService.close(null, true);
+        this.slideInService.closeLast(true);
       },
       error: (error) => {
         this.isLoading = false;

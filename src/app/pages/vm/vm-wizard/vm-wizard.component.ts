@@ -77,7 +77,7 @@ export class VmWizardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private gpuService: GpuService,
@@ -113,7 +113,7 @@ export class VmWizardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideIn.close();
+          this.slideInService.closeLast();
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },

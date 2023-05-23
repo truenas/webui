@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import {
   map, startWith, switchMap,
 } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { WebSocketService } from 'app/services';
@@ -24,22 +25,23 @@ export class SelfEncryptingDriveCardComponent {
     toLoadingState(),
   );
 
-  readonly sedPassword$ = this.slideIn.onClose$.pipe(
-    startWith(undefined),
-    switchMap(() => this.ws.call('system.advanced.sed_global_password')),
-    map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
-    toLoadingState(),
-  );
+  sedPassword$: Observable<LoadingState<string>>;
 
   constructor(
     private store$: Store<AppState>,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(SelfEncryptingDriveFormComponent);
+    const slideIn = this.slideInService.open(SelfEncryptingDriveFormComponent);
+    this.sedPassword$ = slideIn.slideInClosed$.pipe(
+      startWith(undefined),
+      switchMap(() => this.ws.call('system.advanced.sed_global_password')),
+      map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
+      toLoadingState(),
+    );
   }
 }

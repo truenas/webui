@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -34,11 +34,11 @@ export class GuiCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private slideIn2Service: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
   ) {}
 
   doAdd(): void {
-    const slideInRef = this.slideIn2Service.open(GuiFormComponent);
+    const slideInRef = this.slideInService.open(GuiFormComponent);
     slideInRef.slideInClosed$.pipe(
       filter((response) => !response),
       untilDestroyed(this),
