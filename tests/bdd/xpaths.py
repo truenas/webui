@@ -1,4 +1,8 @@
 
+class add_Dataset:
+    unencrypted_Error_Message = '//mat-error[contains(.,"Cannot create an unencrypted dataset within an encrypted dataset (encrypted)")]'
+
+
 class breadcrumb:
     dashboard = '//a[text()="Dashboard"]'
 
@@ -10,6 +14,8 @@ class button:
     initiate_failover = '//button[@ix-auto="button__INITIATE FAILOVER"]'
     failover = '//button[span/text()="Failover"]'
     leave_Domain = '//button[@ix-auto="button__LEAVE DOMAIN"]'
+    i_Agree = '//button[@ix-auto="button__I AGREE"]'
+    summit = '//button[@ix-auto="button__SUBMIT"]'
 
 
 class checkbox:
@@ -31,6 +37,10 @@ class input:
     password = '//input[@ix-auto="input__Password"]'
 
 
+class isqsi:
+    authorized_Access_Title = '//div[contains(text(),"Authorized Access")]'
+
+
 class login:
     user_input = '//input[@placeholder="Username"]'
     password_input = '//input[@placeholder="Password"]'
@@ -38,6 +48,10 @@ class login:
 
     def ha_status(message):
         return f'//p[contains(.,"{message}")]'
+
+
+class pool:
+    title = '//div[contains(text(),"Pools")]'
 
 
 class popup:
@@ -56,6 +70,7 @@ class sideMenu:
     directory_services = '//mat-list-item[@ix-auto="option__Directory Services"]'
     directory_services_ldap = '//mat-list-item[@ix-auto="option__LDAP"]'
     directory_services_nis = '//mat-list-item[@ix-auto="option__NIS"]'
+    pools = '//mat-list-item[@ix-auto="option__Pools"]'
 
 
 class topToolbar:

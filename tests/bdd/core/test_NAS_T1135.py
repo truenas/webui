@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -95,8 +96,8 @@ def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name,
     driver.find_element_by_xpath('//a[text()="Proceed"]').click()
     assert wait_on_element(driver, 10, '//div[@class="login-header" and contains(.,"Sign in to Dropbox to link with TrueNAS CloudSync")]')
 
-    if wait_on_element(driver, 7, '//iframe[@id="consent-iframe"]'):
-        driver.switch_to.frame('consent-iframe')
+    if wait_on_element(driver, 7, '//iframe[@id="ccpa-iframe"]'):
+        driver.switch_to.frame('ccpa-iframe')
         wait_on_element(driver, 7, '//button[contains(text(),"Accept All")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(text(),"Accept All")]').click()
         driver.switch_to.default_content()
@@ -149,7 +150,7 @@ def click_verify_credential_to_verify_it_is_valid(driver):
 @then(parsers.parse('click Summit, {account_name} should be added to the list'))
 def click_summit_account_name_should_be_added_to_the_list(driver, account_name):
     """click Summit, account_name should be added to the list."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, f'//div[normalize-space(text())="{account_name}"]')

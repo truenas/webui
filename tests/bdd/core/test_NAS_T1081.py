@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -15,6 +16,8 @@ from pytest_bdd import (
     then,
     when,
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1081.feature', 'Verify dataset Encryption Inheritance')
@@ -88,19 +91,17 @@ def confirm_the_dataset_will_be_unencrypted_click_the_submit_button(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
-@then('verify that the new dataset is not encrypted')
-def verify_that_the_new_dataset_is_not_encrypted(driver):
-    """verify that the new dataset is not encrypted."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Pools")]')
-    assert wait_on_element(driver, 7, '//td[@id="tbody__name_encrypted"]/span/span/mat-icon')
-    time.sleep(0.5)
-    assert attribute_value_exist(driver, '//td[@id="tbody__name_encrypted"]/span/span/mat-icon', 'fonticon', 'mdi-lock-open-variant')
-    assert wait_on_element(driver, 7, '//td[contains(.,"notencrypteddataset")]/span/span/mat-icon')
-    assert attribute_value_exist(driver, '//td[contains(.,"notencrypteddataset")]/span/span/mat-icon', 'svgicon', 'anti-lock')
+@then('verify that the unencrypted dataset can\'t be create and go back to the pool page')
+def verify_that_the_unencrypted_dataset_cant_be_create_and_go_back_to_the_pool_page(driver):
+    """verify that the unencrypted dataset can't be create and go back to the pool page."""
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.unencrypted_Error_Message)
+    assert wait_on_element(driver, 5, xpaths.sideMenu.pools, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.pools).click()
+    assert wait_on_element(driver, 5, xpaths.pool.title)
 
 
 @then('click on tank three dots button, select Add Dataset')
@@ -132,8 +133,8 @@ def confirm_encryption_and_generate_key_is_set_and_click_the_submit_button(drive
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Encryption"]', 'class', 'mat-checkbox-checked')
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'clickable')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit)
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 

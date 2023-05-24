@@ -3,6 +3,7 @@
 
 import time
 from selenium.webdriver.common.keys import Keys
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -16,8 +17,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-import pytest
-#pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1118.feature', 'Verify Amazon S3 credentials can be added')
@@ -110,8 +109,7 @@ def click_verify_credential_to_verify_it_is_valid(driver):
 @then(parsers.parse('click Summit, {account_name} should be added to the list'))
 def click_summit_account_name_should_be_added_to_the_list(driver, account_name):
     """click Summit, account_name should be added to the list."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[normalize-space(text())="amazons3creds"]')
 

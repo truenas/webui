@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -163,7 +164,7 @@ def select_none_in_auth_method(driver, method):
 @then('click Submit, you should be returned to the Targets tab')
 def click_submit_you_should_be_returned_to_the_targets_tab(driver):
     """click Submit, you should be returned to the Targets tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Targets")]')
 
@@ -206,7 +207,7 @@ def select_tanknopeer1_100g_in_device(driver, device):
 @then('click Submit, you should be returned to the Extents tab')
 def click_submit_you_should_be_returned_to_the_extents_tab(driver):
     """click Submit, you should be returned to the Extents tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Extents")]')
 
@@ -244,7 +245,7 @@ def select_nopeer1_in_target_input_1_in_lun_id_select_nopeer1_in_extent(driver, 
 @then('click Submit, you should be returned to the Associated Targets tab')
 def click_submit_you_should_be_returned_to_the_associated_targets_tab(driver):
     """click Submit, you should be returned to the Associated Targets tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Associated Targets")]')
 

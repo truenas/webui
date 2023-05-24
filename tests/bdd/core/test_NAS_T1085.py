@@ -4,6 +4,7 @@
 import glob
 import os
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -17,6 +18,8 @@ from pytest_bdd import (
     then,
     when,
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1085.feature', 'Verify that changing an encryption key format to PASSPHRASE functions')
@@ -237,8 +240,8 @@ def input_in_the_dataset_passphrase_and_click_the_submit_button(driver):
     """input in the Dataset Passphrase and click the Submit button."""
     assert wait_on_element(driver, 7, '//input[@placeholder="Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Dataset Passphrase"]').send_keys('abcd1234')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()

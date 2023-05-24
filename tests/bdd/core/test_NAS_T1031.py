@@ -3,6 +3,7 @@
 
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -141,8 +142,7 @@ def click_next_twice_then_click_submit_enable_the_service_if_prompted(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Portal"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Initiator"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Initiator"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//h4[contains(.,"Global Configuration")]')
 

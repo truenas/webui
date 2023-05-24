@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 import random
@@ -26,8 +27,8 @@ MOUNT_POINT = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=3))}'
 
 
 def click_summit(driver):
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 15, xpaths.popup.please_wait)
 
 
@@ -83,7 +84,7 @@ def go_to_sharing_then_click_iscsi_the_iscsi_page_should_open(driver):
 def click_authorized_access_tab_then_click_add_and_authorized_accessadd_add_page_should_open(driver):
     """click Authorized Access tab, then click Add and Authorized AccessAdd Add page should open."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element(driver, 7, xpaths.isqsi.authorized_Access_Title)
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Group")]')
 
@@ -121,7 +122,7 @@ def input_peer_secret_password_peer_secret_confirm_passwordc(driver, password, p
 def click_summit_and_the_new_authorized_access_should_be_in_authorized_access_list(driver):
     """click Summit and the new authorized access should be in Authorized Access list."""
     click_summit(driver)
-    assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element(driver, 7, xpaths.isqsi.authorized_Access_Title)
     assert wait_on_element(driver, 7, '//span[contains(.,"usertest")]')
 
 

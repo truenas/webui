@@ -2,6 +2,7 @@
 """High Availability (tn-bhyve02) feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from selenium.webdriver.common.action_chains import ActionChains
@@ -11,8 +12,7 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     attribute_value_exist,
-    ssh_cmd,
-    refresh_if_element_missing
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -106,7 +106,7 @@ def click_save_please_wait_should_appear_while_settings_are_being_applied(driver
     """Click SAVE "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_wait)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
@@ -252,8 +252,8 @@ def navigate_to_dashboard(driver):
 @then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
 def press_initiate_failover_check_confirm_and_press_failover(driver):
     """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
-    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 25, xpaths.topToolbar.ha_enable)
+    # wait_on_element need to be replace with wait_on_element when NAS-118299
+    assert wait_on_element(driver, 25, xpaths.topToolbar.ha_enable)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
     assert wait_on_element(driver, 5, xpaths.popup.initiate_failover)
@@ -284,8 +284,8 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
     if wait_on_element(driver, 5, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
-    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 30, xpaths.topToolbar.ha_enable)
+    # wait_on_element need to be replace with wait_on_element when NAS-118299
+    assert wait_on_element(driver, 30, xpaths.topToolbar.ha_enable)
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))
@@ -343,7 +343,7 @@ def input_dataset_name_my_acl_dataset_and_click_save(driver, dataset_name):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then(parsers.parse('"{dataset_name}" should be created'))

@@ -2,14 +2,14 @@
 
 from selenium.webdriver.common.keys import Keys
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    refresh_if_element_missing,
     attribute_value_exist,
-    get,
+    get
 )
 from pytest_bdd import (
     given,
@@ -41,7 +41,6 @@ def the_browser_is_open_on_virtal_hostname_and_logged_in(driver, virtal_hostname
         assert wait_on_element(driver, 4, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, xpaths.breadcrumb.dashboard):
-        driver.refresh()
         assert wait_on_element(driver, 10, xpaths.sideMenu.root)
         element = driver.find_element_by_xpath(xpaths.sideMenu.root)
         driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -54,8 +53,8 @@ def you_see_the_dashboard_go_to_directory_services_and_select_nis(driver):
     """you see the Dashboard go to Directory Services and select NIS."""
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
     assert wait_on_element(driver, 5, xpaths.dashboard.system_information)
-    if wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    if wait_on_element(driver, 5, xpaths.button.i_Agree, 'clickable'):
+        driver.find_element_by_xpath(xpaths.button.i_Agree).click()
     if wait_on_element(driver, 2, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close)
         driver.find_element_by_xpath(xpaths.button.close).click()
@@ -119,8 +118,7 @@ def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
     assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
-    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 10, xpaths.topToolbar.ha_enable)
+    assert wait_on_element(driver, 10, xpaths.topToolbar.ha_enable)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
     assert wait_on_element(driver, 5, xpaths.popup.initiate_failover)
@@ -133,7 +131,6 @@ def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
 def on_the_login_wait_to_see_ha_is_enabled_before_login(driver):
     """on the login, wait to see HA is enabled before login."""
     assert wait_on_element(driver, 120, xpaths.login.user_input)
-    # wait for HA is enabled to avoid UI refreshing
     assert wait_on_element(driver, 300, xpaths.login.ha_status('HA is enabled'))
     assert wait_on_element(driver, 7, xpaths.login.user_input)
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
@@ -149,13 +146,13 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
     """on the Dashboard, make sure HA is enabled."""
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
     assert wait_on_element(driver, 60, xpaths.dashboard.system_information)
-    if wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    if wait_on_element(driver, 5, xpaths.button.i_Agree, 'clickable'):
+        driver.find_element_by_xpath(xpaths.button.i_Agree).click()
     if wait_on_element(driver, 3, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
-    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 30, xpaths.topToolbar.ha_enable)
+    # wait_on_element need to be replace with wait_on_element when NAS-118299
+    assert wait_on_element(driver, 30, xpaths.topToolbar.ha_enable)
     # allow time for the NAS to settle down
     time.sleep(5)
 

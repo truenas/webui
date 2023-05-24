@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -144,7 +145,7 @@ def a_new_tab_or_window_should_load_nextcloud_credentials_page(driver):
     """a new tab or window should load Nextcloud Credentials page."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    assert wait_on_element(driver, 10, '//img[@alt="Nextcloud logo"]')
+    assert wait_on_element(driver, 10, '//div[@class="logo"]')
     assert wait_on_element(driver, 5, '//input[@id="user"]')
     assert wait_on_element(driver, 5, '//input[@id="password"]')
     assert wait_on_element(driver, 5, '//button[contains(.,"Log in")]', 'clickable')

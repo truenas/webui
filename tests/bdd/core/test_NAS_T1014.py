@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -94,8 +95,7 @@ def input_password_confirm_password_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.input.password).send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('the new User should be created and added to the user list')

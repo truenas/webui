@@ -4,6 +4,7 @@
 import random
 import string
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -86,8 +87,7 @@ def input_maproot_for_name_select_generic_as_share_type_and_click_submit(driver)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Share Type_Generic"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_Generic"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('the dataset should be created without error')
@@ -146,8 +146,7 @@ def input_nobody_in_maproot_user_input_nogroup_in_maproot_group(driver):
 @then('click Submit, the new share should be created without error')
 def click_submit_the_new_share_should_be_created_without_error(driver):
     """click Submit, the new share should be created without error."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"/mnt/tank/maproot")]')
 

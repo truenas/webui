@@ -1,6 +1,7 @@
 # coding=utf-8
 """Enterprise HA UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from function import (
@@ -8,7 +9,6 @@ from function import (
     is_element_present,
     attribute_value_exist,
     wait_on_element_disappear,
-    refresh_if_element_missing,
     put
 
 )
@@ -32,8 +32,8 @@ def the_browser_is_open_navigate_to_tnbhyve03tnixsystemsnet(driver, nas_host):
     global hostname
     hostname = nas_host
     if nas_host not in driver.current_url:
-        driver.get(f"http://{nas_host}/ui/sessions/signin")
-        time.sleep(1)
+        driver.get(f"http://{nas_host}")
+        time.sleep(2)
 
 
 @when(parsers.parse('if the login page appears, enter "{user}" and "{password}"'))
@@ -94,6 +94,7 @@ def when_twofactor_authentication_is_enabled_logout(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="option__Log Out"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Log Out"]').click()
     assert wait_on_element(driver, 5, xpaths.login.user_input)
+    driver.refresh()
     assert wait_on_element(driver, 60, xpaths.login.ha_status('HA is enabled'))
 
 
@@ -108,13 +109,18 @@ def disable_twofactor_authentication_with_api_and_login(driver):
     """disable Two-Factor Authentication with API and login."""
     results = put(hostname, 'auth/twofactor/', ('root', passwd), {"enabled": False})
     assert results.status_code == 200, results.text
-    assert wait_on_element(driver, 5, xpaths.login.user_input)
+    driver.refresh()
+    time.sleep(2)
+    assert wait_on_element(driver, 7, xpaths.login.user_input)
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
     driver.find_element_by_xpath(xpaths.login.password_input).clear()
     driver.find_element_by_xpath(xpaths.login.password_input).send_keys(passwd)
     assert wait_on_element(driver, 5, xpaths.login.signin_button)
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
+
+    if wait_on_element(driver, 7, xpaths.button.i_Agree, 'clickable'):
+        driver.find_element_by_xpath(xpaths.button.i_Agree).click()
 
 
 @then('enable Two-Factor Authentication with API')
@@ -143,6 +149,6 @@ def on_the_dashboard_click_on_failover_initiate_failover(driver):
 @then('wait on the login to appear')
 def wait_on_the_login_to_appear(driver):
     """wait on the login to appear."""
-    assert wait_on_element(driver, 60, xpaths.login.user_input)
-    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 120, xpaths.login.ha_status('HA is enabled'))
+    assert wait_on_element(driver, 120, xpaths.login.user_input)
+    # wait_on_element need to be replace with wait_on_element when NAS-118299
+    assert wait_on_element(driver, 120, xpaths.login.ha_status('HA is enabled'))

@@ -4,6 +4,7 @@
 import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -75,7 +76,7 @@ def the_iscsi_page_appear_at_the_target_global_configuration_tab(driver):
 def click_on_the_authorized_access_tab_then_click_add(driver):
     """click on the Authorized Access tab, then click Add."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element(driver, 7, xpaths.isqsi.authorized_Access_Title)
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Group")]')
 
@@ -103,9 +104,9 @@ def input_secret_in_secret_input_secret_confirm_in_secret_confirm(driver, secret
 @then('click Submit, you should be returned to the Authorized Access tab')
 def click_submit_you_should_be_returned_to_the_authorized_access_tab(driver):
     """click Submit, you should be returned to the Authorized Access tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element(driver, 7, xpaths.isqsi.authorized_Access_Title)
 
 
 @then('the new authorized access should be on the Authorized Access list')
@@ -164,7 +165,7 @@ def select_0_0_0_0_in_ip_address_input_3260_in_port(driver, ip, port):
 @then('click Submit, you should be returned to the Portals tab')
 def click_submit_you_should_be_returned_to_the_portals_tab(driver):
     """click Submit, you should be returned to the Portals tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Portals")]')
 
@@ -263,7 +264,7 @@ def select_1_in_authentication_group_number(driver, group_id):
 @then('click Submit, you should be returned to the Targets tab')
 def click_submit_you_should_be_returned_to_the_targets_tab(driver):
     """click Submit, you should be returned to the Targets tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Targets")]')
 
@@ -306,7 +307,7 @@ def select_tanknopeer1_100g_in_device(driver, device):
 @then('click Submit, you should be returned to the Extents tab')
 def click_submit_you_should_be_returned_to_the_extents_tab(driver):
     """click Submit, you should be returned to the Extents tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Extents")]')
 
@@ -344,7 +345,7 @@ def select_nopeer1_in_target_input_1_in_lun_id_select_nopeer1_in_extent(driver, 
 @then('click Submit, you should be returned to the Associated Targets tab')
 def click_submit_you_should_be_returned_to_the_associated_targets_tab(driver):
     """click Submit, you should be returned to the Associated Targets tab."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Associated Targets")]')
 

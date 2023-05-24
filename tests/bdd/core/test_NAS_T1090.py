@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -92,8 +93,8 @@ def input_appleshare_has_the_name_and_click_submit(driver):
     assert wait_on_element(driver, 5, '//h4[contains(.,"Name and Options")]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('appleshare')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('the new dataset should create without error')
@@ -143,8 +144,8 @@ def input_the_apple_share_dataset_as_the_path_and_a_share_name(driver):
 @then('click SUMMIT, the new share should create without errors')
 def click_summit_the_new_share_should_create_without_errors(driver):
     """click SUMMIT, the new share should create without errors."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     if wait_on_element(driver, 3, '//h1[contains(.,"Enable service")]'):
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')

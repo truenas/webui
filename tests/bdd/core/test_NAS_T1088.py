@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -16,6 +17,8 @@ from pytest_bdd import (
     then,
     when,
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1088.feature', 'Verify an exception is raised when entering the wrong passphrase for an encrypted pool')
@@ -94,8 +97,8 @@ def try_to_unlock_the_root_dataset_with_an_invalid_passphrase(driver):
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Unlock Children"]', 'class', 'mat-checkbox-checked')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Unlock Children"]').click()
     driver.find_element_by_xpath('//input[@placeholder="Dataset Passphrase"]').send_keys('aabcd1234')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.summit, 'clickable')
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 

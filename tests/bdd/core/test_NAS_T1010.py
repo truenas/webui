@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -102,8 +103,7 @@ def input_my_tank_smb_share_as_description_click_summit(driver, description):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then(parsers.parse('the "{smbname}" should be added in the Windows Shares list'))

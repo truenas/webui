@@ -4,6 +4,7 @@
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -109,8 +110,7 @@ def input_testing_in_password_and_confirm_password_entries(driver):
 @then('click SUBMIT, and the new user should be created')
 def click_save_and_the_new_user_should_be_created(driver):
     """click SUBMIT, and the new user should be created."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"ftpuser")]')
 

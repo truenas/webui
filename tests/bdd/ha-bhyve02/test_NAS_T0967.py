@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 import time
 from function import (
@@ -107,8 +108,8 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
     driver.find_element_by_xpath(xpaths.input.password).send_keys('testing1')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.summit)
+    rsc.click_The_Summit_Button(driver)
 
 
 @then('User should be created and added to the user list')

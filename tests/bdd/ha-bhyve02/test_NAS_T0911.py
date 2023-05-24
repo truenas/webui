@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 from function import wait_on_element, is_element_present, wait_on_element_disappear
 import time

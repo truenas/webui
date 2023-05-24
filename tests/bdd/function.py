@@ -7,6 +7,7 @@ import re
 import requests
 import sys
 import time
+import xpaths
 from collections.abc import Iterable
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -63,6 +64,24 @@ def wait_on_element_disappear(driver, wait, xpath):
             return True
         # this just to slow down the loop
         time.sleep(0.1)
+    else:
+        return False
+
+
+def refresh_if_element_missing(driver, wait, xpath):
+    timeout = time.time() + wait
+    while time.time() <= timeout:
+        time.sleep(5)
+        if wait_on_element(driver, 2, xpaths.login.user_input):
+            driver.find_element_by_xpath(xpaths.login.user_input).clear()
+            driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+            driver.find_element_by_xpath(xpaths.login.password_input).clear()
+            driver.find_element_by_xpath(xpaths.login.password_input).send_keys('testing')
+            assert wait_on_element(driver, 7, xpaths.login.signin_button)
+            driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        if wait_on_element(driver, 5, xpath):
+            return True
+        driver.refresh()
     else:
         return False
 
@@ -170,11 +189,12 @@ def run_cmd(command):
         return {'result': True, 'output': output}
 
 
-def get(url, api_path, auth):
+def get(url, api_path, auth, payload=None):
     get_it = requests.get(
         f'http://{url}/api/v2.0/{api_path}',
         headers=header,
-        auth=auth
+        auth=auth,
+        data=json.dumps(payload) if payload else None
     )
     return get_it
 

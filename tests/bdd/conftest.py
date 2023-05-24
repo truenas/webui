@@ -85,7 +85,7 @@ def browser():
     firefox_capabilities['binary'] = binary
     web_driver = webdriver.Firefox(capabilities=firefox_capabilities)
     web_driver.set_window_size(1920, 1080)
-    #web_driver.implicitly_wait(2)
+    # web_driver.implicitly_wait(2)
     return web_driver
 
 

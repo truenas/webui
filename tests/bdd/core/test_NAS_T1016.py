@@ -4,6 +4,7 @@
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -104,8 +105,7 @@ def input_test_wheel_smb_share_as_the_description_click_summit(driver, descripti
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Configure ACL")]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()

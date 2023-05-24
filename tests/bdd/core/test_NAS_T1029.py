@@ -2,6 +2,7 @@
 """Core UI feature tests."""
 
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -91,7 +92,7 @@ def input_dataset_name_luns_and_click_save(driver, dataset_name):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
 
 
 @then(parsers.parse('the {dataset_name} dataset should be created and be in the tank dataset list'))
@@ -128,8 +129,7 @@ def input_ds3_for_zvol_name_and_1_gib_for_zvol_size(driver, zvol_name, zvol_size
 @then('click the SUBMIT button. Please wait should appear')
 def click_the_submit_button_please_wait_should_appear(driver):
     """click the SUBMIT button. Please wait should appear."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    rsc.click_The_Summit_Button(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
