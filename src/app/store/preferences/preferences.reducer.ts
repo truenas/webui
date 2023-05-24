@@ -7,7 +7,7 @@ import { defaultPreferences } from 'app/store/preferences/default-preferences.co
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
-  builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted,
+  builtinUsersToggled, dashboardStateUpdated, guiFormClosedWithoutSaving, guiFormSubmitted,
   lifetimeTokenUpdated,
   localizationFormSubmitted, noPreferencesFound,
   preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
@@ -34,7 +34,7 @@ const initialState: PreferencesState = {
 export const preferencesReducer = createReducer(
   initialState,
 
-  on(dashboardStateLoaded, (state, { dashboardState }) => ({ ...state, dashboardState })),
+  on(dashboardStateLoaded, dashboardStateUpdated, (state, { dashboardState }) => ({ ...state, dashboardState })),
   on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null })),
   on(adminUiInitialized, () => ({ ...initialState, areLoaded: false })),
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),

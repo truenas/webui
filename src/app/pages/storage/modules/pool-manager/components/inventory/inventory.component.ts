@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
+import { filter, switchMap } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -18,17 +19,25 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 export class InventoryComponent implements OnInit {
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected readonly DiskType = DiskType;
+  protected hideCard = false;
+
+  protected isLoading$ = this.poolManagerStore.isLoading$;
 
   constructor(
-    private poolManagerStore: PoolManagerStore,
+    public poolManagerStore: PoolManagerStore,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.poolManagerStore.inventory$.pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
-      this.sizeDisksMap = getDiskTypeSizeMap(unusedDisks);
-      this.cdr.markForCheck();
-    });
+    this.isLoading$.pipe(
+      filter((isLoading) => isLoading !== undefined && !isLoading),
+      switchMap(() => this.poolManagerStore.inventory$),
+    ).pipe(untilDestroyed(this))
+      .subscribe((unusedDisks) => {
+        this.sizeDisksMap = getDiskTypeSizeMap(unusedDisks);
+        this.hideCard = !Object.keys(this.sizeDisksMap.HDD).length && !Object.keys(this.sizeDisksMap.SSD).length;
+        this.cdr.markForCheck();
+      });
   }
 
   getFilesize(size: string): string {
