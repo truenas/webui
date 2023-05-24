@@ -48,6 +48,7 @@
         *ngIf="dataSource && dataSource.length > 0"
         mat-table
         class="table-component"
+        [ixTest]="['table', _tableConf.name]"
         [dataSource]="displayedDataSource"
       >
         <ng-container

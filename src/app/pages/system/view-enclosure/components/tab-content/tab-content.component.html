@@ -1,4 +1,4 @@
-<table id="tab-data" mat-table [dataSource]="data.elements">
+<table id="tab-data" mat-table [ixTest]="['enclosures-table', data.name]" [dataSource]="data.elements">
   <!-- Column -->
   <ng-container
     *ngFor="let header of data.header; let i = index"
