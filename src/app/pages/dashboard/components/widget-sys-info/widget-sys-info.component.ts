@@ -138,6 +138,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     }
     this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
       this.isIxHardware = isIxHardware;
+      this.setProductImage();
     });
   }
 
@@ -184,7 +185,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
 
     // PRODUCT IMAGE
-    this.setProductImage(systemInfo);
+    this.setProductImage();
 
     this.parseUptime();
     this.ready = true;
@@ -229,15 +230,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     return result;
   }
 
-  setProductImage(data: SystemInfo): void {
+  setProductImage(): void {
     if (!this.isIxHardware) return;
 
-    if (data.system_product.includes('MINI')) {
-      this.setMiniImage(data.system_product);
-    } else if (data.system_product.includes('CERTIFIED')) {
+    if (this.data.system_product.includes('MINI')) {
+      this.setMiniImage(this.data.system_product);
+    } else if (this.data.system_product.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      const product = this.productImgServ.getServerProduct(data.system_product);
+      const product = this.productImgServ.getServerProduct(this.data.system_product);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
       this.productModel = product || '';
       this.productEnclosure = 'rackmount';
