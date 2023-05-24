@@ -1,4 +1,5 @@
 import { JobState } from 'app/enums/job-state.enum';
+import { AppMaintainer } from 'app/interfaces/available-app.interface';
 import {
   AppMetadata, ChartFormValue, ChartSchemaGroup, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
@@ -134,13 +135,18 @@ export interface ChartMetadata {
   keywords: string[];
   name: string;
   sources: string[];
+  maintainers: AppMaintainer[];
+  annotations: { title: string };
   version: string;
+  kubeVersion: string;
+  type: string;
 }
 
 export interface ChartMetadataDependency {
   name: string;
   repository: string;
   version: string;
+  enabled: boolean;
 }
 
 export interface CatalogItems {

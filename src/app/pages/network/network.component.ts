@@ -176,7 +176,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ipmiTableConf: AppTableConfig<NetworkComponent> = {
     title: this.translate.instant('IPMI'),
-    queryCall: 'ipmi.query',
+    queryCall: 'ipmi.lan.query',
     columns: [{ name: this.translate.instant('Channel'), prop: 'channelLabel' }],
     hideHeader: true,
     parent: this,

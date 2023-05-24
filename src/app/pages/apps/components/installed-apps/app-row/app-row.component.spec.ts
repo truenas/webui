@@ -36,7 +36,7 @@ describe('AppRowComponent', () => {
   it('checks app logo, name and catalog', () => {
     expect(spectator.query('.app-logo img')).toHaveAttribute('src', 'https://image/');
     expect(spectator.query('.app-name')).toHaveText('app_name');
-    expect(spectator.query('.app-catalog')).toHaveText('Official');
+    expect(spectator.query('.app-catalog')).toHaveText('Truenas');
   });
 
   it('checks app status column', () => {

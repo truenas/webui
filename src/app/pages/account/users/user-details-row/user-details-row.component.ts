@@ -11,7 +11,7 @@ import {
   DeleteUserDialogComponent,
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class UserDetailsRowComponent {
 
   constructor(
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideIn: IxSlideIn2Service,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
   ) {}
@@ -70,10 +70,7 @@ export class UserDetailsRowComponent {
   }
 
   doEdit(user: User): void {
-    const editForm = this.slideIn.open(UserFormComponent, { wide: true });
-    if (editForm) {
-      editForm.setupForm(user);
-    }
+    this.slideIn.open(UserFormComponent, { wide: true, data: user });
   }
 
   doDelete(user: User): void {

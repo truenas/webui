@@ -1,8 +1,8 @@
-<mat-card class="card">
+<mat-card *ngIf="!hideCard" class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Inventory' | translate }}</h3>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content *ngIf="!(isLoading$| async); else loading">
     <div *ngFor="let item of sizeDisksMap[DiskType.Hdd] | keyvalue">
       <div *ngIf="item.value" class="details-item">
         <ix-icon name="ix:hdd"></ix-icon>
@@ -19,3 +19,7 @@
     </div>
   </mat-card-content>
 </mat-card>
+
+<ng-template #loading>
+  <ngx-skeleton-loader class="loading"></ngx-skeleton-loader>
+</ng-template>
