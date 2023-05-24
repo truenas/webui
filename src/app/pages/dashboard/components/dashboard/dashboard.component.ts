@@ -61,7 +61,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   reorderMode = false;
-  isSavingState = false;
   screenType = ScreenType.Desktop;
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
@@ -483,6 +482,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onConfirm(): void {
     this.saveState(this.dashState);
     delete this.previousState;
+    this.exitReorderMode();
+    this.store$.dispatch(dashboardStateUpdated({ dashboardState: this.dashState }));
   }
 
   private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
@@ -543,7 +544,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private exitReorderMode(): void {
     this.reorderMode = false;
-    this.isSavingState = false;
 
     if (this.previousState) {
       this.setDashState(this.previousState);
@@ -562,17 +562,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
-    this.isSavingState = true;
-
     this.ws.call('user.set_attribute', [1, 'dashState', state])
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (!res) {
           throw new Error('Unable to save Dashboard State');
         }
-
-        this.exitReorderMode();
-        this.store$.dispatch(dashboardStateUpdated({ dashboardState: state }));
       });
   }
 
