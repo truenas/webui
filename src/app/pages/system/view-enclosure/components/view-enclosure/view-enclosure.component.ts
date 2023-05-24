@@ -274,6 +274,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       this.system.pools = pools;
       this.events.next({ name: 'PoolsChanged', sender: this });
       this.addViews();
+      this.extractVisualizations();
     });
   }
 }
