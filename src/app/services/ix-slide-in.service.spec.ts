@@ -110,9 +110,7 @@ describe('IxSlideInService', () => {
       const data = { value: true };
       const slideInRef = service.open(TestComponent);
 
-      slideInRef.slideInClosed$.subscribe((val) => {
-        response = val;
-      });
+      slideInRef.slideInClosed$.subscribe((val) => response = val);
       slideInRef.close(data);
 
       expect(response).toBe(data);

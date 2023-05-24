@@ -13,11 +13,11 @@ import {
   NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -204,7 +204,7 @@ export class NetworkConfigurationComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<NetworkConfigurationComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -344,7 +344,7 @@ export class NetworkConfigurationComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.closeLast();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isFormLoading = false;

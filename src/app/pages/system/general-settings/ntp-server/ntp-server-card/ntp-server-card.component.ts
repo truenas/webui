@@ -82,18 +82,13 @@ export class NtpServerCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(NtpServerFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getData();
-    });
+    const slideInRef = this.slideInService.open(NtpServerFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getData());
   }
 
   doEdit(server: NtpServer): void {
-    const slideIn = this.slideInService.open(NtpServerFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getData();
-    });
-    slideIn.componentInstance.setupForm(server);
+    const slideInRef = this.slideInService.open(NtpServerFormComponent, { data: server });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getData());
   }
 
   doDelete(server: NtpServer): void {

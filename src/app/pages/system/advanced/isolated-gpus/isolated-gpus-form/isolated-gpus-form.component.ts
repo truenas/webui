@@ -5,12 +5,12 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -31,7 +31,7 @@ export class IsolatedGpusFormComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<IsolatedGpuValidatorService>,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -62,7 +62,7 @@ export class IsolatedGpusFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.slideInService.closeLast();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

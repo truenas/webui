@@ -8,10 +8,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -35,7 +35,7 @@ export class KernelFormComponent {
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<KernelFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -60,7 +60,7 @@ export class KernelFormComponent {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
-        this.slideInService.closeLast();
+        this.slideInRef.close();
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: WebsocketError) => {

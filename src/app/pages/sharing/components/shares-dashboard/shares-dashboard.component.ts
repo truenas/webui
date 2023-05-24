@@ -144,8 +144,8 @@ export class SharesDashboardComponent implements AfterViewInit {
     }
   }
 
-  handleSlideInClosed(slideIn: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       switch (modalType) {
         case SmbFormComponent:
         case SmbAclComponent:
@@ -208,13 +208,12 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           detailsHref: '/sharing/nfs',
           add: () => {
-            const slideIn = this.slideInService.open(NfsFormComponent);
-            this.handleSlideInClosed(slideIn, NfsFormComponent);
+            const slideInRef = this.slideInService.open(NfsFormComponent);
+            this.handleSlideInClosed(slideInRef, NfsFormComponent);
           },
           edit: (row: NfsShare): void => {
-            const slideIn = this.slideInService.open(NfsFormComponent);
-            this.handleSlideInClosed(slideIn, NfsFormComponent);
-            slideIn.componentInstance.setNfsShareForEdit(row);
+            const slideInRef = this.slideInService.open(NfsFormComponent, { data: row });
+            this.handleSlideInClosed(slideInRef, NfsFormComponent);
           },
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
@@ -253,14 +252,13 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add: () => {
-            const slideIn = this.slideInService.open(IscsiWizardComponent);
-            this.handleSlideInClosed(slideIn, IscsiWizardComponent);
+            const slideInRef = this.slideInService.open(IscsiWizardComponent);
+            this.handleSlideInClosed(slideInRef, IscsiWizardComponent);
           },
           addButtonLabel: this.translate.instant('Wizard'),
           edit: (row: IscsiTarget) => {
-            const slideIn = this.slideInService.open(TargetFormComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, TargetFormComponent);
-            slideIn.componentInstance.setTargetForEdit(row);
+            const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, TargetFormComponent);
           },
           afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
@@ -304,8 +302,8 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           limitRowsByMaxHeight: true,
           add: () => {
-            const slideIn = this.slideInService.open(SmbFormComponent);
-            this.handleSlideInClosed(slideIn, SmbFormComponent);
+            const slideInRef = this.slideInService.open(SmbFormComponent);
+            this.handleSlideInClosed(slideInRef, SmbFormComponent);
           },
           edit: (row: SmbShare) => {
             if (this.isClustered) {
@@ -314,9 +312,8 @@ export class SharesDashboardComponent implements AfterViewInit {
                 this.translate.instant('This share is configured through TrueCommand'),
               );
             } else {
-              const slideIn = this.slideInService.open(SmbFormComponent);
-              this.handleSlideInClosed(slideIn, SmbFormComponent);
-              slideIn.componentInstance.setSmbShareForEdit(row);
+              const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
+              this.handleSlideInClosed(slideInRef, SmbFormComponent);
             }
           },
           afterGetData: (data: SmbShare[]) => {
@@ -353,9 +350,10 @@ export class SharesDashboardComponent implements AfterViewInit {
                         const searchName = row.home ? 'homes' : row.name;
                         this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                           (sharesecs) => {
-                            const slideIn = this.slideInService.open(SmbAclComponent);
-                            this.handleSlideInClosed(slideIn, SmbAclComponent);
-                            slideIn.componentInstance.setSmbShareName(sharesecs[0].share_name);
+                            const slideInRef = this.slideInService.open(SmbAclComponent, {
+                              data: sharesecs[0].share_name,
+                            });
+                            this.handleSlideInClosed(slideInRef, SmbAclComponent);
                           },
                         );
                       }

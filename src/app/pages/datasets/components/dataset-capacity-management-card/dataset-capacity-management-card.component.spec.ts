@@ -186,12 +186,12 @@ describe('DatasetCapacityManagementCardComponent', () => {
   });
 
   it('opens capacity settings form when Edit button is clicked', async () => {
-    const slideIn = spectator.inject(IxSlideInService);
-    jest.spyOn(slideIn, 'open').mockImplementation();
+    const slideInRef = spectator.inject(IxSlideInService);
+    jest.spyOn(slideInRef, 'open').mockImplementation();
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(slideIn.open).toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { wide: true });
+    expect(slideInRef.open).toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { wide: true });
   });
 });

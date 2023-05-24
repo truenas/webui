@@ -7,10 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +31,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<ReplicationSettingsFormComponent>,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -74,7 +74,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.closeLast();
+        this.slideInRef.close();
       },
       error: (error: WebsocketError) => {
         this.isFormLoading = false;

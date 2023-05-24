@@ -94,18 +94,15 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(SmbFormComponent);
-    slideIn.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(SmbFormComponent);
+    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: string | number): void {
-    const slideIn = this.slideInService.open(SmbFormComponent);
-    slideIn.componentInstance.setSmbShareForEdit(this.entityList.rows.find((share) => share.id === id));
-    slideIn.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
+    const slideInRef = this.slideInService.open(SmbFormComponent, {
+      data: this.entityList.rows.find((share) => share.id === id),
     });
+    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(smbShare: SmbShare): EntityTableAction[] {
@@ -136,11 +133,10 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
                 const searchName = row.home ? 'homes' : row.name;
                 this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                   (shareSecs) => {
-                    const slideIn = this.slideInService.open(SmbAclComponent);
-                    slideIn.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                    const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareSecs[0].share_name });
+                    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
                       this.entityList.getData();
                     });
-                    slideIn.componentInstance.setSmbShareName(shareSecs[0].share_name);
                   },
                 );
               }

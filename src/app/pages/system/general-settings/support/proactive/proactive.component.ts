@@ -11,11 +11,11 @@ import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +48,7 @@ export class ProactiveComponent implements OnInit {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<ProactiveComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -68,7 +68,7 @@ export class ProactiveComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.closeLast();
+          this.slideInRef.close();
 
           this.snackbar.success(
             this.translate.instant(helptext.proactive.dialog_mesage),

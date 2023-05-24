@@ -457,9 +457,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showConfigForm(): void {
-    const slideIn = this.slideInService.open(DashboardFormComponent);
-    slideIn.componentInstance.setupForm(this.dashState);
-    slideIn.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe((dashState: DashConfigItem[]) => {
+    const slideInRef = this.slideInService.open(DashboardFormComponent, { data: this.dashState });
+    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe((dashState: DashConfigItem[]) => {
       if (dashState) {
         this.store$.dispatch(dashboardStateLoaded({ dashboardState: dashState }));
         this.setDashState(dashState);

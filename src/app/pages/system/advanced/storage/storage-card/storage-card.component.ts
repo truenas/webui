@@ -36,8 +36,8 @@ export class StorageCardComponent {
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideIn = this.slideInService.open(StorageSettingsFormComponent);
-    this.systemDatasetPool$ = slideIn.slideInClosed$.pipe(
+    const slideInRef = this.slideInService.open(StorageSettingsFormComponent);
+    this.systemDatasetPool$ = slideInRef.slideInClosed$.pipe(
       startWith(undefined),
       switchMap(() => this.ws.call('systemdataset.config')),
       map((config) => config.pool),

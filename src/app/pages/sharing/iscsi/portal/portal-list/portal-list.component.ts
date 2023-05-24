@@ -74,10 +74,8 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(PortalFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(PortalFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number, entityList: EntityTableComponent<IscsiPortalRow>): void {
@@ -90,14 +88,8 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
       };
     });
 
-    const slideIn = this.slideInService.open(PortalFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-    slideIn.componentInstance.setupForm({
-      ...portal,
-      listen,
-    });
+    const slideInRef = this.slideInService.open(PortalFormComponent, { data: { ...portal, listen } });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   prerequisite(): Promise<boolean> {

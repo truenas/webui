@@ -53,13 +53,12 @@ export class InitshutdownListComponent implements EntityTableConfig {
         name: 'edit',
         actionName: 'edit',
         onClick: (rowToEdit: InitShutdownScript) => {
-          const slideIn = this.slideInService.open(InitShutdownFormComponent);
-          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          const slideInRef = this.slideInService.open(InitShutdownFormComponent, { data: rowToEdit });
+          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
             this.entityList.loaderOpen = true;
             this.entityList.needRefreshTable = true;
             this.entityList.getData();
           });
-          slideIn.componentInstance.setScriptForEdit(rowToEdit);
         },
       },
       {
@@ -75,8 +74,8 @@ export class InitshutdownListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(InitShutdownFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(InitShutdownFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();

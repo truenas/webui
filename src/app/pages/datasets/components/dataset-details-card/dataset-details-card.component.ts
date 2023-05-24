@@ -104,12 +104,16 @@ export class DatasetDetailsCardComponent {
   }
 
   editDataset(): void {
-    const slideIn = this.slideInService.open(DatasetFormComponent, { wide: true });
-    slideIn.componentInstance.setForEdit(this.dataset.id);
+    const slideInRef = this.slideInService.open(DatasetFormComponent, {
+      wide: true, data: { datasetId: this.dataset.id, isNew: false },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   editZvol(): void {
-    const slideIn = this.slideInService.open(ZvolFormComponent);
-    slideIn.componentInstance.zvolFormInit(false, this.dataset.id);
+    const slideInRef = this.slideInService.open(ZvolFormComponent, {
+      data: { isNew: false, parentId: this.dataset.id },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
   }
 }

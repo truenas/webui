@@ -111,8 +111,8 @@ export class DataProtectionDashboardComponent implements OnInit {
     this.refreshAllTables();
   }
 
-  handleSlideInClosed(slideIn: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
-    slideIn.slideInClosed$
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+    slideInRef.slideInClosed$
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         switch (modalType) {
@@ -169,13 +169,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           parent: this,
           add: () => {
-            const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-            this.handleSlideInClosed(slideIn, ScrubTaskFormComponent);
+            const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+            this.handleSlideInClosed(slideInRef, ScrubTaskFormComponent);
           },
           edit: (task: ScrubTaskUi) => {
-            const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-            this.handleSlideInClosed(slideIn, ScrubTaskFormComponent);
-            slideIn.componentInstance.setTaskForEdit(task);
+            const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: task });
+            this.handleSlideInClosed(slideInRef, ScrubTaskFormComponent);
           },
           tableActions: [
             {
@@ -220,13 +219,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, SnapshotTaskComponent);
+            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+            this.handleSlideInClosed(slideInRef, SnapshotTaskComponent);
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, SnapshotTaskComponent);
-            slideIn.componentInstance.setTaskForEdit(row);
+            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, SnapshotTaskComponent);
           },
           tableFooterActions: [
             {
@@ -279,13 +277,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            const slideIn = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, ReplicationWizardComponent);
+            const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
+            this.handleSlideInClosed(slideInRef, ReplicationWizardComponent);
           },
           edit: (row: ReplicationTaskUi) => {
-            const slideIn = this.slideInService.open(ReplicationFormComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, ReplicationFormComponent);
-            slideIn.componentInstance.setForEdit(row);
+            const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, ReplicationFormComponent);
           },
           onButtonClick: (row) => {
             this.stateButton(row);
@@ -329,13 +326,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            const slideIn = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, CloudsyncFormComponent);
+            const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+            this.handleSlideInClosed(slideInRef, CloudsyncFormComponent);
           },
           edit: (row: CloudSyncTaskUi) => {
-            const slideIn = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, CloudsyncFormComponent);
-            slideIn.componentInstance.setTaskForEdit(row);
+            const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, CloudsyncFormComponent);
           },
           onButtonClick: (row: CloudSyncTaskUi) => {
             this.stateButton(row);
@@ -376,13 +372,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            const slideIn = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, RsyncTaskFormComponent);
+            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+            this.handleSlideInClosed(slideInRef, RsyncTaskFormComponent);
           },
           edit: (row: RsyncTaskUi) => {
-            const slideIn = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-            this.handleSlideInClosed(slideIn, RsyncTaskFormComponent);
-            slideIn.componentInstance.setTaskForEdit(row);
+            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, RsyncTaskFormComponent);
           },
           onButtonClick: (row: RsyncTaskUi) => {
             this.stateButton(row as TaskTableRow);
@@ -423,13 +418,12 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
           ],
           add: () => {
-            const slideIn = this.slideInService.open(SmartTaskFormComponent);
-            this.handleSlideInClosed(slideIn, SmartTaskFormComponent);
+            const slideInRef = this.slideInService.open(SmartTaskFormComponent);
+            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
           },
           edit: (row: SmartTestTaskUi) => {
-            const slideIn = this.slideInService.open(SmartTaskFormComponent);
-            this.handleSlideInClosed(slideIn, SmartTaskFormComponent);
-            slideIn.componentInstance.setTestForEdit(row);
+            const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
+            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
           },
         },
       },

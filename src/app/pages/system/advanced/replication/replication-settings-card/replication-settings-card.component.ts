@@ -26,8 +26,8 @@ export class ReplicationSettingsCardComponent {
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideIn = this.slideInService.open(ReplicationSettingsFormComponent);
-    this.taskLimit$ = slideIn.slideInClosed$.pipe(
+    const slideInRef = this.slideInService.open(ReplicationSettingsFormComponent);
+    this.taskLimit$ = slideInRef.slideInClosed$.pipe(
       startWith(undefined),
       switchMap(() => this.ws.call('replication.config.config')),
       map((config) => config.max_parallel_replication_tasks),

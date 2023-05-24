@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   ChangeDetectorRef,
+  OnInit,
+  Inject,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
@@ -14,9 +16,10 @@ import {
   CreateBootenvParams,
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { NameValidationService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -24,10 +27,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./bootenv-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootEnvironmentFormComponent {
+export class BootEnvironmentFormComponent implements OnInit {
   Operations = BootEnvironmentAction;
-  operation: BootEnvironmentAction = BootEnvironmentAction.Create;
   currentName?: string;
+  operation: BootEnvironmentAction;
   title: string;
 
   formGroup = this.formBuilder.group({
@@ -45,20 +48,26 @@ export class BootEnvironmentFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private nameValidationService: NameValidationService,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
+    private slideInRef: IxSlideInRef<BootEnvironmentFormComponent>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { operation: BootEnvironmentAction; name?: string },
   ) {}
 
-  setupForm(operation: BootEnvironmentAction, name?: string): void {
-    this.operation = operation;
+  ngOnInit(): void {
+    if (this.slideInData) {
+      this.currentName = this.slideInData.name;
+      this.operation = this.slideInData.operation;
+      this.setupForm();
+    }
+  }
 
+  setupForm(): void {
     switch (this.operation) {
       case this.Operations.Rename:
         this.title = this.translate.instant('Rename Boot Environment');
-        this.currentName = name;
         this.formGroup.patchValue({
-          name,
+          name: this.currentName,
         });
 
         this.tooltips = {
@@ -67,7 +76,6 @@ export class BootEnvironmentFormComponent {
         break;
       case this.Operations.Clone:
         this.title = this.translate.instant('Clone Boot Environment');
-        this.currentName = name;
 
         this.formGroup.addControl(
           'source',
@@ -101,11 +109,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInService.closeLast(true);
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInService.closeLast(false);
+            this.slideInRef.close(false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });
@@ -123,11 +131,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInService.closeLast(true);
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInService.closeLast(false);
+            this.slideInRef.close(false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });
@@ -143,11 +151,11 @@ export class BootEnvironmentFormComponent {
         this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.isFormLoading = false;
-            this.slideInService.closeLast(true);
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isFormLoading = false;
-            this.slideInService.closeLast(false);
+            this.slideInRef.close(false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
           },
         });

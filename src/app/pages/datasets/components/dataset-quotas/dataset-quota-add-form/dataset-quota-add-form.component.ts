@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,18 +11,19 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UserService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-quota-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetQuotaAddFormComponent {
+export class DatasetQuotaAddFormComponent implements OnInit {
   isLoading = false;
   quotaType: DatasetQuotaType;
   readonly DatasetQuotaType = DatasetQuotaType;
@@ -90,12 +93,17 @@ export class DatasetQuotaAddFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private userService: UserService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<DatasetQuotaAddFormComponent>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { quotaType: DatasetQuotaType; datasetId: string },
   ) {}
 
-  setupAddQuotaForm(quotaType: DatasetQuotaType, datasetId: string): void {
-    this.datasetId = datasetId;
-    this.quotaType = quotaType;
+  ngOnInit(): void {
+    this.quotaType = this.slideInData.quotaType;
+    this.datasetId = this.slideInData.datasetId;
+    this.setupAddQuotaForm();
+  }
+
+  setupAddQuotaForm(): void {
     this.cdr.markForCheck();
   }
 
@@ -109,7 +117,7 @@ export class DatasetQuotaAddFormComponent {
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
           this.isLoading = false;
-          this.slideInService.closeLast();
+          this.slideInRef.close();
           this.cdr.markForCheck();
         },
         error: (error) => {

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,17 +9,17 @@ import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Job } from 'app/interfaces/job.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './tunable-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TunableFormComponent {
-  private editingTunable: Tunable;
+export class TunableFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTunable;
   }
@@ -42,15 +44,21 @@ export class TunableFormComponent {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
+    private slideInRef: IxSlideInRef<TunableFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingTunable: Tunable,
   ) {}
 
-  setTunableForEdit(tunable: Tunable): void {
-    this.editingTunable = tunable;
+  ngOnInit(): void {
+    if (this.editingTunable) {
+      this.setTunableForEdit();
+    }
+  }
+
+  setTunableForEdit(): void {
     this.form.patchValue(this.editingTunable);
     this.form.controls.var.disable();
   }
@@ -63,7 +71,7 @@ export class TunableFormComponent {
       complete: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.closeLast();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

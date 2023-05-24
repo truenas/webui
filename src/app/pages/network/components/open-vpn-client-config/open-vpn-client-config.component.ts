@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, of } from 'rxjs';
@@ -14,13 +13,13 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   AppLoaderService, DialogService, ServicesService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -104,9 +103,8 @@ export class OpenVpnClientConfigComponent implements OnInit {
     private services: ServicesService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<OpenVpnClientConfigComponent>,
     private dialogService: DialogService,
-    private router: Router,
     private snackbar: SnackbarService,
     private appLoaderService: AppLoaderService,
     private translate: TranslateService,
@@ -125,7 +123,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
         next: () => {
           this.snackbar.success(this.translate.instant('OpenVPN client configuration saved'));
           this.isLoading = false;
-          this.slideInService.closeLast();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

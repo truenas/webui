@@ -76,19 +76,14 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   };
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(NfsFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(NfsFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const nfsShare = this.entityList.rows.find((row) => row.id === id);
-    const slideIn = this.slideInService.open(NfsFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-    slideIn.componentInstance.setNfsShareForEdit(nfsShare);
+    const slideInRef = this.slideInService.open(NfsFormComponent, { data: nfsShare });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   onCheckboxChange(row: NfsShare, loader$: Subject<boolean>): void {

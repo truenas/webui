@@ -48,7 +48,6 @@ export class ChartFormComponent implements OnInit, OnDestroy {
   dynamicSection: DynamicFormSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
   subscription = new Subscription();
-  private slideInData: SlideInDataChartForm;
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -65,12 +64,8 @@ export class ChartFormComponent implements OnInit, OnDestroy {
     private mdDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
-    @Inject(SLIDE_IN_DATA) data: SlideInDataChartForm,
-  ) {
-    if (data) {
-      this.slideInData = data;
-    }
-  }
+    @Inject(SLIDE_IN_DATA) private slideInData: SlideInDataChartForm,
+  ) { }
 
   ngOnInit(): void {
     this.setChartCreate();

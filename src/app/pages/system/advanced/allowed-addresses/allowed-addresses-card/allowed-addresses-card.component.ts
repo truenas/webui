@@ -65,8 +65,8 @@ export class AllowedAddressesCardComponent {
         label: this.translate.instant('Configure'),
         onClick: async () => {
           await this.advancedSettings.showFirstTimeWarningIfNeeded();
-          const slideIn = this.slideInService.open(AllowedAddressesFormComponent);
-          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          const slideInRef = this.slideInService.open(AllowedAddressesFormComponent);
+          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
             this.tableConfig.tableComponent?.getData();
           });
         },

@@ -103,8 +103,8 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  handleSlideInClosed(slideIn: IxSlideInRef<unknown, unknown>): void {
-    slideIn.slideInClosed$.pipe(
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+    slideInRef.slideInClosed$.pipe(
       filter((value) => value === true),
       untilDestroyed(this),
     ).subscribe(() => {
@@ -121,21 +121,24 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(BootEnvironmentFormComponent);
-    this.handleSlideInClosed(slideIn);
-    slideIn.componentInstance.setupForm(BootEnvironmentAction.Create);
+    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
+      data: { operation: BootEnvironmentAction.Create },
+    });
+    this.handleSlideInClosed(slideInRef);
   }
 
   doRename(bootenv: Bootenv): void {
-    const slideIn = this.slideInService.open(BootEnvironmentFormComponent);
-    this.handleSlideInClosed(slideIn);
-    slideIn.componentInstance.setupForm(BootEnvironmentAction.Rename, bootenv.id);
+    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
+      data: { operation: BootEnvironmentAction.Rename, name: bootenv.id },
+    });
+    this.handleSlideInClosed(slideInRef);
   }
 
   doClone(bootenv: Bootenv): void {
-    const slideIn = this.slideInService.open(BootEnvironmentFormComponent);
-    this.handleSlideInClosed(slideIn);
-    slideIn.componentInstance.setupForm(BootEnvironmentAction.Clone, bootenv.id);
+    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
+      data: { operation: BootEnvironmentAction.Clone, name: bootenv.id },
+    });
+    this.handleSlideInClosed(slideInRef);
   }
 
   doScrub(): void {

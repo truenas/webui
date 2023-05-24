@@ -96,10 +96,8 @@ export class SmartTaskListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(SmartTaskFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(SmartTaskFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<SmartTestTaskUi>[] {
@@ -108,11 +106,8 @@ export class SmartTaskListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: SmartTestTaskUi) => {
-        const slideIn = this.slideInService.open(SmartTaskFormComponent);
-        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.entityList.getData();
-        });
-        slideIn.componentInstance.setTestForEdit(row);
+        const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     }, {
       id: 'delete',

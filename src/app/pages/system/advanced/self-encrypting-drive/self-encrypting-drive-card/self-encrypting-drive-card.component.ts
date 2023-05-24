@@ -36,8 +36,8 @@ export class SelfEncryptingDriveCardComponent {
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideIn = this.slideInService.open(SelfEncryptingDriveFormComponent);
-    this.sedPassword$ = slideIn.slideInClosed$.pipe(
+    const slideInRef = this.slideInService.open(SelfEncryptingDriveFormComponent);
+    this.sedPassword$ = slideInRef.slideInClosed$.pipe(
       startWith(undefined),
       switchMap(() => this.ws.call('system.advanced.sed_global_password')),
       map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),

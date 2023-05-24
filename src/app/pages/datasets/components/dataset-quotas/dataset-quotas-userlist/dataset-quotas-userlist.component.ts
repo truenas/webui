@@ -251,19 +251,17 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(DatasetQuotaAddFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getUserQuotas();
+    const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
+      data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId },
     });
-    slideIn.componentInstance.setupAddQuotaForm(DatasetQuotaType.User, this.datasetId);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
-    const slideIn = this.slideInService.open(DatasetQuotaEditFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getUserQuotas();
+    const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
+      data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId, id: row.id },
     });
-    slideIn.componentInstance.setupEditQuotaForm(DatasetQuotaType.User, this.datasetId, row.id);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doDelete(row: DatasetQuota): void {

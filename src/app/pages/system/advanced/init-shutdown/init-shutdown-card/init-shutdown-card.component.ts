@@ -39,19 +39,14 @@ export class InitShutdownCardComponent {
     add: async () => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const slideIn = this.slideInService.open(InitShutdownFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.tableConfig.tableComponent?.getData();
-      });
+      const slideInRef = this.slideInService.open(InitShutdownFormComponent);
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
     },
     edit: async (script: InitShutdownScript) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const slideIn = this.slideInService.open(InitShutdownFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.tableConfig.tableComponent?.getData();
-      });
-      slideIn.componentInstance.setScriptForEdit(script);
+      const slideInRef = this.slideInService.open(InitShutdownFormComponent, { data: script });
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
     },
   };
 

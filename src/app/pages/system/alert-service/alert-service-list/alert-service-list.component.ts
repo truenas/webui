@@ -76,20 +76,15 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(AlertServiceComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityTable.getData();
-    });
+    const slideInRef = this.slideInService.open(AlertServiceComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   doEdit(id: number, entityTable: EntityTableComponent<AlertService>): void {
     const alertService = entityTable.rows.find((row) => row.id === id);
 
-    const slideIn = this.slideInService.open(AlertServiceComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityTable.getData();
-    });
-    slideIn.componentInstance.setAlertServiceForEdit(alertService);
+    const slideInRef = this.slideInService.open(AlertServiceComponent, { data: alertService });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   onCheckboxChange(row: AlertService): void {

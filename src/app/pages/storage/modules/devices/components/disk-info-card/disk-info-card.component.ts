@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -27,7 +27,6 @@ export class DiskInfoCardComponent {
   @Input() disk: Disk;
 
   constructor(
-    private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,

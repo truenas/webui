@@ -71,8 +71,8 @@ export class DatasetDetailsPanelComponent {
     return this.dataset.name === this.systemDataset;
   }
 
-  handleSlideInClosed(slideIn: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
-    slideIn.slideInClosed$.pipe(untilDestroyed(this))
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this))
       .subscribe((value: { id: string }) => {
         this.datasetStore.datasetUpdated();
 
@@ -85,15 +85,17 @@ export class DatasetDetailsPanelComponent {
   }
 
   onAddDataset(): void {
-    const slideIn = this.slideInService.open(DatasetFormComponent, { wide: true });
-    this.handleSlideInClosed(slideIn, DatasetFormComponent);
-    slideIn.componentInstance.setForNew(this.dataset.id);
+    const slideInRef = this.slideInService.open(DatasetFormComponent, {
+      wide: true, data: { isNew: true, datasetId: this.dataset.id },
+    });
+    this.handleSlideInClosed(slideInRef, DatasetFormComponent);
   }
 
   onAddZvol(): void {
-    const slideIn = this.slideInService.open(ZvolFormComponent);
-    this.handleSlideInClosed(slideIn, ZvolFormComponent);
-    slideIn.componentInstance.zvolFormInit(true, this.dataset.id);
+    const slideInRef = this.slideInService.open(ZvolFormComponent, {
+      data: { isNew: true, parentId: this.dataset.id },
+    });
+    this.handleSlideInClosed(slideInRef, ZvolFormComponent);
   }
 
   onCloseMobileDetails(): void {

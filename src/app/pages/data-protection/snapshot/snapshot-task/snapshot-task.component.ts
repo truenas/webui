@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,13 +12,14 @@ import {
   PeriodicSnapshotTaskCreate,
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { StorageService, TaskService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -27,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./snapshot-task.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotTaskComponent {
+export class SnapshotTaskComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -86,31 +87,35 @@ export class SnapshotTaskComponent {
     Object.values(LifetimeUnit).map((lifetime) => ({ label: lifetime, value: lifetime })),
   );
 
-  private editingTask: PeriodicSnapshotTask;
-
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private snackbar: SnackbarService,
     protected storageService: StorageService,
+    private slideInRef: IxSlideInRef<SnapshotTaskComponent>,
+    @Inject(SLIDE_IN_DATA) private editingTask: PeriodicSnapshotTask,
   ) {}
+
+  ngOnInit(): void {
+    if (this.editingTask) {
+      this.setTaskForEdit();
+    }
+  }
 
   get isTimeMode(): boolean {
     return this.form.value.schedule === CronPresetValue.Hourly;
   }
 
-  setTaskForEdit(task: PeriodicSnapshotTask): void {
-    this.editingTask = task;
+  setTaskForEdit(): void {
     this.form.patchValue({
-      ...task,
-      begin: task.schedule.begin,
-      end: task.schedule.end,
-      schedule: scheduleToCrontab(task.schedule),
+      ...this.editingTask,
+      begin: this.editingTask.schedule.begin,
+      end: this.editingTask.schedule.end,
+      schedule: scheduleToCrontab(this.editingTask.schedule),
     });
   }
 
@@ -149,7 +154,7 @@ export class SnapshotTaskComponent {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInService.closeLast(true);
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;

@@ -172,7 +172,7 @@ describe('CloudsyncFormComponent', () => {
   });
 
   it('shows values for an existing cloudsync task when it is open for edit', () => {
-    spectator.component.setTaskForEdit(existingTask);
+    spectator.component.setTaskForEdit();
 
     expect(spectator.component.form.value).toEqual({
       acknowledge_abuse: false,

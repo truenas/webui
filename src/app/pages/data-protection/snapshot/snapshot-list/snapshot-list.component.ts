@@ -141,18 +141,13 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const snapshotTask = this.entityList.rows.find((row) => row.id === id);
-    const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-    slideIn.componentInstance.setTaskForEdit(snapshotTask);
+    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true, data: snapshotTask });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

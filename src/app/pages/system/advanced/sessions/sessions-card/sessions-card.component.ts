@@ -112,8 +112,8 @@ export class SessionsCardComponent {
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideIn = this.slideInService.open(TokenSettingsComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(TokenSettingsComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.sessionsTableConf.tableComponent?.getData();
     });
   }

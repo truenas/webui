@@ -24,10 +24,9 @@ export class DataProtectionCardComponent {
   ) {}
 
   addSnapshot(): void {
-    const slideIn = this.slideInService.open(SnapshotAddFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(SnapshotAddFormComponent, { data: this.dataset.id });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
     });
-    slideIn.componentInstance.setDataset(this.dataset.id);
   }
 }

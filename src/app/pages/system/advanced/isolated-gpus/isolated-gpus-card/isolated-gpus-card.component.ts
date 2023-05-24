@@ -48,10 +48,8 @@ export class IsolatedGpusCardComponent implements OnInit {
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-    const slideIn = this.slideInService.open(IsolatedGpusFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.loadIsolatedGpus();
-    });
+    const slideInRef = this.slideInService.open(IsolatedGpusFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.loadIsolatedGpus());
   }
 
   private loadIsolatedGpus(): void {

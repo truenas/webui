@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,6 +10,8 @@ import {
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   EncryptionSectionComponent,
@@ -27,14 +29,13 @@ import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/u
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetFormComponent {
+export class DatasetFormComponent implements OnInit {
   @ViewChild(NameAndOptionsSectionComponent) nameAndOptionsSection: NameAndOptionsSectionComponent;
   @ViewChild(EncryptionSectionComponent) encryptionSection: EncryptionSectionComponent;
   @ViewChild(QuotasSectionComponent) quotasSection: QuotasSectionComponent;
@@ -51,14 +52,24 @@ export class DatasetFormComponent {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    private slideInRef: IxSlideInRef<DatasetFormComponent>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
   ) {}
+
+  ngOnInit(): void {
+    if (this.slideInData.datasetId && !this.slideInData.isNew) {
+      this.setForEdit();
+    }
+    if (this.slideInData.datasetId && this.slideInData.isNew) {
+      this.setForNew();
+    }
+  }
 
   get isNew(): boolean {
     return !this.existingDataset;
@@ -95,12 +106,12 @@ export class DatasetFormComponent {
     ];
   }
 
-  setForNew(parentId: string): void {
+  setForNew(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.datasetFormService.ensurePathLimits(parentId).pipe(
-      switchMap(() => this.datasetFormService.loadDataset(parentId)),
+    this.datasetFormService.ensurePathLimits(this.slideInData.datasetId).pipe(
+      switchMap(() => this.datasetFormService.loadDataset(this.slideInData.datasetId)),
     )
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -117,12 +128,12 @@ export class DatasetFormComponent {
       });
   }
 
-  setForEdit(datasetId: string): void {
+  setForEdit(): void {
     const requests = [
-      this.datasetFormService.loadDataset(datasetId),
+      this.datasetFormService.loadDataset(this.slideInData.datasetId),
     ];
 
-    const parentId = datasetId.split('/').slice(0, -1).join('/');
+    const parentId = this.slideInData.datasetId.split('/').slice(0, -1).join('/');
     if (parentId) {
       requests.push(this.datasetFormService.loadDataset(parentId));
     }
@@ -173,7 +184,7 @@ export class DatasetFormComponent {
       next: (createdDataset) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.closeLast(createdDataset);
+        this.slideInRef.close(createdDataset);
         this.snackbar.success(
           this.isNew
             ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })

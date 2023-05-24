@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
@@ -12,7 +11,6 @@ import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -31,8 +29,6 @@ export class DownloadClientConfigModalComponent {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<DownloadClientConfigModalComponent>,
     private services: ServicesService,
-    private router: Router,
-    private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private storageService: StorageService,
   ) {}

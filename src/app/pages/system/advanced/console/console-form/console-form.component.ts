@@ -9,13 +9,13 @@ import { of, Subscription } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DialogService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -59,7 +59,7 @@ export class ConsoleFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<ConsoleFormComponent>,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
@@ -105,7 +105,7 @@ export class ConsoleFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.cdr.markForCheck();
-        this.slideInService.closeLast();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

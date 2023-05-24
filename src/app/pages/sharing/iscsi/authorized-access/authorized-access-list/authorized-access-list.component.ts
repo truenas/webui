@@ -56,18 +56,13 @@ export class AuthorizedAccessListComponent implements EntityTableConfig<IscsiAut
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(AuthorizedAccessFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number, entityList: EntityTableComponent<IscsiAuthAccess>): void {
     const authAccess = entityList.rows.find((row) => row.id === id);
-    const slideIn = this.slideInService.open(AuthorizedAccessFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-    slideIn.componentInstance.setAccessForEdit(authAccess);
+    const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent, { data: authAccess });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

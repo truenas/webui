@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,6 +24,8 @@ import {
   NetworkInterfaceCreate,
   NetworkInterfaceUpdate,
 } from 'app/interfaces/network-interface.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/ix-forms/validators/ip-validation';
@@ -42,7 +44,6 @@ import {
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
 import { NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -124,8 +125,6 @@ export class InterfaceFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  private existingInterface: NetworkInterface;
-
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -133,13 +132,14 @@ export class InterfaceFormComponent implements OnInit {
     private translate: TranslateService,
     private networkService: NetworkService,
     private errorHandler: FormErrorHandlerService,
-    private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
     private core: CoreService,
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
+    private slideInRef: IxSlideInRef<InterfaceFormComponent>,
+    @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
   ) {}
 
   get isNew(): boolean {
@@ -177,15 +177,18 @@ export class InterfaceFormComponent implements OnInit {
   ngOnInit(): void {
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
+
+    if (this.existingInterface) {
+      this.setInterfaceForEdit();
+    }
   }
 
-  setInterfaceForEdit(interfaceToEdit: NetworkInterface): void {
-    this.existingInterface = interfaceToEdit;
-    interfaceToEdit.aliases.forEach(() => this.addAlias());
+  setInterfaceForEdit(): void {
+    this.existingInterface.aliases.forEach(() => this.addAlias());
     this.form.patchValue({
-      ...interfaceToEdit,
-      mtu: interfaceToEdit.mtu || this.defaultMtu,
-      aliases: interfaceAliasesToFormAliases(interfaceToEdit),
+      ...this.existingInterface,
+      mtu: this.existingInterface.mtu || this.defaultMtu,
+      aliases: interfaceAliasesToFormAliases(this.existingInterface),
     });
 
     this.setOptionsForEdit();
@@ -229,7 +232,7 @@ export class InterfaceFormComponent implements OnInit {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('Network interface updated'));
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-        this.slideInService.closeLast();
+        this.slideInRef.close();
 
         this.ws.call('interface.default_route_will_be_removed').pipe(
           filter(Boolean),

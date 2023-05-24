@@ -14,6 +14,7 @@ import helptext from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -23,7 +24,6 @@ import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -82,7 +82,7 @@ export class ActiveDirectoryComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<ActiveDirectoryComponent>,
     private snackbarService: SnackbarService,
   ) {}
 
@@ -119,7 +119,7 @@ export class ActiveDirectoryComponent implements OnInit {
         return;
       }
 
-      this.slideInService.closeLast();
+      this.slideInRef.close();
     });
   }
 
@@ -140,7 +140,7 @@ export class ActiveDirectoryComponent implements OnInit {
           if (update.job_id) {
             this.showStartingJob(update.job_id);
           } else {
-            this.slideInService.closeLast();
+            this.slideInRef.close();
           }
         },
         error: (error) => {
@@ -205,7 +205,7 @@ export class ActiveDirectoryComponent implements OnInit {
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.slideInService.closeLast();
+      this.slideInRef.close();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.dialogService.error(this.errorHandler.parseJobError(error));

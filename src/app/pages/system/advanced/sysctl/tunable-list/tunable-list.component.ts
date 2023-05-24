@@ -72,8 +72,8 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(TunableFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(TunableFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
@@ -88,13 +88,12 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
         name: 'edit',
         actionName: 'edit',
         onClick: (row: Tunable) => {
-          const slideIn = this.slideInService.open(TunableFormComponent);
-          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          const slideInRef = this.slideInService.open(TunableFormComponent, { data: row });
+          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
             this.entityList.loaderOpen = true;
             this.entityList.needRefreshTable = true;
             this.entityList.getData();
           });
-          slideIn.componentInstance.setTunableForEdit(row);
         },
       },
       {

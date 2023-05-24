@@ -245,19 +245,17 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(DatasetQuotaAddFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getGroupQuotas();
+    const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
+      data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId },
     });
-    slideIn.componentInstance.setupAddQuotaForm(DatasetQuotaType.Group, this.datasetId);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
-    const slideIn = this.slideInService.open(DatasetQuotaEditFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getGroupQuotas();
+    const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
+      data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId, id: row.id },
     });
-    slideIn.componentInstance.setupEditQuotaForm(DatasetQuotaType.Group, this.datasetId, row.id);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doDelete(row: DatasetQuota): void {

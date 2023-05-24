@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +14,8 @@ import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,7 +27,6 @@ import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -69,14 +70,11 @@ export class VmEditFormComponent implements OnInit {
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
   gpuOptions$ = this.gpuService.getGpuOptions();
 
-  existingVm: VirtualMachine;
-
   readonly helptext = helptext;
 
   constructor(
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private errorHandler: ErrorHandlerService,
@@ -88,25 +86,30 @@ export class VmEditFormComponent implements OnInit {
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
     private snackbar: SnackbarService,
+    private slideInRef: IxSlideInRef<VmEditFormComponent>,
+    @Inject(SLIDE_IN_DATA) private existingVm: VirtualMachine,
   ) {}
 
   ngOnInit(): void {
     this.listenForFormValueChanges();
+
+    if (this.existingVm) {
+      this.setVmForEdit();
+    }
   }
 
-  setVmForEdit(vm: VirtualMachine): void {
-    if (vm.cpu_mode !== VmCpuMode.Custom) {
+  setVmForEdit(): void {
+    if (this.existingVm.cpu_mode !== VmCpuMode.Custom) {
       this.showCpuModelField = false;
     }
 
-    this.existingVm = vm;
     this.form.patchValue({
-      ...vm,
-      memory: vm.memory * MiB,
-      min_memory: vm.min_memory ? vm.min_memory * MiB : null,
+      ...this.existingVm,
+      memory: this.existingVm.memory * MiB,
+      min_memory: this.existingVm.min_memory ? this.existingVm.min_memory * MiB : null,
     });
 
-    this.setupGpuControl(vm);
+    this.setupGpuControl(this.existingVm);
   }
 
   onSubmit(): void {
@@ -134,7 +137,7 @@ export class VmEditFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.snackbar.success(this.translate.instant('VM updated successfully.'));
-          this.slideInService.closeLast();
+          this.slideInRef.close();
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

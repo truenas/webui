@@ -83,13 +83,12 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
     add: () => {
-      const slideIn = this.slideInService.open(InterfaceFormComponent);
-      this.handleSlideInClosed(slideIn);
+      const slideInRef = this.slideInService.open(InterfaceFormComponent);
+      this.handleSlideInClosed(slideInRef);
     },
     edit: (row: NetworkInterfaceUi) => {
-      const slideIn = this.slideInService.open(InterfaceFormComponent);
-      this.handleSlideInClosed(slideIn);
-      slideIn.componentInstance.setInterfaceForEdit(row);
+      const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: row });
+      this.handleSlideInClosed(slideInRef);
     },
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
@@ -132,13 +131,12 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     ],
     parent: this,
     add: () => {
-      const slideIn = this.slideInService.open(StaticRouteFormComponent);
-      this.handleSlideInClosed(slideIn);
+      const slideInRef = this.slideInService.open(StaticRouteFormComponent);
+      this.handleSlideInClosed(slideInRef);
     },
     edit: (route: StaticRoute) => {
-      const slideIn = this.slideInService.open(StaticRouteFormComponent);
-      this.handleSlideInClosed(slideIn);
-      slideIn.componentInstance.setEditingStaticRoute(route);
+      const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
+      this.handleSlideInClosed(slideInRef);
     },
     deleteMsg: {
       title: 'static route',
@@ -161,22 +159,22 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     isActionVisible: this.isOpenVpnActionVisible,
     edit: (row: Service) => {
       if (row.service === ServiceName.OpenVpnClient) {
-        const slideIn = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-        this.handleSlideInClosed(slideIn);
+        const slideInRef = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
+        this.handleSlideInClosed(slideInRef);
       } else if (row.service === ServiceName.OpenVpnServer) {
-        const slideIn = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
-        this.handleSlideInClosed(slideIn);
+        const slideInRef = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
+        this.handleSlideInClosed(slideInRef);
       }
     },
     afterGetData: () => {
       const state = this.navigation?.extras?.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         if (state.configureOpenVPN === 'client') {
-          const slideIn = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-          this.handleSlideInClosed(slideIn);
+          const slideInRef = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
+          this.handleSlideInClosed(slideInRef);
         } else {
-          const slideIn = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
-          this.handleSlideInClosed(slideIn);
+          const slideInRef = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
+          this.handleSlideInClosed(slideInRef);
         }
       }
     },
@@ -192,9 +190,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit: (row: IpmiRow) => {
-      const slideIn = this.slideInService.open(IpmiFormComponent);
-      this.handleSlideInClosed(slideIn);
-      slideIn.componentInstance.setIdIpmi(row.id);
+      const slideInRef = this.slideInService.open(IpmiFormComponent, { data: row.id });
+      this.handleSlideInClosed(slideInRef);
     },
   };
 
@@ -251,8 +248,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  handleSlideInClosed(slideIn: IxSlideInRef<unknown, unknown>): void {
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
       this.getInterfaces();
       this.checkInterfacePendingChanges();
@@ -706,9 +703,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
           }
 
-          const slideIn = this.slideInService.open(InterfaceFormComponent);
-          this.handleSlideInClosed(slideIn);
-          slideIn.componentInstance.setInterfaceForEdit(interfaces[0]);
+          const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: interfaces[0] });
+          this.handleSlideInClosed(slideInRef);
         },
         error: (error: WebsocketError) => {
           this.loader.close();

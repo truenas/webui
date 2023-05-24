@@ -69,12 +69,10 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (device: VmDevice) => {
-        const slideIn = this.slideInService.open(DeviceFormComponent);
-        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.entityList.getData();
+        const slideInRef = this.slideInService.open(DeviceFormComponent, {
+          data: { virtualMachineId: Number(this.pk), device },
         });
-        slideIn.componentInstance.setVirtualMachineId(Number(this.pk));
-        slideIn.componentInstance.setDeviceForEdit(device);
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     });
     actions.push({
@@ -139,10 +137,7 @@ export class DeviceListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(DeviceFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-    slideIn.componentInstance.setVirtualMachineId(Number(this.pk));
+    const slideInRef = this.slideInService.open(DeviceFormComponent, { data: { virtualMachineId: Number(this.pk) } });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

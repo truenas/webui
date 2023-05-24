@@ -78,10 +78,8 @@ export class ScrubListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<ScrubTaskUi>[] {
@@ -90,11 +88,8 @@ export class ScrubListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: ScrubTaskUi) => {
-        const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.entityList.getData();
-        });
-        slideIn.componentInstance.setTaskForEdit(row);
+        const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     }, {
       id: 'delete',

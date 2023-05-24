@@ -34,18 +34,14 @@ export class SysctlCardComponent {
     ],
     add: async () => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
-      const slideIn = this.slideInService.open(TunableFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.tableConfig.tableComponent?.getData();
-      });
+      const slideInRef = this.slideInService.open(TunableFormComponent);
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
     },
     edit: async (tunable: Tunable) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
-      const slideIn = this.slideInService.open(TunableFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.tableConfig.tableComponent?.getData();
-      });
-      slideIn.componentInstance.setTunableForEdit(tunable);
+
+      const slideInRef = this.slideInService.open(TunableFormComponent, { data: tunable });
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
     },
   };
 

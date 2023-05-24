@@ -1,20 +1,23 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+} from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ValidationService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './ntp-server-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NtpServerFormComponent {
+export class NtpServerFormComponent implements OnInit {
   isFormLoading = false;
 
   formGroup = this.fb.group({
@@ -28,7 +31,7 @@ export class NtpServerFormComponent {
   });
 
   readonly helptext = helptext;
-  private editingServer: NtpServer;
+
   get isNew(): boolean {
     return !this.editingServer;
   }
@@ -37,30 +40,34 @@ export class NtpServerFormComponent {
   }
 
   constructor(
-    private slideInService: IxSlideInService,
     private validationService: ValidationService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
+    private slideInRef: IxSlideInRef<NtpServerFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingServer: NtpServer,
   ) {}
+
+  ngOnInit(): void {
+    if (this.editingServer) {
+      this.setupForm();
+    }
+  }
 
   /**
    * @param server Skip argument to add new server.
    */
-  setupForm(server?: NtpServer): void {
-    this.editingServer = server;
-    if (!this.isNew) {
-      this.formGroup.patchValue({
-        address: server.address,
-        burst: server.burst,
-        iburst: server.iburst,
-        prefer: server.prefer,
-        minpoll: server.minpoll,
-        maxpoll: server.maxpoll,
-      });
-    }
+  setupForm(): void {
+    this.formGroup.patchValue({
+      address: this.editingServer.address,
+      burst: this.editingServer.burst,
+      iburst: this.editingServer.iburst,
+      prefer: this.editingServer.prefer,
+      minpoll: this.editingServer.minpoll,
+      maxpoll: this.editingServer.maxpoll,
+    });
   }
 
   onSubmit(): void {
@@ -87,7 +94,7 @@ export class NtpServerFormComponent {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.closeLast();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

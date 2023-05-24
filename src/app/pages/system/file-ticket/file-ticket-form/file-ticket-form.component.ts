@@ -25,11 +25,11 @@ import {
 } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -76,7 +76,7 @@ export class FileTicketFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private sysGeneralService: SystemGeneralService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<FileTicketFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
@@ -231,7 +231,7 @@ export class FileTicketFormComponent implements OnInit {
         if (shouldOpen) {
           this.window.open(params.url, '_blank');
         }
-        this.slideInService.closeLast();
+        this.slideInRef.close();
       });
   }
 

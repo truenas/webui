@@ -80,8 +80,8 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(CronFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(CronFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
@@ -89,13 +89,12 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   }
 
   openEditForm(row: CronjobRow): void {
-    const slideIn = this.slideInService.open(CronFormComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(CronFormComponent, { data: row });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
     });
-    slideIn.componentInstance.setCronForEdit(row);
   }
 
   getActions(tableRow: CronjobRow): EntityTableAction<CronjobRow>[] {

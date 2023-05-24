@@ -74,19 +74,14 @@ export class CronCardComponent {
     add: async () => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const slideIn = this.slideInService.open(CronFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.tableConfig.tableComponent?.getData();
-      });
+      const slideInRef = this.slideInService.open(CronFormComponent);
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
     },
     edit: async (cron: CronjobRow) => {
       await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-      const slideIn = this.slideInService.open(CronFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.tableConfig.tableComponent?.getData();
-      });
-      slideIn.componentInstance.setCronForEdit(cron);
+      const slideInRef = this.slideInService.open(CronFormComponent, { data: cron });
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
     },
   };
 

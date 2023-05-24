@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,6 +24,8 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -48,7 +50,7 @@ type FormValue = CloudsyncFormComponent['form']['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
 })
-export class CloudsyncFormComponent {
+export class CloudsyncFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -164,9 +166,8 @@ export class CloudsyncFormComponent {
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
 
-  private editingTask: CloudSyncTaskUi;
-
   constructor(
+    public slideInRef: IxSlideInRef<CloudsyncFormComponent>,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
@@ -179,8 +180,15 @@ export class CloudsyncFormComponent {
     protected slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
-  ) {
+    @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
+  ) { }
+
+  ngOnInit(): void {
     this.setupForm();
+
+    if (this.editingTask) {
+      this.setTaskForEdit();
+    }
   }
 
   setupForm(): void {
@@ -539,69 +547,67 @@ export class CloudsyncFormComponent {
     }
   }
 
-  setTaskForEdit(task: CloudSyncTaskUi): void {
-    this.editingTask = task;
-
-    const transfers = task.transfers;
+  setTaskForEdit(): void {
+    const transfers = this.editingTask.transfers;
     if (this.isCustomTransfers(transfers)) {
       this.setTransfersOptions(true, transfers);
     }
 
     this.form.patchValue({
-      ...task,
-      cloudsync_picker: scheduleToCrontab(task.schedule) as CronPresetValue,
-      credentials: task.credentials.id,
-      encryption: task.encryption,
-      bwlimit: task.bwlimit.map((bwlimit) => {
+      ...this.editingTask,
+      cloudsync_picker: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
+      credentials: this.editingTask.credentials.id,
+      encryption: this.editingTask.encryption,
+      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
           ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth, { standard: 'iec' })}`
           : `${bwlimit.time}, off`;
       }),
     });
 
-    if (task.direction === Direction.Pull) {
-      this.form.controls.path_destination.setValue([task.path]);
+    if (this.editingTask.direction === Direction.Pull) {
+      this.form.controls.path_destination.setValue([this.editingTask.path]);
 
-      if (task.include?.length) {
+      if (this.editingTask.include?.length) {
         this.form.controls.folder_source.setValue(
-          task.include.map((path: string) => (`${task.attributes.folder as string}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => (`${this.editingTask.attributes.folder as string}/${path.split('/')[1]}`)),
         );
       } else {
-        this.form.controls.folder_source.setValue([task.attributes.folder as string]);
+        this.form.controls.folder_source.setValue([this.editingTask.attributes.folder as string]);
       }
     } else {
-      this.form.controls.folder_destination.setValue([task.attributes.folder as string]);
+      this.form.controls.folder_destination.setValue([this.editingTask.attributes.folder as string]);
 
-      if (task.include?.length) {
+      if (this.editingTask.include?.length) {
         this.form.controls.path_source.setValue(
-          task.include.map((path: string) => (`${task.path}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => (`${this.editingTask.path}/${path.split('/')[1]}`)),
         );
       } else {
-        this.form.controls.path_source.setValue([task.path]);
+        this.form.controls.path_source.setValue([this.editingTask.path]);
       }
     }
 
-    if (task.attributes.bucket) {
-      this.form.controls.bucket.setValue(task.attributes.bucket as string);
-      this.form.controls.bucket_input.setValue(task.attributes.bucket as string);
+    if (this.editingTask.attributes.bucket) {
+      this.form.controls.bucket.setValue(this.editingTask.attributes.bucket as string);
+      this.form.controls.bucket_input.setValue(this.editingTask.attributes.bucket as string);
     }
-    if (task.attributes.bucket_policy_only) {
-      this.form.controls.bucket_policy_only.setValue(task.attributes.bucket_policy_only as boolean);
+    if (this.editingTask.attributes.bucket_policy_only) {
+      this.form.controls.bucket_policy_only.setValue(this.editingTask.attributes.bucket_policy_only as boolean);
     }
-    if (task.attributes.task_encryption) {
-      this.form.controls.task_encryption.setValue(task.attributes.task_encryption as string);
+    if (this.editingTask.attributes.task_encryption) {
+      this.form.controls.task_encryption.setValue(this.editingTask.attributes.task_encryption as string);
     }
-    if (task.attributes.fast_list) {
-      this.form.controls.fast_list.setValue(task.attributes.fast_list as boolean);
+    if (this.editingTask.attributes.fast_list) {
+      this.form.controls.fast_list.setValue(this.editingTask.attributes.fast_list as boolean);
     }
-    if (task.attributes.chunk_size) {
-      this.form.controls.chunk_size.setValue(task.attributes.chunk_size as number);
+    if (this.editingTask.attributes.chunk_size) {
+      this.form.controls.chunk_size.setValue(this.editingTask.attributes.chunk_size as number);
     }
-    if (task.attributes.acknowledge_abuse) {
-      this.form.controls.acknowledge_abuse.setValue(task.attributes.acknowledge_abuse as boolean);
+    if (this.editingTask.attributes.acknowledge_abuse) {
+      this.form.controls.acknowledge_abuse.setValue(this.editingTask.attributes.acknowledge_abuse as boolean);
     }
-    if (task.attributes.storage_class) {
-      this.form.controls.storage_class.setValue(task.attributes.storage_class as string);
+    if (this.editingTask.attributes.storage_class) {
+      this.form.controls.storage_class.setValue(this.editingTask.attributes.storage_class as string);
     }
   }
 
@@ -756,7 +762,7 @@ export class CloudsyncFormComponent {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInService.closeLast(true);
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;

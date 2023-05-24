@@ -62,19 +62,14 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget> {
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(TargetFormComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const target = this.entityList.rows.find((row) => row.id === id);
-    const slideIn = this.slideInService.open(TargetFormComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-    slideIn.componentInstance.setTargetForEdit(target);
+    const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true, data: target });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(row: IscsiTarget): EntityTableAction<IscsiTarget>[] {

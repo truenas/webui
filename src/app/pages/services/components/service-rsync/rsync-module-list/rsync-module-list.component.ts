@@ -67,14 +67,13 @@ export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRo
   }
 
   doAdd(): void {
-    const slideIn = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    const slideInRef = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const rsyncModule = this.entityList.rows.find((row) => row.id === id);
-    const slideIn = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
-    slideIn.componentInstance.setModuleForEdit(rsyncModule);
+    const slideInRef = this.slideInService.open(RsyncModuleFormComponent, { wide: true, data: rsyncModule });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

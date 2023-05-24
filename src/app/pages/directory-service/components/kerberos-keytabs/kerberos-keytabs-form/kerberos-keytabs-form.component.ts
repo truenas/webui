@@ -1,20 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-keytabs-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KerberosKeytabsFormComponent {
+export class KerberosKeytabsFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingKerberosKeytab;
   }
@@ -34,21 +37,25 @@ export class KerberosKeytabsFormComponent {
 
   readonly helptext = helptext;
 
-  private editingKerberosKeytab: KerberosKeytab;
-
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
+    private slideInRef: IxSlideInRef<KerberosKeytabsFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingKerberosKeytab: KerberosKeytab,
   ) {}
 
-  setKerberosKeytabsForEdit(kerberosKeytab: KerberosKeytab): void {
-    this.editingKerberosKeytab = kerberosKeytab;
+  ngOnInit(): void {
+    if (this.editingKerberosKeytab) {
+      this.setKerberosKeytabsForEdit();
+    }
+  }
+
+  setKerberosKeytabsForEdit(): void {
     this.form.patchValue({
-      name: kerberosKeytab.name,
+      name: this.editingKerberosKeytab.name,
     });
   }
 
@@ -80,7 +87,7 @@ export class KerberosKeytabsFormComponent {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.closeLast();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;

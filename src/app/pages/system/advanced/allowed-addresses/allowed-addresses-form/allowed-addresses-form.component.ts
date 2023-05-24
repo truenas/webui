@@ -8,12 +8,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -31,7 +31,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<AllowedAddressesFormComponent>,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
@@ -79,7 +79,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
       message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
     }).pipe(
-      tap(() => this.slideInService.closeLast()),
+      tap(() => this.slideInRef.close()),
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {

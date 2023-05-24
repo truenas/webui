@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,8 @@ import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshot
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -56,7 +58,6 @@ export class ReplicationFormComponent implements OnInit {
   @ViewChild(ScheduleSectionComponent, { static: true }) scheduleSection: ScheduleSectionComponent;
 
   isLoading = false;
-  existingReplication: ReplicationTask;
 
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
@@ -69,18 +70,24 @@ export class ReplicationFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
     private snackbar: SnackbarService,
     private datasetService: DatasetService,
     private replicationService: ReplicationService,
+    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<ReplicationFormComponent>,
+    @Inject(SLIDE_IN_DATA) public existingReplication: ReplicationTask,
   ) {}
 
   ngOnInit(): void {
     this.countSnapshotsOnChanges();
     this.updateExplorersOnChanges();
     this.updateExplorers();
+
+    if (this.existingReplication) {
+      this.setForEdit();
+    }
   }
 
   get isNew(): boolean {
@@ -115,8 +122,7 @@ export class ReplicationFormComponent implements OnInit {
     return this.sourceSection.form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
   }
 
-  setForEdit(replication: ReplicationTask): void {
-    this.existingReplication = replication;
+  setForEdit(): void {
     this.cdr.markForCheck();
   }
 
@@ -140,7 +146,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInService.closeLast();
+            this.slideInRef.close();
           },
           error: (error) => {
             this.isLoading = false;
@@ -152,7 +158,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInService.closeLast();
+    this.slideInRef.close();
     this.slideInService.open(ReplicationWizardComponent, { wide: true });
   }
 

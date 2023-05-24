@@ -36,8 +36,8 @@ export class SyslogCardComponent {
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideIn = this.slideInService.open(SyslogFormComponent);
-    this.syslog$ = slideIn.slideInClosed$.pipe(
+    const slideInRef = this.slideInService.open(SyslogFormComponent);
+    this.syslog$ = slideInRef.slideInClosed$.pipe(
       startWith(undefined),
       switchMap(() => this.ws.call('systemdataset.config')),
       map((config) => config.syslog),

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,20 +8,21 @@ import { Observable } from 'rxjs';
 import helptext from 'app/helptext/system/cron-form';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UserService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './cron-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CronFormComponent {
+export class CronFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingCron;
   }
@@ -56,24 +57,28 @@ export class CronFormComponent {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
 
-  private editingCron: Cronjob;
-
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private userService: UserService,
+    private slideInRef: IxSlideInRef<CronFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingCron: Cronjob,
   ) {}
 
-  setCronForEdit(cron: Cronjob): void {
-    this.editingCron = cron;
+  ngOnInit(): void {
+    if (this.editingCron) {
+      this.setCronForEdit();
+    }
+  }
+
+  setCronForEdit(): void {
     this.form.patchValue({
-      ...cron,
-      schedule: scheduleToCrontab(cron.schedule),
+      ...this.editingCron,
+      schedule: scheduleToCrontab(this.editingCron.schedule),
     });
   }
 
@@ -102,7 +107,7 @@ export class CronFormComponent {
           this.snackbar.success(this.translate.instant('Cron job updated'));
         }
         this.isLoading = false;
-        this.slideInService.closeLast();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

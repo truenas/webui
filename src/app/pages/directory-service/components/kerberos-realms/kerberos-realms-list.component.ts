@@ -59,10 +59,8 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
     return [{
       label: this.translate.instant('Add'),
       onClick: () => {
-        const slideIn = this.slideInService.open(KerberosRealmsFormComponent);
-        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.entityList.getData();
-        });
+        const slideInRef = this.slideInService.open(KerberosRealmsFormComponent);
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     }] as EntityTableAction[];
   }
@@ -73,11 +71,8 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
         id: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (realm: KerberosRealmRow) => {
-          const slideIn = this.slideInService.open(KerberosRealmsFormComponent);
-          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-            this.entityList.getData();
-          });
-          slideIn.componentInstance.setRealmForEdit(realm);
+          const slideInRef = this.slideInService.open(KerberosRealmsFormComponent, { data: realm });
+          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
         },
       },
       {

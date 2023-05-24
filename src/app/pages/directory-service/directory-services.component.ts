@@ -67,18 +67,13 @@ export class DirectoryServicesComponent implements OnInit {
       this.ensureActiveDirectoryIsEnabledForIdmap()
         .pipe(untilDestroyed(this))
         .subscribe(() => {
-          const slideIn = this.slideInService.open(IdmapFormComponent);
-          slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-            this.refreshCards();
-          });
+          const slideInRef = this.slideInService.open(IdmapFormComponent);
+          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
         });
     },
     edit: (row: Idmap) => {
-      const slideIn = this.slideInService.open(IdmapFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.refreshCards();
-      });
-      slideIn.componentInstance.setIdmapForEdit(row);
+      const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
     },
     getActions: () => {
       return [
@@ -134,17 +129,12 @@ export class DirectoryServicesComponent implements OnInit {
       { name: this.translate.instant('Password Server'), prop: 'kpasswd_server' },
     ],
     add: () => {
-      const slideIn = this.slideInService.open(KerberosRealmsFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.refreshCards();
-      });
+      const slideInRef = this.slideInService.open(KerberosRealmsFormComponent);
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
     },
     edit: (realm: KerberosRealm) => {
-      const slideIn = this.slideInService.open(KerberosRealmsFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.refreshCards();
-      });
-      slideIn.componentInstance.setRealmForEdit(realm);
+      const slideInRef = this.slideInService.open(KerberosRealmsFormComponent, { data: realm });
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
     },
   };
 
@@ -163,17 +153,12 @@ export class DirectoryServicesComponent implements OnInit {
       { name: 'Name', prop: 'name' },
     ],
     add: () => {
-      const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.refreshCards();
-      });
+      const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent);
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
     },
     edit: (row: KerberosKeytab) => {
-      const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.refreshCards();
-      });
-      slideIn.componentInstance.setKerberosKeytabsForEdit(row);
+      const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent, { data: row });
+      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
     },
   };
 
@@ -296,24 +281,18 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   openActiveDirectoryForm(): void {
-    const slideIn = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshCards();
-    });
+    const slideInRef = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
   }
 
   openLdapForm(): void {
-    const slideIn = this.slideInService.open(LdapComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshCards();
-    });
+    const slideInRef = this.slideInService.open(LdapComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
   }
 
   openKerberosSettingsForm(): void {
-    const slideIn = this.slideInService.open(KerberosSettingsComponent);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshCards();
-    });
+    const slideInRef = this.slideInService.open(KerberosSettingsComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
   }
 
   refreshTables(): void {

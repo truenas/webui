@@ -109,10 +109,8 @@ export class IdmapListComponent implements EntityTableConfig {
       onClick: () => {
         this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
-            const slideIn = this.slideInService.open(IdmapFormComponent);
-            slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-              this.entityList.getData();
-            });
+            const slideInRef = this.slideInService.open(IdmapFormComponent);
+            slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
           } else {
             this.dialogService.confirm({
               title: helptext.idmap.enable_ad_dialog.title,
@@ -137,11 +135,8 @@ export class IdmapListComponent implements EntityTableConfig {
       label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
       onClick: (rowToEdit: IdmapRow) => {
-        const slideIn = this.slideInService.open(IdmapFormComponent);
-        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.entityList.getData();
-        });
-        slideIn.componentInstance.setIdmapForEdit(rowToEdit);
+        const slideInRef = this.slideInService.open(IdmapFormComponent, { data: rowToEdit });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     });
     if (!requiredIdmapDomains.includes(row.name as IdmapName)) {
@@ -166,9 +161,7 @@ export class IdmapListComponent implements EntityTableConfig {
   }
 
   showActiveDirectoryForm(): void {
-    const slideIn = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

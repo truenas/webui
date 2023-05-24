@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,13 +17,14 @@ import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DialogService, NetworkService, VmService, WebSocketService,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const specifyCustom = 'Specify custom';
 
@@ -226,8 +227,9 @@ export class DeviceFormComponent implements OnInit {
     private vmService: VmService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
+    private slideInRef: IxSlideInRef<DeviceFormComponent>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { virtualMachineId: number; device: VmDevice },
   ) {}
 
   ngOnInit(): void {
@@ -241,54 +243,62 @@ export class DeviceFormComponent implements OnInit {
         this.usbForm.controls.usb.disable();
       }
     });
+
+    if (this.slideInData.virtualMachineId) {
+      this.virtualMachineId = this.slideInData.virtualMachineId;
+      this.setVirtualMachineId();
+    }
+
+    if (this.slideInData.device) {
+      this.existingDevice = this.slideInData.device;
+      this.setDeviceForEdit();
+    }
   }
 
-  setVirtualMachineId(id: number): void {
-    this.virtualMachineId = id;
+  setVirtualMachineId(): void {
     this.hideDisplayIfCannotBeAdded();
   }
 
-  setDeviceForEdit(device: VmDevice): void {
-    this.existingDevice = device;
-    this.typeControl.setValue(device.dtype);
-    this.orderControl.setValue(device.order);
-    switch (device.dtype) {
+  setDeviceForEdit(): void {
+    this.typeControl.setValue(this.existingDevice.dtype);
+    this.orderControl.setValue(this.existingDevice.order);
+    switch (this.existingDevice.dtype) {
       case VmDeviceType.Pci:
-        this.pciForm.patchValue(device.attributes);
+        this.pciForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Raw:
         this.rawFileForm.patchValue({
-          ...device.attributes,
-          sectorsize: device.attributes.logical_sectorsize === null
+          ...this.existingDevice.attributes,
+          sectorsize: this.existingDevice.attributes.logical_sectorsize === null
             ? 0
-            : device.attributes.logical_sectorsize,
+            : this.existingDevice.attributes.logical_sectorsize,
         });
         break;
       case VmDeviceType.Nic:
-        this.nicForm.patchValue(device.attributes);
+        this.nicForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Display:
-        this.displayForm.patchValue(device.attributes);
+        this.displayForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Disk:
         this.diskForm.patchValue({
-          ...device.attributes,
-          sectorsize: device.attributes.logical_sectorsize === null
+          ...this.existingDevice.attributes,
+          sectorsize: this.existingDevice.attributes.logical_sectorsize === null
             ? 0
-            : device.attributes.logical_sectorsize,
+            : this.existingDevice.attributes.logical_sectorsize,
         });
         break;
       case VmDeviceType.Cdrom:
-        this.cdromForm.patchValue(device.attributes);
+        this.cdromForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Usb:
-        if (!device.attributes.device) {
-          device.attributes.device = specifyCustom;
+        if (!this.existingDevice.attributes.device) {
+          this.existingDevice.attributes.device = specifyCustom;
         }
-        this.usbForm.patchValue(device.attributes);
+        this.usbForm.patchValue(this.existingDevice.attributes);
         break;
       default:
-        assertUnreachable(device);
+        assertUnreachable(this.existingDevice);
     }
   }
 
@@ -354,7 +364,7 @@ export class DeviceFormComponent implements OnInit {
           }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.closeLast();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.errorHandler.handleWsFormError(error, this.typeSpecificForm);

@@ -159,9 +159,7 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
       () => {
         const slideInRef = this.slideInService.open(CatalogAddFormComponent);
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.refresh();
-        });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
       },
     );
   }
@@ -169,9 +167,7 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
   edit(catalog: Catalog): void {
     const slideInRef = this.slideInService.open(CatalogEditFormComponent);
     slideInRef.componentInstance.setCatalogForEdit(catalog);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refresh();
-    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   refreshRow(row: Catalog): void {
