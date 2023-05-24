@@ -101,16 +101,16 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add: () => this.slideInService.open(CertificateAddComponent)
-            .slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-              this.getCards();
-            }),
+          add: () => {
+            const slideInRef = this.slideInService.open(CertificateAddComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
+          },
           edit: (certificate: Certificate) => {
-            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
-            slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-              setTimeout(() => this.getCards(), 250);
-            });
-            slideIn.componentInstance.setCertificate(certificate);
+            const slideInRef = this.slideInService.open(
+              CertificateEditComponent,
+              { wide: true, data: { certificatesDash: this, certificate } },
+            );
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           delete: (item: Certificate, table: TableComponent) => {
             const dialogRef = this.dialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: item } });
@@ -158,17 +158,15 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.slideInService.open(CsrAddComponent).slideInClosed$
-              .pipe(untilDestroyed(this)).subscribe(() => {
-                this.getCards();
-              });
+            const slideInRef = this.slideInService.open(CsrAddComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (certificate: Certificate) => {
-            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
-            slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-              this.getCards();
-            });
-            slideIn.componentInstance.setCertificate(certificate);
+            const slideInRef = this.slideInService.open(
+              CertificateEditComponent,
+              { wide: true, data: { certificatesDash: this, certificate } },
+            );
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },
       },
@@ -205,17 +203,12 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.slideInService.open(CertificateAuthorityAddComponent)
-              .slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-                this.getCards();
-              });
+            const slideInRef = this.slideInService.open(CertificateAuthorityAddComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: CertificateAuthority) => {
-            const slideIn = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true });
-            slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-              this.getCards();
-            });
-            slideIn.componentInstance.setCertificateAuthority(row);
+            const slideInRef = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true, data: row });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           delete: (row: CertificateAuthority, table: TableComponent) => {
             if (row.signed_certificates > 0) {
@@ -245,17 +238,12 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.slideInService.open(AcmednsFormComponent)
-              .slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-                this.getCards();
-              });
+            const slideInRef = this.slideInService.open(AcmednsFormComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: DnsAuthenticator) => {
-            const slideIn = this.slideInService.open(AcmednsFormComponent);
-            slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-              this.getCards();
-            });
-            slideIn.componentInstance.setAcmednsForEdit(row);
+            const slideInRef = this.slideInService.open(AcmednsFormComponent, { data: row });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },
       },
@@ -379,11 +367,8 @@ export class CertificatesDashComponent implements OnInit {
       name: 'create_ACME',
       matTooltip: this.translate.instant('Create ACME Certificate'),
       onClick: (csr: Certificate) => {
-        const slideIn = this.slideInService.open(CertificateAcmeAddComponent);
-        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.getCards();
-        });
-        slideIn.componentInstance.setCsr(csr);
+        const slideInRef = this.slideInService.open(CertificateAcmeAddComponent, { data: csr });
+        slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
       },
     };
 

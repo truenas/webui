@@ -9,6 +9,7 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   CertificateIdentifierAndTypeComponent,
@@ -27,7 +28,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -56,7 +56,7 @@ export class CertificateAddComponent {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<CertificateAddComponent>,
     private snackbar: SnackbarService,
   ) {}
 
@@ -88,7 +88,7 @@ export class CertificateAddComponent {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
-          this.slideInService.closeLast();
+          this.slideInRef.close(true);
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

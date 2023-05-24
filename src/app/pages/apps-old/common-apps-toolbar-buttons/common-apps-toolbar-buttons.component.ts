@@ -107,8 +107,10 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
           schema: catalogApp.versions[catalogApp.latest_version].schema,
         } as CatalogApp;
 
-        const slideIn = this.slideInService.open(ChartFormComponent, { wide: true });
-        slideIn.componentInstance.setChartCreate(catalogAppInfo);
+        this.slideInService.open(
+          ChartFormComponent,
+          { wide: true, data: { catalogApp: catalogAppInfo } },
+        );
       });
   }
 

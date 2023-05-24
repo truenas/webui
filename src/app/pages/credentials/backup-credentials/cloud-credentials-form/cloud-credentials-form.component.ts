@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
+  Component, Inject,
   OnInit,
   Type,
   ViewChild,
@@ -18,6 +18,8 @@ import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/c
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -70,7 +72,6 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
@@ -100,11 +101,12 @@ export class CloudCredentialsFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<CloudCredentialsFormComponent>,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
+    @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
@@ -128,11 +130,15 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProviders();
+
+    if (this.credential) {
+      this.setCredentialsForEdit();
+    }
   }
 
-  setCredentialsForEdit(credential: CloudsyncCredential): void {
-    this.existingCredential = credential;
-    this.commonForm.patchValue(credential);
+  setCredentialsForEdit(): void {
+    this.existingCredential = this.credential;
+    this.commonForm.patchValue(this.existingCredential);
 
     if (this.providerForm) {
       this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
@@ -162,7 +168,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInService.closeLast();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -244,7 +250,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.slideInService.closeLast();
+          this.slideInRef.close();
         },
       });
   }

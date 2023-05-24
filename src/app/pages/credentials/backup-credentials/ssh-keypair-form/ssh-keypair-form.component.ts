@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,8 +9,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import helptext from 'app/helptext/system/ssh-keypairs';
-import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import {
+  KeychainCredentialUpdate,
+  KeychainSshKeyPair,
+} from 'app/interfaces/keychain-credential.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -16,7 +23,6 @@ import {
   AppLoaderService, DialogService, StorageService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,8 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./ssh-keypair-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SshKeypairFormComponent {
-  private editingKeypair: KeychainSshKeyPair;
+export class SshKeypairFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingKeypair;
   }
@@ -53,7 +58,7 @@ export class SshKeypairFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<SshKeypairFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -62,10 +67,16 @@ export class SshKeypairFormComponent {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private storage: StorageService,
-  ) {}
+    @Inject(SLIDE_IN_DATA) private editingKeypair: KeychainSshKeyPair,
+  ) { }
 
-  setKeypairForEditing(keypair: KeychainSshKeyPair): void {
-    this.editingKeypair = keypair;
+  ngOnInit(): void {
+    if (this.editingKeypair) {
+      this.setKeypairForEditing();
+    }
+  }
+
+  setKeypairForEditing(): void {
     this.form.patchValue({
       name: this.editingKeypair.name,
       private_key: this.editingKeypair.attributes.private_key,
@@ -132,7 +143,7 @@ export class SshKeypairFormComponent {
 
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.closeLast();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isFormLoading = false;

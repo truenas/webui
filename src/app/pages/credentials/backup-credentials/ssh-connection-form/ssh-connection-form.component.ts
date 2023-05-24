@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Optional,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, Optional,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -18,12 +18,13 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, KeychainCredentialService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
 
@@ -33,7 +34,7 @@ const generateNewKeyValue = 'GENERATE_NEW_KEY';
   styleUrls: ['./ssh-connection-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SshConnectionFormComponent {
+export class SshConnectionFormComponent implements OnInit {
   form = this.formBuilder.group({
     connection_name: ['', Validators.required],
     setup_method: [SshConnectionsSetupMethod.SemiAutomatic],
@@ -129,8 +130,6 @@ export class SshConnectionFormComponent {
 
   readonly helptext = helptext;
 
-  private existingConnection: KeychainSshCredentials;
-
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -140,12 +139,19 @@ export class SshConnectionFormComponent {
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<SshConnectionFormComponent>,
     public formatter: IxFormatterService,
     private snackbar: SnackbarService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
-  ) {}
+    @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
+  ) { }
+
+  ngOnInit(): void {
+    if (this.existingConnection) {
+      this.setConnectionForEdit();
+    }
+  }
 
   get isManualAuthFormValid(): boolean {
     return this.form.controls.host.valid
@@ -153,11 +159,10 @@ export class SshConnectionFormComponent {
       && this.form.controls.username.valid;
   }
 
-  setConnectionForEdit(connection: KeychainSshCredentials): void {
-    this.existingConnection = connection;
+  setConnectionForEdit(): void {
     this.form.patchValue({
-      ...connection.attributes,
-      connection_name: connection.name,
+      ...this.existingConnection.attributes,
+      connection_name: this.existingConnection.name,
       setup_method: SshConnectionsSetupMethod.Manual,
     });
     this.cdr.markForCheck();
@@ -206,7 +211,7 @@ export class SshConnectionFormComponent {
             this.dialogRef.close();
           }
         } else {
-          this.slideInService.closeLast();
+          this.slideInRef.close(true);
         }
       },
       error: (error) => {

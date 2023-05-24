@@ -70,10 +70,7 @@ export class UserDetailsRowComponent {
   }
 
   doEdit(user: User): void {
-    const slideIn = this.slideInService.open(UserFormComponent, { wide: true });
-    if (slideIn) {
-      slideIn.componentInstance.setupForm(user);
-    }
+    this.slideInService.open(UserFormComponent, { wide: true, data: user });
   }
 
   doDelete(user: User): void {

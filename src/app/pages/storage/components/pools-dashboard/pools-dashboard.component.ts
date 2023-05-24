@@ -10,6 +10,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -61,7 +62,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     private ws: WebSocketService,
     protected router: Router,
     private layoutService: LayoutService,
-    private slideInService2: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private sorter: StorageService,
     private store: PoolsDashboardStore,
@@ -105,8 +106,8 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   }
 
   onImportPool(): void {
-    const slideinRef = this.slideInService2.open(ImportPoolComponent);
-    slideinRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.store.loadDashboard());
+    const slideinRef = this.slideInService.open(ImportPoolComponent);
+    slideinRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.store.loadDashboard());
   }
 
   createPool(): void {

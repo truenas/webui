@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { bindCallback, merge } from 'rxjs';
+import { bindCallback, merge, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
@@ -14,6 +14,11 @@ import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/
 export class IxSlideInService {
   slideInComponent: IxSlideInComponent;
   slideInRefMap = new Map<string, IxSlideInRef<unknown>>();
+  /**
+   * Emits when any slide in has been closed.
+   * Prefer to use slideInClosed$ in slideInRef to tell when an individual slide in is closed.
+   */
+  readonly onClose$ = new Subject();
 
   constructor(
     private location: Location,
@@ -37,15 +42,16 @@ export class IxSlideInService {
     this.slideInRefMap.set(slideInRef.id, slideInRef);
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.deleteRef(slideInRef.id);
+      this.onClose$.next('');
     });
     return slideInRef;
   }
 
-  closeLast(response?: unknown): void {
+  closeLast(): void {
     if (!this.isSlideInOpen) { return; }
 
     const lastSlideInRef = Array.from(this.slideInRefMap.values()).pop();
-    lastSlideInRef.close(response);
+    lastSlideInRef.close();
   }
 
   closeAll(): void {

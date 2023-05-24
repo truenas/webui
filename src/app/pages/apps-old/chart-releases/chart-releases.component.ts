@@ -21,6 +21,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationTab } from 'app/pages/apps-old/application-tab.enum';
@@ -340,19 +341,23 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
       { extra: { include_chart_schema: true } },
     ]).pipe(untilDestroyed(this)).subscribe((releases: ChartRelease[]) => {
       this.appLoaderService.close();
-      const slideIn = this.slideInService.open(ChartFormComponent, { wide: true });
-      slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+
+      let slideInRef: IxSlideInRef<ChartFormComponent>;
+      if (catalogApp.chart_metadata.name === ixChartApp) {
+        slideInRef = this.slideInService.open(
+          ChartFormComponent,
+          { wide: true, data: { title: helptext.launch, releases } },
+        );
+      } else {
+        slideInRef = this.slideInService.open(
+          ChartFormComponent,
+          { wide: true, data: { title: catalogApp.chart_metadata.name, releases } },
+        );
+      }
+
+      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.refreshChartReleases();
       });
-
-      if (catalogApp.chart_metadata.name === ixChartApp) {
-        slideIn.componentInstance.setTitle(helptext.launch);
-      } else {
-        slideIn.componentInstance.setTitle(catalogApp.chart_metadata.name);
-      }
-      if (releases.length) {
-        slideIn.componentInstance.setChartEdit(releases[0]);
-      }
     });
   }
 

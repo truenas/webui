@@ -92,7 +92,7 @@ describe('GroupDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {

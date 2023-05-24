@@ -28,7 +28,7 @@ export class AppsToolbarButtonsComponent {
   readonly officialCatalog = officialCatalog;
 
   constructor(
-    private slideInService2: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -42,7 +42,7 @@ export class AppsToolbarButtonsComponent {
   }
 
   onAdvancedSettings(): void {
-    this.slideInService2.open(KubernetesSettingsComponent);
+    this.slideInService.open(KubernetesSettingsComponent);
   }
 
   onUnsetPool(): void {

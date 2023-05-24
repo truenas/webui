@@ -71,7 +71,7 @@ describe('IpmiFormComponent', () => {
           vlan: null,
         }] as Ipmi[]),
         mockCall('failover.node', 'A'),
-        mockCall('ipmi.query', [{
+        mockCall('ipmi.lan.query', [{
           channel: 1,
           dhcp: false,
           gateway: '10.220.0.1',
@@ -160,7 +160,7 @@ describe('IpmiFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('failover.call_remote', ['ipmi.update', [1, {
+      expect(ws.call).toHaveBeenCalledWith('failover.call_remote', ['ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',

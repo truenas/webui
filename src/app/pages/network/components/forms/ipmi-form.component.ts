@@ -132,7 +132,7 @@ export class IpmiFormComponent implements OnInit {
     this.cdr.markForCheck();
 
     forkJoin([
-      this.ws.call('ipmi.query', this.queryFilter),
+      this.ws.call('ipmi.lan.query', this.queryFilter),
       this.loadFlashingStatus(),
     ])
       .pipe(
@@ -189,11 +189,11 @@ export class IpmiFormComponent implements OnInit {
           if (isUsingRemote) {
             return this.remoteControllerData
               ? of([this.remoteControllerData])
-              : this.ws.call('failover.call_remote', ['ipmi.query', this.queryFilter]) as Observable<Ipmi[]>;
+              : this.ws.call('failover.call_remote', ['ipmi.lan.query', this.queryFilter]) as Observable<Ipmi[]>;
           }
           return this.defaultControllerData
             ? of([this.defaultControllerData])
-            : this.ws.call('ipmi.query', this.queryFilter);
+            : this.ws.call('ipmi.lan.query', this.queryFilter);
         }),
         untilDestroyed(this),
       )
@@ -222,9 +222,9 @@ export class IpmiFormComponent implements OnInit {
     let call$: Observable<Ipmi>;
 
     if (this.form.controls.remoteController.value) {
-      call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.ipmiId, ipmiUpdate]]) as Observable<Ipmi>;
+      call$ = this.ws.call('failover.call_remote', ['ipmi.lan.update', [this.ipmiId, ipmiUpdate]]) as Observable<Ipmi>;
     } else {
-      call$ = this.ws.call('ipmi.update', [this.ipmiId, ipmiUpdate]);
+      call$ = this.ws.call('ipmi.lan.update', [this.ipmiId, ipmiUpdate]);
     }
     call$.pipe(untilDestroyed(this))
       .subscribe({

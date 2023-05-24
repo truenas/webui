@@ -128,7 +128,7 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    this.slideInService.open(GroupFormComponent).componentInstance.setupForm();
+    this.slideInService.open(GroupFormComponent);
   }
 
   onToggle(row: Group): void {

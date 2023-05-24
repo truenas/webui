@@ -156,13 +156,10 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
       message: helptext.thirdPartyRepoWarning.message,
       buttonText: helptext.thirdPartyRepoWarning.btnMsg,
       hideCheckbox: true,
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
       () => {
-        const slideIn = this.slideInService.open(CatalogAddFormComponent);
-        slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+        const slideInRef = this.slideInService.open(CatalogAddFormComponent);
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
           this.refresh();
         });
       },
@@ -170,9 +167,9 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
   }
 
   edit(catalog: Catalog): void {
-    const slideIn = this.slideInService.open(CatalogEditFormComponent);
-    slideIn.componentInstance.setCatalogForEdit(catalog);
-    slideIn.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(CatalogEditFormComponent);
+    slideInRef.componentInstance.setCatalogForEdit(catalog);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refresh();
     });
   }
