@@ -61,7 +61,7 @@ If not checked, <i>zfs allow</i> must be used to grant non-user permissions to p
   encryption_placeholder: T('Encryption'),
   encryption_tooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
 
-  encryption_inherit_placeholder: T('Encryption inherit'),
+  encryption_inherit_placeholder: T('Inherit Encryption'),
   encryption_inherit_tooltip: T('Target dataset encryption will be inherited from its parent dataset.'),
 
   encryption_key_generate_placeholder: T('Generate Encryption Key'),
