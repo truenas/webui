@@ -13,7 +13,6 @@ export class AppSectionExpandCollapseComponent implements OnChanges, AfterConten
   @ViewChild('section', { static: true, read: ElementRef }) section: ElementRef<HTMLElement>;
   @Input() maxHeight = 250;
   height$ = new BehaviorSubject<number>(this.maxHeight);
-
   isCollapsed = true;
 
   get showButton(): boolean {
@@ -38,5 +37,9 @@ export class AppSectionExpandCollapseComponent implements OnChanges, AfterConten
 
   setHeight(): void {
     this.height$.next(this.section.nativeElement.offsetHeight || this.maxHeight);
+  }
+
+  onResize(): void {
+    this.setHeight();
   }
 }

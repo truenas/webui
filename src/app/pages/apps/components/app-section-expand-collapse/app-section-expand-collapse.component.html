@@ -1,4 +1,4 @@
-<div #section class="content-wrapper">
+<div #section class="content-wrapper" (window:resize)="onResize()">
   <ng-content></ng-content>
 </div>
 <div *ngIf="isCollapsed && showButton" class="gradient"></div>
