@@ -11,6 +11,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclMode } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -91,103 +93,163 @@ describe('DatasetFormComponent', () => {
         }),
       }),
       mockProvider(Router),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  describe('first checks', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('toggles between Advanced mode when corresponding button is pressed', async () => {
+      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
+      expect(spectator.query(QuotasSectionComponent)).not.toExist();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(true);
+      expect(spectator.query(QuotasSectionComponent)).toExist();
+
+      const basicButton = await loader.getHarness(MatButtonHarness.with({ text: 'Basic Options' }));
+      await basicButton.click();
+
+      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
+      expect(spectator.query(QuotasSectionComponent)).not.toExist();
+    });
   });
 
-  it('toggles between Advanced mode when corresponding button is pressed', async () => {
-    expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
-    expect(spectator.query(QuotasSectionComponent)).not.toExist();
+  describe('second checks', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              datasetId: 'parent/child',
+              isNew: true,
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
 
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-    await advancedButton.click();
-
-    expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(true);
-    expect(spectator.query(QuotasSectionComponent)).toExist();
-
-    const basicButton = await loader.getHarness(MatButtonHarness.with({ text: 'Basic Options' }));
-    await basicButton.click();
-
-    expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
-    expect(spectator.query(QuotasSectionComponent)).not.toExist();
+    it('ensures path limits when form is opened for adding a new form', () => {
+      expect(spectator.inject(DatasetFormService).ensurePathLimits).toHaveBeenCalledWith('parent/child');
+    });
   });
 
-  it('ensures path limits when form is opened for adding a new form', () => {
-    spectator.component.setForNew('parent/child');
+  describe('third checks', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              datasetId: 'parent',
+              isNew: true,
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
 
-    expect(spectator.inject(DatasetFormService).ensurePathLimits).toHaveBeenCalledWith('parent/child');
+    it('creates a new dataset when new form is submitted', async () => {
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+        name: 'dataset',
+        encryption: true,
+        aclmode: AclMode.Passthrough,
+      }]);
+    });
+
+    it('creates a new dataset in advanced mode when new form is submitted', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+        name: 'dataset',
+        encryption: true,
+        refquota: GiB,
+        aclmode: AclMode.Passthrough,
+      }]);
+    });
+
+    it('checks if parent has ACL and offers to go to ACL editor if it does', async () => {
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', ['/mnt/parent']);
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: helptext.afterSubmitDialog.title,
+          message: helptext.afterSubmitDialog.message,
+        }),
+      );
+    });
   });
 
-  it('creates a new dataset when new form is submitted', async () => {
-    spectator.component.setForNew('parent');
+  describe('fourth checks', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              datasetId: 'parent/child',
+              isNew: false,
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
 
-    const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await submit.click();
+    it('updates an existing child dataset when edit form is submitted', async () => {
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
-      name: 'dataset',
-      encryption: true,
-      aclmode: AclMode.Passthrough,
-    }]);
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
+        name: 'dataset',
+        aclmode: AclMode.Passthrough,
+      }]);
+    });
   });
 
-  it('creates a new dataset in advanced mode when new form is submitted', async () => {
-    spectator.component.setForNew('parent');
+  describe('fifth checks', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              datasetId: 'parent',
+              isNew: false,
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
 
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-    await advancedButton.click();
+    it('updates an existing root dataset when edit form is submitted', async () => {
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
 
-    const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await submit.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
-      name: 'dataset',
-      encryption: true,
-      refquota: GiB,
-      aclmode: AclMode.Passthrough,
-    }]);
-  });
-
-  it('updates an existing child dataset when edit form is submitted', async () => {
-    spectator.component.setForEdit('parent/child');
-
-    const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await submit.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
-      name: 'dataset',
-      aclmode: AclMode.Passthrough,
-    }]);
-  });
-
-  it('updates an existing root dataset when edit form is submitted', async () => {
-    spectator.component.setForEdit('parent');
-
-    const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await submit.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
-      name: 'dataset',
-      aclmode: AclMode.Passthrough,
-    }]);
-  });
-
-  it('checks if parent has ACL and offers to go to ACL editor if it does', async () => {
-    spectator.component.setForNew('parent');
-
-    const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await submit.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', ['/mnt/parent']);
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: helptext.afterSubmitDialog.title,
-        message: helptext.afterSubmitDialog.message,
-      }),
-    );
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
+        name: 'dataset',
+        aclmode: AclMode.Passthrough,
+      }]);
+    });
   });
 });

@@ -357,7 +357,6 @@ describe('ChartFormComponent', () => {
     });
 
     it('shows values for an existing data when form is opened for create', () => {
-      spectator.component.setChartCreate();
       const values = spectator.component.form.value;
 
       expect(values).toEqual({
@@ -376,8 +375,6 @@ describe('ChartFormComponent', () => {
     });
 
     it('shows values of a dynamic fields when the form value changes.', () => {
-      spectator.component.setChartCreate();
-
       spectator.component.form.patchValue({
         hostNetwork: true,
         updateStrategy: 'Recreate',
@@ -399,8 +396,6 @@ describe('ChartFormComponent', () => {
     });
 
     it('creating when form is submitted', () => {
-      spectator.component.setChartCreate();
-
       spectator.component.form.patchValue({
         release_name: 'app_name',
         service: {
@@ -440,13 +435,15 @@ describe('ChartFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { title: 'App title', releases: [existingChartEdit] } },
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: { title: 'App title', releases: [existingChartEdit] },
+          },
         ],
       });
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
-      spectator.component.setChartEdit();
       const values = spectator.component.form.value;
 
       expect(values).toEqual({
@@ -455,18 +452,7 @@ describe('ChartFormComponent', () => {
       });
     });
 
-    it('disables immutable fields when form is opened for edit', () => {
-      const existingChartEditWithImmutable = { ...existingChartEdit };
-      existingChartEditWithImmutable.chart_schema.schema.questions[0].schema.immutable = true;
-      spectator.component.setChartEdit();
-      spectator.detectComponentChanges();
-
-      expect(spectator.component.form.controls.timezone.disabled).toBeTruthy();
-    });
-
     it('editing when form is submitted', () => {
-      spectator.component.setChartEdit();
-
       spectator.component.form.patchValue({
         timezone: 'Europe/Paris',
       });

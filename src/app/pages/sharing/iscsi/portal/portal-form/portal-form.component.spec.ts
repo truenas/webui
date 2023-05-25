@@ -7,6 +7,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
@@ -44,16 +46,18 @@ describe('PortalFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       provideMockStore(),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-  });
-
   describe('adding a new portal group', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+    });
+
     it('sends an create payload to websocket and closes modal when save is pressed', async () => {
       const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
       await addButton.click();
@@ -82,14 +86,23 @@ describe('PortalFormComponent', () => {
 
   describe('editing a portal group', () => {
     beforeEach(() => {
-      spectator.component.setupForm({
-        comment: 'test',
-        discovery_authgroup: 1,
-        discovery_authmethod: IscsiAuthMethod.None,
-        listen: [{ ip: '0.0.0.0' }],
-        id: 1,
-        tag: 1,
-      } as IscsiPortal);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              comment: 'test',
+              discovery_authgroup: 1,
+              discovery_authmethod: IscsiAuthMethod.None,
+              listen: [{ ip: '0.0.0.0' }],
+              id: 1,
+              tag: 1,
+            } as IscsiPortal,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('shows iscsi portal group values when form is being edited', async () => {

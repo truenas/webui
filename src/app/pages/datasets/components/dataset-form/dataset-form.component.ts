@@ -63,10 +63,10 @@ export class DatasetFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.slideInData.datasetId && !this.slideInData.isNew) {
+    if (this.slideInData?.datasetId && !this.slideInData?.isNew) {
       this.setForEdit();
     }
-    if (this.slideInData.datasetId && this.slideInData.isNew) {
+    if (this.slideInData?.datasetId && this.slideInData?.isNew) {
       this.setForNew();
     }
   }

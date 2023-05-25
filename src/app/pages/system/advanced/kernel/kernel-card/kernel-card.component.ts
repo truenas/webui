@@ -27,8 +27,8 @@ export class KernelCardComponent {
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
-  async onConfigurePressed(): Promise<void> {
+  async onConfigurePressed(debugKernel: boolean): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideInService.open(KernelFormComponent);
+    this.slideInService.open(KernelFormComponent, { data: debugKernel });
   }
 }

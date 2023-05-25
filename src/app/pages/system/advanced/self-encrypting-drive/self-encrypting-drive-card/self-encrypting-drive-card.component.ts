@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import {
   map, startWith, switchMap,
 } from 'rxjs/operators';
-import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { WebSocketService } from 'app/services';
@@ -25,7 +24,12 @@ export class SelfEncryptingDriveCardComponent {
     toLoadingState(),
   );
 
-  sedPassword$: Observable<LoadingState<string>>;
+  sedPassword$ = this.slideInService.onClose$.pipe(
+    startWith(undefined),
+    switchMap(() => this.ws.call('system.advanced.sed_global_password')),
+    map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
+    toLoadingState(),
+  );
 
   constructor(
     private store$: Store<AppState>,
@@ -36,12 +40,6 @@ export class SelfEncryptingDriveCardComponent {
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideInRef = this.slideInService.open(SelfEncryptingDriveFormComponent);
-    this.sedPassword$ = slideInRef.slideInClosed$.pipe(
-      startWith(undefined),
-      switchMap(() => this.ws.call('system.advanced.sed_global_password')),
-      map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
-      toLoadingState(),
-    );
+    this.slideInService.open(SelfEncryptingDriveFormComponent);
   }
 }

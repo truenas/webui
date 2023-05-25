@@ -50,6 +50,8 @@ describe('KernelCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(KernelFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(KernelFormComponent, {
+      data: true,
+    });
   });
 });

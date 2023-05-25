@@ -68,10 +68,15 @@ export class ChartFormComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.setChartCreate();
-    this.setTitle();
+    if (this.slideInData.catalogApp) {
+      this.setChartCreate();
+    }
 
-    if (this.slideInData.releases.length) {
+    if (this.slideInData.title) {
+      this.setTitle();
+    }
+
+    if (this.slideInData?.releases?.length) {
       this.setChartEdit();
     }
   }

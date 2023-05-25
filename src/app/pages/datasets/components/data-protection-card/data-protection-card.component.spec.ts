@@ -59,6 +59,6 @@ describe('DataProtectionComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Snapshot' }));
     await editButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(SnapshotAddFormComponent);
+    expect(slideInRef.open).toHaveBeenCalledWith(SnapshotAddFormComponent, { data: '/mnt/pool/ds' });
   });
 });

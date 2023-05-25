@@ -192,6 +192,6 @@ describe('DatasetCapacityManagementCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { wide: true });
+    expect(slideInRef.open).toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetZvol, wide: true });
   });
 });

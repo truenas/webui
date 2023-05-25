@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
@@ -28,10 +30,6 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
   let loader: HarnessLoader;
-  const fakeSlideInRef = {
-    zvolFormInit: jest.fn(),
-    setForNew: jest.fn(),
-  };
   const dataset = {
     id: 'root/parent/child',
     pool: 'my-pool',
@@ -61,7 +59,7 @@ describe('DatasetDetailsPanelComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService, {
-        open: jest.fn(() => fakeSlideInRef),
+        open: jest.fn(),
         onClose$: of(),
       }),
       mockProvider(DatasetTreeStore, {
@@ -79,6 +77,8 @@ describe('DatasetDetailsPanelComponent', () => {
         ],
       }),
       mockProvider(SnackbarService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -100,15 +100,19 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a dataset form when Add Dataset is pressed', async () => {
     const addDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Dataset' }));
     await addDatasetButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetFormComponent, { wide: true });
-    expect(fakeSlideInRef.setForNew).toHaveBeenCalledWith('root/parent/child');
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      DatasetFormComponent,
+      { data: { datasetId: 'root/parent/child', isNew: true }, wide: true },
+    );
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {
     const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
     await addZvolButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ZvolFormComponent);
-    expect(fakeSlideInRef.zvolFormInit).toHaveBeenCalledWith(true, 'root/parent/child');
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      ZvolFormComponent,
+      { data: { parentId: 'root/parent/child', isNew: true } },
+    );
   });
 
   it('shows all the cards', () => {

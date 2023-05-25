@@ -1,11 +1,10 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, Inject,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { WINDOW } from 'app/helpers/window.helper';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppState } from 'app/store';
@@ -31,7 +30,6 @@ export class TokenSettingsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
