@@ -1,9 +1,9 @@
 <div class="step-description">
-  {{ helptext.data_vdev_description }}
+  {{ helptext.spare_vdev_description | translate }}
 </div>
 
 <ix-layout-step
-  [type]="VdevType.Data"
+  [type]="VdevType.Spare"
   [inventory]="inventory$ | async"
   [canChangeLayout]="true"
 ></ix-layout-step>
@@ -24,8 +24,18 @@
     color="primary"
     type="button"
     ixTest="next"
-    [disabled]="!(hasDataVdevs$ | async)"
   >
     {{ 'Next' | translate }}
   </button>
+
+  <!-- TODO: Implement -->
+  <button
+    mat-button
+    color="accent"
+    type="button"
+    ixTest="save-ang-go-to-review"
+  >
+    {{ 'Save And Go To Review' | translate }}
+  </button>
 </ix-form-actions>
+

@@ -12,7 +12,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import {
+  Observable, of, take,
+} from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
@@ -130,9 +132,19 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     if (!vdevLayoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
       this.form.controls.layout.setValue(null, { emitEvent: false });
     }
-
-    this.vdevLayoutOptions$ = of(vdevLayoutOptions);
-    this.updateWidthOptions();
+    this.poolManagerStore.getLayoutsForVdevType(this.type)
+      .pipe(
+        take(1),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (allowedVdevTypes) => {
+          this.vdevLayoutOptions$ = of(vdevLayoutOptions.filter(
+            (layout) => !!allowedVdevTypes.includes(layout.value as CreateVdevLayout),
+          ));
+          this.updateWidthOptions();
+        },
+      });
   }
 
   private updateDiskSizeOptions(): void {

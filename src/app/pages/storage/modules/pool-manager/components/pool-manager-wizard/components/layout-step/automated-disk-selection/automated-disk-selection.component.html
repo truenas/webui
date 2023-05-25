@@ -8,7 +8,7 @@
       [required]="true"
     ></ix-select>
   </div>
-  <div class="content-container">
+  <div *ngIf="!!form.value.layout" class="content-container">
     <div class="automated-disk-selection-container">
       <h3>{{ 'Automated Disk Selection' | translate }}</h3>
       <ix-select
@@ -18,26 +18,28 @@
         [options]="diskSizeAndTypeOptions$"
         [required]="true"
       ></ix-select>
-      <ix-select
-        formControlName="width"
-        [label]="'Width' | translate"
-        [tooltip]="'Select VDEV width' | translate"
-        [options]="widthOptions$"
-        [required]="true"
-      ></ix-select>
+      <div *ngIf="!!form.value.sizeAndType?.length">
+        <ix-select
+          formControlName="width"
+          [label]="'Width' | translate"
+          [tooltip]="'Select VDEV width' | translate"
+          [options]="widthOptions$"
+          [required]="true"
+        ></ix-select>
 
-      <ix-checkbox
-        formControlName="treatDiskSizeAsMinimum"
-        [label]="'Treat Disk Size as Minimum' | translate"
-      ></ix-checkbox>
+        <ix-checkbox
+          formControlName="treatDiskSizeAsMinimum"
+          [label]="'Treat Disk Size as Minimum' | translate"
+        ></ix-checkbox>
 
-      <ix-select
-        formControlName="vdevsNumber"
-        [label]="'Number of VDEVs' | translate"
-        [tooltip]="'Number of VDEVs to create' | translate"
-        [options]="numberOptions$"
-        [required]="true"
-      ></ix-select>
+        <ix-select
+          formControlName="vdevsNumber"
+          [label]="'Number of VDEVs' | translate"
+          [tooltip]="'Number of VDEVs to create' | translate"
+          [options]="numberOptions$"
+          [required]="true"
+        ></ix-select>
+      </div>
     </div>
     <div class="advanced-options-container">
       <h3>{{ 'Advanced Options' | translate }}</h3>

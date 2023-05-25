@@ -20,26 +20,7 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Spare' | translate }}</ng-template>
-        <div class="step-buttons">
-          <button
-            mat-button
-            matStepperPrevious
-            color="accent"
-            type="button"
-            ixTest="back"
-          >
-            {{ 'Back' | translate }}
-          </button>
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-          >
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+        <ix-spare-wizard-step></ix-spare-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Cache' | translate }}</ng-template>
