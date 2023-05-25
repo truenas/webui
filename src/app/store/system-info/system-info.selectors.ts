@@ -21,6 +21,11 @@ export const selectIsSystemHaCapable = createSelector(
   (state) => state.isSystemHaCapable,
 );
 
+export const selectIsIxHardware = createSelector(
+  selectSystemInfoState,
+  (state) => state.isIxHardware,
+);
+
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
 
 export const waitForSystemFeatures = selectNotNull(selectSystemFeatures);
