@@ -52,9 +52,9 @@ describe('StartServiceDialogComponent', () => {
     } as StartServiceDialogResult);
   });
 
-  it('returns false result when Cancel is pressed', async () => {
-    const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
-    await cancelButton.click();
+  it('returns false result when No is pressed', async () => {
+    const noButton = await loader.getHarness(MatButtonHarness.with({ text: 'No' }));
+    await noButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       start: false,
