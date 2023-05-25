@@ -6,7 +6,9 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  filter, map, take,
+} from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -32,7 +34,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
+import { dashboardStateLoaded, dashboardStateUpdated } from 'app/store/preferences/preferences.actions';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -64,10 +66,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   reorderMode = false;
+  isSavingState = false;
   screenType = ScreenType.Desktop;
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
   dashStateReady = false;
+  preferencesApplied = false;
   dashState: DashConfigItem[]; // Saved State
   previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
@@ -477,7 +481,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onConfirm(): void {
     this.saveState(this.dashState);
     delete this.previousState;
-    this.exitReorderMode();
   }
 
   private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
@@ -517,7 +520,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setDashState(dashState: DashConfigItem[]): void {
     this.dashState = this.sanitizeState(dashState);
-    this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    if (!this.reorderMode) {
+      this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    }
   }
 
   private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
@@ -535,12 +540,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private exitReorderMode(): void {
+    this.reorderMode = false;
+    this.isSavingState = false;
+
     if (this.previousState) {
       this.setDashState(this.previousState);
       delete this.previousState;
     }
-
-    this.reorderMode = false;
   }
 
   private enableReorderMode(): void {
@@ -554,9 +560,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
+    this.isSavingState = true;
+
     this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.exitReorderMode();
+          this.store$.dispatch(dashboardStateUpdated({ dashboardState: state }));
+        },
+        error: () => this.exitReorderMode(),
+      });
   }
 
   private loadPoolData(): void {
@@ -593,7 +607,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe((preferences: PreferencesState) => {
       if (preferences.dashboardState) {
-        this.applyState(preferences.dashboardState);
+        if (!this.preferencesApplied) {
+          this.applyState(preferences.dashboardState);
+          this.preferencesApplied = true;
+        }
       } else {
         this.availableWidgets = this.generateDefaultConfig();
         this.setDashState(this.availableWidgets);

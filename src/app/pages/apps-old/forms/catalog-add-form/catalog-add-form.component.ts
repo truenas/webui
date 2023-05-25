@@ -4,9 +4,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogCreate } from 'app/interfaces/catalog.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -35,7 +35,7 @@ export class CatalogAddFormComponent {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<CatalogAddFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -56,7 +56,7 @@ export class CatalogAddFormComponent {
           this.snackbar.success(
             this.translate.instant('Adding large catalogs can take minutes. Please check on the progress in Task Manager.'),
           );
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isFormLoading = false;

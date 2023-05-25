@@ -1,4 +1,4 @@
-export const officialCatalog = 'OFFICIAL';
+export const officialCatalog = 'TRUENAS';
 export const ixChartApp = 'ix-chart';
 export const chartsTrain = 'charts';
 export const latestVersion = 'latest';
