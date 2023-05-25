@@ -1,8 +1,8 @@
 <div #section class="content-wrapper">
   <ng-content></ng-content>
 </div>
-<div *ngIf="isCollapsed && showMoreLess" class="gradient"></div>
-<div *ngIf="showMoreLess" class="more-less">
+<div *ngIf="isCollapsed && showButton" class="gradient"></div>
+<div *ngIf="showButton" class="more-less">
   <button
     type="button"
     mat-stroked-button

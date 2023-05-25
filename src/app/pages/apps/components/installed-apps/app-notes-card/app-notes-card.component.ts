@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 
 @Component({
