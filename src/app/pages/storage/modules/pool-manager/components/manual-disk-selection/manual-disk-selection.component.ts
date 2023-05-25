@@ -3,7 +3,8 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
+import { GiB, MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -15,6 +16,7 @@ import {
   manualSelectionVdevsToVdevs,
   vdevsToManualSelectionVdevs,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/utils/vdevs-to-manual-selection-vdevs.utils';
+import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
 export interface ManualDiskSelectionParams {
   layout: CreateVdevLayout;
@@ -31,8 +33,35 @@ export interface ManualDiskSelectionParams {
 })
 export class ManualDiskSelectionComponent implements OnInit {
   manualSelectionState: ManualDiskSelectionState;
-  isSaveDisabled$ = this.manualDiskSelectionStore.vdevs$.pipe(
-    map((vdevs) => vdevs.some((vdev) => !!vdev.errorMsg)),
+  minDisks = minDisksPerLayout;
+  isSaveDisabled$ = combineLatest([
+    this.manualDiskSelectionStore.vdevs$,
+    this.manualDiskSelectionStore.layout$,
+  ]).pipe(
+    map(([vdevs, layout]) => {
+      let vdevError = false;
+      let diskSizeError = false;
+      const swapondrive = 2;
+      let smallestdisk = 0;
+      const swapsize = swapondrive * GiB;
+      for (const vdev of vdevs) {
+        if (vdev.disks?.length < this.minDisks[layout]) {
+          vdevError = true;
+        }
+        for (let i = 0; i < vdev.disks.length; i++) {
+          const size = vdev.disks[i].size - swapsize;
+          if (i === 0) {
+            smallestdisk = size;
+          }
+          const tenMib = 10 * MiB;
+          if (size > smallestdisk + tenMib || size < smallestdisk - tenMib) {
+            diskSizeError = true;
+          }
+        }
+      }
+
+      return vdevError || diskSizeError;
+    }),
   );
 
   private oldVdevs: UnusedDisk[][] = [];

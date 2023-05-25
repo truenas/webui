@@ -16,10 +16,7 @@ export function vdevsToManualSelectionVdevs(vdevs: UnusedDisk[][]): ManualSelect
         };
       }),
       uuid: vdevId,
-      showDiskSizeError: false,
       rawSize: 0,
-      vdevDisksError: false,
-      errorMsg: '',
     };
   });
 }
