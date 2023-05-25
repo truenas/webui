@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -49,9 +48,9 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   protected vdevLayoutOptions$: Observable<Option[]> = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
-  protected diskSizeAndTypeOptions$: Observable<SelectOption[]> = of([]);
-  protected widthOptions$: Observable<SelectOption[]> = of([]);
-  protected numberOptions$: Observable<SelectOption[]> = of([]);
+  protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
+  protected widthOptions$ = of<SelectOption[]>([]);
+  protected numberOptions$ = of<SelectOption[]>([]);
 
   private minDisks = minDisksPerLayout;
   private sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
@@ -59,7 +58,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     protected poolManagerStore: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   get selectedDiskSize(): number {

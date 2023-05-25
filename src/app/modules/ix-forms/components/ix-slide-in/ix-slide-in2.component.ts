@@ -39,7 +39,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   counterId = 0;
 
   constructor(
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     private slideIn2Service: IxSlideIn2Service,
   ) {
     this.element = this.el.nativeElement;

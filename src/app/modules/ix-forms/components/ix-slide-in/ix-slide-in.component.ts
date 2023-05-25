@@ -36,7 +36,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   wasBodyCleared = false;
 
   constructor(
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     protected slideInService: IxSlideInService,
   ) {
     this.element = this.el.nativeElement;

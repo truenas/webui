@@ -32,7 +32,7 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
+import { CheckUserQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -1009,18 +1009,6 @@ export type ApiDirectory = {
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
 };
 
-/**
- * API definitions for `call` and `job` methods for auth apis.
- */
-export type AuthApiDirectory = {
-  'auth.login': {
-    params: LoginParams;
-    response: boolean;
-  };
-  'auth.login_with_token': { params: [token: string]; response: boolean };
-  'auth.logout': { params: void; response: void };
-  'auth.generate_token': { params: [number]; response: string };
-};
 /**
  * Prefer typing like this:
  * ```

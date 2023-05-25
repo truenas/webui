@@ -298,7 +298,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
 
     const el = styler(carousel);
-    const slideW = styler(slide).get('width'); // 600;
+    const slideW = styler(slide).get('width') as number; // 600;
 
     const startX = (parseInt(this.currentSlide) * slideW) * -1;
     const endX = (value * slideW) * -1;

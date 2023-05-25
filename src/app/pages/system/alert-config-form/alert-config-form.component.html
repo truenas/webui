@@ -20,7 +20,7 @@
     </div>
   </div>
   <form *ngIf="selectedCategory" (submit)="onSubmit()">
-    <ng-container *ngFor="let cls of selectedCategory.classes">
+    <ng-container *ngFor="let cls of selectedCategory.classes; trackBy: trackById">
       <div class="class-row" [formGroup]="form.controls[cls.id]">
         <span class="class-label">{{ cls.title }}</span>
         <ix-select

@@ -21,7 +21,7 @@ export class IsolatedGpuValidatorService {
   validateGpu = (control: AbstractControl): Observable<ValidationErrors | null> => {
     return this.gpuService.getAllGpus().pipe(
       switchMap((allGpus) => {
-        const selectedGpus: string[] = control.value || [];
+        const selectedGpus = (control.value || []) as string[];
 
         if (!selectedGpus.length) {
           return of(null);

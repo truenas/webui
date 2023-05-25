@@ -52,7 +52,7 @@ export class SmartResultsComponent implements EntityTableConfig {
   noAdd = true;
 
   protected pk: string;
-  protected type: string;
+  protected type: SmartTestResultPageType;
 
   constructor(
     private aroute: ActivatedRoute,
@@ -66,8 +66,8 @@ export class SmartResultsComponent implements EntityTableConfig {
       this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
         tap((disks) => {
           this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-            this.pk = params.pk;
-            this.type = params.type;
+            this.pk = params.pk as string;
+            this.type = params.type as SmartTestResultPageType;
 
             if (this.type === SmartTestResultPageType.Disk) {
               this.queryCallOption = [[['disk', '=', this.pk]]];

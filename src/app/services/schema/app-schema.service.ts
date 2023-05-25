@@ -494,7 +494,7 @@ export class AppSchemaService {
                 schema: items,
               },
               isParentImmutable: isParentImmutable || !!schema.immutable,
-              config: item,
+              config: item as HierarchicalObjectMap<ChartFormValue>,
             }),
           );
         }

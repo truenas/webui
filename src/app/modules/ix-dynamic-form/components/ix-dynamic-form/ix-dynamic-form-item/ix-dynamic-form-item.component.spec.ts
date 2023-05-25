@@ -14,6 +14,7 @@ import {
   DynamicFormSchemaExplorer,
   DynamicFormSchemaDict,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -60,7 +61,7 @@ const selectSchema = {
   required: true,
   title: 'Label Select',
   tooltip: 'Tooltip Select',
-  options: of([]),
+  options: of<Option<BaseOptionValueType>[]>([]),
   type: 'select',
 } as DynamicFormSchemaSelect;
 
