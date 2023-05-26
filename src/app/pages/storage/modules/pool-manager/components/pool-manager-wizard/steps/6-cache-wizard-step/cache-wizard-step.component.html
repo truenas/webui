@@ -1,8 +1,8 @@
-<div class="step-description" [innerHTML]="helptext.spare_vdev_description | translate">
+<div class="step-description" [innerHTML]="helptext.cache_vdev_description | translate">
 </div>
 
 <ix-layout-step
-  [type]="VdevType.Spare"
+  [type]="VdevType.Cache"
   [inventory]="inventory$ | async"
   [canChangeLayout]="true"
 ></ix-layout-step>
