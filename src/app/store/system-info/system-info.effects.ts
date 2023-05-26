@@ -9,6 +9,7 @@ import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
+  ixHardwareLoaded,
   systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
 
@@ -60,6 +61,15 @@ export class SystemInfoEffects {
     mergeMap(() => {
       return this.ws.call('system.is_ha_capable').pipe(
         map((isSystemHaCapable: boolean) => systemHaCapabilityLoaded({ isSystemHaCapable })),
+      );
+    }),
+  ));
+
+  loadIsIxHardware = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('system.is_ix_hardware').pipe(
+        map((isIxHardware: boolean) => ixHardwareLoaded({ isIxHardware })),
       );
     }),
   ));

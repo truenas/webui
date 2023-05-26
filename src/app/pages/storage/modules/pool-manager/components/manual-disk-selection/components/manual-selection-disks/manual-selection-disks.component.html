@@ -5,7 +5,7 @@
 <div 
   class="dnd-wrapper"
   dndDropzone
-  [ngClass]="{'drag-active': (store$.dragActive$ | async)}"
+  [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
   (dndDrop)="onDrop($event)">
   <div
     class="tree-container"
@@ -21,7 +21,7 @@
       >
         <div
           class="unused-disk drag-handle"
-          [ngClass]="{ 'grabbed': store$.dragActive$ | async }"
+          [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
           [dndDraggable]="asDisk(disk)"
           [dndEffectAllowed]="'move'"
           (dndStart)="onDragStart()"

@@ -16,6 +16,7 @@ import {
 import {
   ManualSelectionDisk,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
+import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 
 interface EnclosureDisk extends Disk {
@@ -53,7 +54,8 @@ export class ManualSelectionDisksComponent implements OnInit {
   constructor(
     private filesizePipe: FileSizePipe,
     private translate: TranslateService,
-    public store$: ManualDiskSelectionStore,
+    protected store$: ManualDiskSelectionStore,
+    protected dragToggleStore$: ManualDiskDragToggleStore,
   ) {}
 
   readonly isGroup = (i: number, node: DiskOrGroup): node is EnclosureGroup => 'group' in node;
@@ -152,19 +154,19 @@ export class ManualSelectionDisksComponent implements OnInit {
 
   onDrop(event: DndDropEvent): void {
     const disk = event.data as ManualSelectionDisk;
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
     this.store$.removeDiskFromVdev(disk);
   }
 
   onDragStart(): void {
-    this.store$.toggleActivateDrag(true);
+    this.dragToggleStore$.toggleActivateDrag(true);
   }
 
   onDragEnd(): void {
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
   }
 
   onDragCanceled(): void {
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
   }
 }

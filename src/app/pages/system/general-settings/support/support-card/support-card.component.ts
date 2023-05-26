@@ -109,11 +109,7 @@ export class SupportCardComponent implements OnInit {
     }
     const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
-    if (this.licenseInfo?.system_serial_ha) {
-      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.licenseInfo.system_serial;
-    } else {
-      this.systemInfo.serial = this.systemInfo.system_serial;
-    }
+
     if (this.licenseInfo.addhw_detail.length === 0) {
       this.licenseInfo.add_hardware = 'NONE';
     } else {

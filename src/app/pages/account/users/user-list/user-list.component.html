@@ -20,6 +20,7 @@
     ix-table
     matSort
     matSortDisableClear="true"
+    ixTest="users-table"
     [ix-table-empty]="!dataSource.filteredData.length"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
     [matSortActive]="defaultSort.active"
