@@ -29,7 +29,6 @@ import { InterfaceFormComponent } from 'app/pages/network/components/interface-f
 import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
-import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import { OpenVpnServerConfigComponent } from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
@@ -68,7 +67,6 @@ import { routing } from './network.routing';
     IpmiFormComponent,
     NetworkComponent,
     OpenVpnServerConfigComponent,
-    OpenVpnClientConfigComponent,
     NetworkConfigurationCardComponent,
     DownloadClientConfigModalComponent,
     DefaultGatewayDialogComponent,

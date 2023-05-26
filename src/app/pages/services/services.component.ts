@@ -229,7 +229,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   }
 
   configureService(row: Service): void {
-    if (row.service === ServiceName.OpenVpnClient || row.service === ServiceName.OpenVpnServer) {
+    if (row.service === ServiceName.OpenVpnServer) {
       const navigationExtras: NavigationExtras = { state: { configureOpenVPN: row.service.replace('openvpn_', '') } };
       this.router.navigate(['network'], navigationExtras);
     } else {

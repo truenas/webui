@@ -27,7 +27,6 @@ import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/enti
 import { TableService } from 'app/modules/entity/table/table.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
   OpenVpnServerConfigComponent,
 } from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
@@ -156,20 +155,14 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getActions: this.getOpenVpnActions.bind(this),
     isActionVisible: this.isOpenVpnActionVisible,
     edit: (row: Service) => {
-      if (row.service === ServiceName.OpenVpnClient) {
-        this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-      } else if (row.service === ServiceName.OpenVpnServer) {
+      if (row.service === ServiceName.OpenVpnServer) {
         this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
       }
     },
     afterGetData: () => {
       const state = this.navigation?.extras?.state as { configureOpenVPN: string };
-      if (state && state.configureOpenVPN) {
-        if (state.configureOpenVPN === 'client') {
-          this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-        } else {
-          this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
-        }
+      if (state?.configureOpenVPN) {
+        this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
       }
     },
   };
@@ -578,7 +571,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openvpnDataSourceHelper(services: Service[]): (Service & { service_label: string })[] {
     return services
-      .filter((item) => item.service.includes('openvpn_'))
+      .filter((item) => item.service.includes('openvpn_server'))
       .map((item) => ({
         ...item,
         service_label: item.service.charAt(8).toUpperCase() + item.service.slice(9),

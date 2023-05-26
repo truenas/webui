@@ -10,13 +10,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServicesService {
   constructor(protected ws: WebSocketService) {}
 
-  getOpenVpnClientAuthAlgorithmChoices(): Observable<Choices> {
-    return this.ws.call('openvpn.client.authentication_algorithm_choices');
-  }
-
-  getOpenVpnClientCipherChoices(): Observable<Choices> {
-    return this.ws.call('openvpn.client.cipher_choices');
-  }
   getCerts(): Observable<Certificate[]> {
     return this.ws.call('certificate.query');
   }

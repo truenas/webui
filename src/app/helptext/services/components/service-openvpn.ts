@@ -2,26 +2,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 
 export default {
-  // Helptext for client component
-  client: {
-    header: T('OpenVPN Client Settings'),
-    nobind: {
-      placeholder: T('Nobind'),
-      tooltip: T('Enable to prevent binding to local address and port. \
- Must be enabled if OpenVPN client and server are to run concurrently.'),
-    },
-    remote: {
-      placeholder: T('Remote'),
-      tooltip: T('A valid IP address or domain name to which OpenVPN will connect.'),
-    },
-    tls_crypt_auth: {
-      placeholder: T('TLS Crypt Auth'),
-      tooltip: T('Provide static key for authentication/encryption of all control \
- channel packets when <code>tls_crypt_auth_enabled</code> is enabled.'),
-    },
-    formTitle: T('Open VPN Client'),
-
-  },
   // Helptext for server component
   server: {
     header: T('OpenVPN Server Settings'),
