@@ -261,7 +261,7 @@ describe('IdmapFormComponent', () => {
           range_low: 1000000,
           options: {
             schema_mode: 'RFC2307',
-            unix_nss_info: true,
+            unix_nss_info: false,
             unix_primary_group: true,
           },
         },

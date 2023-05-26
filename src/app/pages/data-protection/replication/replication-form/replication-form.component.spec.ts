@@ -121,6 +121,8 @@ describe('ReplicationFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     componentProviders: [
       mockProvider(ReplicationService, {

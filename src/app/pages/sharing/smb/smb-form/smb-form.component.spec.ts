@@ -276,7 +276,7 @@ describe('SmbFormComponent', () => {
       await advancedButton.click();
       const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
       await afpCheckbox.setValue(true);
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
         title: helptextSharingSmb.afpDialog_title,
         message: helptextSharingSmb.afpDialog_message,
         hideCheckbox: false,
