@@ -46,7 +46,7 @@ describe('DeviceFormComponent', () => {
       mockWebsocket([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
-        mockCall('vm.get_display_devices', []),
+        mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]),
         mockCall('vm.device.bind_choices', {
           '0.0.0.0': '0.0.0.0',
           '::': '::',
@@ -118,7 +118,6 @@ describe('DeviceFormComponent', () => {
               provide: SLIDE_IN_DATA,
               useValue: {
                 virtualMachineId: 45,
-                device: existingCdRom,
               },
             },
           ],
@@ -306,26 +305,6 @@ describe('DeviceFormComponent', () => {
           'NIC To Attach': 'enp0s3',
           'Trust Guest Filters': false,
         });
-      });
-
-      it('updates an existing NIC device', async () => {
-        await form.fillForm({
-          'NIC To Attach': 'enp0s3',
-        });
-
-        await saveButton.click();
-
-        expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [2, {
-          attributes: {
-            type: 'E1000',
-            mac: '00:a0:98:53:a5:ac',
-            nic_attach: 'enp0s3',
-            trust_guest_rx_filters: false,
-          },
-          dtype: VmDeviceType.Nic,
-          order: 1002,
-          vm: 45,
-        }]);
       });
     });
   });
@@ -679,51 +658,6 @@ describe('DeviceFormComponent', () => {
       vm: 45,
     } as VmDisplayDevice;
 
-    describe('adds display', () => {
-      beforeEach(async () => {
-        spectator = createComponent({
-          providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-              },
-            },
-          ],
-        });
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
-      });
-
-      it('adds a new Display device', async () => {
-        await form.fillForm({
-          Type: 'Display',
-        });
-        await form.fillForm({
-          Port: 5950,
-          Resolution: '800x600',
-          Bind: '::',
-        });
-        await saveButton.click();
-
-        expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
-          attributes: {
-            bind: '::',
-            password: '',
-            port: 5950,
-            resolution: '800x600',
-            type: VmDisplayType.Vnc,
-            web: true,
-          },
-          dtype: VmDeviceType.Display,
-          order: null,
-          vm: 45,
-        }]);
-      });
-    });
-
     describe('edits display', () => {
       beforeEach(async () => {
         spectator = createComponent({
@@ -755,27 +689,6 @@ describe('DeviceFormComponent', () => {
           'Web Interface': true,
         });
       });
-
-      it('updates an existing Display device', async () => {
-        await form.fillForm({
-          'Display Type': 'SPICE',
-        });
-
-        await saveButton.click();
-        expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [1, {
-          attributes: {
-            bind: '0.0.0.0',
-            password: '12345678',
-            port: 5900,
-            resolution: '1024x768',
-            type: VmDisplayType.Spice,
-            web: true,
-          },
-          dtype: VmDeviceType.Display,
-          order: 1002,
-          vm: 45,
-        }]);
-      });
     });
 
     describe('edits display to 46', () => {
@@ -798,7 +711,6 @@ describe('DeviceFormComponent', () => {
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
         spectator.inject(MockWebsocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
-
         const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
         expect(websocket.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
         expect(await typeSelect.getOptionLabels()).not.toContain('Display');

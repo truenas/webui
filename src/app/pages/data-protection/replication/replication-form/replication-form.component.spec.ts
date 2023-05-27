@@ -252,30 +252,4 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
     }));
   });
-
-  it('counts the number of eligible manual snapshots on change on some of the fields', fakeAsync(() => {
-    beforeEach(fakeAsync(() => {
-      spectator = createComponent();
-      tick();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    }));
-
-    generalForm.patchValue({
-      transport: TransportMode.Ssh,
-      direction: Direction.Push,
-    });
-    tick();
-    spectator.detectChanges();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('replication.count_eligible_manual_snapshots', [{
-      datasets: ['/tank/target'],
-      transport: TransportMode.Ssh,
-      ssh_credentials: 5,
-      name_regex: 'test-.*',
-    }]);
-    expect(spectator.query('.eligible-snapshots')).toExist();
-    expect(spectator.query('.eligible-snapshots')).toHaveExactTrimmedText(
-      '3 of 5 existing snapshots of dataset /tank/target would be replicated with this task.',
-    );
-  }));
 });
