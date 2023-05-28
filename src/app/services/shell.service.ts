@@ -72,11 +72,11 @@ export class ShellService {
     });
   }
 
-  onmessage(msg: MessageEvent): void {
+  onmessage(msg: MessageEvent<ArrayBuffer | string>): void {
     let data: { id?: string; msg: string };
 
     try {
-      data = JSON.parse(msg.data);
+      data = JSON.parse(msg.data as string) as { id?: string; msg: string };
     } catch (error: unknown) {
       data = { msg: 'please discard this' };
     }
@@ -95,7 +95,7 @@ export class ShellService {
       return;
     }
 
-    this.shellCmdOutput = msg.data;
+    this.shellCmdOutput = msg.data as ArrayBuffer;
     this.shellOutput.emit(this.shellCmdOutput);
   }
 

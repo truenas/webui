@@ -123,8 +123,8 @@ export class DeviceListComponent implements EntityTableConfig {
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params.pk;
-      this.vm = params.name;
+      this.pk = params.pk as string;
+      this.vm = params.name as string;
       this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
       this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM

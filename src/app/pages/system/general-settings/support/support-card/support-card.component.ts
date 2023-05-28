@@ -169,7 +169,7 @@ export class SupportCardComponent implements OnInit {
           }),
         )),
         filter(Boolean),
-      );
+      ) as Observable<boolean>;
     }
 
     request$.pipe(

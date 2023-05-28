@@ -87,7 +87,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),
-              catchError((error) => {
+              catchError((error: WebsocketError) => {
                 this.patchState({
                   isLoading: false,
                   error,

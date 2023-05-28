@@ -33,7 +33,7 @@ import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-
 import { OpenVpnServerConfigComponent } from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
-import { IpmiFormComponent } from './components/forms/ipmi-form.component';
+import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
 

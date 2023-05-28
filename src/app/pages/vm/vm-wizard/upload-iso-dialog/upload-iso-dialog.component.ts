@@ -27,8 +27,6 @@ export class UploadIsoDialogComponent {
   readonly directoryNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly helptext = helptext;
 
-  private apiEndPoint: string;
-
   constructor(
     private formBuilder: FormBuilder,
     private filesystemService: FilesystemService,

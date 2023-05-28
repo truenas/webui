@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -65,7 +65,6 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -88,8 +87,8 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     ]).pipe(
       tap(([targets, extents]) => {
         entityList.rows.forEach((row) => {
-          row.targetName = _.find(targets, { id: row.target }).name;
-          row.extentName = _.find(extents, { id: row.extent }).name;
+          row.targetName = _.find(targets, { id: row.target as number }).name;
+          row.extentName = _.find(extents, { id: row.extent as number }).name;
         });
       }),
     );
