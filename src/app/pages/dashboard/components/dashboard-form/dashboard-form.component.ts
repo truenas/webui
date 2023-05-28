@@ -88,7 +88,7 @@ export class DashboardFormComponent {
         identifier = widget.identifier.split(',')[1];
       }
       if (keys.includes(identifier)) {
-        return { ...widget, rendered: this.form.value[identifier] };
+        return { ...widget, rendered: this.form.value[identifier] as boolean };
       }
       return widget;
     });

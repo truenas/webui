@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -33,7 +33,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
   });
 
   csrs: Certificate[] = [];
-  csrOptions$: Observable<Option[]> = of([]);
+  csrOptions$ = of<Option[]>([]);
 
   readonly helptext = helptextSystemCertificates;
 

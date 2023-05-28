@@ -29,7 +29,7 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   routeAdd?: string[];
   queryRes?: unknown[];
   showActions?: boolean;
-  isActionVisible?: (actionId: string, row: Row) => boolean;
+  isActionVisible?: (actionId: string | number, row: Row) => boolean;
   customActions?: unknown[];
   multiActions?: EntityTableMultiAction<Row>[];
   noActions?: boolean;

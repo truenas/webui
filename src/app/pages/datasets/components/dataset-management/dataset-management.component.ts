@@ -48,11 +48,6 @@ import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 
-enum ScrollType {
-  IxTree = 'ixTree',
-  IxTreeHeader = 'ixTreeHeader',
-}
-
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-management.component.html',
@@ -73,7 +68,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   systemDataset: string;
   isLoading = true;
   subscription = new Subscription();
-  scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
   treeWidthChange$ = new Subject<ResizedEvent>();
 

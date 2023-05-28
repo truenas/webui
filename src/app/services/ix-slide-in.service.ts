@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { bindCallback, merge, Subject } from 'rxjs';
+import { merge, Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 
@@ -63,7 +63,11 @@ export class IxSlideInService {
 
   private closeOnNavigation(): void {
     merge(
-      bindCallback(this.location.subscribe.bind(this.location))(),
+      new Observable((observer) => {
+        this.location.subscribe((event) => {
+          observer.next(event);
+        });
+      }),
       this.router.events.pipe(filter((event) => event instanceof NavigationEnd)),
     )
       .pipe(untilDestroyed(this))

@@ -197,7 +197,7 @@ export class ErrorHandlerService implements ErrorHandler {
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
               || `Error (${error.status})`,
-          message: error.error,
+          message: String(error.error),
         };
       }
       case 500: {

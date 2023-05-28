@@ -39,9 +39,9 @@ export class PodShellComponent implements TerminalConfiguration {
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {
       this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-        this.chartReleaseName = params.rname;
-        this.podName = params.pname;
-        this.command = params.cname;
+        this.chartReleaseName = params.rname as string;
+        this.podName = params.pname as string;
+        this.command = params.cname as string;
 
         this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
           this.podDetails = { ...consoleChoices };

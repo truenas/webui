@@ -77,7 +77,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
 
   ngOnInit(): void {
     const paramMap = this.aroute.snapshot.params;
-    this.datasetId = paramMap.datasetId;
+    this.datasetId = paramMap.datasetId as string;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getGroupQuotas();
 

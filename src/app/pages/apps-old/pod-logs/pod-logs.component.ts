@@ -65,10 +65,10 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.chartReleaseName = params.rname;
-      this.podName = params.pname;
-      this.containerName = params.cname;
-      this.tailLines = params.tail_lines;
+      this.chartReleaseName = params.rname as string;
+      this.podName = params.pname as string;
+      this.containerName = params.cname as string;
+      this.tailLines = params.tail_lines as number;
 
       this.reconnect();
     });
