@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
+  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject, HostListener,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -39,6 +39,19 @@ import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
+export enum WidgetName {
+  SystemInformation = 'System Information',
+  SystemInformationStandby = 'System Information(Standby)',
+  Cpu = 'CPU',
+  Memory = 'Memory',
+  Storage = 'Storage',
+  Network = 'Network',
+  Interface = 'Interface',
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  Pool = 'Pool',
+  Help = 'Help',
+}
+
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
   state: DashboardNicState;
@@ -77,13 +90,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   activeMobileWidget: DashConfigItem[] = [];
   availableWidgets: DashConfigItem[] = this.generateDefaultConfig();
   renderedWidgets: DashConfigItem[];
-  large = 'lg';
-  medium = 'md';
-  small = 'sm';
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
   interval: Interval;
 
   readonly ScreenType = ScreenType;
+  readonly WidgetType = WidgetName;
 
   get isLoaded(): boolean {
     return this.dashStateReady
@@ -137,14 +148,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
-  ) {
-    window.onresize = () => {
-      this.checkScreenSize();
-    };
-    window.onload = () => {
-      this.checkScreenSize();
-    };
-  }
+  ) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -181,6 +185,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return widget.id;
   }
 
+  @HostListener('window:resize', ['$event'])
   checkScreenSize(): void {
     const currentScreenType = this.window.innerWidth < 600 ? ScreenType.Mobile : ScreenType.Desktop;
 
@@ -350,28 +355,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   generateDefaultConfig(): DashConfigItem[] {
     const conf: DashConfigItem[] = [
-      { name: 'System Information', rendered: true, id: '0' },
+      {
+        name: WidgetName.SystemInformation,
+        rendered: true,
+        id: '0',
+      },
     ];
 
     if (this.isHaLicensed) {
       conf.push({
         id: conf.length.toString(),
-        name: 'System Information(Standby)',
+        name: WidgetName.SystemInformationStandby,
         identifier: 'passive,true',
         rendered: true,
       });
     }
 
-    conf.push({ name: 'Help', rendered: true });
-    conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
-    conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });
-    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
-    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Help, rendered: true });
+    conf.push({ name: WidgetName.Cpu, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Memory, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Storage, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
 
     this.pools?.forEach((pool) => {
       conf.push({
         id: conf.length.toString(),
-        name: 'Pool',
+        name: WidgetName.Pool,
         identifier: `name,Pool:${pool.name}`,
         rendered: false,
       });
@@ -380,7 +389,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.nics?.forEach((nic) => {
       conf.push({
         id: conf.length.toString(),
-        name: 'Interface',
+        name: WidgetName.Interface,
         identifier: `name,${nic.name}`,
         rendered: false,
       });
@@ -399,7 +408,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    if (item.name.toLowerCase() === 'storage') {
+    if (item.name === WidgetName.Storage) {
       return this.volumeData;
     }
 
@@ -425,14 +434,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // eslint-disable-next-line rxjs/finnish
     let data: Subject<CoreEvent> | DashboardNicState | Pool | Pool[];
 
-    switch (item.name.toLowerCase()) {
-      case 'cpu':
+    switch (item.name) {
+      case WidgetName.Cpu:
         data = this.statsDataEvent$;
         break;
-      case 'memory':
+      case WidgetName.Memory:
         data = this.statsDataEvent$;
         break;
-      case 'pool':
+      case WidgetName.Pool:
         if (spl) {
           const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value.split(':')[1]);
           if (pools.length) { data = pools[0]; }
@@ -440,7 +449,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           console.warn('DashConfigItem has no identifier!');
         }
         break;
-      case 'interface':
+      case WidgetName.Interface:
         if (spl) {
           const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
           if (nics.length) { data = nics[0].state; }
@@ -448,7 +457,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           console.warn('DashConfigItem has no identifier!');
         }
         break;
-      case 'storage':
+      case WidgetName.Storage:
         data = this.pools;
         break;
     }
@@ -486,12 +495,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
     return state.filter((widget) => {
       if (
-        ['pool', 'storage'].includes(widget.name.toLowerCase())
+        [WidgetName.Pool, WidgetName.Storage].includes(widget.name)
        && (!this.volumeDataFromConfig(widget) || !this.dataFromConfig(widget))
       ) {
         return false;
       }
-      if (widget.name === 'Interface' && !this.dataFromConfig(widget)) {
+      if (widget.name === WidgetName.Interface && !this.dataFromConfig(widget)) {
         return false;
       }
       return true;

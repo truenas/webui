@@ -46,7 +46,7 @@ export function tagArrayToOptions(): OperatorFunction<{ tag: number }[], Option[
  * @usage
  * valueToLabel(options)(value)
  */
-export function valueToLabel(options: Option[]): (value: string) => string {
+export function findLabelsByValue(options: Option[]): (value: string) => string {
   return (value: string): string => {
     const selectedOption = options.find((option) => option.value === value);
     return selectedOption?.label;

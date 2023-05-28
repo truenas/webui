@@ -23,7 +23,6 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { StorageService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
@@ -62,9 +61,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   @Input() nics: BaseNetworkInterface[];
 
   readonly emptyTypes = EmptyType;
-  private utils: WidgetUtils;
-  LinkState = LinkState;
-  title = this.translate.instant('Network');
+  protected readonly LinkState = LinkState;
+
   nicInfoMap: NicInfoMap = {};
   paddingX = 16;
   paddingTop = 16;
@@ -128,8 +126,13 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
                 return 0;
               }
 
-              const converted = this.utils.convert(value as number);
-              return parseFloat(converted.value).toFixed(1) + converted.units.charAt(0);
+              const converted = filesize(value as number, {
+                round: 1,
+                output: 'object',
+                standard: 'iec',
+              });
+
+              return `${converted.value}${converted.unit.charAt(0)}`;
             },
           },
         },
@@ -145,8 +148,13 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (tooltipItem.yLabel === 0) {
             label += 0;
           } else {
-            const converted = this.utils.convert(Number(tooltipItem.yLabel));
-            label += parseFloat(converted.value).toFixed(1) + converted.units.charAt(0);
+            const converted = filesize(Number(tooltipItem.yLabel), {
+              round: 1,
+              output: 'object',
+              standard: 'iec',
+            });
+
+            label = `${label}${converted.value}${converted.unit.charAt(0)}`;
           }
           return label;
         },
@@ -172,8 +180,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     private store$: Store<AppState>,
   ) {
     super(translate);
-    this.configurable = false;
-    this.utils = new WidgetUtils();
 
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;

@@ -57,7 +57,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   disableActionsConfig = true;
   virtualizationDetails: VirtualizationDetails = null;
   canAdd = false;
-  expandedElement?: VirtualMachineRow | null = null;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -94,7 +93,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     poweroff: 'vm.poweroff',
     update: 'vm.update',
     clone: 'vm.clone',
-    getAvailableMemory: 'vm.get_available_memory',
   } as const;
 
   availableMemory: string;
@@ -469,7 +467,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   checkMemory(): void {
-    this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((availableMemory) => {
+    this.ws.call('vm.get_available_memory').pipe(untilDestroyed(this)).subscribe((availableMemory) => {
       this.availableMemory = this.storageService.convertBytesToHumanReadable(availableMemory);
     });
   }

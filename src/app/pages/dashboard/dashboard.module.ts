@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -36,7 +37,6 @@ import {
   SimpleFailoverBtnComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
-import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { routing } from './dashboard.routing';
 
 @NgModule({
@@ -65,11 +65,11 @@ import { routing } from './dashboard.routing';
     ChartsModule,
     LayoutModule,
     TestIdModule,
+    NgxFilesizeModule,
   ],
   declarations: [
     DashboardComponent,
     DashboardFormComponent,
-    WidgetComponent,
     WidgetSysInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,

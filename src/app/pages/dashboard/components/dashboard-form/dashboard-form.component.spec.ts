@@ -9,6 +9,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
+import { WidgetName } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -40,11 +41,11 @@ describe('DashboardFormComponent', () => {
     ws = spectator.inject(WebSocketService);
     dashState = [
       {
-        name: 'CPU',
+        name: WidgetName.Cpu,
         rendered: true,
       },
       {
-        name: 'Memory',
+        name: WidgetName.Memory,
         rendered: false,
       },
     ];

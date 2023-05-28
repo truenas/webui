@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { of } from 'rxjs';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
-import { choicesToOptions, valueToLabel } from 'app/helpers/options.helper';
+import { choicesToOptions, findLabelsByValue } from 'app/helpers/options.helper';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import {
@@ -209,7 +209,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       {
         label: this.translate.instant('Basic Constraints'),
         value: this.form.value.BasicConstraints.BasicConstraints
-          .map(valueToLabel(basicConstraintOptions))
+          .map(findLabelsByValue(basicConstraintOptions))
           .join(', '),
       },
     ];
@@ -233,7 +233,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       {
         label: this.translate.instant('Authority Key Identifier'),
         value: this.form.value.AuthorityKeyIdentifier.AuthorityKeyIdentifier
-          .map(valueToLabel(authorityKeyIdentifierOptions))
+          .map(findLabelsByValue(authorityKeyIdentifierOptions))
           .join(', '),
       },
     ];
@@ -248,7 +248,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       {
         label: this.translate.instant('Extended Key Usage'),
         value: this.form.value.ExtendedKeyUsage.usages
-          .map(valueToLabel(this.extendedKeyUsageOptions))
+          .map(findLabelsByValue(this.extendedKeyUsageOptions))
           .join(', '),
       },
     ];
@@ -272,7 +272,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       {
         label: this.translate.instant('Key Usage'),
         value: this.form.value.KeyUsage.KeyUsage
-          .map(valueToLabel(keyUsageOptions))
+          .map(findLabelsByValue(keyUsageOptions))
           .join(', '),
       },
     ];
