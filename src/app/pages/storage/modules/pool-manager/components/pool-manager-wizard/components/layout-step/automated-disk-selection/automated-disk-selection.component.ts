@@ -173,8 +173,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       this.form.controls.sizeAndType.setValue(null, { emitEvent: false });
     }
 
-    // TODO: Incorrect type conversion.
-    this.diskSizeAndTypeOptions$ = of(options) as Observable<SelectOption[]>;
+    this.diskSizeAndTypeOptions$ = of(options);
 
     this.updateLayoutOptions();
   }
