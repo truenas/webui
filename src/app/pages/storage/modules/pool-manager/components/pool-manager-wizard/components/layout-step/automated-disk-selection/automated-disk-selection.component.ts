@@ -78,8 +78,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.updateDiskSizeOptions();
-
-    // TODO: Set initial values?
   }
 
   openManualDiskSelection(): void {

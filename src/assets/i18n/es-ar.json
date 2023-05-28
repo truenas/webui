@@ -959,7 +959,7 @@
   "Select IP addresses to listen to for NFS requests. Leave empty for NFS to listen to all available addresses.  Static IPs need to be configured on the interface to appear on the list.": "",
   "Select Image Tag": "",
   "Select Pool": "",
-  "Select VDEV layout": "",
+  "Select VDEV layout. This is the first step in setting up your Vdevs.": "",
   "Select VDEV width": "",
   "Select a disk size from inventory": "",
   "Select an existing CSR.": "",

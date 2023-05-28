@@ -13,7 +13,7 @@
   "No similar apps found.": "",
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
   "Save And Go To Review": "",
-  "Select VDEV layout": "",
+  "Select VDEV layout. This is the first step in setting up your Vdevs.": "",
   "Setup Pool To Install": "",
   "Special": "",
   "Target dataset encryption will be inherited from its parent dataset.": "",
