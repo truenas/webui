@@ -31,11 +31,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     super(initialState);
   }
 
-  initialize = this.updater((state: ManualDiskSelectionState, params: {
-    vdevs: ManualSelectionVdev[]; // TODO: transform inside store?
-    inventory: UnusedDisk[];
-    layout: CreateVdevLayout;
-  }) => {
+  initialize = this.updater((state: ManualDiskSelectionState, params: ManualDiskSelectionState) => {
     return {
       ...initialState,
       ...params,
