@@ -22,6 +22,15 @@
   .filters-btn {
     display: flex;
     justify-content: flex-end;
+
+    button {
+      background-color: transparent;
+      color: var(--primary) !important;
+
+      ix-icon {
+        color: var(--primary);
+      }
+    }
   }
 
   .filters-container {
@@ -62,15 +71,6 @@
         font-size: x-small;
       }
     }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-
-      @media (max-width: $breakpoint-xs) {
-        margin-top: 24px;
-      }
-    }
   }
 }
 
@@ -101,12 +101,12 @@
   flex-direction: column;
   row-gap: 8px;
 
-  .header-number-title {
-    color: var(--primary-txt);
+  .header-number-title,
+  h2 {
+    color: var(--fg-1);
   }
 
   h2 {
-    color: var(--primary-txt);
     line-height: 1;
   }
 }
