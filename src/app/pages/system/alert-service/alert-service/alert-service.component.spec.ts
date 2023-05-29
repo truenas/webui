@@ -11,6 +11,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,7 +27,6 @@ import {
   OpsGenieServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
   return {
@@ -95,9 +96,10 @@ describe('AlertServiceComponent', () => {
       OpsGenieServiceComponent,
     ],
     providers: [
-      MockProvider(IxSlideInService, {
+      MockProvider(IxSlideInRef, {
         close: jest.fn(),
       }),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
       MockProvider(SnackbarService, {
         success: jest.fn(),
       }),
@@ -112,122 +114,132 @@ describe('AlertServiceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+  describe('creates a new alert service', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('shows form fields specific to an alert service when Type is changed', async () => {
+      await form.fillForm({
+        Type: 'OpsGenie',
+      });
+
+      const opsGenieForm = spectator.query(OpsGenieServiceComponent);
+      expect(opsGenieForm).toBeTruthy();
+    });
+
+    it('creates a new alert service when new form is submitted', async () => {
+      await form.fillForm({
+        Name: 'My Alert Service',
+        Enabled: true,
+        Type: 'AWS SNS',
+        Level: 'Error',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.create', [{
+        name: 'My Alert Service',
+        enabled: true,
+        type: AlertServiceType.AwsSns,
+        level: AlertLevel.Error,
+        attributes: {
+          aws_access_key_id: 'KEY1',
+          aws_secret_access_key: 'SECRET1',
+          region: 'us-east-1',
+          topic_arn: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
+        },
+      }]);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {
+      await form.fillForm({
+        Name: 'My Alert Service',
+        Enabled: true,
+        Type: 'AWS SNS',
+        Level: 'Error',
+      });
+
+      const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
+      await sendTestAlertButton.click();
+
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.test', [{
+        attributes: {
+          aws_access_key_id: 'KEY1',
+          aws_secret_access_key: 'SECRET1',
+          region: 'us-east-1',
+          topic_arn: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
+        },
+        enabled: true,
+        level: AlertLevel.Error,
+        name: 'My Alert Service',
+        type: AlertServiceType.AwsSns,
+      }]);
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
   });
 
-  it('shows form fields specific to an alert service when Type is changed', async () => {
-    await form.fillForm({
-      Type: 'OpsGenie',
+  describe('edits alert service', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: existingService },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    const opsGenieForm = spectator.query(OpsGenieServiceComponent);
-    expect(opsGenieForm).toBeTruthy();
-  });
+    it('shows values for an existing alert service', fakeAsync(async () => {
+      const values = await form.getValues();
+      expect(values).toEqual({
+        Enabled: true,
+        Level: 'Warning',
+        Name: 'Existing Service',
+        Type: 'AWS SNS',
+      });
+      tick();
 
-  it('creates a new alert service when new form is submitted', async () => {
-    await form.fillForm({
-      Name: 'My Alert Service',
-      Enabled: true,
-      Type: 'AWS SNS',
-      Level: 'Error',
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      expect(awsSnsForm.setValues).toHaveBeenCalledWith(existingService.attributes);
+    }));
+
+    it('updates an existing alert service when update form is submitted', async () => {
+      await form.fillForm({
+        Name: 'Updated Service',
+        Enabled: false,
+        Type: 'OpsGenie',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const opsGenie = spectator.query(OpsGenieServiceComponent);
+      expect(opsGenie.getSubmitAttributes).toHaveBeenCalled();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.update', [
+        4,
+        {
+          name: 'Updated Service',
+          enabled: false,
+          level: AlertLevel.Warning,
+          type: AlertServiceType.OpsGenie,
+          attributes: { email: 'me@truenas.com' },
+        },
+      ]);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    const awsSnsForm = spectator.query(AwsSnsServiceComponent);
-    expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.create', [{
-      name: 'My Alert Service',
-      enabled: true,
-      type: AlertServiceType.AwsSns,
-      level: AlertLevel.Error,
-      attributes: {
-        aws_access_key_id: 'KEY1',
-        aws_secret_access_key: 'SECRET1',
-        region: 'us-east-1',
-        topic_arn: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
-      },
-    }]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
-
-  it('shows values for an existing alert service', fakeAsync(async () => {
-    spectator.component.setAlertServiceForEdit(existingService);
-
-    const values = await form.getValues();
-    expect(values).toEqual({
-      Enabled: true,
-      Level: 'Warning',
-      Name: 'Existing Service',
-      Type: 'AWS SNS',
-    });
-    tick();
-
-    const awsSnsForm = spectator.query(AwsSnsServiceComponent);
-    expect(awsSnsForm.setValues).toHaveBeenCalledWith(existingService.attributes);
-  }));
-
-  it('updates an existing alert service when update form is submitted', async () => {
-    spectator.component.setAlertServiceForEdit(existingService);
-
-    await form.fillForm({
-      Name: 'Updated Service',
-      Enabled: false,
-      Type: 'OpsGenie',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    const opsGenie = spectator.query(OpsGenieServiceComponent);
-    expect(opsGenie.getSubmitAttributes).toHaveBeenCalled();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.update', [
-      4,
-      {
-        name: 'Updated Service',
-        enabled: false,
-        level: AlertLevel.Warning,
-        type: AlertServiceType.OpsGenie,
-        attributes: { email: 'me@truenas.com' },
-      },
-    ]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
-
-  it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {
-    await form.fillForm({
-      Name: 'My Alert Service',
-      Enabled: true,
-      Type: 'AWS SNS',
-      Level: 'Error',
-    });
-
-    const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
-    await sendTestAlertButton.click();
-
-    const awsSnsForm = spectator.query(AwsSnsServiceComponent);
-    expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.test', [{
-      attributes: {
-        aws_access_key_id: 'KEY1',
-        aws_secret_access_key: 'SECRET1',
-        region: 'us-east-1',
-        topic_arn: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
-      },
-      enabled: true,
-      level: AlertLevel.Error,
-      name: 'My Alert Service',
-      type: AlertServiceType.AwsSns,
-    }]);
-
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

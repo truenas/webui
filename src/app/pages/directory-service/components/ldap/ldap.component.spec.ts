@@ -12,6 +12,8 @@ import helptext from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -75,6 +77,8 @@ describe('LdapComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialog),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     declarations: [
       MockComponent(EntityJobComponent),
@@ -157,7 +161,7 @@ describe('LdapComponent', () => {
       anonbind: true,
       kerberos_principal: 'principal2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('shows job dialog when form is submitted and there is a job_id in the response', async () => {
@@ -180,6 +184,6 @@ describe('LdapComponent', () => {
 
     expect(jobComponent.jobId).toBe(2);
     expect(jobComponent.wsshow).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

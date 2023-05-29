@@ -6,6 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
@@ -33,18 +35,26 @@ describe('DatasetQuotaAddFormComponent', () => {
       }),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-    ws = spectator.inject(WebSocketService);
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('adding user quotas', () => {
     beforeEach(() => {
-      spectator.component.setupAddQuotaForm(DatasetQuotaType.User, 'my-dataset');
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              quotaType: DatasetQuotaType.User,
+              datasetId: 'my-dataset',
+            },
+          },
+        ],
+      });
+      ws = spectator.inject(WebSocketService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('adds user quotas when form is submitted', async () => {
@@ -68,13 +78,25 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: '2000' },
         ],
       ]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
 
   describe('adding group quotas', () => {
     beforeEach(() => {
-      spectator.component.setupAddQuotaForm(DatasetQuotaType.Group, 'my-dataset');
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              quotaType: DatasetQuotaType.Group,
+              datasetId: 'my-dataset',
+            },
+          },
+        ],
+      });
+      ws = spectator.inject(WebSocketService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('adds group quotas when form is submitted', async () => {
@@ -97,7 +119,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: '2000' },
         ],
       ]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

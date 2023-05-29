@@ -16,6 +16,7 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -25,7 +26,6 @@ import {
   AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -99,7 +99,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private services: ServicesService,
     private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<OpenVpnServerConfigComponent>,
     private dialogService: DialogService,
     private storageService: StorageService,
     private matDialog: MatDialog,
@@ -127,7 +127,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('OpenVPN server configuration saved'));
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

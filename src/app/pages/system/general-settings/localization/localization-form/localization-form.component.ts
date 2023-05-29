@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import {
   FormBuilder, Validators,
@@ -15,9 +15,10 @@ import { LocalizationSettings } from 'app/interfaces/localization-settings.inter
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
@@ -30,7 +31,7 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
   styleUrls: ['./localization-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LocalizationFormComponent {
+export class LocalizationFormComponent implements OnInit {
   fieldsetTitle = helptext.localeTitle;
 
   isFormLoading = false;
@@ -111,12 +112,19 @@ export class LocalizationFormComponent {
     public localeService: LocaleService,
     protected ws: WebSocketService,
     protected langService: LanguageService,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
+    private slideInRef: IxSlideInRef<LocalizationFormComponent>,
     @Inject(WINDOW) private window: Window,
+    @Inject(SLIDE_IN_DATA) private localizationSettings: LocalizationSettings,
   ) { }
+
+  ngOnInit(): void {
+    if (this.localizationSettings) {
+      this.setupForm();
+    }
+  }
 
   setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
@@ -125,14 +133,14 @@ export class LocalizationFormComponent {
     this.dateFormat.options = of(dateOptions);
   }
 
-  setupForm(localizationSettings: LocalizationSettings): void {
-    this.setTimeOptions(localizationSettings.timezone);
+  setupForm(): void {
+    this.setTimeOptions(this.localizationSettings.timezone);
     this.formGroup.patchValue({
-      language: localizationSettings.language,
-      kbdmap: localizationSettings.kbdMap,
-      timezone: localizationSettings.timezone,
-      date_format: localizationSettings.dateFormat,
-      time_format: localizationSettings.timeFormat,
+      language: this.localizationSettings.language,
+      kbdmap: this.localizationSettings.kbdMap,
+      timezone: this.localizationSettings.timezone,
+      date_format: this.localizationSettings.dateFormat,
+      time_format: this.localizationSettings.timeFormat,
     });
   }
 
@@ -154,7 +162,7 @@ export class LocalizationFormComponent {
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInRef.close();
         this.setTimeOptions(body.timezone);
         this.langService.setLanguage(body.language);
       },

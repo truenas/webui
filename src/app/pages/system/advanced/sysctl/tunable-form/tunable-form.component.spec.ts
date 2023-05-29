@@ -7,6 +7,8 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -31,16 +33,18 @@ describe('TunableFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-  });
-
   describe('adding a new sysctl variable', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+    });
+
     it('sends a create payload to websocket and closes modal form is saved', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -65,13 +69,22 @@ describe('TunableFormComponent', () => {
 
   describe('editing a sysctl variable', () => {
     beforeEach(() => {
-      spectator.component.setTunableForEdit({
-        id: 1,
-        comment: 'Existing variable',
-        enabled: false,
-        var: 'var.exist',
-        value: 'Existing value',
-      } as Tunable);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              id: 1,
+              comment: 'Existing variable',
+              enabled: false,
+              var: 'var.exist',
+              value: 'Existing value',
+            } as Tunable,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('shows current group values when form is being edited', async () => {

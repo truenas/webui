@@ -8,6 +8,8 @@ import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-we
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
@@ -51,6 +53,8 @@ describe('SyslogFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       provideMockStore(),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 

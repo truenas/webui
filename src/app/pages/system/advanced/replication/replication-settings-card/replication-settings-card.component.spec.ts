@@ -5,6 +5,8 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   ReplicationSettingsCardComponent,
@@ -29,6 +31,8 @@ describe('ReplicationSettingsCardComponent', () => {
       mockProvider(IxSlideInService, {
         onClose$: of(),
       }),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(IxSlideInRef),
     ],
   });
 

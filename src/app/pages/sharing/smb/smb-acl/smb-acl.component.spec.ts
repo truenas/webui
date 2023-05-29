@@ -7,6 +7,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -53,12 +55,17 @@ describe('SmbAclComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
-    spectator.component.setSmbShareName('myshare');
+    spectator = createComponent({
+      providers: [
+        { provide: SLIDE_IN_DATA, useValue: 'myshare' },
+      ],
+    });
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     entriesList = await loader.getHarness(IxListHarness);
@@ -117,7 +124,7 @@ describe('SmbAclComponent', () => {
       ],
     }]);
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('requires either SID or domain + name to be validated', async () => {

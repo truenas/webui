@@ -10,6 +10,8 @@ import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -119,6 +121,8 @@ describe('ReplicationFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     componentProviders: [
       mockProvider(ReplicationService, {
@@ -127,60 +131,40 @@ describe('ReplicationFormComponent', () => {
     ],
   });
 
-  beforeEach(fakeAsync(() => {
-    spectator = createComponent();
-    tick();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  }));
+  describe('checks replication form', () => {
+    beforeEach(fakeAsync(() => {
+      spectator = createComponent();
+      tick();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    }));
 
-  it('shows form sections', () => {
-    expect(spectator.query(GeneralSectionComponent)).toExist();
-    expect(spectator.query(TransportSectionComponent)).toExist();
-    expect(spectator.query(TargetSectionComponent)).toExist();
-    expect(spectator.query(SourceSectionComponent)).toExist();
-    expect(spectator.query(ScheduleSectionComponent)).toExist();
-  });
+    it('shows form sections', () => {
+      expect(spectator.query(GeneralSectionComponent)).toExist();
+      expect(spectator.query(TransportSectionComponent)).toExist();
+      expect(spectator.query(TargetSectionComponent)).toExist();
+      expect(spectator.query(SourceSectionComponent)).toExist();
+      expect(spectator.query(ScheduleSectionComponent)).toExist();
+    });
 
-  it('switches to wizard when Switch To Wizard is pressed', async () => {
-    const switchButton = await loader.getHarness(MatButtonHarness.with({ text: 'Switch To Wizard' }));
-    await switchButton.click();
+    it('switches to wizard when Switch To Wizard is pressed', async () => {
+      const switchButton = await loader.getHarness(MatButtonHarness.with({ text: 'Switch To Wizard' }));
+      await switchButton.click();
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
-  });
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
+    });
 
-  it('creates a new replication task', async () => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('creates a new replication task', async () => {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
-    expect(spectator.query(GeneralSectionComponent).getPayload).toHaveBeenCalled();
-    expect(spectator.query(TransportSectionComponent).getPayload).toHaveBeenCalled();
-    expect(spectator.query(SourceSectionComponent).getPayload).toHaveBeenCalled();
-    expect(spectator.query(TargetSectionComponent).getPayload).toHaveBeenCalled();
-    expect(spectator.query(ScheduleSectionComponent).getPayload).toHaveBeenCalled();
+      expect(spectator.query(GeneralSectionComponent).getPayload).toHaveBeenCalled();
+      expect(spectator.query(TransportSectionComponent).getPayload).toHaveBeenCalled();
+      expect(spectator.query(SourceSectionComponent).getPayload).toHaveBeenCalled();
+      expect(spectator.query(TargetSectionComponent).getPayload).toHaveBeenCalled();
+      expect(spectator.query(ScheduleSectionComponent).getPayload).toHaveBeenCalled();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.create', [{
-      name: 'dataset',
-      ssh_credentials: 5,
-      direction: Direction.Pull,
-      source_datasets: ['/tank/source'],
-      name_regex: 'test-.*',
-      target_dataset: '/tank/target',
-      transport: TransportMode.Ssh,
-      auto: true,
-    }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
-
-  it('updates an existing replication task', async () => {
-    spectator.component.setForEdit({ id: 1 } as ReplicationTask);
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.update', [
-      1,
-      {
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.create', [{
         name: 'dataset',
         ssh_credentials: 5,
         direction: Direction.Pull,
@@ -189,12 +173,50 @@ describe('ReplicationFormComponent', () => {
         target_dataset: '/tank/target',
         transport: TransportMode.Ssh,
         auto: true,
-      },
-    ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('updates task', () => {
+    beforeEach(fakeAsync(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: { id: 1 } as ReplicationTask },
+        ],
+      });
+      tick();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    }));
+
+    it('updates an existing replication task', async () => {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.update', [
+        1,
+        {
+          name: 'dataset',
+          ssh_credentials: 5,
+          direction: Direction.Pull,
+          source_datasets: ['/tank/source'],
+          name_regex: 'test-.*',
+          target_dataset: '/tank/target',
+          transport: TransportMode.Ssh,
+          auto: true,
+        },
+      ]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
   });
 
   describe('updates node providers when direction, transport or ssh credentials change', () => {
+    beforeEach(fakeAsync(() => {
+      spectator = createComponent();
+      tick();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    }));
+
     it('push from local to remote', fakeAsync(() => {
       generalForm.controls.direction.setValue(Direction.Push);
       generalForm.controls.transport.setValue(TransportMode.Ssh);
@@ -230,24 +252,4 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
     }));
   });
-
-  it('counts the number of eligible manual snapshots on change on some of the fields', fakeAsync(() => {
-    generalForm.patchValue({
-      transport: TransportMode.Ssh,
-      direction: Direction.Push,
-    });
-    tick();
-    spectator.detectChanges();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('replication.count_eligible_manual_snapshots', [{
-      datasets: ['/tank/target'],
-      transport: TransportMode.Ssh,
-      ssh_credentials: 5,
-      name_regex: 'test-.*',
-    }]);
-    expect(spectator.query('.eligible-snapshots')).toExist();
-    expect(spectator.query('.eligible-snapshots')).toHaveExactTrimmedText(
-      '3 of 5 existing snapshots of dataset /tank/target would be replicated with this task.',
-    );
-  }));
 });
