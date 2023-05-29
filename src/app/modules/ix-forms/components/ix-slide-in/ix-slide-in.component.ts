@@ -42,7 +42,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     private el: ElementRef,
     private slideInService: IxSlideInService,
   ) {
-    this.element = this.el.nativeElement;
+    this.element = this.el.nativeElement as HTMLElement;
   }
 
   ngOnInit(): void {
