@@ -1,4 +1,4 @@
-<form class="reports-toolbar" [formGroup]="form">
+<form *ngIf="allTabs.length" class="reports-toolbar" [formGroup]="form">
   <ng-container *ngIf="activeTab?.value === ReportType.Disk">
     <ix-select
       formControlName="devices"
@@ -43,7 +43,7 @@
         ix-auto-type="option"
         [ix-auto-identifier]="tab.label"
         [class.selected]="isActiveTab(tab)"
-        (click)="onNavigateToTab(tab)"
+        [routerLink]="['/reportsdashboard', tab.value]"
       >{{ tab.label | translate }}</button>
     </div>
   </mat-menu>
