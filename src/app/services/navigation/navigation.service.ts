@@ -117,7 +117,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Reports'),
       icon: 'insert_chart',
-      state: 'reportsdashboard/cpu',
+      state: 'reportsdashboard',
     },
     {
       name: T('System Settings'),
