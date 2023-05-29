@@ -101,7 +101,7 @@ export interface AppTableConfig<P = unknown> {
   afterDelete?(): void;
   edit?(any: unknown): void; // edit row
   delete?(item: unknown, table: TableComponent): void; // customize delete row method
-  dataSourceHelper?(any: unknown[]): unknown[]; // customise handle/modify dataSource
+  dataSourceHelper?(any: unknown): unknown[]; // customise handle/modify dataSource
   getInOutInfo?(any: unknown): void; // get in out info if has state column
   getActions?: () => AppTableAction[]; // actions for each row
   isActionVisible?(actionId: string, entity: unknown): boolean; // determine if action is visible

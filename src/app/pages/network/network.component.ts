@@ -45,7 +45,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
-import { IpmiFormComponent } from './components/forms/ipmi-form.component';
+import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
 
 @UntilDestroy()
 @Component({
@@ -529,7 +529,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     return nic.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
       transformed.link_state = networkInterface.state.link_state;
-      const addresses = new Set([]);
+      const addresses = new Set<string>([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
         if (alias.type.startsWith('INET')) {

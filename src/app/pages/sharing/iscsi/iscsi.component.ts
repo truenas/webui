@@ -55,7 +55,7 @@ export class IscsiComponent implements OnInit {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.activeTab = params.pk;
+      this.activeTab = params.pk as string;
     });
   }
 

@@ -83,8 +83,8 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     ]).pipe(
       tap(([targets, extents]) => {
         entityList.rows.forEach((row) => {
-          row.targetName = _.find(targets, { id: row.target }).name;
-          row.extentName = _.find(extents, { id: row.extent }).name;
+          row.targetName = _.find(targets, { id: row.target as number }).name;
+          row.extentName = _.find(extents, { id: row.extent as number }).name;
         });
       }),
     );

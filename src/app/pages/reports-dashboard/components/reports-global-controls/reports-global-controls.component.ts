@@ -75,7 +75,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
       });
     });
     this.diskDevices$.pipe(untilDestroyed(this)).subscribe((disks) => {
-      const disksNames = this.route.snapshot.queryParams.disks;
+      const disksNames = this.route.snapshot.queryParams.disks as string[] | string;
       let devices: string[];
       if (disksNames) {
         devices = Array.isArray(disksNames) ? disksNames : [disksNames];

@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
@@ -15,7 +14,6 @@ import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapsho
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +38,6 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {

@@ -12,7 +12,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Option } from 'app/interfaces/option.interface';
+import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -117,7 +117,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows \'No options\' if options length === 0', async () => {
-      spectator.component.options = of([]);
+      spectator.component.options = of<SelectOption[]>([]);
       spectator.component.ngOnChanges();
 
       const select = await loader.getHarness(MatSelectHarness);

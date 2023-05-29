@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DndModule } from 'ngx-drag-drop';
 import { NgxFilesizeModule } from 'ngx-filesize';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -25,6 +26,7 @@ import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/compon
 import { EnclosureWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/enclosure-wrapper/enclosure-wrapper.component';
 import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-vdev/manual-selection-vdev.component';
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
+import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
@@ -64,6 +66,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CastModule,
     AppLoaderModule,
     CoreComponents,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     PoolManagerComponent,
@@ -88,6 +91,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
   providers: [
     PoolManagerStore,
     ManualDiskSelectionStore,
+    ManualDiskDragToggleStore,
     GenerateVdevsService,
   ],
 })

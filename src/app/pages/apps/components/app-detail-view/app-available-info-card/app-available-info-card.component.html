@@ -14,8 +14,14 @@
   <ngx-skeleton-loader *ngIf="(isLoading$ | async) || loadingSources; else appSources"></ngx-skeleton-loader>
   <ng-template #appSources>
     <ng-container *ngIf="sources?.length; else notAvailable">
-      <ng-container *ngFor="let source of sources; index as i">
-        <a [href]="source" [title]="source" [ixTest]="[app.name, 'source']">{{ 'Source {srcNo}{space}' | translate: { srcNo: i +1, space: i +1 >= sources.length ? '' : ', ' } }}</a>
+      <ng-container *ngFor="let source of sources; last as isLast">
+        <a
+          [href]="source" 
+          [title]="source" 
+          [ixTest]="[app.name, 'source']">
+          {{ getCleanSource(source) }}
+        </a>
+        <span *ngIf="!isLast">, </span>
       </ng-container>
     </ng-container>
   </ng-template>

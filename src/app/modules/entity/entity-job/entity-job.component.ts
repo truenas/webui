@@ -141,7 +141,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.aborted.emit(this.job);
           }
         },
-        error: (job) => {
+        error: (job: Job) => {
           this.job = job;
           this.failure.emit(this.job);
         },
