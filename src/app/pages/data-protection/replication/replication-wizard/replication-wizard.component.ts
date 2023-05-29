@@ -382,6 +382,20 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }],
             },
             {
+              type: 'checkbox',
+              name: 'encryption_inherit',
+              placeholder: helptext.encryption_inherit_placeholder,
+              tooltip: helptext.encryption_inherit_tooltip,
+              value: false,
+              relation: [{
+                action: RelationAction.Show,
+                when: [{
+                  name: 'encryption',
+                  value: true,
+                }],
+              }],
+            },
+            {
               type: 'select',
               name: 'encryption_key_format',
               placeholder: helptext.encryption_key_format_placeholder,
@@ -393,13 +407,17 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 label: this.translate.instant('PASSPHRASE'),
                 value: EncryptionKeyFormat.Passphrase,
               }],
-              relation: [{
-                action: RelationAction.Show,
-                when: [{
-                  name: 'encryption',
-                  value: true,
-                }],
-              }],
+              value: EncryptionKeyFormat.Hex,
+              relation: [
+                {
+                  action: RelationAction.Hide,
+                  connective: RelationConnection.Or,
+                  when: [
+                    { name: 'encryption', value: false },
+                    { name: 'encryption_inherit', value: true },
+                  ],
+                },
+              ],
             },
             {
               type: 'checkbox',
@@ -407,37 +425,35 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.encryption_key_generate_placeholder,
               tooltip: helptext.encryption_key_generate_tooltip,
               value: true,
-              relation: [{
-                action: RelationAction.Show,
-                connective: RelationConnection.And,
-                when: [{
-                  name: 'encryption',
-                  value: true,
-                }, {
-                  name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Hex,
-                }],
-              }],
+              relation: [
+                {
+                  action: RelationAction.Hide,
+                  connective: RelationConnection.Or,
+                  when: [
+                    { name: 'encryption', value: false },
+                    { name: 'encryption_inherit', value: true },
+                    { name: 'encryption_key_format', value: EncryptionKeyFormat.Passphrase },
+                  ],
+                },
+              ],
             },
             {
               type: 'input',
               name: 'encryption_key_hex',
               placeholder: helptext.encryption_key_hex_placeholder,
               tooltip: helptext.encryption_key_hex_tooltip,
-              relation: [{
-                action: RelationAction.Show,
-                connective: RelationConnection.And,
-                when: [{
-                  name: 'encryption',
-                  value: true,
-                }, {
-                  name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Hex,
-                }, {
-                  name: 'encryption_key_generate',
-                  value: false,
-                }],
-              }],
+              relation: [
+                {
+                  action: RelationAction.Hide,
+                  connective: RelationConnection.Or,
+                  when: [
+                    { name: 'encryption', value: false },
+                    { name: 'encryption_inherit', value: true },
+                    { name: 'encryption_key_format', value: EncryptionKeyFormat.Passphrase },
+                    { name: 'encryption_key_generate', value: true },
+                  ],
+                },
+              ],
             },
             {
               type: 'input',
@@ -446,17 +462,17 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               name: 'encryption_key_passphrase',
               placeholder: helptext.encryption_key_passphrase_placeholder,
               tooltip: helptext.encryption_key_passphrase_tooltip,
-              relation: [{
-                action: RelationAction.Show,
-                connective: RelationConnection.And,
-                when: [{
-                  name: 'encryption',
-                  value: true,
-                }, {
-                  name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Passphrase,
-                }],
-              }],
+              relation: [
+                {
+                  action: RelationAction.Hide,
+                  connective: RelationConnection.Or,
+                  when: [
+                    { name: 'encryption', value: false },
+                    { name: 'encryption_inherit', value: true },
+                    { name: 'encryption_key_format', value: EncryptionKeyFormat.Hex },
+                  ],
+                },
+              ],
             },
             {
               type: 'checkbox',
@@ -464,30 +480,33 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.encryption_key_location_truenasdb_placeholder,
               tooltip: helptext.encryption_key_location_truenasdb_tooltip,
               value: true,
-              relation: [{
-                action: RelationAction.Show,
-                when: [{
-                  name: 'encryption',
-                  value: true,
-                }],
-              }],
+              relation: [
+                {
+                  action: RelationAction.Hide,
+                  connective: RelationConnection.Or,
+                  when: [
+                    { name: 'encryption', value: false },
+                    { name: 'encryption_inherit', value: true },
+                  ],
+                },
+              ],
             },
             {
               type: 'input',
               name: 'encryption_key_location',
               placeholder: helptext.encryption_key_location_placeholder,
               tooltip: helptext.encryption_key_location_tooltip,
-              relation: [{
-                action: RelationAction.Show,
-                connective: RelationConnection.And,
-                when: [{
-                  name: 'encryption',
-                  value: true,
-                }, {
-                  name: 'encryption_key_location_truenasdb',
-                  value: false,
-                }],
-              }],
+              relation: [
+                {
+                  action: RelationAction.Hide,
+                  connective: RelationConnection.Or,
+                  when: [
+                    { name: 'encryption', value: false },
+                    { name: 'encryption_inherit', value: true },
+                    { name: 'encryption_key_location_truenasdb', value: true },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -1378,6 +1397,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }
 
         payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? truenasDbKeyLocation : data['encryption_key_location'];
+        payload['encryption_inherit'] = data['encryption_inherit'];
       }
 
       // schedule option
