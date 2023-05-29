@@ -1397,6 +1397,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }
 
         payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? truenasDbKeyLocation : data['encryption_key_location'];
+        payload['encryption_inherit'] = data['encryption_inherit'];
       }
 
       // schedule option
