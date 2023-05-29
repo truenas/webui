@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -30,7 +31,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   });
   activeTab: ReportTab;
   selectedDisks: string[];
-  allTabs: ReportTab[] = this.reportsService.getReportTabs();
+  allTabs: ReportTab[];
   diskDevices$ = this.reportsService.getDiskDevices();
   diskMetrics$ = this.reportsService.getDiskMetrics();
   @Output() diskOptionsChanged = new EventEmitter<{ devices: string[]; metrics: string[] }>();
@@ -44,10 +45,11 @@ export class ReportsGlobalControlsComponent implements OnInit {
     private store$: Store<AppState>,
     private reportsService: ReportsService,
     private slideIn: IxSlideInService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.activeTab = this.allTabs.find((tab) => tab.value === this.route.routeConfig.path);
+    this.setupTabs();
     this.setAutoRefreshControl();
     this.setupDisksTab();
   }
@@ -56,12 +58,16 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.slideIn.open(ReportsConfigFormComponent);
   }
 
-  onNavigateToTab(tab: ReportTab): void {
-    this.router.navigate(['/reportsdashboard', tab.value]);
-  }
-
   isActiveTab(tab: ReportTab): boolean {
     return this.activeTab?.value === tab.value;
+  }
+
+  private setupTabs(): void {
+    this.reportsService.getReportTabs().pipe(untilDestroyed(this)).subscribe((tabs) => {
+      this.allTabs = tabs;
+      this.activeTab = tabs.find((tab) => tab.value === this.route.routeConfig.path);
+      this.cdr.markForCheck();
+    });
   }
 
   private setupDisksTab(): void {

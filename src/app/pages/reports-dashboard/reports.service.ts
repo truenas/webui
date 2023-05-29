@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { addSeconds } from 'date-fns';
 import {
-  map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
+  map, Observable, shareReplay, BehaviorSubject, switchMap, interval, of, withLatestFrom,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -40,10 +40,10 @@ export class ReportsService implements OnDestroy {
   serverTime: Date;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
+  private hasUps$ = new BehaviorSubject<boolean>(false);
+  private hasDiskTemperature$ = new BehaviorSubject<boolean>(false);
+  private hasTarget$ = new BehaviorSubject<boolean>(false);
   private reportsUtils: Worker;
-  private hasUps = false;
-  private hasDiskTemperature = false;
-  private hasTarget = false;
 
   constructor(
     private ws: WebSocketService,
@@ -95,13 +95,13 @@ export class ReportsService implements OnDestroy {
     };
 
     this.ws.call('reporting.graphs').subscribe((reportingGraphs) => {
-      this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
-      this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
+      this.hasUps$.next(reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups));
+      this.hasTarget$.next(reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target));
       this.reportingGraphs$.next(reportingGraphs);
     });
 
     this.ws.call('disk.temperatures').subscribe((values) => {
-      this.hasDiskTemperature = Boolean(Object.values(values).filter(Boolean).length);
+      this.hasDiskTemperature$.next(Boolean(Object.values(values).filter(Boolean).length));
     });
 
     this.store$
@@ -145,22 +145,23 @@ export class ReportsService implements OnDestroy {
     return data;
   }
 
-  getReportTabs(): ReportTab[] {
-    return Array.from(reportTypeLabels)
-      .filter(([value]) => {
-        if (value === ReportType.Ups && !this.hasUps) {
-          return false;
-        }
+  getReportTabs(): Observable<ReportTab[]> {
+    return of(Array.from(reportTypeLabels)).pipe(
+      withLatestFrom(this.hasUps$, this.hasTarget$, this.hasDiskTemperature$),
+      map(([tabs, hasUps, hasTarget]) => {
+        return tabs.filter(([value]) => {
+          if (value === ReportType.Ups && !hasUps) {
+            return false;
+          }
 
-        if (value === ReportType.Target && !this.hasTarget) {
-          return false;
-        }
+          if (value === ReportType.Target && !hasTarget) {
+            return false;
+          }
 
-        return true;
-      })
-      .map(([value, label]) => {
-        return { value, label } as ReportTab;
-      });
+          return true;
+        }).map(([value, label]) => ({ value, label }));
+      }),
+    );
   }
 
   getDiskDevices(): Observable<Option[]> {
@@ -188,7 +189,7 @@ export class ReportsService implements OnDestroy {
   getDiskMetrics(): Observable<Option[]> {
     return this.diskMetrics$.asObservable().pipe(
       map((options) => {
-        if (!this.hasDiskTemperature) {
+        if (!this.hasDiskTemperature$.value) {
           return options.filter((option) => option.value !== 'disktemp');
         }
 

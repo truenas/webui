@@ -2,17 +2,14 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef, Inject,
 } from '@angular/core';
-import {
-  Router, ActivatedRoute,
-} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { combineLatest } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
-import { AppLoaderService, DialogService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { ReportsService } from './reports.service';
 
@@ -34,16 +31,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   otherReports: Report[] = [];
   activeReports: Report[] = [];
   visibleReports: number[] = [];
-  allTabs: ReportTab[] = this.reportsService.getReportTabs();
+  allTabs: ReportTab[];
 
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
-    private translate: TranslateService,
     private layoutService: LayoutService,
     private reportsService: ReportsService,
-    private loader: AppLoaderService,
-    private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -51,9 +44,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.scrollContainer = this.layoutService.getContentContainer();
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.reportsService.getReportGraphs()
+    combineLatest([
+      this.reportsService.getReportGraphs(),
+      this.reportsService.getReportTabs(),
+    ])
       .pipe(untilDestroyed(this))
-      .subscribe((reports) => {
+      .subscribe(([reports, tabs]) => {
+        this.allTabs = tabs;
         this.allReports = reports.map((report) => {
           const list = [];
           if (report.identifiers) {
@@ -83,7 +80,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   activateTabFromUrl(): void {
-    const subpath = this.route.snapshot.url[0] && this.route.snapshot.url[0].path;
+    const subpath = this.route.snapshot?.url[0]?.path;
     const tabFound = this.allTabs.find((tab) => tab.value === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
   }
