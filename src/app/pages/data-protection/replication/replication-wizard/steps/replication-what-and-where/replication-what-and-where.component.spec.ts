@@ -83,7 +83,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('generates payload which will inherit dataset encryption from its parent dataset', async () => {
-    await form.fillForm({ 'Encryption inherit': true });
+    await form.fillForm({ 'Inherit Encryption': true });
 
     expect(spectator.component.getPayload()).toEqual({
       exist_replication: null,
