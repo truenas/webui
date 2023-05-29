@@ -235,6 +235,8 @@ export class ReplicationWizardComponent {
       payload.encryption_key_location = data.encryption_key_location_truenasdb
         ? truenasDbKeyLocation
         : data.encryption_key_location;
+
+      payload.encryption_inherit = data.encryption_inherit;
     }
 
     if (data.schedule_method === ScheduleMethod.Cron) {
