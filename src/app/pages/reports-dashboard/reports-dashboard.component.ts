@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -46,7 +46,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
     combineLatest([
       this.reportsService.getReportGraphs(),
-      this.reportsService.getReportTabs(),
+      of(this.reportsService.getReportTabs()),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([reports, tabs]) => {

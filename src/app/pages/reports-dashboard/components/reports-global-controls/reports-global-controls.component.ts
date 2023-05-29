@@ -63,9 +63,9 @@ export class ReportsGlobalControlsComponent implements OnInit {
   }
 
   private setupTabs(): void {
-    this.reportsService.getReportTabs().pipe(untilDestroyed(this)).subscribe((tabs) => {
-      this.allTabs = tabs;
-      this.activeTab = tabs.find((tab) => tab.value === this.route.routeConfig.path);
+    this.reportsService.getReportGraphs().pipe(untilDestroyed(this)).subscribe(() => {
+      this.allTabs = this.reportsService.getReportTabs();
+      this.activeTab = this.allTabs.find((tab) => tab.value === this.route.routeConfig.path);
       this.cdr.markForCheck();
     });
   }
