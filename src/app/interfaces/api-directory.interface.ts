@@ -5,7 +5,6 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -180,7 +179,7 @@ import {
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
-import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
+import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
 import { CreatePoolScrubTask, PoolScrubTask, PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
@@ -714,9 +713,6 @@ export type ApiDirectory = {
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
-  'pool.import_disk': { params: ImportDiskParams; response: void };
-  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: ImportDiskFilesystem };
-  'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };
   'pool.is_upgraded': { params: [poolId: number]; response: boolean };
