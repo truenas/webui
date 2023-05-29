@@ -102,15 +102,11 @@ export class NavigationService {
     },
     {
       name: T('Apps (WIP)'),
-      type: MenuItemType.SlideOut,
+      type: MenuItemType.Link,
       tooltip: T('Apps'),
       icon: 'apps',
       state: 'apps',
       isVisible$: this.hasApps$,
-      sub: [
-        { name: T('Installed'), state: 'installed' },
-        { name: T('Available'), state: 'available' },
-      ],
     },
     {
       name: T('Reporting'),

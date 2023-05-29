@@ -42,11 +42,11 @@ const routes: Routes = [
     {
       path: 'available',
       component: AppRouterOutletComponent,
-      data: { title: T('Available'), breadcrumb: T('Available') },
+      data: { title: T('Discover'), breadcrumb: T('Available') },
       children: [{
         path: '',
         component: AvailableAppsComponent,
-        data: { title: T('Available'), breadcrumb: T('Available') },
+        data: { title: T('Discover'), breadcrumb: T('Available') },
       },
       {
         path: ':catalog/:train/:appId',
