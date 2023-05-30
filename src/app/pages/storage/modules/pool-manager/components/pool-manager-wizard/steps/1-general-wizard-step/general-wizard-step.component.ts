@@ -26,8 +26,6 @@ export class GeneralWizardStepComponent implements OnInit {
     name: ['', Validators.required],
     encryption: [false],
     encryptionStandard: ['AES-256-GCM', Validators.required],
-    allowNonUniqueSerialDisks: [false],
-    allowExportedPools: [[] as string[]],
   });
 
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
@@ -50,7 +48,6 @@ export class GeneralWizardStepComponent implements OnInit {
 
     this.initEncryptionField();
     this.connectGeneralOptionsToStore();
-    this.connectWarningsToStore();
   }
 
   private initEncryptionField(): void {
@@ -84,18 +81,6 @@ export class GeneralWizardStepComponent implements OnInit {
       this.store.setGeneralOptions({
         name,
         encryption: encryption ? encryptionStandard : null,
-      });
-    });
-  }
-
-  private connectWarningsToStore(): void {
-    combineLatest([
-      this.form.controls.allowExportedPools.valueChanges.pipe(startWith([])),
-      this.form.controls.allowNonUniqueSerialDisks.valueChanges.pipe(startWith(false)),
-    ]).pipe(untilDestroyed(this)).subscribe(([allowExportedPools, allowNonUniqueSerialDisks]) => {
-      this.store.setDiskWarningOptions({
-        allowExportedPools,
-        allowNonUniqueSerialDisks,
       });
     });
   }

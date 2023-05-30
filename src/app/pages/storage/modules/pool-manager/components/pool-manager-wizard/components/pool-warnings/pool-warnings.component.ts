@@ -1,15 +1,17 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { of, Observable } from 'rxjs';
+import {
+  of, Observable, combineLatest, startWith,
+} from 'rxjs';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
@@ -21,7 +23,10 @@ import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolWarningsComponent implements OnInit {
-  @Input() form: GeneralWizardStepComponent['form'];
+  protected form = this.formBuilder.group({
+    allowNonUniqueSerialDisks: [false],
+    allowExportedPools: [[] as string[]],
+  });
 
   exportedPoolsWarning = this.translate.instant(
     `The following disks have exported pools on them.
@@ -47,6 +52,7 @@ export class PoolWarningsComponent implements OnInit {
   ]);
 
   constructor(
+    private formBuilder: FormBuilder,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private store: PoolManagerStore,
@@ -54,6 +60,18 @@ export class PoolWarningsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initUnsafeDisksWarnings();
+    this.connectWarningsToStore();
+  }
+
+  checkboxChanged(event: MatCheckboxChange): void {
+    let allowExportedPools = [...this.form.controls.allowExportedPools.value];
+
+    if (event.checked) {
+      allowExportedPools = [...allowExportedPools, event.source.value];
+    } else {
+      allowExportedPools = allowExportedPools.filter((pool) => pool !== event.source.value);
+    }
+    this.form.patchValue({ allowExportedPools });
   }
 
   private initUnsafeDisksWarnings(): void {
@@ -99,14 +117,15 @@ export class PoolWarningsComponent implements OnInit {
     return this.disksWithExportedPools.filter((item) => item.exported_zpool === pool).map((item) => item.devname);
   }
 
-  checkboxChanged(event: MatCheckboxChange): void {
-    let allowExportedPools = [...this.form.controls.allowExportedPools.value];
-
-    if (event.checked) {
-      allowExportedPools = [...allowExportedPools, event.source.value];
-    } else {
-      allowExportedPools = allowExportedPools.filter((pool) => pool !== event.source.value);
-    }
-    this.form.patchValue({ allowExportedPools });
+  private connectWarningsToStore(): void {
+    combineLatest([
+      this.form.controls.allowExportedPools.valueChanges.pipe(startWith([])),
+      this.form.controls.allowNonUniqueSerialDisks.valueChanges.pipe(startWith(false)),
+    ]).pipe(untilDestroyed(this)).subscribe(([allowExportedPools, allowNonUniqueSerialDisks]) => {
+      this.store.setDiskWarningOptions({
+        allowExportedPools,
+        allowNonUniqueSerialDisks,
+      });
+    });
   }
 }

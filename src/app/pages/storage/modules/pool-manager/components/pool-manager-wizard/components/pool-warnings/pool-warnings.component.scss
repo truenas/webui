@@ -1,4 +1,8 @@
 :host {
+  display: block;
+  margin-bottom: 16px;
+  margin-top: 16px;
+
   ix-radio-group {
     margin-top: 0;
   }
@@ -26,8 +30,7 @@
     line-height: 1.25;
   }
 
-  mat-checkbox {
+  mat-checkbox:not(:last-child) {
     margin-bottom: 4px;
-    margin-top: 4px;
   }
 }

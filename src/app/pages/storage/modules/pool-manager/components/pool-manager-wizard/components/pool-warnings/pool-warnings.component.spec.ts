@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
@@ -9,7 +9,6 @@ import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
-import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 const duplicateSerialDisk = {
@@ -23,19 +22,18 @@ const exportedPoolDisk = {
   duplicate_serial: [],
   exported_zpool: 'FAKE_POOL',
   devname: 'sdb',
-} as unknown as UnusedDisk;
+} as UnusedDisk;
 
 const duplicateSerialAndExportedPoolDisk = {
   identifier: '{uuid}bb73faf5-6d50-4af9-ae30-bc8ba0cf866',
   duplicate_serial: ['sdb'],
   exported_zpool: 'MOCK_POOL',
   devname: 'sdc',
-} as unknown as UnusedDisk;
+} as UnusedDisk;
 
 describe('PoolWarningsComponent', () => {
   let spectator: Spectator<PoolWarningsComponent>;
   let loader: HarnessLoader;
-  let form: GeneralWizardStepComponent['form'];
 
   const createComponent = createComponentFactory({
     component: PoolWarningsComponent,
@@ -52,16 +50,7 @@ describe('PoolWarningsComponent', () => {
   });
 
   beforeEach(() => {
-    form = new FormGroup({
-      allowNonUniqueSerialDisks: new FormControl(false),
-      allowExportedPools: new FormControl<string[]>([]),
-    }) as unknown as GeneralWizardStepComponent['form'];
-
-    spectator = createComponent({
-      props: {
-        form,
-      },
-    });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -69,7 +58,7 @@ describe('PoolWarningsComponent', () => {
     const allowNonUniqueSerial = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Allow non-unique serialed disks' }));
     await allowNonUniqueSerial.setValue('Allow');
 
-    expect(form.value).toMatchObject({
+    expect(spectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenCalledWith({
       allowNonUniqueSerialDisks: true,
       allowExportedPools: [],
     });
@@ -83,7 +72,7 @@ describe('PoolWarningsComponent', () => {
     await exportedPoolCheckboxes[0].check();
     await exportedPoolCheckboxes[1].check();
 
-    expect(form.value).toMatchObject({
+    expect(spectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenCalledWith({
       allowNonUniqueSerialDisks: false,
       allowExportedPools: ['FAKE_POOL', 'MOCK_POOL'],
     });
