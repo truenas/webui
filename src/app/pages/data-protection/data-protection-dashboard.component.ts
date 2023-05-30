@@ -154,7 +154,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Pool'), prop: 'pool_name' },
             { name: this.translate.instant('Description'), prop: 'description', hiddenIfEmpty: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', width: '110px' },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -198,10 +198,10 @@ export class DataProtectionDashboardComponent implements OnInit {
             key_props: ['dataset', 'naming_schema', 'keepfor'],
           },
           columns: [
-            { name: this.translate.instant('Pool/Dataset'), prop: 'dataset' },
-            { name: this.translate.instant('Keep for'), prop: 'keepfor' },
+            { name: this.translate.instant('Pool/Dataset'), prop: 'dataset', enableMatTooltip: true },
+            { name: this.translate.instant('Keep for'), prop: 'keepfor', enableMatTooltip: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run' },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -209,11 +209,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               checkbox: true,
               onChange: (row: PeriodicSnapshotTaskUi) => this.onCheckboxToggle(TaskCardId.Snapshot, row, 'enabled'),
             },
-            {
-              name: this.translate.instant('State'),
-              prop: 'state',
-              button: true,
-            },
+            { name: this.translate.instant('State'), prop: 'state', button: true },
           ],
           dataSourceHelper: (data: PeriodicSnapshotTaskUi[]) => this.snapshotDataSourceHelper(data),
           isActionVisible: this.isActionVisible,
@@ -261,7 +257,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           columns: [
             { name: this.translate.instant('Name'), prop: 'name' },
-            { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot' },
+            { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -269,11 +265,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               checkbox: true,
               onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row as TaskTableRow, 'enabled'),
             },
-            {
-              name: this.translate.instant('State'),
-              prop: 'state',
-              button: true,
-            },
+            { name: this.translate.instant('State'), prop: 'state', button: true },
           ],
           parent: this,
           add: () => {
@@ -306,23 +298,15 @@ export class DataProtectionDashboardComponent implements OnInit {
           columns: [
             { name: this.translate.instant('Description'), prop: 'description' },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Next Run'),
-              prop: 'next_run',
-              width: '80px',
-            },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
-              width: '80px',
               prop: 'enabled',
               checkbox: true,
+              width: '80px',
               onChange: (row: CloudSyncTaskUi) => this.onCheckboxToggle(TaskCardId.CloudSync, row, 'enabled'),
             },
-            {
-              name: this.translate.instant('State'),
-              prop: 'state',
-              button: true,
-            },
+            { name: this.translate.instant('State'), prop: 'state', button: true },
           ],
           parent: this,
           add: () => {
@@ -353,7 +337,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Path'), prop: 'path' },
             { name: this.translate.instant('Remote Host'), prop: 'remotehost' },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run' },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -361,11 +345,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               checkbox: true,
               onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row as TaskTableRow, 'enabled'),
             },
-            {
-              name: this.translate.instant('State'),
-              prop: 'state',
-              button: true,
-            },
+            { name: this.translate.instant('State'), prop: 'state', button: true },
           ],
           dataSourceHelper: (data: RsyncTaskUi[]) => this.rsyncDataSourceHelper(data),
           getActions: this.getRsyncActions.bind(this),
@@ -398,24 +378,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           dataSourceHelper: (data: SmartTestTaskUi[]) => this.smartTestsDataSourceHelper(data),
           parent: this,
           columns: [
-            {
-              name: helptext_smart.smartlist_column_disks,
-              prop: 'disksLabel',
-            },
-            {
-              name: helptext_smart.smartlist_column_type,
-              prop: 'type',
-            },
+            { name: helptext_smart.smartlist_column_disks, prop: 'disksLabel' },
+            { name: helptext_smart.smartlist_column_type, prop: 'type' },
             { name: helptext_smart.smartlist_column_description, prop: 'desc', hiddenIfEmpty: true },
-            {
-              name: helptext_smart.smartlist_column_frequency,
-              prop: 'frequency',
-              enableMatTooltip: true,
-            },
-            {
-              name: helptext_smart.smartlist_column_next_run,
-              prop: 'next_run',
-            },
+            { name: helptext_smart.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
+            { name: helptext_smart.smartlist_column_next_run, prop: 'next_run', enableMatTooltip: true },
           ],
           add: () => {
             const slideInRef = this.slideInService.open(SmartTaskFormComponent);
