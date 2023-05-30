@@ -111,10 +111,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     }
   }
 
-  navigateToTab(tab: ReportTab): void {
-    this.router.navigate(['/reportsdashboard', tab.value]);
-  }
-
   activateTab(activeTab: ReportTab): void {
     const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
       (report) => {
