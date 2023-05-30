@@ -1,17 +1,3 @@
-<ng-template #pageHeader>
-  <ix-page-title-header>
-    <button
-      *ngIf="!(isSystemHaCapable$ | async)"
-      mat-button
-      color="primary"
-      ixTest="import-data"
-      (click)="onImportData()"
-    >
-      {{ 'Import Data' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
-
 <div
   *ngIf="!isLoading && dataSource?.data.length === 0; else datasetContainer"
   class="entity-empty-wrapper"

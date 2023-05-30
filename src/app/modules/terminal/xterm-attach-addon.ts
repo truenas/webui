@@ -17,7 +17,7 @@ export class XtermAttachAddon implements ITerminalAddon {
   activate(terminal: Terminal): void {
     this.disposables.push(
       addSocketListener(this.socket, 'message', (event) => {
-        const data: ArrayBuffer | string = event.data;
+        const data = event.data as ArrayBuffer | string;
         terminal.write(typeof data === 'string' ? data : new Uint8Array(data));
       }),
     );

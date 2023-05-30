@@ -33,7 +33,7 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   getColumnValue(column: EntityTableColumn, isCronTime = false): unknown {
-    const columnValue = _.get(this.config, column.prop.split('.'));
+    const columnValue = _.get(this.config, column.prop.split('.')) as unknown;
 
     if (!columnValue) {
       return column.emptyText || 'N/A';
@@ -56,9 +56,9 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     return this.parent.conf.getActions ? this.parent.conf.getActions(this.config) : this.parent.getActions(this.config);
   }
 
-  private tryGetTaskCronDescription(val: string): string {
+  private tryGetTaskCronDescription(val: unknown): unknown {
     try {
-      return this.taskService.getTaskCronDescription(val, {});
+      return this.taskService.getTaskCronDescription(val as string, {});
     } catch (err: unknown) {
       console.error(err);
       return val;

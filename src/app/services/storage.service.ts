@@ -121,8 +121,7 @@ export class StorageService {
       let kbytes = [];
       let mbytes = [];
       let gbytes = [];
-      let
-        tbytes = [];
+      let tbytes = [];
       for (const i of tempArr) {
         if (i) {
           if (i.slice(-2) === ' B') {

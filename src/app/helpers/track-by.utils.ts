@@ -1,3 +1,3 @@
-export function trackById(index: number, item: { id: number | string }): number | string {
+export function trackById<T>(index: number, item: { id: T }): T {
   return item.id;
 }

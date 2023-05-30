@@ -52,7 +52,7 @@ export class DiskInfoCardComponent {
   }
 
   onReplace(): void {
-    const poolId = this.route.snapshot.params.poolId;
+    const poolId = this.route.snapshot.params.poolId as string;
     this.matDialog
       .open(ReplaceDiskDialogComponent, {
         data: {

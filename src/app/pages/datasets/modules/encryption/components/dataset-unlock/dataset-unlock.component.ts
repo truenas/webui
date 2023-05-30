@@ -87,7 +87,7 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.pk = this.aroute.snapshot.params['datasetId'];
+    this.pk = this.aroute.snapshot.params['datasetId'] as string;
     this.getEncryptionSummary();
 
     this.form.controls.use_file.valueChanges.pipe(untilDestroyed(this)).subscribe((useFile) => {

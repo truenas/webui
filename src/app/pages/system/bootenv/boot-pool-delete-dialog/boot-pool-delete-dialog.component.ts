@@ -24,7 +24,6 @@ export class BootPoolDeleteDialogComponent {
   });
   isJobCompleted = false;
   bulkItems = new Map<string, BulkListItem<Bootenv>>();
-  hasErrors = false;
 
   get successCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Success).length;

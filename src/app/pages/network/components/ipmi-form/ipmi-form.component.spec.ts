@@ -15,7 +15,7 @@ import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-gr
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { IpmiFormComponent } from 'app/pages/network/components/forms/ipmi-form.component';
+import { IpmiFormComponent } from 'app/pages/network/components/ipmi-form/ipmi-form.component';
 import {
   DialogService, RedirectService, SystemGeneralService,
 } from 'app/services';

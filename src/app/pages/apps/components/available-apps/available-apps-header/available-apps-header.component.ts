@@ -33,7 +33,6 @@ export class AvailableAppsHeaderComponent implements OnInit {
   });
 
   searchControl = this.fb.control('');
-  isLoading = false;
   isFirstLoad = true;
   showFilters = false;
 
@@ -45,6 +44,8 @@ export class AvailableAppsHeaderComponent implements OnInit {
       return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
     }),
   );
+
+  isLoading$ = this.applicationsStore.isLoading$;
 
   installedCatalogs: string[] = [];
 

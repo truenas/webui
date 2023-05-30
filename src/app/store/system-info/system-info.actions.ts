@@ -17,6 +17,11 @@ export const systemHaCapabilityLoaded = createAction(
   props<{ isSystemHaCapable: boolean }>(),
 );
 
+export const ixHardwareLoaded = createAction(
+  '[System Info API] System is IxHardware Loaded',
+  props<{ isIxHardware: boolean }>(),
+);
+
 export const passiveNodeReplaced = createAction(
   '[System Info API] Passive Node Replaced',
 );
