@@ -111,10 +111,8 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   onSettingsClicked(): void {
-    this.slideInService.open(NetworkConfigurationComponent, { wide: true });
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.loadNetworkConfigAndSummary();
-    });
+    const slideInRef = this.slideInService.open(NetworkConfigurationComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
   private loadNetworkConfigAndSummary(): void {

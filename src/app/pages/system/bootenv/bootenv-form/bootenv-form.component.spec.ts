@@ -6,6 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -30,12 +32,9 @@ describe('BootEnvironmentFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-    ws = spectator.inject(WebSocketService);
   });
 
   /*
@@ -43,7 +42,17 @@ describe('BootEnvironmentFormComponent', () => {
   */
   describe('creating a boot environment', () => {
     beforeEach(() => {
-      spectator.component.setupForm(BootEnvironmentAction.Create);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              operation: BootEnvironmentAction.Create,
+            },
+          },
+        ],
+      });
+      ws = spectator.inject(WebSocketService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -67,8 +76,20 @@ describe('BootEnvironmentFormComponent', () => {
   */
   describe('cloning a boot environment', () => {
     const cloneSource = 'original';
+
     beforeEach(() => {
-      spectator.component.setupForm(BootEnvironmentAction.Clone, cloneSource);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              operation: BootEnvironmentAction.Clone,
+              name: cloneSource,
+            },
+          },
+        ],
+      });
+      ws = spectator.inject(WebSocketService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -102,7 +123,18 @@ describe('BootEnvironmentFormComponent', () => {
   */
   describe('renaming a boot environment', () => {
     beforeEach(() => {
-      spectator.component.setupForm(BootEnvironmentAction.Rename, 'myBootEnv');
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              operation: BootEnvironmentAction.Rename,
+              name: 'myBootEnv',
+            },
+          },
+        ],
+      });
+      ws = spectator.inject(WebSocketService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 

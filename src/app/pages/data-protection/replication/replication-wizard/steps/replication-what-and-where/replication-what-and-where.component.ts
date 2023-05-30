@@ -23,6 +23,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -128,6 +129,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
+    private slideInRef: IxSlideInRef<ReplicationWhatAndWhereComponent>,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentialService: KeychainCredentialService,
@@ -537,7 +539,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInService.close();
+    this.slideInRef.close();
     this.slideInService.open(ReplicationFormComponent, { wide: true });
   }
 

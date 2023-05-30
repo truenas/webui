@@ -6,6 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -40,18 +42,27 @@ describe('DatasetQuotaEditFormComponent', () => {
         memorySizeFormatting: jest.fn(() => '500 KiB'),
         memorySizeParsing: jest.fn(() => 1024000),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-    ws = spectator.inject(WebSocketService);
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('editing user quota', () => {
     beforeEach(() => {
-      spectator.component.setupEditQuotaForm(DatasetQuotaType.User, 'Test', 1);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              quotaType: DatasetQuotaType.User,
+              datasetId: 'Test',
+              id: 1,
+            },
+          },
+        ],
+      });
+      ws = spectator.inject(WebSocketService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows current quota values when editing', async () => {
@@ -92,13 +103,26 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 0,
         },
       ]]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
 
   describe('editing group quota', () => {
     beforeEach(() => {
-      spectator.component.setupEditQuotaForm(DatasetQuotaType.Group, 'Test', 1);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              quotaType: DatasetQuotaType.Group,
+              datasetId: 'Test',
+              id: 1,
+            },
+          },
+        ],
+      });
+      ws = spectator.inject(WebSocketService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows current quota values when editing', async () => {
@@ -139,7 +163,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 1,
         },
       ]]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

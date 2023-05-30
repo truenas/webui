@@ -41,8 +41,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 
@@ -112,8 +110,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
-    private layoutService: LayoutService,
-    private slideIn: IxSlideInService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {

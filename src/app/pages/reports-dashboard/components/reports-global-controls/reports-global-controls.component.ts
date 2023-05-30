@@ -4,7 +4,7 @@ import {
   Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
@@ -41,10 +41,9 @@ export class ReportsGlobalControlsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router,
     private store$: Store<AppState>,
     private reportsService: ReportsService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -55,7 +54,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   }
 
   showConfigForm(): void {
-    this.slideIn.open(ReportsConfigFormComponent);
+    this.slideInService.open(ReportsConfigFormComponent);
   }
 
   isActiveTab(tab: ReportTab): boolean {

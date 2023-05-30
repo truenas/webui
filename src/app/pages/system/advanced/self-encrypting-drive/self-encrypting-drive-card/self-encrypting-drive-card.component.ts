@@ -24,7 +24,7 @@ export class SelfEncryptingDriveCardComponent {
     toLoadingState(),
   );
 
-  readonly sedPassword$ = this.slideIn.onClose$.pipe(
+  sedPassword$ = this.slideInService.onClose$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('system.advanced.sed_global_password')),
     map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
@@ -34,12 +34,12 @@ export class SelfEncryptingDriveCardComponent {
   constructor(
     private store$: Store<AppState>,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(SelfEncryptingDriveFormComponent);
+    this.slideInService.open(SelfEncryptingDriveFormComponent);
   }
 }

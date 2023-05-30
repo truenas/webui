@@ -130,6 +130,10 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProviders();
+
+    if (this.credential) {
+      this.setCredentialsForEdit();
+    }
   }
 
   setCredentialsForEdit(): void {

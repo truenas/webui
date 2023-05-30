@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -64,90 +66,102 @@ describe('CronFormComponent', () => {
           { username: 'steven' },
         ] as User[]),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-  });
+  describe('adds new cron job', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
 
-  it('shows existing values when cron form is opened to edit existing record', async () => {
-    spectator.component.setCronForEdit(existingCronJob);
+    it('adds a new cron job entry', async () => {
+      await form.fillForm({
+        Description: 'Final cron job',
+        Command: 'rm -rf /',
+        'Run As User': 'root',
+        'Hide Standard Output': true,
+        'Hide Standard Error': true,
+        Schedule: '0-30 */2 2 * 2-3',
+        Enabled: true,
+      });
 
-    const values = await form.getValues();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
-    expect(values).toEqual({
-      Description: 'Important cron job',
-      Command: 'ls -la',
-      'Run As User': 'root',
-      Schedule: 'Custom (30 * 12 * 1,2,3) At 30 minutes past the hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
-      'Hide Standard Output': true,
-      'Hide Standard Error': false,
-      Enabled: true,
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.create', [{
+        command: 'rm -rf /',
+        description: 'Final cron job',
+        enabled: true,
+        schedule: {
+          minute: '0-30',
+          hour: '*/2',
+          dom: '2',
+          dow: 'tue,wed',
+          month: '*',
+        },
+        stderr: true,
+        stdout: true,
+        user: 'root',
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
 
-  it('adds a new cron job entry', async () => {
-    await form.fillForm({
-      Description: 'Final cron job',
-      Command: 'rm -rf /',
-      'Run As User': 'root',
-      'Hide Standard Output': true,
-      'Hide Standard Error': true,
-      Schedule: '0-30 */2 2 * 2-3',
-      Enabled: true,
+  describe('edits cron job', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: existingCronJob },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('shows existing values when cron form is opened to edit existing record', async () => {
+      const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.create', [{
-      command: 'rm -rf /',
-      description: 'Final cron job',
-      enabled: true,
-      schedule: {
-        minute: '0-30',
-        hour: '*/2',
-        dom: '2',
-        dow: 'tue,wed',
-        month: '*',
-      },
-      stderr: true,
-      stdout: true,
-      user: 'root',
-    }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
-
-  it('edits an existing cron job entry when it is open for editing', async () => {
-    spectator.component.setCronForEdit(existingCronJob);
-
-    await form.fillForm({
-      Description: 'Updated cron job',
-      Schedule: '* */2 * * 0-4',
-      Enabled: false,
+      expect(values).toEqual({
+        Description: 'Important cron job',
+        Command: 'ls -la',
+        'Run As User': 'root',
+        Schedule: 'Custom (30 * 12 * 1,2,3) At 30 minutes past the hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
+        'Hide Standard Output': true,
+        'Hide Standard Error': false,
+        Enabled: true,
+      });
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('edits an existing cron job entry when it is open for editing', async () => {
+      await form.fillForm({
+        Description: 'Updated cron job',
+        Schedule: '* */2 * * 0-4',
+        Enabled: false,
+      });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.update', [234, {
-      command: 'ls -la',
-      description: 'Updated cron job',
-      enabled: false,
-      schedule: {
-        minute: '*',
-        hour: '*/2',
-        dom: '*',
-        month: '*',
-        dow: 'mon,tue,wed,thu,sun',
-      },
-      stderr: false,
-      stdout: true,
-      user: 'root',
-    }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.update', [234, {
+        command: 'ls -la',
+        description: 'Updated cron job',
+        enabled: false,
+        schedule: {
+          minute: '*',
+          hour: '*/2',
+          dom: '*',
+          month: '*',
+          dow: 'mon,tue,wed,thu,sun',
+        },
+        stderr: false,
+        stdout: true,
+        user: 'root',
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
   });
 });

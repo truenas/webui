@@ -3,9 +3,10 @@
     <h3>{{ 'Kernel' | translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixWithLoadingState="debugKernel$ as debugKernel"
         mat-button
         [ixTest]="['kernel', 'configure']"
-        (click)="onConfigurePressed()"
+        (click)="onConfigurePressed(debugKernel)"
       >
         {{ 'Configure' | translate }}
       </button>

@@ -19,7 +19,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { DialogService } from 'app/services';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.component';
@@ -72,7 +72,7 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
     private mdDialog: MatDialog,
     private dialogService: DialogService,
     private ws: WebSocketService,
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private layoutService: LayoutService,
   ) {}
 
@@ -159,9 +159,7 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
       () => {
         const slideInRef = this.slideInService.open(CatalogAddFormComponent);
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.refresh();
-        });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
       },
     );
   }
@@ -169,9 +167,7 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
   edit(catalog: Catalog): void {
     const slideInRef = this.slideInService.open(CatalogEditFormComponent);
     slideInRef.componentInstance.setCatalogForEdit(catalog);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refresh();
-    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   refreshRow(row: Catalog): void {

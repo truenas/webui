@@ -7,6 +7,8 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -79,6 +81,8 @@ describe('OpenVpnClientConfigComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     declarations: [
       DownloadClientConfigModalComponent,
@@ -147,7 +151,7 @@ describe('OpenVpnClientConfigComponent', () => {
       additional_parameters: 'param=newvalue',
       tls_crypt_auth: 'Key 2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('unsets certificates when unset button is clicked', async () => {

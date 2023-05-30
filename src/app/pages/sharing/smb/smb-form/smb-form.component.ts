@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  Inject,
   OnInit,
 } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
@@ -32,6 +33,8 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -46,7 +49,6 @@ import {
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -58,7 +60,6 @@ export class SmbFormComponent implements OnInit {
   isLoading = false;
   isAdvancedMode = false;
   namesInUse: string[] = [];
-  existingSmbShare: SmbShare;
   readonly helptextSharingSmb = helptextSharingSmb;
   private wasStripAclWarningShown = false;
 
@@ -172,14 +173,15 @@ export class SmbFormComponent implements OnInit {
     private mdDialog: MatDialog,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private router: Router,
     protected loader: AppLoaderService,
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
-  ) {}
+    private slideInRef: IxSlideInRef<SmbFormComponent>,
+    @Inject(SLIDE_IN_DATA) private existingSmbShare: SmbShare,
+  ) { }
 
   ngOnInit(): void {
     this.getUnusableNamesForShare();
@@ -196,6 +198,10 @@ export class SmbFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(noop);
+
+    if (this.existingSmbShare) {
+      this.setSmbShareForEdit();
+    }
   }
 
   setupAclControl(): void {
@@ -351,14 +357,13 @@ export class SmbFormComponent implements OnInit {
     this.presetFields = [];
   }
 
-  setSmbShareForEdit(smbShare: SmbShare): void {
-    this.existingSmbShare = smbShare;
+  setSmbShareForEdit(): void {
     this.title = helptextSharingSmb.formTitleEdit;
-    const index = this.namesInUse.findIndex((name) => name === smbShare.name);
+    const index = this.namesInUse.findIndex((name) => name === this.existingSmbShare.name);
     if (index >= 0) {
       this.namesInUse.splice(index, 1);
     }
-    this.form.patchValue(smbShare);
+    this.form.patchValue(this.existingSmbShare);
   }
 
   afpConfirmEnable(value: boolean): void {
@@ -430,10 +435,10 @@ export class SmbFormComponent implements OnInit {
                     { queryParams: { homeShare, path: smbShareResponse.path_local } },
                   );
                 }
-                this.slideInService.close();
+                this.slideInRef.close();
               });
             } else {
-              this.slideInService.close();
+              this.slideInRef.close();
             }
           },
           error: (err: WebsocketError) => {
@@ -444,7 +449,7 @@ export class SmbFormComponent implements OnInit {
             }
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInService.close();
+            this.slideInRef.close();
           },
         });
       },

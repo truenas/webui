@@ -75,6 +75,10 @@ describe('LocalizationCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(LocalizationFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(LocalizationFormComponent, {
+      data: {
+        dateFormat: undefined, kbdMap: 'us', language: 'en', timeFormat: undefined, timezone: 'America/New_York',
+      },
+    });
   });
 });

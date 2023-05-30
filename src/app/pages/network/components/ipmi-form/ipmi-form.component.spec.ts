@@ -12,6 +12,8 @@ import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -59,6 +61,8 @@ describe('IpmiFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebsocket([
         mockCall('failover.licensed', true),
         mockCall('failover.call_remote', [{
@@ -90,8 +94,11 @@ describe('IpmiFormComponent', () => {
 
   async function setupTest(newProductType: ProductType): Promise<void> {
     productType = newProductType;
-    spectator = createComponent();
-    spectator.component.setIdIpmi(1);
+    spectator = createComponent({
+      providers: [
+        { provide: SLIDE_IN_DATA, useValue: 1 },
+      ],
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     ws = spectator.inject(WebSocketService);
@@ -167,7 +174,7 @@ describe('IpmiFormComponent', () => {
         netmask: '255.255.240.0',
         vlan: null,
       }]]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
   });

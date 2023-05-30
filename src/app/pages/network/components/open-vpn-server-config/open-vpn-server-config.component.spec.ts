@@ -9,6 +9,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -83,6 +85,8 @@ describe('OpenVpnServerConfigComponent', () => {
       mockProvider(StorageService, {
         downloadBlob: jest.fn(),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     declarations: [
       DownloadClientConfigModalComponent,
@@ -155,7 +159,7 @@ describe('OpenVpnServerConfigComponent', () => {
       additional_parameters: 'param=newvalue',
       tls_crypt_auth: 'Key 2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('disables Topology field when Device Type is set to TAP', async () => {

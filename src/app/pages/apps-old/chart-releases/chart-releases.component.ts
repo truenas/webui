@@ -38,7 +38,7 @@ import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-fo
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { RedirectService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -82,7 +82,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public appService: ApplicationsService,
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private redirect: RedirectService,
     private layoutService: LayoutService,
@@ -348,17 +348,11 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
           ChartFormComponent,
           { wide: true, data: { title: helptext.launch, releases } },
         );
-        slideInRef.componentInstance.setTitle();
       } else {
         slideInRef = this.slideInService.open(
           ChartFormComponent,
           { wide: true, data: { title: catalogApp.chart_metadata.name, releases } },
         );
-        slideInRef.componentInstance.setTitle();
-      }
-
-      if (releases.length) {
-        slideInRef.componentInstance.setChartEdit();
       }
 
       slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

@@ -95,12 +95,6 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
 
   afterInit(entityList: EntityTableComponent<RsyncTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(
-      filter((value) => !!value.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   getActions(row: RsyncTaskUi): EntityTableAction<RsyncTaskUi>[] {
@@ -201,12 +195,13 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   }
 
   doAdd(): void {
-    this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+    const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const rsyncTask = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-    form.setTaskForEdit(rsyncTask);
+    const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true, data: rsyncTask });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

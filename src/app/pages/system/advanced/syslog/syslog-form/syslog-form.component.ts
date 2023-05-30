@@ -17,11 +17,11 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -67,7 +67,7 @@ export class SyslogFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<SyslogFormComponent>,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -114,7 +114,7 @@ export class SyslogFormComponent implements OnInit {
           this.store$.dispatch(advancedConfigUpdated());
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close();
         }),
         catchError((error) => {
           this.isFormLoading = false;

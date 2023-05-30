@@ -36,7 +36,7 @@ describe('AuthService', () => {
         helptext.pathWarningTitle,
         helptext.pathIsTooLongWarning,
       );
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
     });
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
@@ -47,7 +47,7 @@ describe('AuthService', () => {
         helptext.pathWarningTitle,
         helptext.pathIsTooLongWarning,
       );
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
     });
   });
 

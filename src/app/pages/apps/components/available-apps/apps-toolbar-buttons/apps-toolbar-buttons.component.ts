@@ -13,7 +13,7 @@ import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ export class AppsToolbarButtonsComponent {
   readonly officialCatalog = officialCatalog;
 
   constructor(
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,

@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -43,7 +43,7 @@ describe('GuiCardComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
     ],
   });
 
@@ -75,6 +75,6 @@ describe('GuiCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(GuiFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GuiFormComponent);
   });
 });
