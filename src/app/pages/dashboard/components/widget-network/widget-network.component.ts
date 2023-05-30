@@ -22,10 +22,10 @@ import { ReportingParams } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { StorageService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -166,7 +166,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     private tableService: TableService,
     public translate: TranslateService,
     private dialog: DialogService,
-    private storage: StorageService,
+    private formatter: IxFormatterService,
     private localeService: LocaleService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
@@ -461,8 +461,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   showInOutInfo(nic: BaseNetworkInterface): string {
-    const lastSent = this.storage.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastSent);
-    const lastReceived = this.storage.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastReceived);
+    const lastSent = this.formatter.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastSent);
+    const lastReceived = this.formatter.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastReceived);
 
     return `${this.translate.instant('Sent')}: ${lastSent} ${this.translate.instant('Received')}: ${lastReceived}`;
   }

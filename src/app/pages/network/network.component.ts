@@ -25,6 +25,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
@@ -36,8 +37,7 @@ import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interfac
 import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
 import {
   AppLoaderService,
-  DialogService,
-  StorageService, SystemGeneralService,
+  DialogService, SystemGeneralService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -201,7 +201,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     private router: Router,
     private dialogService: DialogService,
-    private storageService: StorageService,
+    private formatter: IxFormatterService,
     private loader: AppLoaderService,
     private translate: TranslateService,
     private tableService: TableService,
@@ -508,13 +508,13 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
               row.link_state = reportingData.interfaces[row.id].link_state;
               if (reportingData.interfaces[row.id].received_bytes !== undefined) {
-                row.received = this.storageService.convertBytesToHumanReadable(
+                row.received = this.formatter.convertBytesToHumanReadable(
                   reportingData.interfaces[row.id].received_bytes,
                 );
                 row.received_bytes = reportingData.interfaces[row.id].received_bytes;
               }
               if (reportingData.interfaces[row.id].sent_bytes !== undefined) {
-                row.sent = this.storageService.convertBytesToHumanReadable(
+                row.sent = this.formatter.convertBytesToHumanReadable(
                   reportingData.interfaces[row.id].sent_bytes,
                 );
                 row.sent_bytes = reportingData.interfaces[row.id].sent_bytes;
