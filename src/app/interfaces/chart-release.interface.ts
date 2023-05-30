@@ -55,6 +55,7 @@ export interface ChartRelease {
   version: number;
   namespace: string;
   chart_metadata: ChartMetadata;
+  app_metadata: AppMetadata;
   id: string;
   catalog: string;
   catalog_train: string;
@@ -189,4 +190,22 @@ export interface ChartSchema {
   };
   supported: boolean;
   values: { [key: string]: ChartFormValue };
+}
+
+export interface AppMetadata {
+  runAsContext?: {
+    description: string;
+    gid?: number;
+    groupName?: string;
+    userName?: string;
+    uid?: number;
+  }[];
+  capabilities?: {
+    description: string;
+    name: string;
+  }[];
+  hostMounts?: {
+    description: string;
+    hostPath: string;
+  }[];
 }
