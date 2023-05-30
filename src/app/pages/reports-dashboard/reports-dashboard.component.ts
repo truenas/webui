@@ -2,9 +2,7 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef, Inject,
 } from '@angular/core';
-import {
-  Router, ActivatedRoute,
-} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
@@ -38,10 +36,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   otherReports: Report[] = [];
   activeReports: Report[] = [];
   visibleReports: number[] = [];
-  allTabs: ReportTab[] = this.reportsService.getReportTabs();
+  allTabs: ReportTab[];
 
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,
     private layoutService: LayoutService,
@@ -67,6 +64,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.reportsService.getReportGraphs()
       .pipe(untilDestroyed(this))
       .subscribe((reports) => {
+        this.allTabs = this.reportsService.getReportTabs();
         this.allReports = reports.map((report) => {
           const list = [];
           if (report.identifiers) {
@@ -96,7 +94,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   activateTabFromUrl(): void {
-    const subpath = this.route.snapshot.url[0] && this.route.snapshot.url[0].path;
+    const subpath = this.route.snapshot?.url[0]?.path;
     const tabFound = this.allTabs.find((tab) => tab.value === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
   }
@@ -111,10 +109,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     if (tab.value === ReportType.Disk) {
       this.buildDiskMetrics();
     }
-  }
-
-  navigateToTab(tab: ReportTab): void {
-    this.router.navigate(['/reportsdashboard', tab.value]);
   }
 
   activateTab(activeTab: ReportTab): void {
