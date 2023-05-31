@@ -77,8 +77,8 @@ export class ErrorHandlerService implements ErrorHandler {
 
   parseWsError(error: WebsocketError): ErrorReport {
     return {
-      title: error.type || error.trace.class,
-      message: error.reason,
+      title: error.type || error.trace?.class,
+      message: error.reason || error?.error.toString(),
       backtrace: error.trace?.formatted || '',
     };
   }
