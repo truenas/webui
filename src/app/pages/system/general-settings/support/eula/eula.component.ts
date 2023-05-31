@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -12,15 +11,11 @@ import { WebSocketService } from 'app/services/ws.service';
 export class EulaComponent implements OnInit {
   eula: string;
 
-  constructor(private ws: WebSocketService, private router: Router) { }
+  constructor(private ws: WebSocketService) { }
 
   ngOnInit(): void {
     this.ws.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
       this.eula = eula;
     });
-  }
-
-  goToSupport(): void {
-    this.router.navigate(['/system/support']);
   }
 }

@@ -20,6 +20,26 @@ describe('IxFormatterService', () => {
     spectator = createService();
   });
 
+  describe('convertBytesToHumanReadable', () => {
+    it('format bytes to human readable string with 2 decimal points by default', () => {
+      const transformed = spectator.service.convertBytesToHumanReadable(1474828);
+
+      expect(transformed).toBe('1.41 MiB');
+    });
+
+    it('returns 0 when bytes is 0', () => {
+      const transformed = spectator.service.convertBytesToHumanReadable(0);
+
+      expect(transformed).toBe('0 B');
+    });
+
+    it('accepts string as number of bytes', () => {
+      const transformed = spectator.service.convertBytesToHumanReadable('44722');
+
+      expect(transformed).toBe('43.67 KiB');
+    });
+  });
+
   describe('memorySizeFormatting', () => {
     it('should return empty string when invalid size string is passed', () => {
       const formatted = spectator.service.memorySizeFormatting('2u');

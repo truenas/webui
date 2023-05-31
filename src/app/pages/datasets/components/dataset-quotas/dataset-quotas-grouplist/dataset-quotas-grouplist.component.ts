@@ -22,6 +22,7 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
@@ -63,6 +64,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
+    protected formatter: IxFormatterService,
     private errorHandler: ErrorHandlerService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
@@ -105,7 +107,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         }
         return row[field];
       case 'quota':
-        return this.storageService.convertBytesToHumanReadable(row[field], 0);
+        return this.formatter.convertBytesToHumanReadable(row[field], 0);
       case 'used_percent':
         return `${Math.round(row[field] * 100) / 100}%`;
       case 'obj_used_percent':
@@ -114,7 +116,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         return row.obj_quota ? row.obj_quota : '—';
       case 'used_bytes':
         if (row[field] !== 0) {
-          return this.storageService.convertBytesToHumanReadable(row[field], 2);
+          return this.formatter.convertBytesToHumanReadable(row[field], 2);
         }
         return row[field];
       default:

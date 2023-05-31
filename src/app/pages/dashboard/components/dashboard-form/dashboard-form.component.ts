@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WidgetName } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -60,18 +61,18 @@ export class DashboardFormComponent implements OnInit {
   setupForm(): void {
     this.dashState.forEach((widget) => {
       switch (widget.name) {
-        case 'Storage':
-        case 'Pool':
+        case WidgetName.Storage:
+        case WidgetName.Pool:
           this.storageWidgets.push(widget);
           break;
-        case 'Network':
-        case 'Interface':
+        case WidgetName.Network:
+        case WidgetName.Interface:
           this.networkWidgets.push(widget);
           break;
-        case 'System Information':
-        case 'CPU':
-        case 'Help':
-        case 'Memory':
+        case WidgetName.SystemInformation:
+        case WidgetName.Cpu:
+        case WidgetName.Help:
+        case WidgetName.Memory:
           this.systemWidgets.push(widget);
           break;
       }
@@ -91,7 +92,7 @@ export class DashboardFormComponent implements OnInit {
     this.isFormLoading = true;
 
     const clone: DashConfigItem[] = [...this.dashState].map((widget) => {
-      let identifier = widget.name;
+      let identifier: string = widget.name;
       if (widget.identifier) {
         identifier = widget.identifier.split(',')[1];
       }
