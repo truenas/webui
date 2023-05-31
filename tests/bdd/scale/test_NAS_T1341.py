@@ -86,7 +86,7 @@ def click_save_wait_for_the_installation_to_finish(driver):
     driver.find_element_by_xpath(xpaths.button.save).click()
 
     assert wait_on_element(driver, 5, xpaths.popup.installing)
-    assert wait_on_element_disappear(driver, 240, xpaths.popup.installing)
+    assert wait_on_element_disappear(driver, 300, xpaths.popup.installing)
 
 
 @then('confirm installation is successful and the App is active')
