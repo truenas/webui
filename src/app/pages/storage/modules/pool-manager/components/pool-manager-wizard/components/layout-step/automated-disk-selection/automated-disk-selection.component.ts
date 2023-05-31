@@ -165,17 +165,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       }));
 
     const options = [...hddOptions, ...ssdOptions];
-    const selectedOptionInOptions = options.find((option) => {
-      return _.isEqual(option.value, this.form.controls.sizeAndType.value);
-    });
-
-    // TODO: Hack for select not seeing the option because its reference has changed.
-    // TODO: Make work in ix-select or use some other way (preferably).
-    if (selectedOptionInOptions) {
-      this.form.controls.sizeAndType.setValue(selectedOptionInOptions.value, { emitEvent: false });
-    } else {
-      this.form.controls.sizeAndType.setValue(null, { emitEvent: false });
-    }
 
     this.diskSizeAndTypeOptions$ = of(options);
 
