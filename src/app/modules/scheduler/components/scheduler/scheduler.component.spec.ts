@@ -8,8 +8,8 @@ import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { SchedulerModalComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 
 describe('SchedulerComponent', () => {

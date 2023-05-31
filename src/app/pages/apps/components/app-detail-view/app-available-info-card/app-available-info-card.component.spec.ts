@@ -2,8 +2,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
+import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 
 describe('AppAvailableInfoCardComponent', () => {
   let spectator: Spectator<AppAvailableInfoCardComponent>;

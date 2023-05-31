@@ -9,10 +9,10 @@ import { map } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { getPorts } from 'app/pages/apps/utils/get-ports';
 import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { getPorts } from 'app/pages/apps/utils/get-ports';
 
 @UntilDestroy()
 @Component({

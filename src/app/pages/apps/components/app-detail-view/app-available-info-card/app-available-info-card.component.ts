@@ -5,8 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { formatRelative } from 'date-fns';
 import { Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { getCleanLink } from 'app/pages/apps/utils/get-clean-link';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
+import { getCleanLink } from 'app/pages/apps/utils/get-clean-link';
 
 @UntilDestroy()
 @Component({
