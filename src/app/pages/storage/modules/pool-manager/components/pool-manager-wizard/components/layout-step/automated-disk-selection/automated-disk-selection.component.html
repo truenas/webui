@@ -17,6 +17,7 @@
         [tooltip]="'Select a disk size from inventory' | translate"
         [options]="diskSizeAndTypeOptions$"
         [required]="true"
+        [compareWith]="compareSizeAndTypeWith"
       ></ix-select>
       <div *ngIf="!!form.value.sizeAndType?.length">
         <ix-select
