@@ -4,8 +4,8 @@
       <span>{{ '{n, plural, one {# available update} other {# available updates} }!' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
-        color="primary"
         ixTest="update-all"
+        class="update-all-button"
         (click)="onBulkUpgrade(true)"
       >
         <ix-icon name="mdi-alert-circle"></ix-icon>
@@ -17,6 +17,7 @@
       mat-button
       color="primary"
       ixTest="discover-apps"
+      class="discover-apps-button"
       [routerLink]="['/apps', 'available']"
     >{{ 'Discover Apps' | translate }}</a>
   </ix-page-title-header>

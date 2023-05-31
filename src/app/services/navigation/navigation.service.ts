@@ -97,15 +97,15 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Apps'),
       icon: 'apps',
-      state: 'apps-old',
+      state: 'apps',
       isVisible$: this.hasApps$,
     },
     {
-      name: T('Apps (WIP)'),
+      name: T('Apps (Old)'),
       type: MenuItemType.Link,
       tooltip: T('Apps'),
       icon: 'apps',
-      state: 'apps',
+      state: 'apps-old',
       isVisible$: this.hasApps$,
     },
     {

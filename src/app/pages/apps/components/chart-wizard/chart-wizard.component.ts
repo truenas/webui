@@ -25,6 +25,7 @@ import {
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -180,9 +181,11 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loader.close();
           this.cdr.markForCheck();
         },
-        error: () => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.router.navigate(['/apps', 'available']);
+          this.router.navigate(['/apps', 'available']).then(() => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
+          });
         },
       });
   }

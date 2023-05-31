@@ -1,6 +1,7 @@
 {
   "": "",
   "<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.  <i>File</i> provides virtual storage access to a single file.": "",
+  "Apps (Old)": "",
   "Choose <i>Master</i> if the UPS is plugged directly      into the system serial port. The UPS will remain the      last item to shut down. Choose <i>Slave</i> to have      this system shut down before <i>Master</i>. See the      <a href=\"{url}\"      target=\"_blank\">Network UPS Tools Overview</a>.": "",
   "Discover": "",
   "Discover Apps": "",
@@ -415,7 +416,6 @@
   "Apply the same quota warning  alert settings as the parent dataset.": "Aanvinken om dezelfde instellingen voor quotawaarschuwingen toe te passen als bij de bovenliggende dataset.",
   "Apply updates and reboot system after downloading.": "Aanvinken om updates toe te passen en het systeem opnieuw booten na het downloaden.",
   "Apps": "Apps",
-  "Apps (WIP)": "Apps (WIP)",
   "Apr": "apr",
   "Archive": "Archiveren",
   "Are you sure you want to abort the <b>{task}</b> task?": "Weet u zeker dat u de taak <b>{task}</b> wilt afbreken?",
