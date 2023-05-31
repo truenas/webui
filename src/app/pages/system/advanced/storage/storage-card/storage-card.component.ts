@@ -19,7 +19,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorageCardComponent {
-  readonly systemDatasetPool$ = this.slideIn.onClose$.pipe(
+  systemDatasetPool$ = this.slideInService.onClose$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('systemdataset.config')),
     map((config) => config.pool),
@@ -33,7 +33,7 @@ export class StorageCardComponent {
   );
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
     private store$: Store<AppState>,
     private ws: WebSocketService,
@@ -41,6 +41,6 @@ export class StorageCardComponent {
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(StorageSettingsFormComponent);
+    this.slideInService.open(StorageSettingsFormComponent);
   }
 }

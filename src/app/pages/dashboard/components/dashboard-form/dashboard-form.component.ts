@@ -1,13 +1,20 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ChangeDetectorRef,
+  Inject,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ControlsOf } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WidgetName } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface DashboardFormValue {
@@ -19,11 +26,10 @@ interface DashboardFormValue {
   templateUrl: './dashboard-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardFormComponent {
+export class DashboardFormComponent implements OnInit {
   form = this.formBuilder.group<ControlsOf<DashboardFormValue>>({});
   isFormLoading = true;
 
-  dashState: DashConfigItem[] = [];
   systemWidgets: DashConfigItem[] = [];
   storageWidgets: DashConfigItem[] = [];
   networkWidgets: DashConfigItem[] = [];
@@ -33,11 +39,16 @@ export class DashboardFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+    private slideInRef: IxSlideInRef<DashboardFormComponent>,
+    @Inject(SLIDE_IN_DATA) private dashState: DashConfigItem[] = [],
+  ) { }
+
+  ngOnInit(): void {
+    this.setupForm();
+  }
 
   extractName(widget: DashConfigItem): string {
     const name = widget.name;
@@ -47,10 +58,8 @@ export class DashboardFormComponent {
     return name;
   }
 
-  setupForm(dashState: DashConfigItem[]): void {
-    this.dashState = dashState;
-
-    dashState.forEach((widget) => {
+  setupForm(): void {
+    this.dashState.forEach((widget) => {
       switch (widget.name) {
         case WidgetName.Storage:
         case WidgetName.Pool:
@@ -103,7 +112,7 @@ export class DashboardFormComponent {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
         this.onSubmit$.next(this.dashState);
-        this.slideInService.close();
+        this.slideInRef.close(this.dashState);
       },
       error: (err) => {
         console.error(err);

@@ -51,7 +51,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -205,7 +204,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     protected matDialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
     protected layoutService: LayoutService,
-    protected slideIn: IxSlideInService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
   ) {

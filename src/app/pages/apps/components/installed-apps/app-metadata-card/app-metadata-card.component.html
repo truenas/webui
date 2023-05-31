@@ -1,0 +1,60 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      <span>{{ 'Application Metadata' | translate }}</span>
+      <ix-icon
+        name="mdi-information"
+        [matTooltip]="'This information is provided by the catalog maintainer.' | translate"
+      ></ix-icon>
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    <ix-app-section-expand-collapse *ngIf="appMetadata?.hostMounts" id="hostMounts" [maxHeight]="maxHeight">
+      <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
+      <div class="details-list">
+        <div *ngFor="let item of appMetadata.hostMounts" class="details-item">
+          <span class="label">{{ item.hostPath }}</span>
+          <span class="value">{{ item.description }}</span>
+        </div>
+      </div>
+    </ix-app-section-expand-collapse>
+
+    <ix-app-section-expand-collapse *ngIf="appMetadata?.capabilities" id="capabilities" [maxHeight]="maxHeight">
+      <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
+      <div class="details-list">
+        <div *ngFor="let item of appMetadata.capabilities" class="details-item">
+          <span class="label">{{ item.name }}</span>
+          <span class="value">{{ item.description }}</span>
+        </div>
+      </div>
+    </ix-app-section-expand-collapse>
+
+    <ix-app-section-expand-collapse *ngIf="appMetadata?.runAsContext" id="runAsContext" [maxHeight]="maxHeight">
+      <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
+      <div class="details-list">
+        <div *ngFor="let item of appMetadata.runAsContext" class="details-entry">
+          <div class="details-item">
+            <span class="label">{{ 'UID' | translate }}:</span>
+            <span class="value">{{ item.uid }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'GID' | translate }}:</span>
+            <span class="value">{{ item.gid }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'Username' | translate }}:</span>
+            <span class="value">{{ item.userName }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'Groupname' | translate }}:</span>
+            <span class="value">{{ item.groupName }}</span>
+          </div>
+          <div class="details-item">
+            <span class="label">{{ 'Description' | translate }}:</span>
+            <span class="value">{{ item.description }}</span>
+          </div>
+        </div>
+      </div>
+    </ix-app-section-expand-collapse>
+  </mat-card-content>
+</mat-card>

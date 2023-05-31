@@ -66,7 +66,7 @@ describe('TargetSectionComponent', () => {
       Destination: 'tank/replication',
       'Destination Dataset Read-only Policy': 'SET',
       Encryption: true,
-      'Encryption inherit': false,
+      'Inherit Encryption': false,
       'Encryption Key Format': 'PASSPHRASE',
       Passphrase: '12345678',
       'Store Encryption key in Sending TrueNAS database': true,
@@ -122,12 +122,12 @@ describe('TargetSectionComponent', () => {
 
     it('hides encryption fields when Encryption inherit is selected', async () => {
       await form.fillForm({
-        'Encryption inherit': true,
+        'Inherit Encryption': true,
       });
 
       const labels = await form.getLabels();
       expect(labels).toContain('Encryption');
-      expect(labels).toContain('Encryption inherit');
+      expect(labels).toContain('Inherit Encryption');
       expect(labels).not.toContain('Encryption Key Format');
       expect(labels).not.toContain('Generate Encryption Key');
       expect(labels).not.toContain('Store Encryption key in Sending TrueNAS database');
@@ -141,7 +141,7 @@ describe('TargetSectionComponent', () => {
     it('shows encryption options when encryption is enabled', async () => {
       const labels = await form.getLabels();
       expect(labels).toContain('Encryption');
-      expect(labels).toContain('Encryption inherit');
+      expect(labels).toContain('Inherit Encryption');
       expect(labels).toContain('Encryption Key Format');
       expect(labels).toContain('Generate Encryption Key');
       expect(labels).toContain('Store Encryption key in Sending TrueNAS database');

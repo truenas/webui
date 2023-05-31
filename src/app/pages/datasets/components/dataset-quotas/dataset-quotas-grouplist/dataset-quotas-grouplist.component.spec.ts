@@ -11,6 +11,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
@@ -77,6 +79,8 @@ describe('DatasetQuotasGrouplistComponent', () => {
         mockCall('pool.dataset.get_quota', fakeGroupQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -136,6 +140,8 @@ describe('DatasetQuotasGrouplistComponent', () => {
     const [firstRow] = element.querySelectorAll('.mat-mdc-row');
     (firstRow as HTMLElement).click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetQuotaEditFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      DatasetQuotaEditFormComponent, { data: { datasetId: 'Test', id: 1, quotaType: 'GROUP' } },
+    );
   });
 });

@@ -23,12 +23,12 @@ export class KernelCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
-  async onConfigurePressed(): Promise<void> {
+  async onConfigurePressed(debugKernel: boolean): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(KernelFormComponent);
+    this.slideInService.open(KernelFormComponent, { data: debugKernel });
   }
 }

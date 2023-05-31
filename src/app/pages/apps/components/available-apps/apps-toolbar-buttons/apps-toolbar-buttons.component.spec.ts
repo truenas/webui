@@ -10,7 +10,7 @@ import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog
 import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('AppsToolbarButtonsComponent', () => {
   let spectator: Spectator<AppsToolbarButtonsComponent>;
@@ -21,7 +21,7 @@ describe('AppsToolbarButtonsComponent', () => {
     component: AppsToolbarButtonsComponent,
     providers: [
       mockProvider(MatDialog),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
@@ -52,7 +52,7 @@ describe('AppsToolbarButtonsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Advanced Settings' });
 
-    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(KubernetesSettingsComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(KubernetesSettingsComponent);
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {

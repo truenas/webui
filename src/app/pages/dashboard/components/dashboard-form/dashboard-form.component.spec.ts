@@ -4,6 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -33,12 +35,12 @@ describe('DashboardFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(SnackbarService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
-    ws = spectator.inject(WebSocketService);
     dashState = [
       {
         name: WidgetName.Cpu,
@@ -49,11 +51,16 @@ describe('DashboardFormComponent', () => {
         rendered: false,
       },
     ];
+    spectator = createComponent({
+      providers: [
+        { provide: SLIDE_IN_DATA, useValue: dashState },
+      ],
+    });
+    ws = spectator.inject(WebSocketService);
   });
 
   describe('configure dashboard widget visibility', () => {
     beforeEach(() => {
-      spectator.component.setupForm(dashState);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 

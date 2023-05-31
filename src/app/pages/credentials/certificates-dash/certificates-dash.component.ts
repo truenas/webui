@@ -33,7 +33,7 @@ import {
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
 
 @UntilDestroy()
@@ -46,7 +46,7 @@ export class CertificatesDashComponent implements OnInit {
   private downloadActions: AppTableAction[];
 
   constructor(
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private ws: WebSocketService,
     private dialog: MatDialog,
     private dialogService: DialogService,

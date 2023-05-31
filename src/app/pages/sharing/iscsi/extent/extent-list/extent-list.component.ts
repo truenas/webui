@@ -67,19 +67,17 @@ export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
 
   afterInit(entityList: EntityTableComponent<IscsiExtent>): void {
     this.entityTable = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityList.getData();
-    });
   }
 
   doAdd(): void {
-    this.slideInService.open(ExtentFormComponent, { wide: true });
+    const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   doEdit(id: number): void {
     const extent = this.entityTable.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(ExtentFormComponent, { wide: true });
-    form.setExtentForEdit(extent);
+    const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true, data: extent });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   getActions(): EntityTableAction[] {

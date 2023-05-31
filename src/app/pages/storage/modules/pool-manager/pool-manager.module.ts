@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -40,6 +41,7 @@ import { ManualSelectionDisksComponent } from './components/manual-disk-selectio
 import { AutomatedDiskSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
 import { CustomLayoutAppliedComponent } from './components/pool-manager-wizard/components/layout-step/custom-layout-applied/custom-layout-applied.component';
 import { LayoutStepComponent } from './components/pool-manager-wizard/components/layout-step/layout-step.component';
+import { PoolWarningsComponent } from './components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { EnclosureWizardStepComponent } from './components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/3-data-wizard-step/data-wizard-step.component';
 
@@ -67,6 +69,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     AppLoaderModule,
     CoreComponents,
     NgxSkeletonLoaderModule,
+    MatCheckboxModule,
   ],
   declarations: [
     PoolManagerComponent,
@@ -87,6 +90,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CustomLayoutAppliedComponent,
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
+    PoolWarningsComponent,
   ],
   providers: [
     PoolManagerStore,
