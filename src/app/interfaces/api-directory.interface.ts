@@ -169,8 +169,6 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
 import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
-import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
-import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
   PeriodicSnapshotTask,
@@ -658,21 +656,6 @@ export type ApiDirectory = {
   'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
-
-  // OpenVPN
-  'openvpn.client.update': { params: [OpenvpnClientConfigUpdate]; response: OpenvpnClientConfig };
-  'openvpn.client.authentication_algorithm_choices': { params: void; response: Choices };
-  'openvpn.client.cipher_choices': { params: void; response: Choices };
-  'openvpn.server.renew_static_key': { params: void; response: OpenvpnServerConfig };
-  'openvpn.client.config': { params: void; response: OpenvpnClientConfig };
-  'openvpn.server.cipher_choices': { params: void; response: Choices };
-  'openvpn.server.authentication_algorithm_choices': { params: void; response: Choices };
-  'openvpn.server.client_configuration_generation': {
-    params: [certificateId: number, serverAddress: string];
-    response: string;
-  };
-  'openvpn.server.update': { params: [OpenvpnServerConfigUpdate]; response: OpenvpnServerConfig };
-  'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
 
   // Pool
   'pool.attach': { params: [id: number, params: PoolAttachParams]; response: void };
