@@ -2,14 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, noop, Observable, of,
+  BehaviorSubject, noop,
 } from 'rxjs';
 import {
   filter, take, tap,
@@ -17,7 +17,6 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -39,7 +38,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class ManualUpdateFormComponent implements OnInit {
   isFormLoading$ = new BehaviorSubject(false);
   form = this.formBuilder.group({
-    filelocation: ['', Validators.required],
     updateFile: [null as FileList],
     rebootAfterManualUpdate: [false],
   });
@@ -48,7 +46,6 @@ export class ManualUpdateFormComponent implements OnInit {
 
   readonly helptext = helptext;
   currentVersion = '';
-  fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
 
@@ -77,7 +74,6 @@ export class ManualUpdateFormComponent implements OnInit {
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();
     this.getVersionNoFromSysInfo();
-    this.setPoolOptions();
     this.getUserPrefs();
   }
 
@@ -97,21 +93,6 @@ export class ManualUpdateFormComponent implements OnInit {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.currentVersion = sysInfo.version;
       this.cdr.markForCheck();
-    });
-  }
-
-  setPoolOptions(): void {
-    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
-      if (!pools) {
-        return;
-      }
-      const options = [{ label: this.translate.instant('Memory device'), value: ':temp:' }];
-      pools.forEach((pool) => {
-        options.push({
-          label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
-        });
-      });
-      this.fileLocationOptions$ = of(options);
     });
   }
 
@@ -158,16 +139,15 @@ export class ManualUpdateFormComponent implements OnInit {
   onSubmit(): void {
     this.isFormLoading$.next(true);
     const value = this.form.value;
-    value.filelocation = value.filelocation === ':temp:' ? null : value.filelocation;
     this.store$.dispatch(updateRebootAfterManualUpdate({
       rebootAfterManualUpdate: value.rebootAfterManualUpdate,
     }));
     this.systemService.updateRunningNoticeSent.emit();
     this.cdr.markForCheck();
-    this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
+    this.setupAndOpenUpdateJobDialog(value.updateFile);
   }
 
-  setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
+  setupAndOpenUpdateJobDialog(files: FileList): void {
     if (!files.length) {
       return;
     }
@@ -181,7 +161,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
     dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
 
-    const formData: FormData = this.generateFormData(files, fileLocation);
+    const formData: FormData = this.generateFormData(files);
 
     dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -212,7 +192,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  generateFormData(files: FileList, fileLocation: string): FormData {
+  generateFormData(files: FileList): FormData {
     const formData = new FormData();
     if (this.isHaLicensed) {
       formData.append('data', JSON.stringify({
@@ -221,7 +201,7 @@ export class ManualUpdateFormComponent implements OnInit {
     } else {
       formData.append('data', JSON.stringify({
         method: 'update.file',
-        params: [{ destination: fileLocation }],
+        params: [{ destination: null }],
       }));
     }
     formData.append('file', files[0]);

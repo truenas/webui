@@ -20,14 +20,6 @@
           [acceptedFiles]="'.tar,.update'"
         ></ix-file-input>
 
-        <ix-select
-          formControlName="filelocation"
-          [label]="helptext.filelocation.placeholder | translate"
-          [tooltip]="helptext.filelocation.tooltip | translate"
-          [options]="fileLocationOptions$"
-          [required]="true"
-        ></ix-select>
-
         <ix-checkbox
           *ngIf="!isHaLicensed && systemService.isEnterprise"
           formControlName="rebootAfterManualUpdate"
