@@ -17,12 +17,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-apps-toolbar-buttons',
-  templateUrl: './apps-toolbar-buttons.component.html',
-  styleUrls: ['./apps-toolbar-buttons.component.scss'],
+  selector: 'ix-app-settings-button',
+  templateUrl: './app-settings-button.component.html',
+  styleUrls: ['./app-settings-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppsToolbarButtonsComponent {
+export class AppSettingsButtonComponent {
   readonly customIxChartApp = ixChartApp;
   readonly chartsTrain = chartsTrain;
   readonly officialCatalog = officialCatalog;

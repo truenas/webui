@@ -19,13 +19,3 @@
     {{ 'Unset Pool' | translate }}
   </button>
 </mat-menu>
-
-<a
-  mat-button
-  color="primary"
-  ixTest="custom-app"
-  [disabled]="!(applicationsStore.selectedPool$ | async)"
-  [routerLink]="['/apps', 'available', officialCatalog, chartsTrain, customIxChartApp, 'install']"
->
-  {{ 'Custom App' | translate }}
-</a>

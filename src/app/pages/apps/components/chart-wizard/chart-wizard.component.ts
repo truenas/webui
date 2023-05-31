@@ -27,13 +27,14 @@ import {
   AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
@@ -103,7 +104,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private loader: AppLoaderService,
     private router: Router,
-    private slideInRef: IxSlideInRef<ChartWizardComponent>,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -183,9 +184,11 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loader.close();
           this.cdr.markForCheck();
         },
-        error: () => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.router.navigate(['/apps', 'available']);
+          this.router.navigate(['/apps', 'available']).then(() => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
+          });
         },
       });
   }
@@ -429,7 +432,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInRef.close();
     this.router.navigate(['/apps/installed']);
   }
 }
