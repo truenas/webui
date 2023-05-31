@@ -16,7 +16,7 @@ import { ManageCatalogSummaryDialogComponent } from 'app/pages/apps-old/dialogs/
 import { CatalogAddFormComponent } from 'app/pages/apps-old/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/apps-old/forms/catalog-edit-form/catalog-edit-form.component';
 import { DialogService } from 'app/services';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -69,7 +69,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     private mdDialog: MatDialog,
     private dialogService: DialogService,
     private ws: WebSocketService,
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private layoutService: LayoutService,
   ) {}
 

@@ -8,6 +8,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -16,7 +18,6 @@ import {
   DialogService, LanguageService, SystemGeneralService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('NetworkConfigurationComponent', () => {
@@ -71,12 +72,14 @@ describe('NetworkConfigurationComponent', () => {
         mockCall('network.configuration.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(LanguageService),
       mockProvider(SystemGeneralService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 

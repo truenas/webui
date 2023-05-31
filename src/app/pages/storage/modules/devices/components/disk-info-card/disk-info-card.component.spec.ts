@@ -15,7 +15,7 @@ import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { DiskInfoCardComponent } from './disk-info-card.component';
 
 describe('DiskInfoCardComponent', () => {
@@ -27,7 +27,7 @@ describe('DiskInfoCardComponent', () => {
       MockComponents(CopyButtonComponent),
     ],
     providers: [
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { poolId: '1' } },
       }),
@@ -93,7 +93,7 @@ describe('DiskInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {

@@ -3,20 +3,10 @@
     <h3 mat-card-title>{{ 'Notes' | translate }}</h3>
   </mat-card-header>
   <mat-card-content>
-    <div class="notes">
-      <div #notes class="notes-list" (window:resize)="onResize()">
+    <ix-app-section-expand-collapse class="notes" [maxHeight]="maxHeight">
+      <div class="notes-list">
         <markdown [data]="app.info.notes"></markdown>
       </div>
-      <div *ngIf="isCollapsed && (height | async) >= maxHeight" class="gradient"></div>
-      <div *ngIf="(height | async) >= maxHeight" class="more-less">
-        <button
-          mat-button
-          ixTest="show-more-less"
-          (click)="changeCollapsed()"
-        >
-          {{ isCollapsed ? ('View More' | translate) : ('Collapse' | translate) }}
-        </button>
-      </div>
-    </div>
+    </ix-app-section-expand-collapse>
   </mat-card-content>
 </mat-card>

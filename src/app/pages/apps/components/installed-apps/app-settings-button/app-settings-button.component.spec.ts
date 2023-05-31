@@ -4,13 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
-import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
@@ -21,7 +21,7 @@ describe('AppSettingsButtonComponent', () => {
     component: AppSettingsButtonComponent,
     providers: [
       mockProvider(MatDialog),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -54,7 +54,7 @@ describe('AppSettingsButtonComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Advanced Settings' });
 
-    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(KubernetesSettingsComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(KubernetesSettingsComponent);
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {

@@ -31,13 +31,12 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
-import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
+import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { DialogService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -118,7 +117,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private errorHandler: ErrorHandlerService,
     private router: Router,
     private layoutService: LayoutService,
     private matDialog: MatDialog,
@@ -126,7 +124,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private applicationsStore: AvailableAppsStore,
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
   ) {

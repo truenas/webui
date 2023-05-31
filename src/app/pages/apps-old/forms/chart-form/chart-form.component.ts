@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Inject, OnDestroy,
+  ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators,
@@ -37,7 +37,7 @@ export type SlideInDataChartForm = { title?: string; releases?: ChartRelease[]; 
   templateUrl: './chart-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartFormComponent implements OnDestroy {
+export class ChartFormComponent implements OnInit, OnDestroy {
   title: string;
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
@@ -48,7 +48,6 @@ export class ChartFormComponent implements OnDestroy {
   dynamicSection: DynamicFormSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
   subscription = new Subscription();
-  private slideInData: SlideInDataChartForm;
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -65,10 +64,20 @@ export class ChartFormComponent implements OnDestroy {
     private mdDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
-    @Inject(SLIDE_IN_DATA) private data: SlideInDataChartForm,
-  ) {
-    if (data) {
-      this.slideInData = data;
+    @Inject(SLIDE_IN_DATA) private slideInData: SlideInDataChartForm,
+  ) { }
+
+  ngOnInit(): void {
+    if (this.slideInData.catalogApp) {
+      this.setChartCreate();
+    }
+
+    if (this.slideInData.title) {
+      this.setTitle();
+    }
+
+    if (this.slideInData?.releases?.length) {
+      this.setChartEdit();
     }
   }
 

@@ -37,7 +37,6 @@ import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -131,7 +130,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AppLoaderService,
     EntityTableService,
     IxSlideInService,
-    IxSlideIn2Service,
     IxFileUploadService,
     DisksUpdateService,
     {

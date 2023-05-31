@@ -11,6 +11,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
@@ -256,6 +258,8 @@ describe('ChartWizardComponent', () => {
           routeConfig: { path: 'install' },
         },
       },
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 

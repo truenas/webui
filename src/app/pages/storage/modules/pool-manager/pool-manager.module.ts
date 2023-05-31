@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -28,10 +29,10 @@ import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-man
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
 import { LogWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
-import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
@@ -40,6 +41,7 @@ import { ManualSelectionDisksComponent } from './components/manual-disk-selectio
 import { AutomatedDiskSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
 import { CustomLayoutAppliedComponent } from './components/pool-manager-wizard/components/layout-step/custom-layout-applied/custom-layout-applied.component';
 import { LayoutStepComponent } from './components/pool-manager-wizard/components/layout-step/layout-step.component';
+import { PoolWarningsComponent } from './components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { EnclosureWizardStepComponent } from './components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/3-data-wizard-step/data-wizard-step.component';
 
@@ -67,6 +69,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     AppLoaderModule,
     CoreComponents,
     NgxSkeletonLoaderModule,
+    MatCheckboxModule,
   ],
   declarations: [
     PoolManagerComponent,
@@ -87,6 +90,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CustomLayoutAppliedComponent,
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
+    PoolWarningsComponent,
   ],
   providers: [
     PoolManagerStore,

@@ -108,7 +108,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private store$: Store<AppState>,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private route: ActivatedRoute,
     private emptyService: EmptyService,
@@ -219,7 +219,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(SnapshotAddFormComponent);
+    this.slideInService.open(SnapshotAddFormComponent);
   }
 
   doBatchDelete(snapshots: ZfsSnapshot[]): void {

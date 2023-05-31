@@ -5,7 +5,6 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -170,8 +169,6 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
 import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
-import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
-import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
   PeriodicSnapshotTask,
@@ -180,7 +177,7 @@ import {
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
-import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
+import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
 import { CreatePoolScrubTask, PoolScrubTask, PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
@@ -660,21 +657,6 @@ export type ApiDirectory = {
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
 
-  // OpenVPN
-  'openvpn.client.update': { params: [OpenvpnClientConfigUpdate]; response: OpenvpnClientConfig };
-  'openvpn.client.authentication_algorithm_choices': { params: void; response: Choices };
-  'openvpn.client.cipher_choices': { params: void; response: Choices };
-  'openvpn.server.renew_static_key': { params: void; response: OpenvpnServerConfig };
-  'openvpn.client.config': { params: void; response: OpenvpnClientConfig };
-  'openvpn.server.cipher_choices': { params: void; response: Choices };
-  'openvpn.server.authentication_algorithm_choices': { params: void; response: Choices };
-  'openvpn.server.client_configuration_generation': {
-    params: [certificateId: number, serverAddress: string];
-    response: string;
-  };
-  'openvpn.server.update': { params: [OpenvpnServerConfigUpdate]; response: OpenvpnServerConfig };
-  'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
-
   // Pool
   'pool.attach': { params: [id: number, params: PoolAttachParams]; response: void };
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
@@ -714,9 +696,6 @@ export type ApiDirectory = {
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
-  'pool.import_disk': { params: ImportDiskParams; response: void };
-  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: ImportDiskFilesystem };
-  'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };
   'pool.is_upgraded': { params: [poolId: number]; response: boolean };

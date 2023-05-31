@@ -5,8 +5,8 @@ import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
+import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -53,16 +53,14 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   getAddActions(): EntityTableAction[] {
     return [{
       label: this.translate.instant('Add'),
       onClick: () => {
-        this.slideInService.open(KerberosRealmsFormComponent);
+        const slideInRef = this.slideInService.open(KerberosRealmsFormComponent);
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     }] as EntityTableAction[];
   }
@@ -73,8 +71,8 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
         id: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (realm: KerberosRealmRow) => {
-          const modal = this.slideInService.open(KerberosRealmsFormComponent);
-          modal.setRealmForEdit(realm);
+          const slideInRef = this.slideInService.open(KerberosRealmsFormComponent, { data: realm });
+          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
         },
       },
       {

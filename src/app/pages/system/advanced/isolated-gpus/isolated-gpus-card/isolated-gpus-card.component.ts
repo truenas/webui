@@ -30,7 +30,7 @@ export class IsolatedGpusCardComponent implements OnInit {
   };
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
     private gpuService: GpuService,
     private cdr: ChangeDetectorRef,
@@ -43,16 +43,13 @@ export class IsolatedGpusCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadIsolatedGpus();
-
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.loadIsolatedGpus();
-    });
   }
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
-    this.slideIn.open(IsolatedGpusFormComponent);
+    const slideInRef = this.slideInService.open(IsolatedGpusFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.loadIsolatedGpus());
   }
 
   private loadIsolatedGpus(): void {

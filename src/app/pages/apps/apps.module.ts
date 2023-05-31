@@ -52,8 +52,8 @@ import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-ro
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
-import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
+import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
@@ -62,12 +62,14 @@ import { AppDetailViewComponent } from './components/app-detail-view/app-detail-
 import { AppHelmChartCardComponent } from './components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 import { AppResourcesCardComponent } from './components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
+import { AppSectionExpandCollapseComponent } from './components/app-section-expand-collapse/app-section-expand-collapse.component';
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
+import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppNotesCardComponent } from './components/installed-apps/app-notes-card/app-notes-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -105,6 +107,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppDetailsHeaderComponent,
     AppDetailsSimilarComponent,
     AppSettingsButtonComponent,
+    AppMetadataCardComponent,
+    AppSectionExpandCollapseComponent,
   ],
   imports: [
     CommonModule,

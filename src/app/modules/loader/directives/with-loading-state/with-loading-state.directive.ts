@@ -33,7 +33,7 @@ export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
 
   @Input('ixWithLoadingState') set state(state$: Observable<LoadingState<V>>) {
     this.renderSubscription?.unsubscribe();
-    this.renderSubscription = state$.subscribe((state) => this.renderState(state));
+    this.renderSubscription = state$?.subscribe((state) => this.renderState(state));
   }
 
   ngOnDestroy(): void {

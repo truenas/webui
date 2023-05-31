@@ -21,8 +21,8 @@ import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
@@ -37,7 +37,6 @@ import { IxPermissionsComponent } from 'app/modules/ix-forms/components/ix-permi
 import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
@@ -48,7 +47,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
-import { IxSlideIn2Component } from './components/ix-slide-in/ix-slide-in2.component';
+import { IxSlideInComponent } from './components/ix-slide-in/ix-slide-in.component';
 import { WithManageCertificatesLinkComponent } from './components/with-manage-certificates-link/with-manage-certificates-link.component';
 
 @NgModule({
@@ -87,7 +86,6 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxSelectComponent,
     IxFieldsetComponent,
     IxSlideInComponent,
-    IxSlideIn2Component,
     IxModalHeaderComponent,
     IxCheckboxComponent,
     IxTextareaComponent,
@@ -112,7 +110,6 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxInputComponent,
     IxSelectComponent,
     IxSlideInComponent,
-    IxSlideIn2Component,
     IxModalHeaderComponent,
     IxFieldsetComponent,
     IxCheckboxComponent,

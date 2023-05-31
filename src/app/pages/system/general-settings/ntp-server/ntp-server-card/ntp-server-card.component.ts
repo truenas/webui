@@ -54,12 +54,6 @@ export class NtpServerCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData();
-
-    this.slideInService.onClose$.pipe(
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.getData();
-    });
   }
 
   createDataSource(servers: NtpServer[] = []): void {
@@ -88,12 +82,13 @@ export class NtpServerCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideInService.open(NtpServerFormComponent);
+    const slideInRef = this.slideInService.open(NtpServerFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getData());
   }
 
   doEdit(server: NtpServer): void {
-    const modal = this.slideInService.open(NtpServerFormComponent);
-    modal.setupForm(server);
+    const slideInRef = this.slideInService.open(NtpServerFormComponent, { data: server });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getData());
   }
 
   doDelete(server: NtpServer): void {

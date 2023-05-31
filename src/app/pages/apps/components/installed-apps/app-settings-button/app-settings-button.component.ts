@@ -8,12 +8,12 @@ import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.
 import helptext from 'app/helptext/apps/apps';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ export class AppSettingsButtonComponent {
   readonly officialCatalog = officialCatalog;
 
   constructor(
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,

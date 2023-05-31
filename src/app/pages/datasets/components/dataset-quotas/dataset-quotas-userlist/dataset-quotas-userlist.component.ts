@@ -70,7 +70,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
@@ -82,10 +82,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     this.datasetId = paramMap.datasetId as string;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getUserQuotas();
-
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getUserQuotas();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -255,13 +251,17 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   doAdd(): void {
-    const form = this.slideIn.open(DatasetQuotaAddFormComponent);
-    form.setupAddQuotaForm(DatasetQuotaType.User, this.datasetId);
+    const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
+      data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
-    const form = this.slideIn.open(DatasetQuotaEditFormComponent);
-    form.setupEditQuotaForm(DatasetQuotaType.User, this.datasetId, row.id);
+    const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
+      data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId, id: row.id },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doDelete(row: DatasetQuota): void {

@@ -16,7 +16,7 @@ import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog
 import { AppLoaderService, DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +31,7 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
   constructor(
     private loader: AppLoaderService,
     private appService: ApplicationsService,
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -107,11 +107,10 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
           schema: catalogApp.versions[catalogApp.latest_version].schema,
         } as CatalogApp;
 
-        const slideInRef = this.slideInService.open(
+        this.slideInService.open(
           ChartFormComponent,
           { wide: true, data: { catalogApp: catalogAppInfo } },
         );
-        slideInRef.componentInstance.setChartCreate();
       });
   }
 

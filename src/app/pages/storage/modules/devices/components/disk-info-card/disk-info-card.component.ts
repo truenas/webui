@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +13,7 @@ import {
   ReplaceDiskDialogComponent,
   ReplaceDiskDialogData,
 } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -27,9 +27,8 @@ export class DiskInfoCardComponent {
   @Input() disk: Disk;
 
   constructor(
-    private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
-    private slideIn2Service: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
   ) {}
@@ -43,7 +42,7 @@ export class DiskInfoCardComponent {
   }
 
   onEdit(): void {
-    const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
+    const slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
     slideInRef.componentInstance.setFormDisk(this.disk);
     slideInRef.slideInClosed$.pipe(
       filter((response) => Boolean(response)),

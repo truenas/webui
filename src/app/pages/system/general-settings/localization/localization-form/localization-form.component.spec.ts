@@ -9,6 +9,8 @@ import { Observable, of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -84,26 +86,31 @@ describe('LocalizationFormComponent', () => {
           },
         ],
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      providers: [
+        {
+          provide: SLIDE_IN_DATA,
+          useValue: {
+            dateFormat: 'yyyy-MM-dd',
+            kbdMap: 'us',
+            language: 'en',
+            timeFormat: 'HH:mm:ss',
+            timezone: 'America/Los_Angeles',
+          } as LocalizationSettings,
+        },
+      ],
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
   });
 
   describe('saving localization settings', () => {
-    beforeEach(() => {
-      spectator.component.setupForm({
-        dateFormat: 'yyyy-MM-dd',
-        kbdMap: 'us',
-        language: 'en',
-        timeFormat: 'HH:mm:ss',
-        timezone: 'America/Los_Angeles',
-      } as LocalizationSettings);
-    });
-
     it('shows current localization settings when editing', async () => {
       const form = await loader.getHarness(IxFormHarness);
       const values = await form.getValues();
@@ -140,7 +147,7 @@ describe('LocalizationFormComponent', () => {
         kbdmap: 'us',
         timezone: 'America/Los_Angeles',
       }]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });
   });

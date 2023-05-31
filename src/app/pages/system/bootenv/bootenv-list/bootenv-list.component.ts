@@ -19,6 +19,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -95,17 +96,20 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getBootEnvironments();
-    this.slideInService.onClose$.pipe(
-      filter((value) => value.response === true),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.getBootEnvironments();
-    });
   }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+    slideInRef.slideInClosed$.pipe(
+      filter((value) => value === true),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getBootEnvironments();
+    });
   }
 
   onSearch(query: string): void {
@@ -117,18 +121,24 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    const modal = this.slideInService.open(BootEnvironmentFormComponent);
-    modal.setupForm(BootEnvironmentAction.Create);
+    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
+      data: { operation: BootEnvironmentAction.Create },
+    });
+    this.handleSlideInClosed(slideInRef);
   }
 
   doRename(bootenv: Bootenv): void {
-    const modal = this.slideInService.open(BootEnvironmentFormComponent);
-    modal.setupForm(BootEnvironmentAction.Rename, bootenv.id);
+    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
+      data: { operation: BootEnvironmentAction.Rename, name: bootenv.id },
+    });
+    this.handleSlideInClosed(slideInRef);
   }
 
   doClone(bootenv: Bootenv): void {
-    const modal = this.slideInService.open(BootEnvironmentFormComponent);
-    modal.setupForm(BootEnvironmentAction.Clone, bootenv.id);
+    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
+      data: { operation: BootEnvironmentAction.Clone, name: bootenv.id },
+    });
+    this.handleSlideInClosed(slideInRef);
   }
 
   doScrub(): void {

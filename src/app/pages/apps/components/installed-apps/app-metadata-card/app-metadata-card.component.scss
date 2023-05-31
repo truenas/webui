@@ -1,0 +1,28 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+  margin: 0;
+}
+
+.card-subtitle {
+  margin-bottom: 12px;
+}
+
+.details-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 12px;
+}
+
+ix-app-section-expand-collapse {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.details-entry {
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--lines);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+}
