@@ -12,7 +12,9 @@ import _ from 'lodash';
 import {
   BehaviorSubject, of, Subject, Subscription,
 } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  delay, filter, map, take,
+} from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -117,7 +119,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
           if (idx === path.length - 1) {
             nextElement?.scrollIntoView({ block: 'center' });
             nextElement.classList.add('highlighted');
-            setTimeout(() => nextElement.classList.remove('highlighted'), 999);
+
+            of(([])).pipe(delay(999))
+              .pipe(untilDestroyed(this))
+              .subscribe(() => nextElement.classList.remove('highlighted'));
           }
         });
       }
