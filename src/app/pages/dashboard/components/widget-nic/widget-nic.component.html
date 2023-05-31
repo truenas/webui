@@ -1,4 +1,4 @@
-<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+<div class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container front">
     <mat-card
       class="front overflow-hidden"
@@ -122,8 +122,7 @@
                           <strong>{{ 'In' | translate }}: &nbsp;</strong>
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.received }}</span>
-                          {{ traffic.receivedUnits }}/s
+                          <span class="stat">{{ traffic.received | filesize: { standard: 'iec' }  }}</span>/s
                         </div>
                       </div>
                       <div class="tr">
@@ -131,8 +130,7 @@
                           <strong>{{ 'Out' | translate }}: </strong>&nbsp;
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.sent }}</span>
-                          {{ traffic.sentUnits }}/s
+                          <span class="stat">{{ traffic.sent | filesize: { standard: 'iec' } }}</span>/s
                         </div>
                       </div>
                     </div>

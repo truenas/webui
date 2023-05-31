@@ -8,7 +8,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import { Chart, ChartColor, ChartDataSets } from 'chart.js';
 import { Subject, Subscription } from 'rxjs';
 import {
@@ -38,10 +37,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
 
   chart: Chart;// chart instance
   isReady = false;
-  title: string = this.translate.instant('Memory');
   subtitle: string = this.translate.instant('% of all cores');
-  configurable = false;
-  chartId = UUID.UUID();
   colorPattern: string[];
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
   screenType = ScreenType.Desktop;
@@ -99,9 +95,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
     const services = data.total - data.free - data.arc_size;
 
     return [
-      ['Free', this.bytesToGigabytes(data.free).toFixed(1)],
-      ['ZFS Cache', this.bytesToGigabytes(data.arc_size).toFixed(1)],
-      ['Services', this.bytesToGigabytes(services).toFixed(1)],
+      [this.translate.instant('Free'), this.bytesToGigabytes(data.free).toFixed(1)],
+      [this.translate.instant('ZFS Cache'), this.bytesToGigabytes(data.arc_size).toFixed(1)],
+      [this.translate.instant('Services'), this.bytesToGigabytes(services).toFixed(1)],
     ];
   }
 
@@ -137,11 +133,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
       return undefined;
     }
 
-    const ds = this.makeDatasets(this.memData.data);
+    const datasets = this.makeDatasets(this.memData.data);
 
     const data = {
+      datasets,
       labels: this.labels,
-      datasets: ds,
     };
 
     const options = {
