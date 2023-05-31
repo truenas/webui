@@ -504,7 +504,6 @@
   "Applications not configured": "未配置应用",
   "Applications you install will automatically appear here. Click below and browse the TrueNAS catalog to get started.": "您安装的应用程序将自动出现在此处。 单击下方并浏览TrueNAS目录以开始使用。",
   "Applied Dataset Quota": "应用数据集配额",
-  "Apply": "应用",
   "Apply Group": "应用于组",
   "Apply Owner": "申请所有者",
   "Apply Pending Updates": "应用更新",
