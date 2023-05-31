@@ -43,6 +43,8 @@ export class IxFormatterService {
    * @param minUnits If no unit is provided, what minimum base unit should be assumed
    * @param hideBytes If the value is in bytes, should the 'B' sign be added
    * @returns A human readable string with appropriate units
+  /**
+   * @deprecated Use Filesize pipe
    */
   convertBytesToHumanReadable = (
     rawBytes: number | string,

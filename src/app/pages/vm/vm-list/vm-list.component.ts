@@ -23,6 +23,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
@@ -102,6 +103,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
   constructor(
     private ws: WebSocketService,
     private storageService: StorageService,
+    private formatter: IxFormatterService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private router: Router,
@@ -185,7 +187,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
         state: vm.status.state,
         com_port: `/dev/nmdm${vm.id}B`,
         shutdownTimeoutString: `${vm.shutdown_timeout} seconds`,
-        memoryString: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
+        memoryString: this.formatter.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
       if (this.checkDisplay(vm)) {
@@ -462,7 +464,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
 
   checkMemory(): void {
     this.ws.call('vm.get_available_memory').pipe(untilDestroyed(this)).subscribe((availableMemory) => {
-      this.availableMemory = this.storageService.convertBytesToHumanReadable(availableMemory);
+      this.availableMemory = this.formatter.convertBytesToHumanReadable(availableMemory);
     });
   }
 
