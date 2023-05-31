@@ -60,7 +60,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly selectedEnclosure$ = this.select((state) => state.selectedEnclosure);
 
   private disksUpdateSubscriptionId: string;
-  private selectedSlotNumber: number | null = null;
 
   constructor(
     private ws: WebSocketService,

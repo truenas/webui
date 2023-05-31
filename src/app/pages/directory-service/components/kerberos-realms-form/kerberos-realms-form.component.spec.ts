@@ -5,6 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -29,16 +31,18 @@ describe('KerberosRealmsFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-  });
-
   describe('adding a new kerberos realm', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+    });
+
     it('sends a create payload to websocket and closes modal form is saved', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -62,13 +66,22 @@ describe('KerberosRealmsFormComponent', () => {
 
   describe('editing a kerberos realm', () => {
     beforeEach(() => {
-      spectator.component.setRealmForEdit({
-        id: 13,
-        realm: 'existing',
-        kdc: ['center1', 'center2'],
-        admin_server: ['10.1.12.1', '10.1.12.2'],
-        kpasswd_server: ['10.2.30.1', '10.2.30.2'],
-      } as KerberosRealm);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              id: 13,
+              realm: 'existing',
+              kdc: ['center1', 'center2'],
+              admin_server: ['10.1.12.1', '10.1.12.2'],
+              kpasswd_server: ['10.2.30.1', '10.2.30.2'],
+            } as KerberosRealm,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('shows current group values when form is being edited', async () => {

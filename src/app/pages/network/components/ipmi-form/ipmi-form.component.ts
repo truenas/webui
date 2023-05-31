@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -16,13 +16,14 @@ import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, RedirectService, SystemGeneralService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
@@ -40,7 +41,6 @@ export class IpmiFormComponent implements OnInit {
   remoteControllerOptions: Observable<RadioOption[]>;
   isLoading = false;
   managementIp: string;
-  ipmiId: number;
   isFlashing = false;
 
   queryFilter: QueryParams<Ipmi> = null;
@@ -84,23 +84,26 @@ export class IpmiFormComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private validatorsService: IxValidatorsService,
-    private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
-  ) {
-  }
+    private slideInRef: IxSlideInRef<IpmiFormComponent>,
+    @Inject(SLIDE_IN_DATA) private ipmiId: number,
+  ) { }
 
   ngOnInit(): void {
     this.setFormRelations();
     this.loadFormData();
+
+    if (this.ipmiId) {
+      this.setIdIpmi();
+    }
   }
 
-  setIdIpmi(id: number): void {
-    this.ipmiId = id;
+  setIdIpmi(): void {
     this.queryFilter = [[['id', '=', this.ipmiId]]];
   }
 
@@ -230,7 +233,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.close();
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );

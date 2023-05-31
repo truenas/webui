@@ -10,12 +10,12 @@ import { take } from 'rxjs/operators';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -61,7 +61,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<SelfEncryptingDriveFormComponent>,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
@@ -84,7 +84,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInRef.close();
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: WebsocketError) => {

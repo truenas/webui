@@ -47,6 +47,7 @@
         mat-button
         color="primary"
         ixTest="apply"
+        [disabled]="isLoading$ | async"
         (click)="applyFilters()"
       >
         {{ 'Apply' | translate }}

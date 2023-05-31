@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,7 +28,7 @@ interface AllowedAddressRow {
   templateUrl: './allowed-addresses-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AllowedAddressesCardComponent implements OnInit {
+export class AllowedAddressesCardComponent {
   readonly tableConfig: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_addresses,
     queryCall: 'system.general.config',
@@ -65,7 +65,10 @@ export class AllowedAddressesCardComponent implements OnInit {
         label: this.translate.instant('Configure'),
         onClick: async () => {
           await this.advancedSettings.showFirstTimeWarningIfNeeded();
-          this.slideIn.open(AllowedAddressesFormComponent);
+          const slideInRef = this.slideInService.open(AllowedAddressesFormComponent);
+          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+            this.tableConfig.tableComponent?.getData();
+          });
         },
       },
     ],
@@ -75,17 +78,11 @@ export class AllowedAddressesCardComponent implements OnInit {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
-
-  ngOnInit(): void {
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.tableConfig.tableComponent?.getData();
-    });
-  }
 
   private addressesSourceHelper(data: SystemGeneralConfig): AllowedAddressRow[] {
     return data.ui_allowlist.map((ip) => ({ address: ip }));

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -10,11 +10,12 @@ import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import helptext from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -22,7 +23,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownFormComponent implements OnInit {
-  private editingScript: InitShutdownScript;
   get isNew(): boolean {
     return !this.editingScript;
   }
@@ -73,13 +73,14 @@ export class InitShutdownFormComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
+    private slideInRef: IxSlideInRef<InitShutdownFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingScript: InitShutdownScript,
   ) {}
 
   ngOnInit(): void {
@@ -87,13 +88,14 @@ export class InitShutdownFormComponent implements OnInit {
       this.form.controls.command.enabledWhile(this.isCommand$),
       this.form.controls.script.disabledWhile(this.isCommand$),
     );
+
+    if (this.editingScript) {
+      this.setScriptForEdit();
+    }
   }
 
-  setScriptForEdit(script: InitShutdownScript): void {
-    this.editingScript = script;
-    if (!this.isNew) {
-      this.form.patchValue(this.editingScript);
-    }
+  setScriptForEdit(): void {
+    this.form.patchValue(this.editingScript);
   }
 
   onSubmit(): void {
@@ -118,7 +120,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

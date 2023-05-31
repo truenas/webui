@@ -23,6 +23,7 @@ import { CustomTransfersDialogComponent } from 'app/pages/data-protection/clouds
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { DataProtectionDashboardComponent } from 'app/pages/data-protection/data-protection-dashboard.component';
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
@@ -41,7 +42,6 @@ import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-sn
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
-import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { dataProtectionRoutes } from './data-protection.routing';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { GeneralSectionComponent } from './replication/replication-form/sections/general-section/general-section.component';

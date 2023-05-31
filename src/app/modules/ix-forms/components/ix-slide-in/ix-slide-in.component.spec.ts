@@ -3,10 +3,8 @@ import {
 } from '@angular/core';
 import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in2.component';
-import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
 /** Simple component for testing IxSlideInComponent */
 @Component({
@@ -15,18 +13,17 @@ import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/di
 class TestClassComponent {
   text: string;
   constructor(
-    private slideInRef: IxSlideInRef<DiskFormComponent, string>,
-    @Inject(SLIDE_IN_DATA) private value: string,
+  @Inject(SLIDE_IN_DATA) value: string,
   ) {
     this.text = value;
   }
 }
 
-describe('IxSlideIn2Component', () => {
-  let spectator: Spectator<IxSlideIn2Component>;
+describe('IxSlideInComponent', () => {
+  let spectator: Spectator<IxSlideInComponent>;
 
   const createComponent = createComponentFactory({
-    component: IxSlideIn2Component,
+    component: IxSlideInComponent,
     declarations: [
       TestClassComponent,
     ],

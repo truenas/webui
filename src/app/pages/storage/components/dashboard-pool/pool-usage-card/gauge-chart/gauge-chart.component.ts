@@ -28,9 +28,10 @@ interface ChartElement {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
 Chart.defaults.roundedDoughnut = Chart.helpers.clone(Chart.defaults.doughnut);
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+// eslint-disable-next-line max-len
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
 Chart.controllers.roundedDoughnut = Chart.controllers.doughnut.extend({
   draw(this: ChartElement, ease: number) {
     const ctx = this.chart.chart.ctx;

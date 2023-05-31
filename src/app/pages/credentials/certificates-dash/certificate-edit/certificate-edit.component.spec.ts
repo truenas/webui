@@ -27,7 +27,7 @@ import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { DialogService } from 'app/services';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit.component';
 
@@ -58,7 +58,7 @@ describe('CertificateEditComponent', () => {
         mockCall('certificate.update'),
       ]),
       mockProvider(MatDialog),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockProvider(DialogService),
@@ -82,6 +82,7 @@ describe('CertificateEditComponent', () => {
     });
 
     it('shows the name of the certificate', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       spectator.component.ngOnInit();
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
       expect(await nameInput.getValue()).toBe('ray');
@@ -150,7 +151,7 @@ describe('CertificateEditComponent', () => {
     });
 
     it('opens slidein for creating ACME certificates when Create ACME Certificate is pressed', async () => {
-      const slideInService = spectator.inject(IxSlideIn2Service);
+      const slideInService = spectator.inject(IxSlideInService);
       const mockSetCsr = jest.fn();
       slideInService.open.mockReturnValue({
         componentInstance: {

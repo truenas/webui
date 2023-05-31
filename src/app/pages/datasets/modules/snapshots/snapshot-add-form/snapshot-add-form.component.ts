@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators,
@@ -15,6 +15,8 @@ import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
@@ -22,7 +24,6 @@ import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-va
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -61,8 +62,9 @@ export class SnapshotAddFormComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
-    private slideIn: IxSlideInService,
     private datasetStore: DatasetTreeStore,
+    private slideInRef: IxSlideInRef<SnapshotAddFormComponent>,
+    @Inject(SLIDE_IN_DATA) private datasetId: string,
   ) {}
 
   ngOnInit(): void {
@@ -91,10 +93,14 @@ export class SnapshotAddFormComponent implements OnInit {
       this.form.controls.recursive.valueChanges,
       this.form.controls.dataset.valueChanges,
     ).pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
+
+    if (this.datasetId) {
+      this.setDataset();
+    }
   }
 
-  setDataset(datasetId: string): void {
-    this.form.controls.dataset.setValue(datasetId);
+  setDataset(): void {
+    this.form.controls.dataset.setValue(this.datasetId);
   }
 
   onSubmit(): void {
@@ -119,7 +125,7 @@ export class SnapshotAddFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideIn.close(null, true);
+        this.slideInRef.close(true);
         this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },

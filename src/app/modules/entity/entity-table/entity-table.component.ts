@@ -51,7 +51,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -205,7 +204,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     protected matDialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
     protected layoutService: LayoutService,
-    protected slideIn: IxSlideInService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -575,7 +573,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     if (typeof (response) === 'undefined' || typeof (response.data) === 'undefined') {
       response = {
-        data: response,
+        data: response as unknown,
       };
     }
 
@@ -679,8 +677,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     let hasHorizontalScrollbar = false;
     if (this.entitytable) {
       // Hack to access the private property _elementRef. Do not replace with elementRef.
-      const parentNode = (this.entitytable as unknown as { _elementRef: ElementRef })
-        ._elementRef.nativeElement.parentNode;
+      const parentNode = (this.entitytable as unknown as { _elementRef: ElementRef<HTMLElement> })
+        ._elementRef.nativeElement.parentNode as HTMLElement;
       hasHorizontalScrollbar = parentNode.scrollWidth > parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
@@ -719,7 +717,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         const index = _.findIndex(rows, { id: row.id } as _.PartialShallow<Row>);
         if (index > -1) {
           Object.keys(rows[index]).forEach((prop) => {
-            row[prop as keyof Row] = rows[index][prop];
+            row[prop as keyof Row] = rows[index][prop] as Row[keyof Row];
           });
         }
       });
@@ -824,7 +822,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     let id: string | number;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
-      id = item[this.conf.config.deleteMsg.id_prop];
+      id = item[this.conf.config.deleteMsg.id_prop] as string | number;
     } else {
       id = item.id;
     }
@@ -887,7 +885,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     const deleteMsg = this.getDeleteMessage(item);
     let id: string | number;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
-      id = item[this.conf.config.deleteMsg.id_prop];
+      id = item[this.conf.config.deleteMsg.id_prop] as string | number;
     } else {
       id = item.id;
     }

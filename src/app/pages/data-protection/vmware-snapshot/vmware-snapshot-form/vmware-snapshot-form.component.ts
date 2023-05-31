@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,10 +11,11 @@ import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -60,7 +61,6 @@ export class VmwareSnapshotFormComponent implements OnInit {
     datastore: helptext.VMware_snapshot_form_datastore_tooltip,
   };
 
-  private editingSnapshot: VmwareSnapshot;
   private datastoreList: VmwareDatastore[];
   private filesystemList: VmwareFilesystem[];
 
@@ -72,10 +72,11 @@ export class VmwareSnapshotFormComponent implements OnInit {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     protected dialogService: DialogService,
+    private slideInRef: IxSlideInRef<VmwareSnapshotFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingSnapshot: VmwareSnapshot,
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +86,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
         this.form.controls.filesystem.setValue(fileSystemValue);
       }
     });
+
+    if (this.editingSnapshot) {
+      this.setSnapshotForEdit();
+    }
   }
 
   get disableFetchDatastores(): boolean {
@@ -92,9 +97,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
     return !hostname || !username || !password;
   }
 
-  setSnapshotForEdit(snapshot: VmwareSnapshot): void {
-    this.editingSnapshot = snapshot;
-    this.form.patchValue(snapshot);
+  setSnapshotForEdit(): void {
+    this.form.patchValue(this.editingSnapshot);
     this.onFetchDataStores();
   }
 
@@ -184,7 +188,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;

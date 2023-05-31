@@ -5,7 +5,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, map, switchMap, throttleTime,
 } from 'rxjs';
-import { GiB } from 'app/constants/bytes.constant';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
@@ -67,9 +66,5 @@ export class AppResourcesCardComponent implements OnInit {
       }
       this.cdr.markForCheck();
     });
-  }
-
-  bytesToGigabytes(value: number): number {
-    return value / GiB;
   }
 }

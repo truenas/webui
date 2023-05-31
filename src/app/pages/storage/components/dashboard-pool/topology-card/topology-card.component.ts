@@ -137,7 +137,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     }
 
     if (!isMixedWidth && !isSingleDeviceCategory) {
-      vdevWidth = allVdevWidths.values().next().value;
+      vdevWidth = Array.from(allVdevWidths.values())[0];
     }
 
     if (warnings.length === 1) {

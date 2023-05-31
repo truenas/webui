@@ -27,12 +27,11 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
@@ -86,9 +85,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
     private mdDialog: MatDialog,
@@ -100,6 +97,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private loader: AppLoaderService,
     private router: Router,
+    private slideInRef: IxSlideInRef<ChartWizardComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -409,7 +407,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInService.close();
+    this.slideInRef.close();
     this.router.navigate(['/apps/installed']);
   }
 }

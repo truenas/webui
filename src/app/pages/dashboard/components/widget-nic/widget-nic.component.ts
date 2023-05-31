@@ -151,7 +151,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
 
     const el = styler(carousel);
-    const slideW = styler(slide).get('width');
+    const slideW = styler(slide).get('width') as number;
 
     tween({
       from: { x: (parseInt(this.currentSlide) * 100) * -1 },

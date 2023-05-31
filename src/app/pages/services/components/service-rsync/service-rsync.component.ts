@@ -20,7 +20,7 @@ export class ServiceRsyncComponent implements OnInit {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.activedTab = params['pk'];
+      this.activedTab = params['pk'] as string;
     });
   }
 }

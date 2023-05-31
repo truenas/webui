@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,10 +10,11 @@ import helptext from 'app/helptext/services/components/service-rsync';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -22,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./rsync-module-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RsyncModuleFormComponent {
+export class RsyncModuleFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingModule;
   }
@@ -48,7 +49,6 @@ export class RsyncModuleFormComponent {
   });
 
   isLoading = false;
-  editingModule: RsyncModule;
   modeOptions$ = of(helptext.rsyncmod_mode_options);
 
   readonly userProvider = new UserComboboxProvider(this.userService);
@@ -75,14 +75,20 @@ export class RsyncModuleFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
     private userService: UserService,
+    private slideInRef: IxSlideInRef<RsyncModuleFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingModule: RsyncModule,
   ) {}
 
-  setModuleForEdit(module: RsyncModule): void {
-    this.editingModule = module;
-    this.form.patchValue(module);
+  ngOnInit(): void {
+    if (this.editingModule) {
+      this.setModuleForEdit();
+    }
+  }
+
+  setModuleForEdit(): void {
+    this.form.patchValue(this.editingModule);
   }
 
   onSubmit(): void {
@@ -102,7 +108,7 @@ export class RsyncModuleFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

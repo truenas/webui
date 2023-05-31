@@ -17,7 +17,7 @@ import {
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 const dummyGroup = {
@@ -43,7 +43,7 @@ describe('GroupDetailsRowComponent', () => {
       GroupFormComponent,
     ],
     providers: [
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
       mockWebsocket([
         mockCall('user.query'),
         mockCall('group.delete'),
@@ -92,7 +92,7 @@ describe('GroupDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {

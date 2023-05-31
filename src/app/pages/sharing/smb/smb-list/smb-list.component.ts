@@ -94,18 +94,15 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
   }
 
   doAdd(): void {
-    this.slideInService.open(SmbFormComponent);
-    this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+    const slideInRef = this.slideInService.open(SmbFormComponent);
+    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: string | number): void {
-    const form = this.slideInService.open(SmbFormComponent);
-    form.setSmbShareForEdit(this.entityList.rows.find((share) => share.id === id));
-    this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
+    const slideInRef = this.slideInService.open(SmbFormComponent, {
+      data: this.entityList.rows.find((share) => share.id === id),
     });
+    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(smbShare: SmbShare): EntityTableAction[] {
@@ -136,8 +133,10 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
                 const searchName = row.home ? 'homes' : row.name;
                 this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                   (shareSecs) => {
-                    const form = this.slideInService.open(SmbAclComponent);
-                    form.setSmbShareName(shareSecs[0].share_name);
+                    const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareSecs[0].share_name });
+                    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                      this.entityList.getData();
+                    });
                   },
                 );
               }

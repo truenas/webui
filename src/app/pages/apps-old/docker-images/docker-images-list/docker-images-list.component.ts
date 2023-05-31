@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import {
   delay, filter, map, switchMap,
@@ -75,7 +74,6 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
 
   constructor(
     public formatter: IxFormatterService,
-    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
