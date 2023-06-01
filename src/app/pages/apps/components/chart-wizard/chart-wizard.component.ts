@@ -10,11 +10,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  BehaviorSubject, of, Subject, Subscription,
+  BehaviorSubject, of, Subject, Subscription, timer,
 } from 'rxjs';
-import {
-  delay, filter, map, take,
-} from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -124,10 +122,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
           if (idx === path.length - 1) {
             nextElement?.scrollIntoView({ block: 'center' });
             nextElement.classList.add('highlighted');
-
-            of(([])).pipe(delay(999))
-              .pipe(untilDestroyed(this))
-              .subscribe(() => nextElement.classList.remove('highlighted'));
+            timer(999).pipe(untilDestroyed(this)).subscribe(() => nextElement.classList.remove('highlighted'));
           }
         });
       }
