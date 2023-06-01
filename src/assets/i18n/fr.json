@@ -84,6 +84,7 @@
   "Choose a path to the user's home directory. If the directory exists and matches the username, it is set as the user's home directory. When the path does not end with a subdirectory matching the username, a new subdirectory is created only if the 'Create Home Directory' field is marked checked. The full path to the user's home directory is shown here when editing a user.": "",
   "Cipher": "",
   "Click for information on    <a href=\"https://www.truenas.com/docs/truenasupgrades/\" target=\"_blank\">TrueNAS SCALE Migration, Nightly trains    and other upgrade options.</a>": "",
+  "Continue with the upgrade": "",
   "Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
   "Core #": "",
   "Create Home Directory": "",
