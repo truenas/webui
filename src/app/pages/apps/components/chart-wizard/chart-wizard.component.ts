@@ -23,8 +23,11 @@ import {
   ChartFormValues,
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
-import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -32,7 +35,6 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
@@ -84,11 +86,13 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
   }
 
+  get showAppMetadata(): boolean {
+    return Boolean(this.catalogApp?.app_metadata && this.form?.controls['show_metadata']?.value);
+  }
+
   constructor(
     private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
     private mdDialog: MatDialog,
@@ -100,6 +104,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private loader: AppLoaderService,
     private router: Router,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -141,10 +146,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        filter((params) => !!(params.appId as string) && !!(params.catalog) && !!(params.train)),
+        filter((params: AppDetailsRouteParams) => !!(params.appId) && !!(params.catalog) && !!(params.train)),
         untilDestroyed(this),
       )
-      .subscribe(({ train, catalog, appId }: AppDetailsRouteParams) => {
+      .subscribe(({ train, catalog, appId }) => {
         this.appId = appId;
         this.train = train;
         this.catalog = catalog;
@@ -174,15 +179,16 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
           this.appsLoaded = true;
-          this.cdr.detectChanges();
           this.setChartCreate(app);
           this.isLoading = false;
           this.loader.close();
           this.cdr.markForCheck();
         },
-        error: () => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.router.navigate(['/apps', 'available']);
+          this.router.navigate(['/apps', 'available']).then(() => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
+          });
         },
       });
   }
@@ -233,6 +239,23 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.buildDynamicForm(catalogApp.schema);
+
+    if (catalogApp?.app_metadata) {
+      const controlName = 'show_metadata';
+      this.form.addControl(controlName, new FormControl(true, []));
+      this.dynamicSection.push({
+        name: 'Application Metadata',
+        description: '',
+        help: this.translate.instant('This information is provided by the catalog maintainer.'),
+        schema: [{
+          controlName,
+          title: 'Show Metadata',
+          type: DynamicFormSchemaType.Checkbox,
+          hidden: true,
+        }],
+      });
+    }
+
     if (this.catalogApp.name !== ixChartApp) {
       this.form.patchValue({ release_name: this.catalogApp.name });
     }
@@ -409,7 +432,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInService.close();
     this.router.navigate(['/apps/installed']);
   }
 }

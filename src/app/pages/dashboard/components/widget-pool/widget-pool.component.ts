@@ -67,7 +67,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
 
   templates: { [template: string]: TemplateRef<void> };
-  tpl: TemplateRef<void>;
   path: Slide[] = [];
   title: string;
   displayValue: string;
@@ -148,12 +147,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     private ws: WebSocketService,
   ) {
     super(translate);
-    this.configurable = false;
   }
 
   ngOnInit(): void {
     this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
-    this.tpl = this.overview;
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -298,7 +295,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
 
     const el = styler(carousel);
-    const slideW = styler(slide).get('width'); // 600;
+    const slideW = styler(slide).get('width') as number; // 600;
 
     const startX = (parseInt(this.currentSlide) * slideW) * -1;
     const endX = (value * slideW) * -1;

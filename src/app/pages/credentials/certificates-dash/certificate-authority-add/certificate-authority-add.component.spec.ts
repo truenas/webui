@@ -15,6 +15,7 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
@@ -36,7 +37,6 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 // TODO: Consider building a harness for the wizard.
 describe('CertificateAuthorityAddComponent', () => {
@@ -124,7 +124,7 @@ describe('CertificateAuthorityAddComponent', () => {
         }),
         mockCall('certificateauthority.create'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
@@ -184,7 +184,7 @@ describe('CertificateAuthorityAddComponent', () => {
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('certificateauthority.create', [expectedInternalCa]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('create a new CA when Type = Intermediate and form is submitted', async () => {
@@ -212,7 +212,7 @@ describe('CertificateAuthorityAddComponent', () => {
       create_type: CaCreateType.Intermediate,
       signedby: 1,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CA and form is submitted', async () => {

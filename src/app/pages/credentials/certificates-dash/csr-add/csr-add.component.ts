@@ -8,6 +8,7 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   CsrIdentifierAndTypeComponent,
@@ -26,7 +27,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ export class CsrAddComponent {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<CsrAddComponent>,
     private dialogService: DialogService,
   ) { }
 
@@ -109,7 +109,7 @@ export class CsrAddComponent {
         complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate signing request created'));
-          this.slideIn.close();
+          this.slideInRef.close(true);
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;

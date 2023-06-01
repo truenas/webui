@@ -290,7 +290,21 @@ ix-app-details-panel {
   display: flex;
   gap: 8px;
 
-  span {
+  > span {
     font-size: 16px;
+  }
+}
+
+.discover-apps-button {
+  min-width: 180px;
+}
+
+.update-all-button ::ng-deep {
+  .mdc-button__label {
+    gap: 4px;
+
+    ix-icon {
+      font-size: 18px;
+    }
   }
 }

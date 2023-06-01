@@ -23,5 +23,10 @@
     <ix-app-containers-card [app]="app"></ix-app-containers-card>
     <ix-app-history-card [app]="app"></ix-app-history-card>
     <ix-app-notes-card *ngIf="app.info?.notes" [app]="app"></ix-app-notes-card>
+    <ix-app-metadata-card
+      *ngIf="app?.app_metadata"
+      [appMetadata]="app.app_metadata"
+      [maxHeight]="180"
+    ></ix-app-metadata-card>
   </div>
 </div>

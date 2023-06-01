@@ -100,7 +100,10 @@ describe('UserDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(UserFormComponent, { wide: true });
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      UserFormComponent,
+      { wide: true, data: dummyUser },
+    );
   });
 
   it('should open DeleteUserDialog when Delete button is pressed', async () => {

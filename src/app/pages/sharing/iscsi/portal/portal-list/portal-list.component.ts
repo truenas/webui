@@ -27,6 +27,7 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
   queryCall = 'iscsi.portal.query' as const;
   wsDelete = 'iscsi.portal.delete' as const;
   routeAddTooltip = this.translate.instant('Add Portal');
+  entityList: EntityTableComponent<IscsiPortalRow>;
 
   columns = [
     {
@@ -69,13 +70,12 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
   ) {}
 
   afterInit(entityList: EntityTableComponent<IscsiPortalRow>): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityList.getData();
-    });
+    this.entityList = entityList;
   }
 
   doAdd(): void {
-    this.slideInService.open(PortalFormComponent);
+    const slideInRef = this.slideInService.open(PortalFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number, entityList: EntityTableComponent<IscsiPortalRow>): void {
@@ -88,11 +88,8 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
       };
     });
 
-    const form = this.slideInService.open(PortalFormComponent);
-    form.setupForm({
-      ...portal,
-      listen,
-    });
+    const slideInRef = this.slideInService.open(PortalFormComponent, { data: { ...portal, listen } });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   prerequisite(): Promise<boolean> {

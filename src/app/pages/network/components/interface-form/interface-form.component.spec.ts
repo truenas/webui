@@ -18,6 +18,8 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
@@ -118,18 +120,20 @@ describe('InterfaceFormComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-    aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-    ws = spectator.inject(WebSocketService);
-  });
-
   describe('creation', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      ws = spectator.inject(WebSocketService);
+    });
+
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
 
@@ -162,7 +166,7 @@ describe('InterfaceFormComponent', () => {
         }],
         mtu: 1500,
       }]);
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(CoreService).emit).toHaveBeenCalledWith({
         name: 'NetworkInterfacesChanged',
         data: { commit: false, checkin: false },
@@ -217,7 +221,7 @@ describe('InterfaceFormComponent', () => {
         data: { commit: false, checkin: false },
         sender: expect.any(InterfaceFormComponent),
       });
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
@@ -285,10 +289,20 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
-  describe('edit', () => {
-    it('shows values for a network interface when it is opened for edit', async () => {
-      spectator.component.setInterfaceForEdit(existingInterface);
+  describe('edit 1', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: existingInterface },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      ws = spectator.inject(WebSocketService);
+    });
 
+    it('shows values for a network interface when it is opened for edit', async () => {
       const values = await form.getValues();
       expect(values).toEqual({
         Name: 'enp0s6',
@@ -299,40 +313,93 @@ describe('InterfaceFormComponent', () => {
         'IP Address': '10.2.3.4/24',
       });
     });
+  });
 
-    it('reloads bridge member choices when bridge interface is opened for edit', () => {
-      spectator.component.setInterfaceForEdit({
-        ...existingInterface,
-        id: 'br7',
-        type: NetworkInterfaceType.Bridge,
+  describe('edit 2', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              ...existingInterface,
+              id: 'vlan1',
+              type: NetworkInterfaceType.Vlan,
+            } as NetworkInterface,
+          },
+        ],
       });
-
-      expect(spectator.inject(NetworkService).getBridgeMembersChoices).toHaveBeenLastCalledWith('br7');
-    });
-
-    it('reloads lag ports when link aggregation is opened for edit', () => {
-      spectator.component.setInterfaceForEdit({
-        ...existingInterface,
-        id: 'bond9',
-        type: NetworkInterfaceType.LinkAggregation,
-      } as NetworkInterface);
-
-      expect(spectator.inject(NetworkService).getLaggPortsChoices).toHaveBeenLastCalledWith('bond9');
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      ws = spectator.inject(WebSocketService);
     });
 
     it('disables parent interface fields when VLAN is opened for edit', async () => {
-      spectator.component.setInterfaceForEdit({
-        ...existingInterface,
-        id: 'vlan1',
-        type: NetworkInterfaceType.Vlan,
-      } as NetworkInterface);
-
       const parentInterfaceField = await loader.getHarness(IxSelectHarness.with({ label: 'Parent Interface' }));
       expect(await parentInterfaceField.isDisabled()).toBe(true);
     });
   });
 
+  describe('edit 3', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              ...existingInterface,
+              id: 'br7',
+              type: NetworkInterfaceType.Bridge,
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      ws = spectator.inject(WebSocketService);
+    });
+
+    it('reloads bridge member choices when bridge interface is opened for edit', () => {
+      expect(spectator.inject(NetworkService).getBridgeMembersChoices).toHaveBeenLastCalledWith('br7');
+    });
+  });
+
+  describe('edit 4', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              ...existingInterface,
+              id: 'bond9',
+              type: NetworkInterfaceType.LinkAggregation,
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      ws = spectator.inject(WebSocketService);
+    });
+
+    it('reloads lag ports when link aggregation is opened for edit', () => {
+      expect(spectator.inject(NetworkService).getLaggPortsChoices).toHaveBeenLastCalledWith('bond9');
+    });
+  });
+
   describe('failover fields', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      ws = spectator.inject(WebSocketService);
+    });
+
     beforeEach(() => {
       const websocketMock = spectator.inject(MockWebsocketService);
       websocketMock.mockCall('failover.licensed', true);

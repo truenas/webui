@@ -22,11 +22,9 @@ const routes: Routes = [
     {
       path: 'installed',
       component: InstalledAppsComponent,
-      data: { title: T('Installed'), breadcrumb: T('Applications') },
       children: [{
         path: ':appId',
         component: InstalledAppsComponent,
-        data: { title: T('Installed'), breadcrumb: T('Installed') },
       },
       {
         path: ':appId/shell/:pname/:cname',
@@ -42,26 +40,26 @@ const routes: Routes = [
     {
       path: 'available',
       component: AppRouterOutletComponent,
-      data: { title: T('Available'), breadcrumb: T('Available') },
+      data: { title: T('Discover'), breadcrumb: T('Applications') },
       children: [{
         path: '',
         component: AvailableAppsComponent,
-        data: { title: T('Available'), breadcrumb: T('Available') },
+        data: { title: T('Discover'), breadcrumb: T('Applications') },
       },
       {
         path: ':catalog/:train/:appId',
         component: AppDetailViewComponent,
-        data: { title: T('App Detail'), breadcrumb: T('App Detail') },
+        data: { title: T('Discover'), breadcrumb: T('Applications') },
       },
       {
         path: ':catalog/:train/:appId/install',
         component: ChartWizardComponent,
-        data: { title: T('Install App'), breadcrumb: T('Install App') },
+        data: { title: T('Install App'), breadcrumb: T('Applications') },
       },
       {
         path: ':catalog/:train/:appId/edit',
         component: ChartWizardComponent,
-        data: { title: T('Edit App'), breadcrumb: T('Edit App') },
+        data: { title: T('Edit App'), breadcrumb: T('Applications') },
       }],
     },
     {

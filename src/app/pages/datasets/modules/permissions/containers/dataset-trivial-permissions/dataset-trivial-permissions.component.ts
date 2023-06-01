@@ -95,7 +95,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.datasetId = this.activatedRoute.snapshot.params['datasetId'];
+    this.datasetId = this.activatedRoute.snapshot.params['datasetId'] as string;
     this.datasetPath = '/mnt/' + this.datasetId;
 
     this.loadPermissionsInformation();

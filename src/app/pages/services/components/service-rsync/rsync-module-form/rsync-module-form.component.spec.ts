@@ -7,6 +7,8 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import { RsyncModule } from 'app/interfaces/rsync-module.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, UserService } from 'app/services';
@@ -65,105 +67,118 @@ describe('RsyncModuleFormComponent', () => {
           { username: 'games' },
         ]),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-  });
-
-  it('adds a new rsync module when a new form is submitted', async () => {
-    await form.fillForm({
-      Name: 'new',
-      Path: '/mnt/new',
-      Comment: 'New module',
-      Enabled: true,
-
-      'Access Mode': 'Read Only',
-      'Max Connections': '20',
-      User: 'games',
-      Group: 'wheel',
-      'Hosts Allow': ['host1.com'],
-      'Hosts Deny': ['host2.com'],
-
-      'Auxiliary Parameters': 'newParam=2',
+  describe('adds new rsync module', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('adds a new rsync module when a new form is submitted', async () => {
+      await form.fillForm({
+        Name: 'new',
+        Path: '/mnt/new',
+        Comment: 'New module',
+        Enabled: true,
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsyncmod.create', [{
-      name: 'new',
-      path: '/mnt/new',
-      comment: 'New module',
-      enabled: true,
+        'Access Mode': 'Read Only',
+        'Max Connections': '20',
+        User: 'games',
+        Group: 'wheel',
+        'Hosts Allow': ['host1.com'],
+        'Hosts Deny': ['host2.com'],
 
-      mode: RsyncModuleMode.ReadOnly,
-      maxconn: 20,
-      user: 'games',
-      group: 'wheel',
-      hostsallow: ['host1.com'],
-      hostsdeny: ['host2.com'],
+        'Auxiliary Parameters': 'newParam=2',
+      });
 
-      auxiliary: 'newParam=2',
-    }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
-  it('shows current rsync values when it is opened for edit', async () => {
-    spectator.component.setModuleForEdit(existingModule);
-    const values = await form.getValues();
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsyncmod.create', [{
+        name: 'new',
+        path: '/mnt/new',
+        comment: 'New module',
+        enabled: true,
 
-    expect(values).toEqual({
-      Name: 'test',
-      Path: '/mnt/x/oooo',
-      Comment: 'My module',
-      Enabled: true,
+        mode: RsyncModuleMode.ReadOnly,
+        maxconn: 20,
+        user: 'games',
+        group: 'wheel',
+        hostsallow: ['host1.com'],
+        hostsdeny: ['host2.com'],
 
-      'Access Mode': 'Read and Write',
-      'Max Connections': '2',
-      User: 'daemon',
-      Group: 'kmem',
-      'Hosts Allow': ['google.com'],
-      'Hosts Deny': ['yahoo.com'],
-
-      'Auxiliary Parameters': 'aux',
+        auxiliary: 'newParam=2',
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
 
-  it('saves current rsync values when edit form is submitted', async () => {
-    spectator.component.setModuleForEdit(existingModule);
-
-    await form.fillForm({
-      Enabled: false,
-      'Access Mode': 'Write Only',
-      'Hosts Allow': ['192.110.1.2'],
-      'Hosts Deny': [],
+  describe('edits rsync module', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: existingModule },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('shows current rsync values when it is opened for edit', async () => {
+      const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsyncmod.update', [
-      1,
-      {
-        name: 'test',
-        path: '/mnt/x/oooo',
-        comment: 'My module',
-        enabled: false,
+      expect(values).toEqual({
+        Name: 'test',
+        Path: '/mnt/x/oooo',
+        Comment: 'My module',
+        Enabled: true,
 
-        mode: RsyncModuleMode.WriteOnly,
-        maxconn: 2,
-        user: 'daemon',
-        group: 'kmem',
-        hostsallow: ['192.110.1.2'],
-        hostsdeny: [],
+        'Access Mode': 'Read and Write',
+        'Max Connections': '2',
+        User: 'daemon',
+        Group: 'kmem',
+        'Hosts Allow': ['google.com'],
+        'Hosts Deny': ['yahoo.com'],
 
-        auxiliary: 'aux',
-      },
-    ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+        'Auxiliary Parameters': 'aux',
+      });
+    });
+
+    it('saves current rsync values when edit form is submitted', async () => {
+      await form.fillForm({
+        Enabled: false,
+        'Access Mode': 'Write Only',
+        'Hosts Allow': ['192.110.1.2'],
+        'Hosts Deny': [],
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsyncmod.update', [
+        1,
+        {
+          name: 'test',
+          path: '/mnt/x/oooo',
+          comment: 'My module',
+          enabled: false,
+
+          mode: RsyncModuleMode.WriteOnly,
+          maxconn: 2,
+          user: 'daemon',
+          group: 'kmem',
+          hostsallow: ['192.110.1.2'],
+          hostsdeny: [],
+
+          auxiliary: 'aux',
+        },
+      ]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
   });
 });

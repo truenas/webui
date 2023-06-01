@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -46,10 +47,6 @@ export class BackupCredentialsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getCards();
-    });
-
     this.cloudCredentialsService.getProviders().pipe(untilDestroyed(this)).subscribe(
       (providers) => {
         this.providers = providers;
@@ -74,11 +71,12 @@ export class BackupCredentialsComponent implements OnInit {
           hideHeader: false,
           parent: this,
           add: () => {
-            this.slideInService.open(CloudCredentialsFormComponent);
+            const slideInRef = this.slideInService.open(CloudCredentialsFormComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (credential: CloudsyncCredential) => {
-            const form = this.slideInService.open(CloudCredentialsFormComponent);
-            form.setCredentialsForEdit(credential);
+            const slideInRef = this.slideInService.open(CloudCredentialsFormComponent, { data: credential });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
           afterGetData: (credentials: CloudsyncCredential[]) => {
@@ -92,8 +90,8 @@ export class BackupCredentialsComponent implements OnInit {
               return;
             }
 
-            const form = this.slideInService.open(CloudCredentialsFormComponent);
-            form.setCredentialsForEdit(credentialToEdit);
+            const slideInRef = this.slideInService.open(CloudCredentialsFormComponent, { data: credentialToEdit });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
             this.isFirstCredentialsLoad = false;
           },
         },
@@ -111,11 +109,12 @@ export class BackupCredentialsComponent implements OnInit {
           hideHeader: true,
           parent: this,
           add: () => {
-            this.slideInService.open(SshConnectionFormComponent);
+            const slideInRef = this.slideInService.open(SshConnectionFormComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: KeychainSshCredentials) => {
-            const form = this.slideInService.open(SshConnectionFormComponent);
-            form.setConnectionForEdit(row);
+            const slideInRef = this.slideInService.open(SshConnectionFormComponent, { data: row });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },
       }, {
@@ -133,11 +132,12 @@ export class BackupCredentialsComponent implements OnInit {
           hideHeader: true,
           parent: this,
           add: () => {
-            this.slideInService.open(SshKeypairFormComponent);
+            const slideInRef = this.slideInService.open(SshKeypairFormComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: KeychainSshKeyPair) => {
-            const modal = this.slideInService.open(SshKeypairFormComponent);
-            modal.setKeypairForEditing(row);
+            const slideInRef = this.slideInService.open(SshKeypairFormComponent, { data: row });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },
       },

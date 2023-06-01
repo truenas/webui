@@ -177,7 +177,6 @@ module.exports = {
         "@typescript-eslint/member-ordering": "off",
 
         // Other temporary disables
-        "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
         "rxjs/no-implicit-any-catch": ["off"],
@@ -325,7 +324,7 @@ module.exports = {
         "@angular-eslint/template/no-interpolation-in-attributes": ['error'],
         "angular-test-ids/require-test-id": ["error", {
           "attribute": "ixTest",
-          "addElements": ["a", "mat-row", "mat-slider"]
+          "addElements": ["a", "mat-row", "mat-slider", "table"]
         }],
 
         // TODO: To be enabled later

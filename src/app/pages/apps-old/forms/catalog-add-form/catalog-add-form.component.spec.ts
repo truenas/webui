@@ -4,12 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { CatalogAddFormComponent } from 'app/pages/apps-old/forms/catalog-add-form/catalog-add-form.component';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CatalogAddFormComponent', () => {
@@ -26,7 +26,7 @@ describe('CatalogAddFormComponent', () => {
       mockWebsocket([
         mockCall('catalog.create'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
     ],

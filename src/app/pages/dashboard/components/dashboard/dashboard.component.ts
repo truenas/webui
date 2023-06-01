@@ -1,12 +1,14 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
+  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject, HostListener,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  filter, map, take,
+} from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -32,10 +34,23 @@ import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
+import { dashboardStateLoaded, dashboardStateUpdated } from 'app/store/preferences/preferences.actions';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+
+export enum WidgetName {
+  SystemInformation = 'System Information',
+  SystemInformationStandby = 'System Information(Standby)',
+  Cpu = 'CPU',
+  Memory = 'Memory',
+  Storage = 'Storage',
+  Network = 'Network',
+  Interface = 'Interface',
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  Pool = 'Pool',
+  Help = 'Help',
+}
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -64,22 +79,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   reorderMode = false;
+  isSavingState = false;
   screenType = ScreenType.Desktop;
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
   dashStateReady = false;
+  preferencesApplied = false;
   dashState: DashConfigItem[]; // Saved State
   previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
   availableWidgets: DashConfigItem[] = this.generateDefaultConfig();
   renderedWidgets: DashConfigItem[];
-  large = 'lg';
-  medium = 'md';
-  small = 'sm';
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
   interval: Interval;
 
   readonly ScreenType = ScreenType;
+  readonly WidgetType = WidgetName;
 
   get isLoaded(): boolean {
     return this.dashStateReady
@@ -133,14 +148,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
-  ) {
-    window.onresize = () => {
-      this.checkScreenSize();
-    };
-    window.onload = () => {
-      this.checkScreenSize();
-    };
-  }
+  ) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -177,6 +185,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return widget.id;
   }
 
+  @HostListener('window:resize', ['$event'])
   checkScreenSize(): void {
     const currentScreenType = this.window.innerWidth < 600 ? ScreenType.Mobile : ScreenType.Desktop;
 
@@ -346,28 +355,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   generateDefaultConfig(): DashConfigItem[] {
     const conf: DashConfigItem[] = [
-      { name: 'System Information', rendered: true, id: '0' },
+      {
+        name: WidgetName.SystemInformation,
+        rendered: true,
+        id: '0',
+      },
     ];
 
     if (this.isHaLicensed) {
       conf.push({
         id: conf.length.toString(),
-        name: 'System Information(Standby)',
+        name: WidgetName.SystemInformationStandby,
         identifier: 'passive,true',
         rendered: true,
       });
     }
 
-    conf.push({ name: 'Help', rendered: true });
-    conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
-    conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });
-    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
-    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Help, rendered: true });
+    conf.push({ name: WidgetName.Cpu, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Memory, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Storage, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
 
     this.pools?.forEach((pool) => {
       conf.push({
         id: conf.length.toString(),
-        name: 'Pool',
+        name: WidgetName.Pool,
         identifier: `name,Pool:${pool.name}`,
         rendered: false,
       });
@@ -376,7 +389,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.nics?.forEach((nic) => {
       conf.push({
         id: conf.length.toString(),
-        name: 'Interface',
+        name: WidgetName.Interface,
         identifier: `name,${nic.name}`,
         rendered: false,
       });
@@ -395,7 +408,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    if (item.name.toLowerCase() === 'storage') {
+    if (item.name === WidgetName.Storage) {
       return this.volumeData;
     }
 
@@ -421,14 +434,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // eslint-disable-next-line rxjs/finnish
     let data: Subject<CoreEvent> | DashboardNicState | Pool | Pool[];
 
-    switch (item.name.toLowerCase()) {
-      case 'cpu':
+    switch (item.name) {
+      case WidgetName.Cpu:
         data = this.statsDataEvent$;
         break;
-      case 'memory':
+      case WidgetName.Memory:
         data = this.statsDataEvent$;
         break;
-      case 'pool':
+      case WidgetName.Pool:
         if (spl) {
           const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value.split(':')[1]);
           if (pools.length) { data = pools[0]; }
@@ -436,7 +449,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           console.warn('DashConfigItem has no identifier!');
         }
         break;
-      case 'interface':
+      case WidgetName.Interface:
         if (spl) {
           const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
           if (nics.length) { data = nics[0].state; }
@@ -444,7 +457,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           console.warn('DashConfigItem has no identifier!');
         }
         break;
-      case 'storage':
+      case WidgetName.Storage:
         data = this.pools;
         break;
     }
@@ -457,11 +470,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showConfigForm(): void {
-    const modal = this.slideInService.open(DashboardFormComponent);
-    modal.setupForm(this.dashState);
-    modal.onSubmit$.pipe(take(1), untilDestroyed(this)).subscribe((dashState) => {
-      this.store$.dispatch(dashboardStateLoaded({ dashboardState: dashState }));
-      this.setDashState(dashState);
+    const slideInRef = this.slideInService.open(DashboardFormComponent, { data: this.dashState });
+    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe((dashState: DashConfigItem[]) => {
+      if (dashState) {
+        this.store$.dispatch(dashboardStateLoaded({ dashboardState: dashState }));
+        this.setDashState(dashState);
+      }
     });
   }
 
@@ -477,18 +491,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onConfirm(): void {
     this.saveState(this.dashState);
     delete this.previousState;
-    this.exitReorderMode();
   }
 
   private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
     return state.filter((widget) => {
       if (
-        ['pool', 'storage'].includes(widget.name.toLowerCase())
+        [WidgetName.Pool, WidgetName.Storage].includes(widget.name)
        && (!this.volumeDataFromConfig(widget) || !this.dataFromConfig(widget))
       ) {
         return false;
       }
-      if (widget.name === 'Interface' && !this.dataFromConfig(widget)) {
+      if (widget.name === WidgetName.Interface && !this.dataFromConfig(widget)) {
         return false;
       }
       return true;
@@ -517,7 +530,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setDashState(dashState: DashConfigItem[]): void {
     this.dashState = this.sanitizeState(dashState);
-    this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    if (!this.reorderMode) {
+      this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    }
   }
 
   private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
@@ -535,12 +550,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private exitReorderMode(): void {
+    this.reorderMode = false;
+    this.isSavingState = false;
+
     if (this.previousState) {
       this.setDashState(this.previousState);
       delete this.previousState;
     }
-
-    this.reorderMode = false;
   }
 
   private enableReorderMode(): void {
@@ -554,9 +570,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
+    this.isSavingState = true;
+
     this.ws.call('auth.set_attribute', ['dashState', state])
       .pipe(untilDestroyed(this))
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.exitReorderMode();
+          this.store$.dispatch(dashboardStateUpdated({ dashboardState: state }));
+        },
+        error: () => this.exitReorderMode(),
+      });
   }
 
   private loadPoolData(): void {
@@ -593,7 +617,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe((preferences: PreferencesState) => {
       if (preferences.dashboardState) {
-        this.applyState(preferences.dashboardState);
+        if (!this.preferencesApplied) {
+          this.applyState(preferences.dashboardState);
+          this.preferencesApplied = true;
+        }
       } else {
         this.availableWidgets = this.generateDefaultConfig();
         this.setDashState(this.availableWidgets);

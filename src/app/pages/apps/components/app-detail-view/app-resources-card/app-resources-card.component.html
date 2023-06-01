@@ -27,8 +27,8 @@
 </div>
 <div class="app-list-item">
   {{ 'Available Space' | translate }}:
-  <span *ixWithLoadingState="availableSpace$ as availableSpaceu">
-    {{ +availableSpaceu | filesize: { standard: 'iec' } }}
+  <span *ixWithLoadingState="availableSpace$ as availableSpace">
+    {{ +availableSpace | filesize: { standard: 'iec' } }}
   </span>
 </div>
 

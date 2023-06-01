@@ -14,6 +14,8 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
@@ -56,6 +58,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
           afterClosed: () => of(),
         })),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -83,7 +87,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('generates payload which will inherit dataset encryption from its parent dataset', async () => {
-    await form.fillForm({ 'Encryption inherit': true });
+    await form.fillForm({ 'Inherit Encryption': true });
 
     expect(spectator.component.getPayload()).toEqual({
       exist_replication: null,
@@ -176,7 +180,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   it('opens an advanced dialog when Advanced Replication Creation is pressed', async () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
   });
 });

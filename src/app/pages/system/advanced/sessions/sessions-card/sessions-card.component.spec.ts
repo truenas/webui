@@ -7,6 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessions-card/sessions-card.component';
@@ -46,6 +47,7 @@ describe('SessionsCardComponent', () => {
         onClose$: of(),
       }),
       mockProvider(AdvancedSettingsService),
+      mockProvider(IxSlideInRef),
     ],
   });
 

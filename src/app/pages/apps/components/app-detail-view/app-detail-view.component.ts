@@ -14,21 +14,6 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
-const fakeImages = [
-  {
-    srcUrl: 'assets/images/stars-sky-1200w.jpg',
-    previewUrl: 'assets/images/stars-sky-1200w.jpg',
-  },
-  {
-    srcUrl: 'assets/images/stars-sky-800w.jpg',
-    previewUrl: 'assets/images/stars-sky-800w.jpg',
-  },
-  {
-    srcUrl: 'assets/images/stars-sky-400w.jpg',
-    previewUrl: 'assets/images/stars-sky-400w.jpg',
-  },
-];
-
 @UntilDestroy()
 @Component({
   templateUrl: './app-detail-view.component.html',
@@ -48,7 +33,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   readonly officialCatalog = officialCatalog;
 
   items: GalleryItem[];
-  images = fakeImages;
 
   get pageTitle(): string {
     if (this.appId) {
@@ -121,7 +105,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   }
 
   setLightbox(): void {
-    this.items = this.images.map((image) => new ImageItem({ src: image.srcUrl, thumb: image.previewUrl }));
+    this.items = this.app?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
     this.gallery.ref('lightbox').load(this.items);
   }
 }

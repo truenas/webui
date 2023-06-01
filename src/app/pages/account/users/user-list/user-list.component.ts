@@ -74,7 +74,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
@@ -134,8 +134,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    const modal = this.slideIn.open(UserFormComponent, { wide: true });
-    modal.setupForm();
+    this.slideInService.open(UserFormComponent, { wide: true });
   }
 
   onToggle(row: User): void {

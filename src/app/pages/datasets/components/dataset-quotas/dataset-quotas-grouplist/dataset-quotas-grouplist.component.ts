@@ -22,6 +22,7 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
@@ -63,12 +64,13 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
+    protected formatter: IxFormatterService,
     private errorHandler: ErrorHandlerService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
@@ -77,13 +79,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
 
   ngOnInit(): void {
     const paramMap = this.aroute.snapshot.params;
-    this.datasetId = paramMap.datasetId;
+    this.datasetId = paramMap.datasetId as string;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getGroupQuotas();
-
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getGroupQuotas();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -109,7 +107,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         }
         return row[field];
       case 'quota':
-        return this.storageService.convertBytesToHumanReadable(row[field], 0);
+        return this.formatter.convertBytesToHumanReadable(row[field], 0);
       case 'used_percent':
         return `${Math.round(row[field] * 100) / 100}%`;
       case 'obj_used_percent':
@@ -118,7 +116,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         return row.obj_quota ? row.obj_quota : '—';
       case 'used_bytes':
         if (row[field] !== 0) {
-          return this.storageService.convertBytesToHumanReadable(row[field], 2);
+          return this.formatter.convertBytesToHumanReadable(row[field], 2);
         }
         return row[field];
       default:
@@ -249,13 +247,17 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   doAdd(): void {
-    const form = this.slideIn.open(DatasetQuotaAddFormComponent);
-    form.setupAddQuotaForm(DatasetQuotaType.Group, this.datasetId);
+    const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
+      data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
-    const form = this.slideIn.open(DatasetQuotaEditFormComponent);
-    form.setupEditQuotaForm(DatasetQuotaType.Group, this.datasetId, row.id);
+    const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
+      data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId, id: row.id },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doDelete(row: DatasetQuota): void {

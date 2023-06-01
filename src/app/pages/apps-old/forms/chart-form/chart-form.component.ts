@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit,
+} from '@angular/core';
 import {
   FormBuilder, FormControl, Validators,
 } from '@angular/forms';
@@ -21,18 +23,21 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/in
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
+
+export type SlideInDataChartForm = { title?: string; releases?: ChartRelease[]; catalogApp?: CatalogApp };
 
 @UntilDestroy()
 @Component({
   templateUrl: './chart-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartFormComponent implements OnDestroy {
+export class ChartFormComponent implements OnInit, OnDestroy {
   title: string;
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
@@ -52,24 +57,40 @@ export class ChartFormComponent implements OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<ChartFormComponent>,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private appSchemaService: AppSchemaService,
     private mdDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
-  ) {}
+    @Inject(SLIDE_IN_DATA) private slideInData: SlideInDataChartForm,
+  ) { }
+
+  ngOnInit(): void {
+    if (this.slideInData.catalogApp) {
+      this.setChartCreate();
+    }
+
+    if (this.slideInData.title) {
+      this.setTitle();
+    }
+
+    if (this.slideInData?.releases?.length) {
+      this.setChartEdit();
+    }
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  setTitle(title: string): void {
-    this.title = title;
+  setTitle(): void {
+    this.title = this.slideInData.title;
   }
 
-  setChartEdit(chart: ChartRelease): void {
+  setChartEdit(): void {
+    const chart = this.slideInData.releases[0];
     this.isNew = false;
     this.title = chart.name;
     this.config = chart.config;
@@ -94,8 +115,8 @@ export class ChartFormComponent implements OnDestroy {
     this.buildDynamicForm(chart.chart_schema.schema);
   }
 
-  setChartCreate(catalogApp: CatalogApp): void {
-    this.catalogApp = catalogApp;
+  setChartCreate(): void {
+    this.catalogApp = this.slideInData.catalogApp;
     this.title = this.catalogApp.name;
     let hideVersion = false;
     if (this.catalogApp.name === ixChartApp) {
@@ -139,7 +160,7 @@ export class ChartFormComponent implements OnDestroy {
       ],
     });
 
-    this.buildDynamicForm(catalogApp.schema);
+    this.buildDynamicForm(this.catalogApp.schema);
     this.form.patchValue({ release_name: this.catalogApp.name });
   }
 
@@ -285,6 +306,6 @@ export class ChartFormComponent implements OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.slideInService.close();
+    this.slideInRef.close(true);
   }
 }

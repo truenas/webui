@@ -3,7 +3,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export * from './iscsi/iscsi';
 export * from './nfs/nfs';
 export * from './smb/smb';
-export * from './webdav/webdav';
 
 export const shared = {
   delete_share_message: T('The sharing configuration will be removed.\

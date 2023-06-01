@@ -58,11 +58,6 @@ export class CertificatesDashComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCards();
-    this.slideInService.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.getCards();
-      });
   }
 
   getCards(): void {
@@ -106,10 +101,16 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add: () => this.slideInService.open(CertificateAddComponent),
+          add: () => {
+            const slideInRef = this.slideInService.open(CertificateAddComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
+          },
           edit: (certificate: Certificate) => {
-            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
-            slideIn.setCertificate(certificate);
+            const slideInRef = this.slideInService.open(
+              CertificateEditComponent,
+              { wide: true, data: { certificatesDash: this, certificate } },
+            );
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           delete: (item: Certificate, table: TableComponent) => {
             const dialogRef = this.dialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: item } });
@@ -157,11 +158,15 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.slideInService.open(CsrAddComponent);
+            const slideInRef = this.slideInService.open(CsrAddComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (certificate: Certificate) => {
-            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
-            slideIn.setCertificate(certificate);
+            const slideInRef = this.slideInService.open(
+              CertificateEditComponent,
+              { wide: true, data: { certificatesDash: this, certificate } },
+            );
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },
       },
@@ -198,11 +203,12 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.slideInService.open(CertificateAuthorityAddComponent);
+            const slideInRef = this.slideInService.open(CertificateAuthorityAddComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: CertificateAuthority) => {
-            const form = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true });
-            form.setCertificateAuthority(row);
+            const slideInRef = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true, data: row });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           delete: (row: CertificateAuthority, table: TableComponent) => {
             if (row.signed_certificates > 0) {
@@ -232,11 +238,12 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.slideInService.open(AcmednsFormComponent);
+            const slideInRef = this.slideInService.open(AcmednsFormComponent);
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
           edit: (row: DnsAuthenticator) => {
-            const form = this.slideInService.open(AcmednsFormComponent);
-            form.setAcmednsForEdit(row);
+            const slideInRef = this.slideInService.open(AcmednsFormComponent, { data: row });
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
           },
         },
       },
@@ -360,8 +367,8 @@ export class CertificatesDashComponent implements OnInit {
       name: 'create_ACME',
       matTooltip: this.translate.instant('Create ACME Certificate'),
       onClick: (csr: Certificate) => {
-        const acmeForm = this.slideInService.open(CertificateAcmeAddComponent);
-        acmeForm.setCsr(csr);
+        const slideInRef = this.slideInService.open(CertificateAcmeAddComponent, { data: csr });
+        slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCards());
       },
     };
 

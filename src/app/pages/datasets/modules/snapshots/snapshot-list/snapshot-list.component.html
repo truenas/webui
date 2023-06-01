@@ -1,6 +1,12 @@
 <ng-template #pageHeader>
-  <ix-page-title-header>
+  <ix-page-title-header
+    [pageTitle]="searchInput.value.length
+      ? ('Snapshots' | translate) + ': ' + searchInput.value
+      : ('Snapshots' | translate)
+    "
+  >
     <ix-search-input
+      #searchInput
       [disabled]="isLoading$ | async"
       [value]="datasetFilter"
       (search)="onSearch($event)"
@@ -55,6 +61,7 @@
   ix-table
   matSort
   matSortDisableClear="true"
+  ixTest="snapshots-table"
   [ix-table-empty]="!dataSource.filteredData.length"
   [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
   [dataSource]="dataSource"

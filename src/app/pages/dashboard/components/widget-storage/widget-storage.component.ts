@@ -57,7 +57,6 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   @Input() pools: Pool[];
   @Input() volumeData: VolumesData;
 
-  title: string = this.translate.instant('Storage');
   poolInfoMap: PoolInfoMap = {};
   paddingTop = 7;
   paddingLeft = 7;
@@ -90,7 +89,6 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
   constructor(public router: Router, public translate: TranslateService) {
     super(translate);
-    this.configurable = false;
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

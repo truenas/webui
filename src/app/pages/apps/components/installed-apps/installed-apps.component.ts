@@ -36,7 +36,6 @@ import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-setti
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -118,7 +117,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private errorHandler: ErrorHandlerService,
     private router: Router,
     private layoutService: LayoutService,
     private matDialog: MatDialog,

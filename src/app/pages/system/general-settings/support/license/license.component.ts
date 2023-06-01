@@ -7,9 +7,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService, DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +32,7 @@ export class LicenseComponent {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<LicenseComponent>,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -48,7 +48,7 @@ export class LicenseComponent {
         this.isFormLoading = false;
         // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
         this.window.localStorage.setItem('upgrading_status', 'upgrading');
-        this.slideInService.close();
+        this.slideInRef.close();
         this.cdr.markForCheck();
         setTimeout(() => {
           this.dialogService.confirm({

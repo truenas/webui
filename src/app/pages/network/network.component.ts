@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -11,33 +10,27 @@ import { lastValueFrom, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
-import {
-  OpenVpnServerConfigComponent,
-} from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
 import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
 import {
   AppLoaderService,
-  DialogService,
-  StorageService, SystemGeneralService,
+  DialogService, SystemGeneralService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -45,7 +38,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
-import { IpmiFormComponent } from './components/forms/ipmi-form.component';
+import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
 
 @UntilDestroy()
 @Component({
@@ -83,11 +76,12 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
     add: () => {
-      this.slideInService.open(InterfaceFormComponent);
+      const slideInRef = this.slideInService.open(InterfaceFormComponent);
+      this.handleSlideInClosed(slideInRef);
     },
     edit: (row: NetworkInterfaceUi) => {
-      const interfacesForm = this.slideInService.open(InterfaceFormComponent);
-      interfacesForm.setInterfaceForEdit(row);
+      const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: row });
+      this.handleSlideInClosed(slideInRef);
     },
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
@@ -130,11 +124,12 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     ],
     parent: this,
     add: () => {
-      this.slideInService.open(StaticRouteFormComponent);
+      const slideInRef = this.slideInService.open(StaticRouteFormComponent);
+      this.handleSlideInClosed(slideInRef);
     },
     edit: (route: StaticRoute) => {
-      const modal = this.slideInService.open(StaticRouteFormComponent);
-      modal.setEditingStaticRoute(route);
+      const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
+      this.handleSlideInClosed(slideInRef);
     },
     deleteMsg: {
       title: 'static route',
@@ -142,41 +137,9 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   };
 
-  openvpnTableConf: AppTableConfig<NetworkComponent> = {
-    title: this.translate.instant('OpenVPN'),
-    queryCall: 'service.query',
-    name: 'openVPN',
-    columns: [
-      { name: this.translate.instant('Service'), prop: 'service_label' },
-      { name: this.translate.instant('State'), prop: 'state' },
-    ],
-    hideHeader: true,
-    parent: this,
-    dataSourceHelper: this.openvpnDataSourceHelper,
-    getActions: this.getOpenVpnActions.bind(this),
-    isActionVisible: this.isOpenVpnActionVisible,
-    edit: (row: Service) => {
-      if (row.service === ServiceName.OpenVpnClient) {
-        this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-      } else if (row.service === ServiceName.OpenVpnServer) {
-        this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
-      }
-    },
-    afterGetData: () => {
-      const state = this.navigation?.extras?.state as { configureOpenVPN: string };
-      if (state && state.configureOpenVPN) {
-        if (state.configureOpenVPN === 'client') {
-          this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-        } else {
-          this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
-        }
-      }
-    },
-  };
-
   ipmiTableConf: AppTableConfig<NetworkComponent> = {
     title: this.translate.instant('IPMI'),
-    queryCall: 'ipmi.query',
+    queryCall: 'ipmi.lan.query',
     columns: [{ name: this.translate.instant('Channel'), prop: 'channelLabel' }],
     hideHeader: true,
     parent: this,
@@ -184,8 +147,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit: (row: IpmiRow) => {
-      const ipmiEditForm = this.slideInService.open(IpmiFormComponent);
-      ipmiEditForm.setIdIpmi(row.id);
+      const slideInRef = this.slideInService.open(IpmiFormComponent, { data: row.id });
+      this.handleSlideInClosed(slideInRef);
     },
   };
 
@@ -195,11 +158,10 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     private router: Router,
     private dialogService: DialogService,
-    private storageService: StorageService,
+    private formatter: IxFormatterService,
     private loader: AppLoaderService,
     private translate: TranslateService,
     private tableService: TableService,
-    private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private core: CoreService,
     private snackbar: SnackbarService,
@@ -212,12 +174,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.staticRoutesTableConf.tableComponent.getData();
-      this.getInterfaces();
-      this.checkInterfacePendingChanges();
-    });
-
     this.getInterfaces();
     this.checkInterfacePendingChanges();
     this.core
@@ -246,6 +202,14 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
+    });
+  }
+
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.staticRoutesTableConf.tableComponent.getData();
+      this.getInterfaces();
+      this.checkInterfacePendingChanges();
     });
   }
 
@@ -501,13 +465,13 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
               row.link_state = reportingData.interfaces[row.id].link_state;
               if (reportingData.interfaces[row.id].received_bytes !== undefined) {
-                row.received = this.storageService.convertBytesToHumanReadable(
+                row.received = this.formatter.convertBytesToHumanReadable(
                   reportingData.interfaces[row.id].received_bytes,
                 );
                 row.received_bytes = reportingData.interfaces[row.id].received_bytes;
               }
               if (reportingData.interfaces[row.id].sent_bytes !== undefined) {
-                row.sent = this.storageService.convertBytesToHumanReadable(
+                row.sent = this.formatter.convertBytesToHumanReadable(
                   reportingData.interfaces[row.id].sent_bytes,
                 );
                 row.sent_bytes = reportingData.interfaces[row.id].sent_bytes;
@@ -522,7 +486,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     return nic.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
       transformed.link_state = networkInterface.state.link_state;
-      const addresses = new Set([]);
+      const addresses = new Set<string>([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
         if (alias.type.startsWith('INET')) {
@@ -576,103 +540,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     }];
   }
 
-  openvpnDataSourceHelper(services: Service[]): (Service & { service_label: string })[] {
-    return services
-      .filter((item) => item.service.includes('openvpn_'))
-      .map((item) => ({
-        ...item,
-        service_label: item.service.charAt(8).toUpperCase() + item.service.slice(9),
-      }));
-  }
-
-  getOpenVpnActions(): AppTableAction[] {
-    return [{
-      icon: 'stop',
-      name: 'stop',
-      matTooltip: this.translate.instant('Stop'),
-      onChanging: false,
-      onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
-        row.onChanging = true;
-        this.ws
-          .call('service.stop', [row.service, { silent: false }])
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (wasStopped) => {
-              if (wasStopped) {
-                this.dialogService.info(
-                  this.translate.instant('Service failed to stop'),
-                  this.translate.instant('OpenVPN {serviceLabel} service failed to stop.', {
-                    serviceLabel: row.service_label,
-                  }),
-                );
-                row.state = ServiceStatus.Running;
-                row.onChanging = false;
-              } else {
-                row.state = ServiceStatus.Stopped;
-                row.onChanging = false;
-              }
-            },
-            error: (err) => {
-              row.onChanging = false;
-              this.dialogService.error({
-                ...this.errorHandler.parseWsError(err),
-                title: this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
-                  serviceLabel: row.service_label,
-                }),
-              });
-            },
-          });
-      },
-    },
-    {
-      icon: 'play_arrow',
-      name: 'start',
-      matTooltip: this.translate.instant('Start'),
-      onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
-        row.onChanging = true;
-        this.ws
-          .call('service.start', [row.service, { silent: false }])
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (hasStarted) => {
-              if (hasStarted) {
-                row.state = ServiceStatus.Running;
-                row.onChanging = false;
-              } else {
-                this.dialogService.warn(
-                  this.translate.instant('Service failed to start'),
-                  this.translate.instant('OpenVPN {serviceLabel} service failed to start.', {
-                    serviceLabel: row.service_label,
-                  }),
-                );
-                row.state = ServiceStatus.Stopped;
-                row.onChanging = false;
-              }
-            },
-            error: (err) => {
-              row.onChanging = false;
-              this.dialogService.error({
-                ...this.errorHandler.parseWsError(err),
-                title: this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
-                  serviceLabel: row.service_label,
-                }),
-              });
-            },
-          });
-      },
-    }];
-  }
-
-  isOpenVpnActionVisible(name: string, row: Service): boolean {
-    if (
-      (name === 'start' && row.state === ServiceStatus.Running)
-      || (name === 'stop' && row.state === ServiceStatus.Stopped)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
   isIpmiActionVisible(name: string, row: IpmiRow): boolean {
     if (name === 'manage' && row.ipaddress === '0.0.0.0') {
       return false;
@@ -696,8 +563,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
           }
 
-          const form = this.slideInService.open(InterfaceFormComponent);
-          form.setInterfaceForEdit(interfaces[0]);
+          const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: interfaces[0] });
+          this.handleSlideInClosed(slideInRef);
         },
         error: (error: WebsocketError) => {
           this.loader.close();
