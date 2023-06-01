@@ -283,3 +283,16 @@ def word_xor(data, key):
     for num in range(cycles):
         result += (data[num] ^ key[num % line_numbers]).to_bytes(1, 'little')
     return result
+
+
+def wait_system_ready(nas_hostnam, auth):
+    timeout = time.time() + 180
+    while time.time() <= timeout:
+        try:
+            if get(nas_hostnam, 'system/ready/', auth).json() is True:
+                return True
+        except requests.exceptions.ConnectionError:
+            pass
+        time.sleep(0.5)
+    else:
+        return False
