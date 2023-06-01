@@ -41,7 +41,7 @@ export class GeneralWizardStepComponent implements OnInit {
   exportedPoolsWarning = this.translate.instant(
     `The following disks have exported pools on them.
     Using those disks will make existing pools on them unable to be imported.
-    You will lose any and all data in selected disks.`,
+    You will lose any and all data in selected pools.`,
   );
   exportedPoolsTooltip = this.translate.instant(
     `Some of the disks are attached to the exported pools

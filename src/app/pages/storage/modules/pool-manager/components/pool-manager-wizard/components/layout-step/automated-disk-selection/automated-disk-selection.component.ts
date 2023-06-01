@@ -68,6 +68,18 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     return this.form.controls.sizeAndType.value?.[0];
   }
 
+  get isSizeSelected(): boolean {
+    return !!this.form.value.sizeAndType?.length;
+  }
+
+  get isLayoutSelected(): boolean {
+    return !!this.form.value.layout;
+  }
+
+  get isWidthSelected(): boolean {
+    return !!this.form.value.width;
+  }
+
   get selectedDiskType(): DiskType {
     return this.form.controls.sizeAndType.value?.[1];
   }
