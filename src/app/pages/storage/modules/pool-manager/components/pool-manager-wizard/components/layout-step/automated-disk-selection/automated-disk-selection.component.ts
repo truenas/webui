@@ -119,7 +119,10 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     });
   }
 
-  compareSizeAndTypeWith = (val1: [number, string], val2: [number, string]): boolean => {
+  protected compareSizeAndTypeWith = (
+    val1: [number, string],
+    val2: [number, string],
+  ): boolean => {
     return val1 && val2 ? val1[0] === val2[0] && val1[1] === val2[1] : val1 === val2;
   };
 
