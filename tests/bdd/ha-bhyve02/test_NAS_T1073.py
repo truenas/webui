@@ -94,14 +94,15 @@ def when_twofactor_authentication_is_enabled_logout(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="option__Log Out"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Log Out"]').click()
     assert wait_on_element(driver, 5, xpaths.login.user_input)
-    driver.refresh()
     assert wait_on_element(driver, 60, xpaths.login.ha_status('HA is enabled'))
 
 
 @then('verify the Two-Factor Authentication code entry is visible')
 def verify_the_twofactor_authentication_code_entry_is_visible(driver):
     """verify the Two-Factor Authentication code entry is visible."""
-    assert wait_on_element(driver, 5, '//input[@placeholder="Two-Factor Authentication Code"]')
+    # refresh before verifying Two-Factor Authentication is there
+    driver.refresh()
+    assert wait_on_element(driver, 10, '//input[@placeholder="Two-Factor Authentication Code"]')
 
 
 @then('disable Two-Factor Authentication with API and login')

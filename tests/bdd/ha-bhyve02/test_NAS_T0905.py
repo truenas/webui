@@ -8,7 +8,7 @@ from function import (
     wait_on_element,
     wait_on_element_disappear,
     is_element_present,
-    get
+    wait_system_ready
 )
 from pytest_bdd import (
     given,
@@ -52,12 +52,12 @@ def login_appear_enter_root_and_password(driver, password):
 
 
 @then(parsers.parse('you should see the dashboard and "{information}"'))
-def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, information, nas_url):
+def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, information, nas_url, password):
     """you should see the dashboard and "information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 7, f'//span[contains(.,"{information}")]')
-    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
-    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
+    # make sure the nodeb is ready
+    assert wait_system_ready(nas_url.replace('nodea', 'nodeb'), ('root', password)) is True
 
 
 @then('navigate to System and click Support')
@@ -313,7 +313,7 @@ def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_ho
 
 
 @then('on the virtual hostname Dashboard Save the network interface changes')
-def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(driver, nas_url):
+def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(driver, nas_url, password):
     """on the virtual hostname Dashboard Save the network interface changes."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 7, '//h1[text()="Save Changes"]')
@@ -321,8 +321,8 @@ def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(dr
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close).click()
-    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
-    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
+    # make sure the nodeb is ready before creating pool
+    assert wait_system_ready(nas_url.replace('nodea', 'nodeb'), ('root', password)) is True
 
 
 @then('navigate to Storage click Disks then click name several times to sort in alphabetical order')
@@ -393,10 +393,8 @@ def navigate_to_storage_click_pools_click_add_select_create_new_pool(driver):
 
 
 @then('click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL')
-def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver, nas_url):
+def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver, nas_url,):
     """click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL."""
-    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
-    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
@@ -419,8 +417,6 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
-    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
-    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
 
 @then('create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list')
@@ -446,8 +442,6 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver, n
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Reporting"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
-    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
-    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
