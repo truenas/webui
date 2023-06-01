@@ -42,7 +42,6 @@
     }
 
   }
-
 }
 
 @keyframes fa-spin {
@@ -126,5 +125,26 @@
     position: absolute;
     top: 10px;
   }
+}
 
+:host ::ng-deep .topbar {
+  min-height: 48px;
+
+  .mat-toolbar-row {
+    height: 48px !important;
+  }
+
+  .mat-icon-button,
+  .mat-icon-button .ix-icon.logo {
+    color: var(--topbar-txt) !important;
+  }
+
+  .mat-mdc-select-value {
+    color: #fff;
+    font-weight: 400;
+  }
+
+  .topbar-button-right {
+    margin-left: 0.5rem !important;
+  }
 }
