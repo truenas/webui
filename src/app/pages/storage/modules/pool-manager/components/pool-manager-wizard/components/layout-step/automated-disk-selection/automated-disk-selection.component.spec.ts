@@ -343,6 +343,44 @@ describe('AutomatedDiskSelection', () => {
     );
   });
 
+  it('updates the width options when layout changes after already selecting values', async () => {
+    const layoutSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Layout' }));
+    const widthSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Width' }));
+    const vdevsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Number of VDEVs' }));
+    const sizeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Disk Size' }));
+
+    await layoutSelect.setValue('Stripe');
+    await sizeSelect.setValue('10.91 TiB (HDD)');
+
+    expect(
+      await widthSelect.getOptionLabels(),
+    ).toStrictEqual(
+      _.range(1, unusedDisks.length + 1).map(
+        (num) => num.toString(),
+      ),
+    );
+
+    await widthSelect.setValue('1');
+
+    expect(
+      await vdevsSelect.getOptionLabels(),
+    ).toStrictEqual(
+      _.range(1, unusedDisks.length + 1).map(
+        (num) => num.toString(),
+      ),
+    );
+
+    await layoutSelect.setValue('Mirror');
+    expect(
+      await widthSelect.getValue(),
+    ).toBe('');
+    expect(await widthSelect.getOptionLabels()).toStrictEqual(
+      _.range(2, unusedDisks.length + 1).map(
+        (num) => num.toString(),
+      ),
+    );
+  });
+
   it('limits layout options based on the vdev type', async () => {
     spectator.component.type = VdevType.Log;
     spectator.component.ngOnInit();
