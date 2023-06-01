@@ -9,9 +9,11 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
+import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { DialogService, SystemGeneralService } from 'app/services';
@@ -84,9 +86,13 @@ describe('ManualUpdateFormComponent', () => {
     // websocket = spectator.inject(WebSocketService2);
   });
 
-  it('checks component existance', () => {
-    expect(spectator).toExist();
-    expect(loader).toExist();
+  it('loads all pool location options', async () => {
+    const locationSelect = await loader.getHarness(IxSelectHarness.with({ label: helptext.filelocation.placeholder }));
+    const optionLabels = await locationSelect.getOptionLabels();
+    expect(optionLabels).toEqual([
+      'Memory device',
+      '/mnt/pool2',
+    ]);
   });
 
   /**

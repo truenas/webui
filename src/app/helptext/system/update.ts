@@ -1,6 +1,13 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemUpdate = {
+  filelocation: {
+    placeholder: T('Update File Temporary Storage Location'),
+    tooltip: T(
+      'The update file is temporarily stored here before being applied.',
+    ),
+  },
+
   filename: {
     placeholder: T('Update File'),
     tooltip: T(
