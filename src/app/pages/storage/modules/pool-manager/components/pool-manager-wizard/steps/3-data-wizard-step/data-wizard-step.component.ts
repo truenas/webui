@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
@@ -16,6 +16,7 @@ export class DataWizardStepComponent {
   protected readonly hasDataVdevs$ = this.store.topology$.pipe(
     map((topology) => topology[VdevType.Data].vdevs.length > 0),
   );
+  protected allowedLayouts = Object.values(CreateVdevLayout);
 
   readonly helptext = helptext;
 

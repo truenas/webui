@@ -13,11 +13,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
 import {
-  Observable, of, take,
+  Observable, of,
 } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
@@ -88,9 +89,19 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     this.initControls();
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.limitLayouts) {
+      this.vdevLayoutOptions$ = of(
+        changes.limitLayouts.currentValue.map(
+          (layout) => ({
+            label: Object.keys(CreateVdevLayout)[Object.values(CreateVdevLayout).indexOf(layout)],
+            value: layout,
+          }),
+        ),
+      );
+      this.updateWidthOptions();
+    }
     this.updateDiskSizeOptions();
-
     // TODO: Set initial values?
   }
 
@@ -144,19 +155,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     if (!vdevLayoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
       this.form.controls.layout.setValue(null, { emitEvent: false });
     }
-    this.poolManagerStore.getLayoutsForVdevType(this.type)
-      .pipe(
-        take(1),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (allowedVdevTypes) => {
-          this.vdevLayoutOptions$ = of(vdevLayoutOptions.filter(
-            (layout) => !!allowedVdevTypes.includes(layout.value as CreateVdevLayout),
-          ));
-          this.updateWidthOptions();
-        },
-      });
   }
 
   private updateDiskSizeOptions(): void {
