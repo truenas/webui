@@ -39,6 +39,9 @@ export const helptextSystemUpdate = {
     message: T('Error submitting file'),
   },
 
+  continueDialogTitle: T('Warning'),
+  continueDialogAction: T('Continue with the upgrade'),
+
   clickForInformationLink: T('Click for information on\
     <a href="https://www.truenas.com/docs/truenasupgrades/" target="_blank">TrueNAS SCALE Migration, Nightly trains\
     and other upgrade options.</a>'),
