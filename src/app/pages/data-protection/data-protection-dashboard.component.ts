@@ -151,8 +151,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           dataSourceHelper: (data: ScrubTaskUi[]) => this.scrubDataSourceHelper(data),
           emptyEntityLarge: false,
           columns: [
-            { name: this.translate.instant('Pool'), prop: 'pool_name' },
-            { name: this.translate.instant('Description'), prop: 'description', hiddenIfEmpty: true },
+            { name: this.translate.instant('Pool'), prop: 'pool_name', enableMatTooltip: true },
+            {
+              name: this.translate.instant('Description'), prop: 'description', hiddenIfEmpty: true, enableMatTooltip: true,
+            },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
             {
@@ -256,7 +258,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           getActions: this.getReplicationActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
-            { name: this.translate.instant('Name'), prop: 'name' },
+            { name: this.translate.instant('Name'), prop: 'name', enableMatTooltip: true },
             { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
@@ -296,7 +298,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           getActions: this.getCloudsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
-            { name: this.translate.instant('Description'), prop: 'description' },
+            { name: this.translate.instant('Description'), prop: 'description', enableMatTooltip: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
             {
@@ -334,8 +336,8 @@ export class DataProtectionDashboardComponent implements OnInit {
             key_props: ['remotehost', 'remotemodule'],
           },
           columns: [
-            { name: this.translate.instant('Path'), prop: 'path' },
-            { name: this.translate.instant('Remote Host'), prop: 'remotehost' },
+            { name: this.translate.instant('Path'), prop: 'path', enableMatTooltip: true },
+            { name: this.translate.instant('Remote Host'), prop: 'remotehost', enableMatTooltip: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
             {
@@ -378,8 +380,8 @@ export class DataProtectionDashboardComponent implements OnInit {
           dataSourceHelper: (data: SmartTestTaskUi[]) => this.smartTestsDataSourceHelper(data),
           parent: this,
           columns: [
-            { name: helptext_smart.smartlist_column_disks, prop: 'disksLabel' },
-            { name: helptext_smart.smartlist_column_type, prop: 'type' },
+            { name: helptext_smart.smartlist_column_disks, prop: 'disksLabel', enableMatTooltip: true },
+            { name: helptext_smart.smartlist_column_type, prop: 'type', enableMatTooltip: true },
             { name: helptext_smart.smartlist_column_description, prop: 'desc', hiddenIfEmpty: true },
             { name: helptext_smart.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
             { name: helptext_smart.smartlist_column_next_run, prop: 'next_run', enableMatTooltip: true },
