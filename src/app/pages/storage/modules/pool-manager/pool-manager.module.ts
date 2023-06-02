@@ -35,6 +35,7 @@ import { SpareWizardStepComponent } from 'app/pages/storage/modules/pool-manager
 import { CacheWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/6-cache-wizard-step/cache-wizard-step.component';
 import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
 import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
+import { ReviewWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -82,6 +83,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DiskInfoComponent,
     ManualSelectionVdevComponent,
     SpareWizardStepComponent,
+    ReviewWizardStepComponent,
     GeneralWizardStepComponent,
     CacheWizardStepComponent,
     ManualDiskSelectionComponent,

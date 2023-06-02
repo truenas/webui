@@ -28,4 +28,15 @@
   >
     {{ 'Next' | translate }}
   </button>
+  <!-- TODO: Implement -->
+  <button
+    mat-button
+    color="accent"
+    type="button"
+    ixTest="save-ang-go-to-review"
+    [disabled]="!(hasDataVdevs$ | async)"
+    (click)="goToReviewStep()"
+  >
+    {{ 'Save And Go To Review' | translate }}
+  </button>
 </ix-form-actions>

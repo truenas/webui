@@ -1,7 +1,7 @@
 <mat-card class="card">
   <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   <form (keydown.enter)="$event.preventDefault()">
-    <mat-vertical-stepper [linear]="isLoading$ | async">
+    <mat-vertical-stepper #stepper [linear]="isLoading$ | async">
       <mat-step>
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
         <ix-general-wizard-step></ix-general-wizard-step>
@@ -12,31 +12,32 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
-        <ix-data-wizard-step></ix-data-wizard-step>
+        <ix-data-wizard-step (goToLastStep)="goToLastStep()"></ix-data-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Log' | translate }}</ng-template>
-        <ix-log-wizard-step></ix-log-wizard-step>
+        <ix-log-wizard-step (goToLastStep)="goToLastStep()"></ix-log-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Spare' | translate }}</ng-template>
-        <ix-spare-wizard-step></ix-spare-wizard-step>
+        <ix-spare-wizard-step (goToLastStep)="goToLastStep()"></ix-spare-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Cache' | translate }}</ng-template>
-        <ix-cache-wizard-step></ix-cache-wizard-step>
+        <ix-cache-wizard-step (goToLastStep)="goToLastStep()"></ix-cache-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
-        <ix-metadata-wizard-step></ix-metadata-wizard-step>
+        <ix-metadata-wizard-step (goToLastStep)="goToLastStep()"></ix-metadata-wizard-step>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Dedup' | translate }}</ng-template>
-        <ix-dedup-wizard-step></ix-dedup-wizard-step>
+        <ix-dedup-wizard-step (goToLastStep)="goToLastStep()"></ix-dedup-wizard-step>
       </mat-step>
       
       <mat-step>
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
+        <ix-review-wizard-step></ix-review-wizard-step>
         <div class="step-buttons">
           <button
             mat-button

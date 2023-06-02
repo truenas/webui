@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, Output,
+} from '@angular/core';
 import { map } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
@@ -10,6 +12,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataWizardStepComponent {
+  @Output() goToLastStep = new EventEmitter<void>();
   protected readonly VdevType = VdevType;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Data);
@@ -23,4 +26,8 @@ export class DataWizardStepComponent {
   constructor(
     private store: PoolManagerStore,
   ) {}
+
+  goToReviewStep(): void {
+    this.goToLastStep.emit();
+  }
 }
