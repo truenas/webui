@@ -16,7 +16,7 @@ export class CacheWizardStepComponent {
   protected readonly VdevType = VdevType;
   readonly helptext = helptext;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Spare);
+  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Cache);
   protected readonly hasDataVdevs$ = this.store.topology$.pipe(
     map((topology) => topology[VdevType.Data].vdevs.length > 0),
   );

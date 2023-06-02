@@ -18,7 +18,7 @@ export class DedupWizardStepComponent implements OnInit {
   protected readonly VdevType = VdevType;
   readonly helptext = helptext;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Spare);
+  protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Dedup);
   protected readonly hasDataVdevs$ = this.store.topology$.pipe(
     map((topology) => topology[VdevType.Data].vdevs.length > 0),
   );
