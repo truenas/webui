@@ -16,6 +16,7 @@
   "Catalog is being added. This may take some time. You can minimize this dialog and process will continue in background": "",
   "Certificate request signed": "",
   "Choose <i>Master</i> if the UPS is plugged directly      into the system serial port. The UPS will remain the      last item to shut down. Choose <i>Slave</i> to have      this system shut down before <i>Master</i>. See the      <a href=\"{url}\"      target=\"_blank\">Network UPS Tools Overview</a>.": "",
+  "Continue with the upgrade": "",
   "Cron job created": "",
   "Cron job updated": "",
   "Dashboard settings saved": "",

@@ -527,6 +527,7 @@
   "Content Commitment": "",
   "Contents of the uploaded Service Account JSON file.": "",
   "Context menu copy and paste operations     are disabled in the Shell. Copy and paste     shortcuts for Mac are <i>Command+c</i> and     <i>Command+v</i>. For most operating     systems, use <i>Ctrl+Insert</i> to copy and     <i>Shift+Insert</i> to paste.": "",
+  "Continue with the upgrade": "",
   "Control": "",
   "Controller Type": "",
   "Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
