@@ -1,5 +1,6 @@
 {
   "": "",
+  "(Optional) ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   ", ": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "Access from your IP is restricted": "",
@@ -4146,7 +4147,6 @@
   "ZFS Filesystem": "ZFS文件系统",
   "ZFS Health": "ZFS 健康",
   "ZFS Info": "ZFS 信息",
-  "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations. Optional vdev that can be removed.": "ZFS L2ARC读取缓存可与快速设备一起使用以加快读取操作。可以删除的可选vdev。",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "可以提高同步写入速度的ZFS LOG设备。可以删除的可选写缓存。",
   "ZFS pools must conform to strict naming  <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a>.  Choose a memorable name.": "ZFS池必须遵循严格的命名<a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">约定</a>。选择一个能记住的名字。",
   "ZFS/SED keys synced between KMIP Server and TN database.": "ZFS/SED 密钥在 KMIP 服务器和 TN 数据库之间同步。",

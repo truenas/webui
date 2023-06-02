@@ -1,5 +1,6 @@
 {
   "": "",
+  "(Optional) ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "ACL Types & ACL Modes": "",
   "Add Allowed Initiators (IQN)": "",
   "Add the required no. of disks to get a vdev size estimate": "",
@@ -4143,7 +4144,6 @@
   "ZFS Filesystem": "Файлова система ZFS",
   "ZFS Health": "ZFS Health",
   "ZFS Info": "Інформація ZFS",
-  "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations. Optional vdev that can be removed.": "Кеш читання ZFS L2ARC, який можна використовувати з швидкими пристроями для прискорення операцій читання. Додатковий vdev, який можна видалити.",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "Пристрій ZFS LOG, який може підвищити швидкість синхронного запису. Додатковий кеш запису, який можна видалити.",
   "ZFS pools must conform to strict naming  <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a>.  Choose a memorable name.": "Пули ZFS мають відповідати строгим <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">конвенціям</a >. Виберіть ім'я, яке запам'ятовується.",
   "ZFS/SED keys synced between KMIP Server and TN database.": "Ключі ZFS/SED синхронізуються між сервером KMIP і базою даних TN.",

@@ -1,5 +1,6 @@
 {
   "": "",
+  "(Optional) ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.  <i>File</i> provides virtual storage access to a single file.": "",
   "Choose <i>Master</i> if the UPS is plugged directly      into the system serial port. The UPS will remain the      last item to shut down. Choose <i>Slave</i> to have      this system shut down before <i>Master</i>. See the      <a href=\"{url}\"      target=\"_blank\">Network UPS Tools Overview</a>.": "",
   "Enclosure Options": "",
@@ -4136,7 +4137,6 @@
   "ZFS Filesystem": "ZFS bestandssysteem",
   "ZFS Health": "ZFS gezondheid",
   "ZFS Info": "ZFS informatie",
-  "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations. Optional vdev that can be removed.": "ZFS L2ARC leescache die kan worden gebruikt met snelle apparaten om leesbewerkingen te versnellen. Optionele VDev die kan worden verwijderd.",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "ZFS LOG-apparaat dat de snelheden van synchrone schrijfbewerkingen kan verbeteren. Optionele schrijfcache die kan worden verwijderd.",
   "ZFS pools must conform to strict naming  <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a>.  Choose a memorable name.": "ZFS-pools moeten voldoen aan strikte <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventies</a>. Een te onthouden naam kiezen.",
   "ZFS/SED keys synced between KMIP Server and TN database.": "ZFS/SED-sleutels gesynchroniseerd tussen KMIP Server en TN-database.",
