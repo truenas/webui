@@ -19,6 +19,7 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -190,12 +191,7 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
-      this.updateService.setForHardRefresh();
-      if (this.isHaLicensed) {
-        this.finishHaUpdate();
-      } else {
-        this.finishNonHaUpdate();
-      }
+      this.handleUpdateSuccess();
     });
 
     dialogRef.componentInstance.prefailure.pipe(
@@ -260,6 +256,15 @@ export class ManualUpdateFormComponent implements OnInit {
     }).pipe(untilDestroyed(this)).subscribe(() => {});
   }
 
+  handleUpdateSuccess(): void {
+    this.updateService.setForHardRefresh();
+    if (this.isHaLicensed) {
+      this.finishHaUpdate();
+    } else {
+      this.finishNonHaUpdate();
+    }
+  }
+
   handleUpdatePreFailure(prefailure: HttpErrorResponse): void {
     this.isFormLoading$.next(false);
     this.dialogService.error({
@@ -271,7 +276,51 @@ export class ManualUpdateFormComponent implements OnInit {
 
   handleUpdateFailure = (failure: Job): void => {
     this.isFormLoading$.next(false);
-    this.dialogService.error(this.errorHandler.parseJobError(failure));
     this.cdr.markForCheck();
+    if (failure.error.includes(updateAgainCode)) {
+      this.dialogService.confirm({
+        title: helptext.continueDialogTitle,
+        message: failure.error.replace(updateAgainCode, ''),
+        buttonText: helptext.continueDialogAction,
+      }).pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.resumeUpdateAfterFailure();
+      });
+      return;
+    }
+    this.dialogService.error(this.errorHandler.parseJobError(failure));
   };
+
+  private resumeUpdateAfterFailure(): void {
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: { title: helptext.manual_update_action },
+      disableClose: true,
+    });
+    if (this.isHaLicensed) {
+      dialogRef.componentInstance.setCall('failover.upgrade', [{ resume: true, resume_manual: true }]);
+      dialogRef.componentInstance.disableProgressValue(true);
+    } else {
+      dialogRef.componentInstance.setCall('update.file', [{ resume: true }]);
+    }
+
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close(false);
+      this.handleUpdateSuccess();
+    });
+
+    dialogRef.componentInstance.prefailure.pipe(
+      tap(() => dialogRef.close(false)),
+      untilDestroyed(this),
+    ).subscribe((error) => this.handleUpdatePreFailure(error));
+
+    dialogRef.componentInstance.failure.pipe(
+      take(1),
+      tap(() => dialogRef.close(false)),
+      untilDestroyed(this),
+    ).subscribe((error) => this.handleUpdateFailure(error));
+
+    dialogRef.componentInstance.submit();
+  }
 }
