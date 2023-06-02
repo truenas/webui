@@ -121,6 +121,10 @@ export class ManualUpdateFormComponent implements OnInit {
         this.isHaLicensed = isHaLicensed;
         this.checkForUpdateRunning();
         this.cdr.markForCheck();
+
+        if (this.isHaLicensed) {
+          this.form.removeControl('filelocation');
+        }
       });
     }
   }
