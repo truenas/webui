@@ -6,7 +6,7 @@
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
         <ix-general-wizard-step></ix-general-wizard-step>
       </mat-step>
-      <mat-step *ngIf="hasEnclosureStep$">
+      <mat-step *ngIf="hasEnclosureStep$ | async">
         <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
         <ix-enclosure-wizard-step></ix-enclosure-wizard-step>
       </mat-step>
@@ -89,6 +89,7 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
+        <ix-review-step></ix-review-step>
         <div class="step-buttons">
           <button
             mat-button

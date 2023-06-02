@@ -20,6 +20,9 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import {
+  DownloadKeyDialogOldComponent,
+} from 'app/pages/storage/components/manager/download-key-old/download-key-dialog-old.component';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
@@ -36,12 +39,14 @@ import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/com
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
+import { DownloadKeyDialogComponent } from './components/download-key-dialog/download-key-dialog.component';
 import { ManualSelectionDiskFiltersComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
 import { ManualSelectionDisksComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disks.component';
 import { AutomatedDiskSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
 import { CustomLayoutAppliedComponent } from './components/pool-manager-wizard/components/layout-step/custom-layout-applied/custom-layout-applied.component';
 import { LayoutStepComponent } from './components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolWarningsComponent } from './components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
+import { ReviewStepComponent } from './components/pool-manager-wizard/components/review-step/review-step.component';
 import { EnclosureWizardStepComponent } from './components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/3-data-wizard-step/data-wizard-step.component';
 
@@ -91,6 +96,9 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
     PoolWarningsComponent,
+    ReviewStepComponent,
+    DownloadKeyDialogComponent,
+    DownloadKeyDialogOldComponent,
   ],
   providers: [
     PoolManagerStore,

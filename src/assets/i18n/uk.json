@@ -64,6 +64,7 @@
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
   "Parent Path": "",
   "Password Login Groups": "",
+  "Pool created successfully": "",
   "Quotas added": "",
   "Quotas updated": "",
   "RAM": "",

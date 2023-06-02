@@ -65,7 +65,7 @@ export class SystemGeneralService {
 
   getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
 
-  isEnterprise$ = this.getProductType$.pipe(
+  readonly isEnterprise$ = this.getProductType$.pipe(
     map((productType) => productType === ProductType.ScaleEnterprise),
   );
 
