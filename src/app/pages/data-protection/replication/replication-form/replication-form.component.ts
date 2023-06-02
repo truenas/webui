@@ -240,6 +240,8 @@ export class ReplicationFormComponent implements OnInit {
               this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${error.reason}`;
             }
 
+            alert(123);
+
             this.isLoading = false;
             this.cdr.markForCheck();
           },

@@ -21,6 +21,7 @@ import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshot
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -579,9 +580,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
           this.cdr.markForCheck();
         },
-        error: ({ reason }: { reason: string }) => {
+        error: (error: WebsocketError) => {
           this.snapshotsText = '';
-          this.form.controls.source_datasets.setErrors({ ixManualValidateError: { message: reason } });
+          this.form.controls.source_datasets.setErrors({ ixManualValidateError: { message: error.reason } });
           this.cdr.markForCheck();
         },
       });
