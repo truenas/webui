@@ -87,6 +87,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initControls();
+    this.disableDependentControls();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -120,21 +121,59 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
    * size -> layout -> width -> number
    */
   private initControls(): void {
-    this.form.controls.layout.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.layout.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
+      this.setWidthAndMinDiskSizeDisabled(!this.isSizeSelected || !layout);
+      this.setVdevsNumberDisabled(!this.isSizeSelected || !layout || !this.isWidthSelected);
+
       this.updateWidthOptions();
+      this.cdr.markForCheck();
     });
 
-    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe((sizeAndType) => {
+      this.setWidthAndMinDiskSizeDisabled(!sizeAndType?.length || !this.isLayoutSelected);
+      this.setVdevsNumberDisabled(!sizeAndType?.length || !this.isLayoutSelected || !this.isWidthSelected);
+
       this.updateLayoutOptions();
+      this.cdr.markForCheck();
     });
 
-    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((width) => {
+      if (!this.isSizeSelected || !this.isLayoutSelected || !width) {
+        this.form.controls.vdevsNumber.disable();
+      } else {
+        this.form.controls.vdevsNumber.enable();
+      }
       this.updateNumberOptions();
+      this.cdr.markForCheck();
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateLayout();
     });
+  }
+
+  setVdevsNumberDisabled(disable: boolean): void {
+    if (disable) {
+      this.form.controls.vdevsNumber.disable();
+    } else {
+      this.form.controls.vdevsNumber.enable();
+    }
+  }
+
+  setWidthAndMinDiskSizeDisabled(disable: boolean): void {
+    if (disable) {
+      this.form.controls.width.disable();
+      this.form.controls.treatDiskSizeAsMinimum.disable();
+    } else {
+      this.form.controls.width.enable();
+      this.form.controls.treatDiskSizeAsMinimum.enable();
+    }
+  }
+
+  disableDependentControls(): void {
+    this.form.controls.width.disable();
+    this.form.controls.treatDiskSizeAsMinimum.disable();
+    this.form.controls.vdevsNumber.disable();
   }
 
   private updateLayout(): void {
@@ -161,6 +200,9 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     if (!vdevLayoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
       this.form.controls.layout.setValue(null, { emitEvent: false });
     }
+
+    this.vdevLayoutOptions$ = of(vdevLayoutOptions);
+    this.updateWidthOptions();
   }
 
   private updateDiskSizeOptions(): void {

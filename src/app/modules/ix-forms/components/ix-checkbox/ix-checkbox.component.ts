@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -14,13 +14,12 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   templateUrl: './ix-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCheckboxComponent implements ControlValueAccessor, OnChanges {
+export class IxCheckboxComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() warning: string;
   @Input() required: boolean;
-  @Input() disabled = false;
 
   isDisabled = false;
   value: boolean;
@@ -42,10 +41,6 @@ export class IxCheckboxComponent implements ControlValueAccessor, OnChanges {
 
   registerOnChange(onChange: (value: boolean) => void): void {
     this.onChange = onChange;
-  }
-
-  ngOnChanges(): void {
-    this.setDisabledState(this.disabled);
   }
 
   registerOnTouched(onTouched: () => void): void {

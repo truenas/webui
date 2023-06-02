@@ -29,7 +29,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
-  @Input() disabled = false;
 
   isDisabled = false;
   hasErrorInOptions = false;
@@ -55,7 +54,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.setDisabledState(this.disabled);
     if (!this.options) {
       this.hasErrorInOptions = true;
     } else {

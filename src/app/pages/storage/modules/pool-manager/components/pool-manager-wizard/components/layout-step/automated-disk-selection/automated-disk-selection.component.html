@@ -24,13 +24,11 @@
         [tooltip]="'Select VDEV width' | translate"
         [options]="widthOptions$"
         [required]="true"
-        [disabled]="!isSizeSelected || !isLayoutSelected"
       ></ix-select>
 
       <ix-checkbox
         formControlName="treatDiskSizeAsMinimum"
         [label]="'Treat Disk Size as Minimum' | translate"
-        [disabled]="!isSizeSelected || !isLayoutSelected"
       ></ix-checkbox>
 
       <ix-select
@@ -39,7 +37,6 @@
         [tooltip]="'Number of VDEVs to create' | translate"
         [options]="numberOptions$"
         [required]="true"
-        [disabled]="!isSizeSelected || !isLayoutSelected || !isWidthSelected"
       ></ix-select>
     </div>
     <div class="advanced-options-container">
