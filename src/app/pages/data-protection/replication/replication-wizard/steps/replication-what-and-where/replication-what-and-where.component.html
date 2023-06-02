@@ -33,6 +33,7 @@
         [root]="isRemoteSource ? '' : mntPath"
         [nodeProvider]="isRemoteSource ? remoteSourceNodeProvider : fileNodeProvider"
       ></ix-explorer>
+
       <ix-checkbox
         *ngIf="form.controls.recursive.enabled"
         formControlName="recursive"

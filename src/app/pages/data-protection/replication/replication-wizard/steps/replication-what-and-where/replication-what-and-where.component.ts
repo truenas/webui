@@ -577,8 +577,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
           this.cdr.markForCheck();
         },
-        error: () => {
+        error: ({ reason }: { reason: string }) => {
           this.snapshotsText = '';
+          this.form.controls.source_datasets.setErrors({ ixManualValidateError: { message: reason } });
           this.cdr.markForCheck();
         },
       });
