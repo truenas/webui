@@ -1,6 +1,8 @@
 import { JobState } from 'app/enums/job-state.enum';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
-import { ChartFormValue, ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import {
+  AppMetadata, ChartFormValue, ChartSchemaGroup, ChartSchemaNode,
+} from 'app/interfaces/chart-release.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface Catalog {
@@ -63,6 +65,7 @@ export interface CatalogTrain {
 
 export interface CatalogApp {
   app_readme: string;
+  app_metadata: AppMetadata;
   categories: string[];
   healthy: boolean;
   healthy_error: string;

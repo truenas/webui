@@ -8,6 +8,8 @@ import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
@@ -108,91 +110,122 @@ describe('ZvolFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+  describe('adds a new zvol', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              isNew: true,
+              parentId: 'test pool',
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('adds a new zvol when new form is saved', fakeAsync(async (): Promise<void> => {
+      spectator.tick();
+
+      await form.fillForm({
+        'Zvol name': 'new zvol',
+        Comments: 'comments text',
+        'Size for this zvol': '2 GiB',
+        Sync: 'Standard',
+        'Compression level': 'lz4 (recommended)',
+        'ZFS Deduplication': 'Verify',
+        Sparse: true,
+        'Inherit (non-encrypted)': false,
+        'Read-only': 'On',
+        Snapdev: 'Visible',
+      });
+
+      await form.fillForm({
+        'Encryption Type': 'Passphrase',
+        Algorithm: 'AES-128-CCM',
+      });
+
+      await form.fillForm({
+        pbkdf2iters: 500000,
+        Passphrase: '12345678',
+        'Confirm Passphrase': '12345678',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
+        name: 'test pool/new zvol',
+        comments: 'comments text',
+        compression: 'LZ4',
+        volsize: 2147500032,
+        force_size: false,
+        sync: 'STANDARD',
+        deduplication: 'VERIFY',
+        sparse: true,
+        volblocksize: '16K',
+        readonly: 'ON',
+        snapdev: 'VISIBLE',
+        inherit_encryption: false,
+        encryption: true,
+        encryption_options: {
+          algorithm: 'AES-128-CCM',
+          passphrase: '12345678',
+          pbkdf2iters: '500000',
+        },
+        type: 'VOLUME',
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    }));
   });
-  it('adds a new zvol when new form is saved', fakeAsync(async (): Promise<void> => {
-    spectator.component.zvolFormInit(true, 'test pool');
-    spectator.tick();
 
-    await form.fillForm({
-      'Zvol name': 'new zvol',
-      Comments: 'comments text',
-      'Size for this zvol': '2 GiB',
-      Sync: 'Standard',
-      'Compression level': 'lz4 (recommended)',
-      'ZFS Deduplication': 'Verify',
-      Sparse: true,
-      'Inherit (non-encrypted)': false,
-      'Read-only': 'On',
-      Snapdev: 'Visible',
+  describe('edits zvol', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              isNew: false,
+              parentId: 'test pool',
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    await form.fillForm({
-      'Encryption Type': 'Passphrase',
-      Algorithm: 'AES-128-CCM',
-    });
+    it('saves updated zvol when form opened for edit is saved', fakeAsync(async (): Promise<void> => {
+      spectator.tick();
 
-    await form.fillForm({
-      pbkdf2iters: 500000,
-      Passphrase: '12345678',
-      'Confirm Passphrase': '12345678',
-    });
+      await form.fillForm({
+        'Size for this zvol': '2 GiB',
+      });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
-      name: 'test pool/new zvol',
-      comments: 'comments text',
-      compression: 'LZ4',
-      volsize: 2147500032,
-      force_size: false,
-      sync: 'STANDARD',
-      deduplication: 'VERIFY',
-      sparse: true,
-      volblocksize: '16K',
-      readonly: 'ON',
-      snapdev: 'VISIBLE',
-      inherit_encryption: false,
-      encryption: true,
-      encryption_options: {
-        algorithm: 'AES-128-CCM',
-        passphrase: '12345678',
-        pbkdf2iters: '500000',
-      },
-      type: 'VOLUME',
-    }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  }));
+      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['test pool', {
+        comments: '',
+        compression: 'INHERIT',
+        deduplication: 'INHERIT',
+        force_size: false,
+        readonly: 'INHERIT',
+        snapdev: 'INHERIT',
+        sync: 'INHERIT',
+        volsize: 2147483648,
+      }]);
 
-  it('saves updated zvol when form opened for edit is saved', fakeAsync(async (): Promise<void> => {
-    spectator.component.zvolFormInit(false, 'test pool');
-    spectator.tick();
-
-    await form.fillForm({
-      'Size for this zvol': '2 GiB',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['test pool', {
-      comments: '',
-      compression: 'INHERIT',
-      deduplication: 'INHERIT',
-      force_size: false,
-      readonly: 'INHERIT',
-      snapdev: 'INHERIT',
-      sync: 'INHERIT',
-      volsize: 2147483648,
-    }]);
-
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  }));
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    }));
+  });
 });

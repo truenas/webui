@@ -54,7 +54,7 @@ export class DeviceListComponent implements EntityTableConfig {
     private matDialog: MatDialog,
     private cdRef: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
 
   isActionVisible(actionId: string): boolean {
@@ -69,9 +69,10 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (device: VmDevice) => {
-        const slideIn = this.slideIn.open(DeviceFormComponent);
-        slideIn.setVirtualMachineId(Number(this.pk));
-        slideIn.setDeviceForEdit(device);
+        const slideInRef = this.slideInService.open(DeviceFormComponent, {
+          data: { virtualMachineId: Number(this.pk), device },
+        });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     });
     actions.push({
@@ -123,8 +124,8 @@ export class DeviceListComponent implements EntityTableConfig {
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params.pk;
-      this.vm = params.name;
+      this.pk = params.pk as string;
+      this.vm = params.name as string;
       this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
       this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM
@@ -133,14 +134,10 @@ export class DeviceListComponent implements EntityTableConfig {
       this.cdRef.detectChanges();
       this.queryCallOption[0][0].push(parseInt(this.pk, 10));
     });
-
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   doAdd(): void {
-    const slideIn = this.slideIn.open(DeviceFormComponent);
-    slideIn.setVirtualMachineId(Number(this.pk));
+    const slideInRef = this.slideInService.open(DeviceFormComponent, { data: { virtualMachineId: Number(this.pk) } });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

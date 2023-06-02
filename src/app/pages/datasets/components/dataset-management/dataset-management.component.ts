@@ -14,7 +14,6 @@ import {
   ViewChild,
   ElementRef,
   Inject,
-  TemplateRef,
   TrackByFunction,
 } from '@angular/core';
 import {
@@ -38,20 +37,12 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
-import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
-
-enum ScrollType {
-  IxTree = 'ixTree',
-  IxTreeHeader = 'ixTreeHeader',
-}
 
 @UntilDestroy()
 @Component({
@@ -60,7 +51,6 @@ enum ScrollType {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef<HTMLElement>;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef<HTMLElement>;
 
@@ -73,7 +63,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   systemDataset: string;
   isLoading = true;
   subscription = new Subscription();
-  scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
   treeWidthChange$ = new Subject<ResizedEvent>();
 
@@ -121,15 +110,12 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
-    private layoutService: LayoutService,
-    private slideIn: IxSlideInService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
-        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
         }
@@ -159,13 +145,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         }
         this.cdr.markForCheck();
       });
-
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    this.layoutService.pageHeaderUpdater$.next(null);
   }
 
   loadSystemDatasetConfig(): void {
@@ -231,10 +214,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       // focus on details container
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
-  }
-
-  onImportData(): void {
-    this.slideIn.open(ImportDataComponent);
   }
 
   private setupTree(): void {

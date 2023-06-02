@@ -49,14 +49,14 @@ export class LocalizationCardComponent {
   }
 
   doAdd(config: SystemGeneralConfig): void {
-    const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
-
-    localizationFormModal.setupForm({
-      language: config.language,
-      kbdMap: config.kbdmap,
-      timezone: config.timezone,
-      dateFormat: this.localeService.getPreferredDateFormat(),
-      timeFormat: this.localeService.getPreferredTimeFormat(),
+    this.slideInService.open(LocalizationFormComponent, {
+      data: {
+        language: config.language,
+        kbdMap: config.kbdmap,
+        timezone: config.timezone,
+        dateFormat: this.localeService.getPreferredDateFormat(),
+        timeFormat: this.localeService.getPreferredTimeFormat(),
+      },
     });
   }
 }

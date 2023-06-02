@@ -72,7 +72,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
                 datasets,
               });
             }),
-            catchError((error) => {
+            catchError((error: WebsocketError) => {
               this.patchState({
                 isLoading: false,
                 error,

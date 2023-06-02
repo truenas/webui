@@ -1,6 +1,5 @@
 import { Inject, Injectable, TemplateRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import * as domHelper from 'app/helpers/dom.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable({
@@ -27,14 +26,14 @@ export class LayoutService {
     const appBody = document.body;
 
     if (isCollapsed) {
-      domHelper.addClass(appBody, this.collapsedMenuClass);
+      appBody.classList.add(this.collapsedMenuClass);
     } else {
-      domHelper.removeClass(appBody, this.collapsedMenuClass);
+      appBody.classList.remove(this.collapsedMenuClass);
     }
-    domHelper.removeClass(
-      document.getElementsByClassName('has-submenu') as HTMLCollectionOf<HTMLElement>,
-      'open',
-    );
+
+    for (const element of document.getElementsByClassName('has-submenu') as HTMLCollectionOf<HTMLElement>) {
+      element.classList.remove('open');
+    }
   }
 
   getContentContainer(): HTMLElement {

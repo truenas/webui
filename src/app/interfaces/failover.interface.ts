@@ -19,3 +19,8 @@ export interface FailoverRemoteCallParams {
   job_return?: boolean;
   callback?: unknown;
 }
+
+export interface FailoverUpgradeParams {
+  resume?: boolean;
+  resume_manual?: boolean;
+}

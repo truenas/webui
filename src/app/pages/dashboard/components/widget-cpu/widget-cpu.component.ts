@@ -5,7 +5,6 @@ import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import {
   Chart, ChartData, ChartDataSets, ChartOptions, ChartTooltipItem, InteractionMode,
 } from 'chart.js';
@@ -43,10 +42,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   chart: Chart; // Chart.js instance with per core data
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
   cpuAvg: GaugeConfig;
-  title: string = this.translate.instant('CPU');
   subtitle: string = this.translate.instant('% of all cores');
-  configurable = false;
-  chartId = UUID.UUID();
   coreCount: number;
   threadCount: number;
   hyperthread: boolean;

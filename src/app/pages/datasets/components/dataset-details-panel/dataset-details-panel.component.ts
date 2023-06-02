@@ -1,10 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -20,7 +21,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./dataset-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetDetailsPanelComponent implements OnInit {
+export class DatasetDetailsPanelComponent {
   @Input() dataset: DatasetDetails;
   @Input() systemDataset: string;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
@@ -28,23 +29,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
   constructor(
     private datasetStore: DatasetTreeStore,
     private router: Router,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) { }
-
-  ngOnInit(): void {
-    this.slideIn.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        const dataset = value.response as Dataset;
-
-        if ((value.modalType !== DatasetFormComponent && value.modalType !== ZvolFormComponent) || !dataset?.id) {
-          return;
-        }
-
-        this.datasetStore.datasetUpdated();
-        this.router.navigate(['/datasets', dataset.id]);
-      });
-  }
 
   get datasetHasRoles(): boolean {
     return !!this.dataset.apps?.length
@@ -85,14 +71,31 @@ export class DatasetDetailsPanelComponent implements OnInit {
     return this.dataset.name === this.systemDataset;
   }
 
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this))
+      .subscribe((value: { id: string }) => {
+        this.datasetStore.datasetUpdated();
+
+        if ((modalType !== DatasetFormComponent && modalType !== ZvolFormComponent) || !value?.id) {
+          return;
+        }
+
+        this.router.navigate(['/datasets', value.id]);
+      });
+  }
+
   onAddDataset(): void {
-    const addDataset = this.slideIn.open(DatasetFormComponent, { wide: true });
-    addDataset.setForNew(this.dataset.id);
+    const slideInRef = this.slideInService.open(DatasetFormComponent, {
+      wide: true, data: { isNew: true, datasetId: this.dataset.id },
+    });
+    this.handleSlideInClosed(slideInRef, DatasetFormComponent);
   }
 
   onAddZvol(): void {
-    const addZvolComponent = this.slideIn.open(ZvolFormComponent);
-    addZvolComponent.zvolFormInit(true, this.dataset.id);
+    const slideInRef = this.slideInService.open(ZvolFormComponent, {
+      data: { isNew: true, parentId: this.dataset.id },
+    });
+    this.handleSlideInClosed(slideInRef, ZvolFormComponent);
   }
 
   onCloseMobileDetails(): void {

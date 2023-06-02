@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -52,9 +51,9 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   protected vdevLayoutOptions$: Observable<Option[]> = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
-  protected diskSizeAndTypeOptions$: Observable<SelectOption[]> = of([]);
-  protected widthOptions$: Observable<SelectOption[]> = of([]);
-  protected numberOptions$: Observable<SelectOption[]> = of([]);
+  protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
+  protected widthOptions$ = of<SelectOption[]>([]);
+  protected numberOptions$ = of<SelectOption[]>([]);
 
   private minDisks = minDisksPerLayout;
   private sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
@@ -62,7 +61,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     protected poolManagerStore: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   get selectedDiskSize(): number {
@@ -126,7 +124,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       this.setVdevsNumberDisabled(!this.isSizeSelected || !layout || !this.isWidthSelected);
 
       this.updateWidthOptions();
-      this.cdr.markForCheck();
     });
 
     this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe((sizeAndType) => {
@@ -134,7 +131,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       this.setVdevsNumberDisabled(!sizeAndType?.length || !this.isLayoutSelected || !this.isWidthSelected);
 
       this.updateLayoutOptions();
-      this.cdr.markForCheck();
     });
 
     this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((width) => {
@@ -144,7 +140,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
         this.form.controls.vdevsNumber.enable();
       }
       this.updateNumberOptions();
-      this.cdr.markForCheck();
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {

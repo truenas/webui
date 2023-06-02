@@ -1,4 +1,5 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { AppMetadata } from 'app/interfaces/chart-release.interface';
 
 export interface AvailableApp {
   healthy: boolean;
@@ -8,6 +9,7 @@ export interface AvailableApp {
   title: string;
   description: string;
   app_readme: string;
+  app_metadata: AppMetadata;
   location: string;
   healthy_error: string;
   latest_version: string;

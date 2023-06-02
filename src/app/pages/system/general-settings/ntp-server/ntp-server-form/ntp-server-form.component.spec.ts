@@ -5,6 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { WebSocketService, DialogService } from 'app/services';
@@ -29,18 +31,16 @@ describe('NtpServerFormComponent', () => {
         mockCall('system.ntpserver.update'),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
   });
 
   describe('adding ntp server', () => {
     beforeEach(() => {
-      spectator.component.setupForm();
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -67,15 +67,24 @@ describe('NtpServerFormComponent', () => {
 
   describe('editing ntp server', () => {
     beforeEach(() => {
-      spectator.component.setupForm({
-        id: 1,
-        address: 'mock.ntp.server',
-        burst: false,
-        iburst: true,
-        prefer: false,
-        minpoll: 6,
-        maxpoll: 10,
-      } as NtpServer);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              id: 1,
+              address: 'mock.ntp.server',
+              burst: false,
+              iburst: true,
+              prefer: false,
+              minpoll: 6,
+              maxpoll: 10,
+            } as NtpServer,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('shows current server values when form is being edited', async () => {

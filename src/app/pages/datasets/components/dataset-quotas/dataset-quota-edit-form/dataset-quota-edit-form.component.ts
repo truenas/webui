@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,22 +15,24 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-quota-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetQuotaEditFormComponent {
+export class DatasetQuotaEditFormComponent implements OnInit {
   isFormLoading = false;
   private datasetQuota: DatasetQuota;
   private datasetId: string;
   private quotaType: DatasetQuotaType;
+  private id: number;
 
   get title(): string {
     return this.quotaType === DatasetQuotaType.User
@@ -98,20 +102,26 @@ export class DatasetQuotaEditFormComponent {
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
-    private slideIn: IxSlideInService,
     private snackbar: SnackbarService,
     protected dialogService: DialogService,
+    private slideInRef: IxSlideInRef<DatasetQuotaEditFormComponent>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { quotaType: DatasetQuotaType; datasetId: string; id: number },
   ) {}
 
-  setupEditQuotaForm(quotaType: DatasetQuotaType, datasetId: string, id: number): void {
-    this.datasetId = datasetId;
-    this.quotaType = quotaType;
-    this.updateForm(id);
+  ngOnInit(): void {
+    this.datasetId = this.slideInData.datasetId;
+    this.quotaType = this.slideInData.quotaType;
+    this.id = this.slideInData.id;
+    this.setupEditQuotaForm();
   }
 
-  private updateForm(id: number): void {
+  setupEditQuotaForm(): void {
+    this.updateForm();
+  }
+
+  private updateForm(): void {
     this.isFormLoading = true;
-    this.getQuota(id).pipe(
+    this.getQuota(this.id).pipe(
       tap((quotas) => {
         this.datasetQuota = quotas[0];
         this.isFormLoading = false;
@@ -173,7 +183,7 @@ export class DatasetQuotaEditFormComponent {
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
         this.isFormLoading = false;
-        this.slideIn.close();
+        this.slideInRef.close();
         this.cdr.markForCheck();
       },
       error: (error) => {

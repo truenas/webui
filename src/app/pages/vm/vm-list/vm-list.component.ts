@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
@@ -45,7 +46,7 @@ const noMemoryError = 'ENOMEM';
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService],
 })
-export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit, AfterViewInit {
+export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   title = this.translate.instant('Virtual Machines');
@@ -57,7 +58,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   disableActionsConfig = true;
   virtualizationDetails: VirtualizationDetails = null;
   canAdd = false;
-  expandedElement?: VirtualMachineRow | null = null;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -94,7 +94,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     poweroff: 'vm.poweroff',
     update: 'vm.update',
     clone: 'vm.clone',
-    getAvailableMemory: 'vm.get_available_memory',
   } as const;
 
   availableMemory: string;
@@ -104,6 +103,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   constructor(
     private ws: WebSocketService,
     private storageService: StorageService,
+    private formatter: IxFormatterService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private router: Router,
@@ -113,14 +113,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private translate: TranslateService,
     private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
-
-  ngOnInit(): void {
-    this.slideIn.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.entityList.getData());
-  }
 
   afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
     this.checkMemory();
@@ -193,7 +187,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         state: vm.status.state,
         com_port: `/dev/nmdm${vm.id}B`,
         shutdownTimeoutString: `${vm.shutdown_timeout} seconds`,
-        memoryString: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
+        memoryString: this.formatter.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
       if (this.checkDisplay(vm)) {
@@ -358,8 +352,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (vm: VirtualMachineRow) => {
-        const slideIn = this.slideIn.open(VmEditFormComponent);
-        slideIn.setVmForEdit(vm);
+        const slideInRef = this.slideInService.open(VmEditFormComponent, { data: vm });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     },
     {
@@ -469,13 +463,14 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   checkMemory(): void {
-    this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((availableMemory) => {
-      this.availableMemory = this.storageService.convertBytesToHumanReadable(availableMemory);
+    this.ws.call('vm.get_available_memory').pipe(untilDestroyed(this)).subscribe((availableMemory) => {
+      this.availableMemory = this.formatter.convertBytesToHumanReadable(availableMemory);
     });
   }
 
   doAdd(): void {
-    this.slideIn.open(VmWizardComponent);
+    const slideInRef = this.slideInService.open(VmWizardComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {

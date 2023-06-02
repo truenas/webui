@@ -49,7 +49,7 @@ describe('NtpServerCardComponent', () => {
   let spectator: Spectator<NtpServerCardComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let slideIn: IxSlideInService;
+  let slideInRef: IxSlideInService;
 
   const createComponent = createComponentFactory({
     component: NtpServerCardComponent,
@@ -76,7 +76,7 @@ describe('NtpServerCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    slideIn = spectator.inject(IxSlideInService);
+    slideInRef = spectator.inject(IxSlideInService);
   });
 
   afterEach(() => {
@@ -138,18 +138,18 @@ describe('NtpServerCardComponent', () => {
   });
 
   it('should open add ntp server form', async () => {
-    jest.spyOn(slideIn, 'open').mockImplementation();
+    jest.spyOn(slideInRef, 'open').mockImplementation();
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(slideIn.open).toHaveBeenCalledWith(NtpServerFormComponent);
+    expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent);
   });
 
   it('should open edit ntp server form', () => {
-    jest.spyOn(slideIn, 'open').mockImplementation();
+    jest.spyOn(slideInRef, 'open').mockImplementation();
     spectator.click(spectator.query('.mat-column-address', { root: true }));
 
-    expect(slideIn.open).toHaveBeenCalledWith(NtpServerFormComponent);
+    expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent);
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {
