@@ -99,6 +99,12 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
           }),
         ),
       );
+      const isChangeLayoutFalse = this.canChangeLayout !== null
+        && this.canChangeLayout !== undefined
+        && !this.canChangeLayout;
+      if (isChangeLayoutFalse && changes.limitLayouts.currentValue.length) {
+        this.form.controls.layout.setValue(changes.limitLayouts.currentValue[0]);
+      }
       this.updateWidthOptions();
     }
     this.updateDiskSizeOptions();
