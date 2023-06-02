@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, combineLatest, filter, map,
 } from 'rxjs';
+import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsByCategory, AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -35,6 +36,10 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
       return !!searchQuery || isFilterApplied;
     }),
   );
+
+  readonly customIxChartApp = ixChartApp;
+  readonly chartsTrain = chartsTrain;
+  readonly officialCatalog = officialCatalog;
 
   constructor(
     private layoutService: LayoutService,

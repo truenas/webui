@@ -11,7 +11,7 @@
         mat-flat-button
         class="mat-mdc-button mat-button mat-primary"
         ixTest="back-to-support"
-        (click)="goToSupport()"
+        [routerLink]="['/system/general']"
       >
         {{ 'Back to Support' | translate }}
       </button>

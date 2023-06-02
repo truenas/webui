@@ -153,8 +153,8 @@
                   <button
                     *ngIf="!isPassive"
                     mat-button
+                    color="default"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    [color]="updateBtnStatus"
                     (click)="router.navigate(['system', 'update'])"
                   >
                     {{ updateBtnLabel | translate }}
@@ -224,10 +224,8 @@
                   <mat-list-item *ngIf="data.license">
                     <strong>{{ 'License' | translate }}:</strong>
                     <span>
-                      {{ data.license.contract_type.toLowerCase() | titlecase }}
+                      {{ licenseString }}
                     </span>
-                    &nbsp;contract, &nbsp; expires
-                    {{ data.license.contract_end.$value }}
                   </mat-list-item>
 
                   <mat-list-item *ngIf="data.system_serial && isIxHardware">
@@ -277,23 +275,6 @@
         </div>
         <!-- end carousel -->
       </mat-card-content>
-    </mat-card>
-
-    <!-- Flip Side -->
-    <mat-card class="back">
-      <mat-card-content>
-        <h3>Form goes here</h3>
-      </mat-card-content>
-      <div class="widget-footer">
-        <button
-          mat-button
-          color="primary"
-          [ixTest]="['widget-sysinfo', 'flip']"
-          (click)="toggleConfig()"
-        >
-          {{ 'Flip' | translate }}
-        </button>
-      </div>
     </mat-card>
   </div>
 </div>

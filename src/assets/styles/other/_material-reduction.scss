@@ -41,10 +41,7 @@ h4 {font-size: 1.44em;}
 
 h5 {font-size: 1.2em;}
 
-small,
-.text_small {font-size: 0.833em;}
-
-.text-extra-small { font-size: x-small;}
+small {font-size: 0.833em;}
 
 span.code {
   background: rgba(255, 255, 255, 0.1);
@@ -80,8 +77,7 @@ span.code {
   padding: 16px 32px !important;
 }
 
-ix-entity-table .mat-mdc-card,
-ix-entity-form .mat-mdc-card {
+ix-entity-table .mat-mdc-card {
   padding: 0 !important;
 }
 
@@ -90,7 +86,6 @@ ix-entity-form .mat-mdc-card {
   max-width: 960px;
 }
 
-ix-entity-form .mat-mdc-card > *,
 ix-entity-table .mat-mdc-card > * {
   margin: 0 !important;
   padding: 16px !important;
@@ -200,9 +195,6 @@ textarea.mat-input-element::placeholder {
   position: relative;
 }
 
-.form-element.form-combobox .mat-mdc-form-field,
-.form-element.form-ip-netmask .mat-mdc-form-field,
-.form-element.form-combobox .mat-mdc-menu-trigger,
 .form-element .mat-mdc-text-field-wrapper,
 .form-element input[type = 'password'],
 .form-element input[type = 'email'],
@@ -223,9 +215,6 @@ textarea.mat-input-element::placeholder {
 
 .form-element,
 #password,
-.form-element.form-combobox .mat-mdc-form-field,
-.form-element.form-ip-netmask .mat-mdc-form-field,
-.form-element.form-combobox .mat-mdc-menu-trigger,
 .form-element .mat-mdc-text-field-wrapper,
 .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid,
 .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid input,
@@ -241,98 +230,6 @@ textarea.mat-input-element::placeholder {
   line-height: normal !important;
   min-height: 33px;
   width: 100% !important;
-}
-
-ix-entity-form-list .list-action-block-wrapper .form-element,
-ix-entity-form-list .list-action-block-wrapper #password,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-mdc-form-field,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-mdc-form-field,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-mdc-menu-trigger,
-ix-entity-form-list .list-action-block-wrapper .form-element .mat-mdc-text-field-wrapper,
-ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'password'],
-ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'email'],
-ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'text'],
-ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'number'],
-ix-entity-form-list .list-action-block-wrapper .form-element textarea,
-ix-entity-form-list .list-action-block-wrapper .has-tooltip mat-form-field.full-width,
-ix-entity-form-list .list-action-block-wrapper .form-element select {
-  width: 100% !important;
-}
-
-/* Combo Box */
-.form-element.form-combobox .label-container {
-  margin-bottom: 0;
-  padding-bottom: 3px;
-}
-
-.form-element.form-combobox .mat-mdc-text-field-wrapper input,
-.form-element.form-combobox .mat-mdc-text-field-wrapper {
-  background-color: unset;
-  border: unset;
-  padding: unset;
-}
-
-.form-element.form-combobox .mat-mdc-form-field {
-  height: 33px;
-  margin-right: 1px;
-  max-width: calc(100% - 34px) !important;
-  padding: 0 8px;
-}
-
-.form-element.form-combobox .mat-mdc-menu-trigger:hover {
-  cursor: pointer;
-}
-
-.form-element.form-combobox .mat-mdc-menu-trigger {
-  padding: 9px 2px 8px;
-  position: relative;
-  top: -9px;
-}
-
-.form-element.form-combobox .mat-mdc-menu-trigger .ix-icon {
-  position: relative !important;
-  top: 7px !important;
-}
-
-.form-element.form-combobox .mat-mdc-form-field,
-.form-element.form-combobox .mat-mdc-menu-trigger {
-  height: 33px;
-}
-
-/* IP w/Netmask*/
-.form-element.form-ip-netmask .mat-mdc-form-field {
-  max-height: 33px;
-}
-
-.form-element.form-ip-netmask .mat-mdc-text-field-wrapper input,
-.form-element.form-ip-netmask .mat-mdc-text-field-wrapper {
-  background-color: unset;
-  border: unset;
-  padding: unset;
-}
-
-.form-element.form-combobox .mat-mdc-select-trigger {
-  padding: 9px 2px 8px;
-  position: relative;
-  top: 2px;
-}
-
-/* Form List */
-.form-list .form-list-item {
-  position: relative;
-  right: 18px;
-  top: 50%;
-}
-
-.form-list .list-action-inline {
-  align-items: flex-start;
-  display: flex;
-  justify-content: center;
-}
-
-.form-list .list-action {
-  display: flex;
-  justify-content: right;
 }
 
 /* Chips */
@@ -355,43 +252,6 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   .no-rows {
     min-height: 96px;
   }
-}
-
-.form-element input[type = 'password'],
-.form-element .has_toggle_pw input {
-  display: inline;
-  height: inherit;
-  position: relative;
-}
-
-.form-element button.toggle_pw {
-  bottom: -2px;
-  position: absolute;
-  right: 0;
-}
-
-.form-element button.toggle_pw ix-icon {
-  font-size: 22px;
-  opacity: 0.75;
-}
-
-.form-element.form-explorer .mat-mdc-text-field-wrapper {
-  padding-left: 0;
-}
-
-.form-element.form-explorer .mat-mdc-text-field-wrapper,
-.form-element.form-explorer .mat-mdc-form-field-flex,
-.form-element.form-explorer .mat-mdc-form-field-flex input {
-  border: none;
-}
-
-.form-element.form-combobox .mat-mdc-form-field-flex,
-.form-element.form-combobox .mat-mdc-form-field-flex input {
-  border: none;
-}
-
-.margin-for-error {
-  position: static !important;
 }
 
 .mat-mdc-checkbox {
@@ -795,13 +655,6 @@ input::-ms-clear {
   display: none;
 }
 
-@media only screen and (max-width: 750px) {
-  .viewcontroller-wrapper {
-    flex-grow: 100;
-    margin-top: 8px;
-  }
-}
-
 /* Generic styling for nested lists*/
 ul.nested-list {
   list-style: circle;
@@ -854,11 +707,6 @@ ul.nested-list li {
   display: flex;
 }
 
-.form-selection-list.mat-mdc-list-base .mat-mdc-list-item .mat-mdc-list-item-unscoped-content,
-.form-selection-list.mat-mdc-list-base .mat-mdc-list-option .mat-mdc-list-item-unscoped-content {
-  padding: 0;
-}
-
 .ngxp__container {
   border-radius: 6px !important;
 
@@ -881,10 +729,6 @@ ul.nested-list li {
     min-width: auto;
     padding: 0 8px;
   }
-}
-
-.form-list-item .form-element {
-  margin: 8px 0;
 }
 
 .mat-mdc-tab-header-pagination-chevron {
@@ -1061,5 +905,11 @@ body {
 
   .mdc-checkbox__background {
     transform: scale(0.9);
+  }
+
+  ix-dynamic-form-item.highlighted {
+    > div:first-child {
+      outline: 1px solid var(--primary);
+    }
   }
 }

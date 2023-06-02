@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   Component, Inject, Input, OnInit,
 } from '@angular/core';
@@ -7,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs/operators';
-import { GiB, MiB } from 'app/constants/bytes.constant';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -34,9 +34,9 @@ import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/sys
     '../widget/widget.component.scss',
     './widget-sys-info.component.scss',
   ],
+  providers: [TitleCasePipe],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
-  // HA
   @Input() isHaLicensed = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
@@ -45,9 +45,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
 
-  title: string = this.translate.instant('System Info');
   data: SystemInfo;
-  memory: string;
   ready = false;
   productImage = '';
   productModel = '';
@@ -66,8 +64,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
 
-  private _updateBtnStatus = 'default';
-
   constructor(
     public router: Router,
     public translate: TranslateService,
@@ -80,10 +76,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     private productImgServ: ProductImageService,
     public loader: AppLoaderService,
     public dialogService: DialogService,
+    private titleCase: TitleCasePipe,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
-    this.configurable = false;
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdateRunning: string) => {
       this.isUpdateRunning = isUpdateRunning === 'true';
     });
@@ -94,6 +90,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     });
 
     this.hasHa = this.window.sessionStorage.getItem('ha_status') === 'true';
+  }
+
+  get licenseString(): string {
+    return this.translate.instant('{license} contract, expires {date}', {
+      license: this.titleCase.transform(this.data.license.contract_type.toLowerCase()),
+      date: this.data.license.contract_end.$value,
+    });
   }
 
   ngOnInit(): void {
@@ -155,13 +158,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     });
   }
 
-  get updateBtnStatus(): string {
-    if (this.updateAvailable) {
-      this._updateBtnStatus = 'default';
-    }
-    return this._updateBtnStatus;
-  }
-
   get updateBtnLabel(): string {
     if (this.updateAvailable) {
       return this.translate.instant('Updates Available');
@@ -182,9 +178,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     const datetime = this.addTimeDiff(this.data.datetime.$date);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
 
-    this.memory = this.formatMemory(this.data.physmem, 'GiB');
-
-    // PRODUCT IMAGE
     this.setProductImage();
 
     this.parseUptime();
@@ -220,18 +213,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     }
   }
 
-  formatMemory(physmem: number, units: string): string {
-    let result: string;
-    if (units === 'MiB') {
-      result = Number(physmem / MiB).toFixed(0) + ' MiB';
-    } else if (units === 'GiB') {
-      result = Number(physmem / GiB).toFixed(0) + ' GiB';
-    }
-    return result;
-  }
-
   setProductImage(): void {
-    if (!this.isIxHardware) return;
+    if (!this.isIxHardware || !this.data) return;
 
     if (this.data.system_product.includes('MINI')) {
       this.setMiniImage(this.data.system_product);

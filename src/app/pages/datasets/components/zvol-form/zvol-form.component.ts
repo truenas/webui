@@ -283,7 +283,7 @@ export class ZvolFormComponent implements OnInit {
     // decimal has to be truncated to three decimal places
     this.origVolSize = volumesize;
 
-    const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
+    const humansize = this.formatter.convertBytesToHumanReadable(volumesize);
     this.origHuman = humansize;
 
     this.form.controls.name.setValue(parent.name);
@@ -544,7 +544,7 @@ export class ZvolFormComponent implements OnInit {
     }
 
     if (this.origHuman !== data.volsize) {
-      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as string, true);
+      data.volsize = this.formatter.convertHumanStringToNum(data.volsize as string, true);
     } else {
       delete data.volsize;
     }

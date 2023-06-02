@@ -1,6 +1,14 @@
 <ng-template #pageHeader>
-  <ix-page-title-header>
-    <ix-apps-toolbar-buttons></ix-apps-toolbar-buttons>
+  <ix-page-title-header [pageTitle]="'Discover' | translate">
+    <a
+      mat-button
+      color="primary"
+      ixTest="custom-app"
+      [disabled]="!(applicationsStore.selectedPool$ | async)"
+      [routerLink]="['/apps', 'available', officialCatalog, chartsTrain, customIxChartApp, 'install']"
+    >
+      {{ 'Custom App' | translate }}
+    </a>
   </ix-page-title-header>
 </ng-template>
 
