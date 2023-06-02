@@ -298,6 +298,7 @@
   "Container Name": "",
   "Containers": "",
   "Content Commitment": "",
+  "Continue with the upgrade": "",
   "Controller Type": "",
   "Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
   "Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩  are hidden or visible. The default value is hidden.": "",

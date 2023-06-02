@@ -40,4 +40,5 @@ export interface SystemUpdateTrain {
 
 export interface UpdateParams {
   reboot: boolean;
+  resume?: boolean;
 }

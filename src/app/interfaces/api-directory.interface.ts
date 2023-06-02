@@ -110,7 +110,12 @@ import {
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
+import {
+  FailoverConfig,
+  FailoverRemoteCall,
+  FailoverUpdate,
+  FailoverUpgradeParams,
+} from 'app/interfaces/failover.interface';
 import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
@@ -511,7 +516,7 @@ export type ApiDirectory = {
   'failover.config': { params: void; response: FailoverConfig };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.upgrade_finish': { params: void; response: boolean };
-  'failover.upgrade': { params: void; response: boolean };
+  'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
 
   // FCPort
   'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
@@ -1009,6 +1014,7 @@ export type ApiDirectory = {
   'update.set_train': { params: [train: string]; response: void };
   'update.download': { params: void; response: boolean };
   'update.update': { params: [UpdateParams]; response: void };
+  'update.file': { params: [{ resume: boolean }?]; response: void };
 
   // ZFS
   'zfs.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
