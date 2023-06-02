@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewContainerRef,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -141,6 +141,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private viewContainerRef: ViewContainerRef,
   ) {}
 
   ngOnInit(): void {
@@ -370,6 +371,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       data: { dialog: true },
       width: '600px',
       panelClass: 'ix-overflow-dialog',
+      viewContainerRef: this.viewContainerRef,
     });
 
     dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
