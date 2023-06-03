@@ -8,7 +8,7 @@ import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted,
-  localizationFormSubmitted, noPreferencesFound,
+  localizationFormSubmitted, noPreferencesFound, dashboardStateUpdated,
   preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
   themeNotFound,
   updateRebootAfterManualUpdate,
@@ -33,7 +33,7 @@ const initialState: PreferencesState = {
 export const preferencesReducer = createReducer(
   initialState,
 
-  on(dashboardStateLoaded, (state, { dashboardState }) => ({ ...state, dashboardState })),
+  on(dashboardStateLoaded, dashboardStateUpdated, (state, { dashboardState }) => ({ ...state, dashboardState })),
   on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null })),
   on(adminUiInitialized, () => ({ ...initialState, areLoaded: false })),
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),

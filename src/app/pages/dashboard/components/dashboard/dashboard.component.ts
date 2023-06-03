@@ -29,7 +29,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
+import { dashboardStateLoaded, dashboardStateUpdated } from 'app/store/preferences/preferences.actions';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -65,6 +65,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
   dashStateReady = false;
+  preferencesApplied = false;
   dashState: DashConfigItem[]; // Saved State
   previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
@@ -482,6 +483,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.saveState(this.dashState);
     delete this.previousState;
     this.exitReorderMode();
+    this.store$.dispatch(dashboardStateUpdated({ dashboardState: this.dashState }));
   }
 
   private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
@@ -521,7 +523,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setDashState(dashState: DashConfigItem[]): void {
     this.dashState = this.sanitizeState(dashState);
-    this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    if (!this.reorderMode) {
+      this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
+    }
   }
 
   private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
@@ -539,12 +543,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private exitReorderMode(): void {
+    this.reorderMode = false;
+
     if (this.previousState) {
       this.setDashState(this.previousState);
       delete this.previousState;
     }
-
-    this.reorderMode = false;
   }
 
   private enableReorderMode(): void {
@@ -601,7 +605,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe((preferences: PreferencesState) => {
       if (preferences.dashboardState) {
-        this.applyState(preferences.dashboardState);
+        if (!this.preferencesApplied) {
+          this.applyState(preferences.dashboardState);
+          this.preferencesApplied = true;
+        }
       } else {
         this.availableWidgets = this.generateDefaultConfig();
         this.setDashState(this.availableWidgets);
