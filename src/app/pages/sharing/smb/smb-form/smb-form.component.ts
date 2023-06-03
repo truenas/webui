@@ -551,7 +551,7 @@ export class SmbFormComponent implements OnInit {
             );
           }
 
-          return forkJoin(requests);
+          return requests.length ? forkJoin(requests) : of(requests);
         }),
       );
   };
