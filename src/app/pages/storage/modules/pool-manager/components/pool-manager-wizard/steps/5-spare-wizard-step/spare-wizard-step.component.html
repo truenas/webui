@@ -34,7 +34,6 @@
     color="accent"
     type="button"
     ixTest="save-ang-go-to-review"
-    [disabled]="!(hasDataVdevs$ | async)"
     (click)="goToReviewStep()"
   >
     {{ 'Save And Go To Review' | translate }}
