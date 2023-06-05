@@ -1,4 +1,5 @@
-<div class="step-description" [innerHTML]="helptext.spare_vdev_description | translate">
+<div class="step-description">
+  {{ helptext.spare_vdev_description | translate }}
 </div>
 
 <ix-layout-step
@@ -28,7 +29,6 @@
     {{ 'Next' | translate }}
   </button>
 
-  <!-- TODO: Implement -->
   <button
     mat-button
     color="accent"
