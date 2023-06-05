@@ -38,6 +38,19 @@
         ></ix-icon>
       </div>
 
+      <button
+        *appIfNightly
+        mat-icon-button
+        matBadge="+"
+        matBadgeSize="small"
+        class="topbar-button-right"
+        ixTest="leave-feedback"
+        [matTooltip]="'How would you rate this page?' | translate"
+        (click)="onFeedbackIndicatorPressed()"
+      >
+        <ix-icon name="mdi-star-half-full"></ix-icon>
+      </button>
+
       <ix-truecommand-button></ix-truecommand-button>
 
       <!-- finish update -->

@@ -29,6 +29,7 @@ import {
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -418,6 +419,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   openIx(): void {
     this.window.open('https://www.ixsystems.com/', '_blank');
+  }
+
+  onFeedbackIndicatorPressed(): void {
+    this.dialog.open(FeedbackDialogComponent);
   }
 
   private listenForUpgradePendingState(): void {

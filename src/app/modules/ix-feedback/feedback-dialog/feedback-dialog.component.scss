@@ -1,0 +1,20 @@
+:host {
+  display: block;
+  min-width: 500px;
+}
+
+.close-feedback-dialog {
+  position: absolute;
+  right: 16px;
+  top: 24px;
+}
+
+.stars {
+  align-items: center;
+  display: flex;
+}
+
+.file-ticket-helper {
+  align-items: baseline;
+  display: flex;
+}

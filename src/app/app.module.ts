@@ -28,6 +28,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
+import { IxFeedbackModule } from 'app/modules/ix-feedback/ix-feedback.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -116,6 +117,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     MatButtonModule,
     TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
+    IxFeedbackModule,
   ],
   declarations: [
     AppComponent,
