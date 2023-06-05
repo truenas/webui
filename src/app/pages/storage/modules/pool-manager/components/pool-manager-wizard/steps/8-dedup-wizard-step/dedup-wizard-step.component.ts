@@ -29,7 +29,7 @@ export class DedupWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.store.select((state) => state.topology[VdevType.Data].layout).pipe(untilDestroyed(this)).subscribe({
+    this.store.select((state) => state.topology[VdevType.Data].layout)?.pipe(untilDestroyed(this)).subscribe({
       next: (dataLayout: CreateVdevLayout) => {
         this.allowedLayouts = [dataLayout];
       },
