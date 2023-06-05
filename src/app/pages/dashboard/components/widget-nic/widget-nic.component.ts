@@ -17,13 +17,10 @@ import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interfac
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 interface NetTraffic {
-  sent: string;
-  sentUnits: string;
-  received: string;
-  receivedUnits: string;
+  sent: number;
+  received: number;
   linkState: LinkState;
 }
 
@@ -57,7 +54,6 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef<HTMLElement>;
   traffic: NetTraffic;
   currentSlide = '0';
-  private utils: WidgetUtils;
 
   readonly LinkState = LinkState;
   readonly NetworkInterfaceAliasType = NetworkInterfaceAliasType;
@@ -105,8 +101,6 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     public translate: TranslateService,
   ) {
     super(translate);
-    this.configurable = false;
-    this.utils = new WidgetUtils();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -121,14 +115,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       throttleTime(500),
       untilDestroyed(this),
     ).subscribe((evt: NetworkTrafficEvent) => {
-      const sent = this.utils.convert(evt.data.sent_bytes_rate);
-      const received = this.utils.convert(evt.data.received_bytes_rate);
-
       this.traffic = {
-        sent: sent.value,
-        sentUnits: sent.units,
-        received: received.value,
-        receivedUnits: received.units,
+        sent: evt.data.sent_bytes_rate,
+        received: evt.data.received_bytes_rate,
         linkState: evt.data.link_state,
       };
     });
@@ -151,7 +140,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
 
     const el = styler(carousel);
-    const slideW = styler(slide).get('width');
+    const slideW = styler(slide).get('width') as number;
 
     tween({
       from: { x: (parseInt(this.currentSlide) * 100) * -1 },

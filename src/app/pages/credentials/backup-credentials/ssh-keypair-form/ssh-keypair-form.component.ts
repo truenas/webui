@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -31,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./ssh-keypair-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SshKeypairFormComponent {
+export class SshKeypairFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingKeypair;
   }
@@ -69,6 +69,12 @@ export class SshKeypairFormComponent {
     private storage: StorageService,
     @Inject(SLIDE_IN_DATA) private editingKeypair: KeychainSshKeyPair,
   ) { }
+
+  ngOnInit(): void {
+    if (this.editingKeypair) {
+      this.setKeypairForEditing();
+    }
+  }
 
   setKeypairForEditing(): void {
     this.form.patchValue({

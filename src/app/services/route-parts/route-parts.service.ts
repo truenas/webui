@@ -41,7 +41,11 @@ export class RoutePartsService {
         ngUrl.push(url);
       }
 
-      const { title, breadcrumb, disabled } = child.snapshot.data;
+      const { title, breadcrumb, disabled } = child.snapshot.data as {
+        title: string;
+        breadcrumb: string;
+        disabled: boolean;
+      };
       if (title) {
         routeParts.push({
           title,

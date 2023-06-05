@@ -15,7 +15,6 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -38,7 +37,6 @@ export class CertificateAuthorityEditComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    private dialogService: DialogService,
     private matDialog: MatDialog,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

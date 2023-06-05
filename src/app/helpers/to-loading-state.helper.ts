@@ -25,7 +25,7 @@ export interface LoadingState<T> {
 export function toLoadingState<T>(): OperatorFunction<T, LoadingState<T>> {
   return pipe(
     map((value) => ({ isLoading: false, value })),
-    catchError((error) => of({ isLoading: false, error })),
+    catchError((error: WebsocketError | Error) => of({ isLoading: false, error })),
     startWith({ isLoading: true }),
   );
 }

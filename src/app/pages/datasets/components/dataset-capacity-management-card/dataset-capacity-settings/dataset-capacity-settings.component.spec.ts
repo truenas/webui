@@ -10,6 +10,8 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { fillControlValues, getControlValues } from 'app/modules/ix-forms/testing/control-harnesses.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -35,23 +37,31 @@ describe('DatasetCapacitySettingsComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
-    spectator.component.setDatasetForEdit({
-      id: 'root/path',
-      name: 'root/path',
-      refquota: { parsed: 50 * GiB },
-      refquota_warning: { parsed: 50, source: ZfsPropertySource.Local },
-      refquota_critical: { parsed: 0, source: ZfsPropertySource.Default },
-      quota: { parsed: 100 * GiB },
-      quota_warning: { parsed: null, source: ZfsPropertySource.Local },
-      quota_critical: { parsed: 0, source: ZfsPropertySource.Inherited },
-      refreservation: { parsed: 10 * GiB },
-      reservation: { parsed: 20 * GiB },
-    } as DatasetDetails);
+    spectator = createComponent({
+      providers: [
+        {
+          provide: SLIDE_IN_DATA,
+          useValue: {
+            id: 'root/path',
+            name: 'root/path',
+            refquota: { parsed: 50 * GiB },
+            refquota_warning: { parsed: 50, source: ZfsPropertySource.Local },
+            refquota_critical: { parsed: 0, source: ZfsPropertySource.Default },
+            quota: { parsed: 100 * GiB },
+            quota_warning: { parsed: null, source: ZfsPropertySource.Local },
+            quota_critical: { parsed: 0, source: ZfsPropertySource.Inherited },
+            refreservation: { parsed: 10 * GiB },
+            reservation: { parsed: 20 * GiB },
+          } as DatasetDetails,
+        },
+      ],
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -158,7 +168,7 @@ describe('DatasetCapacitySettingsComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('only sends updated properties on form submit', async () => {

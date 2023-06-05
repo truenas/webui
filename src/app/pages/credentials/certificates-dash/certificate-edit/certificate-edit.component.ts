@@ -20,7 +20,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface SlideInDataCertificateEdit {
@@ -49,7 +49,7 @@ export class CertificateEditComponent implements OnInit {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<CertificateEditComponent>,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,

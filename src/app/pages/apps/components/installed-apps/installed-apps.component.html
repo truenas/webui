@@ -1,16 +1,25 @@
 <ng-template #pageHeader>
   <ix-page-title-header [pageTitle]="'Installed' | translate">
     <div *ngIf="hasUpdates" class="global-update">
-      <span>{{ '{n, plural, one {# application} other {# applications} } have pending updates.' | translate: { n: appsUpdateAvailable } }}</span>
+      <span>{{ '{n, plural, one {# available update} other {# available updates} }!' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
-        color="primary"
         ixTest="update-all"
+        class="update-all-button"
         (click)="onBulkUpgrade(true)"
       >
-        {{ 'Update All' | translate }}
+        <ix-icon name="mdi-alert-circle"></ix-icon>
+        <span>{{ 'Update All' | translate }}</span>
       </button>
     </div>
+    <ix-app-settings-button></ix-app-settings-button>
+    <a
+      mat-button
+      color="primary"
+      ixTest="discover-apps"
+      class="discover-apps-button"
+      [routerLink]="['/apps', 'available']"
+    >{{ 'Discover Apps' | translate }}</a>
   </ix-page-title-header>
 </ng-template>
 
@@ -145,7 +154,7 @@
   </div>
 
   <div
-    *ngIf="selectedApp" 
+    *ngIf="selectedApp"
     class="details-container"
     ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"

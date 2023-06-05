@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Optional,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, Optional,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -34,7 +34,7 @@ const generateNewKeyValue = 'GENERATE_NEW_KEY';
   styleUrls: ['./ssh-connection-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SshConnectionFormComponent {
+export class SshConnectionFormComponent implements OnInit {
   form = this.formBuilder.group({
     connection_name: ['', Validators.required],
     setup_method: [SshConnectionsSetupMethod.SemiAutomatic],
@@ -146,6 +146,12 @@ export class SshConnectionFormComponent {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
     @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
   ) { }
+
+  ngOnInit(): void {
+    if (this.existingConnection) {
+      this.setConnectionForEdit();
+    }
+  }
 
   get isManualAuthFormValid(): boolean {
     return this.form.controls.host.valid

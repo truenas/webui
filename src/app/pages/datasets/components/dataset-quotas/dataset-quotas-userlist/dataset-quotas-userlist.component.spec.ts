@@ -11,12 +11,15 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -57,7 +60,7 @@ describe('DatasetQuotasUserlistComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(FormErrorHandlerService),
       mockProvider(WebSocketService),
-      mockProvider(StorageService, {
+      mockProvider(IxFormatterService, {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
       mockProvider(ActivatedRoute, {
@@ -77,6 +80,8 @@ describe('DatasetQuotasUserlistComponent', () => {
         mockCall('pool.dataset.get_quota', fakeUserQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -136,6 +141,8 @@ describe('DatasetQuotasUserlistComponent', () => {
     const [, secondRow] = element.querySelectorAll('.mat-mdc-row');
     (secondRow as HTMLElement).click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetQuotaEditFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      DatasetQuotaEditFormComponent, { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
+    );
   });
 });

@@ -73,7 +73,6 @@
     [fxFlex]="'calc(100% - ' + sidenavWidth + ')'"
     [style.margin-left]="sidenavWidth"
   >
-    <!-- Top Bar -->
     <ix-topbar [sidenav]="sidenav" (sidenavStatusChange)="onSidenavStatusChange($event)"></ix-topbar>
 
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
@@ -111,7 +110,3 @@
 </mat-sidenav-container>
 
 <ix-slide-in id="ix-slide-in-form"></ix-slide-in>
-<!--TODO: delete after ixSlideInService refactoring-->
-<ix-slide-in2 id="ix-slide-in-form2"></ix-slide-in2>
-
-

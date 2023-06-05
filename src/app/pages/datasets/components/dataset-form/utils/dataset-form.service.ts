@@ -20,7 +20,7 @@ export class DatasetFormService {
     private dialog: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ensurePathLimits(parentPath: string): Observable<unknown> {
@@ -33,7 +33,7 @@ export class DatasetFormService {
         this.translate.instant(helptext.pathWarningTitle),
         this.translate.instant(helptext.pathIsTooLongWarning),
       ).pipe(
-        tap(() => this.slideIn.close()),
+        tap(() => this.slideInService.closeLast()),
       );
     }
 
@@ -42,7 +42,7 @@ export class DatasetFormService {
         this.translate.instant(helptext.pathWarningTitle),
         this.translate.instant(helptext.pathIsTooDeepWarning),
       ).pipe(
-        tap(() => this.slideIn.close()),
+        tap(() => this.slideInService.closeLast()),
       );
     }
 

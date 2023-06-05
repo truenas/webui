@@ -22,7 +22,7 @@ export class SyslogCardComponent {
     toLoadingState(),
   );
 
-  readonly syslog$ = this.slideIn.onClose$.pipe(
+  syslog$ = this.slideInService.onClose$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('systemdataset.config')),
     map((config) => config.syslog),
@@ -34,12 +34,12 @@ export class SyslogCardComponent {
   constructor(
     private store$: Store<AppState>,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(SyslogFormComponent);
+    this.slideInService.open(SyslogFormComponent);
   }
 }

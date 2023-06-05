@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,9 +8,10 @@ import { of } from 'rxjs';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbSharesecAceUpdate } from 'app/interfaces/smb-share.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface FormAclEntry {
@@ -27,7 +28,7 @@ interface FormAclEntry {
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmbAclComponent {
+export class SmbAclComponent implements OnInit {
   form = this.formBuilder.group({
     entries: this.formBuilder.array<FormAclEntry>([]),
   });
@@ -61,7 +62,6 @@ export class SmbAclComponent {
 
   readonly helptext = helptextSharingSmb;
 
-  shareName: string;
   private shareAclId: number;
 
   constructor(
@@ -70,14 +70,19 @@ export class SmbAclComponent {
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private validatorService: IxValidatorsService,
-    private slideIn: IxSlideInService,
     private translate: TranslateService,
+    private slideInRef: IxSlideInRef<SmbAclComponent>,
+    @Inject(SLIDE_IN_DATA) public shareName: string,
   ) {}
 
-  setSmbShareName(shareName: string): void {
-    this.shareName = shareName;
+  ngOnInit(): void {
+    if (this.shareName) {
+      this.setSmbShareName();
+    }
+  }
 
-    this.loadSmbAcl(shareName);
+  setSmbShareName(): void {
+    this.loadSmbAcl(this.shareName);
   }
 
   addAce(): void {
@@ -109,7 +114,7 @@ export class SmbAclComponent {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideIn.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;

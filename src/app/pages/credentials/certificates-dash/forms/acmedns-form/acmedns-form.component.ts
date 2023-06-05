@@ -65,7 +65,7 @@ export class AcmednsFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ixSlideInRef: IxSlideInRef<AcmednsFormComponent>,
+    private slideInRef: IxSlideInRef<AcmednsFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
@@ -175,7 +175,7 @@ export class AcmednsFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.ixSlideInRef.close(true);
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;

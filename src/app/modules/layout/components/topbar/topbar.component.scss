@@ -4,6 +4,46 @@
   animation: fa-spin 2s infinite linear;
 }
 
+:host {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 5;
+
+  .topbar-mobile-footer {
+    align-items: center;
+    display: inline-flex;
+    place-content: flex-end;
+    width: inherit;
+
+    @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-min-mobile) {
+      display: flex;
+      flex-wrap: wrap;
+      height: auto;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      background-color: var(--topbar);
+      bottom: 0;
+      height: 48px;
+      left: 0;
+      padding: 0 16px;
+      place-content: space-around;
+      position: fixed;
+      width: 100%;
+    }
+
+    .topbar-button-right {
+      margin: 0;
+
+      @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+        margin: 4px;
+      }
+    }
+
+  }
+}
+
 @keyframes fa-spin {
   0% {
     transform: rotate(0deg);
@@ -85,5 +125,26 @@
     position: absolute;
     top: 10px;
   }
+}
 
+:host ::ng-deep .topbar {
+  min-height: 48px;
+
+  .mat-toolbar-row {
+    height: 48px !important;
+  }
+
+  .mat-icon-button,
+  .mat-icon-button .ix-icon.logo {
+    color: var(--topbar-txt) !important;
+  }
+
+  .mat-mdc-select-value {
+    color: #fff;
+    font-weight: 400;
+  }
+
+  .topbar-button-right {
+    margin-left: 0.5rem !important;
+  }
 }

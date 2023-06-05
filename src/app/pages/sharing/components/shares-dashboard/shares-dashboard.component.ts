@@ -24,6 +24,7 @@ import {
 import {
   AppTableHeaderAction,
 } from 'app/modules/entity/table/table.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -34,7 +35,7 @@ import {
   IscsiService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 enum ShareType {
@@ -141,11 +142,10 @@ export class SharesDashboardComponent implements AfterViewInit {
     if (this.iscsiHasItems) {
       this.iscsiExpandableState = ExpandableTableState.Expanded;
     }
-    this.setupTableRefreshOnPanelClose();
   }
 
-  setupTableRefreshOnPanelClose(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(({ modalType }: ResponseOnClose) => {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       switch (modalType) {
         case SmbFormComponent:
         case SmbAclComponent:
@@ -208,11 +208,12 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           detailsHref: '/sharing/nfs',
           add: () => {
-            this.slideInService.open(NfsFormComponent);
+            const slideInRef = this.slideInService.open(NfsFormComponent);
+            this.handleSlideInClosed(slideInRef, NfsFormComponent);
           },
           edit: (row: NfsShare): void => {
-            const form = this.slideInService.open(NfsFormComponent);
-            form.setNfsShareForEdit(row);
+            const slideInRef = this.slideInService.open(NfsFormComponent, { data: row });
+            this.handleSlideInClosed(slideInRef, NfsFormComponent);
           },
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
@@ -251,12 +252,13 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add: () => {
-            this.slideInService.open(IscsiWizardComponent);
+            const slideInRef = this.slideInService.open(IscsiWizardComponent);
+            this.handleSlideInClosed(slideInRef, IscsiWizardComponent);
           },
           addButtonLabel: this.translate.instant('Wizard'),
           edit: (row: IscsiTarget) => {
-            const targetForm = this.slideInService.open(TargetFormComponent, { wide: true });
-            targetForm.setTargetForEdit(row);
+            const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, TargetFormComponent);
           },
           afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
@@ -300,7 +302,8 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           limitRowsByMaxHeight: true,
           add: () => {
-            this.slideInService.open(SmbFormComponent);
+            const slideInRef = this.slideInService.open(SmbFormComponent);
+            this.handleSlideInClosed(slideInRef, SmbFormComponent);
           },
           edit: (row: SmbShare) => {
             if (this.isClustered) {
@@ -309,8 +312,8 @@ export class SharesDashboardComponent implements AfterViewInit {
                 this.translate.instant('This share is configured through TrueCommand'),
               );
             } else {
-              const form = this.slideInService.open(SmbFormComponent);
-              form.setSmbShareForEdit(row);
+              const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
+              this.handleSlideInClosed(slideInRef, SmbFormComponent);
             }
           },
           afterGetData: (data: SmbShare[]) => {
@@ -347,8 +350,10 @@ export class SharesDashboardComponent implements AfterViewInit {
                         const searchName = row.home ? 'homes' : row.name;
                         this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                           (sharesecs) => {
-                            const form = this.slideInService.open(SmbAclComponent);
-                            form.setSmbShareName(sharesecs[0].share_name);
+                            const slideInRef = this.slideInService.open(SmbAclComponent, {
+                              data: sharesecs[0].share_name,
+                            });
+                            this.handleSlideInClosed(slideInRef, SmbAclComponent);
                           },
                         );
                       }

@@ -15,7 +15,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsCardComponent {
-  taskLimit$ = this.slideIn.onClose$.pipe(
+  taskLimit$ = this.slideInService.onClose$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('replication.config.config')),
     map((config) => config.max_parallel_replication_tasks),
@@ -24,12 +24,12 @@ export class ReplicationSettingsCardComponent {
 
   constructor(
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
   async onConfigurePressed(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideIn.open(ReplicationSettingsFormComponent);
+    this.slideInService.open(ReplicationSettingsFormComponent);
   }
 }

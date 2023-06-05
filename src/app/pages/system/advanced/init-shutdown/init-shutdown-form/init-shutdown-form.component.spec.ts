@@ -10,6 +10,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -44,16 +46,18 @@ describe('InitShutdownFormComponent', () => {
           };
         }),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebsocketService);
-  });
-
   describe('adding new init/shutdown script', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(MockWebsocketService);
+    });
+
     it('saves values for new script when form is being submitted', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -106,15 +110,24 @@ describe('InitShutdownFormComponent', () => {
 
   describe('editing existing init/shutdown script', () => {
     beforeEach(() => {
-      spectator.component.setScriptForEdit({
-        id: 13,
-        comment: 'Existing script',
-        enabled: true,
-        type: InitShutdownScriptType.Script,
-        script: '/mnt/existing.sh',
-        when: InitShutdownScriptWhen.PostInit,
-        timeout: 45,
-      } as InitShutdownScript);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              id: 13,
+              comment: 'Existing script',
+              enabled: true,
+              type: InitShutdownScriptType.Script,
+              script: '/mnt/existing.sh',
+              when: InitShutdownScriptWhen.PostInit,
+              timeout: 45,
+            } as InitShutdownScript,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(MockWebsocketService);
     });
 
     it('shows current group values when form is being edited', async () => {

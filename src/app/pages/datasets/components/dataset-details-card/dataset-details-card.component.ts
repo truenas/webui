@@ -37,7 +37,7 @@ export class DatasetDetailsCardComponent {
     private translate: TranslateService,
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private ws: WebSocketService,
@@ -104,12 +104,16 @@ export class DatasetDetailsCardComponent {
   }
 
   editDataset(): void {
-    const editForm = this.slideIn.open(DatasetFormComponent, { wide: true });
-    editForm.setForEdit(this.dataset.id);
+    const slideInRef = this.slideInService.open(DatasetFormComponent, {
+      wide: true, data: { datasetId: this.dataset.id, isNew: false },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   editZvol(): void {
-    const editZvolComponent = this.slideIn.open(ZvolFormComponent);
-    editZvolComponent.zvolFormInit(false, this.dataset.id);
+    const slideInRef = this.slideInService.open(ZvolFormComponent, {
+      data: { isNew: false, parentId: this.dataset.id },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
   }
 }

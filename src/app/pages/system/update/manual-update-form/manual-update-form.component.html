@@ -21,6 +21,7 @@
         ></ix-file-input>
 
         <ix-select
+          *ngIf="!isHaLicensed"
           formControlName="filelocation"
           [label]="helptext.filelocation.placeholder | translate"
           [tooltip]="helptext.filelocation.tooltip | translate"

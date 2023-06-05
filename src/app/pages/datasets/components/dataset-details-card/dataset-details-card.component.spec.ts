@@ -43,10 +43,6 @@ const zvol = {
 describe('DatasetDetailsCardComponent', () => {
   let spectator: Spectator<DatasetDetailsCardComponent>;
   let loader: HarnessLoader;
-  const fakeSlideInRef = {
-    setForEdit: jest.fn(),
-    zvolFormInit: jest.fn(),
-  };
   const createComponent = createComponentFactory({
     component: DatasetDetailsCardComponent,
     declarations: [
@@ -63,7 +59,7 @@ describe('DatasetDetailsCardComponent', () => {
       }),
       mockProvider(MatSnackBar),
       mockProvider(IxSlideInService, {
-        open: jest.fn(() => fakeSlideInRef),
+        open: jest.fn(),
         onClose$: of(),
       }),
       mockProvider(MatDialog, {
@@ -123,8 +119,10 @@ describe('DatasetDetailsCardComponent', () => {
       const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
       await editButton.click();
 
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetFormComponent, { wide: true });
-      expect(fakeSlideInRef.setForEdit).toHaveBeenCalledWith('pool/child');
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+        DatasetFormComponent,
+        { wide: true, data: { datasetId: 'pool/child', isNew: false } },
+      );
     });
 
     it('opens delete dataset dialog when Delete button is clicked', async () => {
@@ -158,8 +156,10 @@ describe('DatasetDetailsCardComponent', () => {
 
       const editZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Zvol' }));
       await editZvolButton.click();
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ZvolFormComponent);
-      expect(fakeSlideInRef.zvolFormInit).toHaveBeenCalledWith(false, 'pool/child');
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+        ZvolFormComponent,
+        { data: { isNew: false, parentId: 'pool/child' } },
+      );
     });
   });
 
