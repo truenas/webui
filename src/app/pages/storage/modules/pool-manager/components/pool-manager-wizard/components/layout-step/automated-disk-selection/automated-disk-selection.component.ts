@@ -11,10 +11,13 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import {
+  Observable, of,
+} from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
@@ -64,17 +67,46 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     return this.form.controls.sizeAndType.value?.[0];
   }
 
+  get isSizeSelected(): boolean {
+    return !!this.form.value.sizeAndType?.length;
+  }
+
+  get isLayoutSelected(): boolean {
+    return !!this.form.value.layout;
+  }
+
+  get isWidthSelected(): boolean {
+    return !!this.form.value.width;
+  }
+
   get selectedDiskType(): DiskType {
     return this.form.controls.sizeAndType.value?.[1];
   }
 
   ngOnInit(): void {
     this.initControls();
+    this.disableDependentControls();
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.limitLayouts) {
+      this.vdevLayoutOptions$ = of(
+        changes.limitLayouts.currentValue.map(
+          (layout) => ({
+            label: Object.keys(CreateVdevLayout)[Object.values(CreateVdevLayout).indexOf(layout)],
+            value: layout,
+          }),
+        ),
+      );
+      const isChangeLayoutFalse = this.canChangeLayout !== null
+        && this.canChangeLayout !== undefined
+        && !this.canChangeLayout;
+      if (isChangeLayoutFalse && changes.limitLayouts.currentValue.length) {
+        this.form.controls.layout.setValue(changes.limitLayouts.currentValue[0]);
+      }
+      this.updateWidthOptions();
+    }
     this.updateDiskSizeOptions();
-
     // TODO: Set initial values?
   }
 
@@ -87,21 +119,56 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
    * size -> layout -> width -> number
    */
   private initControls(): void {
-    this.form.controls.layout.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.layout.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
+      this.setWidthAndMinDiskSizeDisabled(!this.isSizeSelected || !layout);
+      this.setVdevsNumberDisabled(!this.isSizeSelected || !layout || !this.isWidthSelected);
+
       this.updateWidthOptions();
     });
 
-    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe((sizeAndType) => {
+      this.setWidthAndMinDiskSizeDisabled(!sizeAndType?.length || !this.isLayoutSelected);
+      this.setVdevsNumberDisabled(!sizeAndType?.length || !this.isLayoutSelected || !this.isWidthSelected);
+
       this.updateLayoutOptions();
     });
 
-    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((width) => {
+      if (!this.isSizeSelected || !this.isLayoutSelected || !width) {
+        this.form.controls.vdevsNumber.disable();
+      } else {
+        this.form.controls.vdevsNumber.enable();
+      }
       this.updateNumberOptions();
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateLayout();
     });
+  }
+
+  setVdevsNumberDisabled(disable: boolean): void {
+    if (disable) {
+      this.form.controls.vdevsNumber.disable();
+    } else {
+      this.form.controls.vdevsNumber.enable();
+    }
+  }
+
+  setWidthAndMinDiskSizeDisabled(disable: boolean): void {
+    if (disable) {
+      this.form.controls.width.disable();
+      this.form.controls.treatDiskSizeAsMinimum.disable();
+    } else {
+      this.form.controls.width.enable();
+      this.form.controls.treatDiskSizeAsMinimum.enable();
+    }
+  }
+
+  disableDependentControls(): void {
+    this.form.controls.width.disable();
+    this.form.controls.treatDiskSizeAsMinimum.disable();
+    this.form.controls.vdevsNumber.disable();
   }
 
   private updateLayout(): void {
