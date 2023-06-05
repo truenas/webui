@@ -52,6 +52,7 @@
         type="button"
         class="manual-disk-selection"
         ixTest="manual"
+        [disabled]="!isLayoutSelected"
         (click)="openManualDiskSelection()"
       >
         {{ 'Manual Disk Selection' | translate }}

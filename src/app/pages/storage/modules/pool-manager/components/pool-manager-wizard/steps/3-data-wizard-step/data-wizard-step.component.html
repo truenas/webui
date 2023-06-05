@@ -1,10 +1,12 @@
-<div class="step-description" [innerHTML]="helptext.data_vdev_description">
+<div class="step-description">
+  {{ helptext.data_vdev_description | translate }}
 </div>
 
 <ix-layout-step
   [type]="VdevType.Data"
   [inventory]="inventory$ | async"
   [canChangeLayout]="true"
+  [limitLayouts]="allowedLayouts"
 ></ix-layout-step>
 
 <ix-form-actions>
@@ -26,5 +28,15 @@
     [disabled]="!(hasDataVdevs$ | async)"
   >
     {{ 'Next' | translate }}
+  </button>
+  <button
+    mat-button
+    color="accent"
+    type="button"
+    ixTest="save-ang-go-to-review"
+    [disabled]="!(hasDataVdevs$ | async)"
+    (click)="goToReviewStep()"
+  >
+    {{ 'Save And Go To Review' | translate }}
   </button>
 </ix-form-actions>
