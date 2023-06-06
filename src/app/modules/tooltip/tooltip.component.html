@@ -2,7 +2,7 @@
   <popper-content #popperTooltip class="fn-theme-tooltip">
     <div class="tooltip-header">
       <div class="title-wrapper">
-        <div>
+        <div [ixTest]="['tooltip', 'title']">
           <h5 class="tooltip-title">
             {{ 'Help' | translate }}{{ header ? ': ' : '' }}
             <i>{{ header ? (header | translate) : '' }}</i>
@@ -13,7 +13,7 @@
         <ix-icon
           class="close-icon"
           name="mdi-close"
-          ixTest="close-tooltip"
+          ixTest="tooltip-close"
           (click)="popperTooltip.hide()"
         ></ix-icon>
       </div>
