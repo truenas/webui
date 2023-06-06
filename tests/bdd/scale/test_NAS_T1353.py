@@ -19,8 +19,8 @@ from pytest_dependency import depends
 
 @pytest.mark.dependency(name='App_Catalog')
 @scenario('features/NAS-T1353.feature', 'Apps Page - Validate adding a Catalog')
-def test_apps_page__validate__adding_truecharts():
-    """Apps Page - Validate  adding TrueCharts."""
+def test_apps_page__validate_adding_a_catalog():
+    """Apps Page - Validate adding a Catalog."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -64,7 +64,7 @@ def on_application_page_click_on_the_manage_catalogs_tab(driver):
 @then('click the Add Catalog button and confirm the warning')
 def click_add_catalog_and_confirm_the_warning(driver):
     """click Add Catalog and confirm the warning."""
-    assert wait_on_element(driver, 10, '//div[text()=" OFFICIAL "]')
+    assert wait_on_element(driver, 10, xpaths.applications.default_Catalog_Name)
     assert wait_on_element(driver, 10, xpaths.button.add_Catalog, 'clickable')
     driver.find_element_by_xpath(xpaths.button.add_Catalog).click()
     assert wait_on_element(driver, 7, xpaths.popup.warning)

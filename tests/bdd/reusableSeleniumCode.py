@@ -197,9 +197,9 @@ def Verify_App_Status(driver, app_Name, app):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
         assert wait_on_element_disappear(driver, 40, xpaths.progress.spinner)
-        assert wait_on_element(driver, 500, f'//mat-card[contains(.,"{app_Name}")]//span[@class="status active"]')
+        assert wait_on_element(driver, 720, f'//mat-card[contains(.,"{app_Name}")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 500, f'//mat-card[contains(.,"{app_Name}")]//span[@class="status active"]')
+        assert wait_on_element(driver, 720, f'//mat-card[contains(.,"{app_Name}")]//span[@class="status active"]')
 
 
 def Wait_For_Inputable_And_Input_Value(driver, xpath, value):

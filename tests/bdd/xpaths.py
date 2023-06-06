@@ -62,8 +62,9 @@ class add_User:
     username_Input = '//ix-input[@formcontrolname="username"]//input'
     password_Input = '//ix-input[@formcontrolname="password"]//input'
     confirm_Password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
-    shell_Select = '//ix-combobox[@formcontrolname="shell"]//input'
+    shell_Select = '//ix-select[@formcontrolname="shell"]//mat-select'
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
+    sh_Shell_Option = '//mat-option[contains(.," sh")]'
     sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
     email_Input = '//ix-input[@formcontrolname="email"]//input'
     auxiliary_Groups_Select = '//ix-select[@formcontrolname="groups"]//mat-select'
@@ -112,6 +113,7 @@ class applications:
     title = '//h1[text()="Applications"]'
     available_Applications_Tab = '//div[contains(text(),"Available Applications")]'
     manage_Catalogs_Tab = '//div[contains(text(),"Manage Catalogs")]'
+    default_Catalog_Name = '//div[contains(text(),"TRUENAS")]'
 
     def card(app_name):
         return f'//mat-card[contains(.,"{app_name}")]'

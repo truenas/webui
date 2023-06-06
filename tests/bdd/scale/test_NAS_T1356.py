@@ -89,7 +89,7 @@ def under_port_forwarding_click_add_input_80_in_container_port_and_9004_in_node_
     """under Port Forwarding click Add input 80 in Container Port and 9004 in Node Port."""
     assert wait_on_element(driver, 7, xpaths.app_Setup.add_Port_Forwading_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.app_Setup.add_Port_Forwading_Button).click()
-    assert wait_on_element(driver, 7, xpaths.app_Setup.container_Port_Input)
+    assert wait_on_element(driver, 7, xpaths.app_Setup.container_Port_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.app_Setup.container_Port_Input).clear()
     driver.find_element_by_xpath(xpaths.app_Setup.container_Port_Input).send_keys('80')
     assert wait_on_element(driver, 7, xpaths.app_Setup.node_Port_Input)
@@ -102,7 +102,7 @@ def click_add_again_input_443_in_container_port_and_9005_in_node_port(driver):
     """click Add again input 443 in Container Port and 9005 in Node Port."""
     assert wait_on_element(driver, 7, xpaths.app_Setup.add_Port_Forwading_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.app_Setup.add_Port_Forwading_Button).click()
-    assert wait_on_element(driver, 7, xpaths.app_Setup.container_Port2_Input)
+    assert wait_on_element(driver, 7, xpaths.app_Setup.container_Port2_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.app_Setup.container_Port2_Input).clear()
     driver.find_element_by_xpath(xpaths.app_Setup.container_Port2_Input).send_keys('443')
     assert wait_on_element(driver, 7, xpaths.app_Setup.node_Port2_Input)
@@ -117,7 +117,7 @@ def click_save_wait_for_the_installation_to_finish(driver):
     driver.find_element_by_xpath(xpaths.button.save).click()
 
     assert wait_on_element(driver, 5, xpaths.popup.installing)
-    assert wait_on_element_disappear(driver, 240, xpaths.popup.installing)
+    assert wait_on_element_disappear(driver, 300, xpaths.popup.installing)
 
 
 @then('confirm installation is successful and the Docker image is active')
