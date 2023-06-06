@@ -35,6 +35,11 @@ import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
 import { LogWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
+import { SpareWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/5-spare-wizard-step/spare-wizard-step.component';
+import { CacheWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/6-cache-wizard-step/cache-wizard-step.component';
+import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
+import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
+import { ReviewWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -46,7 +51,6 @@ import { AutomatedDiskSelectionComponent } from './components/pool-manager-wizar
 import { CustomLayoutAppliedComponent } from './components/pool-manager-wizard/components/layout-step/custom-layout-applied/custom-layout-applied.component';
 import { LayoutStepComponent } from './components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolWarningsComponent } from './components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
-import { ReviewStepComponent } from './components/pool-manager-wizard/components/review-step/review-step.component';
 import { EnclosureWizardStepComponent } from './components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/3-data-wizard-step/data-wizard-step.component';
 
@@ -85,8 +89,13 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     EnclosureWrapperComponent,
     DiskInfoComponent,
     ManualSelectionVdevComponent,
+    SpareWizardStepComponent,
+    ReviewWizardStepComponent,
     GeneralWizardStepComponent,
+    CacheWizardStepComponent,
     ManualDiskSelectionComponent,
+    DedupWizardStepComponent,
+    MetadataWizardStepComponent,
     ManualSelectionDisksComponent,
     ManualSelectionDiskFiltersComponent,
     LayoutStepComponent,
@@ -96,7 +105,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
     PoolWarningsComponent,
-    ReviewStepComponent,
     DownloadKeyDialogComponent,
     DownloadKeyDialogOldComponent,
   ],

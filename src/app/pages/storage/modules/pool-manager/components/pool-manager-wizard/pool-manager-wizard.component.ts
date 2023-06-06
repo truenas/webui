@@ -1,7 +1,8 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,6 +29,7 @@ import { SystemGeneralService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
+  @ViewChild('stepper') stepper: MatStepper;
   isLoading$ = this.store.isLoading$;
 
   hasEnclosureStep$ = combineLatest([
@@ -55,6 +57,11 @@ export class PoolManagerWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectToStore();
+  }
+
+  goToLastStep(): void {
+    this.stepper.selectedIndex = this.stepper.steps.length - 1;
+    this.cdr.markForCheck();
   }
 
   createPool(): void {

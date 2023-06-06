@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, Output,
+} from '@angular/core';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @Component({
@@ -8,11 +11,17 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogWizardStepComponent {
+  @Output() goToLastStep = new EventEmitter<void>();
   protected readonly VdevType = VdevType;
+  readonly helptext = helptext;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Log);
-
+  protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
   constructor(
     private store: PoolManagerStore,
   ) {}
+
+  goToReviewStep(): void {
+    this.goToLastStep.emit();
+  }
 }
