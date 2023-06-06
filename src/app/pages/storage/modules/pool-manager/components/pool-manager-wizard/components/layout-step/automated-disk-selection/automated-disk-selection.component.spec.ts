@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { SimpleChange } from '@angular/core';
 import { NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -8,6 +9,7 @@ import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -200,7 +202,14 @@ describe('AutomatedDiskSelection', () => {
     spectator.component.inventory = [...unusedDisks];
     spectator.component.limitLayouts = Object.values(CreateVdevLayout);
     spectator.component.ngOnInit();
-    spectator.component.ngOnChanges();
+
+    const changes: IxSimpleChanges<AutomatedDiskSelectionComponent> = {
+      canChangeLayout: new SimpleChange(null, true, false),
+      type: new SimpleChange(null, VdevType.Data, false),
+      inventory: new SimpleChange(null, [...unusedDisks], false),
+      limitLayouts: new SimpleChange(null, Object.values(CreateVdevLayout), false),
+    } as unknown as IxSimpleChanges<AutomatedDiskSelectionComponent>;
+    spectator.component.ngOnChanges(changes);
   });
 
   it('updates width and vdev options when layout changes to mirror', async () => {
@@ -384,7 +393,10 @@ describe('AutomatedDiskSelection', () => {
   it('limits layout options based on the vdev type', async () => {
     spectator.component.type = VdevType.Log;
     spectator.component.ngOnInit();
-    spectator.component.ngOnChanges();
+    const changes: IxSimpleChanges<AutomatedDiskSelectionComponent> = {
+      type: new SimpleChange(VdevType.Data, VdevType.Log, false),
+    } as unknown as IxSimpleChanges<AutomatedDiskSelectionComponent>;
+    spectator.component.ngOnChanges(changes);
     spectator.detectChanges();
     const layoutSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Layout' }));
     expect(await layoutSelect.getOptionLabels()).toStrictEqual(['Stripe', 'Mirror']);
@@ -404,6 +416,25 @@ describe('AutomatedDiskSelection', () => {
     expect(error).toBeTruthy();
   });
 
+  it('disables dependent fields until they are valid', async () => {
+    const layoutSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Layout' }));
+    const widthSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Width' }));
+    const vdevsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Number of VDEVs' }));
+    const sizeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Disk Size' }));
+
+    expect(await widthSelect.isDisabled()).toBeTruthy();
+    expect(await vdevsSelect.isDisabled()).toBeTruthy();
+    await layoutSelect.setValue('Mirror');
+    expect(await vdevsSelect.isDisabled()).toBeTruthy();
+    expect(await widthSelect.isDisabled()).toBeTruthy();
+    await sizeSelect.setValue('10.91 TiB (HDD)');
+    expect(await widthSelect.isDisabled()).toBeFalsy();
+    expect(await vdevsSelect.isDisabled()).toBeTruthy();
+    await widthSelect.setValue('2');
+    expect(await widthSelect.isDisabled()).toBeFalsy();
+    expect(await vdevsSelect.isDisabled()).toBeFalsy();
+  });
+
   it('saves the topology layout on form updates', async () => {
     const layoutSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Layout' }));
     const widthSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Width' }));
@@ -415,23 +446,25 @@ describe('AutomatedDiskSelection', () => {
       layout: CreateVdevLayout.Mirror,
       diskSize: null,
       diskType: null,
-      width: null,
-      vdevsNumber: null,
-      treatDiskSizeAsMinimum: false,
+      width: undefined,
+      vdevsNumber: undefined,
+      treatDiskSizeAsMinimum: undefined,
     });
 
     await sizeSelect.setValue('10.91 TiB (HDD)');
-    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(3, VdevType.Data, {
+    const checkValues = {
       layout: CreateVdevLayout.Mirror,
       diskSize: 12000138625024,
       diskType: DiskType.Hdd,
-      width: null,
-      vdevsNumber: null,
+      width: null as number,
+      vdevsNumber: undefined as number,
       treatDiskSizeAsMinimum: false,
-    });
+    };
+
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(8, VdevType.Data, checkValues);
 
     await widthSelect.setValue('2');
-    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(5, VdevType.Data, {
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(12, VdevType.Data, {
       layout: CreateVdevLayout.Mirror,
       diskSize: 12000138625024,
       diskType: DiskType.Hdd,
@@ -441,7 +474,7 @@ describe('AutomatedDiskSelection', () => {
     });
 
     await vdevsSelect.setValue('2');
-    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(7, VdevType.Data, {
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(14, VdevType.Data, {
       layout: CreateVdevLayout.Mirror,
       diskSize: 12000138625024,
       diskType: DiskType.Hdd,
@@ -455,7 +488,7 @@ describe('AutomatedDiskSelection', () => {
     );
 
     await treatDiskSizeAsMinimumCheckbox.setValue(true);
-    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(9, VdevType.Data, {
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenNthCalledWith(16, VdevType.Data, {
       layout: CreateVdevLayout.Mirror,
       diskSize: 12000138625024,
       diskType: DiskType.Hdd,
