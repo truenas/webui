@@ -29,6 +29,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
+  @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
 
   isDisabled = false;
   hasErrorInOptions = false;
