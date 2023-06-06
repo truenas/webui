@@ -113,6 +113,7 @@ class applications:
     title = '//h1[text()="Applications"]'
     available_Applications_Tab = '//div[contains(text(),"Available Applications")]'
     manage_Catalogs_Tab = '//div[contains(text(),"Manage Catalogs")]'
+    default_Catalog_Name = '//div[contains(text(),"TRUENAS")]'
 
     def card(app_name):
         return f'//mat-card[contains(.,"{app_name}")]'
