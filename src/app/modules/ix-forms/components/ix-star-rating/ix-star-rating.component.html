@@ -1,0 +1,23 @@
+<ix-label
+  *ngIf="label || tooltip"
+  [label]="label"
+  [tooltip]="tooltip"
+  [required]="required"
+></ix-label>
+
+<div class="star-rating">
+  <div *ngFor="let rating of ratings; index as index">
+    <button
+      mat-icon-button
+      type="button"
+      [disabled]="isDisabled"
+      [ixTest]="[controlDirective.name, index + 1]"
+      (click)="onValueChanged(index + 1)"
+      (blur)="onTouch()"
+    >
+      <ix-icon [name]="value >= index + 1 ? 'mdi-star' : 'mdi-star-outline'"></ix-icon>
+    </button>
+  </div>
+</div>
+
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
