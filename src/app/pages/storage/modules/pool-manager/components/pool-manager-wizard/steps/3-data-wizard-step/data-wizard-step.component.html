@@ -25,7 +25,7 @@
     color="primary"
     type="button"
     ixTest="next"
-    [disabled]="!(hasDataVdevs$ | async)"
+    [disabled]="!hasDataVdevs"
   >
     {{ 'Next' | translate }}
   </button>
@@ -34,7 +34,7 @@
     color="accent"
     type="button"
     ixTest="save-ang-go-to-review"
-    [disabled]="!(hasDataVdevs$ | async)"
+    [disabled]="!hasDataVdevs"
     (click)="goToReviewStep()"
   >
     {{ 'Save And Go To Review' | translate }}
