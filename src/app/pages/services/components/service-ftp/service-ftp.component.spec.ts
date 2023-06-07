@@ -158,7 +158,6 @@ describe('ServiceFtpComponent', () => {
       'Masquerade Address': '192.168.1.110',
       'Display Login': 'Welcome',
       'Auxiliary Parameters': '--test=value',
-
       'Local User Upload Bandwidth: (Examples: 500 KiB, 500M, 2 TB)': '1 MiB',
       'Local User Download Bandwidth': '2 MiB',
       'Anonymous User Upload Bandwidth': '3 MiB',
