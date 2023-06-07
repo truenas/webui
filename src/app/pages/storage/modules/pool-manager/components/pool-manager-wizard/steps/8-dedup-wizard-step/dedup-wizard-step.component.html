@@ -3,7 +3,7 @@
   [type]="VdevType.Dedup"
   [inventory]="inventory$ | async"
   [canChangeLayout]="false"
-  [limitLayouts]="allowedLayouts"
+  [limitLayouts]="dataVdevLayout$ | async"
 ></ix-layout-step>
 
 <ix-form-actions>
