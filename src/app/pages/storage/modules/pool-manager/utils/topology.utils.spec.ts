@@ -1,5 +1,5 @@
 import { GiB } from 'app/constants/bytes.constant';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   PoolManagerTopology,
@@ -8,7 +8,7 @@ import {
 import {
   categoryCapacity,
   topologyCategoryToDisks,
-  topologyToDisks,
+  topologyToDisks, topologyToPayload,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 describe('topologyCategoryToDisks', () => {
@@ -65,5 +65,51 @@ describe('categoryCapacity', () => {
     } as PoolManagerTopologyCategory;
 
     expect(categoryCapacity(category)).toEqual(6 * GiB);
+  });
+});
+
+describe('topologyToPayload', () => {
+  it('converts store topology to websocket payload', () => {
+    const disk1 = { devname: 'ada1' } as UnusedDisk;
+    const disk2 = { devname: 'ada2' } as UnusedDisk;
+    const disk3 = { devname: 'ada3' } as UnusedDisk;
+    const disk4 = { devname: 'ada4' } as UnusedDisk;
+    const disk5 = { devname: 'ada5' } as UnusedDisk;
+    const disk6 = { devname: 'ada6' } as UnusedDisk;
+    const disk7 = { devname: 'ada7' } as UnusedDisk;
+
+    const topology = {
+      [VdevType.Data]: {
+        layout: CreateVdevLayout.Mirror,
+        vdevs: [
+          [disk1, disk2],
+          [disk3, disk4],
+        ],
+      },
+      [VdevType.Log]: {
+        layout: CreateVdevLayout.Stripe,
+        vdevs: [
+          [disk5],
+          [disk6],
+        ],
+      },
+      [VdevType.Spare]: {
+        vdevs: [
+          [disk7],
+        ],
+      },
+    } as PoolManagerTopology;
+
+    expect(topologyToPayload(topology)).toEqual({
+      data: [
+        { type: CreateVdevLayout.Mirror, disks: ['ada1', 'ada2'] },
+        { type: CreateVdevLayout.Mirror, disks: ['ada3', 'ada4'] },
+      ],
+      log: [
+        { type: CreateVdevLayout.Stripe, disks: ['ada5'] },
+        { type: CreateVdevLayout.Stripe, disks: ['ada6'] },
+      ],
+      spares: ['ada7'],
+    });
   });
 });

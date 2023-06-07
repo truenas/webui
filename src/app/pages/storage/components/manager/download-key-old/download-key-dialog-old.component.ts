@@ -13,10 +13,10 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  styleUrls: ['./download-key-dialog.component.scss'],
-  templateUrl: './download-key-dialog.component.html',
+  styleUrls: ['./download-key-dialog-old.component.scss'],
+  templateUrl: './download-key-dialog-old.component.html',
 })
-export class DownloadKeyDialogComponent {
+export class DownloadKeyDialogOldComponent {
   new = false;
   volumeId: number;
   volumeName: string;
@@ -25,7 +25,7 @@ export class DownloadKeyDialogComponent {
   help = helptext;
 
   constructor(
-    public dialogRef: MatDialogRef<DownloadKeyDialogComponent>,
+    public dialogRef: MatDialogRef<DownloadKeyDialogOldComponent>,
     private ws: WebSocketService,
     private storage: StorageService,
     public dialog: DialogService,

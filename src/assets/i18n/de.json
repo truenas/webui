@@ -1754,6 +1754,7 @@
   "Pool Options for {pool}": "",
   "Pool Status": "",
   "Pool contains {status} Data VDEVs": "",
+  "Pool created successfully": "",
   "Pool has been unset.": "",
   "Pool is not healthy": "",
   "Pool is using more than {maxPct}% of available space": "",
