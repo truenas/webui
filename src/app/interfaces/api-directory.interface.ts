@@ -111,7 +111,12 @@ import {
 } from 'app/interfaces/dns-authenticator.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
+import {
+  FailoverConfig,
+  FailoverRemoteCall,
+  FailoverUpdate,
+  FailoverUpgradeParams,
+} from 'app/interfaces/failover.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FilesystemPutParams, FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -502,7 +507,7 @@ export type ApiDirectory = {
   'failover.config': { params: void; response: FailoverConfig };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.upgrade_finish': { params: void; response: boolean };
-  'failover.upgrade': { params: void; response: boolean };
+  'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
 
   // Keychain Credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
@@ -962,6 +967,7 @@ export type ApiDirectory = {
   'update.set_train': { params: [train: string]; response: void };
   'update.download': { params: void; response: boolean };
   'update.update': { params: [UpdateParams]; response: void };
+  'update.file': { params: [{ resume: boolean }?]; response: void };
 
   // ZFS
   'zfs.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };

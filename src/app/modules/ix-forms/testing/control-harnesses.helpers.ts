@@ -12,6 +12,7 @@ import { IxPermissionsHarness } from 'app/modules/ix-forms/components/ix-permiss
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
+import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { JiraOauthHarness } from 'app/modules/ix-forms/testing/jira-oauth.harness';
@@ -33,6 +34,7 @@ export const supportedFormControlSelectors = [
   SchedulerHarness,
   IxIpInputWithNetmaskHarness,
   IxFileInputHarness,
+  IxStarRatingHarness,
 ] as const;
 
 export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;

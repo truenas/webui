@@ -5,6 +5,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
   catchError, EMPTY, forkJoin, map, Observable, of, switchMap,
@@ -65,6 +66,7 @@ export class ReplicationWizardComponent {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   setRowId(id: number): void {
@@ -388,7 +390,19 @@ export class ReplicationWizardComponent {
         }
         return this.createReplication(replicationPayload);
       }),
-      map((createdReplication) => this.createdReplication = createdReplication),
+      map((createdReplication) => {
+        if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
+          this.ws.call('replication.run', [createdReplication.id]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.info(
+              this.translate.instant('Task started'),
+              this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),
+              true,
+            );
+          });
+        }
+
+        return this.createdReplication = createdReplication;
+      }),
     );
   }
 }

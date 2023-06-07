@@ -72,6 +72,7 @@
   z-index: 99;
 
   @media (max-width: $breakpoint-xs) {
+    display: block;
     margin: 0 9px;
     top: 0;
   }

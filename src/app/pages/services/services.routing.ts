@@ -4,7 +4,6 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceFtpComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from './components/service-lldp/service-lldp.component';
-import { ServiceRsyncComponent } from './components/service-rsync/service-rsync.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from './components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from './components/service-snmp/service-snmp.component';
@@ -31,22 +30,6 @@ export const routes: Routes = [
     data: { title: 'LLDP', breadcrumb: 'LLDP' },
     path: 'lldp',
     component: ServiceLldpComponent,
-  },
-  {
-    data: { title: 'Rsync', breadcrumb: 'Rsync' },
-    path: 'rsync',
-    children: [
-      {
-        path: '',
-        redirectTo: 'configure',
-        pathMatch: 'full',
-      },
-      {
-        path: ':pk',
-        component: ServiceRsyncComponent,
-        data: { title: 'Rsync', breadcrumb: 'Rsync' },
-      },
-    ],
   },
   {
     data: { title: 'S.M.A.R.T.', breadcrumb: 'S.M.A.R.T.' },

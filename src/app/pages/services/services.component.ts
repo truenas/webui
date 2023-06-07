@@ -72,6 +72,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
       map((services) => {
         const transformed = services
+          .filter((service) => serviceNames.has(service.service))
           .filter((service) => !this.hiddenServices.includes(service.service))
           .map((service) => {
             return {

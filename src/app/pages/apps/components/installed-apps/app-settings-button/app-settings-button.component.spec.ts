@@ -7,22 +7,24 @@ import { of } from 'rxjs';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
-import { AppsToolbarButtonsComponent } from 'app/pages/apps/components/available-apps/apps-toolbar-buttons/apps-toolbar-buttons.component';
+import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('AppsToolbarButtonsComponent', () => {
-  let spectator: Spectator<AppsToolbarButtonsComponent>;
+describe('AppSettingsButtonComponent', () => {
+  let spectator: Spectator<AppSettingsButtonComponent>;
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
 
   const createComponent = createComponentFactory({
-    component: AppsToolbarButtonsComponent,
+    component: AppSettingsButtonComponent,
     providers: [
       mockProvider(MatDialog),
       mockProvider(IxSlideInService),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
       }),
@@ -62,10 +64,5 @@ describe('AppsToolbarButtonsComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Confirm to unset pool?',
     }));
-  });
-
-  it('shows Custom App button which will navigate to ix-chart install page', () => {
-    const link = spectator.query('a[href="/apps/available/TRUENAS/charts/ix-chart/install"]');
-    expect(link).toHaveText('Custom App');
   });
 });
