@@ -1,13 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  map, combineLatest,
+  map, combineLatest, timer,
 } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { startWith, switchMap, tap } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -22,6 +22,8 @@ import { DialogService, WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralWizardStepComponent implements OnInit {
+  @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
+
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
     encryption: [false],
@@ -48,6 +50,11 @@ export class GeneralWizardStepComponent implements OnInit {
 
     this.initEncryptionField();
     this.connectGeneralOptionsToStore();
+
+    this.form.statusChanges.pipe(
+      switchMap(() => timer(0)),
+      tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
+    ).pipe(untilDestroyed(this)).subscribe();
   }
 
   private initEncryptionField(): void {

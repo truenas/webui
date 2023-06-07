@@ -10,6 +10,7 @@
   <div class="input-container" [class.disabled]="disabledState">
     <mat-select
       [required]="required"
+      [compareWith]="compareWith"
       [disabled]="disabledState"
       [multiple]="multiple"
       [ixTest]="controlDirective.name"

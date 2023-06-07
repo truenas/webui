@@ -392,15 +392,13 @@ export class ReplicationWizardComponent {
       }),
       map((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          this.ws.call('replication.run', [createdReplication.id]).toPromise().then(
-            () => {
-              this.dialogService.info(
-                this.translate.instant('Task started'),
-                this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),
-                true,
-              );
-            },
-          );
+          this.ws.call('replication.run', [createdReplication.id]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.info(
+              this.translate.instant('Task started'),
+              this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),
+              true,
+            );
+          });
         }
 
         return this.createdReplication = createdReplication;
