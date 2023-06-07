@@ -31,7 +31,7 @@
         [multiple]="true"
         [required]="true"
         [root]="isRemoteSource ? '' : mntPath"
-        [nodeProvider]="isRemoteSource ? remoteSourceNodeProvider : fileNodeProvider"
+        [nodeProvider]="isRemoteSource ? remoteSourceNodeProvider : datasetNodeProvider"
       ></ix-explorer>
 
       <ix-checkbox
@@ -92,7 +92,7 @@
         [tooltip]="helptext.target_dataset_tooltip | translate"
         [required]="true"
         [root]="isRemoteTarget ? '' : mntPath"
-        [nodeProvider]="isRemoteTarget ? remoteTargetNodeProvider : fileNodeProvider"
+        [nodeProvider]="isRemoteTarget ? remoteTargetNodeProvider : datasetNodeProvider"
       ></ix-explorer>
       <ix-checkbox
         *ngIf="form.controls.encryption.enabled"

@@ -34,7 +34,7 @@ import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/r
 import {
   DialogService, KeychainCredentialService, ReplicationService, WebSocketService,
 } from 'app/services';
-import { FilesystemService } from 'app/services/filesystem.service';
+import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -48,7 +48,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   @Output() customRetentionVisibleChange = new EventEmitter<boolean>();
 
-  readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly datasetNodeProvider = this.datasetService.getDatasetNodeProvider();
   remoteSourceNodeProvider: TreeNodeProvider;
   remoteTargetNodeProvider: TreeNodeProvider;
   readonly helptext = helptext;
@@ -136,7 +136,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private keychainCredentialService: KeychainCredentialService,
     private datePipe: DatePipe,
     private translate: TranslateService,
-    private filesystemService: FilesystemService,
+    private datasetService: DatasetService,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private matDialog: MatDialog,

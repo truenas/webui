@@ -11,7 +11,6 @@ export interface FileRecord {
   size: number;
   type: FileType;
   uid: number;
-  is_mountpoint?: boolean;
 }
 
 export type ListdirQueryParams = [

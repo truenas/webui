@@ -39,12 +39,11 @@ export class FilesystemService {
       ).pipe(
         map((files) => {
           const children: ExplorerNodeData[] = [];
-          files.forEach((file: FileRecord) => {
-            if (file.type === FileType.Symlink || !file.hasOwnProperty('name') || !file.is_mountpoint) {
-              return;
-            }
-
-            if (!options.showHiddenFiles && file.name.startsWith('.')) {
+          files.forEach((file) => {
+            if (
+              (file.type === FileType.Symlink || !file.hasOwnProperty('name'))
+              || (!options.showHiddenFiles && file.name.startsWith('.'))
+            ) {
               return;
             }
 
