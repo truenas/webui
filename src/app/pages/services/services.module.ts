@@ -24,10 +24,6 @@ import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/s
 import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { RsyncConfigureComponent } from 'app/pages/services/components/service-rsync/rsync-configure/rsync-configure.component';
-import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
-import { RsyncModuleListComponent } from 'app/pages/services/components/service-rsync/rsync-module-list/rsync-module-list.component';
-import { ServiceRsyncComponent } from 'app/pages/services/components/service-rsync/service-rsync.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
@@ -67,10 +63,6 @@ import { routing } from './services.routing';
     ServiceSshComponent,
     ServiceFtpComponent,
     ServiceLldpComponent,
-    ServiceRsyncComponent,
-    RsyncConfigureComponent,
-    RsyncModuleListComponent,
-    RsyncModuleFormComponent,
     ServiceSmartComponent,
     ServiceNfsComponent,
     ServiceUpsComponent,

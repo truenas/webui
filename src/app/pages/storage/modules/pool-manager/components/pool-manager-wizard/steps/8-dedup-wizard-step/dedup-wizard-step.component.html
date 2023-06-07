@@ -1,0 +1,42 @@
+<div class="step-description">
+  {{ helptext.dedup_vdev_description | translate }}
+</div>
+
+<ix-layout-step
+  [type]="VdevType.Dedup"
+  [inventory]="inventory$ | async"
+  [canChangeLayout]="false"
+  [limitLayouts]="allowedLayouts"
+></ix-layout-step>
+
+<ix-form-actions>
+  <button
+    mat-button
+    matStepperPrevious
+    color="accent"
+    type="button"
+    ixTest="back"
+  >
+    {{ 'Back' | translate }}
+  </button>
+  <button
+    mat-button
+    matStepperNext
+    color="primary"
+    type="button"
+    ixTest="next"
+  >
+    {{ 'Next' | translate }}
+  </button>
+
+  <button
+    mat-button
+    color="accent"
+    type="button"
+    ixTest="save-ang-go-to-review"
+    (click)="goToReviewStep()"
+  >
+    {{ 'Save And Go To Review' | translate }}
+  </button>
+</ix-form-actions>
+

@@ -18,9 +18,6 @@ import {
   DownloadKeyDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import {
-  ReviewStepComponent,
-} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/review-step/review-step.component';
-import {
   PoolManagerWizardComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import {
@@ -35,8 +32,21 @@ import {
 import {
   LogWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
+import {
+  SpareWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/5-spare-wizard-step/spare-wizard-step.component';
+import {
+  CacheWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/6-cache-wizard-step/cache-wizard-step.component';
+import {
+  MetadataWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
+import {
+  DedupWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { SystemGeneralService } from 'app/services';
+import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-wizard-step.component';
 
 describe('PoolManagerWizardComponent', () => {
   let spectator: Spectator<PoolManagerWizardComponent>;
@@ -86,7 +96,11 @@ describe('PoolManagerWizardComponent', () => {
         EnclosureWizardStepComponent,
         DataWizardStepComponent,
         LogWizardStepComponent,
-        ReviewStepComponent,
+        SpareWizardStepComponent,
+        CacheWizardStepComponent,
+        MetadataWizardStepComponent,
+        DedupWizardStepComponent,
+        ReviewWizardStepComponent,
       ),
     ],
     providers: [
@@ -131,18 +145,27 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   it('always shows steps: General, Data, Log, Spare, Cache, Metadata, Review', async () => {
-    // TODO: Check for components once they are added.
     const steps = await wizard.getSteps();
     const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
     expect(stepLabels).toEqual([
       'General Info',
       'Data',
-      'Log',
-      'Spare',
-      'Cache',
-      'Metadata',
+      'Log (Optional)',
+      'Spare (Optional)',
+      'Cache (Optional)',
+      'Metadata (Optional)',
+      'Dedup (Optional)',
       'Review',
     ]);
+
+    expect(spectator.query(GeneralWizardStepComponent)).toExist();
+    expect(spectator.query(EnclosureWizardStepComponent)).not.toExist();
+    expect(spectator.query(DataWizardStepComponent)).toExist();
+    expect(spectator.query(LogWizardStepComponent)).toExist();
+    expect(spectator.query(SpareWizardStepComponent)).toExist();
+    expect(spectator.query(CacheWizardStepComponent)).toExist();
+    expect(spectator.query(MetadataWizardStepComponent)).toExist();
+    expect(spectator.query(DedupWizardStepComponent)).toExist();
   });
 
   it('shows an extra Enclosure Options step for enteprise systems with multiple enclosures', async () => {
@@ -154,12 +177,14 @@ describe('PoolManagerWizardComponent', () => {
       'General Info',
       'Enclosure Options',
       'Data',
-      'Log',
-      'Spare',
-      'Cache',
-      'Metadata',
+      'Log (Optional)',
+      'Spare (Optional)',
+      'Cache (Optional)',
+      'Metadata (Optional)',
+      'Dedup (Optional)',
       'Review',
     ]);
+    expect(spectator.query(EnclosureWizardStepComponent)).toExist();
   });
 
   describe('creating a pool', () => {

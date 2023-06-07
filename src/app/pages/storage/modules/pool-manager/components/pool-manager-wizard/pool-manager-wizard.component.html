@@ -1,95 +1,57 @@
 <mat-card class="card">
   <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   <form (keydown.enter)="$event.preventDefault()">
-    <mat-vertical-stepper [linear]="isLoading$ | async">
-      <mat-step>
+    <mat-vertical-stepper #stepper [linear]="true" (selectionChange)="stepChanged($event)">
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
-        <ix-general-wizard-step></ix-general-wizard-step>
+        <ix-general-wizard-step
+          (stepStatusValidityChanged)="stepValidityChanged($event)"
+        ></ix-general-wizard-step>
       </mat-step>
-      <mat-step *ngIf="hasEnclosureStep$ | async">
+
+      <mat-step *ngIf="hasEnclosureStep$ | async" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
-        <ix-enclosure-wizard-step></ix-enclosure-wizard-step>
+        <ix-enclosure-wizard-step
+          (stepStatusValidityChanged)="stepValidityChanged($event)"
+        ></ix-enclosure-wizard-step>
       </mat-step>
-      <mat-step>
+
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
-        <ix-data-wizard-step></ix-data-wizard-step>
+        <ix-data-wizard-step
+          [hasDataVdevs]="hasDataVdevs"
+          (goToLastStep)="goToLastStep()"
+        ></ix-data-wizard-step>
       </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Log' | translate }}</ng-template>
-        <ix-log-wizard-step></ix-log-wizard-step>
+
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+        <ng-template matStepLabel>{{ 'Log (Optional)' | translate }}</ng-template>
+        <ix-log-wizard-step (goToLastStep)="goToLastStep()"></ix-log-wizard-step>
       </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Spare' | translate }}</ng-template>
-        <div class="step-buttons">
-          <button
-            mat-button
-            matStepperPrevious
-            color="accent"
-            type="button"
-            ixTest="back"
-          >
-            {{ 'Back' | translate }}
-          </button>
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-          >
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+        <ng-template matStepLabel>{{ 'Spare (Optional)' | translate }}</ng-template>
+        <ix-spare-wizard-step (goToLastStep)="goToLastStep()"></ix-spare-wizard-step>
       </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Cache' | translate }}</ng-template>
-        <div class="step-buttons">
-          <button
-            mat-button
-            matStepperPrevious
-            color="accent"
-            type="button"
-            ixTest="back"
-          >
-            {{ 'Back' | translate }}
-          </button>
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-          >
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+        <ng-template matStepLabel>{{ 'Cache (Optional)' | translate }}</ng-template>
+        <ix-cache-wizard-step (goToLastStep)="goToLastStep()"></ix-cache-wizard-step>
       </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
-        <div class="step-buttons">
-          <button
-            mat-button
-            matStepperPrevious
-            color="accent"
-            type="button"
-            ixTest="back"
-          >
-            {{ 'Back' | translate }}
-          </button>
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-          >
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+        <ng-template matStepLabel>{{ 'Metadata (Optional)' | translate }}</ng-template>
+        <ix-metadata-wizard-step (goToLastStep)="goToLastStep()"></ix-metadata-wizard-step>
       </mat-step>
-      <mat-step>
+
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+        <ng-template matStepLabel>{{ 'Dedup (Optional)' | translate }}</ng-template>
+        <ix-dedup-wizard-step (goToLastStep)="goToLastStep()"></ix-dedup-wizard-step>
+      </mat-step>
+
+      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
-        <ix-review-step></ix-review-step>
+        <ix-review-wizard-step></ix-review-wizard-step>
         <div class="step-buttons">
           <button
             mat-button

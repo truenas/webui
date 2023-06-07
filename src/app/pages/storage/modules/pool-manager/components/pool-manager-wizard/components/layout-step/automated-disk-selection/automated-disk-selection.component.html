@@ -3,7 +3,7 @@
     <ix-select
       formControlName="layout"
       [label]="'Layout' | translate"
-      [tooltip]="'Select VDEV layout' | translate"
+      [tooltip]="'Select VDEV layout. This is the first step in setting up your Vdevs.' | translate"
       [options]="vdevLayoutOptions$"
       [required]="true"
     ></ix-select>
@@ -17,38 +17,42 @@
         [tooltip]="'Select a disk size from inventory' | translate"
         [options]="diskSizeAndTypeOptions$"
         [required]="true"
+        [compareWith]="compareSizeAndTypeWith"
       ></ix-select>
-      <ix-select
-        formControlName="width"
-        [label]="'Width' | translate"
-        [tooltip]="'Select VDEV width' | translate"
-        [options]="widthOptions$"
-        [required]="true"
-      ></ix-select>
+      <div *ngIf="!!form.value.sizeAndType?.length">
+        <ix-select
+          formControlName="width"
+          [label]="'Width' | translate"
+          [tooltip]="'Select VDEV width' | translate"
+          [options]="widthOptions$"
+          [required]="true"
+        ></ix-select>
 
-      <ix-checkbox
-        formControlName="treatDiskSizeAsMinimum"
-        [label]="'Treat Disk Size as Minimum' | translate"
-      ></ix-checkbox>
+        <ix-checkbox
+          formControlName="treatDiskSizeAsMinimum"
+          [label]="'Treat Disk Size as Minimum' | translate"
+        ></ix-checkbox>
 
-      <ix-select
-        formControlName="vdevsNumber"
-        [label]="'Number of VDEVs' | translate"
-        [tooltip]="'Number of VDEVs to create' | translate"
-        [options]="numberOptions$"
-        [required]="true"
-      ></ix-select>
+        <ix-select
+          formControlName="vdevsNumber"
+          [label]="'Number of VDEVs' | translate"
+          [tooltip]="'Number of VDEVs to create' | translate"
+          [options]="numberOptions$"
+          [required]="true"
+        ></ix-select>
+      </div>
     </div>
     <div class="advanced-options-container">
       <h3>{{ 'Advanced Options' | translate }}</h3>
 
-      <p><!-- TODO: Add description of manual disk selection. --></p>
+      <p>{{ 'Manual disk selection allows you to create VDevs and add disks to those VDevs individually.' | translate }}</p>
 
       <button
         mat-button
         type="button"
         class="manual-disk-selection"
         ixTest="manual"
+        [disabled]="!isLayoutSelected"
         (click)="openManualDiskSelection()"
       >
         {{ 'Manual Disk Selection' | translate }}
