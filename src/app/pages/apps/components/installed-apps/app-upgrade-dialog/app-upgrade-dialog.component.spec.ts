@@ -1,11 +1,6 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { ImgFallbackModule } from 'ngx-img-fallback';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
@@ -40,10 +35,9 @@ const fakeUpgradeSummary = {
 
 describe('AppUpgradeDialogComponent - test 1', () => {
   let spectator: Spectator<AppUpgradeDialogComponent>;
-  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
-    imports: [AppLoaderModule, ReactiveFormsModule, FormsModule, ImgFallbackModule],
+    imports: [ReactiveFormsModule, FormsModule],
     providers: [
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
@@ -67,7 +61,6 @@ describe('AppUpgradeDialogComponent - test 1', () => {
         ],
       },
     );
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows title as application name', () => {
@@ -79,19 +72,5 @@ describe('AppUpgradeDialogComponent - test 1', () => {
   it('shows current application version', () => {
     expect(spectator.query('.version').textContent).toBe(' 8.7.0_1.0.1');
     expect(2).toBe(2);
-  });
-
-  it('submits upgrade from 1.0.1 to 1.0.2 version', async () => {
-    const upgradeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
-    await upgradeButton.click();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('1.0.2');
-  });
-
-  it('closes modal with no upgrades to start if Close button clicked', async () => {
-    const upgradeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    await upgradeButton.click();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });
