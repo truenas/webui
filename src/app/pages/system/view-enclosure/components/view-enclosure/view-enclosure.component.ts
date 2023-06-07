@@ -19,7 +19,7 @@ import { DisksUpdateService } from 'app/services/disks-update.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
-import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +45,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   selectedEnclosure: EnclosureMetadata;
   views: ViewConfig[] = [];
   spinner = true;
-
+  isIxHardware = false;
   supportedHardware = false;
 
   get showEnclosureSelector(): boolean {
@@ -60,7 +60,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return (this.system.getShelfCount() > 0);
   }
 
-  systemManufacturer: string;
   private _systemProduct: string;
   get systemProduct(): string {
     return this._systemProduct;
@@ -129,12 +128,17 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       .subscribe((sysInfo) => {
         if (!this.systemProduct) {
           this.systemProduct = sysInfo.system_product;
-          this.systemManufacturer = sysInfo.system_manufacturer.toLowerCase();
         }
       });
 
     this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((systemFeatures) => {
       this.supportedHardware = systemFeatures.enclosure;
+    });
+
+    this.store$.select(selectIsIxHardware).pipe(
+      untilDestroyed(this),
+    ).subscribe((isIxHardware) => {
+      this.isIxHardware = isIxHardware;
     });
   }
 

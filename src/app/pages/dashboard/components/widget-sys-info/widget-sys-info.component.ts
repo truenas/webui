@@ -28,7 +28,9 @@ import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
-import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import {
+  selectHasOnlyMissmatchVersionsReason, selectHaStatus, selectIsIxHardware, waitForSystemInfo,
+} from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +65,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   productEnclosure = ''; // rackmount || tower
   certified = false;
   updateAvailable = false;
-  manufacturer = '';
+  isIxHardware = false;
   buildDate: string;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
@@ -147,6 +149,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         this.checkForRunningUpdate();
       });
     }
+
+    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
+      this.isIxHardware = isIxHardware;
+      this.setProductImage();
+    });
   }
 
   checkForRunningUpdate(): void {
@@ -230,15 +237,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
 
-    // PLATFORM INFO
-    if (this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() === 'ixsystems') {
-      this.manufacturer = 'ixsystems';
-    } else {
-      this.manufacturer = 'other';
-    }
-
     // PRODUCT IMAGE
-    this.setProductImage(systemInfo);
+    this.setProductImage();
 
     this.parseUptime();
     this.ready = true;
@@ -282,15 +282,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     return result;
   }
 
-  setProductImage(data: SystemInfo): void {
-    if (this.manufacturer !== 'ixsystems') return;
+  setProductImage(): void {
+    if (!this.isIxHardware) return;
 
-    if (data.system_product.includes('MINI')) {
-      this.setMiniImage(data.system_product);
-    } else if (data.system_product.includes('CERTIFIED')) {
+    if (this.data.system_product.includes('MINI')) {
+      this.setMiniImage(this.data.system_product);
+    } else if (this.data.system_product.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      const product = this.productImgServ.getServerProduct(data.system_product);
+      const product = this.productImgServ.getServerProduct(this.data.system_product);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
       this.productModel = product || '';
       this.productEnclosure = 'rackmount';
