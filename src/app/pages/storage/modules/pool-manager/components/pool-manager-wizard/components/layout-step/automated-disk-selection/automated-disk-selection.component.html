@@ -19,7 +19,13 @@
         [required]="true"
         [compareWith]="compareSizeAndTypeWith"
       ></ix-select>
-      <div *ngIf="!!form.value.sizeAndType?.length">
+
+      <ix-checkbox
+        formControlName="treatDiskSizeAsMinimum"
+        [label]="'Treat Disk Size as Minimum' | translate"
+      ></ix-checkbox>
+
+      <ng-container *ngIf="!!form.value.sizeAndType?.length">
         <ix-select
           formControlName="width"
           [label]="'Width' | translate"
@@ -28,11 +34,6 @@
           [required]="true"
         ></ix-select>
 
-        <ix-checkbox
-          formControlName="treatDiskSizeAsMinimum"
-          [label]="'Treat Disk Size as Minimum' | translate"
-        ></ix-checkbox>
-
         <ix-select
           formControlName="vdevsNumber"
           [label]="'Number of VDEVs' | translate"
@@ -40,7 +41,7 @@
           [options]="numberOptions$"
           [required]="true"
         ></ix-select>
-      </div>
+      </ng-container>
     </div>
     <div class="advanced-options-container">
       <h3>{{ 'Advanced Options' | translate }}</h3>

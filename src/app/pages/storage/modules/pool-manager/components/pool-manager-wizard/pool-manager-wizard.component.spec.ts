@@ -18,9 +18,6 @@ import {
   DownloadKeyDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import {
-  ReviewStepComponent,
-} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/review-step/review-step.component';
-import {
   PoolManagerWizardComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import {
@@ -35,6 +32,9 @@ import {
 import {
   LogWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
+import {
+  ReviewWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { SystemGeneralService } from 'app/services';
 
@@ -43,11 +43,11 @@ describe('PoolManagerWizardComponent', () => {
   let loader: HarnessLoader;
   let wizard: MatStepperHarness;
   let store: PoolManagerStore;
-  const hasMultipleEnclosures$ = new BehaviorSubject(false);
+  const hasMultipleEnclosuresInAllowedDisks$ = new BehaviorSubject(false);
   const state = {
     name: 'pewl',
     encryption: undefined,
-    diskOptions: {
+    diskSettings: {
       allowNonUniqueSerialDisks: true,
     },
     topology: {
@@ -86,13 +86,13 @@ describe('PoolManagerWizardComponent', () => {
         EnclosureWizardStepComponent,
         DataWizardStepComponent,
         LogWizardStepComponent,
-        ReviewStepComponent,
+        ReviewWizardStepComponent,
       ),
     ],
     providers: [
       mockProvider(PoolManagerStore, {
         initialize: jest.fn(),
-        hasMultipleEnclosures$: hasMultipleEnclosures$.asObservable(),
+        hasMultipleEnclosuresInAllowedDisks$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
       }),
       mockProvider(SystemGeneralService, {
@@ -145,8 +145,8 @@ describe('PoolManagerWizardComponent', () => {
     ]);
   });
 
-  it('shows an extra Enclosure Options step for enteprise systems with multiple enclosures', async () => {
-    hasMultipleEnclosures$.next(true);
+  it('shows an extra Enclosure Options step for enteprise systems with multiple enclosures in allowed disks', async () => {
+    hasMultipleEnclosuresInAllowedDisks$.next(true);
 
     const steps = await wizard.getSteps();
     const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));

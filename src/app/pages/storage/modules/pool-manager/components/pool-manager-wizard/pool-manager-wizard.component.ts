@@ -35,7 +35,7 @@ export class PoolManagerWizardComponent implements OnInit {
   isLoading$ = this.store.isLoading$;
 
   hasEnclosureStep$ = combineLatest([
-    this.store.hasMultipleEnclosures$,
+    this.store.hasMultipleEnclosuresInAllowedDisks$,
     this.systemService.isEnterprise$,
   ]).pipe(
     map(([hasMultipleEnclosures, isEnterprise]) => hasMultipleEnclosures && isEnterprise),
@@ -125,7 +125,7 @@ export class PoolManagerWizardComponent implements OnInit {
     const payload: CreatePool = {
       name: this.state.name,
       topology: topologyToPayload(this.state.topology),
-      allow_duplicate_serials: this.state.diskOptions.allowNonUniqueSerialDisks,
+      allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
       encryption: this.hasEncryption,
     };
 
