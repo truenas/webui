@@ -48,7 +48,7 @@ describe('SysInfoComponent', () => {
       'Model:': systemInfo.model,
       'OS Version:': systemInfo.version,
       'Product:': systemInfo.system_product,
-      'Serial Number:': systemInfo.system_serial,
+      'System Serial:': systemInfo.system_serial,
     });
   });
 
