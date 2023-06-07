@@ -9,6 +9,17 @@
     <ix-icon name="clear"></ix-icon>
   </button>
 
+  <div class="file-ticket-helper">
+    <span>{{ 'Submitting a bug?' | translate }}</span>
+    <span>{{ 'Use' | translate }}</span>
+    <a
+      class="file-ticket-link"
+      ixTest="file-ticket"
+      (click)="openFileTicketForm()"
+    >{{ 'File Ticket' | translate }}</a>
+    <span>{{ 'form instead' | translate }}.</span>
+  </div>
+
   <form [formGroup]="form">
     <ix-star-rating
       formControlName="rating"
@@ -23,17 +34,6 @@
       [placeholder]="'Share your thoughts on our product\'s features, usability, or any suggestions for improvement.' | translate"
     ></ix-textarea>
   </form>
-
-  <div class="file-ticket-helper">
-    <span>{{ 'Submitting a bug?' | translate }}</span>&nbsp;
-    <span>{{ 'Use' | translate }}</span>
-    <button
-      mat-flat-button
-      ixTest="file-ticket"
-      (click)="openFileTicketForm()"
-    >{{ 'File Ticket' | translate }}</button>
-    <span>{{ 'form instead' | translate }}.</span>
-  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions>

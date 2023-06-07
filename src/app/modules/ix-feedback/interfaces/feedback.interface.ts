@@ -3,6 +3,20 @@ export enum FeedbackEnvironment {
   Development = 'development',
 }
 
+export interface Review {
+  id: string;
+  url: string;
+  date_created: string;
+  message: string;
+  user_agent: string;
+  environment: FeedbackEnvironment;
+  rating: string;
+  release: string;
+  extra: object;
+  host_u_id: string;
+  attachments: string[];
+}
+
 export interface AddReview {
   rating: number;
   page: string;
@@ -26,25 +40,4 @@ export interface AttachmentAddedResponse {
     filename: string;
     id: number;
   };
-}
-
-export interface Review {
-  id: string;
-  url: string;
-  date_created: string;
-  message: string;
-  user_agent: string;
-  environment: FeedbackEnvironment;
-  rating: string;
-  release: string;
-  extra: object;
-  host_u_id: string;
-  attachments: string[];
-}
-
-export interface ReviewsResponse {
-  draw: number;
-  recordsTotal: number;
-  recordsFiltered: number;
-  data: Review[];
 }

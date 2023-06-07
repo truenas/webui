@@ -26,21 +26,16 @@ export const maxRatingValue = 5;
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-feedback-dialog',
   templateUrl: './feedback-dialog.component.html',
   styleUrls: ['./feedback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeedbackDialogComponent implements OnInit {
   protected form = this.formBuilder.group({
-    rating: [0, [Validators.required, rangeValidator(1, maxRatingValue)]],
+    rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
-    release: [''],
-    environment: [FeedbackEnvironment.Development],
-    host_u_id: [UUID.UUID()],
-    page: [this.window.location.href],
-    user_agent: [this.window.navigator.userAgent],
   });
+  private release: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -60,8 +55,8 @@ export class FeedbackDialogComponent implements OnInit {
       waitForSystemInfo,
       take(1),
       untilDestroyed(this),
-    ).subscribe(({ version: release }) => {
-      this.form.patchValue({ release });
+    ).subscribe(({ version }) => {
+      this.release = version;
     });
   }
 
@@ -73,7 +68,11 @@ export class FeedbackDialogComponent implements OnInit {
   onSubmit(): void {
     const values: AddReview = {
       ...this.form.getRawValue(),
+      host_u_id: UUID.UUID(),
+      page: this.window.location.href,
+      user_agent: this.window.navigator.userAgent,
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
+      release: this.release,
     };
 
     this.feedbackService.addReview(values)

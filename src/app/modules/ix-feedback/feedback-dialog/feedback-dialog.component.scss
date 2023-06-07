@@ -17,4 +17,11 @@
 .file-ticket-helper {
   align-items: baseline;
   display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.file-ticket-link {
+  color: var(--primary);
+  cursor: pointer;
 }
