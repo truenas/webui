@@ -1,8 +1,5 @@
-<div class="step-description">
-  {{ helptext.data_vdev_description | translate }}
-</div>
-
 <ix-layout-step
+  [description]="helptext.data_vdev_description | translate"
   [type]="VdevType.Data"
   [inventory]="inventory$ | async"
   [canChangeLayout]="true"

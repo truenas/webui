@@ -1,7 +1,6 @@
 {
   "": "",
   " Est. Usable Capacity": "",
-  "(Optional) ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   ", ": "",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Ctrl+C</i>.": "",
   "ACL Types & ACL Modes": "",
@@ -218,6 +217,7 @@
   "Warning: There are {n} disks available that have non-unique serial numbers.\n        Non-unique serial numbers can be caused by a cabling issue and\n        adding such disks to a pool can result in lost data.": "",
   "Windows": "",
   "Wizard iSCSI": "",
+  "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "Zvol «{name}» updated.": "",
   "form instead": "",
   "last run {date}": "",
