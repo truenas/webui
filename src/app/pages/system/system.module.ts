@@ -45,6 +45,7 @@ import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-card/global-two-factor-auth-card.component';
+import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-form/global-two-factor-auth-form.component';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
@@ -223,6 +224,7 @@ import { routing } from './system.routing';
     UpdateComponent,
     BootenvStatsDialogComponent,
     CronFormComponent,
+    GlobalTwoFactorAuthFormComponent,
     CronCardComponent,
     SaveConfigDialogComponent,
     UploadConfigDialogComponent,

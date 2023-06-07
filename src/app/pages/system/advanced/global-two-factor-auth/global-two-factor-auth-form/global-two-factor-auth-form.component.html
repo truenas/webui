@@ -1,0 +1,51 @@
+<ix-modal-header
+  [title]="'Global Two Factor Authentication Settings' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enable Two Factor Authentication Globally' | translate"
+          [warning]="twoFactorConfig.enabled ? '' : enableWarning"
+        ></ix-checkbox>
+        <ix-input
+          formControlName="interval"
+          [label]="'Interval (in seconds)' | translate"
+          [type]="'number'"
+        ></ix-input>
+        <ix-input
+          formControlName="window"
+          [label]="'Window' | translate"
+          [type]="'number'"
+        ></ix-input>
+        <ix-input
+          formControlName="otp_digits"
+          [label]="'OTP Digits' | translate"
+          [type]="'number'"
+        ></ix-input>
+        <ix-checkbox
+          formControlName="ssh"
+          [label]="'Enable Two Factor Authentication for SSH' | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <mat-divider></mat-divider>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
