@@ -2170,6 +2170,7 @@
   "Pool Disks have {alerts} alerts and {smartTests} failed S.M.A.R.T. tests": "",
   "Pool Options for {pool}": "",
   "Pool contains {status} Data VDEVs": "",
+  "Pool created successfully": "",
   "Pool has been unset.": "",
   "Pool is not healthy": "",
   "Pool is using more than {maxPct}% of available space": "",

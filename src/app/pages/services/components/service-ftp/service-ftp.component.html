@@ -267,6 +267,7 @@
           <ix-fieldset [title]="'Bandwidth' | translate">
             <ix-input
               formControlName="localuserbw"
+              postfix="KiB"
               [label]="helptext.localuserbw_placeholder | translate"
               [tooltip]="helptext.userbw_tooltip | translate"
               [format]="iecFormatter.memorySizeFormatting"
@@ -275,6 +276,7 @@
 
             <ix-input
               formControlName="localuserdlbw"
+              postfix="KiB"
               [label]="'Local User Download Bandwidth' | translate"
               [tooltip]="helptext.userbw_tooltip | translate"
               [format]="iecFormatter.memorySizeFormatting"
@@ -283,6 +285,7 @@
 
             <ix-input
               formControlName="anonuserbw"
+              postfix="KiB"
               [label]="'Anonymous User Upload Bandwidth' | translate"
               [tooltip]="helptext.userbw_tooltip | translate"
               [format]="iecFormatter.memorySizeFormatting"
@@ -291,6 +294,7 @@
 
             <ix-input
               formControlName="anonuserdlbw"
+              postfix="KiB"
               [label]="'Anonymous User Download Bandwidth' | translate"
               [tooltip]="helptext.userbw_tooltip | translate"
               [format]="iecFormatter.memorySizeFormatting"

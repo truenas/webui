@@ -9,7 +9,7 @@
         ></ix-general-wizard-step>
       </mat-step>
 
-      <mat-step *ngIf="hasEnclosureStep$" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step *ngIf="hasEnclosureStep$ | async" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
         <ix-enclosure-wizard-step
           (stepStatusValidityChanged)="stepValidityChanged($event)"
