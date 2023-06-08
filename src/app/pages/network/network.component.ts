@@ -6,7 +6,7 @@ import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { lastValueFrom, Subject } from 'rxjs';
+import { combineLatest, lastValueFrom, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -36,7 +36,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
 
@@ -214,8 +214,11 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private listenForHaStatus(): void {
-    this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe(({ hasHa }) => {
-      this.isHaEnabled = hasHa;
+    combineLatest([
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)),
+      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
+    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
+      this.isHaEnabled = isHa && hasHa;
     });
   }
 
@@ -458,7 +461,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe((reportingData) => {
-        if (reportingData.interfaces) {
+        if (reportingData?.interfaces) {
           tableSource.forEach((row) => {
             if (!reportingData.interfaces[row.id]) {
               row.link_state = null;
