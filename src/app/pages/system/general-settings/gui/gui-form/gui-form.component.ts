@@ -53,7 +53,6 @@ export class GuiFormComponent {
     ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
-    crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
   });
@@ -232,7 +231,6 @@ export class GuiFormComponent {
         ui_httpsport: config.ui_httpsport,
         ui_httpsprotocols: config.ui_httpsprotocols,
         ui_httpsredirect: config.ui_httpsredirect,
-        crash_reporting: config.crash_reporting,
         usage_collection: config.usage_collection,
         ui_consolemsg: config.ui_consolemsg,
       });

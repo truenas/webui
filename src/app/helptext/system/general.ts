@@ -99,13 +99,6 @@ export const helptextSystemGeneral = {
     tooltip: T('Choose a time format.'),
   },
 
-  crash_reporting: {
-    label: T('Crash reporting'),
-    tooltip: T('Send failed HTTP request data which can include client\
- and server IP addresses, failed method call tracebacks, and\
- middleware log file contents to iXsystems.'),
-  },
-
   usage_collection: {
     label: T('Usage collection'),
     tooltip: T('Enable sending anonymous usage statistics to iXsystems.'),

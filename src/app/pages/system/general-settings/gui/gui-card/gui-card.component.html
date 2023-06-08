@@ -59,12 +59,6 @@
         </span>
       </mat-list-item>
       <mat-list-item>
-        <span class="label">{{ helptext.crash_reporting.label | translate }}:</span>
-        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
-          {{ generalConfig.crash_reporting ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
-      <mat-list-item>
         <span class="label">{{ helptext.usage_collection.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.usage_collection ? ('Enabled' | translate) : ('Disabled' | translate) }}
