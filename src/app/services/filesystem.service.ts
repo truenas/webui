@@ -40,10 +40,11 @@ export class FilesystemService {
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {
-            if (
-              (file.type === FileType.Symlink || !file.hasOwnProperty('name'))
-              || (!options.showHiddenFiles && file.name.startsWith('.'))
-            ) {
+            if (file.type === FileType.Symlink || !file.hasOwnProperty('name')) {
+              return;
+            }
+
+            if (!options.showHiddenFiles && file.name.startsWith('.')) {
               return;
             }
 
