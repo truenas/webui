@@ -64,8 +64,10 @@ export class PoolManagerWizardComponent implements OnInit {
     this.connectToStore();
   }
 
-  stepChanged({ selectedIndex }: StepperSelectionEvent): void {
-    if (selectedIndex === 2) {
+  stepChanged(data: StepperSelectionEvent): void {
+    const elementId = (data.selectedStep.content.elementRef.nativeElement as HTMLElement)?.parentElement?.id;
+
+    if (elementId === 'data-step') {
       this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0))
         .pipe(untilDestroyed(this))
         .subscribe((result) => {

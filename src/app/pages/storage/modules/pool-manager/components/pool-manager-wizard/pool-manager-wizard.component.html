@@ -16,7 +16,7 @@
         ></ix-enclosure-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step id="data-step" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
         <ix-data-wizard-step
           [hasDataVdevs]="hasDataVdevs"
