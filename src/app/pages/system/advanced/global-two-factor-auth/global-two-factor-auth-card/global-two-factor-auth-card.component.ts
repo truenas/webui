@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  BehaviorSubject, share, switchMap,
+  BehaviorSubject, shareReplay, switchMap, tap,
 } from 'rxjs';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState, LoadingState } from 'app/helpers/to-loading-state.helper';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-form/global-two-factor-auth-form.component';
@@ -16,12 +16,14 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './global-two-factor-auth-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalTwoFactorAuthCardComponent {
+export class GlobalTwoFactorAuthCardComponent implements OnInit {
   private readonly refreshCard$ = new BehaviorSubject<void>(null);
-  protected readonly twoFactorConfigUpdater$ = this.refreshCard$.pipe(
-    switchMap(() => this.ws.call('auth.twofactor.config')),
-    toLoadingState(),
-    share(),
+  private readonly twoFactorConfigUpdater$ = new BehaviorSubject<LoadingState<TwoFactorConfig>>(null);
+  protected readonly twoFactorConfig$ = this.twoFactorConfigUpdater$.pipe(
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
   );
 
   constructor(
@@ -29,6 +31,15 @@ export class GlobalTwoFactorAuthCardComponent {
     private advancedSettings: AdvancedSettingsService,
     private slideInService: IxSlideInService,
   ) { }
+
+  ngOnInit(): void {
+    this.refreshCard$.pipe(
+      switchMap(() => this.ws.call('auth.twofactor.config')),
+      toLoadingState(),
+      tap((config) => this.twoFactorConfigUpdater$.next(config)),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   async onConfigurePressed(twoFactorAuthConfig: TwoFactorConfig): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
