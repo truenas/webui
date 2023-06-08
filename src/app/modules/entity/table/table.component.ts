@@ -334,7 +334,6 @@ implements OnInit, AfterViewInit, AfterViewChecked {
 
     switch (state) {
       case JobState.Pending:
-      case JobState.Running:
       case JobState.Aborted:
         return 'fn-theme-orange';
       case JobState.Finished:
@@ -346,6 +345,7 @@ implements OnInit, AfterViewInit, AfterViewChecked {
       case JobState.Locked:
       case JobState.Hold:
         return 'fn-theme-yellow';
+      case JobState.Running:
       default:
         return 'fn-theme-primary';
     }

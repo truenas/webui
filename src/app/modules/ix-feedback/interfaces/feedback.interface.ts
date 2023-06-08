@@ -25,7 +25,7 @@ export interface AddReview {
   environment: FeedbackEnvironment;
   host_u_id: string;
   message: string;
-  extra?: object;
+  extra: object;
 }
 
 export interface ReviewAddedResponse {

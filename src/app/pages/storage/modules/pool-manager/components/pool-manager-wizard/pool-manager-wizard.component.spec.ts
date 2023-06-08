@@ -86,6 +86,10 @@ describe('PoolManagerWizardComponent', () => {
         EnclosureWizardStepComponent,
         DataWizardStepComponent,
         LogWizardStepComponent,
+        SpareWizardStepComponent,
+        CacheWizardStepComponent,
+        MetadataWizardStepComponent,
+        DedupWizardStepComponent,
         ReviewWizardStepComponent,
       ),
     ],
@@ -131,21 +135,30 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   it('always shows steps: General, Data, Log, Spare, Cache, Metadata, Review', async () => {
-    // TODO: Check for components once they are added.
     const steps = await wizard.getSteps();
     const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
     expect(stepLabels).toEqual([
       'General Info',
       'Data',
-      'Log',
-      'Spare',
-      'Cache',
-      'Metadata',
+      'Log (Optional)',
+      'Spare (Optional)',
+      'Cache (Optional)',
+      'Metadata (Optional)',
+      'Dedup (Optional)',
       'Review',
     ]);
+
+    expect(spectator.query(GeneralWizardStepComponent)).toExist();
+    expect(spectator.query(EnclosureWizardStepComponent)).not.toExist();
+    expect(spectator.query(DataWizardStepComponent)).toExist();
+    expect(spectator.query(LogWizardStepComponent)).toExist();
+    expect(spectator.query(SpareWizardStepComponent)).toExist();
+    expect(spectator.query(CacheWizardStepComponent)).toExist();
+    expect(spectator.query(MetadataWizardStepComponent)).toExist();
+    expect(spectator.query(DedupWizardStepComponent)).toExist();
   });
 
-  it('shows an extra Enclosure Options step for enteprise systems with multiple enclosures in allowed disks', async () => {
+  it('shows an extra Enclosure Options step for enteprise systems with multiple enclosures', async () => {
     hasMultipleEnclosuresInAllowedDisks$.next(true);
 
     const steps = await wizard.getSteps();
@@ -154,12 +167,14 @@ describe('PoolManagerWizardComponent', () => {
       'General Info',
       'Enclosure Options',
       'Data',
-      'Log',
-      'Spare',
-      'Cache',
-      'Metadata',
+      'Log (Optional)',
+      'Spare (Optional)',
+      'Cache (Optional)',
+      'Metadata (Optional)',
+      'Dedup (Optional)',
       'Review',
     ]);
+    expect(spectator.query(EnclosureWizardStepComponent)).toExist();
   });
 
   describe('creating a pool', () => {

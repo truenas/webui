@@ -73,6 +73,7 @@ export class FeedbackDialogComponent implements OnInit {
       user_agent: this.window.navigator.userAgent,
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
       release: this.release,
+      extra: {},
     };
 
     this.feedbackService.addReview(values)

@@ -75,11 +75,6 @@ export class PoolManagerWizardComponent implements OnInit {
     }
   }
 
-  goToLastStep(): void {
-    this.stepper.selectedIndex = this.stepper.steps.length - 1;
-    this.cdr.markForCheck();
-  }
-
   createPool(): void {
     const payload = this.prepareCreatePayload();
 
@@ -110,6 +105,11 @@ export class PoolManagerWizardComponent implements OnInit {
       });
 
     dialogRef.componentInstance.submit();
+  }
+
+  goToLastStep(): void {
+    this.stepper.selectedIndex = this.stepper.steps.length - 1;
+    this.cdr.markForCheck();
   }
 
   private connectToStore(): void {
