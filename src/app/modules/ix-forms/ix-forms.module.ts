@@ -38,6 +38,7 @@ import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxStarRatingComponent } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -103,6 +104,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxLabelComponent,
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
+    IxStarRatingComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -128,6 +130,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxLabelComponent,
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
+    IxStarRatingComponent,
   ],
   providers: [
     IxFormatterService,

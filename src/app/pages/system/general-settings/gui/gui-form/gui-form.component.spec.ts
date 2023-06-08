@@ -30,7 +30,6 @@ describe('GuiFormComponent', () => {
   let ws: WebSocketService;
 
   const mockSystemGeneralConfig = {
-    crash_reporting: true,
     usage_collection: false,
     ui_address: [
       '0.0.0.0',
@@ -130,7 +129,6 @@ describe('GuiFormComponent', () => {
 
     expect(values).toEqual(
       {
-        'Crash reporting': true,
         'GUI SSL Certificate': 'freenas_default',
         'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
         'Show Console Messages': false,

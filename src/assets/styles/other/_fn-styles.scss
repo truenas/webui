@@ -14,7 +14,6 @@
 ## Third pirty adjust
     Scroll Bar
     Data table
-## Top Bar
 ## Main Sidenav
 ## Collapsed Sidenav
 ## Pages
@@ -534,20 +533,6 @@ body * {
 /*-------- Chart js ---------*/
 .chart {
   margin-left: -10px;
-}
-
-/*---- Top Bar -----*/
-.topbar.mat-toolbar {
-  min-height: 48px;
-}
-
-.topbar .mat-mdc-select-value {
-  color: #fff;
-  font-weight: 400;
-}
-
-.topbar-button-right {
-  margin-left: 0.5rem !important;
 }
 
 /*---- Main Sidenav -----*/
