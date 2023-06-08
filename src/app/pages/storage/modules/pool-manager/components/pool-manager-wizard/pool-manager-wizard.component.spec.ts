@@ -6,6 +6,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness } from '@angular/material/stepper/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -33,10 +34,22 @@ import {
   LogWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
 import {
+  SpareWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/5-spare-wizard-step/spare-wizard-step.component';
+import {
+  CacheWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/6-cache-wizard-step/cache-wizard-step.component';
+import {
+  MetadataWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
+import {
+  DedupWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
+import {
   ReviewWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { SystemGeneralService } from 'app/services';
+import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {
   let spectator: Spectator<PoolManagerWizardComponent>;
@@ -99,9 +112,6 @@ describe('PoolManagerWizardComponent', () => {
         hasMultipleEnclosuresInAllowedDisks$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
       }),
-      mockProvider(SystemGeneralService, {
-        isEnterprise$: of(true),
-      }),
       mockProvider(MatDialog, {
         open: jest.fn((component) => {
           if (component === DownloadKeyDialogComponent) {
@@ -117,6 +127,16 @@ describe('PoolManagerWizardComponent', () => {
             afterClosed: () => of(undefined),
           };
         }),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemFeatures,
+            value: {
+              enclosure: true,
+            },
+          },
+        ],
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
