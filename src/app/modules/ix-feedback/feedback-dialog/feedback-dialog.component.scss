@@ -1,6 +1,17 @@
 :host {
   display: block;
-  min-width: 500px;
+  max-width: 100%;
+  width: 500px;
+
+  ::ng-deep {
+    ix-textarea {
+      textarea {
+        max-height: 40vh;
+        min-height: 7vh;
+        min-width: 96.5%;
+      }
+    }
+  }
 }
 
 .close-feedback-dialog {
