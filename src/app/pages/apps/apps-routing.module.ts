@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
+import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
@@ -45,6 +46,11 @@ const routes: Routes = [
         path: '',
         component: AvailableAppsComponent,
         data: { title: T('Discover'), breadcrumb: T('Applications') },
+      },
+      {
+        path: ':category',
+        component: CategoryViewComponent,
+        data: { title: T('Category'), breadcrumb: T('Applications') },
       },
       {
         path: ':catalog/:train/:appId',

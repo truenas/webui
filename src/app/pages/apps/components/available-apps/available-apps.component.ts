@@ -1,11 +1,11 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { Router, RouterEvent, NavigationSkipped } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, combineLatest, filter, map,
-} from 'rxjs';
+  Router, RouterEvent, NavigationSkipped,
+} from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { combineLatest, filter, map } from 'rxjs';
 import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsByCategory, AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
@@ -20,21 +20,19 @@ import { LayoutService } from 'app/services/layout.service';
 export class AvailableAppsComponent implements AfterViewInit, OnInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  showViewMoreButton$: Observable<boolean> = combineLatest([
-    this.applicationsStore.filterValues$,
-  ]).pipe(
-    map(([appsFilter]) => {
-      return !appsFilter.sort && !appsFilter.categories.length;
-    }),
+  showViewMoreButton$ = this.applicationsStore.filterValues$.pipe(
+    map((appsFilter) => !appsFilter.sort && !appsFilter.categories.length),
   );
-
-  isFilterOrSearch$: Observable<boolean> = combineLatest([
+  isFilterOrSearch$ = combineLatest([
     this.applicationsStore.searchQuery$,
     this.applicationsStore.isFilterApplied$,
   ]).pipe(
     map(([searchQuery, isFilterApplied]) => {
       return !!searchQuery || isFilterApplied;
     }),
+  );
+  customAppDisabled$ = this.applicationsStore.selectedPool$.pipe(
+    map((pool) => !pool),
   );
 
   readonly customIxChartApp = ixChartApp;

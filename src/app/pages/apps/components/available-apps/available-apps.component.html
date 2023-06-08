@@ -4,7 +4,7 @@
       mat-button
       color="primary"
       ixTest="custom-app"
-      [disabled]="!(applicationsStore.selectedPool$ | async)"
+      [disabled]="customAppDisabled$ | async"
       [routerLink]="['/apps', 'available', officialCatalog, chartsTrain, customIxChartApp, 'install']"
     >
       {{ 'Custom App' | translate }}
@@ -69,9 +69,9 @@
     class="view-all"
   >
     <button
-      mat-stroked-button
+      mat-flat-button
       [ixTest]="[appSection.title, 'view-all']"
-      (click)="applyCategoryFilter(appSection.category)"
+      [routerLink]="['/apps', 'available', appSection.category]"
     >
       {{ 'View All' | translate }} {{ appSection.title | translate }}
     </button>
