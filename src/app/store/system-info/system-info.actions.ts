@@ -37,6 +37,11 @@ export const haSettingsUpdated = createAction(
   '[System Info API] HA Settings Updated',
 );
 
+export const ixHardwareLoaded = createAction(
+  '[System Info API] System is IxHardware Loaded',
+  props<{ isIxHardware: boolean }>(),
+);
+
 export const passiveNodeReplaced = createAction(
   '[System Info API] Passive Node Replaced',
 );

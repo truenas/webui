@@ -11,6 +11,7 @@ import {
   upgradePendingStateLoaded,
   failoverLicensedStatusLoaded,
   systemHaCapabilityLoaded,
+  ixHardwareLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 export interface SystemInfoState {
@@ -21,6 +22,7 @@ export interface SystemInfoState {
   hasOnlyMissmatchVersionsReason: boolean;
   isHaLicensed: boolean;
   isSystemHaCapable: boolean;
+  isIxHardware: boolean;
 }
 
 const initialState: SystemInfoState = {
@@ -31,6 +33,7 @@ const initialState: SystemInfoState = {
   hasOnlyMissmatchVersionsReason: false,
   isHaLicensed: false,
   isSystemHaCapable: false,
+  isIxHardware: false,
 };
 
 export const systemInfoReducer = createReducer(
@@ -47,4 +50,5 @@ export const systemInfoReducer = createReducer(
   })),
   on(upgradePendingStateLoaded, (state, { isUpgradePending }) => ({ ...state, isUpgradePending })),
   on(systemHaCapabilityLoaded, (state, { isSystemHaCapable }) => ({ ...state, isSystemHaCapable })),
+  on(ixHardwareLoaded, (state, { isIxHardware }) => ({ ...state, isIxHardware })),
 );
