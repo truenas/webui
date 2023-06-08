@@ -44,23 +44,18 @@ describe('AppUpgradeDialogComponent - test 1', () => {
       mockProvider(AppLoaderService),
       mockProvider(ErrorHandlerService),
       mockProvider(ApplicationsService),
+      {
+        provide: MAT_DIALOG_DATA,
+        useValue: {
+          appInfo: fakeAppInfo,
+          upgradeSummary: fakeUpgradeSummary,
+        },
+      },
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent(
-      {
-        providers: [
-          {
-            provide: MAT_DIALOG_DATA,
-            useValue: {
-              appInfo: fakeAppInfo,
-              upgradeSummary: fakeUpgradeSummary,
-            },
-          },
-        ],
-      },
-    );
+    spectator = createComponent();
   });
 
   it('shows title as application name', () => {
