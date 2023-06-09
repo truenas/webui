@@ -14,7 +14,6 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({ providedIn: 'root' })
@@ -48,9 +47,8 @@ export class SystemGeneralService {
     combineLatest([
       this.isStable(),
       this.store$.pipe(waitForSystemInfo),
-      this.store$.pipe(waitForGeneralConfig),
-    ]).subscribe(([isStable, sysInfo, generalConfig]) => {
-      if (!isStable && generalConfig.crash_reporting) {
+    ]).subscribe(([isStable, sysInfo]) => {
+      if (!isStable) {
         Sentry.init({
           dsn: environment.sentryPublicDsn,
           release: sysInfo.version,
@@ -65,7 +63,7 @@ export class SystemGeneralService {
 
   getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
 
-  isEnterprise$ = this.getProductType$.pipe(
+  readonly isEnterprise$ = this.getProductType$.pipe(
     map((productType) => productType === ProductType.ScaleEnterprise),
   );
 

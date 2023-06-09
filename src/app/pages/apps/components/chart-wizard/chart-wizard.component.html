@@ -19,6 +19,11 @@
         (deleteListItem)="deleteItem($event)"
       ></ix-dynamic-wizard>
 
+      <ix-app-metadata-card
+        *ngIf="showAppMetadata"
+        [appMetadata]="catalogApp.app_metadata"
+      ></ix-app-metadata-card>
+
       <div class="actions">
         <button
           mat-button

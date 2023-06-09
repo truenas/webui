@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -30,7 +30,6 @@ describe('GuiCardComponent', () => {
               ui_httpsport: 443,
               ui_httpsprotocols: ['TLSv1.2', 'TLSv1.3'],
               ui_httpsredirect: false,
-              crash_reporting: true,
               usage_collection: true,
               ui_consolemsg: false,
             },
@@ -43,7 +42,7 @@ describe('GuiCardComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideIn2Service),
+      mockProvider(IxSlideInService),
     ],
   });
 
@@ -65,7 +64,6 @@ describe('GuiCardComponent', () => {
       'Web Interface HTTPS Port: 443',
       'HTTPS Protocols: TLSv1.2, TLSv1.3',
       'Web Interface HTTP -> HTTPS Redirect: Disabled',
-      'Crash reporting: Enabled',
       'Usage collection: Enabled',
       'Show Console Messages: Disabled',
     ]);
@@ -75,6 +73,6 @@ describe('GuiCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideIn2Service).open).toHaveBeenCalledWith(GuiFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GuiFormComponent);
   });
 });

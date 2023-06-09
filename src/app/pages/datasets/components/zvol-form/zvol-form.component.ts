@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+} from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,6 +17,8 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -25,7 +29,6 @@ import {
   CloudCredentialService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 interface ZvolFormData {
   name?: string;
@@ -64,7 +67,7 @@ interface ZvolFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
 })
-export class ZvolFormComponent {
+export class ZvolFormComponent implements OnInit {
   get title(): string {
     return this.isNew
       ? this.translate.instant(helptext.zvol_title_add)
@@ -184,10 +187,11 @@ export class ZvolFormComponent {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
     private formatter: IxFormatterService,
     protected storageService: StorageService,
     protected snackbar: SnackbarService,
+    private slideInRef: IxSlideInRef<ZvolFormComponent>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { isNew: boolean; parentId: string },
   ) {
     this.form.controls.key.disable();
     this.form.controls.passphrase.disable();
@@ -196,9 +200,13 @@ export class ZvolFormComponent {
     this.form.controls.algorithm.disable();
   }
 
-  zvolFormInit(isNew: boolean, parentId: string): void {
-    this.isNew = isNew;
-    this.parentId = parentId;
+  ngOnInit(): void {
+    this.isNew = this.slideInData.isNew;
+    this.parentId = this.slideInData.parentId;
+    this.zvolFormInit();
+  }
+
+  zvolFormInit(): void {
     if (this.parentId) {
       this.setupForm();
     }
@@ -275,7 +283,7 @@ export class ZvolFormComponent {
     // decimal has to be truncated to three decimal places
     this.origVolSize = volumesize;
 
-    const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
+    const humansize = this.formatter.convertBytesToHumanReadable(volumesize);
     this.origHuman = humansize;
 
     this.form.controls.name.setValue(parent.name);
@@ -536,7 +544,7 @@ export class ZvolFormComponent {
     }
 
     if (this.origHuman !== data.volsize) {
-      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as string, true);
+      data.volsize = this.formatter.convertHumanStringToNum(data.volsize as string, true);
     } else {
       delete data.volsize;
     }
@@ -672,7 +680,7 @@ export class ZvolFormComponent {
             title: helptext.zvol_save_errDialog.title,
             message: helptext.zvol_save_errDialog.msg,
           });
-          this.slideInService.close(null, false);
+          this.slideInRef.close(false);
         }
       },
       error: (error: WebsocketError): void => {
@@ -741,7 +749,7 @@ export class ZvolFormComponent {
 
   private handleZvolCreateUpdate(dataset: Dataset): void {
     this.isLoading = false;
-    this.slideInService.close(null, dataset);
+    this.slideInRef.close(dataset);
 
     this.snackbar.success(
       this.isNew

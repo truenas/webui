@@ -23,7 +23,6 @@ describe('AvailableAppsHeaderComponent', () => {
   let catalogsItems: IxFilterSelectListHarness;
   let sortItems: IxFilterSelectListHarness;
   let categoriesSelect: IxChipsHarness;
-  let applyButton: MatButtonHarness;
   let availableAppsStore: AvailableAppsStore;
 
   const createComponent = createComponentFactory({
@@ -39,7 +38,7 @@ describe('AvailableAppsHeaderComponent', () => {
       ]),
       mockProvider(AvailableAppsStore, {
         availableApps$: of([{
-          catalog: 'OFFICIAL',
+          catalog: 'TRUENAS',
           categories: ['storage', 'crypto'],
           last_update: { $date: 452 },
           name: 'chia',
@@ -51,7 +50,7 @@ describe('AvailableAppsHeaderComponent', () => {
         }] as AvailableApp[]),
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
         filterValues$: of({
-          catalogs: ['OFFICIAL'],
+          catalogs: ['TRUENAS'],
           sort: null,
           categories: ['storage', 'crypto', 'media', 'torrent'],
         }),
@@ -75,7 +74,6 @@ describe('AvailableAppsHeaderComponent', () => {
     catalogsItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
     sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[1];
     categoriesSelect = await loader.getHarness(IxChipsHarness);
-    applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
     availableAppsStore = spectator.inject(AvailableAppsStore);
   });
 
@@ -93,11 +91,10 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('calls applyFilters when user selects catalogs', async () => {
-    await catalogsItems.setValue(['OFFICIAL']);
-    await applyButton.click();
+    await catalogsItems.setValue(['TRUENAS']);
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['OFFICIAL'],
+      catalogs: ['TRUENAS'],
       sort: null,
       categories: [
         'storage',
@@ -110,10 +107,9 @@ describe('AvailableAppsHeaderComponent', () => {
 
   it('calls applyFilters when user selects sort', async () => {
     await sortItems.setValue(['Updated Date']);
-    await applyButton.click();
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['OFFICIAL', 'TEST'],
+      catalogs: ['TRUENAS', 'TEST'],
       sort: AppsFiltersSort.LastUpdate,
       categories: [
         'storage',
@@ -126,10 +122,9 @@ describe('AvailableAppsHeaderComponent', () => {
 
   it('calls applyFilters when user selects categories', async () => {
     await categoriesSelect.setValue(['storage']);
-    await applyButton.click();
 
     expect(availableAppsStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['OFFICIAL', 'TEST'],
+      catalogs: ['TRUENAS', 'TEST'],
       sort: null,
       categories: ['storage'],
     });

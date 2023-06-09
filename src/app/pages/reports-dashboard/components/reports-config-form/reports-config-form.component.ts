@@ -11,11 +11,11 @@ import {
 } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -50,7 +50,7 @@ export class ReportsConfigFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<ReportsConfigFormComponent>,
   ) { }
 
   ngOnInit(): void {
@@ -82,7 +82,7 @@ export class ReportsConfigFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Reporting configuration saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

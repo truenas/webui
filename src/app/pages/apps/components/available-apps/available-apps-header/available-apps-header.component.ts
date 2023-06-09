@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -25,7 +26,7 @@ import { DialogService } from 'app/services';
   styleUrls: ['./available-apps-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AvailableAppsHeaderComponent implements OnInit {
+export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   form = this.fb.group({
     catalogs: [[] as string[]],
     sort: [null as AppsFiltersSort],
@@ -33,7 +34,6 @@ export class AvailableAppsHeaderComponent implements OnInit {
   });
 
   searchControl = this.fb.control('');
-  isLoading = false;
   isFirstLoad = true;
   showFilters = false;
 
@@ -45,6 +45,8 @@ export class AvailableAppsHeaderComponent implements OnInit {
       return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
     }),
   );
+
+  isLoading$ = this.applicationsStore.isLoading$;
 
   installedCatalogs: string[] = [];
 
@@ -103,13 +105,13 @@ export class AvailableAppsHeaderComponent implements OnInit {
     this.applicationsStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
       next: (filter) => {
         if (filter.categories?.length) {
-          this.form.controls.categories.setValue(filter.categories);
+          this.form.controls.categories.setValue(filter.categories, { emitEvent: false });
         }
         if (filter.catalogs?.length) {
-          this.form.controls.catalogs.setValue(filter.catalogs);
+          this.form.controls.catalogs.setValue(filter.catalogs, { emitEvent: false });
         }
         if (filter.sort) {
-          this.form.controls.sort.setValue(filter.sort);
+          this.form.controls.sort.setValue(filter.sort, { emitEvent: false });
         }
       },
     });
@@ -123,6 +125,16 @@ export class AvailableAppsHeaderComponent implements OnInit {
       next: (searchQuery) => {
         this.searchControl.setValue(searchQuery);
       },
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.form.valueChanges.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.applyFilters();
     });
   }
 

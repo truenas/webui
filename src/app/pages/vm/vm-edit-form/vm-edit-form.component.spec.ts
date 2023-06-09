@@ -10,6 +10,8 @@ import {
 } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
@@ -64,6 +66,8 @@ describe('VmEditFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebsocket([
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
@@ -127,8 +131,11 @@ describe('VmEditFormComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
-    spectator.component.setVmForEdit(existingVm);
+    spectator = createComponent({
+      providers: [
+        { provide: SLIDE_IN_DATA, useValue: existingVm },
+      ],
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   });
@@ -193,7 +200,7 @@ describe('VmEditFormComponent', () => {
       time: VmTime.Local,
       vcpus: 1,
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('updates GPU devices when form is edited and saved', async () => {

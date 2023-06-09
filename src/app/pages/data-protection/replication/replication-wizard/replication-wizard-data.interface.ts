@@ -20,6 +20,7 @@ export interface ReplicationWizardData {
   ssh_credentials_target: number;
   target_dataset: string;
   encryption: boolean;
+  encryption_inherit: boolean;
   encryption_key_format: EncryptionKeyFormat;
   encryption_key_generate: boolean;
   encryption_key_hex: string;

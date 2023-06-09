@@ -4,13 +4,10 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceFtpComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from './components/service-lldp/service-lldp.component';
-import { ServiceRsyncComponent } from './components/service-rsync/service-rsync.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from './components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from './components/service-snmp/service-snmp.component';
-import { ServiceTftpComponent } from './components/service-tftp/service-tftp.component';
 import { ServiceUpsComponent } from './components/service-ups/service-ups.component';
-import { ServiceWebdavComponent } from './components/service-webdav/service-webdav.component';
 import { ServicesComponent } from './services.component';
 
 export const routes: Routes = [
@@ -35,22 +32,6 @@ export const routes: Routes = [
     component: ServiceLldpComponent,
   },
   {
-    data: { title: 'Rsync', breadcrumb: 'Rsync' },
-    path: 'rsync',
-    children: [
-      {
-        path: '',
-        redirectTo: 'configure',
-        pathMatch: 'full',
-      },
-      {
-        path: ':pk',
-        component: ServiceRsyncComponent,
-        data: { title: 'Rsync', breadcrumb: 'Rsync' },
-      },
-    ],
-  },
-  {
     data: { title: 'S.M.A.R.T.', breadcrumb: 'S.M.A.R.T.' },
     path: 'smartd',
     component: ServiceSmartComponent,
@@ -59,11 +40,6 @@ export const routes: Routes = [
     data: { title: 'NFS', breadcrumb: 'NFS' },
     path: 'nfs',
     component: ServiceNfsComponent,
-  },
-  {
-    data: { title: 'TFTP', breadcrumb: 'TFTP' },
-    path: 'tftp',
-    component: ServiceTftpComponent,
   },
   {
     data: { title: 'UPS', breadcrumb: 'UPS' },
@@ -79,11 +55,6 @@ export const routes: Routes = [
     data: { title: 'SNMP', breadcrumb: 'SNMP' },
     path: 'snmp',
     component: ServiceSnmpComponent,
-  },
-  {
-    data: { title: 'WebDAV', breadcrumb: 'WebDAV' },
-    path: 'webdav',
-    component: ServiceWebdavComponent,
   },
 ];
 

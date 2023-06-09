@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewContainerRef,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,8 +21,10 @@ import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshot
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -32,7 +34,7 @@ import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/r
 import {
   DialogService, KeychainCredentialService, ReplicationService, WebSocketService,
 } from 'app/services';
-import { FilesystemService } from 'app/services/filesystem.service';
+import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -46,7 +48,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   @Output() customRetentionVisibleChange = new EventEmitter<boolean>();
 
-  readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly datasetNodeProvider = this.datasetService.getDatasetNodeProvider();
   remoteSourceNodeProvider: TreeNodeProvider;
   remoteTargetNodeProvider: TreeNodeProvider;
   readonly helptext = helptext;
@@ -128,17 +130,19 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
+    private slideInRef: IxSlideInRef<ReplicationWhatAndWhereComponent>,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentialService: KeychainCredentialService,
     private datePipe: DatePipe,
     private translate: TranslateService,
-    private filesystemService: FilesystemService,
+    private datasetService: DatasetService,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private viewContainerRef: ViewContainerRef,
   ) {}
 
   ngOnInit(): void {
@@ -368,6 +372,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       data: { dialog: true },
       width: '600px',
       panelClass: 'ix-overflow-dialog',
+      viewContainerRef: this.viewContainerRef,
     });
 
     dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
@@ -537,7 +542,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInService.close();
+    this.slideInRef.close();
     this.slideInService.open(ReplicationFormComponent, { wide: true });
   }
 
@@ -575,8 +580,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
           this.cdr.markForCheck();
         },
-        error: () => {
+        error: (error: WebsocketError) => {
           this.snapshotsText = '';
+          this.form.controls.source_datasets.setErrors({ ixManualValidateError: { message: error.reason } });
           this.cdr.markForCheck();
         },
       });

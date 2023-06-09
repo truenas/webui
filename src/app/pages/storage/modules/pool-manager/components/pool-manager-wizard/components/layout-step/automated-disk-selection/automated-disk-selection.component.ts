@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -12,10 +11,13 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import {
+  Observable, of, take,
+} from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
@@ -38,20 +40,20 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   @Output() manualSelectionClicked = new EventEmitter<void>();
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     layout: [CreateVdevLayout.Stripe, Validators.required],
     sizeAndType: [[null, null] as SizeAndType, Validators.required],
-    width: [null as number, Validators.required],
-    treatDiskSizeAsMinimum: [false],
-    vdevsNumber: [null as number, Validators.required],
+    width: [{ value: null as number, disabled: true }, Validators.required],
+    treatDiskSizeAsMinimum: [{ value: false, disabled: true }],
+    vdevsNumber: [{ value: null as number, disabled: true }, Validators.required],
   });
 
   protected vdevLayoutOptions$: Observable<Option[]> = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
-  protected diskSizeAndTypeOptions$: Observable<SelectOption[]> = of([]);
-  protected widthOptions$: Observable<SelectOption[]> = of([]);
-  protected numberOptions$: Observable<SelectOption[]> = of([]);
+  protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
+  protected widthOptions$ = of<SelectOption[]>([]);
+  protected numberOptions$ = of<SelectOption[]>([]);
 
   private minDisks = minDisksPerLayout;
   private sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
@@ -59,11 +61,24 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     protected poolManagerStore: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   get selectedDiskSize(): number {
     return this.form.controls.sizeAndType.value?.[0];
+  }
+
+  get isSizeSelected(): boolean {
+    return !!this.form.value.sizeAndType?.length
+      && !!this.form.value.sizeAndType[0]
+      && !!this.form.value.sizeAndType[1];
+  }
+
+  get isLayoutSelected(): boolean {
+    return !!this.form.value.layout;
+  }
+
+  get isWidthSelected(): boolean {
+    return !!this.form.value.width;
   }
 
   get selectedDiskType(): DiskType {
@@ -74,10 +89,29 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     this.initControls();
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.limitLayouts) {
+      this.updateLayoutOptionsFromLimitedLayouts(changes.limitLayouts.currentValue);
+    }
     this.updateDiskSizeOptions();
+  }
 
-    // TODO: Set initial values?
+  updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
+    this.vdevLayoutOptions$ = of(
+      limitLayouts.map(
+        (layout) => ({
+          label: Object.keys(CreateVdevLayout)[Object.values(CreateVdevLayout).indexOf(layout)],
+          value: layout,
+        }),
+      ),
+    );
+    const isChangeLayoutFalse = this.canChangeLayout !== null
+      && this.canChangeLayout !== undefined
+      && !this.canChangeLayout;
+    if (isChangeLayoutFalse && limitLayouts.length) {
+      this.form.controls.layout.setValue(limitLayouts[0]);
+    }
+    this.updateWidthOptions();
   }
 
   openManualDiskSelection(): void {
@@ -89,15 +123,42 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
    * size -> layout -> width -> number
    */
   private initControls(): void {
-    this.form.controls.layout.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.layout.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
+      if (this.isSizeSelected && !!layout) {
+        if (this.form.controls.width.disabled) {
+          this.form.controls.width.enable();
+        }
+        if (this.form.controls.treatDiskSizeAsMinimum.disabled) {
+          this.form.controls.treatDiskSizeAsMinimum.enable();
+        }
+        if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled) {
+          this.form.controls.vdevsNumber.enable();
+        }
+      }
+
       this.updateWidthOptions();
     });
 
-    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe((sizeAndType) => {
+      if (sizeAndType?.length && this.isLayoutSelected) {
+        if (this.form.controls.width.disabled) {
+          this.form.controls.width.enable();
+        }
+        if (this.form.controls.treatDiskSizeAsMinimum.disabled) {
+          this.form.controls.treatDiskSizeAsMinimum.enable();
+        }
+        if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled) {
+          this.form.controls.vdevsNumber.enable();
+        }
+      }
+
       this.updateLayoutOptions();
     });
 
-    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((width) => {
+      if (this.isSizeSelected && this.isLayoutSelected && !!width && this.form.controls.vdevsNumber.disabled) {
+        this.form.controls.vdevsNumber.enable();
+      }
       this.updateNumberOptions();
     });
 
@@ -108,7 +169,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   private updateLayout(): void {
     const values = this.form.value;
-
     this.poolManagerStore.setAutomaticTopologyCategory(this.type, {
       layout: values.layout,
       diskSize: this.selectedDiskSize,
@@ -118,6 +178,13 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       treatDiskSizeAsMinimum: values.treatDiskSizeAsMinimum,
     });
   }
+
+  protected compareSizeAndTypeWith = (
+    val1: [number, string],
+    val2: [number, string],
+  ): boolean => {
+    return val1 && val2 ? val1[0] === val2[0] && val1[1] === val2[1] : val1 === val2;
+  };
 
   private updateLayoutOptions(): void {
     const vdevLayoutOptions: Option[] = [];
@@ -130,9 +197,19 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     if (!vdevLayoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
       this.form.controls.layout.setValue(null, { emitEvent: false });
     }
-
-    this.vdevLayoutOptions$ = of(vdevLayoutOptions);
-    this.updateWidthOptions();
+    this.poolManagerStore.getLayoutsForVdevType(this.type)
+      .pipe(
+        take(1),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (allowedVdevTypes) => {
+          this.vdevLayoutOptions$ = of(vdevLayoutOptions.filter(
+            (layout) => !!allowedVdevTypes.includes(layout.value as CreateVdevLayout),
+          ));
+          this.updateWidthOptions();
+        },
+      });
   }
 
   private updateDiskSizeOptions(): void {
@@ -151,20 +228,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       }));
 
     const options = [...hddOptions, ...ssdOptions];
-    const selectedOptionInOptions = options.find((option) => {
-      return _.isEqual(option.value, this.form.controls.sizeAndType.value);
-    });
 
-    // TODO: Hack for select not seeing the option because its reference has changed.
-    // TODO: Make work in ix-select or use some other way (preferably).
-    if (selectedOptionInOptions) {
-      this.form.controls.sizeAndType.setValue(selectedOptionInOptions.value, { emitEvent: false });
-    } else {
-      this.form.controls.sizeAndType.setValue(null, { emitEvent: false });
-    }
-
-    // TODO: Incorrect type conversion.
-    this.diskSizeAndTypeOptions$ = of(options) as Observable<SelectOption[]>;
+    this.diskSizeAndTypeOptions$ = of(options);
 
     this.updateLayoutOptions();
   }

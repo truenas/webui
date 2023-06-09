@@ -18,6 +18,7 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
@@ -39,7 +40,6 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('CertificateAddComponent', () => {
   let spectator: Spectator<CertificateAddComponent>;
@@ -91,7 +91,7 @@ describe('CertificateAddComponent', () => {
         ] as Certificate[]),
         mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
@@ -201,7 +201,7 @@ describe('CertificateAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import Certificate and form is submitted', async () => {

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -15,13 +15,14 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -34,7 +35,6 @@ export class NfsFormComponent implements OnInit {
   isLoading = false;
   isAdvancedMode = false;
   hasNfsSecurityField = false;
-  existingNfsShare: NfsShare;
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
@@ -91,22 +91,26 @@ export class NfsFormComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
+    private slideInRef: IxSlideInRef<NfsFormComponent>,
+    @Inject(SLIDE_IN_DATA) private existingNfsShare: NfsShare,
   ) {}
 
-  setNfsShareForEdit(nfsShare: NfsShare): void {
-    this.existingNfsShare = nfsShare;
-    nfsShare.networks.forEach(() => this.addNetworkControl());
-    nfsShare.hosts.forEach(() => this.addHostControl());
-    this.form.patchValue(nfsShare);
+  setNfsShareForEdit(): void {
+    this.existingNfsShare.networks.forEach(() => this.addNetworkControl());
+    this.existingNfsShare.hosts.forEach(() => this.addHostControl());
+    this.form.patchValue(this.existingNfsShare);
   }
 
   ngOnInit(): void {
     this.checkForNfsSecurityField();
+
+    if (this.existingNfsShare) {
+      this.setNfsShareForEdit();
+    }
   }
 
   addNetworkControl(): void {
@@ -154,7 +158,7 @@ export class NfsFormComponent implements OnInit {
           }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;

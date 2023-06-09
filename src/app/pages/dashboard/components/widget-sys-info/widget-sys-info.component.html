@@ -153,8 +153,8 @@
                   <button
                     *ngIf="!isPassive"
                     mat-button
+                    color="default"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    [color]="updateBtnStatus"
                     (click)="router.navigate(['system', 'update'])"
                   >
                     {{ updateBtnLabel | translate }}
@@ -205,7 +205,7 @@
                   <mat-list-item>
                     <strong>{{ 'Platform' | translate }}:</strong>
                     <span>
-                      {{ data.system_product && manufacturer === 'ixsystems' ? data.system_product : 'Generic' }}
+                      {{ data.system_product && isIxHardware ? data.system_product : 'Generic' }}
                     </span>
                   </mat-list-item>
                   <mat-list-item>
@@ -224,17 +224,13 @@
                   <mat-list-item *ngIf="data.license">
                     <strong>{{ 'License' | translate }}:</strong>
                     <span>
-                      {{ data.license.contract_type.toLowerCase() | titlecase }}
+                      {{ licenseString }}
                     </span>
-                    &nbsp;contract, &nbsp; expires
-                    {{ data.license.contract_end.$value }}
                   </mat-list-item>
 
-                  <mat-list-item *ngIf="data.system_serial && manufacturer === 'ixsystems'">
-                    <strong>{{ 'Serial Number' | translate }}:</strong>
-                    <span>
-                      {{ (isPassive ? data.license?.system_serial : data.system_serial) }}
-                    </span>
+                  <mat-list-item *ngIf="data.system_serial && isIxHardware">
+                    <strong>{{ 'System Serial' | translate }}:</strong>
+                    <span>{{ data.system_serial }}</span>
                   </mat-list-item>
 
                   <mat-list-item>
@@ -279,23 +275,6 @@
         </div>
         <!-- end carousel -->
       </mat-card-content>
-    </mat-card>
-
-    <!-- Flip Side -->
-    <mat-card class="back">
-      <mat-card-content>
-        <h3>Form goes here</h3>
-      </mat-card-content>
-      <div class="widget-footer">
-        <button
-          mat-button
-          color="primary"
-          [ixTest]="['widget-sysinfo', 'flip']"
-          (click)="toggleConfig()"
-        >
-          {{ 'Flip' | translate }}
-        </button>
-      </div>
     </mat-card>
   </div>
 </div>

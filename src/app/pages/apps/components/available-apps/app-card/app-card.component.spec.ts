@@ -29,7 +29,7 @@ describe('AppCardComponent', () => {
           icon_url: 'https://www.seti.org/logo.png',
           description: 'Use your computer to help SETI@home search for extraterrestrial intelligence.',
           latest_version: '1.0.0',
-          catalog: 'official',
+          catalog: 'TRUENAS',
           train: 'charts',
           installed: true,
         } as AvailableApp,
@@ -55,7 +55,7 @@ describe('AppCardComponent', () => {
   });
 
   it('shows catalog name', () => {
-    expect(spectator.query('.catalog')).toHaveText('Official');
+    expect(spectator.query('.catalog')).toHaveText('Truenas');
   });
 
   it('shows train name', () => {

@@ -233,7 +233,7 @@ export class AppSchemaService {
       return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
-      return this.serializeFormList(data, schema);
+      return this.serializeFormList(data, schema, fieldSchemaNode);
     }
     if (typeof data === 'object') {
       return this.serializeFormGroup(data as HierarchicalObjectMap<ChartFormValue>, schema);
@@ -269,9 +269,15 @@ export class AppSchemaService {
   serializeFormList(
     list: HierarchicalObjectMap<ChartFormValue>[] | ChartFormValue[],
     schema: ChartSchema['schema'],
+    fieldSchemaNode?: ChartSchemaNode,
   ): HierarchicalObjectMap<ChartFormValue>[] {
     return list.map((listItem: HierarchicalObjectMap<ChartFormValue>) => {
-      return this.serializeFormValue(listItem, schema);
+      // TODO: Consider refactoring.
+      if (fieldSchemaNode?.schema?.items[0]?.schema?.type === ChartSchemaType.Dict) {
+        return this.serializeFormGroup(listItem, schema);
+      }
+
+      return this.serializeFormValue(listItem[Object.keys(listItem)[0]], schema);
     }) as HierarchicalObjectMap<ChartFormValue>[];
   }
 
@@ -494,7 +500,7 @@ export class AppSchemaService {
                 schema: items,
               },
               isParentImmutable: isParentImmutable || !!schema.immutable,
-              config: item,
+              config: item as HierarchicalObjectMap<ChartFormValue>,
             }),
           );
         }

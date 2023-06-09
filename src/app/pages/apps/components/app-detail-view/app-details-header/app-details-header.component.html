@@ -34,7 +34,7 @@
 </div>
 
 <div class="app-info" fxFlex="240px">
-  <h5 class="catalog-header">{{ "{catalog} Catalog" | translate: { catalog: app?.catalog } }}</h5>
+  <div class="app-list-item catalog-container">{{ "{catalog} Catalog" | translate: { catalog: app?.catalog } }}</div>
   <div class="app-list-item">
     {{ 'App Version' | translate }}:
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
@@ -72,7 +72,7 @@
 <div class="app-description">
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else appDescription" count="2"></ngx-skeleton-loader>
   <ng-template #appDescription>
-    <div *ngIf="description">{{ description }}</div>
+    <div *ngIf="description" class="description-wrapper">{{ description }}</div>
   </ng-template>
 </div>
 

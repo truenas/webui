@@ -32,12 +32,12 @@ import {
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import {
   DialogService, IscsiService, ValidationService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -200,7 +200,7 @@ export class IscsiWizardComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
@@ -414,6 +414,6 @@ export class IscsiWizardComponent implements OnInit {
 
     this.isLoading = false;
     this.cdr.markForCheck();
-    this.slideInService.close();
+    this.slideInRef.close();
   }
 }

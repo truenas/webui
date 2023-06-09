@@ -91,7 +91,7 @@ export class ImportPoolComponent implements OnInit {
       next: () => {
         dialogRef.close(true);
         this.isLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
       error: (error: WebsocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));

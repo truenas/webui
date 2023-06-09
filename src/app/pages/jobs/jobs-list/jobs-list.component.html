@@ -32,6 +32,7 @@
       matSort
       matSortActive="id"
       matSortDirection="desc"
+      ixTest="jobs-table"
       [ix-table-empty]="!dataSource.filteredData.length"
       [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
       [dataSource]="dataSource"

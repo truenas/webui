@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>{{ help.downloadkey_dialog_title | translate }}!</h1>
+<div
+  *ngIf="!new"
+  mat-dialog-content
+  [innerHtml]="help.downloadkey_dialog_legacy_message | translate"
+></div>
+<div
+  *ngIf="new"
+  mat-dialog-content
+  [innerHtml]="help.downloadkey_dialog_zfs_message | translate"
+></div>
+<div mat-dialog-actions>
+  &nbsp;
+  <span fxFlex></span>
+  <button
+    class="mat-mdc-button mat-button download-link red-warning-button"
+    mat-button
+    ixTest="download-key"
+    (click)="downloadKey()"
+  >
+    {{ help.downloadkey_dialog_button | translate }}
+  </button>
+  <button
+    class="mat-mdc-button mat-button mat-primary"
+    mat-button
+    ixTest="done"
+    [disabled]="!new && !isDownloaded"
+    (click)="dialogRef.close(true)"
+  >
+    {{ help.downloadkey_dialog_done | translate }}
+  </button>
+</div>

@@ -1,7 +1,8 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -9,6 +10,7 @@ import {
   ManualSelectionDisk,
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
+import { ManualDiskDragToggleStore as ManualDiskSelectionDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
@@ -19,10 +21,12 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   styleUrls: ['./manual-selection-vdev.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ManualSelectionVdevComponent implements OnInit {
+export class ManualSelectionVdevComponent implements OnChanges {
   @Input() vdev: ManualSelectionVdev;
   @Input() layout: CreateVdevLayout;
   @Input() swapondrive = 2;
+  vdevErrMsg = '';
+  showDiskSizeError = false;
 
   enclosuresDisks = new Map<number, ManualSelectionDisk[]>();
   nonEnclosureDisks: ManualSelectionDisk[] = [];
@@ -35,27 +39,38 @@ export class ManualSelectionVdevComponent implements OnInit {
   }
   constructor(
     private cdr: ChangeDetectorRef,
-    public store$: ManualDiskSelectionStore,
+    protected store$: ManualDiskSelectionStore,
+    private translate: TranslateService,
+    protected dragToggleStore$: ManualDiskSelectionDragToggleStore,
   ) { }
 
-  ngOnInit(): void {
-    this.store$.vdevs$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.enclosuresDisks = new Map();
-      this.nonEnclosureDisks = [];
-      for (const disk of this.vdev?.disks) {
-        if (disk.enclosure?.number || disk.enclosure?.number === 0) {
-          let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.number);
-          if (!enclosureDisks) {
-            enclosureDisks = [];
-          }
-          this.enclosuresDisks.set(disk.enclosure.number, [...enclosureDisks, disk]);
-        } else {
-          this.nonEnclosureDisks.push(disk);
+  ngOnChanges(): void {
+    let vdevErrorMsg: string = null;
+    if (this.vdev.disks?.length < this.minDisks[this.layout]) {
+      const typeKey = Object.entries(CreateVdevLayout).filter(
+        ([, value]) => value === this.layout,
+      ).map(([key]) => key)[0];
+      vdevErrorMsg = this.translate.instant(
+        'Atleast {min} disk(s) are required for {vdevType} vdevs',
+        { min: this.minDisks[this.layout], vdevType: typeKey },
+      );
+    }
+    this.vdevErrMsg = vdevErrorMsg;
+
+    this.enclosuresDisks = new Map();
+    this.nonEnclosureDisks = [];
+    for (const disk of this.vdev?.disks) {
+      if (disk.enclosure?.number || disk.enclosure?.number === 0) {
+        let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.number);
+        if (!enclosureDisks) {
+          enclosureDisks = [];
         }
+        this.enclosuresDisks.set(disk.enclosure.number, [...enclosureDisks, disk]);
+      } else {
+        this.nonEnclosureDisks.push(disk);
       }
-      this.estimateSize(this.vdev);
-      this.cdr.markForCheck();
-    });
+    }
+    this.estimateSize(this.vdev);
   }
 
   getMovableDisk(disk: ManualSelectionDisk): ManualSelectionDisk {
@@ -71,18 +86,18 @@ export class ManualSelectionVdevComponent implements OnInit {
     let smallestdisk = 0;
     let estimate = 0;
     const swapsize = this.swapondrive * GiB;
-    vdev.showDiskSizeError = false;
+    this.showDiskSizeError = false;
     for (let i = 0; i < vdev.disks.length; i++) {
-      const size = vdev.disks[i].real_capacity - swapsize;
+      const size = vdev.disks[i].size - swapsize;
       stripeSize += size;
       if (i === 0) {
         smallestdisk = size;
       }
       const tenMib = 10 * MiB;
       if (size > smallestdisk + tenMib || size < smallestdisk - tenMib) {
-        vdev.showDiskSizeError = true;
+        this.showDiskSizeError = true;
       }
-      if (vdev.disks[i].real_capacity < smallestdisk) {
+      if (vdev.disks[i].size < smallestdisk) {
         smallestdisk = size;
       }
     }
@@ -111,15 +126,15 @@ export class ManualSelectionVdevComponent implements OnInit {
   }
 
   onDragStart(): void {
-    this.store$.toggleActivateDrag(true);
+    this.dragToggleStore$.toggleActivateDrag(true);
   }
 
   onDragEnd(): void {
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
   }
 
   onDragCanceled(): void {
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
   }
 
   deleteVdev(): void {
@@ -135,7 +150,7 @@ export class ManualSelectionVdevComponent implements OnInit {
       this.store$.removeDiskFromVdev(disk);
     }
     this.store$.addDiskToVdev({ disk, vdev: this.vdev });
-    this.store$.toggleActivateDrag(false);
+    this.dragToggleStore$.toggleActivateDrag(false);
     this.cdr.markForCheck();
   }
 }

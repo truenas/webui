@@ -5,6 +5,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
   catchError, EMPTY, forkJoin, map, Observable, of, switchMap,
@@ -28,13 +29,13 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { DialogService, ReplicationService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -61,10 +62,11 @@ export class ReplicationWizardComponent {
   constructor(
     private ws: WebSocketService,
     private replicationService: ReplicationService,
+    private slideInRef: IxSlideInRef<ReplicationWizardComponent>,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   setRowId(id: number): void {
@@ -123,7 +125,7 @@ export class ReplicationWizardComponent {
     ).subscribe(() => {
       this.isLoading = false;
       this.cdr.markForCheck();
-      this.slideInService.close();
+      this.slideInRef.close();
     });
   }
 
@@ -235,6 +237,8 @@ export class ReplicationWizardComponent {
       payload.encryption_key_location = data.encryption_key_location_truenasdb
         ? truenasDbKeyLocation
         : data.encryption_key_location;
+
+      payload.encryption_inherit = data.encryption_inherit;
     }
 
     if (data.schedule_method === ScheduleMethod.Cron) {
@@ -386,7 +390,19 @@ export class ReplicationWizardComponent {
         }
         return this.createReplication(replicationPayload);
       }),
-      map((createdReplication) => this.createdReplication = createdReplication),
+      map((createdReplication) => {
+        if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
+          this.ws.call('replication.run', [createdReplication.id]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.info(
+              this.translate.instant('Task started'),
+              this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),
+              true,
+            );
+          });
+        }
+
+        return this.createdReplication = createdReplication;
+      }),
     );
   }
 }

@@ -27,7 +27,7 @@ export class UserDetailsRowComponent {
 
   constructor(
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
   ) {}
@@ -70,10 +70,7 @@ export class UserDetailsRowComponent {
   }
 
   doEdit(user: User): void {
-    const editForm = this.slideIn.open(UserFormComponent, { wide: true });
-    if (editForm) {
-      editForm.setupForm(user);
-    }
+    this.slideInService.open(UserFormComponent, { wide: true, data: user });
   }
 
   doDelete(user: User): void {

@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   Component, Inject, Input, OnInit,
 } from '@angular/core';
@@ -7,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs/operators';
-import { GiB, MiB } from 'app/constants/bytes.constant';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -24,7 +24,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -34,9 +34,9 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     '../widget/widget.component.scss',
     './widget-sys-info.component.scss',
   ],
+  providers: [TitleCasePipe],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
-  // HA
   @Input() isHaLicensed = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
@@ -45,16 +45,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
 
-  title: string = this.translate.instant('System Info');
   data: SystemInfo;
-  memory: string;
   ready = false;
   productImage = '';
   productModel = '';
   productEnclosure = ''; // rackmount || tower
   certified = false;
   updateAvailable = false;
-  manufacturer = '';
+  isIxHardware = false;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
   hasHa: boolean;
@@ -65,8 +63,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
-
-  private _updateBtnStatus = 'default';
 
   constructor(
     public router: Router,
@@ -80,10 +76,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     private productImgServ: ProductImageService,
     public loader: AppLoaderService,
     public dialogService: DialogService,
+    private titleCase: TitleCasePipe,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
-    this.configurable = false;
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdateRunning: string) => {
       this.isUpdateRunning = isUpdateRunning === 'true';
     });
@@ -94,6 +90,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     });
 
     this.hasHa = this.window.sessionStorage.getItem('ha_status') === 'true';
+  }
+
+  get licenseString(): string {
+    return this.translate.instant('{license} contract, expires {date}', {
+      license: this.titleCase.transform(this.data.license.contract_type.toLowerCase()),
+      date: this.data.license.contract_end.$value,
+    });
   }
 
   ngOnInit(): void {
@@ -136,6 +139,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         this.checkForRunningUpdate();
       });
     }
+    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
+      this.isIxHardware = isIxHardware;
+      this.setProductImage();
+    });
   }
 
   checkForRunningUpdate(): void {
@@ -149,13 +156,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         console.error(err);
       },
     });
-  }
-
-  get updateBtnStatus(): string {
-    if (this.updateAvailable) {
-      this._updateBtnStatus = 'default';
-    }
-    return this._updateBtnStatus;
   }
 
   get updateBtnLabel(): string {
@@ -178,17 +178,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     const datetime = this.addTimeDiff(this.data.datetime.$date);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
 
-    this.memory = this.formatMemory(this.data.physmem, 'GiB');
-
-    // PLATFORM INFO
-    if (this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() === 'ixsystems') {
-      this.manufacturer = 'ixsystems';
-    } else {
-      this.manufacturer = 'other';
-    }
-
-    // PRODUCT IMAGE
-    this.setProductImage(systemInfo);
+    this.setProductImage();
 
     this.parseUptime();
     this.ready = true;
@@ -223,25 +213,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     }
   }
 
-  formatMemory(physmem: number, units: string): string {
-    let result: string;
-    if (units === 'MiB') {
-      result = Number(physmem / MiB).toFixed(0) + ' MiB';
-    } else if (units === 'GiB') {
-      result = Number(physmem / GiB).toFixed(0) + ' GiB';
-    }
-    return result;
-  }
+  setProductImage(): void {
+    if (!this.isIxHardware || !this.data) return;
 
-  setProductImage(data: SystemInfo): void {
-    if (this.manufacturer !== 'ixsystems') return;
-
-    if (data.system_product.includes('MINI')) {
-      this.setMiniImage(data.system_product);
-    } else if (data.system_product.includes('CERTIFIED')) {
+    if (this.data.system_product.includes('MINI')) {
+      this.setMiniImage(this.data.system_product);
+    } else if (this.data.system_product.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      const product = this.productImgServ.getServerProduct(data.system_product);
+      const product = this.productImgServ.getServerProduct(this.data.system_product);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
       this.productModel = product || '';
       this.productEnclosure = 'rackmount';

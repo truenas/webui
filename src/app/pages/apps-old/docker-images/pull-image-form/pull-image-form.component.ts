@@ -7,9 +7,9 @@ import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +35,7 @@ export class PullImageFormComponent {
   };
 
   constructor(
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<PullImageFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
@@ -74,7 +74,7 @@ export class PullImageFormComponent {
       this.isFormLoading = false;
       this.cdr.markForCheck();
       dialogRef.close();
-      this.slideInService.close();
+      this.slideInRef.close();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;

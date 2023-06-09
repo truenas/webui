@@ -96,9 +96,9 @@ describe('IxDropGridDirective', () => {
       restoreMocks();
     });
     it('pipes \'entered\' stream into \'onItemEntered()\' calls', () => {
-      const enteredEmitter = new EventEmitter();
+      const enteredEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: enteredEmitter, dropped: new EventEmitter() } as IxDropGridItemDirective,
+        { entered: enteredEmitter, dropped: new EventEmitter<unknown>() } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemEntered').mockImplementation();
       const fakeObj = {};
@@ -106,18 +106,18 @@ describe('IxDropGridDirective', () => {
       expect(spectator.directive.onItemEntered).toHaveBeenCalledWith(fakeObj);
     });
     it('pipes \'dropped\' stream into \'onItemDropped()\' calls', () => {
-      const droppedEmitter = new EventEmitter();
+      const droppedEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: new EventEmitter(), dropped: droppedEmitter } as IxDropGridItemDirective,
+        { entered: new EventEmitter<unknown>(), dropped: droppedEmitter } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemDropped').mockImplementation();
       droppedEmitter.emit();
       expect(spectator.directive.onItemDropped).toHaveBeenCalledWith();
     });
     it('stops piping \'entered\' stream into \'onItemEntered()\' after ngOnDestroy()', () => {
-      const enteredEmitter = new EventEmitter();
+      const enteredEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: enteredEmitter, dropped: new EventEmitter() } as IxDropGridItemDirective,
+        { entered: enteredEmitter, dropped: new EventEmitter<unknown>() } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemEntered').mockImplementation();
 
@@ -126,9 +126,9 @@ describe('IxDropGridDirective', () => {
       expect(spectator.directive.onItemEntered).not.toHaveBeenCalled();
     });
     it('stops piping \'dropped\' stream into \'onItemDropped()\' after ngOnDestroy()', () => {
-      const droppedEmitter = new EventEmitter();
+      const droppedEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: new EventEmitter(), dropped: droppedEmitter } as IxDropGridItemDirective,
+        { entered: new EventEmitter<unknown>(), dropped: droppedEmitter } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemDropped').mockImplementation();
 

@@ -5,7 +5,6 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -32,7 +31,7 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
+import { CheckUserQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -112,7 +111,12 @@ import {
 } from 'app/interfaces/dns-authenticator.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
+import {
+  FailoverConfig,
+  FailoverRemoteCall,
+  FailoverUpdate,
+  FailoverUpgradeParams,
+} from 'app/interfaces/failover.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FilesystemPutParams, FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -170,8 +174,6 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
 import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
-import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
-import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
   PeriodicSnapshotTask,
@@ -180,7 +182,7 @@ import {
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
-import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
+import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
 import { CreatePoolScrubTask, PoolScrubTask, PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
@@ -242,7 +244,6 @@ import {
   SystemUpdateTrains,
   UpdateParams,
 } from 'app/interfaces/system-update.interface';
-import { TftpConfig, TftpConfigUpdate } from 'app/interfaces/tftp-config.interface';
 import {
   TrueCommandConfig,
   TrueCommandConnectionState, TrueCommandUpdateResponse,
@@ -266,8 +267,6 @@ import {
   MatchDatastoresWithDatasetsParams,
   VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
-import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
-import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
@@ -508,7 +507,7 @@ export type ApiDirectory = {
   'failover.config': { params: void; response: FailoverConfig };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.upgrade_finish': { params: void; response: boolean };
-  'failover.upgrade': { params: void; response: boolean };
+  'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
 
   // Keychain Credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
@@ -604,8 +603,8 @@ export type ApiDirectory = {
 
   // IPMI
   'ipmi.is_loaded': { params: void; response: boolean };
-  'ipmi.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
-  'ipmi.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
+  'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
+  'ipmi.lan.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
 
   // IPMI Chassis
   'ipmi.chassis.identify': { params: [OnOff]; response: void };
@@ -663,21 +662,6 @@ export type ApiDirectory = {
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
 
-  // OpenVPN
-  'openvpn.client.update': { params: [OpenvpnClientConfigUpdate]; response: OpenvpnClientConfig };
-  'openvpn.client.authentication_algorithm_choices': { params: void; response: Choices };
-  'openvpn.client.cipher_choices': { params: void; response: Choices };
-  'openvpn.server.renew_static_key': { params: void; response: OpenvpnServerConfig };
-  'openvpn.client.config': { params: void; response: OpenvpnClientConfig };
-  'openvpn.server.cipher_choices': { params: void; response: Choices };
-  'openvpn.server.authentication_algorithm_choices': { params: void; response: Choices };
-  'openvpn.server.client_configuration_generation': {
-    params: [certificateId: number, serverAddress: string];
-    response: string;
-  };
-  'openvpn.server.update': { params: [OpenvpnServerConfigUpdate]; response: OpenvpnServerConfig };
-  'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
-
   // Pool
   'pool.attach': { params: [id: number, params: PoolAttachParams]; response: void };
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
@@ -717,9 +701,6 @@ export type ApiDirectory = {
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
-  'pool.import_disk': { params: ImportDiskParams; response: void };
-  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: ImportDiskFilesystem };
-  'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };
   'pool.is_upgraded': { params: [poolId: number]; response: boolean };
@@ -810,6 +791,7 @@ export type ApiDirectory = {
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.info': { params: void; response: SystemInfo };
   'system.is_ha_capable': { params: void; response: boolean };
+  'system.is_ix_hardware': { params: void; response: boolean };
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
@@ -890,10 +872,6 @@ export type ApiDirectory = {
   'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };
   'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
-  'sharing.webdav.query': { params: QueryParams<WebDavShare>; response: WebDavShare[] };
-  'sharing.webdav.update': { params: [id: number, update: WebDavShareUpdate]; response: WebDavShare };
-  'sharing.webdav.create': { params: [WebDavShareUpdate]; response: WebDavShare };
-  'sharing.webdav.delete': { params: [id: number]; response: boolean };
 
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
@@ -901,11 +879,6 @@ export type ApiDirectory = {
   'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
   'tunable.create': { params: [TunableCreate]; response: Tunable };
   'tunable.delete': { params: [id: number]; response: true };
-
-  // TFTP
-  'tftp.update': { params: [TftpConfigUpdate]; response: TftpConfig };
-  'tftp.config': { params: void; response: TftpConfig };
-  'tftp.host_choices': { params: void; response: Choices };
 
   // FTP
   'ftp.update': { params: [FtpConfigUpdate]; response: FtpConfig };
@@ -994,6 +967,7 @@ export type ApiDirectory = {
   'update.set_train': { params: [train: string]; response: void };
   'update.download': { params: void; response: boolean };
   'update.update': { params: [UpdateParams]; response: void };
+  'update.file': { params: [{ resume: boolean }?]; response: void };
 
   // ZFS
   'zfs.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
@@ -1014,11 +988,6 @@ export type ApiDirectory = {
   'snmp.config': { params: void; response: SnmpConfig };
   'snmp.update': { params: [SnmpConfigUpdate]; response: SnmpConfig };
 
-  // WEBDAV
-  'webdav.config': { params: void; response: WebdavConfig };
-  'webdav.update': { params: [WebdavConfigUpdate]; response: WebdavConfig };
-  'webdav.cert_choices': { params: void; response: Choices };
-
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
@@ -1026,18 +995,6 @@ export type ApiDirectory = {
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
 };
 
-/**
- * API definitions for `call` and `job` methods for auth apis.
- */
-export type AuthApiDirectory = {
-  'auth.login': {
-    params: LoginParams;
-    response: boolean;
-  };
-  'auth.login_with_token': { params: [token: string]; response: boolean };
-  'auth.logout': { params: void; response: void };
-  'auth.generate_token': { params: [number]; response: string };
-};
 /**
  * Prefer typing like this:
  * ```

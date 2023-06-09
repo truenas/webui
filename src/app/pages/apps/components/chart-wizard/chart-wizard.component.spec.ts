@@ -11,6 +11,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
@@ -252,10 +254,12 @@ describe('ChartWizardComponent', () => {
       {
         provide: ActivatedRoute,
         useValue: {
-          params: of({ appId: 'ipfs', catalog: 'OFFICIAL', train: 'charts' }),
+          params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
           routeConfig: { path: 'install' },
         },
       },
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -308,7 +312,7 @@ describe('ChartWizardComponent', () => {
 
     expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
       'chart.release.create', [{
-        catalog: 'OFFICIAL',
+        catalog: 'TRUENAS',
         item: 'ipfs',
         release_name: 'appname',
         train: 'charts',

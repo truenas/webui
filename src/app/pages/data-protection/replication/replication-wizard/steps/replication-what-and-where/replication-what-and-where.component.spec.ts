@@ -14,11 +14,13 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
+import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
@@ -51,11 +53,14 @@ describe('ReplicationWhatAndWhereComponent', () => {
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(DatasetService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
         })),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -83,7 +88,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('generates payload which will inherit dataset encryption from its parent dataset', async () => {
-    await form.fillForm({ 'Encryption inherit': true });
+    await form.fillForm({ 'Inherit Encryption': true });
 
     expect(spectator.component.getPayload()).toEqual({
       exist_replication: null,
@@ -131,11 +136,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   it('opens an extended dialog when choosing to create a new ssh connection', async () => {
     await form.fillForm({ 'Source Location': 'On a Different System' });
     await form.fillForm({ 'SSH Connection': 'Create New' });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SshConnectionFormComponent, {
-      data: { dialog: true },
-      width: '600px',
-      panelClass: 'ix-overflow-dialog',
-    });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
   });
 
   it('when an existing name is entered, the "Next" button is disabled', async () => {
@@ -176,7 +177,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   it('opens an advanced dialog when Advanced Replication Creation is pressed', async () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
   });
 });

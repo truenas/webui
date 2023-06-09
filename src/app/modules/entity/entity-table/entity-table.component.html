@@ -89,6 +89,7 @@
         multiTemplateDataRows
         mat-table
         matSort
+        [ixTest]="['entity-table', conf?.title]"
         [dataSource]="dataSource"
         [style.minWidth.px]="displayedColumns.length * 25"
       >

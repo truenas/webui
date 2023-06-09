@@ -30,9 +30,9 @@ import {
   UpdatePoolTopologyGroup,
 } from 'app/interfaces/pool.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DownloadKeyDialogOldComponent } from 'app/pages/storage/components/manager/download-key-old/download-key-dialog-old.component';
 import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
 import {
   RepeatVdevDialogComponent, RepeatVdevDialogData,
@@ -738,7 +738,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           .pipe(
             switchMap((job: Job<Pool>) => {
               if (this.isEncryptedControl.value) {
-                const downloadDialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
+                const downloadDialogRef = this.mdDialog.open(DownloadKeyDialogOldComponent, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;
                 downloadDialogRef.componentInstance.volumeId = job.result.id;
                 downloadDialogRef.componentInstance.volumeName = job.result.name;

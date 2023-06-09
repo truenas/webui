@@ -32,7 +32,7 @@ import {
 import { WebSocketService, DialogService } from 'app/services';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -83,14 +83,14 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     ttpos: 'above' as TooltipPosition,
     onClick: (selected: Disk[]) => {
       if (selected.length > 1) {
-        const slideInRef = this.slideIn2Service.open(DiskBulkEditComponent);
+        const slideInRef = this.slideInService.open(DiskBulkEditComponent);
         slideInRef.componentInstance.setFormDiskBulk(selected);
         slideInRef.slideInClosed$.pipe(
           filter((response) => Boolean(response)),
           untilDestroyed(this),
         ).subscribe(() => this.updateData());
       } else {
-        const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
+        const slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
         slideInRef.componentInstance.setFormDisk(selected[0]);
         slideInRef.slideInClosed$.pipe(
           filter((response) => Boolean(response)),
@@ -119,7 +119,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     protected router: Router,
     private matDialog: MatDialog,
     protected translate: TranslateService,
-    private slideIn2Service: IxSlideIn2Service,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private disksUpdate: DisksUpdateService,
   ) {}
@@ -135,7 +135,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       name: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (disk: Disk) => {
-        const slideInRef = this.slideIn2Service.open(DiskFormComponent, { wide: true });
+        const slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
         slideInRef.componentInstance.setFormDisk(disk);
         slideInRef.slideInClosed$.pipe(
           filter((response) => Boolean(response)),

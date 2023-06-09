@@ -63,9 +63,6 @@ export class ScrubListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(data: ScrubTaskUi[]): ScrubTaskUi[] {
@@ -81,7 +78,8 @@ export class ScrubListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.slideInService.open(ScrubTaskFormComponent);
+    const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<ScrubTaskUi>[] {
@@ -90,8 +88,8 @@ export class ScrubListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: ScrubTaskUi) => {
-        const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-        slideIn.setTaskForEdit(row);
+        const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     }, {
       id: 'delete',

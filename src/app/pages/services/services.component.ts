@@ -2,7 +2,7 @@ import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -72,6 +72,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
       map((services) => {
         const transformed = services
+          .filter((service) => serviceNames.has(service.service))
           .filter((service) => !this.hiddenServices.includes(service.service))
           .map((service) => {
             return {
@@ -229,21 +230,16 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   }
 
   configureService(row: Service): void {
-    if (row.service === ServiceName.OpenVpnClient || row.service === ServiceName.OpenVpnServer) {
-      const navigationExtras: NavigationExtras = { state: { configureOpenVPN: row.service.replace('openvpn_', '') } };
-      this.router.navigate(['network'], navigationExtras);
-    } else {
-      switch (row.service) {
-        case ServiceName.Iscsi:
-          this.router.navigate(['/sharing', 'iscsi']);
-          break;
-        case ServiceName.Cifs:
-          this.router.navigate(['/services', 'smb']);
-          break;
-        default:
-          this.router.navigate(['/services', row.service]);
-          break;
-      }
+    switch (row.service) {
+      case ServiceName.Iscsi:
+        this.router.navigate(['/sharing', 'iscsi']);
+        break;
+      case ServiceName.Cifs:
+        this.router.navigate(['/services', 'smb']);
+        break;
+      default:
+        this.router.navigate(['/services', row.service]);
+        break;
     }
   }
 

@@ -22,6 +22,7 @@
         mat-button
         color="primary"
         ixTest="save-new-order"
+        [disabled]="isSavingState"
         (click)="onConfirm()"
       >
         {{ 'Save' | translate }}
@@ -76,9 +77,9 @@
           *ngFor="let widget of renderedWidgets; let index = index; trackBy: getWidgetId"
           ixDropGridItem
         >
-          <ng-container [ngSwitch]="widget.name | lowercase">
+          <ng-container [ngSwitch]="widget.name">
             <ix-widget-sysinfo
-              *ngSwitchCase="'system information'"
+              *ngSwitchCase="WidgetType.SystemInformation"
               id="active"
               fxFlex.xs="100"
               ixDrag
@@ -86,14 +87,13 @@
               [enclosureSupport]="systemInformation.features.enclosure"
               [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
             </ix-widget-sysinfo>
 
             <ix-widget-sysinfo
-              *ngSwitchCase="'system information(standby)'"
+              *ngSwitchCase="WidgetType.SystemInformationStandby"
               id="passive"
               fxFlex.xs="100"
               ixDrag
@@ -101,14 +101,13 @@
               [enclosureSupport]="systemInformation.features.enclosure"
               [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
             </ix-widget-sysinfo>
 
             <ix-widget-help
-              *ngSwitchCase="'help'"
+              *ngSwitchCase="WidgetType.Help"
               ixDrag
               [showReorderHandle]="reorderMode"
             >
@@ -116,77 +115,71 @@
             </ix-widget-help>
 
             <ix-widget-cpu
-              *ngSwitchCase="'cpu'"
+              *ngSwitchCase="WidgetType.Cpu"
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
               [data]="dataFromConfig(widget) | cast"
               [cpuModel]="systemInformation.model"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
               ><span ixDragHandle></span
             ></ix-widget-cpu>
 
             <ix-widget-memory
-              *ngSwitchCase="'memory'"
+              *ngSwitchCase="WidgetType.Memory"
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
               [ecc]="systemInformation.ecc_memory"
               [data]="dataFromConfig(widget) | cast"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
             </ix-widget-memory>
 
             <ix-widget-pool
-              *ngSwitchCase="'pool'"
+              *ngSwitchCase="WidgetType.Pool"
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
               [poolState]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget)"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
             </ix-widget-pool>
 
             <ix-widget-storage
-              *ngSwitchCase="'storage'"
+              *ngSwitchCase="WidgetType.Storage"
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
               [pools]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget) | cast"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
             </ix-widget-storage>
 
             <ix-widget-nic
-              *ngSwitchCase="'interface'"
+              *ngSwitchCase="WidgetType.Interface"
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
               [nicState]="dataFromConfig(widget) | cast"
               [stats]="statsDataEvent$"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
             </ix-widget-nic>
 
             <ix-widget-network
-              *ngSwitchCase="'network'"
+              *ngSwitchCase="WidgetType.Network"
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
               [nics]="nics"
               [stats]="statsDataEvent$"
-              [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -210,87 +203,78 @@
       [renderedWidgets]="renderedWidgets"
       [dashState]="dashState"
       [emptyConfig]="emptyDashConf"
-      [widgetSize]="medium"
       (launcher)="onMobileLaunch($event)"
     ></ix-widget-controller>
 
     <div class="mobile-widget-container">
       <ng-container *ngIf="isLoaded && screenType === ScreenType.Mobile">
         <ng-container *ngFor="let widget of activeMobileWidget">
-          <ng-container [ngSwitch]="widget.name | lowercase">
+          <ng-container [ngSwitch]="widget.name">
             <ix-widget-sysinfo
-              *ngSwitchCase="'system information'"
+              *ngSwitchCase="WidgetType.SystemInformation"
               id="active"
               [enclosureSupport]="systemInformation.features.enclosure"
               [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             >
             </ix-widget-sysinfo>
 
             <ix-widget-sysinfo
-              *ngSwitchCase="'system information(standby)'"
+              *ngSwitchCase="WidgetType.SystemInformationStandby"
               id="passive"
               [enclosureSupport]="systemInformation.features.enclosure"
               [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             >
             </ix-widget-sysinfo>
 
             <ix-widget-help
-              *ngSwitchCase="'help'"
+              *ngSwitchCase="WidgetType.Help"
               (back)="onMobileBack()"
             ></ix-widget-help>
 
             <ix-widget-cpu
-              *ngSwitchCase="'cpu'"
+              *ngSwitchCase="WidgetType.Cpu"
               [data]="dataFromConfig(widget) | cast"
               [cpuModel]="systemInformation.model"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             ></ix-widget-cpu>
 
             <ix-widget-memory
-              *ngSwitchCase="'memory'"
+              *ngSwitchCase="WidgetType.Memory"
               [data]="dataFromConfig(widget) | cast"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             ></ix-widget-memory>
 
             <ix-widget-pool
-              *ngSwitchCase="'pool'"
+              *ngSwitchCase="WidgetType.Pool"
               [poolState]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget) | cast"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             ></ix-widget-pool>
 
             <ix-widget-storage
-              *ngSwitchCase="'storage'"
+              *ngSwitchCase="WidgetType.Storage"
               fxFlex.xs="100"
               [fxFlex]="widgetWidth + 'px'"
               [pools]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget) | cast"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             ></ix-widget-storage>
 
             <ix-widget-nic
-              *ngSwitchCase="'interface'"
+              *ngSwitchCase="WidgetType.Interface"
               [nicState]="dataFromConfig(widget) | cast"
               [stats]="statsDataEvent$"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             ></ix-widget-nic>
 
             <ix-widget-network
-              *ngSwitchCase="'network'"
+              *ngSwitchCase="WidgetType.Network"
               [nics]="nics"
               [stats]="statsDataEvent$"
-              [widgetSize]="medium"
               (back)="onMobileBack()"
             ></ix-widget-network>
           </ng-container>

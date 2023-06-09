@@ -37,8 +37,8 @@ import { IxPermissionsComponent } from 'app/modules/ix-forms/components/ix-permi
 import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxStarRatingComponent } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -48,7 +48,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
-import { IxSlideIn2Component } from './components/ix-slide-in/ix-slide-in2.component';
+import { IxSlideInComponent } from './components/ix-slide-in/ix-slide-in.component';
 import { WithManageCertificatesLinkComponent } from './components/with-manage-certificates-link/with-manage-certificates-link.component';
 
 @NgModule({
@@ -87,7 +87,6 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxSelectComponent,
     IxFieldsetComponent,
     IxSlideInComponent,
-    IxSlideIn2Component,
     IxModalHeaderComponent,
     IxCheckboxComponent,
     IxTextareaComponent,
@@ -105,6 +104,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxLabelComponent,
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
+    IxStarRatingComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -112,7 +112,6 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxInputComponent,
     IxSelectComponent,
     IxSlideInComponent,
-    IxSlideIn2Component,
     IxModalHeaderComponent,
     IxFieldsetComponent,
     IxCheckboxComponent,
@@ -131,6 +130,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxLabelComponent,
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
+    IxStarRatingComponent,
   ],
   providers: [
     IxFormatterService,

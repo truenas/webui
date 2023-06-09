@@ -27,7 +27,7 @@ import { createTranslateLoader } from 'app/core/classes/icu-translations-loader'
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
-import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
+import { IxFeedbackModule } from 'app/modules/ix-feedback/ix-feedback.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -37,7 +37,6 @@ import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { IxSlideIn2Service } from 'app/services/ix-slide-in2.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -117,10 +116,10 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     MatButtonModule,
     TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
+    IxFeedbackModule,
   ],
   declarations: [
     AppComponent,
-    DownloadKeyDialogComponent,
   ],
   providers: [
     RoutePartsService,
@@ -131,7 +130,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AppLoaderService,
     EntityTableService,
     IxSlideInService,
-    IxSlideIn2Service,
     IxFileUploadService,
     DisksUpdateService,
     {

@@ -14,7 +14,7 @@ export class CustomRouterStateSerializer implements RouterStateSerializer<Custom
       route = route.firstChild;
     }
     const url = routerState.url;
-    const title = route.data.title;
+    const title = route.data.title as string;
 
     return { url, title };
   }

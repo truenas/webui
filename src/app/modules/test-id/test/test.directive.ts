@@ -69,6 +69,7 @@ export class TestDirective {
       case 'button':
       case 'select':
       case 'textarea':
+      case 'table':
         return tagName;
       case 'a':
         return 'link';

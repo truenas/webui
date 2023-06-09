@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, OnInit,
+  Component, Inject, OnInit,
   Type,
   ViewChild,
   ViewContainerRef,
@@ -16,6 +16,8 @@ import { alertServiceNames, AlertServiceType } from 'app/enums/alert-service-typ
 import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/system/alert-service';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -50,7 +52,6 @@ import {
   VictorOpsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +72,6 @@ export class AlertServiceComponent implements OnInit {
   );
 
   isLoading = false;
-  existingAlertService: AlertService;
 
   @ViewChild('alertServiceContainer', { static: true, read: ViewContainerRef }) alertServiceContainer: ViewContainerRef;
 
@@ -85,9 +85,10 @@ export class AlertServiceComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
+    private slideInRef: IxSlideInRef<AlertService>,
+    @Inject(SLIDE_IN_DATA) private existingAlertService: AlertService,
   ) {
     this.setFormEvents();
   }
@@ -102,14 +103,17 @@ export class AlertServiceComponent implements OnInit {
 
   ngOnInit(): void {
     this.renderAlertServiceForm();
+
+    if (this.existingAlertService) {
+      this.setAlertServiceForEdit();
+    }
   }
 
-  setAlertServiceForEdit(alertService: AlertService): void {
-    this.existingAlertService = alertService;
-    this.commonForm.patchValue(alertService);
+  setAlertServiceForEdit(): void {
+    this.commonForm.patchValue(this.existingAlertService);
 
     setTimeout(() => {
-      this.alertServiceForm.setValues(alertService.attributes);
+      this.alertServiceForm.setValues(this.existingAlertService.attributes);
     });
   }
 
@@ -158,7 +162,7 @@ export class AlertServiceComponent implements OnInit {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.snackbar.success(this.translate.instant('Alert service saved'));
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;

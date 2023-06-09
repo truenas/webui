@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +11,7 @@ import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/options.
 import helptext from 'app/helptext/directory-service/ldap';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -19,7 +19,6 @@ import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -77,10 +76,9 @@ export class LdapComponent implements OnInit {
     private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<LdapComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
-    private router: Router,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}
@@ -125,7 +123,7 @@ export class LdapComponent implements OnInit {
           if (update.job_id) {
             this.showStartingJob(update.job_id);
           } else {
-            this.slideInService.close();
+            this.slideInRef.close();
           }
         },
         error: (error) => {
@@ -166,7 +164,7 @@ export class LdapComponent implements OnInit {
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.slideInService.close();
+      this.slideInRef.close();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.dialogService.error(this.errorHandler.parseJobError(error));
