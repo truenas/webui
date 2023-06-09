@@ -1,0 +1,30 @@
+<div class="step-buttons">
+  <button
+    mat-button
+    matStepperPrevious
+    color="accent"
+    type="button"
+    ixTest="back"
+  >
+    {{ 'Back' | translate }}
+  </button>
+
+  <button
+    *ngIf="hasVdevs"
+    mat-button
+    type="button"
+    ixTest="inspect-vdevs"
+    (click)="onInspectVdevsPressed()"
+  >{{ 'Inspect VDEVs' | translate }}</button>
+
+  <button
+    mat-button
+    matStepperNext
+    color="primary"
+    type="button"
+    ixTest="create-pool"
+    (click)="createPool.emit()"
+  >
+    {{ 'Create Pool' | translate }}
+  </button>
+</div>

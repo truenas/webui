@@ -45,6 +45,7 @@ import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.rout
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { DownloadKeyDialogComponent } from './components/download-key-dialog/download-key-dialog.component';
+import { InspectVdevsDialogComponent } from './components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { ManualSelectionDiskFiltersComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
 import { ManualSelectionDisksComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disks.component';
 import { AutomatedDiskSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
@@ -107,6 +108,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     PoolWarningsComponent,
     DownloadKeyDialogComponent,
     DownloadKeyDialogOldComponent,
+    InspectVdevsDialogComponent,
   ],
   providers: [
     PoolManagerStore,
