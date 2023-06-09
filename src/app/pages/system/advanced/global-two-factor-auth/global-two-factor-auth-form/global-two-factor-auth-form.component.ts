@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -28,6 +29,12 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     window: [null as number, Validators.required],
     ssh: [false],
   });
+
+  readonly otpDigitOptions$ = of([
+    { label: '6', value: 6 },
+    { label: '7', value: 7 },
+    { label: '8', value: 8 },
+  ]);
 
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
 

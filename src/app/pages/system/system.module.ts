@@ -120,11 +120,10 @@ import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
-import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
+import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
@@ -220,7 +219,6 @@ import { routing } from './system.routing';
     SysctlCardComponent,
     TunableFormComponent,
     TunableListComponent,
-    TwoFactorComponent,
     UpdateComponent,
     BootenvStatsDialogComponent,
     CronFormComponent,

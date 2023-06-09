@@ -43,7 +43,7 @@ describe('KernelCardComponent', () => {
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
-      'Enable 2FA Globally: Disabled',
+      'Global 2FA: Disabled',
       'Interval: 30',
       'OTP Digits: 4',
       'Window: 3',

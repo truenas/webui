@@ -14,8 +14,8 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
-import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
+import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
+import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
 import { DialogService, WebSocketService } from 'app/services';
 
 describe('TwoFactorComponent', () => {

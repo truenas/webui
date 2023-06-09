@@ -18,7 +18,6 @@ import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-lis
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
-import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
 
 export const routes: Routes = [
@@ -122,10 +121,6 @@ export const routes: Routes = [
           data: { title: T('EULA'), breadcrumb: T('EULA') },
         },
       ],
-    }, {
-      path: 'two-factor',
-      component: TwoFactorComponent,
-      data: { title: T('Two-Factor Auth'), breadcrumb: T('Two-Factor Auth') },
     }, {
       path: 'services',
       component: ServicesComponent,

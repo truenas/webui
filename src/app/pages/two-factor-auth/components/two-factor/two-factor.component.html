@@ -1,16 +1,11 @@
-<mat-card>
+<mat-card class="card">
+  <mat-progress-bar
+    *ngIf="isFormLoading"
+    mode="indeterminate"
+  ></mat-progress-bar>
+
   <mat-toolbar-row>
-    <h3>{{ 'Global Two Factor Authentication' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
-        mat-button
-        [ixTest]="['two-factor-auth', 'configure']"
-        (click)="onConfigurePressed(twoFactorAuthConfig)"
-      >
-        {{ 'Configure' | translate }}
-      </button>
-    </div>
+    <h3>{{ 'Global Two-Factor Authentication Configuration' | translate }}</h3>
   </mat-toolbar-row>
 
   <mat-card-content>
@@ -47,4 +42,38 @@
       </mat-list-item>
     </mat-list>
   </mat-card-content>
+        
+</mat-card>
+<mat-card class="card">
+  <mat-toolbar-row>
+    <h3>{{ 'User Two-Factor Authentication Actions' | translate }}</h3>
+  </mat-toolbar-row>
+
+  <mat-card-actions>
+    <div class="status-content">
+      <ix-warning
+        *ngIf="twoFactorAuthConfigured"
+        [message]="helptext.two_factor.enabled_status_false | translate"
+      ></ix-warning>
+      <button
+        mat-button
+        class="btn"
+        color="primary"
+        type="button"
+        ixTest="renew-secret"
+        (click)="renewSecret()"
+      > {{ twoFactorAuthConfigured ? 'Renew 2FA secret' : 'Configure 2FA secret' | translate }}</button>
+      <button
+        mat-button
+        class="btn"
+        color="accent"
+        type="button"
+        ixTest="show-qr"
+        [disabled]="isFormLoading || !twoFactorAuthConfigured"
+        (click)="showQrCode()"
+      >
+        {{ 'Show QR' | translate }}
+      </button>
+    </div>
+  </mat-card-actions>
 </mat-card>
