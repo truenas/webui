@@ -40,10 +40,10 @@ describe('AppUpgradeDialogComponent - test 1', () => {
     imports: [ReactiveFormsModule, FormsModule],
     providers: [
       mockProvider(MatDialogRef),
-      mockProvider(ErrorHandlerService),
       mockProvider(DialogService),
-      mockProvider(ApplicationsService),
       mockProvider(AppLoaderService),
+      mockProvider(ErrorHandlerService),
+      mockProvider(ApplicationsService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
