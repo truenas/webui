@@ -116,6 +116,11 @@ export const rootRouterConfig: Routes = [{
     data: { title: T('API Keys'), breadcrumb: T('API Keys') },
   },
   {
+    path: 'two-factor-auth',
+    loadChildren: () => import('./pages/two-factor-auth/two-factor-auth.module').then((module) => module.default),
+    data: { title: T('Two-Factor Authentication'), breadcrumb: T('Two-Factor Authentication') },
+  },
+  {
     path: 'data-protection',
     loadChildren: () => import('./pages/data-protection/data-protection.module').then((module) => module.DataProtectionModule),
     data: { title: T('Data Protection'), breadcrumb: T('Data Protection') },
