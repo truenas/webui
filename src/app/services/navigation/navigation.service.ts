@@ -130,30 +130,11 @@ export class NavigationService {
         { name: T('General'), state: 'general' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
-        {
-          name: T('Failover'),
-          state: 'failover',
-          isVisible$: this.hasFailover$,
-        },
+        { name: T('Failover'), state: 'failover', isVisible$: this.hasFailover$ },
         { name: T('Services'), state: 'services' },
         { name: T('Shell'), state: 'shell' },
-        {
-          name: T('Alert Settings'),
-          state: 'alertsettings',
-        },
-        {
-          name: T('Alert Services'),
-          state: 'alertservice',
-        },
-        {
-          name: T('Email'),
-          state: 'email',
-        },
-        {
-          name: T('Enclosure'),
-          state: 'viewenclosure',
-          isVisible$: this.hasEnclosure$,
-        },
+        { name: T('Alert Settings'), state: 'alert-settings' },
+        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
       ],
     },
   ];

@@ -477,7 +477,6 @@
   "Advanced Settings": "Réglages avancés",
   "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click <b>Fetch Datastores</b> and select the datastore to be synchronized.": "Après avoir entré le <b>nom d'hôte, le nom d'utilisateur</b>et le <b>mot de passe</b>, cliquez sur <b>Fetch Datastores</b> et sélectionnez le datastore à synchroniser.",
   "Alert": "Alerte",
-  "Alert Services": "Services d'alerte",
   "Alert Settings": "Paramètres d'alerte",
   "Alert service saved": "Service d'alertes sauvegardé",
   "Alerts": "Alertes",

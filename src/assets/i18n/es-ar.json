@@ -1651,7 +1651,6 @@
   "Advanced Settings": "Configuraciones avanzadas",
   "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click <b>Fetch Datastores</b> and select the datastore to be synchronized.": "Después de ingresar el <b>Nombre de host, Nombre de usuario</b> y <b>Contraseña</b>, haga clic en <b>Recuperar almacenes de datos</b> y seleccione el almacén de datos que se sincronizará.",
   "Alert": "Alerta",
-  "Alert Services": "Servicios de alerta",
   "Alert Settings": "Configuraciones de alerta",
   "Alerts": "Aletas",
   "Alerts could not be loaded": "No se pudieron cargar las alertas",

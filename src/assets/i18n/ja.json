@@ -3649,7 +3649,6 @@
   "Advanced Settings": "詳細設定",
   "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click <b>Fetch Datastores</b> and select the datastore to be synchronized.": "<b>Hostname, Username</b>、<b>Password</b>を入力したら、<b>Fetch Datastores</b>をクリックし、同期するデータストアを選択します。",
   "Alert": "アラート",
-  "Alert Services": "アラートサービス",
   "Alert Settings": "アラート設定",
   "Alerts": "アラート",
   "Algorithm": "アルゴリズム",

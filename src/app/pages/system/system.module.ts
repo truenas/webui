@@ -124,6 +124,7 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
+import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { SetProductionStatusDialogComponent } from './general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
@@ -256,6 +257,7 @@ import { routing } from './system.routing';
     IsolatedGpusCardComponent,
     KernelCardComponent,
     SupportCardComponent,
+    AlertSettingsComponent,
   ],
   providers: [
     TranslateService,

@@ -374,7 +374,6 @@
   "Advanced Settings": "Розширені налаштування",
   "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click <b>Fetch Datastores</b> and select the datastore to be synchronized.": "Після введення <b>Імені Хоста, Ім'я Користувача</b> та <b>Пароля</b> натисніть <b>Вийняти сховища даних</b> і виберіть сховище даних для синхронізації.",
   "Alert": "Оповіщення",
-  "Alert Services": "Служби оповіщення",
   "Alert Settings": "Налаштування оповіщення",
   "Alert service saved": "Службу оповіщення збережено",
   "Alerts": "Сповіщення",

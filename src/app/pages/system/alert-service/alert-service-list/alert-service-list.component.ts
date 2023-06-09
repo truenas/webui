@@ -14,6 +14,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-alert-service-list',
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class AlertServiceListComponent implements EntityTableConfig<AlertService> {
