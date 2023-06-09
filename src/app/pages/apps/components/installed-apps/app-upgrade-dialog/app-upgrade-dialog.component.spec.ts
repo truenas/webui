@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DialogService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const fakeAppInfo = {
@@ -43,6 +43,7 @@ describe('AppUpgradeDialogComponent - test 1', () => {
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(ApplicationsService),
+      mockProvider(AppLoaderService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
