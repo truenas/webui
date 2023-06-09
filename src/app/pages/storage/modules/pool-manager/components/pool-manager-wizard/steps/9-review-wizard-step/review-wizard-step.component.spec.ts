@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
@@ -15,7 +16,11 @@ import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules
 describe('ReviewWizardStepComponent', () => {
   let spectator: Spectator<ReviewWizardStepComponent>;
   let loader: HarnessLoader;
-  const topology = {} as PoolManagerTopology;
+  const topology = {
+    [VdevType.Data]: {
+      vdevs: [[{}]],
+    },
+  } as PoolManagerTopology;
 
   const createComponent = createComponentFactory({
     component: ReviewWizardStepComponent,
@@ -47,6 +52,7 @@ describe('ReviewWizardStepComponent', () => {
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InspectVdevsDialogComponent, {
       data: topology,
+      panelClass: 'inspect-vdevs-dialog',
     });
   });
 });

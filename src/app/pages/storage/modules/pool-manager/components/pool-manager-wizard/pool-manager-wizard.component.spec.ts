@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness } from '@angular/material/stepper/testing';
@@ -198,11 +197,11 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   describe('creating a pool', () => {
-    it('creates a pool using store topology when Create Pool button is pressed on last step', async () => {
+    it('creates a pool using store topology last step emits createPool event', async () => {
       const dialog = spectator.inject(MatDialog);
       await wizard.selectStep({ label: 'Review' });
-      const createPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
-      await createPoolButton.click();
+
+      spectator.query(ReviewWizardStepComponent).createPool.emit();
 
       expect(dialog.open).toHaveBeenCalledWith(EntityJobComponent, {
         disableClose: true,
@@ -244,8 +243,7 @@ describe('PoolManagerWizardComponent', () => {
       });
 
       await wizard.selectStep({ label: 'Review' });
-      const createPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
-      await createPoolButton.click();
+      spectator.query(ReviewWizardStepComponent).createPool.emit();
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DownloadKeyDialogComponent, {
         disableClose: true,
