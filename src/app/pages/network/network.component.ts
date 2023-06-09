@@ -215,7 +215,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private listenForHaStatus(): void {
     combineLatest([
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)),
+      this.store$.select(selectIsHaLicensed),
       this.store$.select(selectHaStatus).pipe(filter(Boolean)),
     ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
       this.isHaEnabled = isHa && hasHa;
