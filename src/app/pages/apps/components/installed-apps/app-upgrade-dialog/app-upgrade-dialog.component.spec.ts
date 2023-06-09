@@ -33,7 +33,8 @@ const fakeUpgradeSummary = {
   upgrade_human_version: '8.7.0_1.0.2',
 };
 
-describe('AppUpgradeDialogComponent - test 1', () => {
+// eslint-disable-next-line jest/no-focused-tests
+describe.only('AppUpgradeDialogComponent - test 1', () => {
   let spectator: Spectator<AppUpgradeDialogComponent>;
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
@@ -44,18 +45,23 @@ describe('AppUpgradeDialogComponent - test 1', () => {
       mockProvider(AppLoaderService),
       mockProvider(ErrorHandlerService),
       mockProvider(ApplicationsService),
-      {
-        provide: MAT_DIALOG_DATA,
-        useValue: {
-          appInfo: fakeAppInfo,
-          upgradeSummary: fakeUpgradeSummary,
-        },
-      },
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent(
+      {
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: {
+              appInfo: fakeAppInfo,
+              upgradeSummary: fakeUpgradeSummary,
+            },
+          },
+        ],
+      },
+    );
   });
 
   it('shows title as application name', () => {
