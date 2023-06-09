@@ -14,7 +14,6 @@
 ## Third pirty adjust
     Scroll Bar
     Data table
-## Top Bar
 ## Main Sidenav
 ## Collapsed Sidenav
 ## Pages
@@ -536,20 +535,6 @@ body * {
   margin-left: -10px;
 }
 
-/*---- Top Bar -----*/
-.topbar.mat-toolbar {
-  min-height: 48px;
-}
-
-.topbar .mat-mdc-select-value {
-  color: #fff;
-  font-weight: 400;
-}
-
-.topbar-button-right {
-  margin-left: 0.5rem !important;
-}
-
 /*---- Main Sidenav -----*/
 .icon-menu {
   padding: 0 24px;
@@ -780,20 +765,6 @@ body * {
   text-align: center;
 }
 
-.default-table {
-  text-align: left;
-}
-
-.default-table > thead tr th {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  font-weight: 400;
-  padding: 0.9rem 1.2rem;
-}
-
-.default-table tbody tr td {
-  padding: 0.9rem 1.2rem;
-}
-
 /*---- Chrome autocomplete Forms -----*/
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -856,28 +827,6 @@ input:-webkit-autofill {
   }
 }
 
-/*---- Modal Dialog ----*/
-.overflow-hide {
-  overflow: hidden !important;
-}
-
-.system-info .mat-mdc-list .mat-mdc-list-item-unscoped-content {
-  height: 40px !important;
-}
-
-@media (max-width: 415px) {
-  .system-info .mat-mdc-list .mat-mdc-list-item-unscoped-content {
-    height: 50px !important;
-  }
-}
-
-.system-info .mat-mdc-list .mat-mdc-list-item-unscoped-content label,
-.system-info .mat-mdc-list .mat-mdc-list-item-unscoped-content p {
-  overflow: visible;
-  white-space: normal;
-  word-break: keep-all;
-}
-
 /*---- tooltip ----*/
 .tooltip .tooltiptext a {
   color: #bbe2f9;
@@ -904,12 +853,6 @@ body.safari-platform {
   .mat-raised-button {
     transform: none;
   }
-}
-
-/*---- Ascii art font ----*/
-.ascii-art-font {
-  font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace !important;
-  line-height: 1 !important;
 }
 
 /*---- widgets buttons alignment ----*/

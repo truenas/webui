@@ -1,4 +1,4 @@
-<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+<div class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container front">
     <mat-card
       class="front overflow-hidden"
@@ -30,7 +30,7 @@
               [class.drag-handle]="showReorderHandle"
             >
               <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ title | translate }}</span>
+              <span>{{ 'Storage' | translate }}</span>
             </div>
           </h3>
           <div class="controls">

@@ -27,13 +27,16 @@ export class IxFormatterService {
    * @param value The value to be parsed
    * @returns The parsed value
    */
-  memorySizeParsing: (val: string) => number = (value: string) => {
+  memorySizeParsing: (val: string, postfixValue?: string) => number = (value: string, postfix: string) => {
     if (!value) {
       return null;
     }
-    const humanStringToNum = this.convertHumanStringToNum(value, true);
+
+    const finalValue = `${value} ${!Number(value) ? '' : postfix || ''}`.trim();
+    const humanStringToNum = this.convertHumanStringToNum(finalValue, true);
+
     // Default unit is MiB so if the user passed in no unit, we assume unit is MiB
-    return (humanStringToNum !== Number(value)) ? humanStringToNum : this.convertHumanStringToNum(value + 'mb', true);
+    return (humanStringToNum !== Number(finalValue)) ? humanStringToNum : this.convertHumanStringToNum(finalValue + 'mb', true);
   };
 
   /**

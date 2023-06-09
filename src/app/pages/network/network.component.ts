@@ -6,44 +6,37 @@ import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { lastValueFrom, Subject } from 'rxjs';
+import { combineLatest, lastValueFrom, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
-import {
-  OpenVpnServerConfigComponent,
-} from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
 import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
 import {
   AppLoaderService,
-  DialogService,
-  StorageService, SystemGeneralService,
+  DialogService, SystemGeneralService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
 
@@ -144,42 +137,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   };
 
-  openvpnTableConf: AppTableConfig<NetworkComponent> = {
-    title: this.translate.instant('OpenVPN'),
-    queryCall: 'service.query',
-    name: 'openVPN',
-    columns: [
-      { name: this.translate.instant('Service'), prop: 'service_label' },
-      { name: this.translate.instant('State'), prop: 'state' },
-    ],
-    hideHeader: true,
-    parent: this,
-    dataSourceHelper: this.openvpnDataSourceHelper,
-    getActions: this.getOpenVpnActions.bind(this),
-    isActionVisible: this.isOpenVpnActionVisible,
-    edit: (row: Service) => {
-      if (row.service === ServiceName.OpenVpnClient) {
-        const slideInRef = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-        this.handleSlideInClosed(slideInRef);
-      } else if (row.service === ServiceName.OpenVpnServer) {
-        const slideInRef = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
-        this.handleSlideInClosed(slideInRef);
-      }
-    },
-    afterGetData: () => {
-      const state = this.navigation?.extras?.state as { configureOpenVPN: string };
-      if (state && state.configureOpenVPN) {
-        if (state.configureOpenVPN === 'client') {
-          const slideInRef = this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
-          this.handleSlideInClosed(slideInRef);
-        } else {
-          const slideInRef = this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
-          this.handleSlideInClosed(slideInRef);
-        }
-      }
-    },
-  };
-
   ipmiTableConf: AppTableConfig<NetworkComponent> = {
     title: this.translate.instant('IPMI'),
     queryCall: 'ipmi.lan.query',
@@ -201,7 +158,7 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     private router: Router,
     private dialogService: DialogService,
-    private storageService: StorageService,
+    private formatter: IxFormatterService,
     private loader: AppLoaderService,
     private translate: TranslateService,
     private tableService: TableService,
@@ -257,8 +214,11 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private listenForHaStatus(): void {
-    this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe(({ hasHa }) => {
-      this.isHaEnabled = hasHa;
+    combineLatest([
+      this.store$.select(selectIsHaLicensed),
+      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
+    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
+      this.isHaEnabled = isHa && hasHa;
     });
   }
 
@@ -501,20 +461,20 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe((reportingData) => {
-        if (reportingData.interfaces) {
+        if (reportingData?.interfaces) {
           tableSource.forEach((row) => {
             if (!reportingData.interfaces[row.id]) {
               row.link_state = null;
             } else {
               row.link_state = reportingData.interfaces[row.id].link_state;
               if (reportingData.interfaces[row.id].received_bytes !== undefined) {
-                row.received = this.storageService.convertBytesToHumanReadable(
+                row.received = this.formatter.convertBytesToHumanReadable(
                   reportingData.interfaces[row.id].received_bytes,
                 );
                 row.received_bytes = reportingData.interfaces[row.id].received_bytes;
               }
               if (reportingData.interfaces[row.id].sent_bytes !== undefined) {
-                row.sent = this.storageService.convertBytesToHumanReadable(
+                row.sent = this.formatter.convertBytesToHumanReadable(
                   reportingData.interfaces[row.id].sent_bytes,
                 );
                 row.sent_bytes = reportingData.interfaces[row.id].sent_bytes;
@@ -581,103 +541,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
         this.window.open(`https://${row.ipaddress}`);
       },
     }];
-  }
-
-  openvpnDataSourceHelper(services: Service[]): (Service & { service_label: string })[] {
-    return services
-      .filter((item) => item.service.includes('openvpn_'))
-      .map((item) => ({
-        ...item,
-        service_label: item.service.charAt(8).toUpperCase() + item.service.slice(9),
-      }));
-  }
-
-  getOpenVpnActions(): AppTableAction[] {
-    return [{
-      icon: 'stop',
-      name: 'stop',
-      matTooltip: this.translate.instant('Stop'),
-      onChanging: false,
-      onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
-        row.onChanging = true;
-        this.ws
-          .call('service.stop', [row.service, { silent: false }])
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (wasStopped) => {
-              if (wasStopped) {
-                this.dialogService.info(
-                  this.translate.instant('Service failed to stop'),
-                  this.translate.instant('OpenVPN {serviceLabel} service failed to stop.', {
-                    serviceLabel: row.service_label,
-                  }),
-                );
-                row.state = ServiceStatus.Running;
-                row.onChanging = false;
-              } else {
-                row.state = ServiceStatus.Stopped;
-                row.onChanging = false;
-              }
-            },
-            error: (err) => {
-              row.onChanging = false;
-              this.dialogService.error({
-                ...this.errorHandler.parseWsError(err),
-                title: this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
-                  serviceLabel: row.service_label,
-                }),
-              });
-            },
-          });
-      },
-    },
-    {
-      icon: 'play_arrow',
-      name: 'start',
-      matTooltip: this.translate.instant('Start'),
-      onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
-        row.onChanging = true;
-        this.ws
-          .call('service.start', [row.service, { silent: false }])
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (hasStarted) => {
-              if (hasStarted) {
-                row.state = ServiceStatus.Running;
-                row.onChanging = false;
-              } else {
-                this.dialogService.warn(
-                  this.translate.instant('Service failed to start'),
-                  this.translate.instant('OpenVPN {serviceLabel} service failed to start.', {
-                    serviceLabel: row.service_label,
-                  }),
-                );
-                row.state = ServiceStatus.Stopped;
-                row.onChanging = false;
-              }
-            },
-            error: (err) => {
-              row.onChanging = false;
-              this.dialogService.error({
-                ...this.errorHandler.parseWsError(err),
-                title: this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
-                  serviceLabel: row.service_label,
-                }),
-              });
-            },
-          });
-      },
-    }];
-  }
-
-  isOpenVpnActionVisible(name: string, row: Service): boolean {
-    if (
-      (name === 'start' && row.state === ServiceStatus.Running)
-      || (name === 'stop' && row.state === ServiceStatus.Stopped)
-    ) {
-      return false;
-    }
-    return true;
   }
 
   isIpmiActionVisible(name: string, row: IpmiRow): boolean {

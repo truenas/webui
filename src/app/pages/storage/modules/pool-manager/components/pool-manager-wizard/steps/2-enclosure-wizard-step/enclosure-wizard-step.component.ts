@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of, timer } from 'rxjs';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
@@ -23,6 +25,8 @@ export enum DispersalStrategy {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureWizardStepComponent implements OnInit {
+  @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
+
   form = this.formBuilder.group({
     dispersalStrategy: [DispersalStrategy.None],
     limitToEnclosure: [null as number],
@@ -66,6 +70,20 @@ export class EnclosureWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectFormToStore();
+
+    this.form.controls.dispersalStrategy.valueChanges.pipe(
+      filter((value) => value !== DispersalStrategy.LimitToSingle),
+      switchMap(() => timer(0)),
+      tap(() => {
+        this.form.controls.limitToEnclosure.removeValidators(Validators.required);
+        this.form.controls.limitToEnclosure.setValue(null);
+      }),
+    ).pipe(untilDestroyed(this)).subscribe();
+
+    this.form.statusChanges.pipe(
+      switchMap(() => timer(0)),
+      tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
+    ).pipe(untilDestroyed(this)).subscribe();
   }
 
   private connectFormToStore(): void {

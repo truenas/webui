@@ -123,6 +123,7 @@
                   <button
                     *ngSwitchCase="'state-button'"
                     mat-stroked-button
+                    class="state-button"
                     [ixTest]="[element[column.prop], 'state']"
                     [ngClass]="getButtonClass(element[column.prop])"
                     (click)="$event.stopPropagation(); onButtonClick(element)"

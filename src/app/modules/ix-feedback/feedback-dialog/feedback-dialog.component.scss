@@ -1,0 +1,38 @@
+:host {
+  display: block;
+  max-width: 100%;
+  width: 500px;
+
+  ::ng-deep {
+    ix-textarea {
+      textarea {
+        max-height: 40vh;
+        min-height: 7vh;
+        min-width: 96.5%;
+      }
+    }
+  }
+}
+
+.close-feedback-dialog {
+  position: absolute;
+  right: 16px;
+  top: 24px;
+}
+
+.stars {
+  align-items: center;
+  display: flex;
+}
+
+.file-ticket-helper {
+  align-items: baseline;
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.file-ticket-link {
+  color: var(--primary);
+  cursor: pointer;
+}

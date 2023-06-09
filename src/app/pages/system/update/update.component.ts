@@ -14,6 +14,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -23,6 +24,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -534,17 +536,21 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  update(): void {
+  update(resume = false): void {
     this.window.sessionStorage.removeItem('updateLastChecked');
     this.window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.handleUpdateError(error);
+    });
     if (!this.isHa) {
-      dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
+      dialogRef.componentInstance.setCall('update.update', [{ resume, reboot: true }]);
       dialogRef.componentInstance.submit();
     } else {
       this.ws.call('update.set_train', [this.trainValue]).pipe(untilDestroyed(this)).subscribe(() => {
-        dialogRef.componentInstance.setCall('failover.upgrade');
+        dialogRef.componentInstance.setCall('failover.upgrade', [{ resume }]);
         dialogRef.componentInstance.disableProgressValue(true);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -559,9 +565,6 @@ export class UpdateComponent implements OnInit {
             buttonText: helptext.ha_update.complete_action,
             hideCancel: true,
           }).pipe(untilDestroyed(this)).subscribe();
-        });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          this.dialogService.error(this.errorHandler.parseJobError(err));
         });
       });
     }
@@ -609,5 +612,22 @@ export class UpdateComponent implements OnInit {
           this.wasConfigurationSaved = true;
         }),
       );
+  }
+
+  private handleUpdateError(error: Job): void {
+    if (error.error.includes(updateAgainCode)) {
+      this.dialogService.confirm({
+        title: helptext.continueDialogTitle,
+        message: error.error.replace(updateAgainCode, ''),
+        buttonText: helptext.continueDialogAction,
+      }).pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.update(true);
+      });
+      return;
+    }
+    this.dialogService.error(this.errorHandler.parseJobError(error));
   }
 }
