@@ -1,4 +1,5 @@
 import { UUID } from 'angular2-uuid';
+import _ from 'lodash';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManualSelectionVdev,
@@ -21,9 +22,10 @@ export function vdevsToManualSelectionVdevs(vdevs: UnusedDisk[][]): ManualSelect
   });
 }
 
-// TODO: Do something about extra fields.
 export function manualSelectionVdevsToVdevs(vdevs: ManualSelectionVdev[]): UnusedDisk[][] {
   return vdevs.map((vdev) => {
-    return vdev.disks;
+    return vdev.disks.map((disk) => {
+      return _.omit(disk, ['vdevUuid', 'real_capacity']) as UnusedDisk;
+    });
   });
 }
