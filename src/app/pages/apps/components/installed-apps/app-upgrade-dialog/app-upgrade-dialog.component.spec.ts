@@ -2,6 +2,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const fakeAppInfo = {
   name: 'elastic-search',
@@ -37,6 +39,8 @@ describe('AppUpgradeDialogComponent - test 1', () => {
     imports: [ReactiveFormsModule, FormsModule],
     providers: [
       mockProvider(MatDialogRef),
+      mockProvider(ErrorHandlerService),
+      mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
