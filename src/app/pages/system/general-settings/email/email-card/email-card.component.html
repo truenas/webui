@@ -1,0 +1,62 @@
+<mat-card id="email-card">
+  <mat-toolbar-row>
+    <h3>{{ 'Email' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        *ixWithLoadingState="emailConfig$ as emailConfig"
+        mat-button
+        color="default"
+        [ixTest]="['email', 'settings']"
+        (click)="openEmailSettings(emailConfig)"
+      >
+        {{ 'Settings' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Send Mail Method' | translate }}:</span>
+        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+          {{ !emailConfig?.oauth?.client_id ? helptext.send_mail_method.smtp.placeholder : helptext.send_mail_method.gmail.placeholder }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'From Email' | translate }}:</span>
+        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+          {{ emailConfig?.fromemail || '-' }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'From Name' | translate }}:</span>
+        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+          {{ emailConfig?.fromname || '-' }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Outgoing Mail Server' | translate }}:</span>
+        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+          {{ emailConfig?.outgoingserver || '-' }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Mail Server Port' | translate }}:</span>
+        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+          {{ emailConfig?.port || '-' }}
+        </span>
+      </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Security' | translate }}:</span>
+        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+          {{ emailConfig?.security || '-' }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

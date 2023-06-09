@@ -14,7 +14,7 @@
       <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
         {{ 'Alert Settings' | translate }}
       </a>
-      <a mat-menu-item ixTest="email-settings" (click)="navigateTo(['/system', 'email'])">
+      <a mat-menu-item ixTest="email-settings" (click)="navigateTo(['/system', 'general'], { fragment: 'email' })">
         {{ 'Email' | translate }}
       </a>
     </mat-menu>

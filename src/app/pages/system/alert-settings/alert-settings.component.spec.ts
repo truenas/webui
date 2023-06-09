@@ -21,7 +21,7 @@ describe('AlertSettingsComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows cards with advanced settings', () => {
+  it('shows cards with alert settings', () => {
     expect(spectator.query(AlertServiceListComponent)).toExist();
     expect(spectator.query(AlertConfigFormComponent)).toExist();
   });

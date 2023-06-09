@@ -15,7 +15,6 @@ import { InitshutdownListComponent } from './advanced/init-shutdown/initshutdown
 import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
-import { EmailComponent } from './email/email.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
@@ -90,11 +89,6 @@ export const routes: Routes = [
           ],
         },
       ],
-    },
-    {
-      path: 'email',
-      component: EmailComponent,
-      data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
     }, {
       path: 'alert-settings',
       component: AlertSettingsComponent,
