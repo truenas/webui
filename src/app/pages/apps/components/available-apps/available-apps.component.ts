@@ -34,6 +34,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   customAppDisabled$ = this.applicationsStore.selectedPool$.pipe(
     map((pool) => !pool),
   );
+  isLoading$ = this.applicationsStore.isLoading$;
 
   readonly customIxChartApp = ixChartApp;
   readonly chartsTrain = chartsTrain;
@@ -79,5 +80,10 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
       catalogs: [],
       sort: null,
     });
+  }
+
+  openCategoryView(category: string): void {
+    this.applyCategoryFilter(category);
+    this.router.navigate(['/apps', 'available', category]);
   }
 }

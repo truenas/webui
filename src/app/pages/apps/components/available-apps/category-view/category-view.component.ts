@@ -1,34 +1,30 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ActivatedRoute,
+} from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject, map } from 'rxjs';
 import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
+@UntilDestroy()
 @Component({
   templateUrl: './category-view.component.html',
   styleUrls: ['./category-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoryViewComponent implements AfterViewInit {
+export class CategoryViewComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  apps$ = this.applicationsStore.availableApps$.pipe(
-    map((apps) => {
-      this.category = this.route.snapshot.paramMap.get('category');
-      this.pageTitle$.next(this.category);
-      return apps.filter((app) => app.categories.includes(this.category.toLocaleLowerCase()));
-    }),
-  );
+  apps$ = this.applicationsStore.availableApps$;
   pageTitle$ = new BehaviorSubject('Category');
   isLoading$ = this.applicationsStore.isLoading$;
-  customAppDisabled$ = this.applicationsStore.selectedPool$.pipe(
-    map((pool) => !pool),
-  );
+  customAppDisabled$ = this.applicationsStore.selectedPool$.pipe(map((pool) => !pool));
   category: string;
 
   readonly customIxChartApp = ixChartApp;
@@ -39,12 +35,24 @@ export class CategoryViewComponent implements AfterViewInit {
     private layoutService: LayoutService,
     private applicationsStore: AvailableAppsStore,
     private route: ActivatedRoute,
-  ) {
-    // this.category = this.route.snapshot.paramMap.get('category');
+  ) {}
+
+  ngOnInit(): void {
+    this.category = this.route.snapshot.paramMap.get('category');
+    this.pageTitle$.next(this.category.replace(/-/g, ' '));
+    this.applicationsStore.applyFilters({
+      categories: [this.category],
+      catalogs: [],
+      sort: null,
+    });
   }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  ngOnDestroy(): void {
+    this.applicationsStore.resetFilters();
   }
 
   trackByAppId(id: number, app: AvailableApp): string {

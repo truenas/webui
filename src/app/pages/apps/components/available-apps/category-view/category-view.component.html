@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle$ | async | translate">
+  <ix-page-title-header [pageTitle]="pageTitle$ | async | titlecase | translate" [loading]="isLoading$ | async">
     <a
       mat-button
       color="primary"
@@ -10,14 +10,9 @@
       {{ 'Custom App' | translate }}
     </a>
   </ix-page-title-header>
-  <ix-fake-progress-bar
-    *ngIf="isLoading$ | async"
-    class="loader-bar"
-    [loading]="true"
-  ></ix-fake-progress-bar>
 </ng-template>
 
-<div class="apps">
+<div *ngIf="!(isLoading$ | async)" class="apps">
   <ix-app-card
     *ngFor="let app of apps$ | async; trackBy: trackByAppId"
     [app]="app"
@@ -28,7 +23,7 @@
 <ngx-skeleton-loader
   *ngIf="isLoading$ | async"
   class="fake-apps"
-  [count]="6"
+  [count]="12"
   [animation]="false"
 ></ngx-skeleton-loader>
 

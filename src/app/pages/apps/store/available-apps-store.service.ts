@@ -7,7 +7,7 @@ import {
   Observable, Subscription, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
+import { AppExtraCategory, appExtraCategoryLabels } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -15,6 +15,12 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+
+export const filterInitialValues: AppsFiltersValues = {
+  categories: [],
+  sort: null,
+  catalogs: [],
+};
 
 export interface AppsByCategory {
   title: string;
@@ -46,11 +52,7 @@ const initialState: AvailableAppsState = {
   filteredApps: [],
   isLoading: false,
   isFilterApplied: false,
-  filter: {
-    categories: [],
-    sort: null,
-    catalogs: [],
-  },
+  filter: filterInitialValues,
   searchQuery: '',
   installedApps: [],
   selectedPool: null,
@@ -152,6 +154,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
       isFilterApplied: false,
       searchQuery: '',
       filteredApps: [],
+      filter: filterInitialValues,
     };
   });
 
@@ -472,7 +475,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
 
     if (state.filter.categories.includes(AppExtraCategory.NewAndUpdated) || !hasCategoriesFilter) {
       appsByCategory.push({
-        title: this.translate.instant('New & Updated Apps'),
+        title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.NewAndUpdated)),
         apps: hasCategoriesFilter ? filteredLatestApps : filteredLatestApps.slice(0, this.appsPerCategory),
         totalApps: filteredLatestApps.length,
         category: AppExtraCategory.NewAndUpdated,
@@ -481,7 +484,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
 
     if (state.filter.categories.includes(AppExtraCategory.Recommended) || !hasCategoriesFilter) {
       appsByCategory.push({
-        title: this.translate.instant('Recommended Apps'),
+        title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.Recommended)),
         apps: hasCategoriesFilter ? filteredRecommendedApps : filteredRecommendedApps.slice(0, this.appsPerCategory),
         totalApps: filteredRecommendedApps.length,
         category: AppExtraCategory.Recommended,

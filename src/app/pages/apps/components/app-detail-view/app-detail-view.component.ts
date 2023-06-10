@@ -28,7 +28,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   catalog: string;
   train: string;
 
-  isLoading$ = new BehaviorSubject<boolean>(false);
+  isLoading$ = new BehaviorSubject<boolean>(true);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 

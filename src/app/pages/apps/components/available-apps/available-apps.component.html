@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="'Discover' | translate">
+  <ix-page-title-header [pageTitle]="'Discover' | translate" [loading]="isLoading$ | async">
     <a
       mat-button
       color="primary"
@@ -15,24 +15,18 @@
 <ix-available-apps-header></ix-available-apps-header>
 
 <div class="available-apps-list">
-  <ix-fake-progress-bar
-    *ngIf="applicationsStore.isLoading$ | async"
-    class="loader-bar"
-    [loading]="applicationsStore.isLoading$ | async"
-  ></ix-fake-progress-bar>
-
   <h3 *ngIf="applicationsStore.searchQuery$ | async as searchQuery" class="section-title">
     {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
   </h3>
 
   <ngx-skeleton-loader
-    *ngIf="applicationsStore.isLoading$ | async"
+    *ngIf="isLoading$ | async"
     class="fake-apps"
     [count]="6"
     [animation]="false"
   ></ngx-skeleton-loader>
 
-  <ng-container *ngIf="!(applicationsStore.isLoading$ | async)">
+  <ng-container *ngIf="!(isLoading$ | async)">
     <ng-container *ngIf="!(isFilterOrSearch$ | async)">
       <ng-container
         *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle"
@@ -71,7 +65,7 @@
     <button
       mat-flat-button
       [ixTest]="[appSection.title, 'view-all']"
-      [routerLink]="['/apps', 'available', appSection.category]"
+      (click)="openCategoryView(appSection.category)"
     >
       {{ 'View All' | translate }} {{ appSection.title | translate }}
     </button>

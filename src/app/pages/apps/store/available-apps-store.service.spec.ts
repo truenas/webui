@@ -323,7 +323,7 @@ describe('AvailableAppsStore', () => {
             apps: [
               { ...installedAndRecommendedApp },
             ],
-            category: 'New and Updated',
+            category: 'new-and-updated',
             title: 'New & Updated Apps',
             totalApps: 1,
           },
@@ -331,7 +331,7 @@ describe('AvailableAppsStore', () => {
             apps: [
               { ...installedAndRecommendedApp, categories: ['storage', AppExtraCategory.Recommended] },
             ],
-            category: 'Recommended',
+            category: 'recommended',
             title: 'Recommended Apps',
             totalApps: 1,
           },
