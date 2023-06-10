@@ -16,7 +16,7 @@
     "build": "yarn run generate_licenses && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --configuration production",
     "build:prod:aot": "yarn run build:prod --base-href /ui/ && node scripts/verify_build.js",
-    "test": "jest",
+    "test": "jest src/app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component.spec.ts",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
     "test:pr": "yarn run check-env -s && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
