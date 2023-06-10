@@ -2,9 +2,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import {
-  FormBuilder,
-} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,11 +14,9 @@ import { helptext } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -63,13 +58,10 @@ export class TwoFactorComponent implements OnInit {
   }
 
   constructor(
-    private fb: FormBuilder,
     protected ws: WebSocketService,
-    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translateService: TranslateService,
-    private formErrorHandler: FormErrorHandlerService,
     protected mdDialog: MatDialog,
     private authService: AuthService,
   ) {}

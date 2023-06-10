@@ -952,7 +952,7 @@ export type ApiDirectory = {
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
   'user.provisioning_uri': { params: [string]; response: string };
-  'user.renew_2fa_secret': { params: [string]; response: string };
+  'user.renew_2fa_secret': { params: [string]; response: User };
 
   // UPS
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };

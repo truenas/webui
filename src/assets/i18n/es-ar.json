@@ -194,6 +194,7 @@
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "",
   "Config Service": "",
   "Configuration Preview": "",
+  "Configure 2FA Secret": "",
   "Configure 2FA secret": "",
   "Configure Active Directory": "",
   "Confirm New Password": "",

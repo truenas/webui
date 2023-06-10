@@ -36,6 +36,7 @@
   "Choose <i>Master</i> if the UPS is plugged directly      into the system serial port. The UPS will remain the      last item to shut down. Choose <i>Slave</i> to have      this system shut down before <i>Master</i>. See the      <a href=\"{url}\"      target=\"_blank\">Network UPS Tools Overview</a>.": "",
   "Click for information on    <a href=\"https://www.truenas.com/docs/truenasupgrades/\" target=\"_blank\">TrueNAS SCALE Migration, Nightly trains    and other upgrade options.</a>": "",
   "Commits in the last 60 days": "",
+  "Configure 2FA Secret": "",
   "Configure 2FA secret": "",
   "Continue with the upgrade": "",
   "Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
