@@ -6,6 +6,7 @@ import {
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
+import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-card/global-two-factor-auth-card.component';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
@@ -42,6 +43,7 @@ describe('AdvancedSettingsComponent', () => {
         AllowedAddressesCardComponent,
         SelfEncryptingDriveCardComponent,
         IsolatedGpusCardComponent,
+        GlobalTwoFactorAuthCardComponent,
       ),
     ],
   });
@@ -63,5 +65,6 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(AllowedAddressesCardComponent)).toExist();
     expect(spectator.query(SelfEncryptingDriveCardComponent)).toExist();
     expect(spectator.query(IsolatedGpusCardComponent)).toExist();
+    expect(spectator.query(GlobalTwoFactorAuthCardComponent)).toExist();
   });
 });
