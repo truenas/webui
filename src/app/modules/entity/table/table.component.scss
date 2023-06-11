@@ -19,6 +19,10 @@ mat-card-content.table-container {
   cursor: pointer;
 }
 
+.state-button {
+  line-height: initial;
+}
+
 .mat-header-cell,
 .mat-cell {
   &:not(:first-child):not(:last-child) {

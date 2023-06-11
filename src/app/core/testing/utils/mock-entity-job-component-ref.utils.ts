@@ -9,6 +9,8 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
  * mockProvider(MatDialog, {
  *   open: jest.fn(() => mockEntityJobComponentRef),
  * }),
+ *
+ * TODO: Convert to factory function.
  */
 export const mockEntityJobComponentRef = {
   componentInstance: {

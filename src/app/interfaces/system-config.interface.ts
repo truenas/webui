@@ -3,8 +3,6 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 
 export interface SystemGeneralConfig {
   birthday: ApiTimestamp;
-  crash_reporting: boolean;
-  crash_reporting_is_set: boolean;
   id: number;
   kbdmap: string;
   language: string;
@@ -25,7 +23,6 @@ export interface SystemGeneralConfig {
 
 export interface SystemGeneralConfigUpdate {
   birthday?: ApiTimestamp;
-  crash_reporting?: boolean;
   kbdmap?: string;
   language?: string;
   timezone?: string;
