@@ -1,7 +1,6 @@
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject, HostListener,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,7 +29,6 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -150,8 +148,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
-    private authService: AuthService,
-    private router: Router,
   ) {}
 
   ngOnInit(): void {
