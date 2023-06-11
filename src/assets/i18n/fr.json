@@ -3925,7 +3925,6 @@
   "Username on the remote system to log in <b>via Web UI</b> to setup connection.": "Nom d'utilisateur sur le système distant pour se connecter <b>via l'interface utilisateur Web</b> pour configurer la connexion.",
   "Username on the remote system which will be used to login <b>via SSH</b>.": "Nom d'utilisateur sur le système distant qui sera utilisé pour se connecter <b>via SSH</b>.",
   "Username or Password is incorrect.": "Le nom d'utilisateur ou le mot de passe est incorrect.",
-  "Username, Password, or 2FA Code is incorrect.": "Le nom d'utilisateur, le mot de passe ou le code 2FA est incorrect.",
   "Users": "Utilisateurs",
   "Users could not be loaded": "Les utilisateurs n'ont pas pu être chargés",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "Utilise le <i> nom NetBIOS </i> du service SMB pour publier le serveur auprès des clients WS-Discovery. Cela fait apparaître l'ordinateur dans le <i> Voisinage réseau </i> des systèmes d'exploitation Windows modernes.",

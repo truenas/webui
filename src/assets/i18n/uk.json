@@ -3913,7 +3913,6 @@
   "Username on the remote system to log in <b>via Web UI</b> to setup connection.": "Ім’я користувача у віддаленій системі для входу <b>через веб-інтерфейс</b> для встановлення з’єднання.",
   "Username on the remote system which will be used to login <b>via SSH</b>.": "Ім’я користувача у віддаленій системі, яке використовуватиметься для входу <b>через SSH</b>.",
   "Username or Password is incorrect.": "Ім'я користувача або пароль неправильне.",
-  "Username, Password, or 2FA Code is incorrect.": "Ім'я користувача, пароль або код 2FA є неправильним.",
   "Users": "Користувачі",
   "Users could not be loaded": "Користувачів не вдалося завантажити",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "Використовує службу SMB <i>NetBIOS Name</i> для оголошення сервера клієнтам WS-Discovery. Це призводить до того, що комп’ютер з’являється в <i>мережевому середовищі</i> сучасних ОС Windows.",

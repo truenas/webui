@@ -3902,7 +3902,6 @@
   "Username on the remote system to log in <b>via Web UI</b> to setup connection.": "Gebruikersnaam op het externe systeem om in te loggen <b>via Web UI</b> om verbinding te maken.",
   "Username on the remote system which will be used to login <b>via SSH</b>.": "Gebruikersnaam op het externe systeem dat zal worden gebruikt om in te loggen <b>via SSH</b>.",
   "Username or Password is incorrect.": "Gebruikersnaam of wachtwoord is onjuist.",
-  "Username, Password, or 2FA Code is incorrect.": "Gebruikersnaam, wachtwoord of 2FA code is onjuist.",
   "Usernames can be up to 32 characters long. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "Gebruikersnamen kunnen maximaal 32 tekens lang zijn. Gebruikersnamen mogen niet beginnen met een koppelteken (<i>-</i>) of een spatie, tab of deze tekens bevatten: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>.<br>Het teken <b><i>$</i></b> kan alleen worden gebruikt als het laatste teken van de gebruikersnaam.",
   "Users": "Gebruikers",
   "Users could not be loaded": "Gebruikers konden niet worden geladen",

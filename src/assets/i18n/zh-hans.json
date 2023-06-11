@@ -3919,7 +3919,6 @@
   "Username on the remote system to log in <b>via Web UI</b> to setup connection.": "<b>通过网页面板</b> 登录远程系统所需要的用户名。",
   "Username on the remote system which will be used to login <b>via SSH</b>.": "通过SSH</b> 登录远程系统所使用的用户名。",
   "Username or Password is incorrect.": "用户名或密码不正确。",
-  "Username, Password, or 2FA Code is incorrect.": "用户名，密码或2FA码不正确。",
   "Users": "用户",
   "Users could not be loaded": "无法加载用户",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "使用SMB服务<i> NetBIOS名称</i>将服务器通告给WS-Discovery客户端。这会导致计算机出现在Windows操作系统的<i>网上邻居</i>中。",

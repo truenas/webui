@@ -4067,7 +4067,6 @@
   "Username for this service.": "Nombre de usuario para este servicio.",
   "Username of the SNMP  <a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a> user.": "Nombre de usuario del SNMP <a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html\\#pysnmp.hlapi.UsmUserData\" target=\"_blank\"> Modelo de seguridad basado en el usuario (USM)</a> usuario.",
   "Username or Password is incorrect.": "Nombre de usuario o contraseña incorrecta.",
-  "Username, Password, or 2FA Code is incorrect.": "Nombre de usuario, la contraseña o el código 2FA son incorrectos.",
   "Users": "Usuarios",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "Utiliza el servicio SMB <i>Nombre de NetBIOS</i> para anunciar el servidor a los clientes de WS-Discovery. Esto hace que la computadora aparezca en el <i>Entorno de red</i> de los sistemas operativos Windows modernos.",
   "VLAN Addresses": "Direcciones de VLAN",

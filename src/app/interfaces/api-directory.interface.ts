@@ -325,7 +325,7 @@ export type ApiDirectory = {
 
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
-  'auth.two_factor_auth': { params: void; response: boolean };
+  'auth.two_factor_auth': { params: [string, string]; response: boolean };
   'auth.twofactor.renew_secret': { params: void; response: boolean };
   'auth.twofactor.config': { params: void; response: TwoFactorConfig };
   'auth.sessions': { params: void; response: AuthSession[] };

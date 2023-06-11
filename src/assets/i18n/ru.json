@@ -4111,7 +4111,6 @@
   "Username for this service.": "Имя пользователя для этого сервиса.",
   "Username of the SNMP  <a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a> user.": "Имя пользователя <a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html\\#pysnmp.hlapi.UsmUserData\" target=\"_blank\">модели безопасности на основе пользователей (USM)</a> SNMP.",
   "Username or Password is incorrect.": "Имя пользователя или пароль неверны.",
-  "Username, Password, or 2FA Code is incorrect.": "Имя пользователя, пароль или 2FA код неверны.",
   "Users": "Пользователи",
   "VLANs": "VLANы",
   "VM system time. Default is <i>Local</i>.": "Системное время ВМ. По умолчанию <i>Местное</i>.",
