@@ -52,7 +52,7 @@
   <mat-card-actions>
     <div class="status-content">
       <ix-warning
-        *ngIf="twoFactorAuthConfigured"
+        *ngIf="!twoFactorEnabled"
         [message]="helptext.two_factor.enabled_status_false | translate"
       ></ix-warning>
       <button

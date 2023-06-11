@@ -5,9 +5,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
-  filter, shareReplay,
+  filter, shareReplay, tap,
 } from 'rxjs/operators';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { helptext } from 'app/helptext/system/2fa';
@@ -32,6 +32,10 @@ export class TwoFactorComponent implements OnInit {
   intervalHint: string;
 
   readonly twoFactorConfig$: Observable<LoadingState<TwoFactorConfig>> = this.ws.call('auth.twofactor.config').pipe(
+    tap((twoFactorConfig) => {
+      this.twoFactorEnabled = twoFactorConfig.enabled;
+      this.cdr.markForCheck();
+    }),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -85,12 +89,13 @@ export class TwoFactorComponent implements OnInit {
   }
 
   renewSecret(): void {
-    this.dialogService.confirm({
+    const confirmation$ = this.twoFactorAuthConfigured ? this.dialogService.confirm({
       title: helptext.two_factor.renewSecret.title,
       message: helptext.two_factor.renewSecret.message,
       hideCheckbox: true,
       buttonText: helptext.two_factor.renewSecret.btn,
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    }) : of(true);
+    confirmation$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = true;
       this.ws.call('user.renew_2fa_secret', [this.currentUser.username]).pipe(untilDestroyed(this)).subscribe({
         next: () => {

@@ -8,11 +8,12 @@ import {
   combineLatest, forkJoin, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, finalize, map, switchMap, tap,
+  filter, finalize, map, switchMap, takeWhile, tap,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -124,7 +125,23 @@ export class SigninStore extends ComponentStore<SigninState> {
           this.disabledReasonsSubscription = null;
         }
         this.setLoadingState(false);
-        this.router.navigateByUrl(this.getRedirectUrl());
+        combineLatest([
+          this.ws.call('auth.twofactor.config').pipe(map((twoFactorConfig) => twoFactorConfig.enabled)),
+          this.authService.user$.pipe(
+            takeWhile((loggedInUser: LoggedInUser) => !loggedInUser, true),
+            filter(Boolean),
+            map((loggedInUser) => loggedInUser.twofactor_auth_configured),
+          ),
+        ])
+          .pipe(untilDestroyed(this)).subscribe({
+            next: ([isGlobal2faConfigured, isUser2faConfigured]) => {
+              if (isGlobal2faConfigured && !isUser2faConfigured) {
+                this.router.navigate(['/two-factor-auth']);
+              } else {
+                this.router.navigateByUrl(this.getRedirectUrl());
+              }
+            },
+          });
       },
       (error: WebsocketError) => {
         this.setLoadingState(false);

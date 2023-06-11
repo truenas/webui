@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   filter, map, take,
 } from 'rxjs/operators';
@@ -160,21 +160,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isHaLicensed = isHaLicensed;
     });
     this.sysinfoReady = true;
-    this.checkTwoFactorAuthConfiguration();
-  }
-
-  checkTwoFactorAuthConfiguration(): void {
-    combineLatest([
-      this.ws.call('auth.twofactor.config').pipe(map((twoFactorConfig) => twoFactorConfig.enabled)),
-      this.authService.user$.pipe(map((loggedInUser) => loggedInUser.twofactor_auth_configured)),
-    ])
-      .pipe(untilDestroyed(this)).subscribe({
-        next: ([isGlobal2faConfigured, isUser2faConfigured]) => {
-          if (isGlobal2faConfigured && !isUser2faConfigured) {
-            this.router.navigate(['/two-factor-auth']);
-          }
-        },
-      });
   }
 
   ngAfterViewInit(): void {
