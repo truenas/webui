@@ -36,12 +36,12 @@ export type PoolManagerTopology = {
   [category in VdevType]: PoolManagerTopologyCategory;
 };
 
-interface PoolManagerDiskOptions {
+interface PoolManagerDiskSettings {
   allowNonUniqueSerialDisks: boolean;
   allowExportedPools: string[];
 }
 
-interface PoolManagerEnclosureOptions {
+interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: number | null;
   maximizeEnclosureDispersal: boolean;
 }
@@ -53,8 +53,8 @@ export interface PoolManagerState {
   encryption: string | null;
 
   allDisks: UnusedDisk[];
-  diskOptions: PoolManagerDiskOptions;
-  enclosureOptions: PoolManagerEnclosureOptions;
+  diskSettings: PoolManagerDiskSettings;
+  enclosureSettings: PoolManagerEnclosureSettings;
 
   topology: PoolManagerTopology;
 }
@@ -74,18 +74,18 @@ const initialTopology = Object.values(VdevType).reduce((topology, value) => {
   };
 }, {} as PoolManagerState['topology']);
 
-const initialState: PoolManagerState = {
+export const initialState: PoolManagerState = {
   isLoading: false,
   allDisks: [],
   enclosures: [],
   name: '',
   encryption: null,
 
-  diskOptions: {
+  diskSettings: {
     allowNonUniqueSerialDisks: false,
     allowExportedPools: [],
   },
-  enclosureOptions: {
+  enclosureSettings: {
     limitToSingleEnclosure: null,
     maximizeEnclosureDispersal: false,
   },
@@ -99,26 +99,30 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly name$ = this.select((state) => state.name);
   readonly encryption$ = this.select((state) => state.encryption);
   readonly enclosures$ = this.select((state) => state.enclosures);
-  readonly hasMultipleEnclosures$ = this.select(
-    this.enclosures$,
-    (enclosures) => enclosures.length > 1,
-  );
   readonly allDisks$ = this.select((state) => state.allDisks);
   readonly topology$ = this.select((state) => state.topology);
-  readonly diskOptions$ = this.select((state) => state.diskOptions);
-  readonly enclosureOptions$ = this.select((state) => state.enclosureOptions);
+  readonly diskSettings$ = this.select((state) => state.diskSettings);
+  readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
   readonly totalUsableCapacity$ = this.select(
     this.topology$,
     (topology) => categoryCapacity(topology[VdevType.Data]),
   );
   readonly allowedDisks$ = this.select(
     this.allDisks$,
-    this.diskOptions$,
-    this.enclosureOptions$,
+    this.diskSettings$,
+    this.enclosureSettings$,
     (allDisks, diskOptions, enclosureOptions) => filterAllowedDisks(allDisks, {
       ...diskOptions,
       ...enclosureOptions,
     }),
+  );
+  readonly hasMultipleEnclosuresInAllowedDisks$ = this.select(
+    this.allowedDisks$,
+    (disks) => {
+      const uniqueEnclosures = new Set<number>();
+      disks.forEach((disk) => uniqueEnclosures.add(disk.enclosure?.number));
+      return uniqueEnclosures.size > 1;
+    },
   );
 
   getLayoutsForVdevType(vdevLayout: VdevType): Observable<CreateVdevLayout[]> {
@@ -219,17 +223,17 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     };
   });
 
-  setDiskWarningOptions(diskOptions: PoolManagerDiskOptions): void {
+  setDiskWarningOptions(diskOptions: PoolManagerDiskSettings): void {
     this.patchState({
-      diskOptions,
+      diskSettings: diskOptions,
     });
 
     this.resetTopologyIfNotEnoughDisks();
   }
 
-  setEnclosureOptions(enclosureOptions: PoolManagerEnclosureOptions): void {
+  setEnclosureOptions(enclosureOptions: PoolManagerEnclosureSettings): void {
     this.patchState({
-      enclosureOptions,
+      enclosureSettings: enclosureOptions,
     });
 
     this.resetTopologyIfNotEnoughDisks();
@@ -288,7 +292,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         const newVdevs = this.generateVdevs.generateVdevs({
           allowedDisks,
           topology: this.get().topology,
-          maximizeDispersal: this.get().enclosureOptions.maximizeEnclosureDispersal,
+          maximizeDispersal: this.get().enclosureSettings.maximizeEnclosureDispersal,
         });
         Object.entries(newVdevs).forEach(([type, vdevs]) => {
           this.updateTopologyCategory(type as VdevType, { vdevs });

@@ -27,11 +27,11 @@
     width: 100%;
   }
 
-  .details-item .value a {
-    display: block;
-    max-width: 100%;
-    white-space: normal;
-    word-break: break-all;
+
+  .details-item {
+    &.sources .value {
+      white-space: normal;
+    }
   }
 
   .portals {

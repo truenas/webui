@@ -85,12 +85,14 @@ export interface UpdatePool {
   allow_duplicate_serials?: boolean;
 }
 
+// TODO: Maybe replace first 5 keys with VdevType enum once old pool manager is removed.
 export interface UpdatePoolTopology {
   data?: { type: CreateVdevLayout; disks: string[] }[];
-  special?: { type: CreateVdevLayout.Stripe | CreateVdevLayout.Mirror; disks: string[] }[];
-  dedup?: { type: CreateVdevLayout.Stripe | CreateVdevLayout.Mirror; disks: string[] }[];
-  cache?: { type: CreateVdevLayout.Stripe; disks: string[] }[];
-  log?: { type: CreateVdevLayout.Stripe | CreateVdevLayout.Mirror; disks: string[] }[];
+  special?: { type: CreateVdevLayout; disks: string[] }[];
+  dedup?: { type: CreateVdevLayout; disks: string[] }[];
+  cache?: { type: CreateVdevLayout; disks: string[] }[];
+  log?: { type: CreateVdevLayout; disks: string[] }[];
+  // Note that here spares is a correct name, not spare.
   spares?: string[];
 }
 

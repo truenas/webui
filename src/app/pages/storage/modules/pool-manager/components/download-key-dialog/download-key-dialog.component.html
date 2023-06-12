@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>{{ helptext.downloadkey_dialog_title | translate }}!</h1>
+<div mat-dialog-content>
+  {{ helptext.downloadkey_dialog_zfs_message | translate }}
+</div>
+
+<ix-form-actions>
+  <button
+    mat-button
+    color="warn"
+    ixTest="download-key"
+    (click)="downloadKey()"
+  >
+    {{ 'Download Encryption Key' | translate }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+    ixTest="done"
+    [disabled]="!wasDownloaded"
+    [matDialogClose]="true"
+  >
+    {{ 'Done' | translate }}
+  </button>
+</ix-form-actions>

@@ -52,12 +52,16 @@
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
           </span>
         </div>
-        <div class="details-item">
+        <div class="details-item sources">
           <span class="label">{{ 'Source' | translate }}:</span>
           <span class="value">
             <ng-container *ngIf="app?.chart_metadata?.sources?.length; else notAvailable">
-              <ng-container *ngFor="let source of app?.chart_metadata?.sources;">
-                <a [href]="source" [title]="source" [ixTest]="[app.name, 'source']">{{ source }}</a>
+              <ng-container *ngFor="let source of app?.chart_metadata?.sources; last as isLast">
+                <a
+                  [href]="source"
+                  [title]="source"
+                  [ixTest]="[app.name, 'source']"
+                >{{ getCleanLink(source) }}</a><span *ngIf="!isLast">, </span>
               </ng-container>
             </ng-container>
           </span>
