@@ -16,12 +16,10 @@
     <ng-container *ngIf="sources?.length; else notAvailable">
       <ng-container *ngFor="let source of sources; last as isLast">
         <a
-          [href]="source" 
-          [title]="source" 
-          [ixTest]="[app.name, 'source']">
-          {{ getCleanSource(source) }}
-        </a>
-        <span *ngIf="!isLast">, </span>
+          [href]="source"
+          [title]="source"
+          [ixTest]="[app.name, 'source']"
+        >{{ getCleanSource(source) }}</a><span *ngIf="!isLast">, </span>
       </ng-container>
     </ng-container>
   </ng-template>

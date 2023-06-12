@@ -30,7 +30,8 @@ describe('AppInfoCardComponent', () => {
       name: 'ix-test-app',
       icon: '',
       sources: [
-        'http://github.com/ix-test-app/ix-test-app',
+        'http://github.com/ix-test-app/ix-test-app/',
+        'https://ix-test-app.com/ix-test-app/ix-test-app/',
       ],
     },
     catalog: 'TRUENAS',
@@ -111,7 +112,7 @@ describe('AppInfoCardComponent', () => {
       },
       {
         label: 'Source:',
-        value: 'http://github.com/ix-test-app/ix-test-app',
+        value: 'github.com/ix-test-app/ix-test-app, ix-test-app.com/ix-test-app/ix-test-app',
       },
       // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
       {
