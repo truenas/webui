@@ -116,7 +116,7 @@ describe('AvailableAppsStore', () => {
           isKubernetesStarted: true,
           selectedPool: 'ix-applications-pool',
           latestApps: [{ ...installedAndRecommendedApp }],
-          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'Recommended'] }],
+          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
           filteredApps: [],
 
         } as AvailableAppsState,
