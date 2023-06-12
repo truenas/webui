@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
@@ -37,7 +39,12 @@ export interface SlideInDataCertificateEdit {
 export class CertificateEditComponent implements OnInit {
   isLoading = false;
 
-  form = this.formBuilder.group<{ [key: string]: string | number | null }>({});
+  form = this.formBuilder.group({
+    name: ['', Validators.required],
+  }) as FormGroup<{
+    name: FormControl<string | null>;
+    renew_days?: FormControl<string | number | null>;
+  }>;
 
   certificate: Certificate;
 
@@ -52,9 +59,7 @@ export class CertificateEditComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
     @Inject(SLIDE_IN_DATA) private slideInData: SlideInDataCertificateEdit,
-  ) {
-    this.form.addControl('name', new FormControl(''));
-  }
+  ) {}
 
   get isCsr(): boolean {
     return this.certificate?.cert_type_CSR;
@@ -62,16 +67,19 @@ export class CertificateEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.setCertificate();
-
-    if (this.certificate?.acme) {
-      this.form.addControl('renew_days', new FormControl(''));
-    }
+    this.setRenewDaysForEditIfAvailable();
   }
 
   setCertificate(): void {
     this.certificate = this.slideInData.certificate;
     this.form.patchValue(this.certificate as never);
     this.cdr.markForCheck();
+  }
+
+  setRenewDaysForEditIfAvailable(): void {
+    if (this.certificate?.acme) {
+      this.form.addControl('renew_days', new FormControl(''));
+    }
   }
 
   onViewCertificatePressed(): void {
