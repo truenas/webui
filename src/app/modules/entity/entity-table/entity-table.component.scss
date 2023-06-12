@@ -362,3 +362,13 @@ div.mat-mdc-card-table {
 .padded-away {
   padding-left: 10px;
 }
+
+.actions-out-of-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  h3 {
+    color: var(--primary-txt);
+  }
+}

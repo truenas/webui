@@ -26,6 +26,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   routeAdd: string[] = ['system', 'alertservice', 'add'];
   routeEdit: string[] = ['system', 'alertservice', 'edit'];
   entityTable: EntityTableComponent<AlertService>;
+  actionsOutOfHeader = true;
 
   columns = [
     { name: 'Service Name', prop: 'name', always_display: true },

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -52,6 +52,7 @@ export class AlertConfigFormComponent implements OnInit {
     protected translate: TranslateService,
     private snackbarService: SnackbarService,
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -120,8 +121,14 @@ export class AlertConfigFormComponent implements OnInit {
     }
 
     this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => this.snackbarService.success(this.translate.instant('Settings saved.')),
-      error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
+      next: () => {
+        this.snackbarService.success(this.translate.instant('Settings saved.'));
+        this.cdr.markForCheck();
+      },
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.cdr.markForCheck();
+      },
     }).add(() => this.isFormLoading = false);
   }
 }
