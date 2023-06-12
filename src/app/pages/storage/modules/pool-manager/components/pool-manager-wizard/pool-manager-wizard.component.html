@@ -19,8 +19,9 @@
       <mat-step id="data-step" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
         <ix-data-wizard-step
-          [hasDataVdevs]="hasDataVdevs"
+          [isStepActive]="activeStepId === 'data-step'"
           (goToLastStep)="goToLastStep()"
+          (stepStatusValidityChanged)="stepValidityChanged($event)"
         ></ix-data-wizard-step>
       </mat-step>
 

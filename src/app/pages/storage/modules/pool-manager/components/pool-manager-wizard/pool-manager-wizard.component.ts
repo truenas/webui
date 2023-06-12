@@ -9,7 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
   CreatePool, Pool,
@@ -33,6 +32,7 @@ import { SystemGeneralService } from 'app/services';
 export class PoolManagerWizardComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
   isLoading$ = this.store.isLoading$;
+  activeStepId: string;
 
   hasEnclosureStep$ = combineLatest([
     this.store.hasMultipleEnclosures$,
@@ -65,16 +65,7 @@ export class PoolManagerWizardComponent implements OnInit {
   }
 
   stepChanged(data: StepperSelectionEvent): void {
-    const elementId = (data.selectedStep.content.elementRef.nativeElement as HTMLElement)?.parentElement?.id;
-
-    if (elementId === 'data-step') {
-      this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0))
-        .pipe(untilDestroyed(this))
-        .subscribe((result) => {
-          this.hasDataVdevs = result;
-          this.stepValidityChanged(result);
-        });
-    }
+    this.activeStepId = (data.selectedStep.content.elementRef.nativeElement as HTMLElement)?.parentElement?.id;
   }
 
   createPool(): void {
