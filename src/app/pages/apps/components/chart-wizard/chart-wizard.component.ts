@@ -20,8 +20,7 @@ import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.i
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
-  ChartFormValues,
-  ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
+  ChartFormValues, ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import {
   AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema,
@@ -161,41 +160,43 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
 
         if (this.activatedRoute.routeConfig.path.includes('install')) {
-          this.makeChartCreate();
+          this.loadApplicationForCreation();
         }
 
         if (this.activatedRoute.routeConfig.path.includes('edit')) {
-          // TODO: Implement application editing logic
+          this.loadApplicationForEdit();
         }
       });
   }
 
-  makeChartCreate(): void {
+  loadApplicationForCreation(): void {
+    this.isNew = true;
     this.isLoading = true;
     this.loader.open();
-    this.appService
-      .getCatalogItem(this.appId, this.catalog, this.train)
-      .pipe(
-        untilDestroyed(this),
-      ).subscribe({
-        next: (app) => {
-          app.schema = app.versions[app.latest_version].schema;
-          this.appsLoaded = true;
-          this.setChartCreate(app);
-          this.isLoading = false;
-          this.loader.close();
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.router.navigate(['/apps', 'available']).then(() => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-          });
-        },
-      });
+    this.appService.getCatalogItem(this.appId, this.catalog, this.train).pipe(untilDestroyed(this)).subscribe({
+      next: (app) => {
+        app.schema = app.versions[app.latest_version].schema;
+        this.setChartForCreation(app);
+        this.afterAppLoaded();
+      },
+      error: (error: WebsocketError) => this.afterAppLoadError(error),
+    });
   }
 
-  private setChartCreate(catalogApp: CatalogApp): void {
+  private loadApplicationForEdit(): void {
+    this.isNew = false;
+    this.isLoading = true;
+    this.loader.open();
+    this.appService.getChartRelease(this.appId).pipe(untilDestroyed(this)).subscribe({
+      next: (releases) => {
+        this.setChartForEdit(releases[0]);
+        this.afterAppLoaded();
+      },
+      error: (error: WebsocketError) => this.afterAppLoadError(error),
+    });
+  }
+
+  private setChartForCreation(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
     this._pageTitle$.next(this.catalogApp.name);
     let hideVersion = false;
@@ -263,7 +264,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private setChartEdit(chart: ChartRelease): void {
+  private setChartForEdit(chart: ChartRelease): void {
     this.isNew = false;
     this.config = chart.config;
     this.config.release_name = chart.id;
@@ -288,6 +289,20 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.buildDynamicForm(chart.chart_schema.schema);
   }
 
+  private afterAppLoaded(): void {
+    this.appsLoaded = true;
+    this.isLoading = false;
+    this.loader.close();
+    this.cdr.markForCheck();
+  }
+
+  private afterAppLoadError(error: WebsocketError): void {
+    this.loader.close();
+    this.router.navigate(['/apps', 'available']).then(() => {
+      this.dialogService.error(this.errorHandler.parseWsError(error));
+    });
+  }
+
   private buildDynamicForm(schema: ChartSchema['schema']): void {
     this.chartSchema = schema;
     try {
@@ -301,7 +316,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       this.dynamicSection = this.dynamicSection.filter((section) => section.schema.length > 0);
-      if (!this.isNew) {
+      if (!this.isNew && this.config && this.form) {
         this.config = this.appSchemaService.restoreKeysFromFormGroup(this.config, this.form);
         this.form.patchValue(this.config);
       }
@@ -420,7 +435,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       } as ChartReleaseCreate]);
     } else {
       delete data.release_name;
-      this.dialogRef.componentInstance.setCall('chart.release.update', [data.release_name, { values: data }]);
+      this.dialogRef.componentInstance.setCall('chart.release.update', [this.config.release_name as string, { values: data }]);
     }
 
     this.dialogRef.componentInstance.submit();
