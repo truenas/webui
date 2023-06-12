@@ -65,7 +65,7 @@
     <button
       mat-flat-button
       [ixTest]="[appSection.title, 'view-all']"
-      (click)="openCategoryView(appSection.category)"
+      [routerLink]="['/apps', 'available', appSection.category]"
     >
       {{ 'View All' | translate }} {{ appSection.title | translate }}
     </button>

@@ -73,17 +73,4 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   changeSearchQuery(query: string): void {
     this.applicationsStore.applySearchQuery(query);
   }
-
-  applyCategoryFilter(category: string): void {
-    this.applicationsStore.applyFilters({
-      categories: [category],
-      catalogs: [],
-      sort: null,
-    });
-  }
-
-  openCategoryView(category: string): void {
-    this.applyCategoryFilter(category);
-    this.router.navigate(['/apps', 'available', category]);
-  }
 }

@@ -1,5 +1,8 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle$ | async | titlecase | translate" [loading]="isLoading$ | async">
+  <ix-page-title-header
+    [pageTitle]="pageTitle$ | async | titlecase | translate"
+    [loading]="isLoading$ | async"
+  >
     <a
       mat-button
       color="primary"
@@ -12,25 +15,28 @@
   </ix-page-title-header>
 </ng-template>
 
-<div *ngIf="!(isLoading$ | async)" class="apps">
-  <ix-app-card
-    *ngFor="let app of apps$ | async; trackBy: trackByAppId"
-    [app]="app"
-    [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-  ></ix-app-card>
-</div>
+<ng-container *ngIf="isLoading$ | async; else categoryLoaded">
+  <ngx-skeleton-loader
+    class="fake-apps"
+    [count]="9"
+    [animation]="false"
+  ></ngx-skeleton-loader>
+</ng-container>
 
-<ngx-skeleton-loader
-  *ngIf="isLoading$ | async"
-  class="fake-apps"
-  [count]="12"
-  [animation]="false"
-></ngx-skeleton-loader>
+<ng-template #categoryLoaded>
+  <div class="apps">
+    <ix-app-card
+      *ngFor="let app of apps$ | async; trackBy: trackByAppId"
+      [app]="app"
+      [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+    ></ix-app-card>
+  </div>
 
-<div *ngIf="!(isLoading$ | async)" class="view-all">
-  <button
-    mat-flat-button
-    [ixTest]="['back-to-discover-page']"
-    [routerLink]="['/apps', 'available']"
-  >{{ 'Back to Discover Page' | translate }}</button>
-</div>
+  <div class="view-all">
+    <button
+      mat-flat-button
+      [ixTest]="['back-to-discover-page']"
+      [routerLink]="['/apps', 'available']"
+    >{{ 'Back to Discover Page' | translate }}</button>
+  </div>
+</ng-template>
