@@ -1,0 +1,12 @@
+<tr *ngFor="let row of dataProvider.currentPage | async" ixTest="row">
+  <td *ngFor="let column of columns; index as idx">
+    <ng-container *ngIf="getTemplateByColumnIndex(idx) as template">
+      <ng-container
+        *ngTemplateOutlet="template; context: { $implicit: row }"
+      ></ng-container>
+    </ng-container>
+    <ng-container *ngIf="!getTemplateByColumnIndex(idx)">
+      {{ row[column.propertyName] }}
+    </ng-container>
+  </td>
+</tr>
