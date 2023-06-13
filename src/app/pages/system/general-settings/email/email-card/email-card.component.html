@@ -29,8 +29,13 @@
             <span class="label">{{ 'From' | translate }}:</span>
             <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
               {{ emailConfig.fromname }}
-              {{ emailConfig.fromemail || '-' }}
-              {{ emailConfig.outgoingserver ? (' via ' | translate) + emailConfig.outgoingserver : ''}}
+              {{
+                emailConfig.outgoingserver && emailConfig.fromemail
+                  ?
+                ('{email} via {server}' | translate : { email: emailConfig.fromemail, server: emailConfig.outgoingserver })
+                  :
+                emailConfig.fromemail || '-'
+              }}
             </span>
           </mat-list-item>
         </ng-container>

@@ -1,6 +1,5 @@
 {
   "": "",
-  " via ": "",
   "<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.  <i>File</i> provides virtual storage access to a single file.": "",
   "Application Metadata": "",
   "Apps (Old)": "",
@@ -53,6 +52,7 @@
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "form instead": "",
   "{catalog} Catalog": "",
+  "{email} via {server}": "",
   "{license} contract, expires {date}": "",
   "{n, plural, one {# available update} other {# available updates} }!": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "\n            Het lijkt er op dat deze sessie langer dan {lifetime} seconden inactief is geweest.<br>\n            Om veiligheidsredenen zullen we u om {time} uitloggen.\n",

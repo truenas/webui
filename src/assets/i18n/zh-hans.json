@@ -1,6 +1,5 @@
 {
   "": "",
-  " via ": "",
   ", ": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "Access from your IP is restricted": "",
@@ -167,6 +166,7 @@
   "{app} Catalog Summary": "",
   "{catalog} Catalog": "",
   "{credentialName} (Newly Created)": "",
+  "{email} via {server}": "",
   "{license} contract, expires {date}": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",

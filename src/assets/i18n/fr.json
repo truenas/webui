@@ -1,7 +1,6 @@
 {
   "": "",
   " Est. Usable Capacity": "",
-  " via ": "",
   ", ": "",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Ctrl+C</i>.": "",
   "ACL Types & ACL Modes": "",
@@ -233,6 +232,7 @@
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
   "{credentialName} (Newly Created)": "",
+  "{email} via {server}": "",
   "{license} contract, expires {date}": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",

@@ -1,6 +1,5 @@
 {
   "": "",
-  " via ": "",
   "ACL Types & ACL Modes": "",
   "Add Allowed Initiators (IQN)": "",
   "Add the required no. of disks to get a vdev size estimate": "",
@@ -136,6 +135,7 @@
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
   "{credentialName} (Newly Created)": "",
+  "{email} via {server}": "",
   "{license} contract, expires {date}": "",
   "{n, plural, one {# available update} other {# available updates} }!": "",
   "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "\n Схоже, ваш сеанс був неактивний понад {lifetime} секунд.<br>\n З міркувань безпеки ми виведемо вас із системи о {time}.\n",
