@@ -1,6 +1,5 @@
 {
   "": "",
-  "(Optional) ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.  <i>File</i> provides virtual storage access to a single file.": "",
   "Application Metadata": "",
   "Apps (Old)": "",
@@ -50,6 +49,7 @@
   "Total Capacity": "",
   "Use": "",
   "VDevs": "",
+  "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "form instead": "",
   "{catalog} Catalog": "",
   "{license} contract, expires {date}": "",
