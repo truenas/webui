@@ -1187,7 +1187,7 @@
   "Will not be destroyed automatically": "",
   "Windows (SMB) Shares": "",
   "Wipe Disk {name}": "",
-  "With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.": "",
+  "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
   "With your selection, no GPU is available for the host to consume.": "",
   "Wizard": "",
   "Would you like to add a Service Principal Name (SPN) now?": "",

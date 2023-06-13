@@ -56,7 +56,7 @@
   "Usernames can be up to 32 characters long. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "",
   "Warning!": "",
   "When not specified, guest system is given fixed amount of memory specified above.\nWhen minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.": "",
-  "With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.": "",
+  "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
   " Please click the button below to add {item}.": " 请点击下面的按钮来添加 {item}。",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "当 <b>UPS 模式</b> 设置为 <i>附属</i> 时。输入 UPS <i>主</i> 系统的开放端口号。默认端口为 <i>3493</i>。",
   " bytes.": " 字节。",
