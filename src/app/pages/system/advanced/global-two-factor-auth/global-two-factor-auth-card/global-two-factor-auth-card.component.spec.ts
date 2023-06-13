@@ -28,7 +28,7 @@ describe('KernelCardComponent', () => {
           enabled: false,
           otp_digits: 4,
           services: { ssh: false },
-        } as unknown as TwoFactorConfig),
+        } as TwoFactorConfig),
       ]),
     ],
   });
@@ -63,7 +63,7 @@ describe('KernelCardComponent', () => {
         enabled: false,
         otp_digits: 4,
         services: { ssh: false },
-      } as unknown as TwoFactorConfig,
+      } as TwoFactorConfig,
     });
   });
 });

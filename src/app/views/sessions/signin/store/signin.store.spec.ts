@@ -31,7 +31,7 @@ describe('SigninStore', () => {
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
-        mockCall('auth.twofactor.config', { enabled: false } as unknown as TwoFactorConfig),
+        mockCall('auth.twofactor.config', { enabled: false } as TwoFactorConfig),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
       ]),
       mockProvider(WebsocketConnectionService, {
