@@ -4,6 +4,14 @@
     <div class="actions action-icon">
       <button
         mat-button
+        [ixTest]="['sessions', 'terminate']"
+        [disabled]="isLoading"
+        (click)="onTerminateOther()"
+      >
+        {{ 'Terminate Other Sessions' | translate }}
+      </button>
+      <button
+        mat-button
         [ixTest]="['sessions', 'configure']"
         (click)="onConfigure()"
       >
@@ -23,7 +31,34 @@
     </mat-list>
   </mat-card-content>
 
-  <ix-conf-table
-    [conf]="sessionsTableConf"
-  ></ix-conf-table>
+  <div *ngIf="isLoading" fxLayoutAlign="center center">
+    <mat-spinner [diameter]="40"></mat-spinner>
+  </div>
+
+  <ix-table2 *ngIf="!isLoading">
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody ix-table-body [columns]="columns" [dataProvider]="dataProvider">
+      <ng-template
+        ix-table-row
+        [columnIndex]="2"
+        [dataProvider]="dataProvider"
+        let-session
+      >
+        <div fxLayoutAlign="end center">
+          <button
+            mat-icon-button
+            [ixTest]="['terminate-session', session.id]"
+            [disabled]="session.current"
+            (click)="onTerminate(session.id)"
+          >
+            <ix-icon name="exit_to_app"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
 </mat-card>

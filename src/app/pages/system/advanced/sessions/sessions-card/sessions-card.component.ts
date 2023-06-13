@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
+import { of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
-import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
+import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
@@ -41,63 +42,22 @@ export class SessionsCardComponent {
     toLoadingState(),
   );
 
-  readonly sessionsTableConf: AppTableConfig = {
-    title: helptextSystemAdvanced.fieldset_sessions_table,
-    queryCall: 'auth.sessions',
-    queryCallOption: [[['internal', '=', false]]],
-    parent: this,
-    emptyEntityLarge: false,
-    columns: [
-      { name: this.translate.instant('Username'), prop: 'username' },
-      { name: this.translate.instant('Start session time'), prop: 'created_at' },
-    ],
-    dataSourceHelper: this.sessionsSourceHelper.bind(this),
-    getActions: (): AppTableAction<AuthSessionRow>[] => {
-      return [
-        {
-          name: 'terminate',
-          icon: 'exit_to_app',
-          matTooltip: this.translate.instant('Terminate session'),
-          disabledCondition: (row: AuthSessionRow): boolean => {
-            return row.current;
-          },
-          onClick: (row: AuthSessionRow): void => {
-            this.dialogService
-              .confirm({
-                title: this.translate.instant('Terminate session'),
-                message: this.translate.instant('Are you sure you want to terminate the session?'),
-              })
-              .pipe(
-                filter(Boolean),
-                untilDestroyed(this),
-              ).subscribe({
-                next: () => this.terminateSession(row.id),
-                error: (err: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(err)),
-              });
-          },
-        },
-      ];
+  isLoading = false;
+  dataProvider = new ArrayDataProvider<AuthSessionRow>(of([]));
+
+  columns: TableColumn<AuthSessionRow>[] = [
+    {
+      title: this.translate.instant('Username'),
+      propertyName: 'username',
     },
-    tableFooterActions: [
-      {
-        label: this.translate.instant('Terminate Other Sessions'),
-        onClick: () => {
-          this.dialogService
-            .confirm({
-              title: this.translate.instant('Terminate session'),
-              message: this.translate.instant('Are you sure you want to terminate all other sessions?'),
-            })
-            .pipe(
-              filter(Boolean),
-              untilDestroyed(this),
-            ).subscribe({
-              next: () => this.terminateOtherSessions(),
-              error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
-            });
-        },
-      },
-    ],
-  };
+    {
+      title: this.translate.instant('Start session time'),
+      propertyName: 'created_at',
+    },
+    {
+      propertyName: 'id',
+    },
+  ];
 
   constructor(
     private store$: Store<AppState>,
@@ -108,22 +68,67 @@ export class SessionsCardComponent {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private advancedSettings: AdvancedSettingsService,
-  ) {}
+    private cdr: ChangeDetectorRef,
+  ) {
+    this.updateSessions();
+  }
+
+  updateSessions(): void {
+    this.isLoading = true;
+    this.cdr.markForCheck();
+    this.ws.call('auth.sessions', [[['internal', '=', false]]]).pipe(
+      map((sessions) => this.sessionsSourceHelper(sessions)), untilDestroyed(this),
+    ).subscribe((sessions) => {
+      this.dataProvider = new ArrayDataProvider(of(sessions));
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    });
+  }
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
     const slideInRef = this.slideInService.open(TokenSettingsComponent);
     slideInRef?.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.sessionsTableConf.tableComponent?.getData();
+      this.updateSessions();
     });
   }
 
-  terminateOtherSessions(): void {
+  onTerminate(id: string): void {
+    this.dialogService
+      .confirm({
+        title: this.translate.instant('Terminate session'),
+        message: this.translate.instant('Are you sure you want to terminate the session?'),
+      })
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => this.terminateSession(id),
+        error: (err: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(err)),
+      });
+  }
+
+  onTerminateOther(): void {
+    this.dialogService
+      .confirm({
+        title: this.translate.instant('Terminate session'),
+        message: this.translate.instant('Are you sure you want to terminate all other sessions?'),
+      })
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => this.terminateOtherSessions(),
+        error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
+      });
+  }
+
+  private terminateOtherSessions(): void {
     this.loader.open();
     this.ws.call('auth.terminate_other_sessions').pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.loader.close();
-        this.sessionsTableConf.tableComponent.getData();
+        this.updateSessions();
       },
       error: (error: WebsocketError) => {
         this.loader.close();
@@ -155,7 +160,7 @@ export class SessionsCardComponent {
     this.ws.call('auth.terminate_session', [sessionId]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.loader.close();
-        this.sessionsTableConf.tableComponent.getData();
+        this.updateSessions();
       },
       error: (error: WebsocketError) => {
         this.loader.close();
