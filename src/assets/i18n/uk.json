@@ -273,7 +273,7 @@
   "When not specified, guest system is given fixed amount of memory specified above.\nWhen minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.": "",
   "Will be automatically destroyed at {datetime} by periodic snapshot task": "",
   "Will not be destroyed automatically": "",
-  "With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.": "",
+  "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
   "Would you like to add a Service Principal Name (SPN) now?": "",
   "You have successfully added credentials.": "",
   "ZFS": "",
