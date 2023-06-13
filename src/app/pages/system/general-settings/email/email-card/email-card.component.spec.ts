@@ -47,7 +47,7 @@ describe('EmailCardComponent', () => {
 
     expect(itemTexts).toEqual([
       'Send Mail Method: SMTP',
-      'From: Test root@truenas.local  via google.com',
+      'From: Test root@truenas.local via google.com',
     ]);
   });
 
