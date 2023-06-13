@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  BehaviorSubject, shareReplay, switchMap, tap,
+  Observable, Subject, shareReplay,
 } from 'rxjs';
 import { toLoadingState, LoadingState } from 'app/helpers/to-loading-state.helper';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -17,28 +19,33 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalTwoFactorAuthCardComponent implements OnInit {
-  private readonly refreshCard$ = new BehaviorSubject<void>(null);
-  private readonly twoFactorConfigUpdater$ = new BehaviorSubject<LoadingState<TwoFactorConfig>>(null);
-  protected readonly twoFactorConfig$ = this.twoFactorConfigUpdater$.pipe(
-    shareReplay({
-      refCount: false,
-      bufferSize: 1,
-    }),
-  );
+  protected twoFactorConfig$: Observable<LoadingState<TwoFactorConfig>>;
 
   constructor(
     private ws: WebSocketService,
     private advancedSettings: AdvancedSettingsService,
     private slideInService: IxSlideInService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
-    this.refreshCard$.pipe(
-      switchMap(() => this.ws.call('auth.twofactor.config')),
+    this.refreshCard();
+  }
+
+  refreshCard(): void {
+    const twoFactorConfigUpdater$ = new Subject<TwoFactorConfig>();
+    this.twoFactorConfig$ = twoFactorConfigUpdater$.pipe(
       toLoadingState(),
-      tap((config) => this.twoFactorConfigUpdater$.next(config)),
-      untilDestroyed(this),
-    ).subscribe();
+      shareReplay({
+        refCount: false,
+        bufferSize: 1,
+      }),
+    );
+    this.cdr.markForCheck();
+    this.ws.call('auth.twofactor.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      twoFactorConfigUpdater$.next(config);
+      twoFactorConfigUpdater$.complete();
+    });
   }
 
   async onConfigurePressed(twoFactorAuthConfig: TwoFactorConfig): Promise<void> {
@@ -47,7 +54,7 @@ export class GlobalTwoFactorAuthCardComponent implements OnInit {
     ixSlideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe({
       next: (response: unknown) => {
         if (response === true) {
-          this.refreshCard$.next();
+          this.refreshCard();
         }
       },
     });

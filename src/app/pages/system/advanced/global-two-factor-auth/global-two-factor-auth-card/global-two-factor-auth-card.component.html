@@ -18,31 +18,31 @@
       <mat-list-item>
         <span class="label">{{ 'Global 2FA' | translate }}:</span>
         <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
+          {{ twoFactorAuthConfig?.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Interval' | translate }}:</span>
         <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.interval }}
+          {{ twoFactorAuthConfig?.interval }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'OTP Digits' | translate }}:</span>
         <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.otp_digits }}
+          {{ twoFactorAuthConfig?.otp_digits }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Window' | translate }}:</span>
         <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.window }}
+          {{ twoFactorAuthConfig?.window }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Two Factor Authentication for SSH' | translate }}:</span>
         <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.services.ssh ? ('Enabled' | translate) : ('Disabled' | translate) }}
+          {{ twoFactorAuthConfig?.services.ssh ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
     </mat-list>
