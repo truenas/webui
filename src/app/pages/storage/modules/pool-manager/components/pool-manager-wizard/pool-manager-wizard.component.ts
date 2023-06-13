@@ -1,4 +1,3 @@
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
@@ -7,7 +6,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, of, timer } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -32,7 +31,6 @@ import { SystemGeneralService } from 'app/services';
 export class PoolManagerWizardComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
   isLoading$ = this.store.isLoading$;
-  activeStepId: string;
 
   hasEnclosureStep$ = combineLatest([
     this.store.hasMultipleEnclosures$,
@@ -62,10 +60,6 @@ export class PoolManagerWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectToStore();
-  }
-
-  stepChanged(data: StepperSelectionEvent): void {
-    this.activeStepId = (data.selectedStep.content.elementRef.nativeElement as HTMLElement)?.parentElement?.id;
   }
 
   createPool(): void {
@@ -125,6 +119,15 @@ export class PoolManagerWizardComponent implements OnInit {
     }
 
     return payload;
+  }
+
+  // changing steps is only available once isCurrentFormValid ==> true
+  goToBackStep(): void {
+    this.stepValidityChanged(true);
+    timer(0).pipe(untilDestroyed(this)).subscribe(() => {
+      this.stepper.previous();
+      this.cdr.markForCheck();
+    });
   }
 
   goToLastStep(): void {

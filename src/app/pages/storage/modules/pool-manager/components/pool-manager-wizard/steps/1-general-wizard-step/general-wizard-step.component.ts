@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,6 +10,7 @@ import {
 import { startWith, switchMap, tap } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService, WebSocketService } from 'app/services';
@@ -21,7 +22,8 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['./general-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GeneralWizardStepComponent implements OnInit {
+export class GeneralWizardStepComponent implements OnInit, OnChanges {
+  @Input() isStepActive: boolean;
   @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
 
   protected form = this.formBuilder.group({
@@ -53,8 +55,18 @@ export class GeneralWizardStepComponent implements OnInit {
 
     this.form.statusChanges.pipe(
       switchMap(() => timer(0)),
-      tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
+      tap(() => this.emitFormValidity()),
     ).pipe(untilDestroyed(this)).subscribe();
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isStepActive.currentValue) {
+      this.emitFormValidity();
+    }
+  }
+
+  private emitFormValidity(): void {
+    this.stepStatusValidityChanged.emit(this.form.valid);
   }
 
   private initEncryptionField(): void {

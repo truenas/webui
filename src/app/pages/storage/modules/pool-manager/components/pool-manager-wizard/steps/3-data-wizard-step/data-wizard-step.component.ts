@@ -17,6 +17,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 export class DataWizardStepComponent implements OnChanges {
   @Input() isStepActive: boolean;
   @Output() goToLastStep = new EventEmitter<void>();
+  @Output() goBackStep = new EventEmitter<void>();
   @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
 
   hasDataVdevs: boolean;
@@ -31,7 +32,7 @@ export class DataWizardStepComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.isStepActive) {
+    if (changes.isStepActive.currentValue) {
       this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0))
         .pipe(untilDestroyed(this))
         .subscribe((result) => {
@@ -42,6 +43,10 @@ export class DataWizardStepComponent implements OnChanges {
           }
         });
     }
+  }
+
+  goToBackStep(): void {
+    this.goBackStep.emit();
   }
 
   goToReviewStep(): void {

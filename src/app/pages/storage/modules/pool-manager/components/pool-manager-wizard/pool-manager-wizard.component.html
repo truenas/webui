@@ -1,26 +1,39 @@
+<!--
+  [isStepActive] is used to make checks for form validity when mat-step is active, we need to enable BACK button
+  if form is invalid, but this requires to set current form as valid -> then go to previous step -> revalidate form
+-->
 <mat-card class="card">
   <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   <form (keydown.enter)="$event.preventDefault()">
-    <mat-vertical-stepper #stepper [linear]="true" (selectionChange)="stepChanged($event)">
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+    <mat-vertical-stepper #stepper [linear]="true">
+      <mat-step #generalStep [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
         <ix-general-wizard-step
+          [isStepActive]="stepper.selected === generalStep"
           (stepStatusValidityChanged)="stepValidityChanged($event)"
         ></ix-general-wizard-step>
       </mat-step>
 
-      <mat-step *ngIf="hasEnclosureStep$ | async" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        *ngIf="hasEnclosureStep$ | async"
+        #enclosureStep
+        [completed]="isCurrentFormValid"
+        [editable]="isCurrentFormValid"
+      >
         <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
         <ix-enclosure-wizard-step
+          [isStepActive]="stepper.selected === enclosureStep"
           (stepStatusValidityChanged)="stepValidityChanged($event)"
+          (goBackStep)="goToBackStep()"
         ></ix-enclosure-wizard-step>
       </mat-step>
 
-      <mat-step id="data-step" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step #dataStep [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
         <ix-data-wizard-step
-          [isStepActive]="activeStepId === 'data-step'"
+          [isStepActive]="stepper.selected === dataStep"
           (goToLastStep)="goToLastStep()"
+          (goBackStep)="goToBackStep()"
           (stepStatusValidityChanged)="stepValidityChanged($event)"
         ></ix-data-wizard-step>
       </mat-step>
