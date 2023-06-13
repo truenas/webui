@@ -95,8 +95,9 @@ import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-f
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
-import { EmailComponent } from 'app/pages/system/email/email.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
+import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
+import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
@@ -124,6 +125,7 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
+import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { SetProductionStatusDialogComponent } from './general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
@@ -186,7 +188,8 @@ import { routing } from './system.routing';
     ConsoleFormComponent,
     CronFormComponent,
     CronListComponent,
-    EmailComponent,
+    EmailFormComponent,
+    EmailCardComponent,
     EulaComponent,
     FailoverSettingsComponent,
     GeneralSettingsComponent,
@@ -256,6 +259,7 @@ import { routing } from './system.routing';
     IsolatedGpusCardComponent,
     KernelCardComponent,
     SupportCardComponent,
+    AlertSettingsComponent,
   ],
   providers: [
     TranslateService,
