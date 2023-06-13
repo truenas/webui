@@ -158,10 +158,10 @@ describe('ServiceFtpComponent', () => {
       'Masquerade Address': '192.168.1.110',
       'Display Login': 'Welcome',
       'Auxiliary Parameters': '--test=value',
-      'Local User Upload Bandwidth: (Examples: 500 KiB, 500M, 2 TB)': '1 MiB',
-      'Local User Download Bandwidth': '2 MiB',
-      'Anonymous User Upload Bandwidth': '3 MiB',
-      'Anonymous User Download Bandwidth': '5 KiB',
+      'Local User Upload Bandwidth: (Examples: 500 KiB, 500M, 2 TB)': '1 GiB',
+      'Local User Download Bandwidth': '2 GiB',
+      'Anonymous User Upload Bandwidth': '3 GiB',
+      'Anonymous User Download Bandwidth': '5 MiB',
     });
   });
 
@@ -180,7 +180,7 @@ describe('ServiceFtpComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
       tls_opt_ip_address_required: true,
-      anonuserdlbw: 5120,
+      anonuserdlbw: 5,
     }]);
   });
 

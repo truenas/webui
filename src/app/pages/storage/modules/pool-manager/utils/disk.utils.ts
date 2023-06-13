@@ -1,7 +1,7 @@
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 
 export function hasNonUniqueSerial(disk: UnusedDisk): boolean {
-  return Boolean(disk.duplicate_serial.length);
+  return Boolean(disk.duplicate_serial?.length);
 }
 
 export function hasExportedPool(disk: UnusedDisk): boolean {

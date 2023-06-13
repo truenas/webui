@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of, timer } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -19,7 +20,8 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { SystemGeneralService } from 'app/services';
+import { AppState } from 'app/store';
+import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -33,10 +35,10 @@ export class PoolManagerWizardComponent implements OnInit {
   isLoading$ = this.store.isLoading$;
 
   hasEnclosureStep$ = combineLatest([
-    this.store.hasMultipleEnclosures$,
-    this.systemService.isEnterprise$,
+    this.store.hasMultipleEnclosuresInAllowedDisks$,
+    this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
   ]).pipe(
-    map(([hasMultipleEnclosures, isEnterprise]) => hasMultipleEnclosures && isEnterprise),
+    map(([hasMultipleEnclosures, hasEnclosureSupport]) => hasMultipleEnclosures && hasEnclosureSupport),
   );
 
   state: PoolManagerState;
@@ -46,7 +48,7 @@ export class PoolManagerWizardComponent implements OnInit {
 
   constructor(
     private store: PoolManagerStore,
-    private systemService: SystemGeneralService,
+    private systemStore$: Store<AppState>,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -94,33 +96,6 @@ export class PoolManagerWizardComponent implements OnInit {
     dialogRef.componentInstance.submit();
   }
 
-  private connectToStore(): void {
-    this.store.initialize();
-
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
-      this.state = state;
-      this.cdr.markForCheck();
-    });
-  }
-
-  private prepareCreatePayload(): CreatePool {
-    const payload: CreatePool = {
-      name: this.state.name,
-      topology: topologyToPayload(this.state.topology),
-      allow_duplicate_serials: this.state.diskOptions.allowNonUniqueSerialDisks,
-      encryption: this.hasEncryption,
-    };
-
-    if (this.state.encryption) {
-      payload.encryption_options = {
-        generate_key: true,
-        algorithm: this.state.encryption,
-      };
-    }
-
-    return payload;
-  }
-
   // changing steps is only available once isCurrentFormValid ==> true
   goToBackStep(): void {
     this.stepValidityChanged(true);
@@ -137,5 +112,32 @@ export class PoolManagerWizardComponent implements OnInit {
 
   stepValidityChanged(isValid: boolean): void {
     this.isCurrentFormValid = isValid;
+  }
+
+  private connectToStore(): void {
+    this.store.initialize();
+
+    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+      this.state = state;
+      this.cdr.markForCheck();
+    });
+  }
+
+  private prepareCreatePayload(): CreatePool {
+    const payload: CreatePool = {
+      name: this.state.name,
+      topology: topologyToPayload(this.state.topology),
+      allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
+      encryption: this.hasEncryption,
+    };
+
+    if (this.state.encryption) {
+      payload.encryption_options = {
+        generate_key: true,
+        algorithm: this.state.encryption,
+      };
+    }
+
+    return payload;
   }
 }
