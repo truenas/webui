@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -80,6 +81,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CoreComponents,
     NgxSkeletonLoaderModule,
     MatCheckboxModule,
+    MatListModule,
   ],
   declarations: [
     PoolManagerComponent,

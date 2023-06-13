@@ -3,12 +3,14 @@
     <div class="inner-container">
       <div class="left-pane">
         <div class="header dialog-header"><h3>{{ 'Inspect VDEVs' | translate }}</h3></div>
-        <div
-          *ngFor="let type of presentTypes"
-          class="vdev-type"
-          [class.selected]="type === selectedType"
-          (click)="selectType(type)"
-        >{{ getTypeLabel(type) | translate }}</div>
+        <mat-nav-list>
+          <mat-list-item
+            *ngFor="let type of presentTypes"
+            class="vdev-type"
+            [class.selected]="type === selectedType"
+            (click)="selectType(type)"
+          >{{ getTypeLabel(type) | translate }}</mat-list-item>
+        </mat-nav-list>
       </div>
       <mat-divider class="divider" [vertical]="true"></mat-divider>
       <div class="right-pane">

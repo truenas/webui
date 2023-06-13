@@ -71,6 +71,10 @@
     cursor: pointer;
     padding: 13px 0 11px 21px;
 
+    &:hover {
+      background-color: var(--hover-bg);
+    }
+
     &.selected {
       border-left: 3px solid var(--primary);
     }
