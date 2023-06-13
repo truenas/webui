@@ -131,7 +131,7 @@ export class UserFormComponent implements OnInit {
     if (this.isNewUser) {
       if (!homeCreate && home !== defaultHomePath) {
         return this.translate.instant(
-          'With this configuration, the existing directory {path} will be used a home directory without creating a new directory for the user.',
+          'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
           { path: '\'' + this.form.value.home + '\'' },
         );
       }
