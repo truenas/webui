@@ -43,7 +43,7 @@ export class CertificateEditComponent implements OnInit {
     name: ['', Validators.required],
   }) as FormGroup<{
     name: FormControl<string | null>;
-    renew_days?: FormControl<string | number | null>;
+    renew_days?: FormControl<number | null>;
   }>;
 
   certificate: Certificate;
@@ -72,13 +72,13 @@ export class CertificateEditComponent implements OnInit {
 
   setCertificate(): void {
     this.certificate = this.slideInData.certificate;
-    this.form.patchValue(this.certificate as never);
+    this.form.patchValue(this.certificate);
     this.cdr.markForCheck();
   }
 
   setRenewDaysForEditIfAvailable(): void {
     if (this.certificate?.acme) {
-      this.form.addControl('renew_days', new FormControl(''));
+      this.form.addControl('renew_days', new FormControl(null));
     }
   }
 
