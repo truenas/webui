@@ -159,11 +159,11 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoading = false;
         this.cdr.markForCheck();
 
-        if (this.activatedRoute.routeConfig.path.includes('install')) {
+        if (this.activatedRoute.routeConfig.path.endsWith('/install')) {
           this.loadApplicationForCreation();
         }
 
-        if (this.activatedRoute.routeConfig.path.includes('edit')) {
+        if (this.activatedRoute.routeConfig.path.endsWith('/edit')) {
           this.loadApplicationForEdit();
         }
       });
