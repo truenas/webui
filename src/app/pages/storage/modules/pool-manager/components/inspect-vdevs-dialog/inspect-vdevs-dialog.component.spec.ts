@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
-  byText, createComponentFactory, mockProvider, Spectator,
+  byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -67,7 +67,7 @@ describe('InspectVdevsDialogComponent', () => {
   });
 
   it('switches to a different vdev type when user presses on the type in sidebar', () => {
-    spectator.click(byText('Log', { selector: '.vdev-type' }));
+    spectator.click(byTextContent('Log', { selector: '.vdev-type' }));
 
     expect(spectator.query('.vdevs-header')).toHaveText('Log VDEVs');
     const vdevs = spectator.queryAll(ManualSelectionVdevComponent);
