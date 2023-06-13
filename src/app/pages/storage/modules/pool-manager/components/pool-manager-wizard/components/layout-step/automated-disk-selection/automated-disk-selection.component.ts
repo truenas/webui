@@ -48,6 +48,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     vdevsNumber: [{ value: null as number, disabled: true }, Validators.required],
   });
 
+  protected compareSizeAndTypeWith = _.isEqual;
+
   protected vdevLayoutOptions$: Observable<Option[]> = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
   ]);
@@ -178,13 +180,6 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       treatDiskSizeAsMinimum: values.treatDiskSizeAsMinimum,
     });
   }
-
-  protected compareSizeAndTypeWith = (
-    val1: [number, string],
-    val2: [number, string],
-  ): boolean => {
-    return val1 && val2 ? val1[0] === val2[0] && val1[1] === val2[1] : val1 === val2;
-  };
 
   private updateLayoutOptions(): void {
     const vdevLayoutOptions: Option[] = [];

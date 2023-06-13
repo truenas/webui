@@ -209,10 +209,7 @@ export const helptextSharingSmb = {
  <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers" target="_blank">Windows\
  Security Identifier</a>. Either a <i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL.',
   ),
-  ae_who_name_domain_tooltip: T(
-    'Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered.\
- Local users have the SMB server NetBIOS name: <code>freenas\\smbusers</code>.',
-  ),
+  ae_who_name_domain_tooltip: T('The domain for local users is the NetBIOS name of the TrueNAS server.'),
   ae_who_name_name_tooltip: T(
     'Who this ACL entry applies to, shown as a user name. Requires adding the user <i>Domain</i>.',
   ),

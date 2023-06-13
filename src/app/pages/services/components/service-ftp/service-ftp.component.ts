@@ -113,6 +113,10 @@ export class ServiceFtpComponent implements OnInit {
       ...this.form.value,
       filemask: invertUmask(this.form.value.filemask),
       dirmask: invertUmask(this.form.value.dirmask),
+      localuserbw: this.convertByteToKbyte(this.form.value.localuserbw),
+      localuserdlbw: this.convertByteToKbyte(this.form.value.localuserdlbw),
+      anonuserbw: this.convertByteToKbyte(this.form.value.anonuserbw),
+      anonuserdlbw: this.convertByteToKbyte(this.form.value.anonuserdlbw),
     };
 
     this.isFormLoading = true;
@@ -147,6 +151,10 @@ export class ServiceFtpComponent implements OnInit {
             ...config,
             filemask: invertUmask(config.filemask),
             dirmask: invertUmask(config.dirmask),
+            localuserbw: this.convertKbyteToByte(config.localuserbw),
+            localuserdlbw: this.convertKbyteToByte(config.localuserdlbw),
+            anonuserbw: this.convertKbyteToByte(config.anonuserbw),
+            anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
           });
           this.isFormLoading = false;
           this.setRootLoginWarning();
@@ -181,5 +189,13 @@ export class ServiceFtpComponent implements OnInit {
         rootlogin: false,
       });
     });
+  }
+
+  private convertByteToKbyte(bytes: number): number {
+    return bytes && bytes < 1024 ? 1 : bytes / 1024;
+  }
+
+  private convertKbyteToByte(value: number): number {
+    return value * 1024;
   }
 }
