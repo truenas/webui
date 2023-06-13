@@ -23,40 +23,18 @@
         </span>
       </mat-list-item>
 
-      <mat-list-item>
-        <span class="label">{{ 'From Email' | translate }}:</span>
-        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
-          {{ emailConfig?.fromemail || '-' }}
-        </span>
-      </mat-list-item>
-
-      <mat-list-item>
-        <span class="label">{{ 'From Name' | translate }}:</span>
-        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
-          {{ emailConfig?.fromname || '-' }}
-        </span>
-      </mat-list-item>
-
-      <mat-list-item>
-        <span class="label">{{ 'Outgoing Mail Server' | translate }}:</span>
-        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
-          {{ emailConfig?.outgoingserver || '-' }}
-        </span>
-      </mat-list-item>
-
-      <mat-list-item>
-        <span class="label">{{ 'Mail Server Port' | translate }}:</span>
-        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
-          {{ emailConfig?.port || '-' }}
-        </span>
-      </mat-list-item>
-
-      <mat-list-item>
-        <span class="label">{{ 'Security' | translate }}:</span>
-        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
-          {{ emailConfig?.security || '-' }}
-        </span>
-      </mat-list-item>
+      <ng-container *ixWithLoadingState="emailConfig$ as emailConfig">
+        <ng-container *ngIf="!emailConfig?.oauth?.client_id">
+          <mat-list-item>
+            <span class="label">{{ 'From' | translate }}:</span>
+            <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+              {{ emailConfig.fromname }}
+              {{ emailConfig.fromemail || '-' }}
+              {{ emailConfig.outgoingserver ? (' via ' | translate) + emailConfig.outgoingserver : ''}}
+            </span>
+          </mat-list-item>
+        </ng-container>
+      </ng-container>
     </mat-list>
   </mat-card-content>
 </mat-card>

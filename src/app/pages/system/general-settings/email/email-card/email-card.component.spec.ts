@@ -13,12 +13,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 const fakeEmailConfig: MailConfig = {
   id: 1,
   fromemail: 'root@truenas.local',
-  outgoingserver: '',
+  outgoingserver: 'google.com',
   port: 25,
   security: MailSecurity.Plain,
   smtp: false,
   pass: '',
-  fromname: '',
+  fromname: 'Test',
   oauth: {},
   user: null as string,
 };
@@ -41,17 +41,13 @@ describe('EmailCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows Localization related settings', async () => {
+  it('shows Email related settings', async () => {
     const items = await loader.getAllHarnesses(MatListItemHarness);
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
       'Send Mail Method: SMTP',
-      'From Email: root@truenas.local',
-      'From Name: -',
-      'Outgoing Mail Server: -',
-      'Mail Server Port: 25',
-      'Security: PLAIN',
+      'From: Test root@truenas.local  via google.com',
     ]);
   });
 
