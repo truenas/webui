@@ -114,8 +114,16 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
+    switchMap(() => combineLatest([
+      this.ws.call('auth.twofactor.config').pipe(map((twoFactorConfig) => twoFactorConfig.enabled)),
+      this.authService.user$.pipe(
+        takeWhile((loggedInUser: LoggedInUser) => !loggedInUser, true),
+        filter(Boolean),
+        map((loggedInUser) => loggedInUser.twofactor_auth_configured),
+      ),
+    ])),
     tapResponse(
-      () => {
+      ([isGlobal2faConfigured, isUser2faConfigured]) => {
         if (this.statusSubscription && !this.statusSubscription.closed) {
           this.statusSubscription.unsubscribe();
           this.statusSubscription = null;
@@ -125,23 +133,12 @@ export class SigninStore extends ComponentStore<SigninState> {
           this.disabledReasonsSubscription = null;
         }
         this.setLoadingState(false);
-        combineLatest([
-          this.ws.call('auth.twofactor.config').pipe(map((twoFactorConfig) => twoFactorConfig.enabled)),
-          this.authService.user$.pipe(
-            takeWhile((loggedInUser: LoggedInUser) => !loggedInUser, true),
-            filter(Boolean),
-            map((loggedInUser) => loggedInUser.twofactor_auth_configured),
-          ),
-        ])
-          .pipe(untilDestroyed(this)).subscribe({
-            next: ([isGlobal2faConfigured, isUser2faConfigured]) => {
-              if (isGlobal2faConfigured && !isUser2faConfigured) {
-                this.router.navigate(['/two-factor-auth']);
-              } else {
-                this.router.navigateByUrl(this.getRedirectUrl());
-              }
-            },
-          });
+
+        if (isGlobal2faConfigured && !isUser2faConfigured) {
+          this.router.navigate(['/two-factor-auth']);
+        } else {
+          this.router.navigateByUrl(this.getRedirectUrl());
+        }
       },
       (error: WebsocketError) => {
         this.setLoadingState(false);

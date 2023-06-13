@@ -43,8 +43,8 @@ export class GlobalTwoFactorAuthCardComponent implements OnInit {
 
   async onConfigurePressed(twoFactorAuthConfig: TwoFactorConfig): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideInService.open(GlobalTwoFactorAuthFormComponent, { data: twoFactorAuthConfig });
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe({
+    const ixSlideInRef = this.slideInService.open(GlobalTwoFactorAuthFormComponent, { data: twoFactorAuthConfig });
+    ixSlideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe({
       next: (response: unknown) => {
         if (response === true) {
           this.refreshCard$.next();

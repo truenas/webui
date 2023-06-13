@@ -2004,6 +2004,7 @@
   "Removes the ACL and permissions recursively  from all child datasets of the current dataset, including all directories and files contained within those child datasets. This can make data inaccessible until new permissions are created.": "",
   "Rename Boot Environment": "",
   "Renew": "",
+  "Renew 2FA Secret": "",
   "Renew 2FA secret": "",
   "Renew Certificate Days": "",
   "Renew Secret": "",

@@ -257,7 +257,7 @@ export class AuthService {
     ]).pipe(
       map(([, data]) => data),
     ).pipe(
-      filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid),
+      filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
       switchMap((loggedInUser: DsUncachedUser) => {
         authenticatedUser = loggedInUser;
 

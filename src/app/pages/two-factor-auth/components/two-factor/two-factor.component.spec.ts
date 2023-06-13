@@ -48,7 +48,7 @@ describe('TwoFactorComponent', () => {
           window: 1,
           services: { ssh: false },
         } as TwoFactorConfig),
-        mockCall('user.renew_2fa_secret', {} as unknown as User),
+        mockCall('user.renew_2fa_secret', {} as User),
         mockCall('user.provisioning_uri', 'provisioning_uri'),
       ]),
     ],
