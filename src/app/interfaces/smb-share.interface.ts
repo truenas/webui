@@ -1,3 +1,4 @@
+import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 
 export interface SmbShare {
@@ -56,22 +57,13 @@ export interface SmbSharesec {
 export interface SmbSharesecAce {
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
-  ae_who_name: {
-    domain: string;
-    name: string;
-    sidtype: string;
-  };
-  ae_who_sid: string;
-}
-
-export interface SmbSharesecAceUpdate {
-  ae_perm: SmbSharesecPermission;
-  ae_type: SmbSharesecType;
-  ae_who_name?: {
-    domain: string;
-    name: string;
+  ae_who_id?: {
+    id_type?: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
+    id?: number;
+    sidtype?: string;
   };
   ae_who_sid?: string;
+  ae_who_str?: NfsAclTag.Everyone | number | null;
 }
 
 export type SmbShareUpdate = {

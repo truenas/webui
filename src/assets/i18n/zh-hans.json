@@ -1305,7 +1305,6 @@
   "Edit Zvol": "编辑Zvol",
   "Editing interfaces while HA is enabled is not allowed.": "启用HA时，不允许编辑接口。",
   "Editing top-level datasets can prevent users from accessing data in child datasets.": "编辑顶级数据集可能会阻止用户访问子数据集中的数据。",
-  "Either SID or Domain Name + Name are required.": "需要 SID 或域名 + 名称。",
   "Electing {controller}.": "选择 {controller}。",
   "Elements": "元素",
   "Email": "电子邮件",

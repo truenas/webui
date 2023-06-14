@@ -2354,7 +2354,6 @@
   "Edit Zvol": "Editar Zvol",
   "Editing interfaces while HA is enabled is not allowed.": "No se permite editar interfaces mientras HA está habilitado.",
   "Editing top-level datasets can prevent users from accessing data in child datasets.": "La edición de conjuntos de datos de nivel superior puede evitar que los usuarios accedan a datos en conjuntos de datos secundarios.",
-  "Either SID or Domain Name + Name are required.": "Se requiere SID o nombre de dominio + nombre.",
   "Electing {controller}.": "Eligiendo {controller}.",
   "Email": "Email",
   "Email Options": "Opciones de email",
