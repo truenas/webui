@@ -1,14 +1,14 @@
 <h3>{{ 'Available Resources' | translate }}</h3>
 
 <div class="app-list-item">
-  {{ 'CPU Usage' | translate }}:
+  <span class="label">{{ 'CPU Usage' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else cpu"></ngx-skeleton-loader>
   <ng-template #cpu>
     <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage } }}</div>
   </ng-template>
 </div>
 <div class="app-list-item">
-  {{ 'Memory Usage' | translate }}:
+  <span class="label">{{ 'Memory Usage' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else memoryUsage"></ngx-skeleton-loader>
   <ng-template #memoryUsage>
     <ng-container *ngIf="memoryUsed && memoryTotal; else notAvailable">
@@ -17,7 +17,7 @@
   </ng-template>
 </div>
 <div class="app-list-item">
-  {{ 'Pool' | translate }}:
+  <span class="label">{{ 'Pool' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else selectedPool"></ngx-skeleton-loader>
   <ng-template #selectedPool>
     <ng-container *ngIf="(applicationsStore.selectedPool$ | async) as selectedPool; else notAvailable">
@@ -26,7 +26,7 @@
   </ng-template>
 </div>
 <div class="app-list-item">
-  {{ 'Available Space' | translate }}:
+  <span class="label">{{ 'Available Space' | translate }}:</span>
   <span *ixWithLoadingState="availableSpace$ as availableSpace">
     {{ +availableSpace | filesize: { standard: 'iec' } }}
   </span>
