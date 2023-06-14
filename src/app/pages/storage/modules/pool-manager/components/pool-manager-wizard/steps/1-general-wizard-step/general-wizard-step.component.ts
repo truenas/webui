@@ -33,6 +33,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   });
 
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
+  isLoading$ = this.store.isLoading$;
 
   readonly encryptionAlgorithmOptions$ = this.ws
     .call('pool.dataset.encryption_algorithm_choices')
