@@ -45,9 +45,9 @@ describe('AppResourcesCardComponent', () => {
   it('shows information about available resources', () => {
     expect(websocket.subscribe).toHaveBeenCalledWith('reporting.realtime');
 
-    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('CPU Usage: 0% Avg. Usage');
-    expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Memory Usage:  N/A');
-    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Pool:  pool');
-    expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space:  2.44 KiB');
+    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('CPU Usage:0% Avg. Usage');
+    expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Memory Usage: N/A');
+    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Pool: pool');
+    expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });
