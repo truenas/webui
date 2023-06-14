@@ -10,7 +10,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -34,7 +34,7 @@ export class AppSettingsButtonComponent {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
-    protected applicationsStore: AvailableAppsStore,
+    protected applicationsStore: AppsStore,
   ) { }
 
   onChoosePool(): void {
