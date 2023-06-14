@@ -108,7 +108,7 @@ describe('PoolManagerWizardComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         initialize: jest.fn(),
-        hasMultipleEnclosuresInAllowedDisks$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
+        hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
       }),
       mockProvider(MatDialog, {

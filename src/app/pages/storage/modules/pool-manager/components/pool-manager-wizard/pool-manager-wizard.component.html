@@ -1,55 +1,82 @@
 <mat-card class="card">
   <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   <form (keydown.enter)="$event.preventDefault()">
-    <mat-vertical-stepper #stepper [linear]="true" (selectionChange)="stepChanged($event)">
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+    <mat-vertical-stepper #stepper>
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.General)"
+      >
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
         <ix-general-wizard-step
           (stepStatusValidityChanged)="stepValidityChanged($event)"
         ></ix-general-wizard-step>
       </mat-step>
 
-      <mat-step *ngIf="hasEnclosureStep$ | async" [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        *ngIf="hasEnclosureStep$ | async"
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.EnclosureOptions)"
+      >
         <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
         <ix-enclosure-wizard-step
           (stepStatusValidityChanged)="stepValidityChanged($event)"
         ></ix-enclosure-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Data)"
+      >
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
         <ix-data-wizard-step
-          [hasDataVdevs]="hasDataVdevs"
           (goToLastStep)="goToLastStep()"
         ></ix-data-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Log)"
+      >
         <ng-template matStepLabel>{{ 'Log (Optional)' | translate }}</ng-template>
         <ix-log-wizard-step (goToLastStep)="goToLastStep()"></ix-log-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Spare)"
+      >
         <ng-template matStepLabel>{{ 'Spare (Optional)' | translate }}</ng-template>
         <ix-spare-wizard-step (goToLastStep)="goToLastStep()"></ix-spare-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Cache)"
+      >
         <ng-template matStepLabel>{{ 'Cache (Optional)' | translate }}</ng-template>
         <ix-cache-wizard-step (goToLastStep)="goToLastStep()"></ix-cache-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Metadata)"
+      >
         <ng-template matStepLabel>{{ 'Metadata (Optional)' | translate }}</ng-template>
         <ix-metadata-wizard-step (goToLastStep)="goToLastStep()"></ix-metadata-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Dedup)"
+      >
         <ng-template matStepLabel>{{ 'Dedup (Optional)' | translate }}</ng-template>
         <ix-dedup-wizard-step (goToLastStep)="goToLastStep()"></ix-dedup-wizard-step>
       </mat-step>
 
-      <mat-step [completed]="isCurrentFormValid" [editable]="isCurrentFormValid">
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Review)"
+      >
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
           (createPool)="createPool()"
