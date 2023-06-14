@@ -4,6 +4,38 @@
   animation: fa-spin 2s infinite linear;
 }
 
+.rate-page {
+  font-size: 1rem;
+  line-height: 1.4rem;
+  padding: 4px;
+}
+
+.pulse {
+  animation: pulse 3s infinite;
+  border-radius: 28px;
+  box-shadow: 0 0 0 var(--primary);
+  cursor: pointer;
+  display: inline-block;
+
+  &:hover {
+    animation: none;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--primary-lighter);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px var(--topbar);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
 :host {
   position: fixed;
   top: 0;

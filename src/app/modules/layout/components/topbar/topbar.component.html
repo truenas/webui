@@ -38,6 +38,14 @@
         ></ix-icon>
       </div>
 
+      <p
+        *appIfNightly
+        class="rate-page pulse"
+        ixTest="leave-feedback-text"
+        (click)="onFeedbackIndicatorPressed()">
+        Rate this page
+      </p>
+
       <button
         *appIfNightly
         mat-icon-button
