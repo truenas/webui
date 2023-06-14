@@ -57,10 +57,9 @@ export interface SmbSharesec {
 export interface SmbSharesecAce {
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
-  ae_who_id?: {
-    id_type?: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
-    id?: number;
-    sidtype?: string;
+  ae_who_id: {
+    id_type: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
+    id: number;
   };
   ae_who_sid?: string;
   ae_who_str?: NfsAclTag.Everyone | number | null;
