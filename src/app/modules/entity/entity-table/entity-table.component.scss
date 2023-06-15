@@ -283,6 +283,12 @@ div#cardHeaderContainer {
   width: 5px;
 }
 
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 #entity-table-component {
   margin-top: 15px;
 }
@@ -361,6 +367,10 @@ div.mat-mdc-card-table {
 
 .padded-away {
   padding-left: 10px;
+}
+
+.fn-toolbar {
+  background: var(--alt-bg1);
 }
 
 .actions-out-of-header {

@@ -56,9 +56,9 @@ function isErrorOrErrorLikeObject(value: unknown): value is Error {
 }
 
 /**
-   * Default implementation of error extraction that handles default error wrapping,
-   * HTTP responses, ErrorEvent and few other known cases.
-   */
+ * Default implementation of error extraction that handles default error wrapping,
+ * HTTP responses, ErrorEvent and few other known cases.
+ */
 export const defaultExtractor = (errorCandidate: unknown): unknown => {
   const error = tryToUnwrapZonejsError(errorCandidate);
 
