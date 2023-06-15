@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness } from '@angular/material/stepper/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -44,20 +44,22 @@ import {
 import {
   DedupWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
+import {
+  ReviewWizardStepComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { SystemGeneralService } from 'app/services';
-import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-wizard-step.component';
+import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {
   let spectator: Spectator<PoolManagerWizardComponent>;
   let loader: HarnessLoader;
   let wizard: MatStepperHarness;
   let store: PoolManagerStore;
-  const hasMultipleEnclosures$ = new BehaviorSubject(false);
+  const hasMultipleEnclosuresInAllowedDisks$ = new BehaviorSubject(false);
   const state = {
     name: 'pewl',
     encryption: undefined,
-    diskOptions: {
+    diskSettings: {
       allowNonUniqueSerialDisks: true,
     },
     topology: {
@@ -106,11 +108,8 @@ describe('PoolManagerWizardComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         initialize: jest.fn(),
-        hasMultipleEnclosures$: hasMultipleEnclosures$.asObservable(),
+        hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
-      }),
-      mockProvider(SystemGeneralService, {
-        isEnterprise$: of(true),
       }),
       mockProvider(MatDialog, {
         open: jest.fn((component) => {
@@ -127,6 +126,16 @@ describe('PoolManagerWizardComponent', () => {
             afterClosed: () => of(undefined),
           };
         }),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemFeatures,
+            value: {
+              enclosure: true,
+            },
+          },
+        ],
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
@@ -169,7 +178,7 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   it('shows an extra Enclosure Options step for enteprise systems with multiple enclosures', async () => {
-    hasMultipleEnclosures$.next(true);
+    hasMultipleEnclosuresInAllowedDisks$.next(true);
 
     const steps = await wizard.getSteps();
     const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
@@ -188,11 +197,11 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   describe('creating a pool', () => {
-    it('creates a pool using store topology when Create Pool button is pressed on last step', async () => {
+    it('creates a pool using store topology last step emits createPool event', async () => {
       const dialog = spectator.inject(MatDialog);
       await wizard.selectStep({ label: 'Review' });
-      const createPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
-      await createPoolButton.click();
+
+      spectator.query(ReviewWizardStepComponent).createPool.emit();
 
       expect(dialog.open).toHaveBeenCalledWith(EntityJobComponent, {
         disableClose: true,
@@ -234,8 +243,7 @@ describe('PoolManagerWizardComponent', () => {
       });
 
       await wizard.selectStep({ label: 'Review' });
-      const createPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
-      await createPoolButton.click();
+      spectator.query(ReviewWizardStepComponent).createPool.emit();
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DownloadKeyDialogComponent, {
         disableClose: true,

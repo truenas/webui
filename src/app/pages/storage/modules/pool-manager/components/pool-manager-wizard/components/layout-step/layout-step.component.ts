@@ -22,10 +22,12 @@ import { topologyCategoryToDisks } from 'app/pages/storage/modules/pool-manager/
 @Component({
   selector: 'ix-layout-step',
   templateUrl: './layout-step.component.html',
+  styleUrls: ['./layout-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutStepComponent implements OnInit {
   @Input() type: VdevType;
+  @Input() description: string;
 
   @Input() canChangeLayout = false;
   @Input() limitLayouts: CreateVdevLayout[];
@@ -67,7 +69,11 @@ export class LayoutStepComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((customVdevs: UnusedDisk[][]) => {
-        this.store.setManualTopologyCategory(this.type, customVdevs);
+        if (!customVdevs.length) {
+          this.store.resetTopologyCategory(this.type);
+        } else {
+          this.store.setManualTopologyCategory(this.type, customVdevs);
+        }
       });
   }
 

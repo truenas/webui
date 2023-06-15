@@ -9,10 +9,11 @@ import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
-import { GmailOauthConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
+import { GmailOauthConfig, MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
@@ -27,11 +28,12 @@ enum SendMethod {
 
 @UntilDestroy()
 @Component({
-  templateUrl: './email.component.html',
-  styleUrls: ['./email.component.scss'],
+  selector: 'ix-email-form',
+  templateUrl: './email-form.component.html',
+  styleUrls: ['./email-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EmailComponent implements OnInit {
+export class EmailFormComponent implements OnInit {
   sendMethodControl = new FormControl(SendMethod.Smtp);
 
   form = this.formBuilder.group({
@@ -84,9 +86,11 @@ export class EmailComponent implements OnInit {
     private translate: TranslateService,
     private matDialog: MatDialog,
     private validatorService: IxValidatorsService,
-    @Inject(WINDOW) private window: Window,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
+    private slideInRef: IxSlideInRef<EmailFormComponent>,
+    @Inject(WINDOW) private window: Window,
+    @Inject(SLIDE_IN_DATA) private emailConfig: MailConfig,
   ) {}
 
   get hasSmtpAuthentication(): boolean {
@@ -108,7 +112,9 @@ export class EmailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadEmailConfig();
+    if (this.emailConfig) {
+      this.initEmailForm();
+    }
   }
 
   onSendTestEmailPressed(): void {
@@ -160,6 +166,7 @@ export class EmailComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Email settings updated.'));
+          this.slideInRef.close();
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -170,28 +177,14 @@ export class EmailComponent implements OnInit {
       });
   }
 
-  private loadEmailConfig(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+  private initEmailForm(): void {
+    this.form.patchValue(this.emailConfig);
 
-    this.ws.call('mail.config')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (config) => {
-          this.isLoading = false;
-          this.form.patchValue(config);
-          if (config.oauth?.client_id) {
-            this.sendMethodControl.setValue(SendMethod.Gmail);
-            this.oauthCredentials = config.oauth;
-          }
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
-      });
+    if (this.emailConfig?.oauth?.client_id) {
+      this.sendMethodControl.setValue(SendMethod.Gmail);
+      this.oauthCredentials = this.emailConfig.oauth;
+    }
+    this.cdr.markForCheck();
   }
 
   private sendTestEmail(): void {

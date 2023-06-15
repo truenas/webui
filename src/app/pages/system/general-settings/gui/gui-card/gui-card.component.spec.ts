@@ -30,7 +30,6 @@ describe('GuiCardComponent', () => {
               ui_httpsport: 443,
               ui_httpsprotocols: ['TLSv1.2', 'TLSv1.3'],
               ui_httpsredirect: false,
-              crash_reporting: true,
               usage_collection: true,
               ui_consolemsg: false,
             },
@@ -65,7 +64,6 @@ describe('GuiCardComponent', () => {
       'Web Interface HTTPS Port: 443',
       'HTTPS Protocols: TLSv1.2, TLSv1.3',
       'Web Interface HTTP -> HTTPS Redirect: Disabled',
-      'Crash reporting: Enabled',
       'Usage collection: Enabled',
       'Show Console Messages: Disabled',
     ]);

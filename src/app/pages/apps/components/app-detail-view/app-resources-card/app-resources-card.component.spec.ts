@@ -4,7 +4,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { WebSocketService } from 'app/services';
 
 describe('AppResourcesCardComponent', () => {
@@ -23,7 +23,7 @@ describe('AppResourcesCardComponent', () => {
           },
         } as DatasetDetails),
       ]),
-      mockProvider(AvailableAppsStore, {
+      mockProvider(AppsStore, {
         selectedPool$: of('pool'),
       }),
     ],

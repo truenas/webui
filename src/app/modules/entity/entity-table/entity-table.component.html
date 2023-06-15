@@ -1,8 +1,17 @@
+<ng-template #tableAddActions>
+  <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
+</ng-template>
+
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
+    <ng-container *ngIf="!conf.actionsOutOfHeader" [ngTemplateOutlet]="tableAddActions"></ng-container>
   </ix-page-title-header>
 </ng-template>
+
+<div *ngIf="conf.actionsOutOfHeader" class="actions-out-of-header">
+  <h3>{{ conf.title | translate }}</h3>
+  <ng-container [ngTemplateOutlet]="tableAddActions"></ng-container>
+</div>
 
 <div
   fxLayout="column"

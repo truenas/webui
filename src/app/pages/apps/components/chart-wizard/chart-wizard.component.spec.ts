@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
+import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -229,6 +229,97 @@ describe('ChartWizardComponent', () => {
     latest_version: '1.2.1',
   } as CatalogApp;
 
+  const existingChartEdit = {
+    name: 'app_name',
+    id: 'app_name',
+    config: {
+      apiPort: 8927,
+      maize: {
+        apiPort: 8933,
+        environmentVariables: [
+          {
+            name: 'name1',
+            value: 'value2',
+          },
+          {
+            name: 'name1',
+            value: 'value2',
+          },
+        ],
+        farmerPort: 8647,
+        ports: [
+          {
+            containerPort: 8933,
+            name: 'api',
+            protocol: 'TCP',
+          },
+          {
+            containerPort: 8644,
+            name: 'blockchain',
+            protocol: 'TCP',
+          },
+          {
+            containerPort: 8647,
+            name: 'farming',
+            protocol: 'TCP',
+          },
+        ],
+        volumeMounts: {
+          config: {
+            datasetName: 'maize-config',
+            hostPath: '/mnt/my pool',
+            hostPathEnabled: true,
+            mountPath: '/root/.chia',
+          },
+          mnemonic: {
+            datasetName: 'config',
+            hostPathEnabled: false,
+            mountPath: '/root/.chia/mnemonic.txt',
+            readOnly: true,
+            subPath: 'mnemonic.txt',
+          },
+        },
+      },
+      maizeEnabled: true,
+      memLimit: '1234',
+      release_name: 'app_name',
+      timezone: 'America/Los_Angeles',
+    } as { [key: string]: ChartFormValue },
+    chart_schema: {
+      schema: {
+        groups: [
+          {
+            name: 'Machinaris Configuration',
+            description: 'Machinaris Configuration description',
+          },
+        ],
+        portals: {},
+        questions: [
+          {
+            variable: 'timezone',
+            label: 'Configure timezone',
+            group: 'Machinaris Configuration',
+            description: 'Configure timezone for machinaris',
+            schema: {
+              type: 'string',
+              enum: [
+                {
+                  value: 'America/Los_Angeles',
+                  description: "'America/Los_Angeles' timezone",
+                },
+                {
+                  value: 'Europe/Paris',
+                  description: "'Europe/Paris' timezone",
+                },
+              ],
+              default: 'America/Los_Angeles',
+            },
+          },
+        ],
+      },
+    },
+  } as ChartRelease;
+
   const createComponent = createComponentFactory({
     component: ChartWizardComponent,
     imports: [
@@ -241,94 +332,143 @@ describe('ChartWizardComponent', () => {
       mockProvider(DialogService),
       mockProvider(ApplicationsService, {
         getCatalogItem: jest.fn(() => of(existingCatalogApp)),
+        getChartRelease: jest.fn(() => of([existingChartEdit])),
       }),
       mockProvider(AppLoaderService),
       mockWebsocket([
         mockCall('chart.release.create'),
         mockCall('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
+        mockCall('chart.release.query', [existingChartEdit]),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
-      {
-        provide: ActivatedRoute,
-        useValue: {
-          params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
-          routeConfig: { path: 'install' },
-        },
-      },
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    spectator.inject(ApplicationsService);
-    spectator.component.ngOnInit();
-  });
-
-  it('shows values for app when form is opened for create', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toEqual({
-      'Application Name': 'ipfs',
-      Version: '1.2.1',
-      'API Port to use for IPFS (local)': '9501',
-      'Gateway Port to use for IPFS (local)': '9880',
-      'Provide access to node network namespace for the workload': false,
-      'Swarm Port to use for IPFS (Public)': '9401',
-      'Update Strategy': 'Create new pods and then kill old ones',
-    });
-  });
-
-  it('creating when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Application Name': 'appname',
-      'API Port to use for IPFS (local)': '9599',
-      'Gateway Port to use for IPFS (local)': '9822',
-      'Provide access to node network namespace for the workload': true,
-      'Update Strategy': 'Kill existing pods before creating new ones',
-    });
-
-    const values = await form.getValues();
-
-    expect(values).toEqual({
-      'Application Name': 'appname',
-      Version: '1.2.1',
-      'API Port to use for IPFS (local)': '9599',
-      'Gateway Port to use for IPFS (local)': '9822',
-      'Provide access to node network namespace for the workload': true,
-      'Swarm Port to use for IPFS (Public)': '9401',
-      'Update Strategy': 'Kill existing pods before creating new ones',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
-    await saveButton.click();
-
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-      'chart.release.create', [{
-        catalog: 'TRUENAS',
-        item: 'ipfs',
-        release_name: 'appname',
-        train: 'charts',
-        values: {
-          release_name: 'appname',
-          service: {
-            apiPort: 9599,
-            gatewayPort: 9822,
-            swarmPort: 9401,
+  describe('Edit chart', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: ActivatedRoute,
+            useValue: {
+              params: of({ appId: 'app_name', catalog: 'TRUENAS', train: 'charts' }),
+              routeConfig: { path: '/edit' },
+            },
           },
-          updateStrategy: 'Recreate',
-          hostNetwork: true,
-        },
-        version: '1.2.1',
-      }],
-    );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      spectator.inject(ApplicationsService);
+    });
+
+    it('shows values for an existing data when form is opened for edit', () => {
+      const values = spectator.component.form.value;
+
+      expect(values).toEqual({
+        timezone: 'America/Los_Angeles',
+      });
+    });
+
+    it('editing when form is submitted', () => {
+      spectator.component.form.patchValue({
+        timezone: 'Europe/Paris',
+      });
+
+      spectator.component.onSubmit();
+
+      expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
+        'chart.release.update', ['app_name', {
+          values: {
+            timezone: 'Europe/Paris',
+          },
+        }],
+      );
+      expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+    });
+  });
+
+  describe('Create chart', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: ActivatedRoute,
+            useValue: {
+              params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
+              routeConfig: { path: '/install' },
+            },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      spectator.inject(ApplicationsService);
+    });
+
+    it('shows values for app when form is opened for create', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Application Name': 'ipfs',
+        Version: '1.2.1',
+        'API Port to use for IPFS (local)': '9501',
+        'Gateway Port to use for IPFS (local)': '9880',
+        'Provide access to node network namespace for the workload': false,
+        'Swarm Port to use for IPFS (Public)': '9401',
+        'Update Strategy': 'Create new pods and then kill old ones',
+      });
+    });
+
+    it('creating when form is submitted', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Application Name': 'appname',
+        'API Port to use for IPFS (local)': '9599',
+        'Gateway Port to use for IPFS (local)': '9822',
+        'Provide access to node network namespace for the workload': true,
+        'Update Strategy': 'Kill existing pods before creating new ones',
+      });
+
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Application Name': 'appname',
+        Version: '1.2.1',
+        'API Port to use for IPFS (local)': '9599',
+        'Gateway Port to use for IPFS (local)': '9822',
+        'Provide access to node network namespace for the workload': true,
+        'Swarm Port to use for IPFS (Public)': '9401',
+        'Update Strategy': 'Kill existing pods before creating new ones',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+      await saveButton.click();
+
+      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+        'chart.release.create', [{
+          catalog: 'TRUENAS',
+          item: 'ipfs',
+          release_name: 'appname',
+          train: 'charts',
+          values: {
+            release_name: 'appname',
+            service: {
+              apiPort: 9599,
+              gatewayPort: 9822,
+              swarmPort: 9401,
+            },
+            updateStrategy: 'Recreate',
+            hostNetwork: true,
+          },
+          version: '1.2.1',
+        }],
+      );
+      expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+    });
   });
 });

@@ -123,6 +123,7 @@
                   <button
                     *ngSwitchCase="'state-button'"
                     mat-stroked-button
+                    class="state-button"
                     [ixTest]="[element[column.prop], 'state']"
                     [ngClass]="getButtonClass(element[column.prop])"
                     (click)="$event.stopPropagation(); onButtonClick(element)"
@@ -211,7 +212,7 @@
                     <button
                       mat-icon-button
                       [ixTest]="['row-action', _tableConf.name, rowAction.name]"
-                      [disabled]="rowAction.disabled || rowAction.disabledCondition"
+                      [disabled]="rowAction.disabled || rowAction.disabledCondition?.(element)"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
                       <ix-icon

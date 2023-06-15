@@ -15,6 +15,7 @@ export interface SomeRow {
 
 export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   columns: EntityTableColumn[];
+  actionsOutOfHeader?: boolean;
   title?: string;
 
   prerequisite?: () => Promise<boolean>;

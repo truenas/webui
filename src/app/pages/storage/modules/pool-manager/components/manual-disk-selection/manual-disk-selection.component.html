@@ -24,9 +24,10 @@
         <mat-divider class="header-divider"></mat-divider>
         <div class="vdevs-container">
           <ix-manual-selection-vdev
-            *ngFor="let vdev of manualDiskSelectionStore.vdevs$ | async; trackBy: trackVdevById"
+            *ngFor="let vdev of currentVdevs; trackBy: trackVdevById"
             [vdev]="vdev"
             [layout]="data.layout"
+            [editable]="true"
           ></ix-manual-selection-vdev>
         </div>
         <mat-divider class="divider actions-divider"></mat-divider>

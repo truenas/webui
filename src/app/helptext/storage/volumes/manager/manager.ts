@@ -58,7 +58,7 @@ export default {
   data_vdev_title: T('Data'),
   data_vdev_description: T('Normal vdev type, used for primary storage operations. ZFS pools always have at least one DATA vdev.'),
   cache_vdev_title: T('Cache'),
-  cache_vdev_description: T('(Optional) ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.'),
+  cache_vdev_description: T('ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.'),
   log_vdev_title: T('Log'),
   log_vdev_description: T('ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.'),
   spare_vdev_title: T('Hot Spare'),
@@ -68,7 +68,7 @@ export default {
  which is used to speed up metadata and small block IO.'),
   dedup_vdev_title: T('Dedup'),
   dedup_vdev_description: T('De-duplication tables are stored on this special vdev type. These vdevs must\
- be sized to <i>X</i> GiB for each <i>X</i> TiB of general storage.'),
+ be sized to X GiB for each X TiB of general storage.'),
   exported_pool_warning: T('This disk is part of the exported pool {pool}. Adding this disk to a new or other existing pools will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure you have backed up any sensitive data in {pool} before reusing/repurposing this disk.'),
 
 };
