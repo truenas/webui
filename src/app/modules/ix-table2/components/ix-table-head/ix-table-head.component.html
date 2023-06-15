@@ -1,3 +1,18 @@
 <tr ixTest="header">
-  <th *ngFor="let column of columns">{{ column.title }}</th>
+  <th *ngFor="let column of columns; index as idx" (click)="onSort(idx)">
+    <div class="title-container" [ngStyle]="{ cursor: column.sortable ? 'pointer' : 'auto' }">
+      <div class="title">{{ column.title }}</div>
+      <div *ngIf="column.sortable" [ngSwitch]="true">
+        <ix-icon
+          *ngSwitchCase="dataProvider.sorting.direction === 'asc' && dataProvider.sorting.active === idx"
+          name="mdi-arrow-down">
+        </ix-icon>
+        <ix-icon
+          *ngSwitchCase="dataProvider.sorting.direction === 'desc' && dataProvider.sorting.active === idx"
+          name="mdi-arrow-up">
+        </ix-icon>
+        <ix-icon *ngSwitchDefault></ix-icon>
+      </div>
+    </div>
+  </th>
 </tr>

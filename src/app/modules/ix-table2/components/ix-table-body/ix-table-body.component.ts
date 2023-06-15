@@ -1,12 +1,15 @@
 import {
   AfterViewInit,
   Component,
+  ContentChild,
   ContentChildren,
   Input,
   QueryList,
   TemplateRef,
 } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
 import { IxTableRowDirective } from 'app/modules/ix-table2/directives/ix-table-row.directive';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
@@ -16,25 +19,41 @@ import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.inter
   styleUrls: ['ix-table-body.component.scss'],
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
-  @Input() columns!: TableColumn<T>[];
-  @Input() dataProvider!: ArrayDataProvider<T>;
+  @Input() columns: TableColumn<T>[];
+  @Input() dataProvider: ArrayDataProvider<T>;
+  @Input() isLoading: Observable<boolean>;
 
   @ContentChildren(IxTableRowDirective)
   ixTableRows!: QueryList<IxTableRowDirective<T>>;
 
+  @ContentChild(IxTableDetailsRowDirective)
+  ixTableDetailsRow: IxTableRowDirective<T>;
+
   ngAfterViewInit(): void {
-    const appointedIds = this.ixTableRows.toArray().map((row) => row.columnIndex);
-    const availabledIds = Array.from({ length: this.columns.length }, (_, idx) => idx)
-      .filter((id) => !appointedIds.includes(id));
+    const templatedRowIndexes = this.ixTableRows.toArray().map((row) => row.columnIndex);
+    const availabledIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
+      .filter((idx) => !templatedRowIndexes.includes(idx));
 
     this.ixTableRows.forEach((row) => {
       if (row.columnIndex === undefined) {
-        row.columnIndex = availabledIds.shift();
+        row.columnIndex = availabledIndexes.shift();
       }
     });
   }
 
+  get detailsTemplate(): TemplateRef<{ $implicit: T }> | undefined {
+    return this.ixTableDetailsRow?.templateRef;
+  }
+
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
     return this.ixTableRows.toArray().find((row) => row.columnIndex === idx)?.templateRef;
+  }
+
+  onToggle(row: T): void {
+    this.dataProvider.expandedRow = this.isExpanded(row) ? null : row;
+  }
+
+  isExpanded(row: T): boolean {
+    return this.dataProvider.expandedRow === row;
   }
 }
