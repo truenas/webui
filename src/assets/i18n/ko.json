@@ -3433,6 +3433,7 @@
   "Warning: {n} of {total} docker images could not be deleted.": "",
   "Warning: {n} of {total} docker images could not be updated.": "",
   "Warning: {n} of {total} snapshots could not be deleted.": "",
+  "Warnings": "",
   "Weak Ciphers": "",
   "Web Interface": "",
   "Web Interface HTTP -> HTTPS Redirect": "",

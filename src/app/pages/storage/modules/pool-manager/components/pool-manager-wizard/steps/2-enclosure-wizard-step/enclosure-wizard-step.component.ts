@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +9,7 @@ import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -24,7 +25,8 @@ export enum DispersalStrategy {
   styleUrls: ['./enclosure-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EnclosureWizardStepComponent implements OnInit {
+export class EnclosureWizardStepComponent implements OnInit, OnChanges {
+  @Input() isStepActive: boolean;
   @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
 
   form = this.formBuilder.group({
@@ -82,8 +84,18 @@ export class EnclosureWizardStepComponent implements OnInit {
 
     this.form.statusChanges.pipe(
       switchMap(() => timer(0)),
-      tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
+      tap(() => this.emitStepValidityStatus()),
     ).pipe(untilDestroyed(this)).subscribe();
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue) {
+      this.emitStepValidityStatus();
+    }
+  }
+
+  private emitStepValidityStatus(): void {
+    this.stepStatusValidityChanged.emit(this.form.valid);
   }
 
   private connectFormToStore(): void {

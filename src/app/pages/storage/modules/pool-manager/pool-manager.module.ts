@@ -1,3 +1,4 @@
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -123,6 +124,10 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     ManualDiskSelectionStore,
     ManualDiskDragToggleStore,
     GenerateVdevsService,
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { showError: true },
+    },
   ],
 })
 

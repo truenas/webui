@@ -4,31 +4,41 @@
     <mat-vertical-stepper #stepper>
       <mat-step
         ixStepActivation
+        errorMessage="Step is required and missing some data."
+        [hasError]="wizardRequiredStepsValidityForm.controls.general.value === false"
         (activate)="onStepActivated(PoolCreationWizardStep.General)"
       >
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
         <ix-general-wizard-step
-          (stepStatusValidityChanged)="stepValidityChanged($event)"
+          [isStepActive]="activeStep === PoolCreationWizardStep.General"
+          (stepStatusValidityChanged)="stepValidityChanged($event, PoolCreationWizardStep.General)"
         ></ix-general-wizard-step>
       </mat-step>
 
       <mat-step
-        *ngIf="hasEnclosureStep$ | async"
+        *ngIf="hasEnclosureStep"
         ixStepActivation
+        errorMessage="Step is required and missing some data."
+        [hasError]="wizardRequiredStepsValidityForm.controls.enclosure.value === false"
         (activate)="onStepActivated(PoolCreationWizardStep.EnclosureOptions)"
       >
         <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
         <ix-enclosure-wizard-step
-          (stepStatusValidityChanged)="stepValidityChanged($event)"
+          [isStepActive]="activeStep === PoolCreationWizardStep.EnclosureOptions"
+          (stepStatusValidityChanged)="stepValidityChanged($event, PoolCreationWizardStep.EnclosureOptions)"
         ></ix-enclosure-wizard-step>
       </mat-step>
 
       <mat-step
         ixStepActivation
+        errorMessage="Step is required and missing some data."
+        [hasError]="wizardRequiredStepsValidityForm.controls.data.value === false"
         (activate)="onStepActivated(PoolCreationWizardStep.Data)"
       >
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
         <ix-data-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Data"
+          (stepStatusValidityChanged)="stepValidityChanged($event, PoolCreationWizardStep.Data)"
           (goToLastStep)="goToLastStep()"
         ></ix-data-wizard-step>
       </mat-step>
@@ -79,6 +89,8 @@
       >
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Review"
+          [wizardRequiredStepsStateForm]="wizardRequiredStepsValidityForm"
           (createPool)="createPool()"
         ></ix-review-wizard-step>
       </mat-step>

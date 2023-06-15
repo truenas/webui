@@ -1,9 +1,11 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
 } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,7 +20,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
-import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import { PoolCreationWizardRequiredStep, PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
@@ -35,19 +37,21 @@ export class PoolManagerWizardComponent implements OnInit {
   @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
 
   @ViewChild('stepper') stepper: MatStepper;
+
   isLoading$ = this.store.isLoading$;
 
-  hasEnclosureStep$ = combineLatest([
-    this.store.hasMultipleEnclosuresAfterFirstStep$,
-    this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
-  ]).pipe(
-    map(([hasMultipleEnclosures, hasEnclosureSupport]) => hasMultipleEnclosures && hasEnclosureSupport),
-  );
+  activeStep: PoolCreationWizardStep;
+  hasEnclosureStep = false;
+
+  wizardRequiredStepsValidityForm = this.fb.group({
+    general: [null as never, [Validators.required]],
+    enclosure: [null as never, []],
+    data: [null as never, [Validators.required]],
+  });
 
   state: PoolManagerState;
 
   isCurrentFormValid = false;
-  hasDataVdevs = false;
 
   protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
 
@@ -58,6 +62,7 @@ export class PoolManagerWizardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private router: Router,
+    private fb: FormBuilder,
     private snackbar: SnackbarService,
   ) {}
 
@@ -67,6 +72,7 @@ export class PoolManagerWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectToStore();
+    this.checkEnclosureStepAvailability();
   }
 
   createPool(): void {
@@ -102,6 +108,7 @@ export class PoolManagerWizardComponent implements OnInit {
   }
 
   onStepActivated(step: PoolCreationWizardStep): void {
+    this.activeStep = step;
     this.stepChanged.emit(step);
   }
 
@@ -116,6 +123,22 @@ export class PoolManagerWizardComponent implements OnInit {
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.state = state;
       this.cdr.markForCheck();
+    });
+  }
+
+  private checkEnclosureStepAvailability(): void {
+    combineLatest([
+      this.store.hasMultipleEnclosuresAfterFirstStep$,
+      this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
+    ]).pipe(
+      map(([hasMultipleEnclosures, hasEnclosureSupport]) => hasMultipleEnclosures && hasEnclosureSupport),
+      untilDestroyed(this),
+    ).subscribe((result) => {
+      this.hasEnclosureStep = result;
+
+      if (result) {
+        this.wizardRequiredStepsValidityForm.controls.enclosure.setValidators(Validators.required);
+      }
     });
   }
 
@@ -137,7 +160,10 @@ export class PoolManagerWizardComponent implements OnInit {
     return payload;
   }
 
-  stepValidityChanged(isValid: boolean): void {
+  stepValidityChanged(isValid: boolean, step: PoolCreationWizardRequiredStep): void {
     this.isCurrentFormValid = isValid;
+    this.wizardRequiredStepsValidityForm.patchValue({
+      [step]: isValid,
+    });
   }
 }

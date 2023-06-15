@@ -1,12 +1,17 @@
 import {
-  ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
+import { PoolCreationWizardRequiredStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import { PoolManagerWizardRequiredFormPartState } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-state.interface';
 import {
   PoolManagerState,
   PoolManagerStore,
@@ -19,7 +24,9 @@ import {
   templateUrl: './review-wizard-step.component.html',
   styleUrls: ['./review-wizard-step.component.scss'],
 })
-export class ReviewWizardStepComponent implements OnInit {
+export class ReviewWizardStepComponent implements OnInit, OnChanges {
+  @Input() isStepActive: boolean;
+  @Input() wizardRequiredStepsStateForm: FormGroup<PoolManagerWizardRequiredFormPartState>;
   @Output() createPool = new EventEmitter<void>();
 
   state: PoolManagerState;
@@ -33,6 +40,19 @@ export class ReviewWizardStepComponent implements OnInit {
     private store: PoolManagerStore,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  get totalWarnings(): number {
+    let result = 0;
+
+    Object.keys(this.wizardRequiredStepsStateForm.controls).forEach((key) => {
+      const control = this.wizardRequiredStepsStateForm.controls[key as PoolCreationWizardRequiredStep];
+      if (!control.value && control.hasValidator(Validators.required)) {
+        result += 1;
+      }
+    });
+
+    return result;
+  }
 
   get hasVdevs(): boolean {
     return Object.keys(this.state.topology).some((type) => {
@@ -57,6 +77,18 @@ export class ReviewWizardStepComponent implements OnInit {
       this.nonEmptyTopologyCategories = this.filterNonEmptyCategories(state.topology);
       this.cdr.markForCheck();
     });
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue) {
+      Object.keys(this.wizardRequiredStepsStateForm.controls).forEach((key) => {
+        const control = this.wizardRequiredStepsStateForm.controls[key as PoolCreationWizardRequiredStep];
+        if (!control.value && control.hasValidator(Validators.required)) {
+          control.patchValue(false);
+        }
+      });
+      this.wizardRequiredStepsStateForm.updateValueAndValidity();
+    }
   }
 
   onInspectVdevsPressed(): void {
