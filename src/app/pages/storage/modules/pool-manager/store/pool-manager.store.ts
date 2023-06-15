@@ -116,11 +116,17 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       ...enclosureOptions,
     }),
   );
-  readonly hasMultipleEnclosuresInAllowedDisks$ = this.select(
-    this.allowedDisks$,
-    (disks) => {
+
+  readonly hasMultipleEnclosuresAfterFirstStep$ = this.select(
+    this.allDisks$,
+    this.diskSettings$,
+    (allDisks, diskOptions) => {
+      const disksAfterFirstStep = filterAllowedDisks(allDisks, {
+        ...diskOptions,
+        limitToSingleEnclosure: null,
+      });
       const uniqueEnclosures = new Set<number>();
-      disks.forEach((disk) => uniqueEnclosures.add(disk.enclosure?.number));
+      disksAfterFirstStep.forEach((disk) => uniqueEnclosures.add(disk.enclosure?.number));
       return uniqueEnclosures.size > 1;
     },
   );
@@ -170,6 +176,10 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private generateVdevs: GenerateVdevsService,
   ) {
     super(initialState);
+  }
+
+  reset(): void {
+    this.setState(initialState);
   }
 
   readonly initialize = this.effect((trigger$) => {

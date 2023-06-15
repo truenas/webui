@@ -34,7 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -123,7 +123,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private applicationsStore: AvailableAppsStore,
+    private applicationsStore: AppsStore,
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,

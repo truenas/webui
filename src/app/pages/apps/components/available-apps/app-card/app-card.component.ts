@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ export class AppCardComponent {
   }
 
   constructor(
-    private applicationsStore: AvailableAppsStore,
+    private applicationsStore: AppsStore,
     private router: Router,
   ) {}
 
