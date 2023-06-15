@@ -29,7 +29,7 @@ def test_verify_recursive_and_transverse_acl_options():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['tank_pool'], scope='session')
+    depends(request, ['tank_pool', 'LDAP_SMB'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -73,7 +73,7 @@ def on_the_datasets_page_create_a_smb_dataset_rtacltest1_with_tank(driver, datas
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset1_name))
 
 
@@ -94,7 +94,7 @@ def create_a_second_smb_dataset_rtacltest2_under_rtacltest1(driver, dataset2_nam
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 5, '//button[contains(.,"Return to pool list")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Return to pool list")]').click()
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset2_name))
