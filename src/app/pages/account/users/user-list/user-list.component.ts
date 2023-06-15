@@ -2,23 +2,20 @@ import {
   Component,
   OnInit,
   ChangeDetectorRef,
-  ViewChild, ChangeDetectionStrategy,
-  ViewChildren, QueryList,
+  ViewChild,
+  ChangeDetectionStrategy,
   AfterViewInit,
   TemplateRef,
 } from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
-import {
-  combineLatest, Observable, of,
-} from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
-import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
@@ -35,18 +32,32 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserListComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
-  filterString = '';
-  dataSource = new MatTableDataSource<User>([]);
-  defaultSort: Sort = { active: 'uid', direction: 'asc' };
+  dataProvider = new ArrayDataProvider<User>(of([]));
+  columns: TableColumn<User>[] = [
+    {
+      title: this.translate.instant('Username'),
+      propertyName: 'username',
+      sortable: true,
+    },
+    {
+      title: this.translate.instant('UID'),
+      propertyName: 'uid',
+      sortable: true,
+    },
+    {
+      title: this.translate.instant('Builtin'),
+      propertyName: 'builtin',
+      sortable: true,
+    },
+    {
+      title: this.translate.instant('Full Name'),
+      propertyName: 'full_name',
+      sortable: true,
+    },
+  ];
 
-  expandedRow: User;
-  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
-
-  readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -68,17 +79,13 @@ export class UserListComponent implements OnInit, AfterViewInit {
   );
 
   hideBuiltinUsers = true;
-
-  get emptyConfigService(): EmptyService {
-    return this.emptyService;
-  }
-
+  filterString = '';
   constructor(
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
-    private emptyService: EmptyService,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -108,25 +115,16 @@ export class UserListComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: (users) => {
         this.createDataSource(users);
-        this.cdr.markForCheck();
       },
       error: () => {
         this.createDataSource();
-        this.cdr.markForCheck();
       },
     });
   }
 
   createDataSource(users: User[] = []): void {
-    this.dataSource = new MatTableDataSource(users);
-    setTimeout(() => {
-      // TODO: Figure out how to avoid setTimeout to make it work on first loading
-      if (this.filterString) {
-        this.dataSource.filter = this.filterString;
-      }
-      this.dataSource.sort = this.sort;
-      this.cdr.markForCheck();
-    }, 0);
+    this.dataProvider = new ArrayDataProvider<User>(of(users));
+    this.cdr.markForCheck();
   }
 
   toggleBuiltins(): void {
@@ -137,24 +135,8 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.slideInService.open(UserFormComponent, { wide: true });
   }
 
-  onToggle(row: User): void {
-    this.expandedRow = this.expandedRow === row ? null : row;
-    this.toggleDetailRows();
-    this.cdr.markForCheck();
-  }
-
-  toggleDetailRows(): void {
-    this.detailRows.forEach((row) => {
-      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
-        row.close();
-      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
-        row.open();
-      }
-    });
-  }
-
   onListFiltered(query: string): void {
-    this.dataSource.filter = query;
+    this.filterString = query;
   }
 
   handleDeletedUser(id: number): void {

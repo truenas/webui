@@ -1,20 +1,8 @@
-:host {
-  display: block;
+.table-container {
+  display: flex;
+  flex-direction: column;
 
-  ix-entity-empty {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    margin: auto;
+  ix-table-pager {
+    margin-top: -5px;
   }
-}
-
-.mat-mdc-card {
-  overflow: hidden;
-}
-
-button:focus-visible {
-  background: var(--focus-bg);
-  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
-  outline-width: 0;
 }
