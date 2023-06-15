@@ -3453,7 +3453,7 @@
   "Delete Dataset": "刪除資料集",
   "Delete Device": "刪除裝置",
   "Delete Virtual Machine": "刪除虛擬機器",
-  "Delete configuration of shares that used this pool?": "是否要刪除這個儲存集區的共用設定？",
+  "Delete saved configurations from TrueNAS?": "是否要刪除這個儲存集區的共用設定？",
   "Delete selections": "刪除選擇項目",
   "Deleting...": "刪除中...",
   "Deny": "拒絕",
