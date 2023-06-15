@@ -24,7 +24,9 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
 export class ManualSelectionVdevComponent implements OnChanges {
   @Input() vdev: ManualSelectionVdev;
   @Input() layout: CreateVdevLayout;
+  @Input() editable = false;
   @Input() swapondrive = 2;
+
   vdevErrMsg = '';
   showDiskSizeError = false;
 
