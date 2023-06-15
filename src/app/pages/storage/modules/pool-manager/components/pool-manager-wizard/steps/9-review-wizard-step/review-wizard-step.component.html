@@ -1,3 +1,67 @@
+<div class="summary-row">
+  <div class="summary-group">
+    <h4>{{ 'General Info' | translate }}</h4>
+
+    <div class="summary-item">
+      <div class="label">{{ 'Pool Name' | translate }}</div>
+      <div class="value">{{ state.name || ('Not Set' | translate) }}</div>
+    </div>
+
+    <div *ngIf="state.encryption" class="summary-item">
+      <div class="label">{{ 'Encryption' | translate }}</div>
+      <div class="value">{{ state.encryption }}</div>
+    </div>
+  </div>
+  <div class="summary-group">
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-group topology-summary">
+    <h4>{{ 'Topology Summary' | translate }}</h4>
+
+    <ng-container *ngIf="nonEmptyTopologyCategories.length; else noVdevs">
+      <ng-container *ngFor="let category of nonEmptyTopologyCategories">
+        <div class="summary-item">
+          <div class="label">
+            {{ category[0] | mapValue: vdevTypeLabels | translate }}
+          </div>
+          <div class="value">
+            {{ category[1] | ixTopologyCategoryDescription }}
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noVdevs>
+      {{ 'No VDEVs added.' | translate }}
+    </ng-template>
+  </div>
+
+  <div class="summary-group">
+    <h4>{{ 'Details' | translate }}</h4>
+
+    <div class="summary-item">
+      <div class="label">{{ 'Est. Usable Capacity' | translate }}</div>
+      <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
+    </div>
+
+    <div
+      *ngIf="state.enclosureSettings.maximizeEnclosureDispersal || limitToEnclosureName"
+      class="summary-item"
+    >
+      <div class="label">{{ 'Dispersal Strategy' | translate }}</div>
+      <div class="value">
+        <ng-container *ngIf="state.enclosureSettings.maximizeEnclosureDispersal">
+          {{ 'Maximize Dispersal' | translate }}
+        </ng-container>
+        <ng-container *ngIf="limitToEnclosureName">
+          {{ 'Limit To {name} Enclosure' | translate: { name: limitToEnclosureName } }}
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="step-buttons">
   <button
     mat-button

@@ -3,11 +3,15 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
-import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import {
+  PoolManagerState,
+  PoolManagerStore,
+  PoolManagerTopology, PoolManagerTopologyCategory,
+} from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +22,11 @@ import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules
 export class ReviewWizardStepComponent implements OnInit {
   @Output() createPool = new EventEmitter<void>();
 
-  topology: PoolManagerTopology;
+  state: PoolManagerState;
+  nonEmptyTopologyCategories: [VdevType, PoolManagerTopologyCategory][] = [];
+
+  protected totalCapacity$ = this.store.totalUsableCapacity$;
+  protected readonly vdevTypeLabels = vdevTypeLabels;
 
   constructor(
     private matDialog: MatDialog,
@@ -27,22 +35,44 @@ export class ReviewWizardStepComponent implements OnInit {
   ) {}
 
   get hasVdevs(): boolean {
-    return Object.keys(this.topology).some((type) => {
-      return this.topology[type as VdevType].vdevs.length > 0;
+    return Object.keys(this.state.topology).some((type) => {
+      return this.state.topology[type as VdevType].vdevs.length > 0;
     });
   }
 
+  get limitToEnclosureName(): string {
+    const limitToSingleEnclosure = this.state.enclosureSettings.limitToSingleEnclosure;
+    if (limitToSingleEnclosure === null) {
+      return undefined;
+    }
+
+    return this.state.enclosures.find((enclosure) => {
+      return enclosure.number === this.state.enclosureSettings.limitToSingleEnclosure;
+    }).name;
+  }
+
   ngOnInit(): void {
-    this.store.topology$.pipe(untilDestroyed(this)).subscribe((topology) => {
-      this.topology = topology;
+    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+      this.state = state;
+      this.nonEmptyTopologyCategories = this.filterNonEmptyCategories(state.topology);
       this.cdr.markForCheck();
     });
   }
 
   onInspectVdevsPressed(): void {
     this.matDialog.open(InspectVdevsDialogComponent, {
-      data: this.topology,
+      data: this.state.topology,
       panelClass: 'inspect-vdevs-dialog',
     });
+  }
+
+  private filterNonEmptyCategories(topology: PoolManagerTopology): [VdevType, PoolManagerTopologyCategory][] {
+    return Object.keys(topology).reduce((acc, type) => {
+      const category = topology[type as VdevType];
+      if (category.vdevs.length > 0) {
+        acc.push([type as VdevType, category]);
+      }
+      return acc;
+    }, [] as [VdevType, PoolManagerTopologyCategory][]);
   }
 }

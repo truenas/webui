@@ -14,6 +14,7 @@ import { DndModule } from 'ngx-drag-drop';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -42,6 +43,9 @@ import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-mana
 import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
 import { ReviewWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
+import {
+  TopologyCategoryDescriptionPipe,
+} from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
@@ -82,6 +86,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     NgxSkeletonLoaderModule,
     MatCheckboxModule,
     MatListModule,
+    CommonDirectivesModule,
   ],
   declarations: [
     PoolManagerComponent,
@@ -111,6 +116,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DownloadKeyDialogComponent,
     DownloadKeyDialogOldComponent,
     InspectVdevsDialogComponent,
+    TopologyCategoryDescriptionPipe,
   ],
   providers: [
     PoolManagerStore,
