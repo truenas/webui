@@ -45,7 +45,7 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     destroy: T('Destroy data on this pool?'),
-    cascade: T('Delete configuration of shares that used this pool?'),
+    cascade: T('Delete saved configurations from TrueNAS?'),
     enterName: T('Enter <strong>{pool}</strong> below to confirm'),
     confirm: T('Confirm Export/Disconnect'),
     unknown_status_alt_text: T('(Remove pool from database)'),

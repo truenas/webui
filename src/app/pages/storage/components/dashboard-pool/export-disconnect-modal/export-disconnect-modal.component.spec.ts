@@ -178,7 +178,7 @@ describe('ExportDisconnectModalComponent', () => {
 
         expect(values).toEqual({
           'Confirm Export/Disconnect': false,
-          'Delete configuration of shares that used this pool?': true,
+          'Delete saved configurations from TrueNAS?': true,
           'Destroy data on this pool?': false,
         });
       });
@@ -189,7 +189,7 @@ describe('ExportDisconnectModalComponent', () => {
         const form = await loader.getHarness(IxFormHarness);
         await form.fillForm({
           'Confirm Export/Disconnect': true,
-          'Delete configuration of shares that used this pool?': true,
+          'Delete saved configurations from TrueNAS?': true,
           'Destroy data on this pool?': false,
         });
 
