@@ -42,7 +42,7 @@
       </ng-container>
     </ng-template>
   </div>
-  <div class="app-list-item">
+  <div class="app-list-item app-version">
     <span class="label">{{ 'App Version' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
     <ng-template #latestAppVersion>
@@ -51,7 +51,7 @@
       </ng-container>
     </ng-template>
   </div>
-  <div class="app-list-item">
+  <div class="app-list-item keywords">
     <span class="label">{{ 'Keywords' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
     <ng-template #appCategories>
@@ -60,7 +60,7 @@
       </ng-container>
     </ng-template>
   </div>
-  <div class="app-list-item">
+  <div class="app-list-item train">
     <span class="label">{{ 'Train' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
     <ng-template #train>
