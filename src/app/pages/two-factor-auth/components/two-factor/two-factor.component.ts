@@ -120,6 +120,7 @@ export class TwoFactorComponent implements OnInit {
       tap(() => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
+        this.showQrCode();
       }),
       catchError((error: WebsocketError) => {
         this.isFormLoading = false;

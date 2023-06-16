@@ -48,6 +48,7 @@
   "Replication <i>{name}</i> has started.": "",
   "Run As Context": "",
   "Save And Go To Review": "",
+  "Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.": "",
   "Select VDEV layout. This is the first step in setting up your Vdevs.": "",
   "Select rating": "",
   "Setup Pool To Install": "",
