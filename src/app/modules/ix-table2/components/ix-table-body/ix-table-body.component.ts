@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
-import { IxTableRowDirective } from 'app/modules/ix-table2/directives/ix-table-row.directive';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
@@ -23,11 +23,11 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() dataProvider: ArrayDataProvider<T>;
   @Input() isLoading: Observable<boolean>;
 
-  @ContentChildren(IxTableRowDirective)
-  ixTableRows!: QueryList<IxTableRowDirective<T>>;
+  @ContentChildren(IxTableCellDirective)
+  ixTableRows!: QueryList<IxTableCellDirective<T>>;
 
   @ContentChild(IxTableDetailsRowDirective)
-  ixTableDetailsRow: IxTableRowDirective<T>;
+  ixTableDetailsRow: IxTableDetailsRowDirective<T>;
 
   ngAfterViewInit(): void {
     const templatedRowIndexes = this.ixTableRows.toArray().map((row) => row.columnIndex);

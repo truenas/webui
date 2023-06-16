@@ -9,8 +9,8 @@ import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-
 import { IxTableHeadComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table2/components/ix-table-pager/ix-table-pager.component';
 import { IxTable2Component } from 'app/modules/ix-table2/components/ix-table2/ix-table2.component';
+import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
-import { IxTableRowDirective } from 'app/modules/ix-table2/directives/ix-table-row.directive';
 
 @NgModule({
   imports: [
@@ -26,7 +26,7 @@ import { IxTableRowDirective } from 'app/modules/ix-table2/directives/ix-table-r
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
-    IxTableRowDirective,
+    IxTableCellDirective,
     IxTableDetailsRowDirective,
   ],
   exports: [
@@ -34,7 +34,7 @@ import { IxTableRowDirective } from 'app/modules/ix-table2/directives/ix-table-r
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
-    IxTableRowDirective,
+    IxTableCellDirective,
     IxTableDetailsRowDirective,
   ],
 })
