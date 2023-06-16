@@ -59,7 +59,7 @@ export class SigninFormComponent {
       request$ = this.ws.call('auth.two_factor_auth', [formValues.username, formValues.password]).pipe(
         switchMap((isTwoFactorEnabled) => {
           this.hasTwoFactor = isTwoFactorEnabled;
-          if (isTwoFactorEnabled && (isTwoFactorEnabled as unknown as boolean[]).length) {
+          if (isTwoFactorEnabled) {
             this.signinStore.setLoadingState(false);
             this.hasTwoFactor = true;
 
