@@ -5,7 +5,7 @@
   </div>
 </div>
 <div mat-dialog-actions id="qr-dialog-buttons">
-  <p>{{ 'Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.' | translate }}</p>
+  <ix-warning class="warning" [message]="'Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.' | translate"></ix-warning>
   <button
     mat-button
     cdkFocusInitial
