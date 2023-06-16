@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { TableProvider } from 'app/modules/ix-table2/interfaces/table-provider.interface';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 
 export class ArrayDataProvider<T> implements TableProvider<T> {
   currentPage$: Observable<T[]>;
-  rows$: Observable<T[]>;
+  rows$: Observable<T[]> = of([] as T[]);
   expandedRow: T;
 
   sorting: TableSort<T> = {
@@ -20,7 +20,7 @@ export class ArrayDataProvider<T> implements TableProvider<T> {
     pageSize: null,
   };
 
-  constructor(rows$: Observable<T[]>) {
+  setRows(rows$: Observable<T[]>): void {
     this.rows$ = rows$;
     this.updateCurrentPage();
   }

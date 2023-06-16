@@ -5,7 +5,7 @@
       <button
         mat-button
         [ixTest]="['sessions', 'terminate']"
-        [disabled]="isLoading"
+        [disabled]="isLoading$ | async"
         (click)="onTerminateOther()"
       >
         {{ 'Terminate Other Sessions' | translate }}
@@ -31,17 +31,18 @@
     </mat-list>
   </mat-card-content>
 
-  <div *ngIf="isLoading" fxLayoutAlign="center center">
-    <mat-spinner [diameter]="40"></mat-spinner>
-  </div>
-
-  <ix-table2 *ngIf="!isLoading">
+  <ix-table2>
     <thead
       ix-table-head
       [columns]="columns"
       [dataProvider]="dataProvider"
     ></thead>
-    <tbody ix-table-body [columns]="columns" [dataProvider]="dataProvider">
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="isLoading$"
+    >
       <ng-template
         ix-table-row
         [columnIndex]="2"

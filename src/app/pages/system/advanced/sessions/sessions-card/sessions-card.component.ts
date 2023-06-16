@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
@@ -42,8 +42,8 @@ export class SessionsCardComponent {
     toLoadingState(),
   );
 
-  isLoading = false;
-  dataProvider = new ArrayDataProvider<AuthSessionRow>(of([]));
+  isLoading$ = new BehaviorSubject<boolean>(false);
+  dataProvider = new ArrayDataProvider<AuthSessionRow>();
 
   columns: TableColumn<AuthSessionRow>[] = [
     {
@@ -74,13 +74,12 @@ export class SessionsCardComponent {
   }
 
   updateSessions(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading$.next(true);
     this.ws.call('auth.sessions', [[['internal', '=', false]]]).pipe(
       map((sessions) => this.sessionsSourceHelper(sessions)), untilDestroyed(this),
     ).subscribe((sessions) => {
-      this.dataProvider = new ArrayDataProvider(of(sessions));
-      this.isLoading = false;
+      this.dataProvider.setRows(of(sessions));
+      this.isLoading$.next(false);
       this.cdr.markForCheck();
     });
   }

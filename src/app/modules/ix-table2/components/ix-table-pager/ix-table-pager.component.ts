@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { AfterContentChecked, Component, Input } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 
@@ -8,7 +8,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
   templateUrl: './ix-table-pager.component.html',
   styleUrls: ['./ix-table-pager.component.scss'],
 })
-export class IxTablePagerComponent<T> implements OnChanges {
+export class IxTablePagerComponent<T> implements AfterContentChecked {
   @Input() dataProvider!: ArrayDataProvider<T>;
   @Input() itemsPerPage = 10;
 
@@ -28,11 +28,13 @@ export class IxTablePagerComponent<T> implements OnChanges {
     return lastPage < this.totalItems ? lastPage : this.totalItems;
   }
 
-  ngOnChanges(): void {
+  ngAfterContentChecked(): void {
     this.dataProvider.rows$.pipe(untilDestroyed(this)).subscribe((row) => {
       this.totalItems = row.length;
+      if (this.currentPage > this.totalPages && this.currentPage !== 1) {
+        this.goToPage(1);
+      }
     });
-    this.goToPage(1);
   }
 
   goToPage(pageNumber: number): void {

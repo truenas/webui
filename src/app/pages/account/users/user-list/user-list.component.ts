@@ -34,7 +34,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataProvider = new ArrayDataProvider<User>(of([]));
+  dataProvider = new ArrayDataProvider<User>();
   columns: TableColumn<User>[] = [
     {
       title: this.translate.instant('Username'),
@@ -123,7 +123,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   createDataSource(users: User[] = []): void {
-    this.dataProvider = new ArrayDataProvider<User>(of(users));
+    this.dataProvider.setRows(of(users));
     this.cdr.markForCheck();
   }
 
