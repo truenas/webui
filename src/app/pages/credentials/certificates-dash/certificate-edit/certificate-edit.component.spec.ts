@@ -82,10 +82,13 @@ describe('CertificateEditComponent', () => {
     });
 
     it('shows the name of the certificate', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      spectator.component.ngOnInit();
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
       expect(await nameInput.getValue()).toBe('ray');
+    });
+
+    it('hides the renew_days input of the certificate if it is not acme', async () => {
+      const renewDaysInput = await loader.getHarnessOrNull(IxInputHarness.with({ label: 'Renew Certificate Days Before Expiry' }));
+      expect(renewDaysInput).not.toExist();
     });
 
     it('shows details of a certificate', () => {
@@ -130,6 +133,32 @@ describe('CertificateEditComponent', () => {
           extension: 'crt',
         } as ViewCertificateDialogData,
       });
+    });
+  });
+
+  describe('Edit acme certificate', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              certificatesDash: mockCertificatesDashComponent,
+              certificate: {
+                ...certificate,
+                acme: true,
+              },
+            },
+          },
+        ],
+      });
+      spectator.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows the renew_days input for acme certificate', async () => {
+      const renewDaysInput = await loader.getHarness(IxInputHarness.with({ label: 'Renew Certificate Days Before Expiry' }));
+      expect(await renewDaysInput.getValue()).toBe('');
     });
   });
 

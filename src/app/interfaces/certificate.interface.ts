@@ -11,6 +11,7 @@ export interface Certificate {
   CA_type_intermediate: boolean;
   CA_type_internal: boolean;
   CSR: string;
+  acme?: unknown;
   DN: string;
   can_be_revoked: boolean;
   cert_type: string; // Enum? "CERTIFICATE"

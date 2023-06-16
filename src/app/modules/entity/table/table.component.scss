@@ -103,6 +103,12 @@ button div.label-warning-icon .ix-icon {
   margin: 0;
 }
 
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .path-locked-status {
   align-items: center;
   display: flex;
