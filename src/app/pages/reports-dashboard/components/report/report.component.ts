@@ -69,6 +69,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   subtitle: string = this.translate.instant('% of all cores');
   isActive = true;
   stepForwardDisabled = true;
+  stepBackDisabled = false;
   timezone: string;
   currentStartDate: number;
   currentEndDate: number;
@@ -268,6 +269,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   stepBack(): void {
+    if (this.stepBackDisabled) {
+      return;
+    }
+
     const rrdOptions = this.convertTimespan(
       this.currentZoomLevel,
       ReportStepDirection.Backward,
@@ -281,6 +286,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   stepForward(): void {
+    if (this.stepForwardDisabled) {
+      return;
+    }
+
     const rrdOptions = this.convertTimespan(
       this.currentZoomLevel,
       ReportStepDirection.Forward,
@@ -354,6 +363,12 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       this.stepForwardDisabled = true;
     } else {
       this.stepForwardDisabled = false;
+    }
+
+    if (startDate.getFullYear() <= 1999) {
+      this.stepBackDisabled = true;
+    } else {
+      this.stepBackDisabled = false;
     }
 
     return {
