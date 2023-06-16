@@ -5,15 +5,15 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import {
-  delay,
-  filter, shareReplay, tap,
+  catchError,
+  filter, shareReplay, switchMap, tap,
 } from 'rxjs/operators';
-import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { helptext } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
@@ -27,22 +27,11 @@ import { AuthService } from 'app/services/auth/auth.service';
 })
 export class TwoFactorComponent implements OnInit {
   userTwoFactorAuthConfigured = false;
+  isDataLoading = false;
   isFormLoading = false;
   globalTwoFactorEnabled: boolean;
   private currentUser: LoggedInUser;
   intervalHint: string;
-
-  readonly twoFactorConfig$: Observable<LoadingState<TwoFactorConfig>> = this.ws.call('auth.twofactor.config').pipe(
-    tap((twoFactorConfig) => {
-      this.globalTwoFactorEnabled = twoFactorConfig.enabled;
-      this.cdr.markForCheck();
-    }),
-    toLoadingState(),
-    shareReplay({
-      refCount: false,
-      bufferSize: 1,
-    }),
-  );
 
   get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
@@ -90,6 +79,21 @@ export class TwoFactorComponent implements OnInit {
       this.userTwoFactorAuthConfigured = user.twofactor_auth_configured;
       this.cdr.markForCheck();
     });
+    this.isDataLoading = true;
+    this.cdr.markForCheck();
+    this.ws.call('auth.twofactor.config').pipe(
+      tap((twoFactorConfig) => {
+        this.isDataLoading = false;
+        this.globalTwoFactorEnabled = twoFactorConfig.enabled;
+        this.cdr.markForCheck();
+      }),
+      toLoadingState(),
+      shareReplay({
+        refCount: false,
+        bufferSize: 1,
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   openQrDialog(provisioningUri: string): void {
@@ -106,25 +110,28 @@ export class TwoFactorComponent implements OnInit {
       hideCheckbox: true,
       buttonText: helptext.two_factor.renewSecret.btn,
     }) : of(true);
-    confirmation$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = true;
-      this.cdr.markForCheck();
-      this.ws.call('user.renew_2fa_secret', [this.currentUser.username]).pipe(delay(2000), untilDestroyed(this)).subscribe({
-        next: () => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-          this.dialogService.error({
-            title: helptext.two_factor.error,
-            message: error.reason,
-            backtrace: error.trace.formatted,
-          });
-        },
-      });
-    });
+    confirmation$.pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.isFormLoading = true;
+        this.cdr.markForCheck();
+        return this.ws.call('user.renew_2fa_secret', [this.currentUser.username]);
+      }),
+      tap(() => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      }),
+      catchError((error: WebsocketError) => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        return this.dialogService.error({
+          title: helptext.two_factor.error,
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        } as ErrorReport);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   showQrCode(): void {

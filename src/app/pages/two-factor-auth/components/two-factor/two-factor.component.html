@@ -1,11 +1,14 @@
 <mat-card class="card">
+  <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'User Two-Factor Authentication Actions' | translate }}</h3>
   </mat-toolbar-row>
 
   <mat-card-actions>
     <div class="status-content">
+      <ngx-skeleton-loader *ngIf="isDataLoading" class="skeleton-loader"></ngx-skeleton-loader>
       <ix-warning
+        *ngIf="!isDataLoading"
         [message]="global2FaMsg"
       ></ix-warning>
       <button
