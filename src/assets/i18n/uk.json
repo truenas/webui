@@ -1,6 +1,7 @@
 {
   "": "",
   "(Optional) ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
+  "2FA has been configured for this account. Enter the OTP to continue.": "",
   "ACL Types & ACL Modes": "",
   "Add Allowed Initiators (IQN)": "",
   "Add the required no. of disks to get a vdev size estimate": "",

@@ -27,6 +27,7 @@
   "1 month": "",
   "1 week": "",
   "2FA": "",
+  "2FA has been configured for this account. Enter the OTP to continue.": "",
   "6 months": "",
   "<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Transport Protocol</a> for the remote system log server connection. Choosing Transport Layer Security (TLS) also requires selecting a preconfigured system Certificate.": "",
   "<a href=\"https://www.ixsystems.com/community/\" target=\"_blank\"> TrueNAS Forums</a> - Find answers from other users in the forums.": "",

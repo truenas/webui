@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, switchMap,
+  Observable, filter, of, switchMap, tap,
 } from 'rxjs';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -46,30 +46,44 @@ export class SigninFormComponent {
     const formValues = this.form.value;
     let request$: Observable<boolean>;
     if (this.hasTwoFactor) {
-      request$ = this.authService.login(formValues.username, formValues.password, formValues.otp);
+      request$ = this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
+        tap((wasLoggedIn) => {
+          if (!wasLoggedIn) {
+            this.handleFailedLogin();
+            this.signinStore.setLoadingState(false);
+            this.cdr.markForCheck();
+          }
+        }),
+      );
     } else {
       request$ = this.ws.call('auth.two_factor_auth', [formValues.username, formValues.password]).pipe(
         switchMap((isTwoFactorEnabled) => {
           this.hasTwoFactor = isTwoFactorEnabled;
-          if (isTwoFactorEnabled) {
+          if (isTwoFactorEnabled && (isTwoFactorEnabled as unknown as boolean[]).length) {
+            this.signinStore.setLoadingState(false);
             this.hasTwoFactor = true;
+
+            const message: string = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
+            this.signinStore.showSnackbar(message);
+
             this.cdr.markForCheck();
             return of(false);
           }
-          return this.authService.login(formValues.username, formValues.password);
+          return this.authService.login(formValues.username, formValues.password).pipe(
+            tap((wasLoggedIn) => {
+              if (!wasLoggedIn) {
+                this.handleFailedLogin();
+                this.signinStore.setLoadingState(false);
+                this.cdr.markForCheck();
+              }
+            }),
+          );
         }),
       );
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
-      next: (wasLoggedIn) => {
-        this.signinStore.setLoadingState(false);
-
-        if (!wasLoggedIn) {
-          this.handleFailedLogin();
-          return;
-        }
-
+    request$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+      next: () => {
         this.signinStore.handleSuccessfulLogin();
       },
       error: (error) => {
