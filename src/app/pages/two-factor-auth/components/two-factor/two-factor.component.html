@@ -1,50 +1,4 @@
 <mat-card class="card">
-  <mat-progress-bar
-    *ngIf="isFormLoading"
-    mode="indeterminate"
-  ></mat-progress-bar>
-
-  <mat-toolbar-row>
-    <h3>{{ 'Global Two-Factor Authentication Configuration' | translate }}</h3>
-  </mat-toolbar-row>
-
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item>
-        <span class="label">{{ 'Global 2FA' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
-      <mat-list-item>
-        <span class="label">{{ 'Interval' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.interval }}
-        </span>
-      </mat-list-item>
-      <mat-list-item>
-        <span class="label">{{ 'OTP Digits' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.otp_digits }}
-        </span>
-      </mat-list-item>
-      <mat-list-item>
-        <span class="label">{{ 'Window' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.window }}
-        </span>
-      </mat-list-item>
-      <mat-list-item>
-        <span class="label">{{ 'Two Factor Authentication for SSH' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig.services.ssh ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-        
-</mat-card>
-<mat-card class="card">
   <mat-toolbar-row>
     <h3>{{ 'User Two-Factor Authentication Actions' | translate }}</h3>
   </mat-toolbar-row>
@@ -52,8 +6,7 @@
   <mat-card-actions>
     <div class="status-content">
       <ix-warning
-        *ngIf="!twoFactorEnabled"
-        [message]="helptext.two_factor.enabled_status_false | translate"
+        [message]="global2FaMsg"
       ></ix-warning>
       <button
         mat-button
@@ -62,14 +15,14 @@
         type="button"
         ixTest="renew-secret"
         (click)="renewSecret()"
-      > {{ twoFactorAuthConfigured ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}</button>
+      > {{ userTwoFactorAuthConfigured ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}</button>
       <button
         mat-button
         class="btn"
         color="accent"
         type="button"
         ixTest="show-qr"
-        [disabled]="isFormLoading || !twoFactorAuthConfigured"
+        [disabled]="isFormLoading || !userTwoFactorAuthConfigured"
         (click)="showQrCode()"
       >
         {{ 'Show QR' | translate }}

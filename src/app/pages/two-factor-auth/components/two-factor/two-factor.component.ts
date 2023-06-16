@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import {
+  delay,
   filter, shareReplay, tap,
 } from 'rxjs/operators';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
@@ -25,15 +26,15 @@ import { AuthService } from 'app/services/auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TwoFactorComponent implements OnInit {
-  twoFactorAuthConfigured = false;
+  userTwoFactorAuthConfigured = false;
   isFormLoading = false;
-  twoFactorEnabled: boolean;
+  globalTwoFactorEnabled: boolean;
   private currentUser: LoggedInUser;
   intervalHint: string;
 
   readonly twoFactorConfig$: Observable<LoadingState<TwoFactorConfig>> = this.ws.call('auth.twofactor.config').pipe(
     tap((twoFactorConfig) => {
-      this.twoFactorEnabled = twoFactorConfig.enabled;
+      this.globalTwoFactorEnabled = twoFactorConfig.enabled;
       this.cdr.markForCheck();
     }),
     toLoadingState(),
@@ -42,6 +43,16 @@ export class TwoFactorComponent implements OnInit {
       bufferSize: 1,
     }),
   );
+
+  get global2FaMsg(): string {
+    if (!this.globalTwoFactorEnabled) {
+      return this.translateService.instant('Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator');
+    }
+    if (this.userTwoFactorAuthConfigured) {
+      return this.translateService.instant('Two-Factor authentication has been configured. No further actions are required.');
+    }
+    return this.translateService.instant('Two-Factor authentication is required on this system, but it\'s not yet configured for your user. Please configure it now.');
+  }
 
   readonly helptext = helptext;
 
@@ -56,7 +67,7 @@ export class TwoFactorComponent implements OnInit {
   };
 
   get getRenewBtnText(): string {
-    return this.twoFactorAuthConfigured
+    return this.userTwoFactorAuthConfigured
       ? this.translateService.instant('Renew 2FA secret')
       : this.translateService.instant('Configure 2FA secret');
   }
@@ -76,7 +87,7 @@ export class TwoFactorComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((user) => {
       this.currentUser = user;
-      this.twoFactorAuthConfigured = user.twofactor_auth_configured;
+      this.userTwoFactorAuthConfigured = user.twofactor_auth_configured;
       this.cdr.markForCheck();
     });
   }
@@ -89,7 +100,7 @@ export class TwoFactorComponent implements OnInit {
   }
 
   renewSecret(): void {
-    const confirmation$ = this.twoFactorAuthConfigured ? this.dialogService.confirm({
+    const confirmation$ = this.userTwoFactorAuthConfigured ? this.dialogService.confirm({
       title: helptext.two_factor.renewSecret.title,
       message: helptext.two_factor.renewSecret.message,
       hideCheckbox: true,
@@ -97,12 +108,15 @@ export class TwoFactorComponent implements OnInit {
     }) : of(true);
     confirmation$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = true;
-      this.ws.call('user.renew_2fa_secret', [this.currentUser.username]).pipe(untilDestroyed(this)).subscribe({
+      this.cdr.markForCheck();
+      this.ws.call('user.renew_2fa_secret', [this.currentUser.username]).pipe(delay(2000), untilDestroyed(this)).subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error: WebsocketError) => {
           this.isFormLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.error({
             title: helptext.two_factor.error,
             message: error.reason,
