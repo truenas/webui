@@ -59,6 +59,7 @@ describe('AvailableAppsHeaderComponent', () => {
         searchQuery$: of(''),
         applySearchQuery: jest.fn(),
         applyFilters: jest.fn(),
+        catalogs$: of(['TRUENAS', 'TEST']),
       }),
     ],
   });

@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, map, Observable, of, take,
+  debounceTime, distinctUntilChanged, map, Observable, of, take, tap,
 } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
@@ -33,18 +33,21 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   });
 
   searchControl = this.fb.control('');
-  isFirstLoad = true;
   showFilters = false;
-
-  isFilterApplied$ = this.applicationsStore.isFilterApplied$;
-  appsCategories: string[] = [];
-  isLoading$ = this.applicationsStore.isLoading$;
+  isFirstLoad = true;
   availableApps$ = this.applicationsStore.availableApps$;
   installedApps$ = this.applicationsStore.installedApps$;
-  installedCatalogs$ = this.applicationsStore.catalogs$;
-  catalogsOptions$: Observable<Option[]> = this.installedCatalogs$.pipe(
-    singleArrayToOptions(),
+  catalogs$ = this.applicationsStore.catalogs$.pipe(
+    tap((catalogs) => {
+      if (this.isFirstLoad) {
+        this.isFirstLoad = false;
+        this.form.controls.catalogs.patchValue(catalogs);
+      }
+    }),
   );
+  isFilterApplied$ = this.applicationsStore.isFilterApplied$;
+  appsCategories: string[] = [];
+  catalogsOptions$ = this.catalogs$.pipe(singleArrayToOptions());
   sortOptions$: Observable<Option[]> = of([
     { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
