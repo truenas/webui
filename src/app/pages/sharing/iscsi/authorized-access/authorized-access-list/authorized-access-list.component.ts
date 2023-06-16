@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
@@ -47,7 +46,6 @@ export class AuthorizedAccessListComponent implements EntityTableConfig<IscsiAut
   };
 
   constructor(
-    private router: Router,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}
