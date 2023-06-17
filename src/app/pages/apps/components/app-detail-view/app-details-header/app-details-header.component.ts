@@ -62,8 +62,13 @@ export class AppDetailsHeaderComponent implements OnInit {
 
   showChoosePoolModal(): void {
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.checkIfPoolSet();
+    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe((success) => {
+      if (!success) {
+        return;
+      }
+      this.wasPoolSet = true;
+      this.cdr.markForCheck();
+      this.navigateToInstallPage();
     });
   }
 
