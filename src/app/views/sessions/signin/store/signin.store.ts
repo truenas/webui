@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,12 +9,11 @@ import {
   combineLatest, forkJoin, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, finalize, map, switchMap, takeWhile, tap,
+  filter, finalize, map, switchMap, tap,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -69,6 +69,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
+    private mdDialog: MatDialog,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -114,16 +115,8 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
-    switchMap(() => combineLatest([
-      this.ws.call('auth.twofactor.config').pipe(map((twoFactorConfig) => twoFactorConfig.enabled)),
-      this.authService.user$.pipe(
-        takeWhile((loggedInUser: LoggedInUser) => !loggedInUser, true),
-        filter(Boolean),
-        map((loggedInUser) => loggedInUser.twofactor_auth_configured),
-      ),
-    ])),
     tapResponse(
-      ([isGlobal2faConfigured, isUser2faConfigured]) => {
+      () => {
         if (this.statusSubscription && !this.statusSubscription.closed) {
           this.statusSubscription.unsubscribe();
           this.statusSubscription = null;
@@ -133,12 +126,7 @@ export class SigninStore extends ComponentStore<SigninState> {
           this.disabledReasonsSubscription = null;
         }
         this.setLoadingState(false);
-
-        if (isGlobal2faConfigured && !isUser2faConfigured) {
-          this.router.navigate(['/two-factor-auth']);
-        } else {
-          this.router.navigateByUrl(this.getRedirectUrl());
-        }
+        this.router.navigateByUrl(this.getRedirectUrl());
       },
       (error: WebsocketError) => {
         this.setLoadingState(false);

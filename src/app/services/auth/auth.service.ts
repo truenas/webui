@@ -19,6 +19,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
@@ -259,7 +260,7 @@ export class AuthService {
     ).pipe(
       filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
       switchMap((loggedInUser: DsUncachedUser) => {
-        authenticatedUser = loggedInUser;
+        authenticatedUser = { ...loggedInUser, globalTwoFactorConfig: null };
 
         const userQueryUuid = UUID.UUID();
         const userQueryPayload = {
@@ -286,7 +287,27 @@ export class AuthService {
             ...users[0],
           };
         }
+      }),
+      switchMap(() => {
+        const twoFactorConfigUuid = UUID.UUID();
+        const twoFactorConfigPayload = {
+          id: twoFactorConfigUuid,
+          msg: IncomingApiMessageType.Method,
+          method: 'auth.twofactor.config',
+        };
 
+        const requestTrigger2FaConfig$ = new Observable((subscriber) => {
+          this.wsManager.send(twoFactorConfigPayload);
+          subscriber.next();
+        }).pipe(take(1));
+
+        return combineLatest([
+          requestTrigger2FaConfig$,
+          this.getFilteredWebsocketResponse(twoFactorConfigUuid),
+        ]).pipe(map(([, data]) => data));
+      }),
+      tap((twoFactorConfig: TwoFactorConfig) => {
+        authenticatedUser.globalTwoFactorConfig = { ...twoFactorConfig };
         this.loggedInUser$.next(authenticatedUser);
       }),
       untilDestroyed(this),
