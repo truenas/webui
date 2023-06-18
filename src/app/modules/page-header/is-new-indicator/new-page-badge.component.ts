@@ -3,12 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 
 @Component({
-  selector: 'ix-is-new-indicator',
-  templateUrl: './is-new-indicator.component.html',
-  styleUrls: ['./is-new-indicator.component.scss'],
+  selector: 'ix-new-page-badge',
+  templateUrl: './new-page-badge.component.html',
+  styleUrls: ['./new-page-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IsNewIndicatorComponent {
+export class NewPageBadgeComponent {
   constructor(private dialog: MatDialog) {}
 
   leaveFeedbackPressed(): void {

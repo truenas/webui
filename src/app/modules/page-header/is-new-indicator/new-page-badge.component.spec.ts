@@ -4,13 +4,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
-import { IsNewIndicatorComponent } from 'app/modules/page-header/is-new-indicator/is-new-indicator.component';
+import { NewPageBadgeComponent } from 'app/modules/page-header/is-new-indicator/new-page-badge.component';
 
 describe('IsNewIndicator', () => {
-  let spectator: Spectator<IsNewIndicatorComponent>;
+  let spectator: Spectator<NewPageBadgeComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: IsNewIndicatorComponent,
+    component: NewPageBadgeComponent,
     imports: [],
     providers: [
       mockProvider(MatDialog),

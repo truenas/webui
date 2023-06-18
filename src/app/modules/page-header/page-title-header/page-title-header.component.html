@@ -3,7 +3,7 @@
   <div class="title-container">
     <div fxLayout="row" fxLayoutAlign="center center">
       <h1>{{ pageTitle ? (pageTitle | translate) : (currentTitle$ | async) | translate }}</h1>
-      <ix-is-new-indicator *ngIf="hasNewIndicator$ | async"></ix-is-new-indicator>
+      <ix-new-page-badge *ngIf="hasNewIndicator$ | async"></ix-new-page-badge>
     </div>
 
     <div class="actions-container">
