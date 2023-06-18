@@ -4,7 +4,7 @@
     <mat-vertical-stepper #stepper>
       <mat-step
         ixStepActivation
-        errorMessage="General step is required and missing some data."
+        errorMessage="Name not added."
         [hasError]="wizardRequiredStepsValidityForm.controls.general.value === false"
         (activate)="onStepActivated(PoolCreationWizardStep.General)"
       >
@@ -18,7 +18,7 @@
       <mat-step
         *ngIf="hasEnclosureStep"
         ixStepActivation
-        errorMessage="Enclosure step is required and missing some data."
+        errorMessage="No Enclosure selected for a Limit Pool To A Single Enclosure."
         [hasError]="wizardRequiredStepsValidityForm.controls.enclosure.value === false"
         (activate)="onStepActivated(PoolCreationWizardStep.EnclosureOptions)"
       >
@@ -31,7 +31,7 @@
 
       <mat-step
         ixStepActivation
-        errorMessage="Data step is required and missing some data."
+        errorMessage="At least 1 data vdev is required."
         [hasError]="wizardRequiredStepsValidityForm.controls.data.value === false"
         (activate)="onStepActivated(PoolCreationWizardStep.Data)"
       >

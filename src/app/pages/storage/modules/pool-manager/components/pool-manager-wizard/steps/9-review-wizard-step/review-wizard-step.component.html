@@ -61,23 +61,23 @@
     </div>
   </div>
 
-  <div *ngIf="hasErrorsOrWarnings" class="summary-group">
+  <div *ngIf="errorsCount" class="summary-group">
     <h4>{{ 'Warnings' | translate }}</h4>
 
-    <div *ngIf="requiredFormStepsTotalErrorsCount" class="summary-item">
+    <div class="summary-item">
       <div class="label">
         {{ 'Total' | translate }}
       </div>
       <div class="value" fxLayout="row" fxLayoutAlign="center center">
         <ix-icon class="error-warning-icon error" name="warning"></ix-icon>
-        {{ requiredFormStepsTotalErrorsCount }}
+        {{ errorsCount }}
         {{ 'Warnings' | translate }}
       </div>
     </div>
 
     <div *ngIf="wizardRequiredStepsStateForm.controls.general.value === false" class="summary-item">
       <div class="label">
-        {{ 'General step is required and missing some data.' | translate }}
+        {{ 'Name not added.' | translate }}
       </div>
     </div>
 
@@ -87,13 +87,13 @@
       class="summary-item"
     >
       <div class="label">
-        {{ 'Enclosure step is required and missing some data.' | translate }}
+        {{ 'No Enclosure selected for a Limit Pool To A Single Enclosure.' | translate }}
       </div>
     </div>
 
     <div *ngIf="wizardRequiredStepsStateForm.controls.data.value === false" class="summary-item">
       <div class="label">
-        {{ 'Data step is required and missing some data.' | translate }}
+        {{ 'At least 1 data vdev is required.' | translate }}
       </div>
     </div>
 
@@ -148,7 +148,7 @@
     color="primary"
     type="button"
     ixTest="create-pool"
-    [disabled]="!canCreatePool"
+    [disabled]="errorsCount"
     (click)="createPool.emit()"
   >
     {{ 'Create Pool' | translate }}

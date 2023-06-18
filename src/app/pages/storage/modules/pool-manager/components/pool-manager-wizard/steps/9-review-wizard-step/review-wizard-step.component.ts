@@ -67,12 +67,18 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
     public translate: TranslateService,
   ) {}
 
-  get requiredFormStepsTotalErrorsCount(): number {
+  get errorsCount(): number {
     let result = 0;
 
     Object.keys(this.wizardRequiredStepsStateForm.controls).forEach((key) => {
       const control = this.wizardRequiredStepsStateForm.controls[key as PoolCreationWizardRequiredStep];
       if (!control.value && control.hasValidator(Validators.required)) {
+        result += 1;
+      }
+    });
+
+    [this.disknumError, this.vdevtypeError, this.stripeVdevTypeError, this.logVdevTypeWarning].forEach((error) => {
+      if (error) {
         result += 1;
       }
     });
@@ -95,29 +101,6 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
     return this.state.enclosures.find((enclosure) => {
       return enclosure.number === this.state.enclosureSettings.limitToSingleEnclosure;
     }).name;
-  }
-
-  get hasErrorsOrWarnings(): boolean {
-    return Boolean(
-      this.requiredFormStepsTotalErrorsCount > 0 || this.disknumError || this.vdevtypeError
-      || this.stripeVdevTypeError || this.logVdevTypeWarning,
-    );
-  }
-
-  get canCreatePool(): boolean {
-    if (this.requiredFormStepsTotalErrorsCount) {
-      return false;
-    }
-    if (this.vdevtypeError) {
-      return false;
-    }
-    if (this.vdevdisksError) {
-      return false;
-    }
-    // if (this.hasSavableErrors && !this.forceControl.value) {
-    //   return false;
-    // }
-    return true;
   }
 
   ngOnInit(): void {
