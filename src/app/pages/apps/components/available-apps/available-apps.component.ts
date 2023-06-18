@@ -71,10 +71,6 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
     return `${appSection.title}`;
   }
 
-  changeSearchQuery(query: string): void {
-    this.applicationsStore.applySearchQuery(query);
-  }
-
   applyCategoryFilter(category: string): void {
     this.applicationsStore.applyFilters({
       categories: [category],
