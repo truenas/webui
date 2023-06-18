@@ -1,5 +1,4 @@
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { User } from './user.interface';
 
@@ -16,9 +15,7 @@ export interface DsUncachedUser {
   };
 }
 
-export interface LoggedInUser extends Partial<DsUncachedUser>, Partial<User> {
-  globalTwoFactorConfig: TwoFactorConfig;
-}
+export interface LoggedInUser extends Partial<DsUncachedUser>, Partial<User> { }
 
 export interface DsUncachedGroup {
   gr_gid: number;

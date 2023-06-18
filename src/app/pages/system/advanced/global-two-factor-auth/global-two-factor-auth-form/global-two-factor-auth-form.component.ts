@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
@@ -12,8 +11,8 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +46,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
+    private twoFactorAuthGuardService: TwoFactorGuardService,
     @Inject(SLIDE_IN_DATA) protected twoFactorConfig: TwoFactorConfig,
   ) {}
 
@@ -80,6 +79,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
+        this.twoFactorAuthGuardService.updateGlobalConfig();
         this.cdr.markForCheck();
         this.slideInRef.close(true);
       },

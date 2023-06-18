@@ -115,10 +115,11 @@ export class TwoFactorComponent implements OnInit {
       switchMap(() => {
         this.isFormLoading = true;
         this.cdr.markForCheck();
-        return this.ws.call('user.renew_2fa_secret', [this.currentUser.username]);
+        return this.authService.renewUser2FaSecret();
       }),
       tap(() => {
         this.isFormLoading = false;
+        this.userTwoFactorAuthConfigured = true;
         this.cdr.markForCheck();
         this.showQrCode();
       }),

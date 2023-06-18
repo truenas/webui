@@ -19,7 +19,6 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
@@ -260,7 +259,7 @@ export class AuthService {
     ).pipe(
       filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
       switchMap((loggedInUser: DsUncachedUser) => {
-        authenticatedUser = { ...loggedInUser, globalTwoFactorConfig: null };
+        authenticatedUser = { ...loggedInUser };
 
         const userQueryUuid = UUID.UUID();
         const userQueryPayload = {
@@ -287,30 +286,38 @@ export class AuthService {
             ...users[0],
           };
         }
-      }),
-      switchMap(() => {
-        const twoFactorConfigUuid = UUID.UUID();
-        const twoFactorConfigPayload = {
-          id: twoFactorConfigUuid,
-          msg: IncomingApiMessageType.Method,
-          method: 'auth.twofactor.config',
-        };
-
-        const requestTrigger2FaConfig$ = new Observable((subscriber) => {
-          this.wsManager.send(twoFactorConfigPayload);
-          subscriber.next();
-        }).pipe(take(1));
-
-        return combineLatest([
-          requestTrigger2FaConfig$,
-          this.getFilteredWebsocketResponse(twoFactorConfigUuid),
-        ]).pipe(map(([, data]) => data));
-      }),
-      tap((twoFactorConfig: TwoFactorConfig) => {
-        authenticatedUser.globalTwoFactorConfig = { ...twoFactorConfig };
         this.loggedInUser$.next(authenticatedUser);
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  renewUser2FaSecret(): Observable<User> {
+    return this.user$.pipe(
+      filter(Boolean),
+      take(1),
+      switchMap((user) => {
+        const renewUuid = UUID.UUID();
+        const renewPayload = {
+          id: renewUuid,
+          msg: IncomingApiMessageType.Method,
+          method: 'user.renew_2fa_secret',
+          params: [user.username],
+        };
+
+        const requestTriggerUserQuery$ = new Observable((subscriber) => {
+          this.wsManager.send(renewPayload);
+          subscriber.next();
+        }).pipe(take(1));
+
+        return combineLatest([
+          requestTriggerUserQuery$,
+          this.getFilteredWebsocketResponse(renewUuid),
+        ]).pipe(map(([, data]) => data as User));
+      }),
+      tap(() => {
+        this.getLoggedInUserInformation();
+      }),
+    );
   }
 }

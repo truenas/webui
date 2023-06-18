@@ -5,47 +5,59 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, combineLatest, filter, of, switchMap,
+  BehaviorSubject,
+  Observable, combineLatest, filter, of, switchMap, take, tap,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Injectable()
 export class TwoFactorGuardService implements CanActivateChild {
   isAuthenticated = false;
   show2FaWarning = false;
+
+  private globalTwoFactorConfig$ = new BehaviorSubject<TwoFactorConfig>(null);
+
   constructor(
     private router: Router,
     private authService: AuthService,
     @Inject(WINDOW) private window: Window,
     private dialogService: DialogService,
     private translateService: TranslateService,
-  ) {
-    this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isLoggedIn) => {
-      this.isAuthenticated = isLoggedIn;
-    });
-    this.authService.user$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
-      next: (user) => {
-        if (user.globalTwoFactorConfig.enabled && !user.twofactor_auth_configured) {
-          this.show2FaWarning = true;
-        }
-      },
-    });
+    private ws: WebSocketService,
+  ) { }
+
+  updateGlobalConfig(): void {
+    this.ws.call('auth.twofactor.config').pipe(
+      tap((twoFactorConfig) => this.globalTwoFactorConfig$.next(twoFactorConfig)),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return combineLatest([
       this.authService.isAuthenticated$,
       this.authService.user$.pipe(filter(Boolean)),
+      this.globalTwoFactorConfig$.pipe(
+        tap((config) => {
+          if (!config) {
+            this.updateGlobalConfig();
+          }
+        }),
+        filter(Boolean),
+      ),
     ]).pipe(
-      switchMap(([isAuthenticated, loggedInUser]) => {
+      take(1),
+      switchMap(([isAuthenticated, loggedInUser, globalTwoFactorConfig]) => {
         if (!isAuthenticated) {
           return of(false);
         }
         if (
-          loggedInUser.globalTwoFactorConfig.enabled
+          globalTwoFactorConfig.enabled
           && !loggedInUser.twofactor_auth_configured
           && !state.url.endsWith('/two-factor-auth')
         ) {
