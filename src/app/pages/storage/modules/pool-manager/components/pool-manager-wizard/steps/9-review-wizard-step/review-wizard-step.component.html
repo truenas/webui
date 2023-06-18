@@ -61,65 +61,35 @@
     </div>
   </div>
 
-  <div *ngIf="errorsCount" class="summary-group">
+  <div *ngIf="errorsTotal || warningsTotal" class="summary-group">
     <h4>{{ 'Warnings' | translate }}</h4>
 
-    <div class="summary-item">
-      <div class="label">
-        {{ 'Total' | translate }}
-      </div>
-      <div class="value" fxLayout="row" fxLayoutAlign="center center">
-        <ix-icon class="error-warning-icon error" name="warning"></ix-icon>
-        {{ errorsCount }}
-        {{ 'Warnings' | translate }}
-      </div>
-    </div>
-
-    <div *ngIf="wizardRequiredStepsStateForm.controls.general.value === false" class="summary-item">
-      <div class="label">
-        {{ 'Name not added.' | translate }}
-      </div>
+    <div *ngIf="wizardRequiredStepsStateForm.controls.general.value === false" class="summary-item error">
+      {{ 'Name not added.' | translate }}
     </div>
 
     <div *ngIf="
       wizardRequiredStepsStateForm.controls.enclosure.validator &&
       wizardRequiredStepsStateForm.controls.enclosure.value === false"
-      class="summary-item"
+      class="summary-item error"
     >
-      <div class="label">
-        {{ 'No Enclosure selected for a Limit Pool To A Single Enclosure.' | translate }}
-      </div>
+      {{ 'No Enclosure selected for a Limit Pool To A Single Enclosure.' | translate }}
     </div>
 
-    <div *ngIf="wizardRequiredStepsStateForm.controls.data.value === false" class="summary-item">
-      <div class="label">
-        {{ 'At least 1 data vdev is required.' | translate }}
-      </div>
+    <div *ngIf="wizardRequiredStepsStateForm.controls.data.value === false" class="summary-item error">
+      {{ 'At least 1 data vdev is required.' | translate }}
     </div>
 
-    <div
-      *ngIf="disknumError"
-      class="size-message red"
-      [innerHTML]="disknumError"
-    ></div>
-
-    <div
-      *ngIf="vdevtypeError"
-      class="size-message red"
-      [innerHTML]="vdevtypeError"
-    ></div>
-
-    <div
-      *ngIf="stripeVdevTypeError"
-      class="size-message red"
-      [innerHTML]="stripeVdevTypeError"
-    ></div>
-
-    <div
-      *ngIf="logVdevTypeWarning"
-      class="size-message orange"
-      [innerHTML]="logVdevTypeWarning"
-    ></div>
+    <div *ngIf="disknumError" class="summary-item error" [innerHTML]="disknumError"></div>
+    <div *ngIf="vdevtypeError" class="summary-item error" [innerHTML]="vdevtypeError"></div>
+    <div *ngIf="stripeVdevTypeError" class="summary-item error" [innerHTML]="stripeVdevTypeError"></div>
+    <div *ngIf="logVdevTypeWarning" class="summary-item warning" [innerHTML]="logVdevTypeWarning"></div>
+    <div *ngIf="nonUniqueSerialDisks.length">
+      <ix-warning [message]="nonUniqueSerialDisksWarning"></ix-warning>
+    </div>
+    <div *ngIf="disksWithExportedPools.length">
+      <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+    </div>
   </div>
 </div>
 
@@ -148,7 +118,7 @@
     color="primary"
     type="button"
     ixTest="create-pool"
-    [disabled]="errorsCount"
+    [disabled]="!!errorsTotal"
     (click)="createPool.emit()"
   >
     {{ 'Create Pool' | translate }}

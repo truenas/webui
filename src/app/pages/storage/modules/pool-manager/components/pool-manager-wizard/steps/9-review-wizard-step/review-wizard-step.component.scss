@@ -44,12 +44,6 @@
   color: var(--red);
 }
 
-.size-message {
-  &.red {
-    color: var(--red);
-  }
-
-  &.orange {
-    color: var(--orange);
-  }
+.warning {
+  color: var(--orange);
 }

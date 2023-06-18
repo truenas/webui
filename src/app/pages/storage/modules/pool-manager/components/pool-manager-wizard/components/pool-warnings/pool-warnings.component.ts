@@ -10,6 +10,7 @@ import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
 import { DiskBus } from 'app/enums/disk-bus.enum';
+import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -28,16 +29,8 @@ export class PoolWarningsComponent implements OnInit {
     allowExportedPools: [[] as string[]],
   });
 
-  exportedPoolsWarning = this.translate.instant(
-    `The following disks have exported pools on them.
-    Using those disks will make existing pools on them unable to be imported.
-    You will lose any and all data in selected disks.`,
-  );
-  exportedPoolsTooltip = this.translate.instant(
-    `Some of the disks are attached to the exported pools
-    mentioned in this list. Checking a pool name means you want to
-    allow reallocation of the disks attached to that pool.`,
-  );
+  exportedPoolsWarning = helptext.manager_exportedDisksWarning;
+  exportedPoolsTooltip = helptext.manager_exportedPoolsTooltip;
 
   nonUniqueSerialDisks: UnusedDisk[] = [];
   nonUniqueSerialDisksTooltip: string;

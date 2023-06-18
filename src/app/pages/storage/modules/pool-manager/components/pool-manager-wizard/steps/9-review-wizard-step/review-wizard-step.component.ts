@@ -6,13 +6,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import {
   CreateVdevLayout, VdevType, vdevTypeLabels,
 } from 'app/enums/v-dev-type.enum';
-// todo replace helptext with another solution
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
@@ -23,6 +24,7 @@ import {
   PoolManagerStore,
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
 @UntilDestroy()
 @Component({
@@ -41,24 +43,25 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected readonly vdevTypeLabels = vdevTypeLabels;
 
-  disknumError: string = null;
   disknumErrorMessage = helptext.manager_disknumErrorMessage;
   disknumErrorConfirmMessage = helptext.manager_disknumErrorConfirmMessage;
   disknumExtendConfirmMessage = helptext.manager_disknumExtendConfirmMessage;
-
-  vdevtypeError: string = null;
   vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
+  exportedPoolsWarning = helptext.manager_exportedDisksWarning;
+  nonUniqueSerialDisksWarning: string;
+
+  disknumError: string = null;
+  vdevtypeError: string = null;
   stripeVdevTypeError: string = null;
   logVdevTypeWarning: string = null;
   firstDataVdevType: string;
-  hasSavableErrors = false;
-  vdevdisksError = false;
-  hasVdevDiskSizeError = false;
-  canDuplicate = false;
   firstDataVdevDisknum = 0;
   firstDataVdevDisksize: number;
   firstDataVdevDisktype: DiskType;
+
+  nonUniqueSerialDisks: UnusedDisk[] = [];
+  disksWithExportedPools: UnusedDisk[] = [];
 
   constructor(
     private matDialog: MatDialog,
@@ -67,7 +70,7 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
     public translate: TranslateService,
   ) {}
 
-  get errorsCount(): number {
+  get errorsTotal(): number {
     let result = 0;
 
     Object.keys(this.wizardRequiredStepsStateForm.controls).forEach((key) => {
@@ -77,8 +80,22 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
       }
     });
 
-    [this.disknumError, this.vdevtypeError, this.stripeVdevTypeError, this.logVdevTypeWarning].forEach((error) => {
+    [this.disknumError, this.vdevtypeError, this.stripeVdevTypeError].forEach((error) => {
       if (error) {
+        result += 1;
+      }
+    });
+
+    return result;
+  }
+
+  get warningsTotal(): number {
+    let result = 0;
+
+    [
+      this.disksWithExportedPools.length, this.nonUniqueSerialDisks.length, this.logVdevTypeWarning,
+    ].forEach((warning) => {
+      if (warning) {
         result += 1;
       }
     });
@@ -109,6 +126,8 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
       this.nonEmptyTopologyCategories = this.filterNonEmptyCategories(state.topology);
       this.cdr.markForCheck();
     });
+
+    this.setNonUniqueSerialDisksWarning();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -138,11 +157,8 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
       let dataVdevType: string;
       this.disknumError = null;
       this.vdevtypeError = null;
-      this.vdevdisksError = false;
       this.stripeVdevTypeError = null;
       this.logVdevTypeWarning = null;
-      this.hasVdevDiskSizeError = false;
-      this.hasSavableErrors = false;
 
       if (typologyCategoryType === VdevType.Data) {
         if (i === 0) {
@@ -153,12 +169,10 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
             this.firstDataVdevDisknum = typologyCategory.vdevs.length;
             this.firstDataVdevDisksize = typologyCategory.vdevs[0][0].size;
             this.firstDataVdevDisktype = typologyCategory.vdevs[0][0].type;
-            this.canDuplicate = true;
           } else {
             this.firstDataVdevDisknum = 0;
             this.firstDataVdevDisksize = null;
             this.firstDataVdevDisktype = null;
-            this.canDuplicate = false;
           }
         }
 
@@ -188,9 +202,10 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
         } else {
           this.getStripeVdevTypeErrorMsg(typologyCategoryType);
         }
-
-        this.hasSavableErrors = true;
       }
+
+      this.nonUniqueSerialDisks = typologyCategory.vdevs.flat().filter(hasNonUniqueSerial);
+      this.disksWithExportedPools = typologyCategory.vdevs.flat().filter(hasExportedPool);
     });
   }
 
@@ -219,5 +234,24 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
       }
       return acc;
     }, [] as [VdevType, PoolManagerTopologyCategory][]);
+  }
+
+  private setNonUniqueSerialDisksWarning(): void {
+    if (this.nonUniqueSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {
+      this.nonUniqueSerialDisksWarning = this.translate.instant(
+        `Warning: There are {n} USB disks available that have non-unique serial numbers.
+          USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other.
+          Adding such disks to a pool can result in lost data.`,
+        { n: this.nonUniqueSerialDisks.length },
+      );
+      return;
+    }
+
+    this.nonUniqueSerialDisksWarning = this.translate.instant(
+      `Warning: There are {n} disks available that have non-unique serial numbers.
+        Non-unique serial numbers can be caused by a cabling issue and
+        adding such disks to a pool can result in lost data.`,
+      { n: this.nonUniqueSerialDisks.length },
+    );
   }
 }
