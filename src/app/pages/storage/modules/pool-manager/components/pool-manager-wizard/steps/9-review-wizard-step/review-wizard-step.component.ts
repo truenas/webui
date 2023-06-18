@@ -5,7 +5,13 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { TranslateService } from '@ngx-translate/core';
+import { DiskType } from 'app/enums/disk-type.enum';
+import {
+  CreateVdevLayout, VdevType, vdevTypeLabels,
+} from 'app/enums/v-dev-type.enum';
+// todo replace helptext with another solution
+import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
   InspectVdevsDialogComponent,
@@ -35,13 +41,33 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected readonly vdevTypeLabels = vdevTypeLabels;
 
+  disknumError: string = null;
+  disknumErrorMessage = helptext.manager_disknumErrorMessage;
+  disknumErrorConfirmMessage = helptext.manager_disknumErrorConfirmMessage;
+  disknumExtendConfirmMessage = helptext.manager_disknumExtendConfirmMessage;
+
+  vdevtypeError: string = null;
+  vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
+
+  stripeVdevTypeError: string = null;
+  logVdevTypeWarning: string = null;
+  firstDataVdevType: string;
+  hasSavableErrors = false;
+  vdevdisksError = false;
+  hasVdevDiskSizeError = false;
+  canDuplicate = false;
+  firstDataVdevDisknum = 0;
+  firstDataVdevDisksize: number;
+  firstDataVdevDisktype: DiskType;
+
   constructor(
     private matDialog: MatDialog,
     private store: PoolManagerStore,
     private cdr: ChangeDetectorRef,
+    public translate: TranslateService,
   ) {}
 
-  get totalWarnings(): number {
+  get requiredFormStepsTotalErrorsCount(): number {
     let result = 0;
 
     Object.keys(this.wizardRequiredStepsStateForm.controls).forEach((key) => {
@@ -71,6 +97,29 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
     }).name;
   }
 
+  get hasErrorsOrWarnings(): boolean {
+    return Boolean(
+      this.requiredFormStepsTotalErrorsCount > 0 || this.disknumError || this.vdevtypeError
+      || this.stripeVdevTypeError || this.logVdevTypeWarning,
+    );
+  }
+
+  get canCreatePool(): boolean {
+    if (this.requiredFormStepsTotalErrorsCount) {
+      return false;
+    }
+    if (this.vdevtypeError) {
+      return false;
+    }
+    if (this.vdevdisksError) {
+      return false;
+    }
+    // if (this.hasSavableErrors && !this.forceControl.value) {
+    //   return false;
+    // }
+    return true;
+  }
+
   ngOnInit(): void {
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.state = state;
@@ -81,6 +130,8 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue) {
+      this.checkAndGenerateErrors();
+
       Object.keys(this.wizardRequiredStepsStateForm.controls).forEach((key) => {
         const control = this.wizardRequiredStepsStateForm.controls[key as PoolCreationWizardRequiredStep];
         if (!control.value && control.hasValidator(Validators.required)) {
@@ -96,6 +147,85 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
       data: this.state.topology,
       panelClass: 'inspect-vdevs-dialog',
     });
+  }
+
+  checkAndGenerateErrors(): void {
+    this.nonEmptyTopologyCategories.forEach(([typologyCategoryType, typologyCategory], i) => {
+      let dataVdevDisknum = 0;
+      let dataVdevType: string;
+      this.disknumError = null;
+      this.vdevtypeError = null;
+      this.vdevdisksError = false;
+      this.stripeVdevTypeError = null;
+      this.logVdevTypeWarning = null;
+      this.hasVdevDiskSizeError = false;
+      this.hasSavableErrors = false;
+
+      if (typologyCategoryType === VdevType.Data) {
+        if (i === 0) {
+          this.firstDataVdevType = typologyCategory.layout;
+          dataVdevType = typologyCategory.layout;
+
+          if (typologyCategory.vdevs.length > 0) {
+            this.firstDataVdevDisknum = typologyCategory.vdevs.length;
+            this.firstDataVdevDisksize = typologyCategory.vdevs[0][0].size;
+            this.firstDataVdevDisktype = typologyCategory.vdevs[0][0].type;
+            this.canDuplicate = true;
+          } else {
+            this.firstDataVdevDisknum = 0;
+            this.firstDataVdevDisksize = null;
+            this.firstDataVdevDisktype = null;
+            this.canDuplicate = false;
+          }
+        }
+
+        if (typologyCategory.vdevs.length > 0) {
+          dataVdevDisknum = typologyCategory.vdevs.length;
+          dataVdevType = typologyCategory.layout;
+        } else {
+          dataVdevDisknum = 0;
+        }
+
+        if (dataVdevDisknum > 0) {
+          if (dataVdevDisknum !== this.firstDataVdevDisknum && this.firstDataVdevType !== CreateVdevLayout.Stripe) {
+            this.getDiskNumErrorMsg(dataVdevDisknum);
+          }
+          if (dataVdevType !== this.firstDataVdevType) {
+            this.getVdevTypeErrorMsg(dataVdevType);
+          }
+        }
+      }
+
+      if (
+        [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(typologyCategoryType)
+        && typologyCategory.vdevs.length >= 1 && typologyCategory.layout === CreateVdevLayout.Stripe
+      ) {
+        if (typologyCategoryType === VdevType.Log) {
+          this.getLogVdevTypeWarningMsg();
+        } else {
+          this.getStripeVdevTypeErrorMsg(typologyCategoryType);
+        }
+
+        this.hasSavableErrors = true;
+      }
+    });
+  }
+
+  private getDiskNumErrorMsg(disks: number): void {
+    this.disknumError = `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {n} disks, new vdev has {m}', { n: this.firstDataVdevDisknum, m: disks })}`;
+  }
+
+  private getVdevTypeErrorMsg(type: string): void {
+    this.vdevtypeError = `${this.translate.instant(this.vdevtypeErrorMessage)} ${this.translate.instant('First vdev is a {vdevType}, new vdev is {newVdevType}', { vdevType: this.firstDataVdevType, newVdevType: type })}`;
+  }
+
+  private getStripeVdevTypeErrorMsg(group: string): void {
+    const vdevType = group === 'special' ? 'metadata' : group;
+    this.stripeVdevTypeError = this.translate.instant('A stripe {vdevType} vdev is highly discouraged and will result in data loss if it fails', { vdevType });
+  }
+
+  private getLogVdevTypeWarningMsg(): void {
+    this.logVdevTypeWarning = this.translate.instant('A stripe log vdev may result in data loss if it fails combined with a power outage.');
   }
 
   private filterNonEmptyCategories(topology: PoolManagerTopology): [VdevType, PoolManagerTopologyCategory][] {

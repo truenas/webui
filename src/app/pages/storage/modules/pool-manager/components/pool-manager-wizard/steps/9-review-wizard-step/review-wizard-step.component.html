@@ -61,16 +61,16 @@
     </div>
   </div>
 
-  <div *ngIf="!!totalWarnings" class="summary-group">
+  <div *ngIf="hasErrorsOrWarnings" class="summary-group">
     <h4>{{ 'Warnings' | translate }}</h4>
 
-    <div class="summary-item">
+    <div *ngIf="requiredFormStepsTotalErrorsCount" class="summary-item">
       <div class="label">
         {{ 'Total' | translate }}
       </div>
       <div class="value" fxLayout="row" fxLayoutAlign="center center">
         <ix-icon class="error-warning-icon error" name="warning"></ix-icon>
-        {{ totalWarnings }}
+        {{ requiredFormStepsTotalErrorsCount }}
         {{ 'Warnings' | translate }}
       </div>
     </div>
@@ -81,7 +81,11 @@
       </div>
     </div>
 
-    <div *ngIf="wizardRequiredStepsStateForm.controls.enclosure.value === false" class="summary-item">
+    <div *ngIf="
+      wizardRequiredStepsStateForm.controls.enclosure.validator &&
+      wizardRequiredStepsStateForm.controls.enclosure.value === false"
+      class="summary-item"
+    >
       <div class="label">
         {{ 'Enclosure step is required and missing some data.' | translate }}
       </div>
@@ -92,6 +96,30 @@
         {{ 'Data step is required and missing some data.' | translate }}
       </div>
     </div>
+
+    <div
+      *ngIf="disknumError"
+      class="size-message red"
+      [innerHTML]="disknumError"
+    ></div>
+
+    <div
+      *ngIf="vdevtypeError"
+      class="size-message red"
+      [innerHTML]="vdevtypeError"
+    ></div>
+
+    <div
+      *ngIf="stripeVdevTypeError"
+      class="size-message red"
+      [innerHTML]="stripeVdevTypeError"
+    ></div>
+
+    <div
+      *ngIf="logVdevTypeWarning"
+      class="size-message orange"
+      [innerHTML]="logVdevTypeWarning"
+    ></div>
   </div>
 </div>
 
@@ -120,7 +148,7 @@
     color="primary"
     type="button"
     ixTest="create-pool"
-    [disabled]="!!totalWarnings"
+    [disabled]="!canCreatePool"
     (click)="createPool.emit()"
   >
     {{ 'Create Pool' | translate }}

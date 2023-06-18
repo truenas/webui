@@ -138,6 +138,8 @@ export class PoolManagerWizardComponent implements OnInit {
 
       if (result) {
         this.wizardRequiredStepsValidityForm.controls.enclosure.setValidators(Validators.required);
+      } else {
+        this.wizardRequiredStepsValidityForm.controls.enclosure.removeValidators(Validators.required);
       }
     });
   }
