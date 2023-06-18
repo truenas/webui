@@ -61,10 +61,10 @@
     </div>
   </div>
 
-  <div class="summary-group">
+  <div *ngIf="!!totalWarnings" class="summary-group">
     <h4>{{ 'Warnings' | translate }}</h4>
 
-    <div *ngIf="!!totalWarnings" class="summary-item">
+    <div class="summary-item">
       <div class="label">
         {{ 'Total' | translate }}
       </div>
@@ -79,26 +79,17 @@
       <div class="label">
         {{ 'General step is required and missing some data.' | translate }}
       </div>
-      <div class="value" fxLayout="row" fxLayoutAlign="center center">
-        <ix-icon class="error-warning-icon error" name="warning"></ix-icon>
-      </div>
     </div>
 
     <div *ngIf="wizardRequiredStepsStateForm.controls.enclosure.value === false" class="summary-item">
       <div class="label">
         {{ 'Enclosure step is required and missing some data.' | translate }}
       </div>
-      <div class="value" fxLayout="row" fxLayoutAlign="center center">
-        <ix-icon class="error-warning-icon error" name="warning"></ix-icon>
-      </div>
     </div>
 
     <div *ngIf="wizardRequiredStepsStateForm.controls.data.value === false" class="summary-item">
       <div class="label">
         {{ 'Data step is required and missing some data.' | translate }}
-      </div>
-      <div class="value" fxLayout="row" fxLayoutAlign="center center">
-        <ix-icon class="error-warning-icon error" name="warning"></ix-icon>
       </div>
     </div>
   </div>
