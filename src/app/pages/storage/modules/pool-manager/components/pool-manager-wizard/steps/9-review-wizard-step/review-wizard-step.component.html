@@ -84,9 +84,22 @@
   <button
     mat-button
     matStepperNext
+    color="error"
+    type="button"
+    ixTest="start-over"
+    [disabled]="isStartOverDisabled"
+    (click)="startOver()"
+  >
+    {{ 'Start Over' | translate }}
+  </button>
+
+  <button
+    mat-button
+    matStepperNext
     color="primary"
     type="button"
     ixTest="create-pool"
+    [disabled]="isStartOverDisabled"
     (click)="createPool.emit()"
   >
     {{ 'Create Pool' | translate }}

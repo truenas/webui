@@ -65,4 +65,16 @@ describe('PoolManagerStore', () => {
       });
     });
   });
+
+  describe('start over', () => {
+    it('reverts state to initial state', async () => {
+      spectator.service.reset();
+
+      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
+        ...initialState,
+        enclosures,
+        allDisks: disks,
+      });
+    });
+  });
 });

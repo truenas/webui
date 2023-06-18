@@ -3,6 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import {
   InspectVdevsDialogComponent,
@@ -12,6 +14,7 @@ import {
   PoolManagerStore,
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +35,13 @@ export class ReviewWizardStepComponent implements OnInit {
     private matDialog: MatDialog,
     private store: PoolManagerStore,
     private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
+    private translate: TranslateService,
   ) {}
+
+  get isStartOverDisabled(): boolean {
+    return !this.state.name && !this.state.encryption && !this.nonEmptyTopologyCategories?.length;
+  }
 
   get hasVdevs(): boolean {
     return Object.keys(this.state.topology).some((type) => {
@@ -74,5 +83,21 @@ export class ReviewWizardStepComponent implements OnInit {
       }
       return acc;
     }, [] as [VdevType, PoolManagerTopologyCategory][]);
+  }
+
+  startOver(): void {
+    this.dialogService
+      .confirm({
+        title: this.translate.instant('Start Over?'),
+        message: this.translate.instant('You will need to start from the beginning'),
+        hideCheckbox: false,
+        buttonText: this.translate.instant('Start Over'),
+      })
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.store.reset();
+      });
   }
 }
