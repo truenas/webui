@@ -1,11 +1,11 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import {
-  ActivatedRoute, Router,
+  ActivatedRoute,
 } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   BehaviorSubject, map,
 } from 'rxjs';
@@ -36,26 +36,15 @@ export class CategoryViewComponent implements OnInit, OnDestroy, AfterViewInit {
     private layoutService: LayoutService,
     private applicationsStore: AvailableAppsStore,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
   ) {}
 
   ngOnInit(): void {
     const category = this.route.snapshot.params.category as string;
-    this.applicationsStore.appsCategories$.pipe(
-      untilDestroyed(this),
-    ).subscribe((categories) => {
-      if (categories.includes(category)) {
-        this.pageTitle$.next(category.replace(/-/g, ' '));
-        this.applicationsStore.applyFilters({
-          categories: [category],
-          catalogs: [],
-          sort: null,
-        });
-        this.cdr.markForCheck();
-      } else {
-        this.router.navigate(['/apps', 'available']);
-      }
+    this.pageTitle$.next(category.replace(/-/g, ' '));
+    this.applicationsStore.applyFilters({
+      categories: [category],
+      catalogs: [],
+      sort: null,
     });
   }
 
