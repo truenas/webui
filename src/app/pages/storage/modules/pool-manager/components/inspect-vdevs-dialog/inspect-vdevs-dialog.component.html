@@ -1,0 +1,41 @@
+<mat-card class="container">
+  <mat-card-content class="card-content">
+    <div class="inner-container">
+      <div class="left-pane">
+        <div class="header dialog-header"><h3>{{ 'Inspect VDEVs' | translate }}</h3></div>
+        <mat-nav-list>
+          <mat-list-item
+            *ngFor="let type of presentTypes"
+            class="vdev-type"
+            [class.selected]="type === selectedType"
+            (click)="selectType(type)"
+          >{{ getTypeLabel(type) | translate }}</mat-list-item>
+        </mat-nav-list>
+      </div>
+      <mat-divider class="divider" [vertical]="true"></mat-divider>
+      <div class="right-pane">
+        <div class="header vdevs-header">
+          <h3>{{ '{type} VDEVs' | translate: { type: (getTypeLabel(selectedType) | translate) } }}</h3>
+
+          <button
+            mat-icon-button
+            mat-dialog-close
+            class="close-icon"
+            ixTest="close-button"
+          >
+            <ix-icon name="clear"></ix-icon>
+          </button>
+        </div>
+
+        <mat-divider class="header-divider"></mat-divider>
+        <div class="vdevs-container">
+          <ix-manual-selection-vdev
+            *ngFor="let vdev of vdevs"
+            [vdev]="vdev"
+            [layout]="layout"
+          ></ix-manual-selection-vdev>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
