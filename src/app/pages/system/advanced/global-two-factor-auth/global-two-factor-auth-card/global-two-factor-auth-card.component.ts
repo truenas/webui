@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, Subject, shareReplay,
+  Observable, shareReplay,
 } from 'rxjs';
 import { toLoadingState, LoadingState } from 'app/helpers/to-loading-state.helper';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -33,8 +33,7 @@ export class GlobalTwoFactorAuthCardComponent implements OnInit {
   }
 
   refreshCard(): void {
-    const twoFactorConfigUpdater$ = new Subject<TwoFactorConfig>();
-    this.twoFactorConfig$ = twoFactorConfigUpdater$.pipe(
+    this.twoFactorConfig$ = this.ws.call('auth.twofactor.config').pipe(
       toLoadingState(),
       shareReplay({
         refCount: false,
@@ -42,10 +41,6 @@ export class GlobalTwoFactorAuthCardComponent implements OnInit {
       }),
     );
     this.cdr.markForCheck();
-    this.ws.call('auth.twofactor.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      twoFactorConfigUpdater$.next(config);
-      twoFactorConfigUpdater$.complete();
-    });
   }
 
   async onConfigurePressed(twoFactorAuthConfig: TwoFactorConfig): Promise<void> {
