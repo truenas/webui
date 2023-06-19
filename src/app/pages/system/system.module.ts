@@ -44,6 +44,7 @@ import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
+import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-card/global-two-factor-auth-card.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-form/global-two-factor-auth-form.component';
 import {
   InitShutdownCardComponent,
@@ -195,6 +196,7 @@ import { routing } from './system.routing';
     GeneralSettingsComponent,
     GuiFormComponent,
     GuiCardComponent,
+    GlobalTwoFactorAuthCardComponent,
     LocalizationCardComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
