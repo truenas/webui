@@ -46,7 +46,11 @@ describe('DataWizardStepComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        isStepActive: true,
+      },
+    });
   });
 
   it('has the correct inputs', () => {

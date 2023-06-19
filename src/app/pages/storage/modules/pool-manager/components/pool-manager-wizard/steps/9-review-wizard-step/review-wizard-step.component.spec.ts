@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -74,7 +75,16 @@ describe('ReviewWizardStepComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        wizardRequiredStepsStateForm: new FormGroup({
+          general: new FormControl(null),
+          enclosure: new FormControl(null),
+          data: new FormControl(null),
+        }),
+        isStepActive: true,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

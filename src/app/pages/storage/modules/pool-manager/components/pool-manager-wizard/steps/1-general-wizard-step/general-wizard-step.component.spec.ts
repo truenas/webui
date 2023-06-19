@@ -44,7 +44,11 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        isStepActive: true,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

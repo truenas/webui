@@ -73,7 +73,7 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
   get errorsTotal(): number {
     let result = 0;
 
-    Object.keys(this.wizardRequiredStepsStateForm.controls).forEach((key) => {
+    Object.keys(this.wizardRequiredStepsStateForm?.controls).forEach((key) => {
       const control = this.wizardRequiredStepsStateForm.controls[key as PoolCreationWizardRequiredStep];
       if (!control.value && control.hasValidator(Validators.required)) {
         result += 1;
