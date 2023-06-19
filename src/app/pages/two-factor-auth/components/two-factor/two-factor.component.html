@@ -10,6 +10,7 @@
       <ix-warning
         *ngIf="!isDataLoading"
         [message]="global2FaMsg"
+        [color]="!globalTwoFactorEnabled || !userTwoFactorAuthConfigured ? 'orange' : 'green'"
       ></ix-warning>
       <button
         mat-button
