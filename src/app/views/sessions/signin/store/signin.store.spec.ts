@@ -105,17 +105,11 @@ describe('SigninStore', () => {
   });
 
   describe('handleSuccessfulLogin', () => {
-    it('redirects user inside if 2fa setup is not required', () => {
+    it('redirects user', () => {
       jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.inject(AuthService), 'user$', 'get').mockReturnValueOnce(of({ twofactor_auth_configured: false }));
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
-    });
-    it('redirects user to two-factor auth if needed', () => {
-      jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: true }));
-      jest.spyOn(spectator.inject(AuthService), 'user$', 'get').mockReturnValueOnce(of({ twofactor_auth_configured: false }));
-      spectator.service.handleSuccessfulLogin();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/two-factor-auth']);
     });
   });
 

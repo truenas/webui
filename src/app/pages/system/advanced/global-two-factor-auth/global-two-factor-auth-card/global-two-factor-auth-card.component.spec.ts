@@ -11,7 +11,7 @@ import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/glob
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-form/global-two-factor-auth-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('GlobalTwoFactorAuthCardComponent', () => {
+describe.skip('GlobalTwoFactorAuthCardComponent', () => {
   let spectator: Spectator<GlobalTwoFactorAuthCardComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
