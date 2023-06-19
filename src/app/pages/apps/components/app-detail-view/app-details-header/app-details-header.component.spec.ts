@@ -107,15 +107,15 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     it('shows app version', () => {
-      expect(spectator.query('.app-version')).toHaveText('App Version: 1.0.0');
+      expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Version: 1.0.0');
     });
 
     it('shows app keywords', () => {
-      expect(spectator.query('.keywords')).toHaveText('Keywords: aliens, ufo');
+      expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Keywords: aliens, ufo');
     });
 
     it('shows app train', () => {
-      expect(spectator.query('.train')).toHaveText('Train: stable');
+      expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
     });
 
     it('shows app description', () => {

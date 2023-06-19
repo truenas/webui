@@ -42,7 +42,7 @@
       </ng-container>
     </ng-template>
   </div>
-  <div class="app-list-item app-version">
+  <div class="app-list-item">
     <span class="label">{{ 'App Version' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
     <ng-template #latestAppVersion>
@@ -51,7 +51,7 @@
       </ng-container>
     </ng-template>
   </div>
-  <div class="app-list-item keywords">
+  <div class="app-list-item">
     <span class="label">{{ 'Keywords' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
     <ng-template #appCategories>
@@ -60,7 +60,7 @@
       </ng-container>
     </ng-template>
   </div>
-  <div class="app-list-item train">
+  <div class="app-list-item">
     <span class="label">{{ 'Train' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
     <ng-template #train>
@@ -72,7 +72,12 @@
   <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
   <div class="app-list-item">
     <span class="label">{{ 'Home Page' | translate }}:</span>
-    <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async; else homepage"></ngx-skeleton-loader>
+    <ng-template #homepage>
+      <ng-container *ngIf="app?.home; else notAvailable">
+        {{ app.home }}
+      </ng-container>
+    </ng-template>
   </div>
 </div>
 
