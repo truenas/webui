@@ -7,7 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, map, Observable, of, take, tap,
+  BehaviorSubject,
+  debounceTime, distinctUntilChanged, filter, map, Observable, of, take, tap,
 } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
@@ -36,6 +37,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   showFilters = false;
   isFirstLoad = true;
   availableApps$ = this.applicationsStore.availableApps$;
+  areLoaded$ = new BehaviorSubject(false);
   installedApps$ = this.applicationsStore.installedApps$;
   catalogs$ = this.applicationsStore.catalogs$.pipe(
     tap((catalogs) => {
@@ -79,15 +81,15 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       this.applicationsStore.applySearchQuery(searchQuery);
     });
     this.applicationsStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
-      next: (filter) => {
-        if (filter.categories?.length) {
-          this.form.controls.categories.setValue(filter.categories, { emitEvent: false });
+      next: (filterValues) => {
+        if (filterValues.categories?.length) {
+          this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
         }
-        if (filter.catalogs?.length) {
-          this.form.controls.catalogs.setValue(filter.catalogs, { emitEvent: false });
+        if (filterValues.catalogs?.length) {
+          this.form.controls.catalogs.setValue(filterValues.catalogs, { emitEvent: false });
         }
-        if (filter.sort) {
-          this.form.controls.sort.setValue(filter.sort, { emitEvent: false });
+        if (filterValues.sort) {
+          this.form.controls.sort.setValue(filterValues.sort, { emitEvent: false });
         }
       },
     });
@@ -101,6 +103,12 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       next: (searchQuery) => {
         this.searchControl.setValue(searchQuery);
       },
+    });
+    this.applicationsStore.isLoading$.pipe(
+      filter((value) => !value),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.areLoaded$.next(true);
     });
   }
 
