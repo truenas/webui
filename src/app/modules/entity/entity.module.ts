@@ -1,4 +1,3 @@
-import { NgxUploaderModule } from '@angular-ex/uploader';
 import { A11yModule } from '@angular/cdk/a11y';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -38,7 +37,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { TreeModule } from '@circlon/angular-tree-component';
+import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -104,7 +103,6 @@ import { AppLoaderService } from 'app/services';
     MatTabsModule,
     MatChipsModule,
     MatDatepickerModule,
-    NgxUploaderModule,
     FlexLayoutModule,
     TranslateModule,
     CdkTreeModule,

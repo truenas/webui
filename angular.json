@@ -32,7 +32,7 @@
             },
             "styles": [
               "node_modules/@siemens/ngx-datatable/assets/icons.css",
-              "node_modules/@circlon/angular-tree-component/css/angular-tree-component.css",
+              "node_modules/@bugsplat/angular-tree-component/css/angular-tree-component.css",
               "src/assets/styles/index.scss"
             ],
             "scripts": [

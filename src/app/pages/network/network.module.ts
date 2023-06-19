@@ -1,4 +1,3 @@
-import { NgxUploaderModule } from '@angular-ex/uploader';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -38,7 +37,6 @@ import { routing } from './network.routing';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxUploaderModule,
     routing,
     MatCardModule,
     MatListModule,

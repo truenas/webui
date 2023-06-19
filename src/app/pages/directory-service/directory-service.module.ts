@@ -1,4 +1,3 @@
-import { NgxUploaderModule } from '@angular-ex/uploader';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
@@ -36,7 +35,6 @@ import { LdapComponent } from './components/ldap/ldap.component';
     EntityModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    NgxUploaderModule,
     routing,
     MatListModule,
     MatToolbarModule,
