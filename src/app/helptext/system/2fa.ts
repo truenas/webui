@@ -58,8 +58,9 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
       btn: T('Save'),
     },
 
-    enabled_status_false: T('Two-factor authentication is not enabled globally. You can change your user specific settings but they will not have an effect on the system until 2FA is enabled globally.'),
-    enabled_status_true: T('Two-factor authentication is enabled globally.'),
+    global_enabled_user_enabled: T('Two-Factor authentication has been configured. No further actions are required.'),
+    global_enabled_user_disabled: T('Two-Factor authentication is required on this system, but it\'s not yet configured for your user. Please configure it now.'),
+    global_disabled: T('Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.'),
 
     enable_button: T('Enable Two-Factor Authentication'),
     disable_button: T('Disable Two-Factor Authentication'),

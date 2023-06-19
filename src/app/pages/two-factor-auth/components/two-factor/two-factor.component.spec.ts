@@ -62,7 +62,7 @@ describe('TwoFactorComponent', () => {
   it('shows warning when global setting is disabled', () => {
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', 'Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.');
+    expect(warning).toHaveAttribute('message', helptext.two_factor.global_disabled);
   });
 
   it('shows warning when global setting is enabled but user disabled', () => {
@@ -79,7 +79,7 @@ describe('TwoFactorComponent', () => {
     spectator.detectChanges();
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', 'Two-Factor authentication is required on this system, but it\'s not yet configured for your user. Please configure it now.');
+    expect(warning).toHaveAttribute('message', helptext.two_factor.global_enabled_user_disabled);
   });
 
   it('shows warning when global setting is enabled and user enabled', () => {
@@ -95,7 +95,7 @@ describe('TwoFactorComponent', () => {
     spectator.detectChanges();
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', 'Two-Factor authentication has been configured. No further actions are required.');
+    expect(warning).toHaveAttribute('message', helptext.two_factor.global_enabled_user_enabled);
   });
 
   it('renews secret when button is clicked', async () => {

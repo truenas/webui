@@ -35,12 +35,12 @@ export class TwoFactorComponent implements OnInit {
 
   get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
-      return this.translateService.instant('Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.');
+      return this.translateService.instant(helptext.two_factor.global_disabled);
     }
     if (this.userTwoFactorAuthConfigured) {
-      return this.translateService.instant('Two-Factor authentication has been configured. No further actions are required.');
+      return this.translateService.instant(helptext.two_factor.global_enabled_user_enabled);
     }
-    return this.translateService.instant('Two-Factor authentication is required on this system, but it\'s not yet configured for your user. Please configure it now.');
+    return this.translateService.instant(helptext.two_factor.global_enabled_user_disabled);
   }
 
   readonly helptext = helptext;
