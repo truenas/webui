@@ -1,3 +1,4 @@
+import { NgxUploaderModule } from '@angular-ex/uploader';
 import { A11yModule } from '@angular/cdk/a11y';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -39,10 +40,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';

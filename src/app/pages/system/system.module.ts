@@ -1,3 +1,4 @@
+import { NgxUploaderModule } from '@angular-ex/uploader';
 import { CommonModule, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -17,9 +18,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { QRCodeModule } from 'angular2-qrcode';
+import { QrCodeModule } from 'ng-qrcode';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { NgxUploaderModule } from 'ngx-uploader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -160,7 +160,7 @@ import { routing } from './system.routing';
     MatListModule,
     MatButtonModule,
     NgxUploaderModule,
-    QRCodeModule,
+    QrCodeModule,
     ReactiveFormsModule,
     routing,
     TooltipModule,
