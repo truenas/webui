@@ -319,14 +319,14 @@ export class AppSchemaService {
     dynamicSchema.forEach((section) => {
       section.schema.forEach((item) => {
         if (item.type !== DynamicFormSchemaType.Dict) {
-          if (item.title && formValue[item.controlName] !== undefined) {
+          if (item.title && formValue?.[item.controlName] !== undefined) {
             options.push({ label: item.title, value: item.controlName });
           }
-        } else if (formValue[item.controlName] !== undefined) {
+        } else if (formValue?.[item.controlName] !== undefined) {
           options = options.concat(
             this.getSearchOptionsFromDict(
               item,
-              formValue[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
+              formValue?.[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
               item.controlName,
             ),
           );
@@ -344,14 +344,14 @@ export class AppSchemaService {
     let options: Option[] = [];
     dict.attrs.forEach((item) => {
       if (item.type !== DynamicFormSchemaType.Dict) {
-        if (item.title && formValue[item.controlName] !== undefined) {
+        if (item.title && formValue?.[item.controlName] !== undefined) {
           options.push({ label: item.title, value: `${valuePrefix}.${item.controlName}` });
         }
       } else {
         options = options.concat(
           this.getSearchOptionsFromDict(
             item,
-            formValue[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
+            formValue?.[item.controlName] as HierarchicalObjectMap<ChartFormValue>,
             `${valuePrefix}.${item.controlName}`,
           ),
         );

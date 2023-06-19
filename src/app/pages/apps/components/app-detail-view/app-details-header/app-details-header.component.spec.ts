@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import {
-  byText, createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -14,7 +12,7 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;
@@ -36,7 +34,7 @@ describe('AppDetailsHeaderComponent', () => {
       MockComponent(AppCardLogoComponent),
     ],
     providers: [
-      mockProvider(AvailableAppsStore, {
+      mockProvider(AppsStore, {
         installedApps$: of([application]),
         selectedPool$: of('has-pool'),
       }),
@@ -75,7 +73,7 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     it('shows Setup Pool To Install instead if pool is not set', async () => {
-      const store = spectator.inject(AvailableAppsStore);
+      const store = spectator.inject(AppsStore);
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
@@ -109,15 +107,15 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     it('shows app version', () => {
-      expect(spectator.query(byText(/App Version/))).toHaveText('1.0.0');
+      expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Version: 1.0.0');
     });
 
     it('shows app keywords', () => {
-      expect(spectator.query(byText(/Keywords/))).toHaveText('aliens, ufo');
+      expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Keywords: aliens, ufo');
     });
 
     it('shows app train', () => {
-      expect(spectator.query(byText(/Train/))).toHaveText('stable');
+      expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
     });
 
     it('shows app description', () => {

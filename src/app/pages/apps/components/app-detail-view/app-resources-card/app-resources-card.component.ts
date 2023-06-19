@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -37,7 +37,7 @@ export class AppResourcesCardComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    protected applicationsStore: AvailableAppsStore,
+    protected applicationsStore: AppsStore,
   ) {}
 
   ngOnInit(): void {

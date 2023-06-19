@@ -2,7 +2,6 @@ import { Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from './services';
@@ -26,24 +25,9 @@ export class AppComponent {
     });
     this.title.setTitle('TrueNAS - ' + this.window.location.hostname);
     const darkScheme = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
-    let path;
-    const savedProductType = this.window.localStorage.product_type as string;
-    if (savedProductType) {
-      const cachedType = savedProductType.toLowerCase();
-      path = `assets/images/truenas_${cachedType}_favicon.png`;
-      if (darkScheme) {
-        path = `assets/images/truenas_${cachedType}_ondark_favicon.png`;
-      }
-    } else {
-      this.sysGeneralService.getProductType$.pipe(
-        map((productType) => productType.toLowerCase()),
-        untilDestroyed(this),
-      ).subscribe((productType) => {
-        path = `assets/images/truenas_${productType}_favicon.png`;
-        if (darkScheme) {
-          path = `assets/images/truenas_${productType}_ondark_favicon.png`;
-        }
-      });
+    let path = 'assets/images/truenas_scale_favicon.png';
+    if (darkScheme) {
+      path = 'assets/images/truenas_scale_ondark_favicon.png';
     }
     this.setFavicon(path);
 

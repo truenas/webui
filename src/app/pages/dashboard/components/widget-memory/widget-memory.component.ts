@@ -8,7 +8,9 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Chart, ChartColor, ChartDataSets } from 'chart.js';
+import {
+  Chart, Color, ChartDataset, ChartOptions,
+} from 'chart.js';
 import { Subject, Subscription } from 'rxjs';
 import {
   filter, map, throttleTime,
@@ -140,24 +142,22 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
       labels: this.labels,
     };
 
-    const options = {
-      // cutoutPercentage:85,
-      tooltips: {
-        enabled: false,
+    const options: ChartOptions<'doughnut'> = {
+      cutout: '50%',
+      plugins: {
+        tooltip: {
+          enabled: false,
+        },
+        legend: {
+          display: false,
+        },
       },
       responsive: true,
       maintainAspectRatio: false,
-      legend: {
-        display: false,
-      },
-      responsiveAnimationDuration: 0,
       animation: {
         duration: 1000,
         animateRotate: true,
         animateScale: true,
-      },
-      hover: {
-        animationDuration: 0,
       },
     };
 
@@ -177,10 +177,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
     this.chart = chart;
   }
 
-  protected makeDatasets(data: string[][]): ChartDataSets[] {
-    const datasets: ChartDataSets[] = [];
+  protected makeDatasets(data: string[][]): ChartDataset[] {
+    const datasets: ChartDataset[] = [];
 
-    const ds: ChartDataSets = {
+    const ds: ChartDataset<'doughnut'> = {
       label: String(this.labels),
       data: data.map((x) => Number(x[1])),
       backgroundColor: [],
@@ -192,8 +192,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
     data.forEach((item, index) => {
       const bgRgb = this.themeService.getRgbBackgroundColorByIndex(index);
 
-      (ds.backgroundColor as ChartColor[]).push(this.utils.rgbToString(bgRgb, 0.85));
-      (ds.borderColor as ChartColor[]).push(this.utils.rgbToString(bgRgb));
+      (ds.backgroundColor as Color[]).push(this.utils.rgbToString(bgRgb, 0.85));
+      (ds.borderColor as Color[]).push(this.utils.rgbToString(bgRgb));
     });
 
     datasets.push(ds);
