@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,6 +14,7 @@ import { DndModule } from 'ngx-drag-drop';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -41,10 +43,14 @@ import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-mana
 import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
 import { ReviewWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
+import {
+  TopologyCategoryDescriptionPipe,
+} from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { DownloadKeyDialogComponent } from './components/download-key-dialog/download-key-dialog.component';
+import { InspectVdevsDialogComponent } from './components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { ManualSelectionDiskFiltersComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
 import { ManualSelectionDisksComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disks.component';
 import { AutomatedDiskSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
@@ -79,6 +85,8 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CoreComponents,
     NgxSkeletonLoaderModule,
     MatCheckboxModule,
+    MatListModule,
+    CommonDirectivesModule,
   ],
   declarations: [
     PoolManagerComponent,
@@ -107,6 +115,8 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     PoolWarningsComponent,
     DownloadKeyDialogComponent,
     DownloadKeyDialogOldComponent,
+    InspectVdevsDialogComponent,
+    TopologyCategoryDescriptionPipe,
   ],
   providers: [
     PoolManagerStore,

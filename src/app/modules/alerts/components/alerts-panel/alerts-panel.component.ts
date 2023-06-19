@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
@@ -60,9 +60,9 @@ export class AlertsPanelComponent implements OnInit {
     this.store$.dispatch(dismissAllAlertsPressed());
   }
 
-  navigateTo(route: string[]): void {
+  navigateTo(route: string[], extras?: NavigationExtras): void {
     this.store$.dispatch(alertPanelClosed());
-    this.router.navigate(route);
+    this.router.navigate(route, extras);
   }
 
   private checkHaStatus(): void {

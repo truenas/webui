@@ -1,0 +1,45 @@
+<mat-card id="email-card">
+  <mat-toolbar-row>
+    <h3>{{ 'Email' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        *ixWithLoadingState="emailConfig$ as emailConfig"
+        mat-button
+        color="default"
+        [ixTest]="['email', 'settings']"
+        (click)="openEmailSettings(emailConfig)"
+      >
+        {{ 'Settings' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Send Mail Method' | translate }}:</span>
+        <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+          {{ !emailConfig?.oauth?.client_id ? helptext.send_mail_method.smtp.placeholder : helptext.send_mail_method.gmail.placeholder }}
+        </span>
+      </mat-list-item>
+
+      <ng-container *ixWithLoadingState="emailConfig$ as emailConfig">
+        <ng-container *ngIf="!emailConfig?.oauth?.client_id">
+          <mat-list-item>
+            <span class="label">{{ 'From' | translate }}:</span>
+            <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
+              {{ emailConfig.fromname }}
+              {{
+                emailConfig.outgoingserver && emailConfig.fromemail
+                  ?
+                ('{email} via {server}' | translate : { email: emailConfig.fromemail, server: emailConfig.outgoingserver })
+                  :
+                emailConfig.fromemail || '-'
+              }}
+            </span>
+          </mat-list-item>
+        </ng-container>
+      </ng-container>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

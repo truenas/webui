@@ -104,10 +104,6 @@ ix-entity-table .mat-mdc-card > * {
   margin: 0 4px;
 }
 
-.fn-toolbar {
-  background: var(--alt-bg1);
-}
-
 /* Special Override Classes */
 
 /* FreeNAS Specific */
@@ -397,14 +393,12 @@ body .mat-mdc-card {
   position: relative;
 }
 
-#ix-slide-in-form2 .mat-mdc-card,
 #ix-slide-in-form .mat-mdc-card,
 #slide-in-form .mat-mdc-card {
   border: none;
   box-shadow: none;
 }
 
-#ix-slide-in-form2 .ix-form-container,
 #ix-slide-in-form .ix-form-container,
 #slide-in-form .ix-form-container {
   padding: 0;
@@ -583,10 +577,6 @@ thead.ui-treetable-thead tr {
   margin-right: 8px;
 }
 
-.standard-list .label {
-  opacity: 0.65;
-}
-
 mat-card.mat-mdc-card .mat-mdc-list-base {
   padding-top: 0;
 }
@@ -595,33 +585,10 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
   margin-left: 8px;
 }
 
-#row-filter.form-element {
-  display: inline;
-  margin: 0;
-  max-height: 36px;
-  width: unset !important;
-}
-
 @media #{$media-lt-sm} {
   .entity-table-controls > div {
     margin-top: 8px;
   }
-
-  #row-filter.search-field {
-    margin-top: 8px;
-  }
-}
-
-#row-filter.form-element .mat-mdc-text-field-wrapper {
-  max-height: 36px !important;
-  width: inherit !important;
-}
-
-#row-filter.form-element .mat-mdc-text-field-wrapper .mat-input-element {
-  height: 16px;
-  padding-left: 8px;
-  position: relative;
-  top: -4px;
 }
 
 /* Expansion Panel Fixes */
@@ -656,49 +623,6 @@ ul.nested-list {
 
 ul.nested-list li {
   margin-left: 24px;
-}
-
-.expanded-table-container {
-  height: 100%;
-}
-
-.expanded-table {
-  height: 100%;
-}
-
-.expanded-table.expanded-height {
-  height: 90%;
-}
-
-.expanded-table .mat-expansion-panel-body {
-  padding: 0 !important;
-}
-
-.expanded-table .mat-expansion-panel-header {
-  height: auto !important;
-  margin: 5px 0;
-  padding-bottom: inherit;
-  padding-right: inherit;
-  padding-top: inherit;
-}
-
-.expanded-table .mat-expansion-panel-header span {
-  padding: 0;
-}
-
-.expanded-table mat-card {
-  border: 0 !important;
-  margin: 0 !important;
-}
-
-.expanded-table mat-panel-title,
-.expanded-table mat-panel-description {
-  margin: 0 !important;
-}
-
-.expanded-table mat-panel-title {
-  align-items: center;
-  display: flex;
 }
 
 .ngxp__container {

@@ -23,11 +23,13 @@
             [enclosure]="enclosureDisks.key"
           >
             <div class="disk-icons">
-              <ix-disk-icon *ngFor="let disk of enclosureDisks.value"
-                class="disk-icon drag-handle"
-                [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
+              <ix-disk-icon
+                *ngFor="let disk of enclosureDisks.value"
+                class="disk-icon"
+                [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable }"
                 [dndDraggable]="getMovableDisk(disk)"
                 [dndEffectAllowed]="'move'"
+                [dndDisableIf]="!editable"
                 [disk]="disk"
                 (dndStart)="onDragStart()"
                 (dndCanceled)="onDragCanceled()"
@@ -36,24 +38,33 @@
             </div>
           </ix-enclosure-wrapper>
           <div class="disk-icons no-enclosure">
-            <ix-disk-icon *ngFor="let disk of nonEnclosureDisks"
-              class="disk-icon drag-handle"
-              [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
+            <ix-disk-icon
+              *ngFor="let disk of nonEnclosureDisks"
+              class="disk-icon"
+              [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable }"
               [dndDraggable]="getMovableDisk(disk)"
               [dndEffectAllowed]="'move'"
+              [dndDisableIf]="!editable"
               [disk]="disk"
               (dndStart)="onDragStart()"
               (dndCanceled)="onDragCanceled()"
               (dndEnd)="onDragEnd()"
             ></ix-disk-icon>
           </div>
-
         </div>
-        <div class="delete-container" (click)="deleteVdev()">
+        <div
+          *ngIf="editable"
+          class="delete-container"
+          (click)="deleteVdev()"
+        >
           <ix-icon name="delete"></ix-icon>
         </div>
       </div>
-      <ix-label class="drag-hint" [label]="'Drag & drop disks to add or remove them' | translate"></ix-label>
+      <ix-label
+        *ngIf="editable"
+        class="drag-hint"
+        [label]="'Drag & drop disks to add or remove them' | translate"
+      ></ix-label>
       <ix-label *ngIf="vdevErrMsg" class="error" [label]="vdevErrMsg"></ix-label>
       <ix-label
         *ngIf="showDiskSizeError"

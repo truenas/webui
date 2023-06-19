@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { ShellComponent } from 'app/pages/shell/shell.component';
-import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
@@ -13,10 +13,8 @@ import { AdvancedSettingsComponent } from './advanced/advanced-settings.componen
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
 import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
-import { AlertConfigFormComponent } from './alert-config-form/alert-config-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
-import { EmailComponent } from './email/email.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { UpdateComponent } from './update/update.component';
 
@@ -90,19 +88,10 @@ export const routes: Routes = [
           ],
         },
       ],
-    },
-    {
-      path: 'email',
-      component: EmailComponent,
-      data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
     }, {
-      path: 'alertsettings',
-      component: AlertConfigFormComponent,
+      path: 'alert-settings',
+      component: AlertSettingsComponent,
       data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings'), icon: 'notifications_active' },
-    }, {
-      path: 'alertservice',
-      data: { title: T('Alert Services'), breadcrumb: T('Alert Services'), icon: 'notifications' },
-      component: AlertServiceListComponent,
     }, {
       path: 'failover',
       component: FailoverSettingsComponent,
