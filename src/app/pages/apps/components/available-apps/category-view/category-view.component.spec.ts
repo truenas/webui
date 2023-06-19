@@ -8,13 +8,13 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { CategoryViewComponent } from './category-view.component';
 
 describe('CategoryViewComponent', () => {
   let spectator: SpectatorRouting<CategoryViewComponent>;
   let loader: HarnessLoader;
-  let store$: AvailableAppsStore;
+  let store$: AppsStore;
 
   const createComponent = createRoutingFactory({
     component: CategoryViewComponent,
@@ -24,7 +24,7 @@ describe('CategoryViewComponent', () => {
       mockProvider(ActivatedRoute, {
         snapshot: { params: { category: 'new-and-updated' } },
       }),
-      mockProvider(AvailableAppsStore, {
+      mockProvider(AppsStore, {
         filterValues$: of({
           catalogs: [],
           sort: null,
@@ -58,7 +58,7 @@ describe('CategoryViewComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    store$ = spectator.inject(AvailableAppsStore);
+    store$ = spectator.inject(AppsStore);
     spectator.fixture.detectChanges();
   });
 

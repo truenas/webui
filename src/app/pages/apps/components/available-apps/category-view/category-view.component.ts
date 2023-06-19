@@ -11,7 +11,7 @@ import {
 } from 'rxjs';
 import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -34,7 +34,7 @@ export class CategoryViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private layoutService: LayoutService,
-    private applicationsStore: AvailableAppsStore,
+    private applicationsStore: AppsStore,
     private route: ActivatedRoute,
   ) {}
 
