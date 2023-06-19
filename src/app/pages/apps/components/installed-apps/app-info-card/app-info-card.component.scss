@@ -29,8 +29,11 @@
 
 
   .details-item {
-    &.sources .value {
-      white-space: normal;
+    &.sources {
+      .value,
+      .value a {
+        white-space: normal;
+      }
     }
   }
 
