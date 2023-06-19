@@ -1,8 +1,7 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -38,6 +37,7 @@ describe('TwoFactorComponent', () => {
           username: 'dummy',
           twofactor_auth_configured: true,
         } as LoggedInUser),
+        renewUser2FaSecret: jest.fn(() => of({})),
       }),
       mockWebsocket([
         mockCall('auth.twofactor.config', {
@@ -59,27 +59,48 @@ describe('TwoFactorComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows global config', async () => {
-    const matList = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => matList.map((item) => item.getFullText()));
-
-    expect(itemTexts).toEqual([
-      'Global 2FA: Disabled',
-      'Interval: 30',
-      'OTP Digits: 6',
-      'Window: 1',
-      'Two Factor Authentication for SSH: Disabled',
-    ]);
-  });
-
   it('shows warning when global setting is disabled', () => {
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext.two_factor.enabled_status_false);
+    expect(warning).toHaveAttribute('message', 'Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.');
+  });
+
+  it('shows warning when global setting is enabled but user disabled', () => {
+    jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
+      id: 1,
+      enabled: true,
+      interval: 30,
+      otp_digits: 6,
+      window: 1,
+      services: { ssh: false },
+    }));
+    spectator.component.ngOnInit();
+    spectator.component.userTwoFactorAuthConfigured = false;
+    spectator.detectChanges();
+    const warning = spectator.query(IxWarningComponent);
+    expect(warning).toBeTruthy();
+    expect(warning).toHaveAttribute('message', 'Two-Factor authentication is required on this system, but it\'s not yet configured for your user. Please configure it now.');
+  });
+
+  it('shows warning when global setting is enabled and user enabled', () => {
+    jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
+      id: 1,
+      enabled: true,
+      interval: 30,
+      otp_digits: 6,
+      window: 1,
+      services: { ssh: false },
+    }));
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+    const warning = spectator.query(IxWarningComponent);
+    expect(warning).toBeTruthy();
+    expect(warning).toHaveAttribute('message', 'Two-Factor authentication has been configured. No further actions are required.');
   });
 
   it('renews secret when button is clicked', async () => {
     const renewBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Renew 2FA Secret' }));
+    jest.spyOn(spectator.component, 'showQrCode').mockImplementation();
     await renewBtn.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -89,9 +110,8 @@ describe('TwoFactorComponent', () => {
       buttonText: helptext.two_factor.renewSecret.btn,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'user.renew_2fa_secret', ['dummy'],
-    );
+    expect(spectator.inject(AuthService).renewUser2FaSecret).toHaveBeenCalled();
+    expect(spectator.component.showQrCode).toHaveBeenCalled();
   });
 
   it('opens qr dialog when button clicked', async () => {

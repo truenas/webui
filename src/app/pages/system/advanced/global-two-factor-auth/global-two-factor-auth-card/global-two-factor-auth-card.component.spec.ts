@@ -11,7 +11,7 @@ import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/glob
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-form/global-two-factor-auth-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('KernelCardComponent', () => {
+describe('GlobalTwoFactorAuthCardComponent', () => {
   let spectator: Spectator<GlobalTwoFactorAuthCardComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
@@ -38,7 +38,7 @@ describe('KernelCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows kernel related settings', async () => {
+  it('shows 2fa related settings', async () => {
     const items = await loader.getAllHarnesses(MatListItemHarness);
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
