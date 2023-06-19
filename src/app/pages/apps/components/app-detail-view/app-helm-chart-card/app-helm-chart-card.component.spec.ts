@@ -42,9 +42,9 @@ describe('AppHelmChartCardComponent', () => {
   });
 
   it('shows card details', () => {
-    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('Catalog:  OFFICIAL');
-    expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Train:  charts');
-    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Chart Version:  1.0.91');
-    expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Maintainer:  truenas (dev@ixsystems.com)');
+    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('Catalog: OFFICIAL');
+    expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Train: charts');
+    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Chart Version: 1.0.91');
+    expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Maintainer: truenas (dev@ixsystems.com)');
   });
 });

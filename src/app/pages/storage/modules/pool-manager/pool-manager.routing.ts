@@ -10,7 +10,11 @@ export const routes: Routes = [
       {
         path: '',
         component: PoolManagerComponent,
-        data: { title: 'Pool Creation Wizard', breadcrumb: 'Pool Creation Wizard' },
+        data: {
+          title: 'Pool Creation Wizard',
+          breadcrumb: 'Pool Creation Wizard',
+          isNew: true,
+        },
       },
     ],
   },
