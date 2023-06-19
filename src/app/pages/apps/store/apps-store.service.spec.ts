@@ -9,15 +9,15 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsByCategory, AvailableAppsState, AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsByCategory, AppsState, AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-describe('AvailableAppsStore', () => {
-  let spectator: SpectatorService<AvailableAppsStore>;
+describe('AppsStore', () => {
+  let spectator: SpectatorService<AppsStore>;
   let testScheduler: TestScheduler;
 
-  const initialState: AvailableAppsState = {
+  const initialState: AppsState = {
     availableApps: [],
     recommendedApps: [],
     latestApps: [],
@@ -70,7 +70,7 @@ describe('AvailableAppsStore', () => {
   ];
 
   const createService = createServiceFactory({
-    service: AvailableAppsStore,
+    service: AppsStore,
     providers: [
       mockProvider(DialogService, {
         error: jest.fn(),
@@ -119,7 +119,7 @@ describe('AvailableAppsStore', () => {
           recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
           filteredApps: [],
 
-        } as AvailableAppsState,
+        } as AppsState,
       });
     });
   });

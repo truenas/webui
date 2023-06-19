@@ -104,7 +104,7 @@ export class ApplicationsService {
   }
 
   getChartRelease(name: string): Observable<ChartRelease[]> {
-    return this.ws.call('chart.release.query', [[['name', '=', name]]]);
+    return this.ws.call('chart.release.query', [[['name', '=', name]], { extra: { include_chart_schema: true } }]);
   }
 
   subscribeToAllChartReleases(): Observable<ApiEvent<ChartRelease>> {

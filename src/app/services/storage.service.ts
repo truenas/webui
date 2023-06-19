@@ -21,9 +21,6 @@ const redundancyCategories = [...specialRedundancyCategories, VdevType.Data];
 export class StorageService {
   protected diskResource = 'disk.query' as const;
 
-  humanReadable: string;
-  iecUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
-
   constructor(
     protected ws: WebSocketService,
     private http: HttpClient,

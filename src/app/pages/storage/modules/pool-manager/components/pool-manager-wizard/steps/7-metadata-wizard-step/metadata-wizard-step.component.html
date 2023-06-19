@@ -1,12 +1,9 @@
-<div class="step-description">
-  {{ helptext.special_vdev_description | translate }}
-</div>
-
 <ix-layout-step
+  [description]="helptext.special_vdev_description | translate"
   [type]="VdevType.Special"
   [inventory]="inventory$ | async"
   [canChangeLayout]="false"
-  [limitLayouts]="allowedLayouts"
+  [limitLayouts]="dataVdevLayout$ | async"
 ></ix-layout-step>
 
 <ix-form-actions>

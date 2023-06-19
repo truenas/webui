@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map } from 'rxjs';
 import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { AppsByCategory, AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -42,7 +42,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
 
   constructor(
     private layoutService: LayoutService,
-    protected applicationsStore: AvailableAppsStore,
+    protected applicationsStore: AppsStore,
     private router: Router,
   ) { }
 
@@ -68,9 +68,5 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
 
   trackByAppSectionTitle(_: number, appSection: AppsByCategory): string {
     return `${appSection.title}`;
-  }
-
-  changeSearchQuery(query: string): void {
-    this.applicationsStore.applySearchQuery(query);
   }
 }

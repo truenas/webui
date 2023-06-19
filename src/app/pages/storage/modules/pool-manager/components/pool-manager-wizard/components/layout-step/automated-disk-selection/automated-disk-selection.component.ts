@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
 import {
-  Observable, of, take,
+  Observable, distinctUntilChanged, of, take,
 } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -92,7 +92,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.limitLayouts) {
+    if (changes.limitLayouts?.currentValue) {
       this.updateLayoutOptionsFromLimitedLayouts(changes.limitLayouts.currentValue);
     }
     this.updateDiskSizeOptions();
@@ -110,7 +110,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     const isChangeLayoutFalse = this.canChangeLayout !== null
       && this.canChangeLayout !== undefined
       && !this.canChangeLayout;
-    if (isChangeLayoutFalse && limitLayouts.length) {
+    const isValueSame = limitLayouts[0] === this.form.controls.layout.value;
+    if (isChangeLayoutFalse && limitLayouts.length && !isValueSame) {
       this.form.controls.layout.setValue(limitLayouts[0]);
     }
     this.updateWidthOptions();
@@ -125,7 +126,10 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
    * size -> layout -> width -> number
    */
   private initControls(): void {
-    this.form.controls.layout.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
+    this.form.controls.layout.valueChanges.pipe(
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((layout) => {
       if (this.isSizeSelected && !!layout) {
         if (this.form.controls.width.disabled) {
           this.form.controls.width.enable();
@@ -141,7 +145,10 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       this.updateWidthOptions();
     });
 
-    this.form.controls.sizeAndType.valueChanges.pipe(untilDestroyed(this)).subscribe((sizeAndType) => {
+    this.form.controls.sizeAndType.valueChanges.pipe(
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((sizeAndType) => {
       if (sizeAndType?.length && this.isLayoutSelected) {
         if (this.form.controls.width.disabled) {
           this.form.controls.width.enable();
@@ -157,14 +164,20 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       this.updateLayoutOptions();
     });
 
-    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((width) => {
+    this.form.controls.width.valueChanges.pipe(
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((width) => {
       if (this.isSizeSelected && this.isLayoutSelected && !!width && this.form.controls.vdevsNumber.disabled) {
         this.form.controls.vdevsNumber.enable();
       }
       this.updateNumberOptions();
     });
 
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.valueChanges.pipe(
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.updateLayout();
     });
   }
@@ -189,7 +202,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       }
     }
 
-    if (!vdevLayoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
+    const isValueNull = this.form.controls.layout.value === null;
+    if (!isValueNull && !vdevLayoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
       this.form.controls.layout.setValue(null, { emitEvent: false });
     }
     this.poolManagerStore.getLayoutsForVdevType(this.type)
@@ -246,7 +260,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       widthOptions = [];
     }
 
-    if (!widthOptions.some((option) => option.value === this.form.controls.width.value)) {
+    const isValueNull = this.form.controls.width.value === null;
+    if (!isValueNull && !widthOptions.some((option) => option.value === this.form.controls.width.value)) {
       this.form.controls.width.setValue(null, { emitEvent: false });
     }
     this.widthOptions$ = of(widthOptions);
@@ -273,7 +288,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       nextNumberOptions = [];
     }
 
-    if (!nextNumberOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
+    const isValueNull = this.form.controls.vdevsNumber.value === null;
+    if (!isValueNull && !nextNumberOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
       this.form.controls.vdevsNumber.setValue(null, { emitEvent: false });
     }
 

@@ -1338,7 +1338,8 @@ mat-form-field {
   border: 0 !important;
 }
 
-.manual-selection-dialog {
+.manual-selection-dialog,
+.inspect-vdevs-dialog {
   .mat-mdc-dialog-container {
     max-width: inherit;
   }

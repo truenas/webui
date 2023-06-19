@@ -29,7 +29,7 @@ export interface AppsByCategory {
   category: string;
 }
 
-export interface AvailableAppsState {
+export interface AppsState {
   availableApps: AvailableApp[];
   latestApps: AvailableApp[];
   recommendedApps: AvailableApp[];
@@ -44,7 +44,7 @@ export interface AvailableAppsState {
   isKubernetesStarted: boolean;
 }
 
-const initialState: AvailableAppsState = {
+const initialState: AppsState = {
   availableApps: [],
   recommendedApps: [],
   latestApps: [],
@@ -61,7 +61,7 @@ const initialState: AvailableAppsState = {
 
 @UntilDestroy()
 @Injectable()
-export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
+export class AppsStore extends ComponentStore<AppsState> {
   readonly appsPerCategory = 6;
 
   readonly searchedApps$ = this.select((state): AppsByCategory[] => {
@@ -95,7 +95,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   readonly selectedPool$ = this.select((state) => state.selectedPool);
   readonly filterValues$ = this.select((state) => state.filter);
   readonly isKubernetesStarted$ = this.select((state) => state.isKubernetesStarted);
-  readonly appsByCategories$ = this.select((state: AvailableAppsState): AppsByCategory[] => {
+  readonly appsByCategories$ = this.select((state: AppsState): AppsByCategory[] => {
     return this.sortAppsByCategory(state.availableApps, state);
   });
 
@@ -112,7 +112,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
   }
 
   private handleError(): void {
-    this.patchState((state: AvailableAppsState): AvailableAppsState => {
+    this.patchState((state: AppsState): AppsState => {
       return {
         ...state,
         isLoading: false,
@@ -137,7 +137,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
         ]);
       }),
       tap(() => {
-        this.patchState((state: AvailableAppsState): AvailableAppsState => {
+        this.patchState((state: AppsState): AppsState => {
           return {
             ...state,
             filteredApps: [],
@@ -149,7 +149,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     );
   });
 
-  resetFilters = this.updater((state: AvailableAppsState) => {
+  resetFilters = this.updater((state: AppsState) => {
     return {
       ...state,
       isFilterApplied: false,
@@ -181,8 +181,8 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: (filteredApps) => {
-        this.patchState((state: AvailableAppsState): AvailableAppsState => {
-          if (filter.categories.some((category) => category?.includes(AppExtraCategory.Recommended))) {
+        this.patchState((state: AppsState): AppsState => {
+          if (filter.categories.some((category) => category.includes(AppExtraCategory.Recommended))) {
             filteredApps = [
               ...filteredApps,
               ...filteredApps.filter(
@@ -206,7 +206,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     });
   }
 
-  applySearchQuery = this.updater((state: AvailableAppsState, searchQuery: string) => {
+  applySearchQuery = this.updater((state: AppsState, searchQuery: string) => {
     return {
       ...state,
       searchQuery,
@@ -328,7 +328,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     );
   }
 
-  updateSelectedPool = this.updater((state: AvailableAppsState, pool: string) => {
+  updateSelectedPool = this.updater((state: AppsState, pool: string) => {
     return {
       ...state,
       selectedPool: pool,
@@ -458,7 +458,7 @@ export class AvailableAppsStore extends ComponentStore<AvailableAppsState> {
     return appsByCategory;
   }
 
-  private sortAppsByCategory(filteredApps: AvailableApp[], state: AvailableAppsState): AppsByCategory[] {
+  private sortAppsByCategory(filteredApps: AvailableApp[], state: AppsState): AppsByCategory[] {
     const appsByCategory: AppsByCategory[] = [];
 
     const hasCategoriesFilter = state.filter.categories.length > 0;
