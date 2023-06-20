@@ -138,6 +138,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
           this.selectedApp = undefined;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -377,6 +378,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
         (job: Job<CoreBulkResponse[]>) => {
+          if (!this.dataSource.length) {
+            this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+          }
           this.dialogService.closeAllDialogs();
           let message = '';
           job.result.forEach((item) => {
