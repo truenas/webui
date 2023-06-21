@@ -8,6 +8,7 @@ import {
 } from 'rxjs';
 import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -21,7 +22,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   showViewMoreButton$: Observable<boolean> = combineLatest([
-    this.applicationsStore.filterValues$,
+    this.appsFilterStore.filterValues$,
   ]).pipe(
     map(([appsFilter]) => {
       return !appsFilter.sort && !appsFilter.categories.length;
@@ -29,8 +30,8 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   );
 
   isFilterOrSearch$: Observable<boolean> = combineLatest([
-    this.applicationsStore.searchQuery$,
-    this.applicationsStore.isFilterApplied$,
+    this.appsFilterStore.searchQuery$,
+    this.appsFilterStore.isFilterApplied$,
   ]).pipe(
     map(([searchQuery, isFilterApplied]) => {
       return !!searchQuery || isFilterApplied;
@@ -44,6 +45,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   constructor(
     private layoutService: LayoutService,
     protected applicationsStore: AppsStore,
+    protected appsFilterStore: AppsFilterStore,
     private router: Router,
   ) { }
 
@@ -54,7 +56,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.router.url.endsWith('/apps/available')) {
-        this.applicationsStore.resetFilters();
+        this.appsFilterStore.resetFilters();
       }
     });
   }
@@ -72,7 +74,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   }
 
   applyCategoryFilter(category: string): void {
-    this.applicationsStore.applyFilters({
+    this.appsFilterStore.applyFilters({
       categories: [category],
       catalogs: [],
       sort: null,

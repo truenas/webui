@@ -16,6 +16,7 @@ import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DialogService } from 'app/services';
 
@@ -37,7 +38,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   isFirstLoad = true;
   showFilters = false;
 
-  isFilterApplied$ = this.applicationsStore.isFilterApplied$;
+  isFilterApplied$ = this.appsFilterStore.isFilterApplied$;
   appsCategories: string[] = [];
   categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
     map((categories) => {
@@ -92,6 +93,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     private mdDialog: MatDialog,
     private dialogService: DialogService,
     protected applicationsStore: AppsStore,
+    protected appsFilterStore: AppsFilterStore,
   ) {}
 
   ngOnInit(): void {
@@ -100,9 +102,9 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((searchQuery) => {
-      this.applicationsStore.applySearchQuery(searchQuery);
+      this.appsFilterStore.applySearchQuery(searchQuery);
     });
-    this.applicationsStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
+    this.appsFilterStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
       next: (filter) => {
         if (filter.categories?.length) {
           this.form.controls.categories.setValue(filter.categories, { emitEvent: false });
@@ -121,7 +123,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       },
     });
-    this.applicationsStore.searchQuery$.pipe(take(1), untilDestroyed(this)).subscribe({
+    this.appsFilterStore.searchQuery$.pipe(take(1), untilDestroyed(this)).subscribe({
       next: (searchQuery) => {
         this.searchControl.setValue(searchQuery);
       },
@@ -158,7 +160,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   applyFilters(): void {
-    this.applicationsStore.applyFilters({
+    this.appsFilterStore.applyFilters({
       catalogs: this.form.value.catalogs || [],
       sort: this.form.value.sort || null,
       categories: (this.form.value.categories || this.appsCategories),
