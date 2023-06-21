@@ -1255,7 +1255,6 @@
   "Edit Zvol": "ZVol bewerken",
   "Editing interfaces while HA is enabled is not allowed.": "Het bewerken van interfaces terwijl HA (hoge beschikbaarheid) is ingeschakeld, is niet toegestaan.",
   "Editing top-level datasets can prevent users from accessing data in child datasets.": "Het bewerken van datasets op het hoogste niveau kan voorkomen dat gebruikers toegang krijgen tot data in onderliggende datasets.",
-  "Either SID or Domain Name + Name are required.": "SID of Domeinnaam + Naam zijn vereist.",
   "Electing {controller}.": "{controller} aan het kiezen.",
   "Elements": "Elementen",
   "Email": "E-mail",
