@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -17,6 +16,8 @@ import {
 import {
   ReviewWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
+import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
@@ -69,23 +70,11 @@ describe('ReviewWizardStepComponent', () => {
       mockProvider(PoolManagerStore, {
         state$,
         totalUsableCapacity$: of(2 * GiB),
+        wizardRequiredStepsValidity$: of({}),
+        poolCreationErrors$: of([]),
       }),
       mockProvider(MatDialog),
     ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        wizardRequiredStepsStateForm: new FormGroup({
-          general: new FormControl(null),
-          enclosure: new FormControl(null),
-          data: new FormControl(null),
-        }),
-        isStepActive: true,
-      },
-    });
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   function getSummaryItem(name: string): string {
@@ -93,9 +82,17 @@ describe('ReviewWizardStepComponent', () => {
   }
 
   describe('buttons', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          isStepActive: true,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
     it('emits (createPool) when Create Pool is pressed', async () => {
       jest.spyOn(spectator.component.createPool, 'emit');
-
       const createPool = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
       await createPool.click();
 
@@ -114,6 +111,15 @@ describe('ReviewWizardStepComponent', () => {
   });
 
   describe('summary', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          isStepActive: true,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
     it('shows pool name', () => {
       expect(getSummaryItem('Pool Name')).toBe('test-pool');
     });
@@ -156,6 +162,51 @@ describe('ReviewWizardStepComponent', () => {
       spectator.detectChanges();
 
       expect(getSummaryItem('Dispersal Strategy')).toBe('Limit To ENC 1 Enclosure');
+    });
+  });
+
+  describe('validation', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          isStepActive: true,
+        },
+        providers: [
+          mockProvider(PoolManagerStore, {
+            state$,
+            totalUsableCapacity$: of(2 * GiB),
+            wizardRequiredStepsValidity$: of({}),
+            poolCreationErrors$: of([
+              {
+                text: 'Some error #1',
+                severity: PoolCreationSeverity.Error,
+                step: PoolCreationWizardStep.General,
+              },
+              {
+                text: 'Some warning #1',
+                severity: PoolCreationSeverity.Warning,
+                step: PoolCreationWizardStep.General,
+              },
+            ]),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows list of validation errors from store', () => {
+      const errorItem = spectator.query('.error.summary-item');
+      expect(errorItem).toBeTruthy();
+      expect(errorItem.innerHTML).toBe(' Some error #1 ');
+
+      const warningItem = spectator.query('.warning.summary-item');
+      expect(warningItem).toBeTruthy();
+      expect(warningItem.innerHTML).toBe(' Some warning #1 ');
+    });
+
+    it('disables pool creation button once there are errors', async () => {
+      const createPool = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
+      expect(createPool.isDisabled).toBeTruthy();
     });
   });
 });

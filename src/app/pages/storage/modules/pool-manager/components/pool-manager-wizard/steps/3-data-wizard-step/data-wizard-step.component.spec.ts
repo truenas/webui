@@ -41,6 +41,7 @@ describe('DataWizardStepComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        topology$: of(null),
       }),
     ],
   });
