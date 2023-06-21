@@ -14,7 +14,6 @@ import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-up
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { getCleanLink } from 'app/pages/apps/utils/get-clean-link';
 import { RedirectService, AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -27,7 +26,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 })
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
-  getCleanLink = getCleanLink;
 
   constructor(
     private appLoaderService: AppLoaderService,

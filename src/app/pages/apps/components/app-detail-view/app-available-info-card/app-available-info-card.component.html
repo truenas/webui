@@ -10,17 +10,17 @@
   </ng-template>
 </div>
 <div class="app-list-item sources">
-  <span class="label">{{ 'App Source' | translate }}:</span>
+  <span class="label">{{ 'Source' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="(isLoading$ | async) || loadingSources; else appSources"></ngx-skeleton-loader>
   <ng-template #appSources>
     <div *ngIf="sources?.length; else notAvailable">
-      <ng-container *ngFor="let source of sources; last as isLast">
-        <a
-          [href]="source"
-          [title]="source"
-          [ixTest]="[app.name, 'source']"
-        >{{ getCleanSource(source) }}</a><span *ngIf="!isLast">, </span>
-      </ng-container>
+      <a
+        *ngFor="let source of sources;"
+        class="source-link"
+        [href]="source"
+        [title]="source"
+        [ixTest]="[app.name, 'source']"
+      >{{ source | cleanLink }}</a>
     </div>
   </ng-template>
 </div>
