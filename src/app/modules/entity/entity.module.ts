@@ -40,7 +40,6 @@ import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -72,7 +71,6 @@ import { AppLoaderService } from 'app/services';
     ReactiveFormsModule,
     DragDropModule,
     RouterModule,
-    ColorPickerModule,
     NgxDatatableModule,
     CdkTableModule,
     TreeModule,

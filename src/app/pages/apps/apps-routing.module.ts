@@ -22,6 +22,7 @@ const routes: Routes = [
     {
       path: 'installed',
       component: InstalledAppsComponent,
+      data: { isNew: true },
       children: [{
         path: ':appId',
         component: InstalledAppsComponent,
@@ -40,6 +41,7 @@ const routes: Routes = [
     {
       path: 'available',
       component: AppRouterOutletComponent,
+      data: { isNew: true },
       children: [{
         path: '',
         component: AvailableAppsComponent,

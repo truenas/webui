@@ -82,12 +82,12 @@
   >{{ 'Inspect VDEVs' | translate }}</button>
 
   <button
+    *ngIf="showStartOver"
     mat-button
     matStepperNext
     color="error"
     type="button"
     ixTest="start-over"
-    [disabled]="isStartOverDisabled"
     (click)="startOver()"
   >
     {{ 'Start Over' | translate }}
@@ -99,7 +99,6 @@
     color="primary"
     type="button"
     ixTest="create-pool"
-    [disabled]="isStartOverDisabled"
     (click)="createPool.emit()"
   >
     {{ 'Create Pool' | translate }}

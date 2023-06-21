@@ -39,8 +39,8 @@ export class ReviewWizardStepComponent implements OnInit {
     private translate: TranslateService,
   ) {}
 
-  get isStartOverDisabled(): boolean {
-    return !this.state.name && !this.state.encryption && !this.nonEmptyTopologyCategories?.length;
+  get showStartOver(): boolean {
+    return Boolean(this.state.name || this.state.encryption || this.nonEmptyTopologyCategories?.length);
   }
 
   get hasVdevs(): boolean {
