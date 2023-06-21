@@ -155,17 +155,25 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           const control = requiredSteps[key as PoolCreationWizardRequiredStep];
           if (control.valid !== null && !control.valid && control.required) {
             if (key === PoolCreationWizardStep.General) {
-              errors.push({ text: 'Name not added', severity: PoolCreationSeverity.Error, step: key });
+              errors.push({
+                text: this.translate.instant('Name not added'),
+                severity: PoolCreationSeverity.Error,
+                step: key,
+              });
             }
             if (key === PoolCreationWizardStep.EnclosureOptions) {
               errors.push({
-                text: 'No Enclosure selected for a Limit Pool To A Single Enclosure.',
+                text: this.translate.instant('No Enclosure selected for a Limit Pool To A Single Enclosure.'),
                 severity: PoolCreationSeverity.Error,
                 step: key,
               });
             }
             if (key === PoolCreationWizardStep.Data) {
-              errors.push({ text: 'At least 1 data vdev is required.', severity: PoolCreationSeverity.Error, step: key });
+              errors.push({
+                text: this.translate.instant('At least 1 data vdev is required.'),
+                severity: PoolCreationSeverity.Error,
+                step: key,
+              });
             }
           }
         });
