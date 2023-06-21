@@ -2,16 +2,15 @@
   <th *ngFor="let column of columns; index as idx" (click)="onSort(idx)">
     <div class="title-container" [ngStyle]="{ cursor: column.sortable ? 'pointer' : 'auto' }">
       <div class="title">{{ column.title }}</div>
-      <div *ngIf="column.sortable" [ngSwitch]="true">
+      <div *ngIf="column.sortable">
         <ix-icon
-          *ngSwitchCase="dataProvider.sorting.direction === 'asc' && dataProvider.sorting.active === idx"
+          *ngIf="dataProvider.sorting.direction === SortDirection.asc && dataProvider.sorting.active === idx"
           name="mdi-arrow-down">
         </ix-icon>
         <ix-icon
-          *ngSwitchCase="dataProvider.sorting.direction === 'desc' && dataProvider.sorting.active === idx"
+          *ngIf="dataProvider.sorting.direction === SortDirection.desc && dataProvider.sorting.active === idx"
           name="mdi-arrow-up">
         </ix-icon>
-        <ix-icon *ngSwitchDefault></ix-icon>
       </div>
     </div>
   </th>

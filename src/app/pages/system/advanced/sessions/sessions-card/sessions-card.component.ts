@@ -3,7 +3,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
-import { BehaviorSubject, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
@@ -19,17 +18,10 @@ import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-interface AuthSessionRow {
-  id: string;
-  current: boolean;
-  username: string;
-  created_at: string;
-}
-
 @UntilDestroy()
 @Component({
   selector: 'ix-sessions-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../common-card.scss', './sessions-card.component.scss'],
   templateUrl: './sessions-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,13 +34,13 @@ export class SessionsCardComponent {
     toLoadingState(),
   );
 
-  isLoading$ = new BehaviorSubject<boolean>(false);
-  dataProvider = new ArrayDataProvider<AuthSessionRow>();
+  isLoading = false;
+  dataProvider = new ArrayDataProvider<AuthSession>();
 
-  columns: TableColumn<AuthSessionRow>[] = [
+  columns: TableColumn<AuthSession>[] = [
     {
       title: this.translate.instant('Username'),
-      propertyName: 'username',
+      propertyName: 'credentials_data',
     },
     {
       title: this.translate.instant('Start session time'),
@@ -74,12 +66,12 @@ export class SessionsCardComponent {
   }
 
   updateSessions(): void {
-    this.isLoading$.next(true);
+    this.isLoading = true;
     this.ws.call('auth.sessions', [[['internal', '=', false]]]).pipe(
-      map((sessions) => this.sessionsSourceHelper(sessions)), untilDestroyed(this),
+      untilDestroyed(this),
     ).subscribe((sessions) => {
-      this.dataProvider.setRows(of(sessions));
-      this.isLoading$.next(false);
+      this.dataProvider.setRows(sessions);
+      this.isLoading = false;
       this.cdr.markForCheck();
     });
   }
@@ -136,18 +128,11 @@ export class SessionsCardComponent {
     });
   }
 
-  private sessionsSourceHelper(data: AuthSession[]): AuthSessionRow[] {
-    return data.map((session) => {
-      return {
-        id: session.id,
-        current: session.current,
-        username: this.getUsername(session),
-        created_at: format(session.created_at.$date, 'Pp'),
-      };
-    });
+  getDate(date: number): string {
+    return format(date, 'Pp');
   }
 
-  private getUsername(credentialsData: AuthSessionCredentialsData): string {
+  getUsername(credentialsData: AuthSessionCredentialsData): string {
     if (credentialsData && credentialsData.credentials_data) {
       return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
     }
