@@ -38,7 +38,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   private opts: SelectOption[] = [];
 
   get selectedLabel(): string {
-    if (!this.value) {
+    if (this.value === undefined) {
       return '';
     }
 
