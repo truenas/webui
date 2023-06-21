@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,7 +18,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
+import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { PoolCreationWizardRequiredStep, PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
@@ -43,17 +43,14 @@ export class PoolManagerWizardComponent implements OnInit {
   activeStep: PoolCreationWizardStep;
   hasEnclosureStep = false;
 
-  wizardRequiredStepsValidityForm = this.fb.group({
-    general: [null as never, [Validators.required]],
-    enclosure: [null as never, []],
-    data: [null as never, [Validators.required]],
-  });
-
   state: PoolManagerState;
-
-  isCurrentFormValid = false;
+  poolCreationErrors: PoolCreationError[];
 
   protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
+
+  get hasEncryption(): boolean {
+    return Boolean(this.state.encryption);
+  }
 
   constructor(
     private store: PoolManagerStore,
@@ -62,17 +59,18 @@ export class PoolManagerWizardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private router: Router,
-    private fb: FormBuilder,
     private snackbar: SnackbarService,
   ) {}
-
-  get hasEncryption(): boolean {
-    return Boolean(this.state.encryption);
-  }
 
   ngOnInit(): void {
     this.connectToStore();
     this.checkEnclosureStepAvailability();
+  }
+
+  getPoolCreationStepErrors(step: PoolCreationWizardStep): PoolCreationError[] {
+    return this.poolCreationErrors.filter(
+      (item) => item.step === step && item.severity === PoolCreationSeverity.Error,
+    );
   }
 
   createPool(): void {
@@ -117,12 +115,20 @@ export class PoolManagerWizardComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  stepValidityChanged(step: PoolCreationWizardRequiredStep, isValid: boolean): void {
+    this.store.updateRequiredStepValidity(step, { valid: isValid });
+  }
+
   private connectToStore(): void {
     this.store.initialize();
 
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.state = state;
       this.cdr.markForCheck();
+    });
+
+    this.store.poolCreationErrors$.pipe(untilDestroyed(this)).subscribe((data) => {
+      this.poolCreationErrors = data;
     });
   }
 
@@ -135,12 +141,7 @@ export class PoolManagerWizardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((result) => {
       this.hasEnclosureStep = result;
-
-      if (result) {
-        this.wizardRequiredStepsValidityForm.controls.enclosure.setValidators(Validators.required);
-      } else {
-        this.wizardRequiredStepsValidityForm.controls.enclosure.removeValidators(Validators.required);
-      }
+      this.store.updateRequiredStepValidity(PoolCreationWizardStep.EnclosureOptions, { required: result });
     });
   }
 
@@ -160,12 +161,5 @@ export class PoolManagerWizardComponent implements OnInit {
     }
 
     return payload;
-  }
-
-  stepValidityChanged(isValid: boolean, step: PoolCreationWizardRequiredStep): void {
-    this.isCurrentFormValid = isValid;
-    this.wizardRequiredStepsValidityForm.patchValue({
-      [step]: isValid,
-    });
   }
 }

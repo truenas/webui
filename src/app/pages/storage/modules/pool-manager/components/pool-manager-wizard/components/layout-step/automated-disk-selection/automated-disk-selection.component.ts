@@ -247,7 +247,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     if (!this.selectedDiskType || !this.selectedDiskSize) {
       return;
     }
-    const length: number = this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize].length;
+    const length: number = this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize]?.length;
     const minRequired = this.minDisks[this.form.controls.layout.value];
     let widthOptions: Option[];
 
@@ -275,7 +275,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     }
 
     const width = this.form.controls.width.value;
-    const length = this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize].length;
+    const length = this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize]?.length;
     let nextNumberOptions: SelectOption[] = [];
 
     if (width) {

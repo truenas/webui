@@ -9,10 +9,10 @@ import _ from 'lodash';
 import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
-import { DiskBus } from 'app/enums/disk-bus.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
@@ -79,22 +79,7 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   private setNonUniqueSerialDisksWarning(): void {
-    if (this.nonUniqueSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {
-      this.nonUniqueSerialDisksTooltip = this.translate.instant(
-        `Warning: There are {n} USB disks available that have non-unique serial numbers.
-          USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other.
-          Adding such disks to a pool can result in lost data.`,
-        { n: this.nonUniqueSerialDisks.length },
-      );
-      return;
-    }
-
-    this.nonUniqueSerialDisksTooltip = this.translate.instant(
-      `Warning: There are {n} disks available that have non-unique serial numbers.
-        Non-unique serial numbers can be caused by a cabling issue and
-        adding such disks to a pool can result in lost data.`,
-      { n: this.nonUniqueSerialDisks.length },
-    );
+    this.nonUniqueSerialDisksTooltip = getNonUniqueSerialDisksWarning(this.nonUniqueSerialDisks, this.translate);
   }
 
   private setExportedPoolOptions(): void {

@@ -4,47 +4,49 @@
     <mat-vertical-stepper #stepper>
       <mat-step
         ixStepActivation
-        errorMessage="Name not added."
-        [hasError]="wizardRequiredStepsValidityForm.controls.general.value === false"
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.General)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.General)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.General)"
       >
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
         <ix-general-wizard-step
           [isStepActive]="activeStep === PoolCreationWizardStep.General"
-          (stepStatusValidityChanged)="stepValidityChanged($event, PoolCreationWizardStep.General)"
+          (stepStatusValidityChanged)="stepValidityChanged(PoolCreationWizardStep.General, $event)"
         ></ix-general-wizard-step>
       </mat-step>
 
       <mat-step
         *ngIf="hasEnclosureStep"
         ixStepActivation
-        errorMessage="No Enclosure selected for a Limit Pool To A Single Enclosure."
-        [hasError]="wizardRequiredStepsValidityForm.controls.enclosure.value === false"
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.EnclosureOptions)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.EnclosureOptions)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.EnclosureOptions)"
       >
         <ng-template matStepLabel>{{ 'Enclosure Options' | translate }}</ng-template>
         <ix-enclosure-wizard-step
           [isStepActive]="activeStep === PoolCreationWizardStep.EnclosureOptions"
-          (stepStatusValidityChanged)="stepValidityChanged($event, PoolCreationWizardStep.EnclosureOptions)"
+          (stepStatusValidityChanged)="stepValidityChanged(PoolCreationWizardStep.EnclosureOptions, $event)"
         ></ix-enclosure-wizard-step>
       </mat-step>
 
       <mat-step
         ixStepActivation
-        errorMessage="At least 1 data vdev is required."
-        [hasError]="wizardRequiredStepsValidityForm.controls.data.value === false"
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.Data)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.Data)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.Data)"
       >
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
         <ix-data-wizard-step
           [isStepActive]="activeStep === PoolCreationWizardStep.Data"
-          (stepStatusValidityChanged)="stepValidityChanged($event, PoolCreationWizardStep.Data)"
+          (stepStatusValidityChanged)="stepValidityChanged(PoolCreationWizardStep.Data, $event)"
           (goToLastStep)="goToLastStep()"
         ></ix-data-wizard-step>
       </mat-step>
 
       <mat-step
         ixStepActivation
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.Log)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.Log)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.Log)"
       >
         <ng-template matStepLabel>{{ 'Log (Optional)' | translate }}</ng-template>
@@ -53,6 +55,8 @@
 
       <mat-step
         ixStepActivation
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.Spare)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.Spare)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.Spare)"
       >
         <ng-template matStepLabel>{{ 'Spare (Optional)' | translate }}</ng-template>
@@ -61,6 +65,8 @@
 
       <mat-step
         ixStepActivation
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.Cache)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.Cache)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.Cache)"
       >
         <ng-template matStepLabel>{{ 'Cache (Optional)' | translate }}</ng-template>
@@ -69,6 +75,8 @@
 
       <mat-step
         ixStepActivation
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.Metadata)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.Metadata)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.Metadata)"
       >
         <ng-template matStepLabel>{{ 'Metadata (Optional)' | translate }}</ng-template>
@@ -77,6 +85,8 @@
 
       <mat-step
         ixStepActivation
+        [errorMessage]="getPoolCreationStepErrors(PoolCreationWizardStep.Dedup)?.[0]?.text"
+        [hasError]="!!getPoolCreationStepErrors(PoolCreationWizardStep.Dedup)?.length"
         (activate)="onStepActivated(PoolCreationWizardStep.Dedup)"
       >
         <ng-template matStepLabel>{{ 'Dedup (Optional)' | translate }}</ng-template>
@@ -90,7 +100,6 @@
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
           [isStepActive]="activeStep === PoolCreationWizardStep.Review"
-          [wizardRequiredStepsStateForm]="wizardRequiredStepsValidityForm"
           (createPool)="createPool()"
         ></ix-review-wizard-step>
       </mat-step>

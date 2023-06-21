@@ -1,5 +1,5 @@
 <div class="summary-row">
-  <div class="summary-group">
+  <div>
     <h4>{{ 'General Info' | translate }}</h4>
 
     <div class="summary-item">
@@ -11,8 +11,6 @@
       <div class="label">{{ 'Encryption' | translate }}</div>
       <div class="value">{{ state.encryption }}</div>
     </div>
-  </div>
-  <div class="summary-group">
   </div>
 </div>
 <div class="summary-row">
@@ -60,35 +58,15 @@
       </div>
     </div>
   </div>
-
-  <div *ngIf="errorsTotal || warningsTotal" class="summary-group">
+</div>
+<div class="summary-row">
+  <div *ngIf="(poolCreationErrors$ | async)?.length">
     <h4>{{ 'Warnings' | translate }}</h4>
 
-    <div *ngIf="wizardRequiredStepsStateForm.controls.general.value === false" class="summary-item error">
-      {{ 'Name not added.' | translate }}
-    </div>
-
-    <div *ngIf="
-      wizardRequiredStepsStateForm.controls.enclosure.validator &&
-      wizardRequiredStepsStateForm.controls.enclosure.value === false"
-      class="summary-item error"
-    >
-      {{ 'No Enclosure selected for a Limit Pool To A Single Enclosure.' | translate }}
-    </div>
-
-    <div *ngIf="wizardRequiredStepsStateForm.controls.data.value === false" class="summary-item error">
-      {{ 'At least 1 data vdev is required.' | translate }}
-    </div>
-
-    <div *ngIf="disknumError" class="summary-item error" [innerHTML]="disknumError"></div>
-    <div *ngIf="vdevtypeError" class="summary-item error" [innerHTML]="vdevtypeError"></div>
-    <div *ngIf="stripeVdevTypeError" class="summary-item error" [innerHTML]="stripeVdevTypeError"></div>
-    <div *ngIf="logVdevTypeWarning" class="summary-item warning" [innerHTML]="logVdevTypeWarning"></div>
-    <div *ngIf="nonUniqueSerialDisks.length">
-      <ix-warning [message]="nonUniqueSerialDisksWarning"></ix-warning>
-    </div>
-    <div *ngIf="disksWithExportedPools.length">
-      <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+    <div *ngFor="let error of poolCreationErrors$ | async">
+      <div [class]="[error.severity, 'summary-item']">
+        {{ error.text }}
+      </div>
     </div>
   </div>
 </div>
@@ -118,7 +96,7 @@
     color="primary"
     type="button"
     ixTest="create-pool"
-    [disabled]="!!errorsTotal"
+    [disabled]="isCreateDisabled"
     (click)="createPool.emit()"
   >
     {{ 'Create Pool' | translate }}

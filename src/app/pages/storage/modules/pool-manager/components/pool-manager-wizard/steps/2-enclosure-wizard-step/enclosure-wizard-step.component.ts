@@ -90,6 +90,9 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue) {
+      if (!this.form.touched) {
+        this.form.updateValueAndValidity();
+      }
       this.emitStepValidityStatus();
     }
   }

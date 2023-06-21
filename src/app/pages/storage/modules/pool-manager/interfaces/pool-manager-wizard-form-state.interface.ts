@@ -1,7 +1,8 @@
-import { FormControl } from '@angular/forms';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 
-export interface PoolManagerWizardRequiredFormPartState {
-  general: FormControl<boolean | null>;
-  enclosure: FormControl<boolean | null>;
-  data: FormControl<boolean | null>;
-}
+export type PoolManagerWizardRequiredFormPartState = {
+  [key in PoolCreationWizardStep]?: {
+    valid: boolean | null;
+    required: boolean;
+  };
+};

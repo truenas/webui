@@ -57,6 +57,8 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       switchMap(() => timer(0)),
       tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
     ).pipe(untilDestroyed(this)).subscribe();
+
+    this.stepStatusValidityChanged.emit(this.form.valid);
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

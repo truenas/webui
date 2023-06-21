@@ -151,12 +151,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   includeNonUniqueSerialDisks = false;
   nonUniqueSerialDisks: ManagerDisk[] = [];
+
   get availableNonUniqueSerialDisksCount(): number {
     if (this.originalDisks.length === this.temp.length) {
       return this.nonUniqueSerialDisks.length;
     }
     return this.temp.filter((disk) => this.nonUniqueSerialDisks.includes(disk)).length;
   }
+
   get nonUniqueSerialDisksWarning(): string {
     if (!this.nonUniqueSerialDisks.length) {
       return null;
