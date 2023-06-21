@@ -18,6 +18,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { DialogService } from 'app/services';
 
 @UntilDestroy()
@@ -70,7 +71,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       }
     }),
   );
-  installedApps$ = this.applicationsStore.installedApps$.pipe(
+  installedApps$ = this.installedAppsStore.installedApps$.pipe(
     toLoadingState(),
     repeat({ delay: () => this.refreshAvailableApps$ }),
   );
@@ -94,6 +95,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     protected applicationsStore: AppsStore,
     protected appsFilterStore: AppsFilterStore,
+    protected installedAppsStore: InstalledAppsStore,
   ) {}
 
   ngOnInit(): void {

@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
 @UntilDestroy()
 @Component({
@@ -25,12 +25,12 @@ export class AppCardComponent {
   }
 
   constructor(
-    private applicationsStore: AppsStore,
     private router: Router,
+    private installedAppsStore: InstalledAppsStore,
   ) {}
 
   navigateToAllInstalledPage(): void {
-    this.applicationsStore.installedApps$.pipe(
+    this.installedAppsStore.installedApps$.pipe(
       map((apps) => apps.filter((app) => (app.chart_metadata.name === this.app.name
         && app.catalog === this.app.catalog && app.catalog_train === this.app.train))),
       untilDestroyed(this),

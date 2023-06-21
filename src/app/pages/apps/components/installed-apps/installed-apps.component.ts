@@ -34,7 +34,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -123,7 +124,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private applicationsStore: AppsStore,
+    private installedAppsStore: InstalledAppsStore,
+    private kubernetesStore: KubernetesStore,
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
@@ -234,8 +236,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.cdr.markForCheck();
 
     combineLatest([
-      this.applicationsStore.selectedPool$,
-      this.applicationsStore.isLoading$.pipe(
+      this.kubernetesStore.selectedPool$.pipe(filter(Boolean)),
+      this.installedAppsStore.isLoading$.pipe(
         tap((isLoading) => this.isLoading = isLoading),
         filter((isLoading) => !isLoading),
       ),
@@ -250,7 +252,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         }
         return !!pool;
       }),
-      switchMap(() => this.applicationsStore.isKubernetesStarted$),
+      switchMap(() => this.kubernetesStore.isKubernetesStarted$),
       filter((kubernetesStarted) => {
         if (!kubernetesStarted) {
           this.dataSource = [];
@@ -260,7 +262,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         }
         return !!kubernetesStarted;
       }),
-      switchMap(() => this.applicationsStore.installedApps$),
+      switchMap(() => this.installedAppsStore.installedApps$),
       filter((charts) => {
         if (!charts.length) {
           this.dataSource = [];
