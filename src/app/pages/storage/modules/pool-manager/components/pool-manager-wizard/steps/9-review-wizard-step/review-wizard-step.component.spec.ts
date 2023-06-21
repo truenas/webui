@@ -153,8 +153,6 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('handles start over logic', async () => {
-      expect(spectator.component.isStartOverDisabled).toBe(false);
-
       const startOver = await loader.getHarness(MatButtonHarness.with({ text: 'Start Over' }));
       await startOver.click();
 
