@@ -48,7 +48,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   protected compareSizeAndTypeWith = _.isEqual;
 
-  protected vdevLayoutOptions$ = of<Option[]>([]);
+  protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
   protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
   protected widthOptions$ = of<SelectOption[]>([]);
   protected numberOptions$ = of<SelectOption[]>([]);
