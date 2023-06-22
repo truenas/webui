@@ -106,6 +106,6 @@ describe('GeneralWizardStepComponent', () => {
     const store = spectator.inject(PoolManagerStore);
     store.startOver$.next();
 
-    expect(form.value).toStrictEqual({ encryption: null, encryptionStandard: null, name: null });
+    expect(form.value).toStrictEqual({ encryption: null, encryptionStandard: 'AES-256-GCM', name: null });
   });
 });
