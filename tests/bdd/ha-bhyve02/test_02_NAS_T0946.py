@@ -309,8 +309,9 @@ def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver)
     # Verify disk are sorted
     disk_list = {1: 'sda', 3: 'sdb', 5: 'sdc'}
     for num in list(disk_list.keys()):
-        disk = driver.find_element_by_xpath(f'//table/tbody/tr[{num}]/td[2]').text
-        assert disk == disk_list[num]
+        disk = driver.find_element_by_xpath(f'//table/tbody/tr[{num}]/td[2]/div').text
+        # using strip to remove empty spaces
+        assert disk.strip() == disk_list[num]
 
 
 @then('wipe all disk without a pool')
