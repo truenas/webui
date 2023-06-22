@@ -12,7 +12,8 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;
@@ -34,8 +35,10 @@ describe('AppDetailsHeaderComponent', () => {
       MockComponent(AppCardLogoComponent),
     ],
     providers: [
-      mockProvider(AppsStore, {
+      mockProvider(InstalledAppsStore, {
         installedApps$: of([application]),
+      }),
+      mockProvider(KubernetesStore, {
         selectedPool$: of('has-pool'),
       }),
       mockProvider(MatDialog, {
@@ -73,7 +76,7 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     it('shows Setup Pool To Install instead if pool is not set', async () => {
-      const store = spectator.inject(AppsStore);
+      const store = spectator.inject(KubernetesStore);
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
