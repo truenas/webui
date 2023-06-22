@@ -71,11 +71,15 @@
   </div>
   <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
   <div class="app-list-item">
-    <span class="label">{{ 'Home Page' | translate }}:</span>
+    <span class="label">{{ 'Homepage' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else homepage"></ngx-skeleton-loader>
     <ng-template #homepage>
       <ng-container *ngIf="app?.home; else notAvailable">
-        {{ app.home }}
+        <a
+          ixTest="homepage"
+          [href]="app.home"
+          [title]="app.home"
+        >{{ app.home | cleanLink }}</a>
       </ng-container>
     </ng-template>
   </div>
