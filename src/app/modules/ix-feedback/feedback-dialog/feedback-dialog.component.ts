@@ -21,7 +21,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -54,7 +53,6 @@ export class FeedbackDialogComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private fileUpload: IxFileUploadService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -71,9 +69,7 @@ export class FeedbackDialogComponent implements OnInit {
       map((files) => files[0]),
       untilDestroyed(this),
     ).subscribe((image) => {
-      console.info('image', image);
       this.image = image;
-      this.attachImageToReview(7, image);
     });
   }
 
@@ -98,7 +94,7 @@ export class FeedbackDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (response) => {
-          if (this.form.controls.image.value && response.success) {
+          if (this.image && response.success) {
             this.attachImageToReview(response.review_id, this.image);
           } else {
             this.onSuccess();
@@ -114,10 +110,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.feedbackService.addAttachment(reviewId, image)
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (attachmentResponse) => {
-          console.info('image uploaded', attachmentResponse);
-          this.onSuccess();
-        },
+        next: () => this.onSuccess(),
         error: (error: HttpErrorResponse) => {
           console.error(error);
           this.dialogService.error({

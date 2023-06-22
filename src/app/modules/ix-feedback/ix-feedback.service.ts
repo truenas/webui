@@ -25,18 +25,12 @@ export class IxFeedbackService {
   }
 
   addAttachment(reviewId: number, image: File): Observable<AttachmentAddedResponse> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'multipart/form-data',
-    });
     const formData = new FormData();
     formData.append('image', image);
-
-    console.info(formData.entries());
 
     return this.httpClient.post<AttachmentAddedResponse>(
       `${this.hostname}/api/reviews/${reviewId}/add-attachment/`,
       formData,
-      { headers },
     );
   }
 }
