@@ -8,7 +8,7 @@ import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
-@Directive({ selector: '[appIfNightly]' })
+@Directive({ selector: '[ixIfNightly]' })
 export class IfNightlyDirective implements OnInit {
   private isNightly = false;
 
