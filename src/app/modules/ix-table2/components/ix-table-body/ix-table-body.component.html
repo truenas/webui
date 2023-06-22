@@ -1,42 +1,41 @@
-<ng-container *ngIf="!(isLoading | async)">
-  <ng-container *ngFor="let row of dataProvider.currentPage$ | async">
-    <tr
-      ixTest="row"
-      class="row"
-      [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto' }"
-      (click)="onToggle(row)"
-    >
-      <td *ngFor="let column of columns; index as idx">
-        <ng-container *ngIf="getTemplateByColumnIndex(idx) as template">
-          <ng-container
-            *ngTemplateOutlet="template; context: { $implicit: row }"
-          ></ng-container>
-        </ng-container>
-        <ng-container *ngIf="!getTemplateByColumnIndex(idx)">
-          {{ row[column.propertyName] }}
-        </ng-container>
-      </td>
-      <td *ngIf="detailsTemplate" class="toggle-cell">
-        <button
-          mat-icon-button
-          ixTest="toggle-row"
-          [matTooltip]="isExpanded(row) ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
-          (click)="$event.stopPropagation(); onToggle(row)"
-        >
-          <ix-icon *ngIf="isExpanded(row)" name="mdi-chevron-up"></ix-icon>
-          <ix-icon *ngIf="!isExpanded(row)" name="mdi-chevron-down"></ix-icon>
-        </button>
-      </td>
-    </tr>
-    <tr *ngIf="detailsTemplate && isExpanded(row)" ixTest="details" class="details">
-      <td [attr.colspan]="columns.length + 1">
-        <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
-      </td>
-    </tr>
-  </ng-container>
+<ng-container *ngFor="let row of dataProvider.currentPage$ | async">
+  <tr
+    ixTest="row"
+    class="row"
+    [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto' }"
+    [hidden]="isLoading"
+    (click)="onToggle(row)"
+  >
+    <td *ngFor="let column of columns; index as idx">
+      <ng-container *ngIf="getTemplateByColumnIndex(idx) as template">
+        <ng-container
+          *ngTemplateOutlet="template; context: { $implicit: row }"
+        ></ng-container>
+      </ng-container>
+      <ng-container *ngIf="!getTemplateByColumnIndex(idx)">
+        {{ row[column.propertyName] }}
+      </ng-container>
+    </td>
+    <td *ngIf="detailsTemplate" class="toggle-cell">
+      <button
+        mat-icon-button
+        ixTest="toggle-row"
+        [matTooltip]="isExpanded(row) ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
+        (click)="$event.stopPropagation(); onToggle(row)"
+      >
+        <ix-icon *ngIf="isExpanded(row)" name="mdi-chevron-up"></ix-icon>
+        <ix-icon *ngIf="!isExpanded(row)" name="mdi-chevron-down"></ix-icon>
+      </button>
+    </td>
+  </tr>
+  <tr *ngIf="detailsTemplate && isExpanded(row)" ixTest="details" class="details" [hidden]="isLoading">
+    <td [attr.colspan]="columns.length + 1">
+      <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
+    </td>
+  </tr>
 </ng-container>
 
-<td *ngIf="isLoading | async" [attr.colspan]="columns.length">
+<td *ngIf="isLoading" [attr.colspan]="columns.length">
   <div class="spinner-container">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>

@@ -1,12 +1,13 @@
+import { SortDirection } from '@swimlane/ngx-datatable';
 import * as _ from 'lodash';
-import { Observable, map, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { TableProvider } from 'app/modules/ix-table2/interfaces/table-provider.interface';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 
 export class ArrayDataProvider<T> implements TableProvider<T> {
-  currentPage$: Observable<T[]>;
-  rows$: Observable<T[]> = of([] as T[]);
+  currentPage$ = new Subject<T[]>();
+  rows: T[] = [];
   expandedRow: T;
 
   sorting: TableSort<T> = {
@@ -20,8 +21,8 @@ export class ArrayDataProvider<T> implements TableProvider<T> {
     pageSize: null,
   };
 
-  setRows(rows$: Observable<T[]>): void {
-    this.rows$ = rows$;
+  setRows(rows: T[]): void {
+    this.rows = rows;
     this.updateCurrentPage();
   }
 
@@ -36,10 +37,7 @@ export class ArrayDataProvider<T> implements TableProvider<T> {
   }
 
   private updateCurrentPage(): void {
-    this.currentPage$ = this.rows$.pipe(
-      map((rows) => this.sort(rows)),
-      map((rows) => this.paginate(rows)),
-    );
+    this.currentPage$.next(this.paginate(this.sort(this.rows)));
   }
 
   private sort(rows: T[]): T[] {
@@ -52,7 +50,7 @@ export class ArrayDataProvider<T> implements TableProvider<T> {
       return sorted;
     }
     if (sortBy) {
-      return direction === 'desc' ? _.sortBy(sorted, sortBy).reverse() : _.sortBy(sorted, sortBy);
+      return direction === SortDirection.desc ? _.sortBy(sorted, sortBy).reverse() : _.sortBy(sorted, sortBy);
     }
 
     return _.orderBy(sorted, propertyName, direction);

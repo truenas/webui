@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -11,6 +12,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table2/components/ix-table
 import { IxTable2Component } from 'app/modules/ix-table2/components/ix-table2/ix-table2.component';
 import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
@@ -19,7 +21,9 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-
     MatProgressSpinnerModule,
     MatButtonModule,
     MatTooltipModule,
+    MatSelectModule,
     TranslateModule,
+    TestIdModule,
   ],
   declarations: [
     IxTable2Component,

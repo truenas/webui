@@ -95,6 +95,7 @@
   "Invalid format. Expected format: <property>=<value>": "",
   "Invisible": "",
   "Isolated GPU PCI Ids": "",
+  "Items per page": "",
   "Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).": "",
   "Last 24 hours": "",
   "Last 3 days": "",

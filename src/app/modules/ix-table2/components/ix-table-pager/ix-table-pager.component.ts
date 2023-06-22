@@ -1,5 +1,6 @@
 import { AfterContentChecked, Component, Input } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MatSelectChange } from '@angular/material/select';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 
 @UntilDestroy()
@@ -10,31 +11,30 @@ import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 })
 export class IxTablePagerComponent<T> implements AfterContentChecked {
   @Input() dataProvider!: ArrayDataProvider<T>;
-  @Input() itemsPerPage = 10;
+  @Input() pageSize = 50;
+  @Input() pageSizeOptions = [10, 20, 50, 100];
 
   currentPage = 1;
   totalItems = 0;
 
   get totalPages(): number {
-    return Math.ceil(this.totalItems / this.itemsPerPage);
+    return Math.ceil(this.totalItems / this.pageSize);
   }
 
   get firstPage(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) * this.pageSize + 1;
   }
 
   get lastPage(): number {
-    const lastPage = this.currentPage * this.itemsPerPage;
+    const lastPage = this.currentPage * this.pageSize;
     return lastPage < this.totalItems ? lastPage : this.totalItems;
   }
 
   ngAfterContentChecked(): void {
-    this.dataProvider.rows$.pipe(untilDestroyed(this)).subscribe((row) => {
-      this.totalItems = row.length;
-      if (this.currentPage > this.totalPages && this.currentPage !== 1) {
-        this.goToPage(1);
-      }
-    });
+    this.totalItems = this.dataProvider.rows.length;
+    if (this.currentPage > this.totalPages && this.currentPage !== 1) {
+      this.goToPage(1);
+    }
   }
 
   goToPage(pageNumber: number): void {
@@ -42,7 +42,7 @@ export class IxTablePagerComponent<T> implements AfterContentChecked {
       this.currentPage = pageNumber;
       this.dataProvider.setPagination({
         pageNumber,
-        pageSize: this.itemsPerPage,
+        pageSize: this.pageSize,
       });
     }
   }
@@ -57,5 +57,10 @@ export class IxTablePagerComponent<T> implements AfterContentChecked {
     if (this.currentPage < this.totalPages) {
       this.goToPage(this.currentPage + 1);
     }
+  }
+
+  onPageSizeChange($event: MatSelectChange): void {
+    this.pageSize = $event.value as number;
+    this.goToPage(1);
   }
 }

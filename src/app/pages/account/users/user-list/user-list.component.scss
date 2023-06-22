@@ -1,8 +1,7 @@
 .table-container {
-  display: flex;
-  flex-direction: column;
-
-  ix-table-pager {
-    margin-top: -5px;
+  ::ng-deep ix-empty-row {
+    background: var(--bg2);
+    border-left: 1px solid var(--contrast-lighter);
+    border-right: 1px solid var(--contrast-lighter);
   }
 }

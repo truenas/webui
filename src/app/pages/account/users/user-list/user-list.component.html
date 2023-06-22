@@ -16,7 +16,10 @@
 </ng-template>
 
 <div class="table-container">
-  <ix-table2>
+  <ix-table2
+    [ix-table-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
+  >
     <thead
       ix-table-head
       [columns]="columns"
@@ -26,7 +29,6 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="isLoading$"
     >
       <ng-template
         ix-table-cell
@@ -44,8 +46,5 @@
       </ng-template>
     </tbody>
   </ix-table2>
-  <ix-table-pager
-    [dataProvider]="dataProvider"
-    [itemsPerPage]="10"
-  ></ix-table-pager>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </div>

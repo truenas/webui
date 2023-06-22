@@ -3,7 +3,7 @@ import { TablePagination } from 'app/modules/ix-table2/interfaces/table-paginati
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 
 export interface TableProvider<T> {
-  rows$: Observable<T[]>;
+  rows: T[];
   currentPage$: Observable<T[]>;
   expandedRow: T;
   setSorting: (sorting: TableSort<T>) => void;
