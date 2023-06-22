@@ -16,6 +16,12 @@ export const nfsAclTagLabels = new Map<NfsAclTag, string>([
   [NfsAclTag.Everyone, T('everyone@')],
 ]);
 
+export const smbAclTagLabels = new Map<NfsAclTag, string>([
+  [NfsAclTag.User, T('User')],
+  [NfsAclTag.UserGroup, T('Group')],
+  [NfsAclTag.Everyone, T('everyone@')],
+]);
+
 export enum NfsAclType {
   Allow = 'ALLOW',
   Deny = 'DENY',

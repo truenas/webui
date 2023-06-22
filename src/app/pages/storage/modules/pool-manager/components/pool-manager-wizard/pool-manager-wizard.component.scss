@@ -1,5 +1,17 @@
 @import 'mixins/cards';
 
+.root-container {
+  display: flex;
+
+  .main-container {
+    width: 100%;
+  }
+
+  .details-container {
+    width: 60%;
+  }
+}
+
 .card {
   @include details-card();
 

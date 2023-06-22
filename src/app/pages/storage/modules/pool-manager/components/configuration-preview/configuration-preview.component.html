@@ -13,12 +13,7 @@
           {{ category.key | mapValue: vdevTypeLabels | translate }}:
         </span>
         <span class="value">
-          <ng-container *ngIf="category.value.vdevs.length; else none">
-            {{ getCategoryDescription(category.value) }}
-          </ng-container>
-          <ng-template #none>
-            {{ unknownProp }}
-          </ng-template>
+          {{ category.value | ixTopologyCategoryDescription }}
         </span>
       </div>
       <div class="details-item">

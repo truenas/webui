@@ -60,6 +60,8 @@
           (deleteListItem)="removeControlNext($event)"
         ></ix-dynamic-form-item>
       </ix-list-item>
+
+      <ix-errors [control]="dynamicForm" [label]="dynamicSchema.title | translate"></ix-errors>
     </ix-list>
 
     <ix-input

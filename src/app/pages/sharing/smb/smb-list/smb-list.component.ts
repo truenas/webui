@@ -131,14 +131,14 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
               } else {
                 // A home share has a name (homes) set; row.name works for other shares
                 const searchName = row.home ? 'homes' : row.name;
-                this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                  (shareSecs) => {
-                    const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareSecs[0].share_name });
+                this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+                  .pipe(untilDestroyed(this))
+                  .subscribe((shareAcl) => {
+                    const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
                     slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
                       this.entityList.getData();
                     });
-                  },
-                );
+                  });
               }
             },
           );

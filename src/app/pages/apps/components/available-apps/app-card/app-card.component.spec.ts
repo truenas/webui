@@ -5,7 +5,7 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
 describe('AppCardComponent', () => {
   let spectator: Spectator<AppCardComponent>;
@@ -15,7 +15,7 @@ describe('AppCardComponent', () => {
       MockComponent(AppCardLogoComponent),
     ],
     providers: [
-      mockProvider(AvailableAppsStore, {
+      mockProvider(AppsStore, {
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
       }),
     ],

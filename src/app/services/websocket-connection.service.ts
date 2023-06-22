@@ -94,6 +94,10 @@ export class WebsocketConnectionService {
   }
 
   private onOpen(): void {
+    if (this.isTryingReconnect) {
+      this.closeWebsocketConnection();
+      return;
+    }
     this.shutDownInProgress = false;
     this.setupConnectionEvents();
   }

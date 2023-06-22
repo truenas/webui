@@ -10,7 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -56,7 +56,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
   imports: [
     CommonModule,
     CommonDirectivesModule,
-    ChartsModule,
+    NgChartsModule,
     LayoutModule,
     routing,
     TranslateModule,

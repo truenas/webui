@@ -308,6 +308,11 @@ certificate still approved.'),
  Underscore (_), and dash (-) characters are allowed.',
       ),
     },
+    renew_days: {
+      tooltip: T(
+        'For example if you set this value to 5, system will renew certificates that expire in 5 days or less.',
+      ),
+    },
   },
 
   list: {
