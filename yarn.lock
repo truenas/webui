@@ -168,13 +168,6 @@
     "@angular-eslint/bundled-angular-compiler" "15.2.0"
     "@typescript-eslint/utils" "5.48.1"
 
-"@angular-ex/uploader@~15.0.0":
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/@angular-ex/uploader/-/uploader-15.0.0.tgz#44fdbe062911d9aeaf1ef42d9a5ec5c3dc634224"
-  integrity sha512-0CE3KPyDqXVED+hBikSIyc0ypC1UrLBZWe1yWjiFxebRng/6x8FY9a+6PQql0h9m/MTfIZ7/32ZEp9ACEboQsw==
-  dependencies:
-    tslib "^2.0.0"
-
 "@angular/animations@^15.1.0":
   version "15.1.0"
   resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-15.1.0.tgz#5f98897d52093bc3e5f01abfa982112efbf51a78"

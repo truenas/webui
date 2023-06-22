@@ -131,7 +131,6 @@
     "ngx-popperjs": "^15.0.4",
     "ngx-skeleton-loader": "~5.0.0",
     "ngx-translate-messageformat-compiler": "~5.0.1",
-    "@angular-ex/uploader": "~15.0.0",
     "ngx-webstorage": "~9.0.0",
     "pixi-filters": "~2.7.1",
     "pixi.js": "~4.7.1",
