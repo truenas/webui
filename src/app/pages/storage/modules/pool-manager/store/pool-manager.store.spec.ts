@@ -118,6 +118,18 @@ describe('PoolManagerStore', () => {
     });
   });
 
+  describe('start over functionality', () => {
+    it('reverts state to initial state', async () => {
+      spectator.service.reset();
+
+      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
+        ...initialState,
+        enclosures,
+        allDisks: disks,
+      });
+    });
+  });
+
   describe('methods - options', () => {
     it('setGeneralOptions - sets options such as name and encryption', async () => {
       const generalOptions = {
