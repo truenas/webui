@@ -12,7 +12,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ServicesService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -67,7 +67,6 @@ export class ServiceLldpComponent implements OnInit {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected services: ServicesService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

@@ -348,14 +348,12 @@ export class SharesDashboardComponent implements AfterViewInit {
                       } else {
                         // A home share has a name (homes) set; row.name works for other shares
                         const searchName = row.home ? 'homes' : row.name;
-                        this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                          (sharesecs) => {
-                            const slideInRef = this.slideInService.open(SmbAclComponent, {
-                              data: sharesecs[0].share_name,
-                            });
+                        this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+                          .pipe(untilDestroyed(this))
+                          .subscribe((shareAcl) => {
+                            const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
                             this.handleSlideInClosed(slideInRef, SmbAclComponent);
-                          },
-                        );
+                          });
                       }
                     },
                   );

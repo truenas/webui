@@ -51,6 +51,10 @@
     width: 100%;
   }
 
+  .overflow-hidden {
+    overflow: hidden !important;
+  }
+
   .card-container {
     height: 100%;
     transform-style: preserve-3d;

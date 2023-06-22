@@ -1,6 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
+import { CleanLinkPipe } from 'app/core/pipes/clean-link.pipe';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -27,7 +28,9 @@ describe('AppAvailableInfoCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppAvailableInfoCardComponent,
-    declarations: [],
+    declarations: [
+      CleanLinkPipe,
+    ],
     providers: [
       mockProvider(ApplicationsService, {
         getCatalogItem: jest.fn(() => of({
@@ -61,9 +64,9 @@ describe('AppAvailableInfoCardComponent', () => {
   });
 
   it('shows card details', () => {
-    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('Version:  2023.5.3');
-    expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Source:');
-    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Last App Update:  05/15/2023');
+    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('Version: 2023.5.3');
+    expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Source:github.com/home-assistant/home-assistant');
+    expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Last App Update: 05/15/2023');
 
     expect(spectator.component.sources).toStrictEqual([
       'https://github.com/home-assistant/home-assistant',

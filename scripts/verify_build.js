@@ -4,7 +4,7 @@
  */
 const exec = require('child_process').exec;
 
-exec('grep -i process.platform -r dist || true', (err, stdout, stderr) => {
+exec('grep -i process.platform -r dist || true', (err, stdout) => {
   if (err) {
     console.error(err);
     process.exit(1);

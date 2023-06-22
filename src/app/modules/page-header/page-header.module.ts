@@ -7,6 +7,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { BreadcrumbComponent } from 'app/modules/page-header/breadcrumb/breadcrumb.component';
 import { PageTitleHeaderComponent } from 'app/modules/page-header/page-title-header/page-title-header.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { NewPageBadgeComponent } from './is-new-indicator/new-page-badge.component';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   declarations: [
     BreadcrumbComponent,
     PageTitleHeaderComponent,
+    NewPageBadgeComponent,
   ],
   exports: [
     PageTitleHeaderComponent,

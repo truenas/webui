@@ -11,7 +11,7 @@ import {
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -51,7 +51,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     private translate: TranslateService,
-    private applicationsStore: AvailableAppsStore,
+    private applicationsStore: AppsStore,
     private gallery: Gallery,
   ) { }
 

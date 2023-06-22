@@ -22,6 +22,7 @@ const routes: Routes = [
     {
       path: 'installed',
       component: InstalledAppsComponent,
+      data: { isNew: true },
       children: [{
         path: ':appId',
         component: InstalledAppsComponent,
@@ -40,7 +41,7 @@ const routes: Routes = [
     {
       path: 'available',
       component: AppRouterOutletComponent,
-      data: { title: T('Discover'), breadcrumb: T('Applications') },
+      data: { isNew: true },
       children: [{
         path: '',
         component: AvailableAppsComponent,
@@ -54,12 +55,12 @@ const routes: Routes = [
       {
         path: ':catalog/:train/:appId/install',
         component: ChartWizardComponent,
-        data: { title: T('Install App'), breadcrumb: T('Applications') },
+        data: { title: T('Discover'), breadcrumb: T('Applications') },
       },
       {
         path: ':catalog/:train/:appId/edit',
         component: ChartWizardComponent,
-        data: { title: T('Edit App'), breadcrumb: T('Applications') },
+        data: { title: 'Edit App', breadcrumb: T('Applications') },
       }],
     },
     {

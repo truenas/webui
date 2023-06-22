@@ -34,7 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ChartBulkUpgradeComponent } from 'app/pages/apps-old/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AvailableAppsStore } from 'app/pages/apps/store/available-apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -123,7 +123,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private applicationsStore: AvailableAppsStore,
+    private applicationsStore: AppsStore,
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
@@ -138,6 +138,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
           this.selectedApp = undefined;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -377,6 +378,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
         (job: Job<CoreBulkResponse[]>) => {
+          if (!this.dataSource.length) {
+            this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+          }
           this.dialogService.closeAllDialogs();
           let message = '';
           job.result.forEach((item) => {
