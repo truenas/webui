@@ -11,11 +11,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import {
-  Observable, distinctUntilChanged, of, take,
-} from 'rxjs';
+import { distinctUntilChanged, of, take } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -50,9 +48,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   protected compareSizeAndTypeWith = _.isEqual;
 
-  protected vdevLayoutOptions$: Observable<Option[]> = of([
-    { label: 'Stripe', value: CreateVdevLayout.Stripe },
-  ]);
+  protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
   protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
   protected widthOptions$ = of<SelectOption[]>([]);
   protected numberOptions$ = of<SelectOption[]>([]);
@@ -203,15 +199,12 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   }
 
   private updateLayoutOptions(): void {
-    const vdevLayoutOptions: Option[] = [];
-    for (const [key, value] of Object.entries(CreateVdevLayout)) {
-      if (this.inventory.length >= this.minDisks[value]) {
-        vdevLayoutOptions.push({ label: key, value });
-      }
-    }
+    const layoutOptions = vdevLayoutOptions.filter((option) => {
+      return this.inventory.length >= this.minDisks[option.value];
+    });
 
     const isValueNull = this.form.controls.layout.value === null;
-    if (!isValueNull && !vdevLayoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
+    if (!isValueNull && !layoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
       this.form.controls.layout.setValue(null, { emitEvent: false });
     }
     this.poolManagerStore.getLayoutsForVdevType(this.type)
@@ -221,8 +214,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       )
       .subscribe({
         next: (allowedVdevTypes) => {
-          this.vdevLayoutOptions$ = of(vdevLayoutOptions.filter(
-            (layout) => !!allowedVdevTypes.includes(layout.value as CreateVdevLayout),
+          this.vdevLayoutOptions$ = of(layoutOptions.filter(
+            (layout) => !!allowedVdevTypes.includes(layout.value),
           ));
           this.updateWidthOptions();
         },

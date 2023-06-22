@@ -37,6 +37,7 @@ describe('AvailableAppsHeaderComponent', () => {
         mockCall('chart.release.query', [{}, {}, {}] as ChartRelease[]),
       ]),
       mockProvider(AppsStore, {
+        isLoading$: of(false),
         availableApps$: of([{
           catalog: 'TRUENAS',
           categories: ['storage', 'crypto'],
@@ -59,6 +60,7 @@ describe('AvailableAppsHeaderComponent', () => {
         searchQuery$: of(''),
         applySearchQuery: jest.fn(),
         applyFilters: jest.fn(),
+        catalogs$: of(['TRUENAS', 'TEST']),
       }),
     ],
   });
