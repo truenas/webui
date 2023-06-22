@@ -4,7 +4,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  Observable, combineLatest, map, of, switchMap,
+  Observable, combineLatest, map, of,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -80,20 +80,20 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     this.appsStore.latestApps$,
     this.state$,
   ]).pipe(
-    switchMap(([
+    map(([
       availableApps,
       appsCategories,
       recommendedApps,
       latestApps,
       state,
     ]) => {
-      return of(this.sortAppsByCategory(
+      return this.sortAppsByCategory(
         availableApps,
         recommendedApps,
         latestApps,
         appsCategories,
         state,
-      ));
+      );
     }),
   );
 
@@ -272,8 +272,12 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       return filteredApps.some((filteredApp) => filteredApp.train === app.train && filteredApp.name === app.name);
     });
 
-    const filteredRecommendedApps = filterApps(recommendedApps);
-    const filteredLatestApps = filterApps(latestApps);
+    const filteredRecommendedApps = filterApps(recommendedApps).map(
+      (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] }),
+    );
+    const filteredLatestApps = filterApps(latestApps).map(
+      (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.NewAndUpdated] }),
+    );
 
     if (state.filter.categories.includes(AppExtraCategory.NewAndUpdated) || !hasCategoriesFilter) {
       appsByCategory.push({
