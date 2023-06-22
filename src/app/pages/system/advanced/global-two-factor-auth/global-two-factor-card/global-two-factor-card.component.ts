@@ -8,14 +8,14 @@ import {
 import { toLoadingState, LoadingState } from 'app/helpers/to-loading-state.helper';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-auth-form/global-two-factor-auth-form.component';
+import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-global-two-factor-auth-card',
-  templateUrl: './global-two-factor-auth-card.component.html',
+  selector: 'ix-global-two-factor-card',
+  templateUrl: './global-two-factor-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalTwoFactorAuthCardComponent implements OnInit {

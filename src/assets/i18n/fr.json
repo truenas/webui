@@ -31,6 +31,7 @@
   "Certificate authority created": "",
   "Certificate request signed": "",
   "Certificate signing request created": "",
+  "Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?": "",
   "Check Available Apps": "",
   "Checking this option will lead to <i>/usr/sbin/zfs</i> being allowed to be executed using sudo without password.    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
   "Choose <i>Master</i> if the UPS is plugged directly      into the system serial port. The UPS will remain the      last item to shut down. Choose <i>Slave</i> to have      this system shut down before <i>Master</i>. See the      <a href=\"{url}\"      target=\"_blank\">Network UPS Tools Overview</a>.": "",

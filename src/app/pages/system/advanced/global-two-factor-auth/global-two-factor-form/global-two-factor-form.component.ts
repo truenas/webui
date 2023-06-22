@@ -4,9 +4,10 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  EMPTY, catchError, filter, of, switchMap, tap,
+} from 'rxjs';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -16,7 +17,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './global-two-factor-auth-form.component.html',
+  templateUrl: './global-two-factor-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
@@ -66,28 +67,36 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
-    const payload: TwoFactorConfigUpdate = {
-      enabled: values.enabled,
-      otp_digits: values.otp_digits,
-      services: { ssh: values.ssh },
-      interval: values.interval,
-      window: values.window,
-    };
-    this.isFormLoading = true;
-    this.ws.call('auth.twofactor.update', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning!'),
+      message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        const values = this.form.value;
+        const payload: TwoFactorConfigUpdate = {
+          enabled: values.enabled,
+          otp_digits: values.otp_digits,
+          services: { ssh: values.ssh },
+          interval: values.interval,
+          window: values.window,
+        };
+        this.isFormLoading = true;
+        return this.ws.call('auth.twofactor.update', [payload]);
+      }),
+      tap(() => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.twoFactorAuthGuardService.updateGlobalConfig();
         this.cdr.markForCheck();
         this.slideInRef.close(true);
-      },
-      error: (error: WebsocketError) => {
+      }),
+      catchError((error) => {
         this.isFormLoading = false;
         this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
-      },
-    });
+        return EMPTY;
+      }),
+    ).pipe(untilDestroyed(this)).subscribe();
   }
 }
