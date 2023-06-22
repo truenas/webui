@@ -43,9 +43,9 @@ describe('PoolManagerStore', () => {
   });
 
   describe('selectors', () => {
-    it('hasMultipleEnclosuresInAllowedDisks$ - returns true when allowed disks contain multiple enclosures', async () => {
+    it('hasMultipleEnclosuresAfterFirstStep$ - returns true when disks after first step have multiple enclosures', async () => {
       spectator.service.initialize();
-      expect(await firstValueFrom(spectator.service.hasMultipleEnclosuresInAllowedDisks$)).toBe(true);
+      expect(await firstValueFrom(spectator.service.hasMultipleEnclosuresAfterFirstStep$)).toBe(true);
     });
   });
 

@@ -49,6 +49,7 @@
 
   h3 {
     display: inline-block;
+    font-weight: 500;
   }
 
   .header-actions {
@@ -66,6 +67,10 @@
   align-items: center;
   display: flex;
   flex-shrink: 0;
+
+  h3 {
+    font-weight: 500;
+  }
 }
 
 .vdevs-container {

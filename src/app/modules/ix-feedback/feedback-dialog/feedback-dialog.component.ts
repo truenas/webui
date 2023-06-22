@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -34,6 +34,8 @@ export const maxRatingValue = 5;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeedbackDialogComponent implements OnInit {
+  isLoading = false;
+
   protected form = this.formBuilder.group({
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
@@ -53,6 +55,7 @@ export class FeedbackDialogComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -79,6 +82,7 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.isLoading = true;
     const values: AddReview = {
       host_u_id: UUID.UUID(),
       rating: this.form.controls.rating.value,
@@ -101,7 +105,9 @@ export class FeedbackDialogComponent implements OnInit {
           }
         },
         error: (error: HttpErrorResponse) => {
+          this.isLoading = false;
           this.dialogService.error(this.errorHandler.parseHttpError(error));
+          this.cdr.markForCheck();
         },
       });
   }
@@ -126,6 +132,8 @@ export class FeedbackDialogComponent implements OnInit {
     this.snackbar.success(
       this.translate.instant('Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.'),
     );
+    this.isLoading = false;
     this.dialogRef.close();
+    this.cdr.markForCheck();
   }
 }

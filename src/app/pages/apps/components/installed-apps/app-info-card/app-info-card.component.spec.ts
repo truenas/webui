@@ -15,6 +15,7 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { AppLoaderService, DialogService, RedirectService } from 'app/services';
 
 describe('AppInfoCardComponent', () => {
@@ -31,7 +32,6 @@ describe('AppInfoCardComponent', () => {
       icon: '',
       sources: [
         'http://github.com/ix-test-app/ix-test-app/',
-        'https://ix-test-app.com/ix-test-app/ix-test-app/',
       ],
     },
     catalog: 'TRUENAS',
@@ -63,6 +63,9 @@ describe('AppInfoCardComponent', () => {
     providers: [
       mockProvider(ApplicationsService, {
         getChartUpgradeSummary: jest.fn(() => of(upgradeSummary)),
+      }),
+      mockProvider(AppsStore, {
+        installedApps$: of([]),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -112,7 +115,7 @@ describe('AppInfoCardComponent', () => {
       },
       {
         label: 'Source:',
-        value: 'github.com/ix-test-app/ix-test-app, ix-test-app.com/ix-test-app/ix-test-app',
+        value: 'github.com/ix-test-app/ix-test-app',
       },
       // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
       {

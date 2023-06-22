@@ -39,7 +39,7 @@ interface NicInfo {
   out: string;
   lastSent: number;
   lastReceived: number;
-  chartData: ChartData;
+  chartData: ChartData<'line'>;
   emptyConfig?: EmptyConfig;
 }
 
@@ -73,15 +73,13 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   contentHeight = 400 - 56;
   rowHeight = 150;
   aspectRatio = 474 / 200;
-  dateFormat = this.localeService.getPreferredDateFormatForChart();
-  timeFormat = this.localeService.getPreferredTimeFormatForChart();
   timezone: string;
 
   minSizeToActiveTrafficArrowIcon = 1024;
 
   interval: Interval;
   availableNics: BaseNetworkInterface[] = [];
-  chartOptions: ChartOptions = {
+  chartOptions: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: true,
     aspectRatio: this.aspectRatio,
@@ -91,72 +89,69 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     layout: {
       padding: 0,
     },
-    legend: {
-      align: 'end',
-      labels: {
-        boxWidth: 8,
-        usePointStyle: true,
-      },
-    },
-    scales: {
-      xAxes: [
-        {
-          type: 'time',
-          time: {
-            unit: 'minute',
-            displayFormats: {
-              minute: 'HH:mm',
-            },
-            tooltipFormat: `${this.dateFormat} ${this.timeFormat}`,
-          },
-          ticks: {
-            beginAtZero: true,
-            maxTicksLimit: 3,
-            maxRotation: 0,
-          },
+    plugins: {
+      legend: {
+        align: 'end',
+        labels: {
+          boxWidth: 8,
+          usePointStyle: true,
         },
-      ],
-      yAxes: [
-        {
-          position: 'right',
-          ticks: {
-            maxTicksLimit: 8,
-            callback: (value) => {
-              if (value === 0) {
-                return 0;
-              }
-
-              const converted = filesize(value as number, {
+      },
+      tooltip: {
+        callbacks: {
+          label(tooltipItem) {
+            let label = tooltipItem.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            if (tooltipItem.parsed.y === 0) {
+              label += 0;
+            } else {
+              const converted = filesize(Number(tooltipItem.parsed.y), {
                 round: 1,
                 output: 'object',
                 standard: 'iec',
               });
 
-              return `${converted.value}${converted.unit.charAt(0)}`;
-            },
+              label = `${label}${converted.value}${converted.unit.charAt(0)}`;
+            }
+            return label;
           },
         },
-      ],
+      },
     },
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem, data) => {
-          let label = data.datasets[tooltipItem.datasetIndex].label || '';
-          if (label) {
-            label += ': ';
-          }
-          if (tooltipItem.yLabel === 0) {
-            label += 0;
-          } else {
-            const converted = filesize(Number(tooltipItem.yLabel), {
+    scales: {
+      x: {
+        type: 'time',
+        time: {
+          unit: 'minute',
+          displayFormats: {
+            minute: 'HH:mm',
+          },
+          tooltipFormat: `${this.localeService.dateFormat} ${this.localeService.timeFormat}`,
+        },
+        ticks: {
+          maxTicksLimit: 3,
+          maxRotation: 0,
+        },
+      },
+      y: {
+        position: 'right',
+        ticks: {
+          maxTicksLimit: 8,
+          callback: (value) => {
+            if (value === 0) {
+              return 0;
+            }
+
+            const converted = filesize(value as number, {
               round: 1,
               output: 'object',
               standard: 'iec',
             });
 
-            label = `${label}${converted.value}${converted.unit.charAt(0)}`;
-          }
-          return label;
+            return `${converted.value}${converted.unit.charAt(0)}`;
+          },
         },
       },
     },
@@ -319,7 +314,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     this.rowHeight = (this.contentHeight - space) / this.rows;
 
     const newChartOptions = { ...this.chartOptions };
-    newChartOptions.scales.yAxes[0].ticks.maxTicksLimit = maxTicksLimit;
+    newChartOptions.scales.y.ticks.maxTicksLimit = maxTicksLimit;
     newChartOptions.aspectRatio = this.aspectRatio;
     this.chartOptions = newChartOptions;
   }
@@ -388,21 +383,27 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             return (response.start + index * response.step) * 1000;
           });
 
-          const chartData = {
+          const chartData: ChartData<'line'> = {
             datasets: [
               {
                 label: `incoming [${networkInterfaceName}]`,
-                data: (response.data as number[][]).map((item, index) => ({ t: labels[index], y: item[0] })),
+                data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: item[0] })),
                 borderColor: this.themeService.currentTheme().blue,
                 backgroundColor: this.themeService.currentTheme().blue,
-                pointRadius: 0.2,
+                pointBackgroundColor: this.themeService.currentTheme().blue,
+                pointRadius: 0,
+                tension: 0.2,
+                fill: true,
               },
               {
                 label: `outgoing [${networkInterfaceName}]`,
-                data: (response.data as number[][]).map((item, index) => ({ t: labels[index], y: -item[1] })),
+                data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: -item[1] })),
                 borderColor: this.themeService.currentTheme().orange,
                 backgroundColor: this.themeService.currentTheme().orange,
-                pointRadius: 0.1,
+                pointBackgroundColor: this.themeService.currentTheme().orange,
+                pointRadius: 0,
+                tension: 0.2,
+                fill: true,
               },
             ],
           };

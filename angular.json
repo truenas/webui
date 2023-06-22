@@ -23,22 +23,14 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
-            "assets": [
-              "src/assets",
-              "src/assets/images",
-              "src/assets/fonts",
-              "src/assets/fonts/Roboto",
-              "src/assets/customicons"
-            ],
+            "assets": ["src/assets"],
             "stylePreprocessorOptions": {
               "includePaths": [
                 "./src/assets/styles",
-                "./node_modules",
-                "./src"
+                "./node_modules"
               ]
             },
             "styles": [
-              "node_modules/dragula/dist/dragula.css",
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
               "node_modules/@circlon/angular-tree-component/css/angular-tree-component.css",
               "src/assets/styles/index.scss"

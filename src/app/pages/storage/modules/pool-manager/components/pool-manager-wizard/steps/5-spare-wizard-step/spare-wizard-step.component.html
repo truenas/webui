@@ -1,8 +1,5 @@
-<div class="step-description">
-  {{ helptext.spare_vdev_description | translate }}
-</div>
-
 <ix-layout-step
+  [description]="helptext.spare_vdev_description | translate"
   [type]="VdevType.Spare"
   [inventory]="inventory$ | async"
   [canChangeLayout]="false"

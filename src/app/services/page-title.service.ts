@@ -11,6 +11,7 @@ import { RoutePartsService } from 'app/services/route-parts/route-parts.service'
 })
 export class PageTitleService {
   title$ = new BehaviorSubject('');
+  hasNewIndicator$ = new BehaviorSubject(false);
 
   constructor(
     private router: Router,
@@ -41,6 +42,7 @@ export class PageTitleService {
     const breadcrumbs = this.routePartsService.routeParts;
     if (breadcrumbs.length > 0) {
       this.title$.next(breadcrumbs[breadcrumbs.length - 1].title || '');
+      this.hasNewIndicator$.next(breadcrumbs.some((breadcrumb) => breadcrumb.isNew));
     }
   }
 }

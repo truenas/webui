@@ -12,7 +12,7 @@
       margin-bottom: 1rem;
     }
 
-    ngx-skeleton-loader {
+    .app-list-item ngx-skeleton-loader {
       display: inline-flex;
       width: 35%;
 
@@ -21,6 +21,12 @@
       }
     }
   }
+}
+
+.app-list-item {
+  align-items: center;
+  display: flex;
+  margin: 0.25rem 0;
 }
 
 .inline {

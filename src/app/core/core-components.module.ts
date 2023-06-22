@@ -22,6 +22,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { StorageService } from 'app/services/storage.service';
+import { CleanLinkPipe } from './pipes/clean-link.pipe';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { StorageService } from 'app/services/storage.service';
     MapValuePipe,
     YesNoPipe,
     BulkListItemComponent,
+    CleanLinkPipe,
   ],
   exports: [
     CommonModule,
@@ -64,6 +66,7 @@ import { StorageService } from 'app/services/storage.service';
     MapValuePipe,
     BulkListItemComponent,
     YesNoPipe,
+    CleanLinkPipe,
   ],
   providers: [
     StorageService,

@@ -1,6 +1,5 @@
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -10,7 +9,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
   CreatePool, Pool,
@@ -20,6 +18,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
@@ -33,11 +32,13 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
+  @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
+
   @ViewChild('stepper') stepper: MatStepper;
   isLoading$ = this.store.isLoading$;
 
   hasEnclosureStep$ = combineLatest([
-    this.store.hasMultipleEnclosuresInAllowedDisks$,
+    this.store.hasMultipleEnclosuresAfterFirstStep$,
     this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
   ]).pipe(
     map(([hasMultipleEnclosures, hasEnclosureSupport]) => hasMultipleEnclosures && hasEnclosureSupport),
@@ -47,6 +48,8 @@ export class PoolManagerWizardComponent implements OnInit {
 
   isCurrentFormValid = false;
   hasDataVdevs = false;
+
+  protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
 
   constructor(
     private store: PoolManagerStore,
@@ -64,17 +67,6 @@ export class PoolManagerWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectToStore();
-  }
-
-  stepChanged({ selectedIndex }: StepperSelectionEvent): void {
-    if (selectedIndex === 2) {
-      this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0))
-        .pipe(untilDestroyed(this))
-        .subscribe((result) => {
-          this.hasDataVdevs = result;
-          this.stepValidityChanged(result);
-        });
-    }
   }
 
   createPool(): void {
@@ -107,6 +99,10 @@ export class PoolManagerWizardComponent implements OnInit {
       });
 
     dialogRef.componentInstance.submit();
+  }
+
+  onStepActivated(step: PoolCreationWizardStep): void {
+    this.stepChanged.emit(step);
   }
 
   goToLastStep(): void {
