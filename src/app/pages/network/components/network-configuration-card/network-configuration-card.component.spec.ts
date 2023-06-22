@@ -26,7 +26,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameserver2: '8.8.4.4',
           httpproxy: 'http://proxy.com',
           netwait_enabled: true,
-          hosts: 'host1.com\nhost2.com',
+          hosts: ['host1.com', 'host2.com'],
           domains: ['domain.cz'],
           service_announcement: {
             mdns: true,
