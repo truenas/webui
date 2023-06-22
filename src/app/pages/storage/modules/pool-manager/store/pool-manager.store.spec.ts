@@ -118,7 +118,7 @@ describe('PoolManagerStore', () => {
     });
   });
 
-  describe('start over', () => {
+  describe('start over functionality', () => {
     it('reverts state to initial state', async () => {
       spectator.service.reset();
 
