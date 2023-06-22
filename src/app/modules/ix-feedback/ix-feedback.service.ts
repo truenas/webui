@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -13,15 +13,7 @@ export class IxFeedbackService {
   constructor(private httpClient: HttpClient) {}
 
   addReview(body: AddReview): Observable<ReviewAddedResponse> {
-    const headers = new HttpHeaders({
-      Authorization: 'Bearer 946bde8d85fc86c6c48344adf1ef2139',
-    });
-
-    return this.httpClient.post<ReviewAddedResponse>(
-      `${this.hostname}/api/reviews/add/`,
-      body,
-      { headers },
-    );
+    return this.httpClient.post<ReviewAddedResponse>(`${this.hostname}/api/reviews/add/`, body);
   }
 
   addAttachment(reviewId: number, image: File): Observable<AttachmentAddedResponse> {
