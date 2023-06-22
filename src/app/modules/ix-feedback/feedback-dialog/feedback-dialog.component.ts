@@ -10,9 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import html2canvas from 'html2canvas';
-import {
-  filter, map, take,
-} from 'rxjs';
+import { take } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AddReview, FeedbackEnvironment } from 'app/modules/ix-feedback/interfaces/feedback.interface';
@@ -67,13 +65,6 @@ export class FeedbackDialogComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(({ version }) => {
       this.release = version;
-    });
-    this.form.controls.image.valueChanges.pipe(
-      filter((files) => !!files.length),
-      map((files) => files[0]),
-      untilDestroyed(this),
-    ).subscribe((image) => {
-      this.image = image;
     });
   }
 
