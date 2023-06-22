@@ -24,6 +24,7 @@ describe('AppDetailsHeaderComponent', () => {
     catalog: 'Truenas',
     tags: ['aliens', 'ufo'],
     train: 'stable',
+    home: 'https://www.seti.org',
     app_readme: 'Find aliens without leaving your home.',
     installed: false,
   } as AvailableApp;
@@ -116,6 +117,10 @@ describe('AppDetailsHeaderComponent', () => {
 
     it('shows app train', () => {
       expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
+    });
+
+    it('shows app homepage', () => {
+      expect(spectator.queryAll('.app-list-item')[4]).toHaveText('Homepage:seti.org');
     });
 
     it('shows app description', () => {
