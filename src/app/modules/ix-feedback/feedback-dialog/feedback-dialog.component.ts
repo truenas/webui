@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
+import html2canvas from 'html2canvas';
 import {
   filter, map, take,
 } from 'rxjs';
@@ -40,9 +41,9 @@ export class FeedbackDialogComponent implements OnInit {
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
     image: [null as File[]],
+    take_screenshot: [true],
   });
   private release: string;
-  private image: File;
   readonly acceptedFiles = ticketAcceptedFiles;
 
   constructor(
@@ -98,8 +99,12 @@ export class FeedbackDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (response) => {
-          if (this.image && response.success) {
-            this.attachImageToReview(response.review_id, this.image);
+          if (this.form.controls.take_screenshot.value && response.success) {
+            this.takeScreenshot().then((file) => {
+              this.attachImageToReview(response.review_id, file);
+            });
+          } else if (this.form.controls.image.value.length && response.success) {
+            this.attachImageToReview(response.review_id, this.form.controls.image.value[0]);
           } else {
             this.onSuccess();
           }
@@ -135,5 +140,23 @@ export class FeedbackDialogComponent implements OnInit {
     this.isLoading = false;
     this.dialogRef.close();
     this.cdr.markForCheck();
+  }
+
+  private takeScreenshot(): Promise<File> {
+    return new Promise((resolve, reject) => {
+      html2canvas(document.body, {
+        allowTaint: true,
+        useCORS: true,
+        imageTimeout: 0,
+        ignoreElements: (element) => element.classList.contains('cdk-overlay-container'),
+      }).then((canvas) => {
+        canvas.toBlob((blob) => {
+          const file = new File([blob], 'screenshot.png', { type: 'image/png' });
+          resolve(file);
+        }, 'image/png');
+      }).catch((error) => {
+        reject(error);
+      });
+    });
   }
 }
