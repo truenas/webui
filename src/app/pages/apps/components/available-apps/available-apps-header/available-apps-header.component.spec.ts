@@ -53,6 +53,7 @@ describe('AvailableAppsHeaderComponent', () => {
         applySearchQuery: jest.fn(),
       }),
       mockProvider(AppsStore, {
+        isLoading$: of(false),
         availableApps$: of([{
           catalog: 'TRUENAS',
           categories: ['storage', 'crypto'],
@@ -65,6 +66,7 @@ describe('AvailableAppsHeaderComponent', () => {
           name: 'qbittorent',
         }] as AvailableApp[]),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
+        catalogs$: of(['TRUENAS', 'TEST']),
       }),
     ],
   });

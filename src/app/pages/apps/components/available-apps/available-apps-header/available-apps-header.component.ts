@@ -7,10 +7,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, map, Observable, of, repeat, shareReplay, Subject, take, tap,
+  BehaviorSubject,
+  debounceTime, distinctUntilChanged, filter, map, Observable, of, take, tap,
 } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import helptext from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -36,56 +36,34 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   });
 
   searchControl = this.fb.control('');
-  isFirstLoad = true;
   showFilters = false;
-
-  isFilterApplied$ = this.appsFilterStore.isFilterApplied$;
-  appsCategories: string[] = [];
-  categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
-    map((categories) => {
-      this.appsCategories = [...categories];
-      return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
-    }),
-  );
-
-  isLoading$ = this.applicationsStore.isLoading$;
-
-  installedCatalogs: string[] = [];
-
-  refreshAvailableApps$ = new Subject<boolean>();
-  availableApps$ = this.applicationsStore.availableApps$.pipe(
-    toLoadingState(),
-    repeat({ delay: () => this.refreshAvailableApps$ }),
-    shareReplay({
-      refCount: false,
-      bufferSize: 1,
-    }),
-  );
-  installedCatalogs$ = this.availableApps$.pipe(
-    map((state) => ({ ...state, value: [...new Set<string>(state.value?.map((app) => app.catalog))] })),
-    tap(({ value: installedCatalogs }) => {
-      this.installedCatalogs = installedCatalogs;
+  isFirstLoad = true;
+  availableApps$ = this.applicationsStore.availableApps$;
+  areLoaded$ = new BehaviorSubject(false);
+  installedApps$ = this.installedAppsStore.installedApps$;
+  catalogs$ = this.applicationsStore.catalogs$.pipe(
+    tap((catalogs) => {
       if (this.isFirstLoad) {
         this.isFirstLoad = false;
-        this.form.controls.catalogs.patchValue(installedCatalogs);
+        this.form.controls.catalogs.patchValue(catalogs);
       }
     }),
   );
-  installedApps$ = this.installedAppsStore.installedApps$.pipe(
-    toLoadingState(),
-    repeat({ delay: () => this.refreshAvailableApps$ }),
-  );
-  catalogsOptions$: Observable<Option[]> = this.installedCatalogs$.pipe(
-    map((state) => state.value),
-    singleArrayToOptions(),
-  );
-
+  isFilterApplied$ = this.appsFilterStore.isFilterApplied$;
+  appsCategories: string[] = [];
+  catalogsOptions$ = this.catalogs$.pipe(singleArrayToOptions());
   sortOptions$: Observable<Option[]> = of([
     { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
     { label: this.translate.instant('Catalog Name'), value: AppsFiltersSort.Catalog },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
   ]);
+  categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
+    map((categories) => {
+      this.appsCategories = [...categories];
+      return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
+    }),
+  );
 
   constructor(
     private fb: FormBuilder,
@@ -107,15 +85,15 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       this.appsFilterStore.applySearchQuery(searchQuery);
     });
     this.appsFilterStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
-      next: (filter) => {
-        if (filter.categories?.length) {
-          this.form.controls.categories.setValue(filter.categories, { emitEvent: false });
+      next: (filterValues) => {
+        if (filterValues.categories?.length) {
+          this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
         }
-        if (filter.catalogs?.length) {
-          this.form.controls.catalogs.setValue(filter.catalogs, { emitEvent: false });
+        if (filterValues.catalogs?.length) {
+          this.form.controls.catalogs.setValue(filterValues.catalogs, { emitEvent: false });
         }
-        if (filter.sort) {
-          this.form.controls.sort.setValue(filter.sort, { emitEvent: false });
+        if (filterValues.sort) {
+          this.form.controls.sort.setValue(filterValues.sort, { emitEvent: false });
         }
       },
     });
@@ -129,6 +107,12 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       next: (searchQuery) => {
         this.searchControl.setValue(searchQuery);
       },
+    });
+    this.applicationsStore.isLoading$.pipe(
+      filter((value) => !value),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.areLoaded$.next(true);
     });
   }
 
@@ -167,9 +151,5 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       sort: this.form.value.sort || null,
       categories: (this.form.value.categories || this.appsCategories),
     });
-  }
-
-  refreshAvailableApps(): void {
-    this.refreshAvailableApps$.next(true);
   }
 }

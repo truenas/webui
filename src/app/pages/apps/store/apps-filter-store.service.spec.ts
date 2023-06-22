@@ -27,7 +27,7 @@ describe('AppsFilterStore', () => {
     isLoading: false,
   };
   const installedAndRecommendedApp: AvailableApp = {
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     installed: true,
     categories: ['storage'],
     description: 'Syncthing is a continuous file synchronization program.',
@@ -38,7 +38,7 @@ describe('AppsFilterStore', () => {
   } as unknown as AvailableApp;
 
   const plexApp: AvailableApp = {
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     installed: false,
     categories: ['media'],
     description: 'Plex is an app',
@@ -167,8 +167,8 @@ describe('AppsFilterStore', () => {
       });
       expectObservable(spectator.service.searchedApps$).toBe('b', {
         b: [{
-          category: 'OFFICIAL',
-          title: 'OFFICIAL',
+          category: 'TRUENAS',
+          title: 'TRUENAS',
           totalApps: 2,
           apps: [...availableApps],
         }],
@@ -218,13 +218,13 @@ describe('AppsFilterStore', () => {
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         categories: ['storage'],
-        catalogs: ['OFFICIAL'],
+        catalogs: ['TRUENAS'],
         sort: AppsFiltersSort.Name,
       });
       expectObservable(spectator.service.filterValues$).toBe('a', {
         a: {
           categories: ['storage'],
-          catalogs: ['OFFICIAL'],
+          catalogs: ['TRUENAS'],
           sort: AppsFiltersSort.Name,
         } as AppsFiltersValues,
       });

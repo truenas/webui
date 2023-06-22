@@ -23,6 +23,7 @@ export interface AppsState {
   latestApps: AvailableApp[];
   recommendedApps: AvailableApp[];
   categories: string[];
+  catalogs: string[];
   isLoading: boolean;
 }
 
@@ -30,6 +31,7 @@ const initialState: AppsState = {
   availableApps: [],
   recommendedApps: [],
   latestApps: [],
+  catalogs: [],
   categories: [],
   isLoading: false,
 };
@@ -39,6 +41,7 @@ const initialState: AppsState = {
 export class AppsStore extends ComponentStore<AppsState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
 
+  readonly catalogs$ = this.select((state) => state.catalogs);
   readonly recommendedApps$ = this.select((state) => state.recommendedApps);
   readonly latestApps$ = this.select((state) => state.latestApps);
   readonly appsCategories$ = this.select((state) => [
@@ -122,6 +125,7 @@ export class AppsStore extends ComponentStore<AppsState> {
         this.patchState((state) => {
           return {
             ...state,
+            catalogs: [...new Set(availableApps?.map((app) => app.catalog))],
             availableApps: [...availableApps],
             recommendedApps: availableApps
               .filter((app) => app.recommended)

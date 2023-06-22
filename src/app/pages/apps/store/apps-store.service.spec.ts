@@ -21,6 +21,7 @@ describe('AppsStore', () => {
     recommendedApps: [],
     latestApps: [],
     categories: [],
+    catalogs: [],
     isLoading: false,
   };
 
@@ -31,7 +32,7 @@ describe('AppsStore', () => {
   ];
 
   const installedAndRecommendedApp: AvailableApp = {
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     installed: true,
     categories: ['storage'],
     description: 'Syncthing is a continuous file synchronization program.',
@@ -42,7 +43,7 @@ describe('AppsStore', () => {
   } as unknown as AvailableApp;
 
   const plexApp: AvailableApp = {
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     installed: false,
     categories: ['media'],
     description: 'Plex is an app',
@@ -97,9 +98,8 @@ describe('AppsStore', () => {
         b: {
           ...initialState,
           availableApps: [...availableApps],
-          categories: [
-            'storage', 'media',
-          ],
+          categories: ['storage', 'media'],
+          catalogs: ['TRUENAS'],
           latestApps: [{ ...installedAndRecommendedApp }],
           recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'Recommended'] }],
 
