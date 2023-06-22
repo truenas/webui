@@ -215,9 +215,7 @@ def Wiped_Unused_Disk(driver):
     for disk_element in disk_elements:
         if is_element_present(driver, f'//tr[contains(.,"{disk_element.text}")]//div[contains(text(),"N/A") or contains(text(),"Exported")]'):
             disk_list.append(disk_element.text)
-    print(disk_list)
     for disk in disk_list:
-        print(xpaths.disks.disk_Expander(disk))
         assert wait_on_element(driver, 7, xpaths.disks.disk_Expander(disk), 'clickable')
         driver.find_element_by_xpath(xpaths.disks.disk_Expander(disk)).click()
         assert wait_on_element(driver, 7, xpaths.disks.wipe_Disk_Button(disk), 'clickable')
@@ -236,3 +234,4 @@ def Wiped_Unused_Disk(driver):
         assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
         assert wait_on_element_disappear(driver, 7, xpaths.disks.confirm_Box_Title(disk))
+        time.sleep(1)
