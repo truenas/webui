@@ -15,36 +15,93 @@
   </ix-page-title-header>
 </ng-template>
 
-<div class="table-container">
-  <ix-table2
-    [ix-table-empty]="!dataProvider.rows.length"
+<mat-card>
+  <table
+    ix-table
+    matSort
+    matSortDisableClear="true"
+    ixTest="users-table"
+    [ix-table-empty]="!dataSource.filteredData.length"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
+    [matSortActive]="defaultSort.active"
+    [dataSource]="dataSource"
+    [matSortDirection]="defaultSort.direction"
+    [multiTemplateDataRows]="true"
+    [fixedLayout]="true"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    >
-      <ng-template
-        ix-table-cell
-        [columnIndex]="2"
-        [dataProvider]="dataProvider"
-        let-user
-      >
+    <ng-container matColumnDef="username">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Username' | translate }}
+      </th>
+      <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+        {{ user.username }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="uid">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'UID' | translate }}
+      </th>
+      <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+        {{ user.uid }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="builtin">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Builtin' | translate }}
+      </th>
+      <td *matCellDef="let user; dataSource: dataSource" mat-cell>
         {{ user.builtin | yesNo }}
-      </ng-template>
-      <ng-template ix-table-details-row [dataProvider]="dataProvider" let-user>
-        <ix-user-details-row
-          [user]="user"
-          (delete)="handleDeletedUser($event)"
-        ></ix-user-details-row>
-      </ng-template>
-    </tbody>
-  </ix-table2>
-  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
-</div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="home">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Home' | translate }}
+      </th>
+      <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+        {{ user.home }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="full_name">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Full Name' | translate }}
+      </th>
+      <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+        {{ user.full_name }}
+      </td>
+    </ng-container>
+
+    <ix-expand-toggle-column
+      [expandedRow]="expandedRow"
+      (toggle)="onToggle($event)"
+    ></ix-expand-toggle-column>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
+    <tr
+      *matRowDef="
+        let user;
+        columns: displayedColumns;
+        dataSource: dataSource
+      "
+      mat-row
+      [ixTest]="user.username"
+      [ixDetailRow]="user"
+      [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
+      [ixDetailRowTemplate]="expandedRowTemplate"
+      (toggle)="onToggle($event)"
+    ></tr>
+  </table>
+
+  <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
+</mat-card>
+
+<ng-template #expandedRowTemplate let-user let-colspan="colspan">
+  <ix-user-details-row
+    [user]="user"
+    [colspan]="colspan"
+    (delete)="handleDeletedUser($event)"
+  ></ix-user-details-row>
+</ng-template>
