@@ -14,6 +14,8 @@ import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService, WebSocketService } from 'app/services';
 
+const defaultEncryptionStandard = 'AES-256-GCM';
+
 @UntilDestroy()
 @Component({
   selector: 'ix-general-wizard-step',
@@ -24,10 +26,10 @@ import { DialogService, WebSocketService } from 'app/services';
 export class GeneralWizardStepComponent implements OnInit {
   @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     name: ['', Validators.required],
     encryption: [false],
-    encryptionStandard: ['AES-256-GCM', Validators.required],
+    encryptionStandard: [defaultEncryptionStandard, Validators.required],
   });
 
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
@@ -55,6 +57,12 @@ export class GeneralWizardStepComponent implements OnInit {
       switchMap(() => timer(0)),
       tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
     ).pipe(untilDestroyed(this)).subscribe();
+
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.reset({
+        encryptionStandard: defaultEncryptionStandard,
+      });
+    });
   }
 
   private initEncryptionField(): void {

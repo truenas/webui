@@ -1,4 +1,4 @@
-import { TreeNode as OriginalTreeNode } from '@circlon/angular-tree-component';
+import { TreeNode as OriginalTreeNode } from '@bugsplat/angular-tree-component';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 
 /**
