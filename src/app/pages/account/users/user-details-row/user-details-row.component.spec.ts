@@ -86,14 +86,9 @@ describe('UserDetailsRowComponent', () => {
     spectator = createComponent({
       props: {
         user: dummyUser,
-        colspan: 5,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
-
-  it('checks colspan attribute', () => {
-    expect(spectator.query('td').getAttribute('colspan')).toBe('5');
   });
 
   it('should open edit user form', async () => {

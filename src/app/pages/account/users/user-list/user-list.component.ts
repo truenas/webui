@@ -2,22 +2,21 @@ import {
   Component,
   OnInit,
   ChangeDetectorRef,
-  ViewChild, ChangeDetectionStrategy,
-  ViewChildren, QueryList,
+  ViewChild,
+  ChangeDetectionStrategy,
   AfterViewInit,
   TemplateRef,
 } from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
-import {
-  combineLatest, Observable, of,
-} from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { SortDirection } from '@swimlane/ngx-datatable';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
-import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
@@ -35,18 +34,32 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserListComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
-  filterString = '';
-  dataSource = new MatTableDataSource<User>([]);
-  defaultSort: Sort = { active: 'uid', direction: 'asc' };
+  dataProvider = new ArrayDataProvider<User>();
+  columns: TableColumn<User>[] = [
+    {
+      title: this.translate.instant('Username'),
+      propertyName: 'username',
+      sortable: true,
+    },
+    {
+      title: this.translate.instant('UID'),
+      propertyName: 'uid',
+      sortable: true,
+    },
+    {
+      title: this.translate.instant('Builtin'),
+      propertyName: 'builtin',
+      sortable: true,
+    },
+    {
+      title: this.translate.instant('Full Name'),
+      propertyName: 'full_name',
+      sortable: true,
+    },
+  ];
 
-  expandedRow: User;
-  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
-
-  readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -68,6 +81,8 @@ export class UserListComponent implements OnInit, AfterViewInit {
   );
 
   hideBuiltinUsers = true;
+  filterString = '';
+  users: User[] = [];
 
   get emptyConfigService(): EmptyService {
     return this.emptyService;
@@ -78,6 +93,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
+    private translate: TranslateService,
     private emptyService: EmptyService,
   ) { }
 
@@ -85,6 +101,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.store$.dispatch(userPageEntered());
     this.getPreferences();
     this.getUsers();
+    this.setDefaultSort();
   }
 
   ngAfterViewInit(): void {
@@ -107,26 +124,19 @@ export class UserListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: (users) => {
+        this.users = users;
         this.createDataSource(users);
-        this.cdr.markForCheck();
       },
       error: () => {
+        this.users = [];
         this.createDataSource();
-        this.cdr.markForCheck();
       },
     });
   }
 
   createDataSource(users: User[] = []): void {
-    this.dataSource = new MatTableDataSource(users);
-    setTimeout(() => {
-      // TODO: Figure out how to avoid setTimeout to make it work on first loading
-      if (this.filterString) {
-        this.dataSource.filter = this.filterString;
-      }
-      this.dataSource.sort = this.sort;
-      this.cdr.markForCheck();
-    }, 0);
+    this.dataProvider.setRows(users);
+    this.cdr.markForCheck();
   }
 
   toggleBuiltins(): void {
@@ -137,24 +147,21 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.slideInService.open(UserFormComponent, { wide: true });
   }
 
-  onToggle(row: User): void {
-    this.expandedRow = this.expandedRow === row ? null : row;
-    this.toggleDetailRows();
-    this.cdr.markForCheck();
-  }
-
-  toggleDetailRows(): void {
-    this.detailRows.forEach((row) => {
-      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
-        row.close();
-      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
-        row.open();
-      }
-    });
-  }
-
   onListFiltered(query: string): void {
-    this.dataSource.filter = query;
+    this.filterString = query.toLowerCase();
+    this.createDataSource(this.users.filter((user) => {
+      return user.username.toLowerCase().includes(this.filterString)
+        || user.full_name.toLowerCase().includes(this.filterString)
+        || user.uid.toString().includes(this.filterString);
+    }));
+  }
+
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 1,
+      direction: SortDirection.asc,
+      propertyName: 'uid',
+    });
   }
 
   handleDeletedUser(id: number): void {

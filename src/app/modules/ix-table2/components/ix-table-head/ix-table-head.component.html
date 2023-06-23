@@ -1,0 +1,17 @@
+<tr ixTest="header">
+  <th *ngFor="let column of columns; index as idx" (click)="onSort(idx)">
+    <div class="title-container" [ngStyle]="{ cursor: column.sortable ? 'pointer' : 'auto' }">
+      <div class="title">{{ column.title }}</div>
+      <div *ngIf="column.sortable">
+        <ix-icon
+          *ngIf="dataProvider.sorting.direction === SortDirection.asc && dataProvider.sorting.active === idx"
+          name="mdi-arrow-down">
+        </ix-icon>
+        <ix-icon
+          *ngIf="dataProvider.sorting.direction === SortDirection.desc && dataProvider.sorting.active === idx"
+          name="mdi-arrow-up">
+        </ix-icon>
+      </div>
+    </div>
+  </th>
+</tr>
