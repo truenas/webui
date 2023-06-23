@@ -328,7 +328,7 @@ export type ApiDirectory = {
   'auth.two_factor_auth': { params: void; response: boolean };
   'auth.twofactor.renew_secret': { params: void; response: boolean };
   'auth.twofactor.config': { params: void; response: TwoFactorConfig };
-  'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };
+  'auth.sessions': { params: void; response: AuthSession[] };
   'auth.terminate_session': { params: [id: string]; response: void };
   'auth.terminate_other_sessions': { params: void; response: void };
 

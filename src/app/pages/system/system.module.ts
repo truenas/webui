@@ -26,7 +26,6 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
@@ -173,7 +172,6 @@ import { routing } from './system.routing';
     MatSlideToggleModule,
     AppLoaderModule,
     TestIdModule,
-    IxTable2Module,
   ],
   declarations: [
     AdvancedSettingsComponent,
