@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
@@ -39,7 +41,10 @@ export class CertificateEditComponent implements OnInit {
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
-  });
+  }) as FormGroup<{
+    name: FormControl<string | null>;
+    renew_days?: FormControl<number | null>;
+  }>;
 
   certificate: Certificate;
 
@@ -62,12 +67,19 @@ export class CertificateEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.setCertificate();
+    this.setRenewDaysForEditIfAvailable();
   }
 
   setCertificate(): void {
     this.certificate = this.slideInData.certificate;
     this.form.patchValue(this.certificate);
     this.cdr.markForCheck();
+  }
+
+  setRenewDaysForEditIfAvailable(): void {
+    if (this.certificate?.acme) {
+      this.form.addControl('renew_days', new FormControl(null));
+    }
   }
 
   onViewCertificatePressed(): void {

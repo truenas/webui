@@ -15,6 +15,5 @@ export * from 'app/services/cloud-credential.service';
 export * from 'app/services/name-validation.service';
 export * from 'app/services/keychain-credential.service';
 export * from './replication.service';
-export * from './services.service';
 export * from './validation.service';
 export * from './redirect.service';

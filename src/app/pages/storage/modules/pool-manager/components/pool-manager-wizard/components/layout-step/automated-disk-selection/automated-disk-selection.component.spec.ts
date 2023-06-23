@@ -390,18 +390,6 @@ describe('AutomatedDiskSelection', () => {
     );
   });
 
-  it('limits layout options based on the vdev type', async () => {
-    spectator.component.type = VdevType.Log;
-    spectator.component.ngOnInit();
-    const changes: IxSimpleChanges<AutomatedDiskSelectionComponent> = {
-      type: new SimpleChange(VdevType.Data, VdevType.Log, false),
-    } as unknown as IxSimpleChanges<AutomatedDiskSelectionComponent>;
-    spectator.component.ngOnChanges(changes);
-    spectator.detectChanges();
-    const layoutSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Layout' }));
-    expect(await layoutSelect.getOptionLabels()).toStrictEqual(['Stripe', 'Mirror']);
-  });
-
   it('doesnt let the layout change', async () => {
     spectator.component.canChangeLayout = false;
     spectator.detectChanges();

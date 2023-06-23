@@ -360,6 +360,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
   // Filter the table by the filter string.
   filter(filterValue: string): void {
+    if (!this.dataSource) {
+      return;
+    }
+
     this.filterValue = filterValue;
     if (filterValue.length > 0) {
       this.dataSource.filter = filterValue;

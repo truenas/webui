@@ -24,6 +24,7 @@
           <div *ngIf="localControls && !report?.errorConf" class="line-chart-tools">
             <mat-button-toggle-group aria-label="Steps">
               <mat-button-toggle
+                [disabled]="stepBackDisabled"
                 [matTooltip]="'Step Back' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="stepBack()"

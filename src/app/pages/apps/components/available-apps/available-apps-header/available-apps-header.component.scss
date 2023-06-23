@@ -125,6 +125,8 @@
   }
 
   ::ng-deep ngx-skeleton-loader {
+    min-width: 32px;
+
     &,
     span {
       height: 26px;
