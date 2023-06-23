@@ -10,12 +10,12 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { SortDirection } from '@swimlane/ngx-datatable';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
@@ -159,7 +159,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
-      direction: SortDirection.asc,
+      direction: SortDirection.Asc,
       propertyName: 'uid',
     });
   }

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { SortDirection } from '@swimlane/ngx-datatable';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
@@ -30,10 +30,10 @@ export class IxTableHeadComponent<T> {
       active = columnId;
     }
     if (direction === null) {
-      direction = SortDirection.asc;
-    } else if (currentDirection === SortDirection.asc) {
-      direction = SortDirection.desc;
-    } else if (currentDirection === SortDirection.desc) {
+      direction = SortDirection.Asc;
+    } else if (currentDirection === SortDirection.Asc) {
+      direction = SortDirection.Desc;
+    } else if (currentDirection === SortDirection.Desc) {
       direction = null;
     }
 
