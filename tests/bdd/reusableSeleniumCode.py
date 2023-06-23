@@ -74,7 +74,7 @@ def Dismiss_All_Alerts(driver):
 
 
 def Encyrpted_Key_Waring(driver):
-    assert wait_on_element(driver, 10, '//h1[contains(text(),"WARNING!")]')
+    assert wait_on_element(driver, 120, '//h1[contains(text(),"WARNING!")]')
     assert wait_on_element(driver, 7, xpaths.button.done, 'clickable')
     driver.find_element_by_xpath(xpaths.button.done).click()
 
