@@ -12,6 +12,7 @@ export class PageTitleHeaderComponent {
   @Input() loading = false;
 
   readonly defaultTitle$ = this.pageTitleService.title$;
+  readonly hasNewIndicator$ = this.pageTitleService.hasNewIndicator$;
   readonly currentTitle$ = this.defaultTitle$.pipe(
     map((defaultTitle) => {
       if (!this.pageTitle) {
@@ -21,5 +22,6 @@ export class PageTitleHeaderComponent {
       return this.pageTitle;
     }),
   );
+
   constructor(private pageTitleService: PageTitleService) {}
 }

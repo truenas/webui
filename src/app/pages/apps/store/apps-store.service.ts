@@ -34,6 +34,7 @@ export interface AppsState {
   latestApps: AvailableApp[];
   recommendedApps: AvailableApp[];
   categories: string[];
+  catalogs: string[];
   filteredApps: AvailableApp[];
   filter: AppsFiltersValues;
   isLoading: boolean;
@@ -49,6 +50,7 @@ const initialState: AppsState = {
   recommendedApps: [],
   latestApps: [],
   categories: [],
+  catalogs: [],
   filteredApps: [],
   isLoading: false,
   isFilterApplied: false,
@@ -98,6 +100,7 @@ export class AppsStore extends ComponentStore<AppsState> {
   readonly appsByCategories$ = this.select((state: AppsState): AppsByCategory[] => {
     return this.sortAppsByCategory(state.availableApps, state);
   });
+  readonly catalogs$ = this.select((state) => state.catalogs);
 
   private installedAppsSubscription: Subscription;
 
@@ -318,6 +321,7 @@ export class AppsStore extends ComponentStore<AppsState> {
         this.patchState((state) => {
           return {
             ...state,
+            catalogs: [...new Set(availableApps?.map((app) => app.catalog))],
             availableApps: [...availableApps],
             recommendedApps: availableApps
               .filter((app) => app.recommended)

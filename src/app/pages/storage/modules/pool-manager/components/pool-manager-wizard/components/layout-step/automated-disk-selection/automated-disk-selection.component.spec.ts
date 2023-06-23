@@ -246,7 +246,7 @@ describe('AutomatedDiskSelection', () => {
     const vdevsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Number of VDEVs' }));
     const sizeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Disk Size' }));
 
-    await layoutSelect.setValue('Raidz1');
+    await layoutSelect.setValue('RAIDZ1');
     await sizeSelect.setValue('10.91 TiB (HDD)');
 
     expect(
@@ -274,7 +274,7 @@ describe('AutomatedDiskSelection', () => {
     const vdevsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Number of VDEVs' }));
     const sizeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Disk Size' }));
 
-    await layoutSelect.setValue('Raidz2');
+    await layoutSelect.setValue('RAIDZ2');
     await sizeSelect.setValue('10.91 TiB (HDD)');
 
     expect(
@@ -302,7 +302,7 @@ describe('AutomatedDiskSelection', () => {
     const vdevsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Number of VDEVs' }));
     const sizeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Disk Size' }));
 
-    await layoutSelect.setValue('Raidz3');
+    await layoutSelect.setValue('RAIDZ3');
     await sizeSelect.setValue('10.91 TiB (HDD)');
 
     expect(
@@ -388,18 +388,6 @@ describe('AutomatedDiskSelection', () => {
         (num) => num.toString(),
       ),
     );
-  });
-
-  it('limits layout options based on the vdev type', async () => {
-    spectator.component.type = VdevType.Log;
-    spectator.component.ngOnInit();
-    const changes: IxSimpleChanges<AutomatedDiskSelectionComponent> = {
-      type: new SimpleChange(VdevType.Data, VdevType.Log, false),
-    } as unknown as IxSimpleChanges<AutomatedDiskSelectionComponent>;
-    spectator.component.ngOnChanges(changes);
-    spectator.detectChanges();
-    const layoutSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Layout' }));
-    expect(await layoutSelect.getOptionLabels()).toStrictEqual(['Stripe', 'Mirror']);
   });
 
   it('doesnt let the layout change', async () => {

@@ -285,7 +285,7 @@ export class SmbFormComponent implements OnInit {
   }
 
   setValuesFromPreset(preset: string): void {
-    if (!this.presets[preset]) {
+    if (!this.presets?.[preset]) {
       return;
     }
     Object.keys(this.presets[preset].params).forEach((param) => {

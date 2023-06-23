@@ -19,8 +19,8 @@
       <ix-gauge-chart
         [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
         [colorBlank]="chartBlankColor"
-        [width]="160"
-        [height]="160"
+        [width]="150"
+        [height]="150"
         [label]="usedPercentage / 100 | percent: '1.0-1'"
         [value]="usedPercentage > 100 ? 100 : usedPercentage"
         [style]="isLowCapacity ? 'color: var(--red);' : ''"
