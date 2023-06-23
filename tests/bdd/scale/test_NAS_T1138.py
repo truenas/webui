@@ -76,6 +76,7 @@ def on_the_datasets_page_click_on_the_tank_tree_and_click_add_zvol(driver):
 def on_the_the_add_zvol_page_input_nopeer1_for_zvol_name(driver, zvol_name):
     """on the the Add Zvol page input nopeer1 for Zvol Name."""
     assert wait_on_element(driver, 5, xpaths.add_Zvol.title)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Zvol.name_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Zvol.name_Input).clear()
     driver.find_element_by_xpath(xpaths.add_Zvol.name_Input).send_keys(zvol_name)
@@ -86,7 +87,7 @@ def input_1_gib_for_zvol_size_click_the_save_button(driver, zvol_size):
     """input "1 GiB" for Zvol Size, click the save button."""
     assert wait_on_element(driver, 5, xpaths.add_Zvol.size_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Zvol.size_Input).send_keys(zvol_size)
-    assert wait_on_element(driver, 5, xpaths.button.save)
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
 

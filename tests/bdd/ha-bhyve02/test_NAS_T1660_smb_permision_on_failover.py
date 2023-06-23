@@ -76,6 +76,7 @@ def on_the_datasets_page_select_the_dozer_dataset_and_click_add_dataset(driver):
 def input_smb1_for_dataset_name_select_smb_for_share_type_and_click_save(driver):
     """input smb1 for dataset name, select SMB for Share Type and click save."""
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 10, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys('smb1')
@@ -103,6 +104,7 @@ def when_the_new_dataset_is_created_click_add_dataset_again(driver):
 def input_smb2_for_dataset_name_select_smb_for_share_type_and_click_save(driver):
     """input smb2 for dataset name, select SMB for Share Type and click save."""
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 10, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys('smb2')

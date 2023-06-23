@@ -69,6 +69,7 @@ def on_the_dataset_page_click_on_the_system_pool_tree_and_click_add_dataset(driv
 def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver, dataset_name):
     """on the Add Dataset slide, input Name "my_ad_dataset" and Share Type SMB."""
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 10, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)

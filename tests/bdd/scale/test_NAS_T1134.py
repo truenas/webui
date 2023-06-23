@@ -28,7 +28,7 @@ def test_create_a_new_dataset_with_access_permission_to_only_ericbsd():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['tank_pool'], scope='session')
+    #depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -70,6 +70,7 @@ def on_the_dataset_page_click_on_the_tank_pool_tree_and_click_add_dataset(driver
 def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver, dataset_name):
     """on the Add Dataset slide, input Name "my_ad_dataset" and Share Type SMB."""
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 10, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)
@@ -82,7 +83,7 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))
 def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
-    assert wait_on_element(driver, 5, xpaths.button.save)
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
