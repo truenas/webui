@@ -86,7 +86,7 @@ def input_1_gib_for_zvol_size_click_the_save_button(driver, zvol_size):
     """input "1 GiB" for Zvol Size, click the save button."""
     assert wait_on_element(driver, 5, xpaths.add_Zvol.size_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Zvol.size_Input).send_keys(zvol_size)
-    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    assert wait_on_element(driver, 5, xpaths.button.save)
     driver.find_element_by_xpath(xpaths.button.save).click()
 
 
