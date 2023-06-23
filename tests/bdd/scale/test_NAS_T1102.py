@@ -128,6 +128,7 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
     assert wait_on_element(driver, 5, xpaths.system_Dataset.title)
     time.sleep(1)
+    assert wait_on_element_disappear(driver, 120, xpaths.progress.progress_Spinner)
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.system_Dataset.pool_Select).click()
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Option('system'))
