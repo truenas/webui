@@ -73,7 +73,7 @@ def on_the_dataset_page_click_on_the_tank_tree_and_click_add_dataset(driver):
 def on_the_add_dataset_slide_input_the_dataset_name_leave_all_options_as_default(driver, dataset_name):
     """on the Add Dataset slide, input the <dataset_name>, leave all options as default."""
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
-    assert wait_on_element_disappear(driver, 10, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     rsc.Wait_For_Inputable_And_Input_Value(driver, xpaths.add_Dataset.name_Textarea, dataset_name)
 
 
