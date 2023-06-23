@@ -9,7 +9,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
-import html2canvas from 'html2canvas';
 import { take } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -91,10 +90,17 @@ export class FeedbackDialogComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (this.form.controls.take_screenshot.value && response.success) {
-            this.takeScreenshot().then((file) => {
-              this.attachImageToReview(response.review_id, file);
+            this.feedbackService.takeScreenshot().pipe(untilDestroyed(this)).subscribe({
+              next: (file) => {
+                this.attachImageToReview(response.review_id, file);
+              },
+              error: (error) => {
+                console.error(error);
+                this.isLoading = false;
+                this.cdr.markForCheck();
+              },
             });
-          } else if (this.form.controls.image.value.length && response.success) {
+          } else if (this.form.controls.image.value?.length && response.success) {
             this.attachImageToReview(response.review_id, this.form.controls.image.value[0]);
           } else {
             this.onSuccess();
@@ -131,23 +137,5 @@ export class FeedbackDialogComponent implements OnInit {
     this.isLoading = false;
     this.dialogRef.close();
     this.cdr.markForCheck();
-  }
-
-  private takeScreenshot(): Promise<File> {
-    return new Promise((resolve, reject) => {
-      html2canvas(document.body, {
-        allowTaint: true,
-        useCORS: true,
-        imageTimeout: 0,
-        ignoreElements: (element) => element.classList.contains('cdk-overlay-container'),
-      }).then((canvas) => {
-        canvas.toBlob((blob) => {
-          const file = new File([blob], 'screenshot.png', { type: 'image/png' });
-          resolve(file);
-        }, 'image/png');
-      }).catch((error) => {
-        reject(error);
-      });
-    });
   }
 }

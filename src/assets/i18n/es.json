@@ -378,7 +378,7 @@
   "Atleast {min} disk(s) are required for {vdevType} vdevs": "",
   "Attach Debug": "",
   "Attach NIC": "",
-  "Attach image": "",
+  "Attach image (optional)": "",
   "Attach screenshots": "",
   "Attention": "",
   "Auth Token": "",

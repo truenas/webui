@@ -353,7 +353,7 @@
   "At least one pool must be available to use apps": "",
   "Atleast {min} disk(s) are required for {vdevType} vdevs": "",
   "Attach NIC": "",
-  "Attach image": "",
+  "Attach image (optional)": "",
   "Attach screenshots": "",
   "Attention": "",
   "Aug": "",
