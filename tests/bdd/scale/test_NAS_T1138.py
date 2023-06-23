@@ -57,7 +57,7 @@ def on_the_dashboard_click_on_storage_in_the_side_menu(driver):
 def on_the_storage_click_on_the_tank_manage_datasets_button(driver):
     """on the Storage click on the tank Manage Datasets button."""
     assert wait_on_element(driver, 10, xpaths.storage.title)
-    assert wait_on_element(driver, 5, xpaths.storage.manage_Dataset_Button('tank'), 'clickable')
+    assert wait_on_element(driver, 10, xpaths.storage.manage_Dataset_Button('tank'), 'clickable')
     driver.find_element_by_xpath(xpaths.storage.manage_Dataset_Button('tank')).click()
 
 

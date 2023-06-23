@@ -68,6 +68,7 @@ def on_the_storage_page_click_create_pool(driver):
 def on_the_pool_manager_enter_encrypted_poo_for_pool_name(driver):
     """on the Pool Manager enter encrypted_poo for pool name."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('encrypted_pool')
 
