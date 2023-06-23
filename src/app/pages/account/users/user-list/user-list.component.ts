@@ -10,12 +10,14 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { SortDirection } from '@swimlane/ngx-datatable';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
@@ -80,18 +82,26 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   hideBuiltinUsers = true;
   filterString = '';
+  users: User[] = [];
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
+
   constructor(
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
     private translate: TranslateService,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {
     this.store$.dispatch(userPageEntered());
     this.getPreferences();
     this.getUsers();
+    this.setDefaultSort();
   }
 
   ngAfterViewInit(): void {
@@ -114,16 +124,18 @@ export class UserListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: (users) => {
+        this.users = users;
         this.createDataSource(users);
       },
       error: () => {
+        this.users = [];
         this.createDataSource();
       },
     });
   }
 
   createDataSource(users: User[] = []): void {
-    this.dataProvider.setRows(of(users));
+    this.dataProvider.setRows(users);
     this.cdr.markForCheck();
   }
 
@@ -136,7 +148,20 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString = query.toLowerCase();
+    this.createDataSource(this.users.filter((user) => {
+      return user.username.toLowerCase().includes(this.filterString)
+        || user.full_name.toLowerCase().includes(this.filterString)
+        || user.uid.toString().includes(this.filterString);
+    }));
+  }
+
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 1,
+      direction: SortDirection.asc,
+      propertyName: 'uid',
+    });
   }
 
   handleDeletedUser(id: number): void {

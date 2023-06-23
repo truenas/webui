@@ -1,4 +1,12 @@
 <div class="paginator">
+  <div class="page-size">
+    <span>{{ 'Items per page' | translate }}:</span>
+    <mat-select ixTest="pageSize" [value]="pageSize" (selectionChange)="onPageSizeChange($event)">
+      <mat-option *ngFor="let option of pageSizeOptions" [value]="option" [ixTest]="['pageSizeOption', option]">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </div>
   <span>
     <ng-container *ngIf="lastPage > firstPage">
       {{ firstPage }} – {{ lastPage }}

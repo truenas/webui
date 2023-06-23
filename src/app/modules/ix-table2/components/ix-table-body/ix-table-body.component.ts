@@ -7,7 +7,6 @@ import {
   QueryList,
   TemplateRef,
 } from '@angular/core';
-import { Observable } from 'rxjs';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
@@ -21,7 +20,7 @@ import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.inter
 export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: TableColumn<T>[];
   @Input() dataProvider: ArrayDataProvider<T>;
-  @Input() isLoading: Observable<boolean>;
+  @Input() isLoading = false;
 
   @ContentChildren(IxTableCellDirective)
   ixTableRows!: QueryList<IxTableCellDirective<T>>;
