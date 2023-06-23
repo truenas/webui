@@ -5,6 +5,7 @@ import {
   forkJoin, Observable, of, Subject,
 } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
+import { TiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -135,8 +136,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     },
   );
 
-  getLayoutsForVdevType(vdevLayout: VdevType): Observable<CreateVdevLayout[]> {
-    switch (vdevLayout) {
+  getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {
+    switch (vdevType) {
       case VdevType.Cache:
         return of([CreateVdevLayout.Stripe]);
       case VdevType.Dedup:
@@ -203,7 +204,10 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       tapResponse(([allDisks, enclosures]) => {
         this.patchState({
           isLoading: false,
-          allDisks,
+          allDisks: allDisks.map((disk) => ({
+            ...disk,
+            size: Math.random() * TiB,
+          })),
           enclosures,
         });
       },

@@ -1,6 +1,7 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { UUID } from 'angular2-uuid';
 import { TestScheduler } from 'rxjs/testing';
+import { TiB } from 'app/constants/bytes.constant';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -16,26 +17,26 @@ describe('ManualDiskSelectionStore', () => {
       identifier: '{serial_lunid} 8HG7MZJH_5000cca2700de678',
       name: 'sdo',
       serial: '8HG7MZJH',
-      size: 12000138625024,
+      size: 12 * TiB,
       model: 'HUH721212AL4200',
       type: DiskType.Hdd,
       enclosure: {
         number: 0,
         slot: 1,
       },
-    } as unknown as UnusedDisk,
+    } as UnusedDisk,
     {
       identifier: '{serial_lunid} 8HG7MZJH_5000cca2700de679',
       name: 'sdp',
       serial: '8HG7MZJI',
-      size: 12000138625024,
+      size: 12 * TiB,
       model: 'HUH721212AL4201',
       type: DiskType.Hdd,
       enclosure: {
         number: 0,
         slot: 2,
       },
-    } as unknown as UnusedDisk,
+    } as UnusedDisk,
   ];
 
   const createService = createServiceFactory({

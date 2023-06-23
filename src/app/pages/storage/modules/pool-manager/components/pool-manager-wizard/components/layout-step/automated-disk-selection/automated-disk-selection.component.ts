@@ -178,6 +178,10 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       this.updateNumberOptions();
     });
 
+    this.form.controls.treatDiskSizeAsMinimum.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateWidthOptions();
+    });
+
     this.form.valueChanges.pipe(
       distinctUntilChanged(),
       untilDestroyed(this),
@@ -237,18 +241,28 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
         value: [Number(size), DiskType.Ssd],
       }));
 
-    const options = [...hddOptions, ...ssdOptions];
+    const options = [...hddOptions, ...ssdOptions].sort((a, b) => a.value[0] - b.value[0]);
 
     this.diskSizeAndTypeOptions$ = of(options);
 
     this.updateLayoutOptions();
   }
 
+  private getNumberOfSuitableDisks(): number {
+    const disksMatchingType = this.sizeDisksMap[this.selectedDiskType];
+    if (!this.form.controls.treatDiskSizeAsMinimum.value) {
+      return disksMatchingType[this.selectedDiskSize]?.length;
+    }
+
+    const suitableSizes = Object.keys(disksMatchingType).filter((size) => Number(size) >= this.selectedDiskSize);
+    return suitableSizes.reduce((acc, size) => acc + disksMatchingType[size].length, 0);
+  }
+
   private updateWidthOptions(): void {
     if (!this.selectedDiskType || !this.selectedDiskSize) {
       return;
     }
-    const length: number = this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize]?.length;
+    const length = this.getNumberOfSuitableDisks();
     const minRequired = this.minDisks[this.form.controls.layout.value];
     let widthOptions: Option[];
 
@@ -276,7 +290,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     }
 
     const width = this.form.controls.width.value;
-    const length = this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize]?.length;
+    const length = this.getNumberOfSuitableDisks();
     let nextNumberOptions: SelectOption[] = [];
 
     if (width && length) {
