@@ -17,10 +17,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   selector: 'ix-user-details-row',
   templateUrl: './user-details-row.component.html',
+  styleUrls: ['./user-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserDetailsRowComponent {
   @Input() user: User;
+  @Input() colspan: number;
   @Output() delete = new EventEmitter<number>();
 
   constructor(
