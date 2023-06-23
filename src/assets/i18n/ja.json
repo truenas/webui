@@ -2511,6 +2511,7 @@
   "Select a schema when Samba Schema is set.": "",
   "Select a screen resolution to use for VNC sessions.": "",
   "Select a sector size in bytes. <i>Default</i> leaves the sector size unset and uses the ZFS volume values. Setting a sector size changes both the logical and physical sector size.": "",
+  "Select action": "",
   "Select an IP address to use for VNC sessions.": "",
   "Select an existing CSR.": "",
   "Select an existing SSH connection  to a remote system or choose <i>Create New</i> to create a new SSH  connection.": "",

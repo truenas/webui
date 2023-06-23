@@ -2734,6 +2734,7 @@
   "Select a sector size in bytes. <i>Default</i> leaves the sector size unset and uses the ZFS volume values. Setting a sector size changes both the logical and physical sector size.": "",
   "Select a time zone.": "",
   "Select a user account to run the command. The                user must have permissions allowing them to run                the command or script.": "",
+  "Select action": "",
   "Select an IP address to use for VNC sessions.": "",
   "Select an existing CSR.": "",
   "Select an existing SSH connection  to a remote system or choose <i>Create New</i> to create a new SSH  connection.": "",
