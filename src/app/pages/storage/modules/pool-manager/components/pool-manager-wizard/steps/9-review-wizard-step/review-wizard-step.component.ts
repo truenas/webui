@@ -1,12 +1,11 @@
 import {
-  ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
@@ -26,7 +25,7 @@ import { DialogService } from 'app/services';
   templateUrl: './review-wizard-step.component.html',
   styleUrls: ['./review-wizard-step.component.scss'],
 })
-export class ReviewWizardStepComponent implements OnInit, OnChanges {
+export class ReviewWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;
   @Output() createPool = new EventEmitter<void>();
 
@@ -82,19 +81,6 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
       this.poolCreationErrors = errors;
       this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
     });
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue) {
-      // this.store.wizardRequiredStepsValidity$.pipe(take(1), untilDestroyed(this)).subscribe((steps) => {
-      //   Object.keys(steps).forEach((step: PoolCreationWizardRequiredStep) => {
-      //     const control = steps[step];
-      //     if (!control.valid && control.required) {
-      //       this.store.updateRequiredStepValidity(step, { valid: false });
-      //     }
-      //   });
-      // });
-    }
   }
 
   onInspectVdevsPressed(): void {
