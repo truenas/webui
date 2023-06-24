@@ -86,6 +86,10 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
       switchMap(() => timer(0)),
       tap(() => this.emitStepValidityStatus()),
     ).pipe(untilDestroyed(this)).subscribe();
+
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.reset();
+    });
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

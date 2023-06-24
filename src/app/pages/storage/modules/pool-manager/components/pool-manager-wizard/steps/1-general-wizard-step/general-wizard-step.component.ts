@@ -15,6 +15,8 @@ import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService, WebSocketService } from 'app/services';
 
+const defaultEncryptionStandard = 'AES-256-GCM';
+
 @UntilDestroy()
 @Component({
   selector: 'ix-general-wizard-step',
@@ -26,10 +28,10 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   @Input() isStepActive: boolean;
   @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     name: ['', Validators.required],
     encryption: [false],
-    encryptionStandard: ['AES-256-GCM', Validators.required],
+    encryptionStandard: [defaultEncryptionStandard, Validators.required],
   });
 
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
@@ -59,6 +61,12 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     ).pipe(untilDestroyed(this)).subscribe();
 
     this.stepStatusValidityChanged.emit(this.form.valid);
+
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.reset({
+        encryptionStandard: defaultEncryptionStandard,
+      });
+    });
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

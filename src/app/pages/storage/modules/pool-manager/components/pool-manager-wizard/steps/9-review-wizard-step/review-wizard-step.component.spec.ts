@@ -25,6 +25,7 @@ import {
   PoolManagerState,
   PoolManagerStore,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { DialogService } from 'app/services';
 
 describe('ReviewWizardStepComponent', () => {
   let spectator: Spectator<ReviewWizardStepComponent>;
@@ -67,6 +68,9 @@ describe('ReviewWizardStepComponent', () => {
       TopologyCategoryDescriptionPipe,
     ],
     providers: [
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(PoolManagerStore, {
         state$,
         totalUsableCapacity$: of(2 * GiB),
@@ -162,6 +166,18 @@ describe('ReviewWizardStepComponent', () => {
       spectator.detectChanges();
 
       expect(getSummaryItem('Dispersal Strategy')).toBe('Limit To ENC 1 Enclosure');
+    });
+
+    it('handles start over logic', async () => {
+      const startOver = await loader.getHarness(MatButtonHarness.with({ text: 'Start Over' }));
+      await startOver.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Start Over?',
+      }));
+
+      const store = spectator.inject(PoolManagerStore);
+      expect(store.reset).toHaveBeenCalled();
     });
   });
 

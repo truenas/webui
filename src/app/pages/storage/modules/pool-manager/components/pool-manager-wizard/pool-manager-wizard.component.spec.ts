@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -55,6 +55,9 @@ describe('PoolManagerWizardComponent', () => {
   let loader: HarnessLoader;
   let wizard: MatStepperHarness;
   let store: PoolManagerStore;
+
+  const startOver$ = new Subject<void>();
+
   const hasMultipleEnclosuresInAllowedDisks$ = new BehaviorSubject(false);
   const state = {
     name: 'pewl',
@@ -111,6 +114,7 @@ describe('PoolManagerWizardComponent', () => {
         hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
         poolCreationErrors$: of([]),
+        startOver$,
       }),
       mockProvider(MatDialog, {
         open: jest.fn((component) => {

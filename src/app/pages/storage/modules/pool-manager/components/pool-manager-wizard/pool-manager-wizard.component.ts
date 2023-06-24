@@ -65,6 +65,7 @@ export class PoolManagerWizardComponent implements OnInit {
   ngOnInit(): void {
     this.connectToStore();
     this.checkEnclosureStepAvailability();
+    this.listenForStartOver();
   }
 
   getPoolCreationStepErrors(step: PoolCreationWizardStep): PoolCreationError[] {
@@ -117,6 +118,12 @@ export class PoolManagerWizardComponent implements OnInit {
 
   stepValidityChanged(step: PoolCreationWizardRequiredStep, isValid: boolean): void {
     this.store.updateRequiredStepValidity(step, { valid: isValid });
+  }
+
+  listenForStartOver(): void {
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.stepper.selectedIndex = 0;
+    });
   }
 
   private connectToStore(): void {
