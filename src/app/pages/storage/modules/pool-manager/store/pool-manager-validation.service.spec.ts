@@ -3,6 +3,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -73,6 +74,26 @@ describe('PoolManagerValidationService', () => {
           text: 'At least 1 data vdev is required.',
         },
       ]);
+    });
+
+    it('generates top level error for each step if exists', () => {
+      let result: Partial<{ [key in PoolCreationWizardStep]: string | null }> = {};
+
+      spectator.service.getTopLevelErrorsForEachStep().subscribe((value) => {
+        result = value;
+      });
+
+      expect(result).toEqual({
+        cache: null,
+        data: 'At least 1 data vdev is required.',
+        dedup: null,
+        enclosure: 'No Enclosure selected for a Limit Pool To A Single Enclosure.',
+        general: 'Name not added',
+        log: null,
+        metadata: null,
+        review: null,
+        spare: null,
+      });
     });
   });
 
@@ -187,6 +208,28 @@ describe('PoolManagerValidationService', () => {
           text: 'A stripe data vdev is highly discouraged and will result in data loss if it fails',
         },
       ]);
+    });
+
+    it('generates top level warnings for each step if exists', () => {
+      let result: Partial<{ [key in PoolCreationWizardStep]: string | null }> = {};
+
+      spectator.service.getTopLevelWarningsForEachStep().subscribe((value) => {
+        result = value;
+      });
+
+      expect(result).toEqual(
+        {
+          cache: null,
+          data: 'A stripe data vdev is highly discouraged and will result in data loss if it fails',
+          dedup: null,
+          enclosure: null,
+          general: null,
+          log: 'A stripe log vdev may result in data loss if it fails combined with a power outage.',
+          metadata: null,
+          review: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
+          spare: null,
+        },
+      );
     });
   });
 });
