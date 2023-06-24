@@ -21,6 +21,7 @@ import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/e
 import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
+import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import {
   PoolManagerState,
   PoolManagerStore,
@@ -71,11 +72,12 @@ describe('ReviewWizardStepComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(PoolManagerValidationService, {
+        getPoolCreationErrors: jest.fn(() => of([])),
+      }),
       mockProvider(PoolManagerStore, {
         state$,
         totalUsableCapacity$: of(2 * GiB),
-        wizardRequiredStepsValidity$: of({}),
-        poolCreationErrors$: of([]),
       }),
       mockProvider(MatDialog),
     ],
@@ -191,8 +193,9 @@ describe('ReviewWizardStepComponent', () => {
           mockProvider(PoolManagerStore, {
             state$,
             totalUsableCapacity$: of(2 * GiB),
-            wizardRequiredStepsValidity$: of({}),
-            poolCreationErrors$: of([
+          }),
+          mockProvider(PoolManagerValidationService, {
+            getPoolCreationErrors: jest.fn(() => of([
               {
                 text: 'Some error #1',
                 severity: PoolCreationSeverity.Error,
@@ -203,7 +206,7 @@ describe('ReviewWizardStepComponent', () => {
                 severity: PoolCreationSeverity.Warning,
                 step: PoolCreationWizardStep.General,
               },
-            ]),
+            ])),
           }),
         ],
       });

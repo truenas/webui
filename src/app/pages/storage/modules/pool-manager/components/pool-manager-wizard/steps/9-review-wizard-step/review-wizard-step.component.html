@@ -60,10 +60,10 @@
   </div>
 </div>
 <div class="summary-row">
-  <div *ngIf="(poolCreationErrors$ | async)?.length">
+  <div *ngIf="poolCreationErrors?.length">
     <h4>{{ 'Warnings' | translate }}</h4>
 
-    <div *ngFor="let error of poolCreationErrors$ | async">
+    <div *ngFor="let error of poolCreationErrors">
       <div [class]="[error.severity, 'summary-item']">
         {{ error.text }}
       </div>

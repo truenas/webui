@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,7 +27,6 @@ export enum DispersalStrategy {
 })
 export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   @Input() isStepActive: boolean;
-  @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
 
   form = this.formBuilder.group({
     dispersalStrategy: [DispersalStrategy.None],
@@ -82,13 +81,10 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
       }),
     ).pipe(untilDestroyed(this)).subscribe();
 
-    this.form.statusChanges.pipe(
-      switchMap(() => timer(0)),
-      tap(() => this.emitStepValidityStatus()),
-    ).pipe(untilDestroyed(this)).subscribe();
-
     this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.form.reset();
+      this.form.reset({
+        dispersalStrategy: DispersalStrategy.None,
+      });
     });
   }
 
@@ -102,7 +98,6 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   }
 
   private emitStepValidityStatus(): void {
-    this.stepStatusValidityChanged.emit(this.form.valid);
   }
 
   private connectFormToStore(): void {
@@ -110,6 +105,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
       this.store.setEnclosureOptions({
         limitToSingleEnclosure: this.isLimitingToSingle ? value.limitToEnclosure : null,
         maximizeEnclosureDispersal: value.dispersalStrategy === DispersalStrategy.Maximize,
+        dispersalStrategy: value.dispersalStrategy,
       });
     });
   }

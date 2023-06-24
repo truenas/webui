@@ -2791,6 +2791,7 @@
   "Select which existing initiator group has access to the target.": "",
   "Selected": "",
   "Selected SSH connection uses non-root user. Would you like to use sudo with <i>/usr/sbin/zfs</i> commands? Passwordless sudo must be enabled on the remote system.\nIf not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
+  "Selected disks have exported pools on them.\n  Using those disks will make existing pools on them unable to be imported.\n  You will lose any and all data in selected disks.": "",
   "Self Healed": "",
   "Self-Encrypting Drive": "",
   "Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this option allows the key server to manage creating or updating the global SED password, creating or updating individual SED passwords, and retrieving SED passwords when SEDs are unlocked. Disabling this option leaves SED password management with the local system.": "",

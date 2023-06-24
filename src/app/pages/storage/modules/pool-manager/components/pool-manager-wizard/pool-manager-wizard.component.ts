@@ -18,9 +18,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
-import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
-import { PoolCreationWizardRequiredStep, PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
-import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
@@ -44,7 +43,9 @@ export class PoolManagerWizardComponent implements OnInit {
   hasEnclosureStep = false;
 
   state: PoolManagerState;
-  poolCreationErrors: PoolCreationError[];
+  topLevelWarningsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
+  topLevelErrorsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
+  activatedSteps: Partial<{ [key in PoolCreationWizardStep]: boolean }> = {};
 
   protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
 
@@ -60,6 +61,7 @@ export class PoolManagerWizardComponent implements OnInit {
     private translate: TranslateService,
     private router: Router,
     private snackbar: SnackbarService,
+    private poolManagerValidation: PoolManagerValidationService,
   ) {}
 
   ngOnInit(): void {
@@ -68,10 +70,16 @@ export class PoolManagerWizardComponent implements OnInit {
     this.listenForStartOver();
   }
 
-  getPoolCreationStepErrors(step: PoolCreationWizardStep): PoolCreationError[] {
-    return this.poolCreationErrors.filter(
-      (item) => item.step === step && item.severity === PoolCreationSeverity.Error,
-    );
+  getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null {
+    return this.topLevelWarningsForEachStep?.[step];
+  }
+
+  getTopLevelErrorForStep(step: PoolCreationWizardStep): string | null {
+    return this.topLevelErrorsForEachStep?.[step];
+  }
+
+  getWasStepActivated(step: PoolCreationWizardStep): boolean {
+    return Boolean(this.activatedSteps?.[step]);
   }
 
   createPool(): void {
@@ -109,6 +117,14 @@ export class PoolManagerWizardComponent implements OnInit {
   onStepActivated(step: PoolCreationWizardStep): void {
     this.activeStep = step;
     this.stepChanged.emit(step);
+
+    this.activatedSteps[step] = true;
+
+    if (step === PoolCreationWizardStep.Review) {
+      Object.values(PoolCreationWizardStep).forEach((stepKey) => {
+        this.activatedSteps[stepKey] = true;
+      });
+    }
   }
 
   goToLastStep(): void {
@@ -116,13 +132,10 @@ export class PoolManagerWizardComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  stepValidityChanged(step: PoolCreationWizardRequiredStep, isValid: boolean): void {
-    this.store.updateRequiredStepValidity(step, { valid: isValid });
-  }
-
   listenForStartOver(): void {
     this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
       this.stepper.selectedIndex = 0;
+      this.activatedSteps = {};
     });
   }
 
@@ -134,8 +147,12 @@ export class PoolManagerWizardComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    this.store.poolCreationErrors$.pipe(untilDestroyed(this)).subscribe((data) => {
-      this.poolCreationErrors = data;
+    this.poolManagerValidation.getTopLevelWarningsForEachStep().pipe(untilDestroyed(this)).subscribe((warnings) => {
+      this.topLevelWarningsForEachStep = warnings;
+    });
+
+    this.poolManagerValidation.getTopLevelErrorsForEachStep().pipe(untilDestroyed(this)).subscribe((warnings) => {
+      this.topLevelErrorsForEachStep = warnings;
     });
   }
 
@@ -148,7 +165,6 @@ export class PoolManagerWizardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((result) => {
       this.hasEnclosureStep = result;
-      this.store.updateRequiredStepValidity(PoolCreationWizardStep.EnclosureOptions, { required: result });
     });
   }
 

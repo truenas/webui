@@ -987,6 +987,7 @@
   "Select when the command or script runs:<br>     <i>Pre Init</i> is early in the boot process, after mounting     filesystems and starting networking.<br> <i>Post Init</i> is at the     end of the boot process, before TrueNAS services start.<br>     <i>Shutdown</i> is during the system power off process.": "",
   "Selected": "",
   "Selected SSH connection uses non-root user. Would you like to use sudo with <i>/usr/sbin/zfs</i> commands? Passwordless sudo must be enabled on the remote system.\nIf not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.": "",
+  "Selected disks have exported pools on them.\n  Using those disks will make existing pools on them unable to be imported.\n  You will lose any and all data in selected disks.": "",
   "Semi-automatic (TrueNAS only)": "",
   "Send Mail Method": "",
   "Send Test Alert": "",

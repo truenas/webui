@@ -9,6 +9,10 @@ export default {
   Using those disks will make existing pools on them unable to be imported.
   You will lose any and all data in selected disks.`),
 
+  manager_exportedSelectedDisksWarning: T(`Selected disks have exported pools on them.
+  Using those disks will make existing pools on them unable to be imported.
+  You will lose any and all data in selected disks.`),
+
   manager_exportedPoolsTooltip: T(`Some of the disks are attached to the exported pools
   mentioned in this list. Checking a pool name means you want to
   allow reallocation of the disks attached to that pool.`),

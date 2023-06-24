@@ -1,26 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest,
   forkJoin, Observable, of, Subject,
 } from 'rxjs';
-import {
-  map, switchMap, take, tap,
-} from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
-import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
-import { PoolCreationWizardRequiredStep, PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
-import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
-import { PoolManagerWizardRequiredFormPartState } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-state.interface';
-import { filterAllowedDisks, hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
+import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
@@ -39,7 +30,6 @@ export interface PoolManagerTopologyCategory {
   diskType: DiskType;
   vdevsNumber: number;
   treatDiskSizeAsMinimum: boolean;
-
   vdevs: UnusedDisk[][];
   hasCustomDiskSelection: boolean;
 }
@@ -56,6 +46,7 @@ interface PoolManagerDiskSettings {
 interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: number | null;
   maximizeEnclosureDispersal: boolean;
+  dispersalStrategy: DispersalStrategy;
 }
 
 export interface PoolManagerState {
@@ -63,14 +54,10 @@ export interface PoolManagerState {
   enclosures: Enclosure[];
   name: string;
   encryption: string | null;
-
   allDisks: UnusedDisk[];
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
-
   topology: PoolManagerTopology;
-
-  wizardRequiredStepsValidity: PoolManagerWizardRequiredFormPartState;
 }
 
 const initialTopology = Object.values(VdevType).reduce((topology, value) => {
@@ -102,15 +89,10 @@ export const initialState: PoolManagerState = {
   enclosureSettings: {
     limitToSingleEnclosure: null,
     maximizeEnclosureDispersal: false,
+    dispersalStrategy: DispersalStrategy.None,
   },
 
   topology: initialTopology,
-
-  wizardRequiredStepsValidity: {
-    [PoolCreationWizardStep.General]: { valid: null, required: true },
-    [PoolCreationWizardStep.EnclosureOptions]: { valid: null, required: false },
-    [PoolCreationWizardStep.Data]: { valid: null, required: true },
-  },
 };
 
 @Injectable()
@@ -119,7 +101,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
   readonly encryption$ = this.select((state) => state.encryption);
-  readonly wizardRequiredStepsValidity$ = this.select((state) => state.wizardRequiredStepsValidity);
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly allDisks$ = this.select((state) => state.allDisks);
   readonly topology$ = this.select((state) => state.topology);
@@ -138,143 +119,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       ...enclosureOptions,
     }),
   );
-
-  disknumErrorMessage = helptext.manager_disknumErrorMessage;
-  disknumErrorConfirmMessage = helptext.manager_disknumErrorConfirmMessage;
-  disknumExtendConfirmMessage = helptext.manager_disknumExtendConfirmMessage;
-  vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
-  exportedPoolsWarning = helptext.manager_exportedDisksWarning;
-
-  readonly poolCreationErrors$ = combineLatest([
-    this.wizardRequiredStepsValidity$,
-    this.topology$,
-  ])
-    .pipe(
-      map(([requiredSteps, topology]) => {
-        const errors: PoolCreationError[] = [];
-
-        Object.keys(requiredSteps).forEach((key: PoolCreationWizardStep) => {
-          const control = requiredSteps[key as PoolCreationWizardRequiredStep];
-          if (control.valid !== null && !control.valid && control.required) {
-            if (key === PoolCreationWizardStep.General) {
-              errors.push({
-                text: this.translate.instant('Name not added'),
-                severity: PoolCreationSeverity.Error,
-                step: key,
-              });
-            }
-            if (key === PoolCreationWizardStep.EnclosureOptions) {
-              errors.push({
-                text: this.translate.instant('No Enclosure selected for a Limit Pool To A Single Enclosure.'),
-                severity: PoolCreationSeverity.Error,
-                step: key,
-              });
-            }
-            if (key === PoolCreationWizardStep.Data) {
-              errors.push({
-                text: this.translate.instant('At least 1 data vdev is required.'),
-                severity: PoolCreationSeverity.Error,
-                step: key,
-              });
-            }
-          }
-        });
-
-        const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
-
-        nonEmptyTopologyCategories.forEach(([typologyCategoryType, typologyCategory], i) => {
-          let dataVdevDisknum = 0;
-          let dataVdevType: string;
-          let firstDataVdevType: CreateVdevLayout;
-          let firstDataVdevDisknum = 0;
-
-          if (typologyCategoryType === VdevType.Data) {
-            if (i === 0) {
-              firstDataVdevType = typologyCategory.layout;
-              dataVdevType = typologyCategory.layout;
-
-              if (typologyCategory.vdevs.length > 0) {
-                firstDataVdevDisknum = typologyCategory.vdevs.length;
-              } else {
-                firstDataVdevDisknum = 0;
-              }
-            }
-
-            if (typologyCategory.vdevs.length > 0) {
-              dataVdevDisknum = typologyCategory.vdevs.length;
-              dataVdevType = typologyCategory.layout;
-            } else {
-              dataVdevDisknum = 0;
-            }
-
-            if (dataVdevDisknum > 0) {
-              if (dataVdevDisknum !== firstDataVdevDisknum && firstDataVdevType !== CreateVdevLayout.Stripe) {
-                errors.push({
-                  text: `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {n} disks, new vdev has {m}', { n: firstDataVdevDisknum, m: dataVdevDisknum })}`,
-                  severity: PoolCreationSeverity.Error,
-                  step: PoolCreationWizardStep.Review,
-                });
-              }
-              if (dataVdevType !== firstDataVdevType) {
-                errors.push({
-                  text: `${this.translate.instant(this.vdevtypeErrorMessage)} ${this.translate.instant('First vdev is a {vdevType}, new vdev is {newVdevType}', { vdevType: firstDataVdevType, newVdevType: dataVdevType })}`,
-                  severity: PoolCreationSeverity.Error,
-                  step: PoolCreationWizardStep.Review,
-                });
-              }
-            }
-          }
-
-          if (
-            [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(typologyCategoryType)
-            && typologyCategory.vdevs.length >= 1 && typologyCategory.layout === CreateVdevLayout.Stripe
-          ) {
-            if (typologyCategoryType === VdevType.Log) {
-              errors.push({
-                text: this.translate.instant('A stripe log vdev may result in data loss if it fails combined with a power outage.'),
-                severity: PoolCreationSeverity.Error,
-                step: PoolCreationWizardStep.Log,
-              });
-            } else {
-              const vdevType = typologyCategoryType === 'special' ? 'metadata' : typologyCategoryType;
-
-              errors.push({
-                text: this.translate.instant('A stripe {vdevType} vdev is highly discouraged and will result in data loss if it fails', { vdevType }),
-                severity: PoolCreationSeverity.Error,
-                step: vdevType as PoolCreationWizardStep,
-              });
-            }
-          }
-
-          const nonUniqueSerialDisks = typologyCategory.vdevs.flat().filter(hasNonUniqueSerial);
-
-          if (nonUniqueSerialDisks?.length) {
-            errors.push({
-              text: getNonUniqueSerialDisksWarning(nonUniqueSerialDisks, this.translate),
-              severity: PoolCreationSeverity.Warning,
-              step: PoolCreationWizardStep.Review,
-            });
-          }
-
-          const disksWithExportedPools = typologyCategory.vdevs.flat().filter(hasExportedPool);
-
-          if (disksWithExportedPools?.length) {
-            errors.push({
-              text: this.exportedPoolsWarning,
-              severity: PoolCreationSeverity.Warning,
-              step: PoolCreationWizardStep.Review,
-            });
-          }
-        });
-
-        return _.uniqBy(errors, 'text')
-          .sort((a, b) => {
-            const warningSeverity = PoolCreationSeverity.Warning;
-            // eslint-disable-next-line no-nested-ternary
-            return (a.severity === warningSeverity ? -1 : (b.severity === warningSeverity ? 1 : 0));
-          });
-      }),
-    );
 
   readonly hasMultipleEnclosuresAfterFirstStep$ = this.select(
     this.allDisks$,
@@ -333,7 +177,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
-    private translate: TranslateService,
   ) {
     super(initialState);
   }
@@ -342,24 +185,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.startOver$.next();
     this.setState({ ...initialState, isLoading: true });
     this.loadStateInitialData().pipe(take(1)).subscribe();
-  }
-
-  updateRequiredStepValidity(
-    step: PoolCreationWizardStep,
-    update: { valid?: boolean; required?: boolean },
-  ): void {
-    this.patchState((state) => {
-      return {
-        ...state,
-        wizardRequiredStepsValidity: {
-          ...state.wizardRequiredStepsValidity,
-          [step]: {
-            ...state.wizardRequiredStepsValidity[step],
-            ...update,
-          },
-        },
-      };
-    });
   }
 
   readonly initialize = this.effect((trigger$) => {
@@ -487,15 +312,5 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           this.updateTopologyCategory(type as VdevType, { vdevs });
         });
       });
-  }
-
-  private filterNonEmptyCategories(topology: PoolManagerTopology): [VdevType, PoolManagerTopologyCategory][] {
-    return Object.keys(topology).reduce((acc, type) => {
-      const category = topology[type as VdevType];
-      if (category.vdevs.length > 0) {
-        acc.push([type as VdevType, category]);
-      }
-      return acc;
-    }, [] as [VdevType, PoolManagerTopologyCategory][]);
   }
 }

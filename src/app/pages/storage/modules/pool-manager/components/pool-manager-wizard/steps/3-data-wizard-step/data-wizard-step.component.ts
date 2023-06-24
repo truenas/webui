@@ -17,7 +17,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 export class DataWizardStepComponent implements OnChanges {
   @Input() isStepActive: boolean;
   @Output() goToLastStep = new EventEmitter<void>();
-  @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
 
   hasDataVdevs: boolean;
 
@@ -36,10 +35,6 @@ export class DataWizardStepComponent implements OnChanges {
         .pipe(untilDestroyed(this))
         .subscribe((result) => {
           this.hasDataVdevs = result;
-
-          if (this.isStepActive) {
-            this.stepStatusValidityChanged.emit(result);
-          }
         });
     }
   }

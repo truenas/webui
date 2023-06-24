@@ -4,14 +4,15 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take } from 'rxjs';
+import { filter } from 'rxjs';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
-import { PoolCreationWizardRequiredStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
+import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import {
   PoolManagerState,
   PoolManagerStore,
@@ -36,7 +37,7 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
   protected readonly vdevTypeLabels = vdevTypeLabels;
   protected readonly poolCreationSeverity = PoolCreationSeverity;
 
-  poolCreationErrors$ = this.store.poolCreationErrors$;
+  poolCreationErrors: PoolCreationError[];
 
   isCreateDisabled = false;
 
@@ -46,6 +47,7 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private poolManagerValidation: PoolManagerValidationService,
   ) {}
 
   get showStartOver(): boolean {
@@ -66,7 +68,7 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
 
     return this.state.enclosures.find((enclosure) => {
       return enclosure.number === this.state.enclosureSettings.limitToSingleEnclosure;
-    }).name;
+    })?.name;
   }
 
   ngOnInit(): void {
@@ -76,21 +78,22 @@ export class ReviewWizardStepComponent implements OnInit, OnChanges {
       this.cdr.markForCheck();
     });
 
-    this.poolCreationErrors$.pipe(untilDestroyed(this)).subscribe((errors) => {
+    this.poolManagerValidation.getPoolCreationErrors().pipe(untilDestroyed(this)).subscribe((errors) => {
+      this.poolCreationErrors = errors;
       this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
     });
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue) {
-      this.store.wizardRequiredStepsValidity$.pipe(take(1), untilDestroyed(this)).subscribe((steps) => {
-        Object.keys(steps).forEach((step: PoolCreationWizardRequiredStep) => {
-          const control = steps[step];
-          if (!control.valid && control.required) {
-            this.store.updateRequiredStepValidity(step, { valid: false });
-          }
-        });
-      });
+      // this.store.wizardRequiredStepsValidity$.pipe(take(1), untilDestroyed(this)).subscribe((steps) => {
+      //   Object.keys(steps).forEach((step: PoolCreationWizardRequiredStep) => {
+      //     const control = steps[step];
+      //     if (!control.valid && control.required) {
+      //       this.store.updateRequiredStepValidity(step, { valid: false });
+      //     }
+      //   });
+      // });
     }
   }
 

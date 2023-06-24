@@ -113,7 +113,6 @@ describe('PoolManagerWizardComponent', () => {
         initialize: jest.fn(),
         hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
-        poolCreationErrors$: of([]),
         startOver$,
       }),
       mockProvider(MatDialog, {

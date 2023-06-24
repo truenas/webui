@@ -110,6 +110,7 @@
   "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",
   "Select the script.     The script will be run using     <a href=\"https://man7.org/linux/man-pages/man1/sh.1p.html\"     target=\"_blank\">sh(1)</a>.": "",
   "Selected": "",
+  "Selected disks have exported pools on them.\n  Using those disks will make existing pools on them unable to be imported.\n  You will lose any and all data in selected disks.": "",
   "Sensitive": "",
   "Service configuration saved": "",
   "Set to inhibit some syslog diagnostics to avoid error messages. See <a href=\"https://man7.org/linux/man-pages/man5/exports.5.html\" target=\"_blank\">exports(5)</a> for examples.": "",
