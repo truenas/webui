@@ -13,6 +13,7 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
+import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import {
   ReviewWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
@@ -150,6 +151,7 @@ describe('ReviewWizardStepComponent', () => {
         enclosureSettings: {
           maximizeEnclosureDispersal: true,
           limitToSingleEnclosure: null,
+          dispersalStrategy: DispersalStrategy.Maximize,
         },
       });
       spectator.detectChanges();
@@ -163,6 +165,7 @@ describe('ReviewWizardStepComponent', () => {
         enclosureSettings: {
           maximizeEnclosureDispersal: false,
           limitToSingleEnclosure: 1,
+          dispersalStrategy: DispersalStrategy.LimitToSingle,
         },
       });
       spectator.detectChanges();

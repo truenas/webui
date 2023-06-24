@@ -89,7 +89,7 @@ export const initialState: PoolManagerState = {
   enclosureSettings: {
     limitToSingleEnclosure: null,
     maximizeEnclosureDispersal: false,
-    dispersalStrategy: DispersalStrategy.None,
+    dispersalStrategy: null,
   },
 
   topology: initialTopology,

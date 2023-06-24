@@ -28,9 +28,9 @@ export class PoolManagerValidationService {
   exportedPoolsWarning = helptext.manager_exportedSelectedDisksWarning;
 
   readonly poolCreationErrors$ = combineLatest([
-    this.store.select((state) => state.name),
-    this.store.select((state) => state.topology),
-    this.store.select((state) => state.enclosureSettings),
+    this.store.name$,
+    this.store.topology$,
+    this.store.enclosureSettings$,
     this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0)),
     combineLatest([
       this.store.hasMultipleEnclosuresAfterFirstStep$,
