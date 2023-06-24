@@ -2013,6 +2013,7 @@
   "Select VDEV layout. This is the first step in setting up your Vdevs.": "",
   "Select a preset ACL": "",
   "Select a schedule preset or choose <i>Custom</i>  to open the advanced scheduler. Note that an in-progress cron task postpones  any later scheduled instance of the same task until the running task is  complete.": "",
+  "Select action": "",
   "Select an existing CSR.": "",
   "Select an existing SSH connection to a remote system or   choose Create New to create a new SSH connection.": "",
   "Select disks you want to use": "",

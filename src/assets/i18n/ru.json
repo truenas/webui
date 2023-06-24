@@ -1441,6 +1441,7 @@
   "Select a previously imported or created CA.": "",
   "Select a schedule preset or choose <i>Custom</i>  to open the advanced scheduler. Note that an in-progress cron task postpones  any later scheduled instance of the same task until the running task is  complete.": "",
   "Select a sector size in bytes. <i>Default</i> leaves the sector size unset and uses the ZFS volume values. Setting a sector size changes both the logical and physical sector size.": "",
+  "Select action": "",
   "Select an existing CSR.": "",
   "Select an existing SSH connection to a remote system or   choose Create New to create a new SSH connection.": "",
   "Select an existing realm that was added  in <b>Directory Services > Kerberos Realms</b>.": "",
