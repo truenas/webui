@@ -50,6 +50,7 @@ describe('EnclosureWizardStepComponent', () => {
     expect(spectator.inject(PoolManagerStore).setEnclosureOptions).toHaveBeenCalledWith({
       limitToSingleEnclosure: null,
       maximizeEnclosureDispersal: true,
+      dispersalStrategy: DispersalStrategy.Maximize,
     });
   });
 
@@ -62,6 +63,7 @@ describe('EnclosureWizardStepComponent', () => {
     expect(spectator.inject(PoolManagerStore).setEnclosureOptions).toHaveBeenCalledWith({
       limitToSingleEnclosure: null,
       maximizeEnclosureDispersal: false,
+      dispersalStrategy: DispersalStrategy.None,
     });
   });
 
@@ -78,6 +80,7 @@ describe('EnclosureWizardStepComponent', () => {
     expect(spectator.inject(PoolManagerStore).setEnclosureOptions).toHaveBeenCalledWith({
       limitToSingleEnclosure: 55,
       maximizeEnclosureDispersal: false,
+      dispersalStrategy: DispersalStrategy.LimitToSingle,
     });
   });
 
@@ -91,6 +94,6 @@ describe('EnclosureWizardStepComponent', () => {
     const store = spectator.inject(PoolManagerStore);
     store.startOver$.next();
 
-    expect(form.value).toStrictEqual({ dispersalStrategy: null, limitToEnclosure: null });
+    expect(form.value).toStrictEqual({ dispersalStrategy: DispersalStrategy.None, limitToEnclosure: null });
   });
 });
