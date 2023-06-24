@@ -67,6 +67,7 @@ export class PoolManagerWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.connectToStore();
+    this.listenForStartOver();
   }
 
   createPool(): void {
@@ -139,5 +140,11 @@ export class PoolManagerWizardComponent implements OnInit {
 
   stepValidityChanged(isValid: boolean): void {
     this.isCurrentFormValid = isValid;
+  }
+
+  listenForStartOver(): void {
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.stepper.selectedIndex = 0;
+    });
   }
 }
