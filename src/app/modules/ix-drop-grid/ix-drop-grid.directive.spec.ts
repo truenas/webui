@@ -1,6 +1,4 @@
-import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { CdkDragEnter, DragDropModule, DropListRef } from '@angular/cdk/drag-drop';
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
 import {
   ComponentRef, EventEmitter, Injector, ViewContainerRef,
@@ -33,8 +31,6 @@ describe('IxDropGridDirective', () => {
       mockProvider(ViewContainerRef, {
         createComponent: jest.fn(),
       }),
-      mockProvider(BreakpointObserver),
-      mockProvider(HighContrastModeDetector),
     ],
   });
 

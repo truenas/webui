@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map, Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 
 @UntilDestroy()
 @Component({

@@ -103,21 +103,6 @@ defineGlobalsInjections({
 });
 
 // eslint-disable-next-line no-restricted-globals
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation((query: unknown) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
-
-// eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window, 'ResizeObserver', {
   writable: true,
   value: jest.fn().mockImplementation(() => ({
