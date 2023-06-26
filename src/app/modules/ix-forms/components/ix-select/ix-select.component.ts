@@ -37,6 +37,19 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   isLoading = false;
   private opts: SelectOption[] = [];
 
+  get selectedLabel(): string {
+    if (this.value === undefined) {
+      return '';
+    }
+
+    if (this.multiple) {
+      return this.multipleLabels.join(',');
+    }
+
+    const selectedOption = this.opts.find((opt) => opt.value === this.value);
+    return selectedOption ? selectedOption.label : '';
+  }
+
   get multipleLabels(): string[] {
     const selectedLabels: string[] = [];
     this.opts.forEach((opt) => {
@@ -44,7 +57,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
         selectedLabels.push(` ${opt.label}`);
       }
     });
-    return selectedLabels.length > 0 ? selectedLabels : null;
+    return selectedLabels.length > 0 ? selectedLabels : [];
   }
 
   constructor(

@@ -9,7 +9,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxUploaderModule } from 'ngx-uploader';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -36,7 +35,6 @@ import { LdapComponent } from './components/ldap/ldap.component';
     EntityModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    NgxUploaderModule,
     routing,
     MatListModule,
     MatToolbarModule,

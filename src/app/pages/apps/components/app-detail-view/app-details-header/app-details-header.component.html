@@ -77,6 +77,7 @@
       <ng-container *ngIf="app?.home; else notAvailable">
         <a
           ixTest="homepage"
+          target="_blank"
           [href]="app.home"
           [title]="app.home"
         >{{ app.home | cleanLink }}</a>

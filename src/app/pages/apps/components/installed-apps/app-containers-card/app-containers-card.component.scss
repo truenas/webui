@@ -36,19 +36,18 @@
 
 .container-item {
   align-items: center;
+  column-gap: 5px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
 
   .container-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 60%;
+    min-width: 60%;
+    word-wrap: break-word;
   }
 
   .container-status {
     flex: 1;
+    min-width: 40px;
   }
 
   .container-action {
