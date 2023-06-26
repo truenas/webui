@@ -1,3 +1,4 @@
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -8,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DndModule } from 'ngx-drag-drop';
@@ -47,6 +49,7 @@ import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
+import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { DownloadKeyDialogComponent } from './components/download-key-dialog/download-key-dialog.component';
@@ -87,6 +90,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     MatCheckboxModule,
     MatListModule,
     CommonDirectivesModule,
+    MatTooltipModule,
   ],
   declarations: [
     PoolManagerComponent,
@@ -123,6 +127,11 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     ManualDiskSelectionStore,
     ManualDiskDragToggleStore,
     GenerateVdevsService,
+    PoolManagerValidationService,
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { showError: true },
+    },
   ],
 })
 

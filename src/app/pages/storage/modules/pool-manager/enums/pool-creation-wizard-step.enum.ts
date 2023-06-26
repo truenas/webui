@@ -9,3 +9,7 @@ export enum PoolCreationWizardStep {
   Dedup = 'dedup',
   Review = 'review',
 }
+
+export type PoolCreationWizardRequiredStep = PoolCreationWizardStep.General
+| PoolCreationWizardStep.EnclosureOptions
+| PoolCreationWizardStep.Data;

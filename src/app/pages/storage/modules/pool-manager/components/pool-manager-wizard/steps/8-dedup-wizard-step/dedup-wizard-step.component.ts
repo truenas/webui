@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
@@ -14,7 +14,9 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DedupWizardStepComponent {
+  @Input() stepWarning: string | null;
   @Output() goToLastStep = new EventEmitter<void>();
+
   protected readonly VdevType = VdevType;
   readonly helptext = helptext;
 

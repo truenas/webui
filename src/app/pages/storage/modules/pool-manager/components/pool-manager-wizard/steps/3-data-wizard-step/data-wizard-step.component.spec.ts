@@ -41,12 +41,17 @@ describe('DataWizardStepComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        topology$: of(null),
       }),
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        isStepActive: true,
+      },
+    });
   });
 
   it('has the correct inputs', () => {
