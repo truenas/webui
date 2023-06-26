@@ -1,0 +1,49 @@
+@import 'scss-imports/splitview';
+
+.apps {
+  column-gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+  margin-bottom: 20px;
+  margin-top: 15px;
+  row-gap: 16px;
+
+  @media (max-width: $breakpoint-xs) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.view-all {
+  align-items: center;
+  background-color: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.loader-bar {
+  height: 2px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  z-index: 10;
+}
+
+
+.fake-apps {
+  column-gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+  row-gap: 16px;
+
+  @media (max-width: $breakpoint-xs) {
+    grid-template-columns: 1fr;
+  }
+
+  ::ng-deep span {
+    height: 153px;
+    margin: 0;
+  }
+}

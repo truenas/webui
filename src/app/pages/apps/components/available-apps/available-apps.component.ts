@@ -1,7 +1,9 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { Router, RouterEvent, NavigationSkipped } from '@angular/router';
+import {
+  Router, RouterEvent, NavigationSkipped,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, combineLatest, filter, map,
@@ -22,10 +24,8 @@ import { LayoutService } from 'app/services/layout.service';
 export class AvailableAppsComponent implements AfterViewInit, OnInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  showViewMoreButton$: Observable<boolean> = combineLatest([
-    this.appsFilterStore.filterValues$,
-  ]).pipe(
-    map(([appsFilter]) => {
+  showViewMoreButton$: Observable<boolean> = this.appsFilterStore.filterValues$.pipe(
+    map((appsFilter) => {
       return !appsFilter.sort && !appsFilter.categories.length;
     }),
   );
@@ -38,6 +38,10 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
       return !!searchQuery || isFilterApplied;
     }),
   );
+  customAppDisabled$ = this.kubernetesStore.selectedPool$.pipe(
+    map((pool) => !pool),
+  );
+  isLoading$ = this.applicationsStore.isLoading$;
 
   readonly customIxChartApp = ixChartApp;
   readonly chartsTrain = chartsTrain;

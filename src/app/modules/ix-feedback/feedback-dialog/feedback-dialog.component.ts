@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { take } from 'rxjs';
+import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AddReview, FeedbackEnvironment } from 'app/modules/ix-feedback/interfaces/feedback.interface';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
@@ -36,8 +37,11 @@ export class FeedbackDialogComponent implements OnInit {
   protected form = this.formBuilder.group({
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
+    image: [null as File[]],
+    take_screenshot: [true],
   });
   private release: string;
+  readonly acceptedFiles = ticketAcceptedFiles;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -69,28 +73,38 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.isLoading = true;
     const values: AddReview = {
-      ...this.form.getRawValue(),
       host_u_id: UUID.UUID(),
-      page: this.window.location.href,
+      rating: this.form.controls.rating.value,
+      message: this.form.controls.message.value,
+      page: this.window.location.pathname,
       user_agent: this.window.navigator.userAgent,
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
       release: this.release,
       extra: {},
     };
 
-    this.isLoading = true;
-
     this.feedbackService.addReview(values)
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
-          this.snackbar.success(
-            this.translate.instant('Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.'),
-          );
-          this.isLoading = false;
-          this.dialogRef.close();
-          this.cdr.markForCheck();
+        next: (response) => {
+          if (this.form.controls.take_screenshot.value && response.success) {
+            this.feedbackService.takeScreenshot().pipe(untilDestroyed(this)).subscribe({
+              next: (file) => {
+                this.attachImageToReview(response.review_id, file);
+              },
+              error: (error) => {
+                console.error(error);
+                this.isLoading = false;
+                this.cdr.markForCheck();
+              },
+            });
+          } else if (this.form.controls.image.value?.length && response.success) {
+            this.attachImageToReview(response.review_id, this.form.controls.image.value[0]);
+          } else {
+            this.onSuccess();
+          }
         },
         error: (error: HttpErrorResponse) => {
           this.isLoading = false;
@@ -98,5 +112,30 @@ export class FeedbackDialogComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  private attachImageToReview(reviewId: number, image: File): void {
+    this.feedbackService.addAttachment(reviewId, image)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => this.onSuccess(),
+        error: (error: HttpErrorResponse) => {
+          console.error(error);
+          this.dialogService.error({
+            title: this.translate.instant('Uploading failed.'),
+            message: error.message,
+            backtrace: JSON.stringify(error, null, '  '),
+          });
+        },
+      });
+  }
+
+  private onSuccess(): void {
+    this.snackbar.success(
+      this.translate.instant('Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.'),
+    );
+    this.isLoading = false;
+    this.dialogRef.close();
+    this.cdr.markForCheck();
   }
 }
