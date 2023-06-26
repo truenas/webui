@@ -37,10 +37,17 @@
       [placeholder]="'Share your thoughts on our product\'s features, usability, or any suggestions for improvement.' | translate"
     ></ix-textarea>
 
+    <ix-slide-toggle
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+      [tooltip]="'Capture and attach screenshot to the review' | translate"
+    ></ix-slide-toggle>
+
     <ix-file-input
+      *ngIf="!form.controls.take_screenshot.value"
       formControlName="image"
-      [label]="'Attach image' | translate"
-      [tooltip]="'Attach image for review' | translate"
+      [label]="'Attach image (optional)' | translate"
+      [tooltip]="'Select image you want attach to review' | translate"
       [multiple]="false"
       [acceptedFiles]="acceptedFiles"
     ></ix-file-input>

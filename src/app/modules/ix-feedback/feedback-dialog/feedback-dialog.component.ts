@@ -9,9 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
-import {
-  filter, map, take,
-} from 'rxjs';
+import { take } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AddReview, FeedbackEnvironment } from 'app/modules/ix-feedback/interfaces/feedback.interface';
@@ -40,9 +38,9 @@ export class FeedbackDialogComponent implements OnInit {
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
     image: [null as File[]],
+    take_screenshot: [true],
   });
   private release: string;
-  private image: File;
   readonly acceptedFiles = ticketAcceptedFiles;
 
   constructor(
@@ -66,13 +64,6 @@ export class FeedbackDialogComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(({ version }) => {
       this.release = version;
-    });
-    this.form.controls.image.valueChanges.pipe(
-      filter((files) => !!files.length),
-      map((files) => files[0]),
-      untilDestroyed(this),
-    ).subscribe((image) => {
-      this.image = image;
     });
   }
 
@@ -98,8 +89,19 @@ export class FeedbackDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (response) => {
-          if (this.image && response.success) {
-            this.attachImageToReview(response.review_id, this.image);
+          if (this.form.controls.take_screenshot.value && response.success) {
+            this.feedbackService.takeScreenshot().pipe(untilDestroyed(this)).subscribe({
+              next: (file) => {
+                this.attachImageToReview(response.review_id, file);
+              },
+              error: (error) => {
+                console.error(error);
+                this.isLoading = false;
+                this.cdr.markForCheck();
+              },
+            });
+          } else if (this.form.controls.image.value?.length && response.success) {
+            this.attachImageToReview(response.review_id, this.form.controls.image.value[0]);
           } else {
             this.onSuccess();
           }

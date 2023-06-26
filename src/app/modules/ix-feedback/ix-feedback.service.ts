@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import html2canvas, { Options } from 'html2canvas';
 import { Observable } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
@@ -24,5 +25,25 @@ export class IxFeedbackService {
       `${this.hostname}/api/reviews/${reviewId}/add-attachment/`,
       formData,
     );
+  }
+
+  takeScreenshot(filename = `${Date.now()}.png`, type = 'image/png', options?: Partial<Options>): Observable<File> {
+    return new Observable((observer) => {
+      html2canvas(document.body, {
+        allowTaint: true,
+        useCORS: true,
+        imageTimeout: 0,
+        ignoreElements: (element) => element.classList.contains('cdk-overlay-container'),
+        ...options,
+      }).then((canvas) => {
+        canvas.toBlob((blob) => {
+          const file = new File([blob], filename, { type });
+          observer.next(file);
+          observer.complete();
+        }, type);
+      }).catch((error) => {
+        observer.error(error);
+      });
+    });
   }
 }

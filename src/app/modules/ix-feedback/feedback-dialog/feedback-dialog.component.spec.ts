@@ -11,6 +11,7 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
+import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -51,6 +52,7 @@ describe('FeedbackDialogComponent', () => {
           },
           message: 'Image uploaded successfully',
         })),
+        takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
       }),
       mockProvider(SnackbarService),
       provideMockStore({
@@ -95,6 +97,8 @@ describe('FeedbackDialogComponent', () => {
         rating: 5,
       }),
     );
+    expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
+    expect(spectator.inject(IxFeedbackService).takeScreenshot).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
@@ -106,8 +110,11 @@ describe('FeedbackDialogComponent', () => {
     const message = await loader.getHarness(IxTextareaHarness.with({ label: 'Message' }));
     await message.setValue('hi there. can you improve this?. thanks.');
 
+    const takeScreenshot = await loader.getHarness(IxSlideToggleHarness.with({ label: 'Take screenshot of the current page' }));
+    await takeScreenshot.setValue(false);
+
     const attachmentFile = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
-    const image = await loader.getHarness(IxFileInputHarness.with({ label: 'Attach image' }));
+    const image = await loader.getHarness(IxFileInputHarness.with({ label: 'Attach image (optional)' }));
     await image.setValue([attachmentFile]);
 
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
@@ -119,8 +126,8 @@ describe('FeedbackDialogComponent', () => {
         rating: 5,
       }),
     );
+    expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
   });
 });
