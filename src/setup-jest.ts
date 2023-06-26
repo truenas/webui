@@ -1,4 +1,6 @@
 import 'jest-preset-angular/setup-jest';
+import { HighContrastModeDetector } from '@angular/cdk/a11y';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -20,6 +22,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { defineGlobalsInjections } from '@ngneat/spectator';
+import { mockProvider } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import {
@@ -99,7 +102,24 @@ defineGlobalsInjections({
       // eslint-disable-next-line no-restricted-globals
       useValue: window,
     },
+    mockProvider(BreakpointObserver),
+    mockProvider(HighContrastModeDetector),
   ],
+});
+
+// eslint-disable-next-line no-restricted-globals
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query: unknown) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
 });
 
 // eslint-disable-next-line no-restricted-globals

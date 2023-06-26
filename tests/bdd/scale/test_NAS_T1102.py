@@ -101,7 +101,7 @@ def create_pool_should_appear_while_pool_is_being_created(driver):
 @then('the pools system should appear in the list')
 def the_pools_system_should_appear_in_the_list(driver):
     """the pools system should appear in the list."""
-    assert wait_on_element(driver, 7, '//h2[text()="system"]')
+    assert wait_on_element(driver, 10, '//h2[text()="system"]')
 
 
 @then('navigate to System Setting and click Advanced to open the Advanced page should open')
@@ -128,6 +128,7 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
     assert wait_on_element(driver, 5, xpaths.system_Dataset.title)
     time.sleep(1)
+    assert wait_on_element_disappear(driver, 120, xpaths.progress.progress_Spinner)
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.system_Dataset.pool_Select).click()
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Option('system'))

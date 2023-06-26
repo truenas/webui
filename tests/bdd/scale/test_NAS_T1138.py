@@ -57,7 +57,7 @@ def on_the_dashboard_click_on_storage_in_the_side_menu(driver):
 def on_the_storage_click_on_the_tank_manage_datasets_button(driver):
     """on the Storage click on the tank Manage Datasets button."""
     assert wait_on_element(driver, 10, xpaths.storage.title)
-    assert wait_on_element(driver, 5, xpaths.storage.manage_Dataset_Button('tank'), 'clickable')
+    assert wait_on_element(driver, 10, xpaths.storage.manage_Dataset_Button('tank'), 'clickable')
     driver.find_element_by_xpath(xpaths.storage.manage_Dataset_Button('tank')).click()
 
 
@@ -76,6 +76,7 @@ def on_the_datasets_page_click_on_the_tank_tree_and_click_add_zvol(driver):
 def on_the_the_add_zvol_page_input_nopeer1_for_zvol_name(driver, zvol_name):
     """on the the Add Zvol page input nopeer1 for Zvol Name."""
     assert wait_on_element(driver, 5, xpaths.add_Zvol.title)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Zvol.name_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Zvol.name_Input).clear()
     driver.find_element_by_xpath(xpaths.add_Zvol.name_Input).send_keys(zvol_name)

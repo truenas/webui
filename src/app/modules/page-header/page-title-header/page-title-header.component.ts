@@ -9,6 +9,7 @@ import { PageTitleService } from 'app/services/page-title.service';
 })
 export class PageTitleHeaderComponent {
   @Input() pageTitle: string;
+  @Input() loading = false;
 
   readonly defaultTitle$ = this.pageTitleService.title$;
   readonly hasNewIndicator$ = this.pageTitleService.hasNewIndicator$;
