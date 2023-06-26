@@ -278,11 +278,6 @@ export class NetworkConfigurationComponent implements OnInit {
             wsd: config.service_announcement.wsd,
           };
 
-          // TODO: REMOVE
-          if (config.hosts && typeof config.hosts === 'string') {
-            transformed.hosts = [config.hosts];
-          }
-
           if (config.activity) {
             if (config.activity.activities.length === 0) {
               transformed.outbound_network_activity = config.activity.type;
