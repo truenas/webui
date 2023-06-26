@@ -6,6 +6,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { initialState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
@@ -70,6 +71,7 @@ describe('PoolManagerStore', () => {
       spectator.service.setEnclosureOptions({
         limitToSingleEnclosure: 1,
         maximizeEnclosureDispersal: false,
+        dispersalStrategy: DispersalStrategy.None,
       });
       spectator.service.setDiskWarningOptions({
         allowExportedPools: ['expo'],
@@ -84,6 +86,7 @@ describe('PoolManagerStore', () => {
       spectator.service.setEnclosureOptions({
         limitToSingleEnclosure: 1,
         maximizeEnclosureDispersal: false,
+        dispersalStrategy: DispersalStrategy.None,
       });
       spectator.service.setManualTopologyCategory(VdevType.Data, [[disks[0]]]);
 
@@ -149,6 +152,7 @@ describe('PoolManagerStore', () => {
       const enclosureSettings = {
         limitToSingleEnclosure: 5,
         maximizeEnclosureDispersal: false,
+        dispersalStrategy: DispersalStrategy.None,
       };
       spectator.service.setEnclosureOptions(enclosureSettings);
 

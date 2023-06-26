@@ -8,7 +8,6 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CipherType } from 'app/enums/cipher-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -35,7 +34,6 @@ describe('SshConnectionFormComponent', () => {
       username: 'root',
       private_key: 1,
       remote_host_key: 'ssh-rsaAAAAB3NzaC1',
-      cipher: CipherType.Standard,
       connect_timeout: 10,
     },
   } as KeychainSshCredentials;
@@ -92,7 +90,6 @@ describe('SshConnectionFormComponent', () => {
         'Private Key': 'key1',
         'Remote Host Key': 'ssh-rsaAAAAB3NzaC1',
 
-        Cipher: 'Standard',
         'Connect Timeout': '10',
       });
     });
@@ -103,7 +100,6 @@ describe('SshConnectionFormComponent', () => {
       await form.fillForm({
         Name: 'Updated',
         'Remote Host Key': 'ssh-rsaAAAAUpdated',
-        Cipher: 'Fast',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -112,7 +108,6 @@ describe('SshConnectionFormComponent', () => {
       expect(websocket.call).toHaveBeenCalledWith('keychaincredential.update', [11, {
         name: 'Updated',
         attributes: {
-          cipher: CipherType.Fast,
           connect_timeout: 10,
           host: '127.0.0.1',
           port: 22,
@@ -144,7 +139,6 @@ describe('SshConnectionFormComponent', () => {
         Username: 'john',
         'Private Key': 'key2',
         'Remote Host Key': 'ssh-rsaNew',
-        Cipher: 'Disabled',
         'Connect Timeout': '20',
       });
 
@@ -159,7 +153,6 @@ describe('SshConnectionFormComponent', () => {
           existing_key_id: 2,
         },
         manual_setup: {
-          cipher: CipherType.Disabled,
           connect_timeout: '20',
           host: 'truenas.com',
           port: 23,
@@ -181,8 +174,6 @@ describe('SshConnectionFormComponent', () => {
         'Admin Password': '12345678',
         'One-Time Password (if necessary)': '1234',
         'Private Key': 'key2',
-
-        Cipher: 'Fast',
       });
       await form.fillForm({
         'Enable passwordless sudo for zfs commands': true,
@@ -199,7 +190,6 @@ describe('SshConnectionFormComponent', () => {
           generate_key: false,
         },
         semi_automatic_setup: {
-          cipher: CipherType.Fast,
           connect_timeout: 10,
           password: '12345678',
           otp_token: '1234',
@@ -254,7 +244,6 @@ describe('SshConnectionFormComponent', () => {
           name: 'Test Key',
         },
         semi_automatic_setup: {
-          cipher: CipherType.Standard,
           connect_timeout: 10,
           otp_token: '',
           password: '123456',
