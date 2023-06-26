@@ -36,7 +36,6 @@ export interface FtpConfig {
   tls_opt_enable_diags: boolean;
   tls_opt_export_cert_data: boolean;
   tls_opt_ip_address_required: boolean;
-  tls_opt_no_cert_request: boolean;
   tls_opt_no_empty_fragments: boolean;
   tls_opt_no_session_reuse_required: boolean;
   tls_opt_stdenvvars: boolean;

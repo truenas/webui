@@ -84,6 +84,10 @@ export class EnclosureWizardStepComponent implements OnInit {
       switchMap(() => timer(0)),
       tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
     ).pipe(untilDestroyed(this)).subscribe();
+
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.reset();
+    });
   }
 
   private connectFormToStore(): void {

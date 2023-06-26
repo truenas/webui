@@ -1,7 +1,7 @@
 import { EventEmitter } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TreeComponent as BaseTreeComponent, TreeModel } from '@circlon/angular-tree-component';
-import { IDTypeDictionary } from '@circlon/angular-tree-component/lib/defs/api';
+import { TreeComponent as BaseTreeComponent, TreeModel } from '@bugsplat/angular-tree-component';
+import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import _ from 'lodash';
-import { forkJoin, Observable, of } from 'rxjs';
+import {
+  forkJoin, Observable, of, Subject,
+} from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -117,6 +119,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     }),
   );
 
+  readonly startOver$ = new Subject<void>();
+
   readonly hasMultipleEnclosuresAfterFirstStep$ = this.select(
     this.allDisks$,
     this.diskSettings$,
@@ -179,35 +183,36 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   reset(): void {
-    this.setState(initialState);
+    this.startOver$.next();
+    this.setState({ ...initialState, isLoading: true });
+    this.loadStateInitialData().pipe(take(1)).subscribe();
   }
 
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
-      tap(() => this.setState({
-        ...initialState,
-        isLoading: true,
-      })),
-      switchMap(() => {
-        return forkJoin([
-          this.ws.call('disk.get_unused'),
-          this.ws.call('enclosure.query'),
-        ]).pipe(
-          tapResponse(([allDisks, enclosures]) => {
-            this.patchState({
-              isLoading: false,
-              allDisks,
-              enclosures,
-            });
-          },
-          (error: WebsocketError) => {
-            this.patchState({ isLoading: false });
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-          }),
-        );
-      }),
+      tap(() => this.setState({ ...initialState, isLoading: true })),
+      switchMap(() => this.loadStateInitialData()),
     );
   });
+
+  loadStateInitialData(): Observable<[UnusedDisk[], Enclosure[]]> {
+    return forkJoin([
+      this.ws.call('disk.get_unused'),
+      this.ws.call('enclosure.query'),
+    ]).pipe(
+      tapResponse(([allDisks, enclosures]) => {
+        this.patchState({
+          isLoading: false,
+          allDisks,
+          enclosures,
+        });
+      },
+      (error: WebsocketError) => {
+        this.patchState({ isLoading: false });
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+      }),
+    );
+  }
 
   readonly resetTopologyCategory = this.updater((state, category: VdevType) => {
     return {

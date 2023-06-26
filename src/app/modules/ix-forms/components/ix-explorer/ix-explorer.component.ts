@@ -10,7 +10,7 @@ import {
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent,
-} from '@circlon/angular-tree-component';
+} from '@bugsplat/angular-tree-component';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { lastValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
