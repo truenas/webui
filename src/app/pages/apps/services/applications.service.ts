@@ -85,7 +85,7 @@ export class ApplicationsService {
       firstOption.push(['recommended', '=', true]);
     }
 
-    filters.categories = filters.categories?.filter((category) => !category.includes(AppExtraCategory.Recommended));
+    filters.categories = filters.categories?.filter((category) => !category?.includes(AppExtraCategory.Recommended));
 
     if (filters.categories?.length) {
       (firstOption as unknown as QueryParams<AvailableApp>[]).push(
