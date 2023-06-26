@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CipherType } from 'app/enums/cipher-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/system/ssh-connections';
@@ -64,7 +63,6 @@ export class SshConnectionFormComponent implements OnInit {
     otp_token: [''],
     private_key: [null as (number | typeof generateNewKeyValue), Validators.required],
 
-    cipher: [CipherType.Standard],
     connect_timeout: [10],
   });
 
@@ -110,19 +108,6 @@ export class SshConnectionFormComponent implements OnInit {
       ];
     }),
   );
-
-  readonly ciphers$ = of([
-    {
-      label: 'Standard',
-      value: CipherType.Standard,
-    }, {
-      label: 'Fast',
-      value: CipherType.Fast,
-    }, {
-      label: 'Disabled',
-      value: CipherType.Disabled,
-    },
-  ]);
 
   readonly isNotRootUsername$ = this.form.controls.username.valueChanges.pipe(
     map((username) => username !== 'root'),
@@ -239,7 +224,6 @@ export class SshConnectionFormComponent implements OnInit {
         port: values.port,
         username: values.username,
         remote_host_key: values.remote_host_key,
-        cipher: values.cipher,
         connect_timeout: values.connect_timeout,
       } as SshCredentials;
     } else {
@@ -250,7 +234,6 @@ export class SshConnectionFormComponent implements OnInit {
         username: values.username,
         otp_token: values.otp_token,
         connect_timeout: values.connect_timeout,
-        cipher: values.cipher,
         sudo: values.sudo,
       };
     }
@@ -268,7 +251,6 @@ export class SshConnectionFormComponent implements OnInit {
         username: values.username,
         private_key: values.private_key,
         remote_host_key: values.remote_host_key,
-        cipher: values.cipher,
         connect_timeout: values.connect_timeout,
       } as SshCredentials,
     };
