@@ -36,6 +36,14 @@
       [rows]="5"
       [placeholder]="'Share your thoughts on our product\'s features, usability, or any suggestions for improvement.' | translate"
     ></ix-textarea>
+
+    <ix-file-input
+      formControlName="image"
+      [label]="'Attach image' | translate"
+      [tooltip]="'Attach image for review' | translate"
+      [multiple]="false"
+      [acceptedFiles]="acceptedFiles"
+    ></ix-file-input>
   </form>
 </mat-dialog-content>
 
