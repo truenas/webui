@@ -31,7 +31,9 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -100,6 +102,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
+    private appsStore: AppsStore,
     private layoutService: LayoutService,
     private loader: AppLoaderService,
     private router: Router,
@@ -217,6 +220,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
         this.translate.instant('Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.'),
       ),
+    );
+    this.form.controls.release_name.addAsyncValidators(
+      forbiddenAsyncValues(this.appsStore.installedApps$.pipe(map((apps) => apps.map((app) => app.name)))),
     );
 
     this.dynamicSection.push({
