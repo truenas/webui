@@ -306,11 +306,14 @@ def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):
 @then('the list of disks should appear in ascending order starting with sda')
 def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver):
     """the list of disks should appear in ascending order starting with sda."""
+    # make sure the spinner if out of the way
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
     # Verify disk are sorted
     disk_list = {1: 'sda', 3: 'sdb', 5: 'sdc'}
     for num in list(disk_list.keys()):
-        disk = driver.find_element_by_xpath(f'//table/tbody/tr[{num}]/td[2]').text
-        assert disk == disk_list[num]
+        disk = driver.find_element_by_xpath(f'//table/tbody/tr[{num}]/td[2]/div').text
+        # using strip to remove empty spaces
+        assert disk.strip() == disk_list[num]
 
 
 @then('wipe all disk without a pool')
