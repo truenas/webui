@@ -55,7 +55,6 @@ export class ServiceFtpComponent implements OnInit {
     tls_opt_common_name_required: [false],
     tls_opt_enable_diags: [false],
     tls_opt_export_cert_data: [false],
-    tls_opt_no_cert_request: [false],
     tls_opt_no_empty_fragments: [false],
     tls_opt_no_session_reuse_required: [false],
     tls_opt_stdenvvars: [false],

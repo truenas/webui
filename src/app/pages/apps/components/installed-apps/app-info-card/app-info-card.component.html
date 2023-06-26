@@ -59,6 +59,7 @@
               <a
                 *ngFor="let source of app?.chart_metadata?.sources;"
                 class="source-link"
+                target="_blank"
                 [href]="source"
                 [title]="source"
                 [ixTest]="[app.name, 'source']"
