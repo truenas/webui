@@ -29,8 +29,3 @@ export const passiveNodeReplaced = createAction(
 export const systemInfoUpdated = createAction(
   '[System Info API] System Info Updated',
 );
-
-export const systemHostIdLoaded = createAction(
-  '[System Host API] Host Id Loaded',
-  props<{ systemHostId: string }>(),
-);

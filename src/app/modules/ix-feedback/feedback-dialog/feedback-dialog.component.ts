@@ -20,7 +20,7 @@ import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
-import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export const maxRatingValue = 5;
 
@@ -40,7 +40,7 @@ export class FeedbackDialogComponent implements OnInit {
     take_screenshot: [true],
   });
   private release: string;
-  private systemHostId: string;
+  private hostId: string;
   readonly acceptedFiles = ticketAcceptedFiles;
 
   constructor(
@@ -65,11 +65,11 @@ export class FeedbackDialogComponent implements OnInit {
     ).subscribe(({ version }) => {
       this.release = version;
     });
-    this.store$.select(selectSystemHostId).pipe(
+    this.feedbackService.getHostId().pipe(
       take(1),
       untilDestroyed(this),
-    ).subscribe((systemHostId) => {
-      this.systemHostId = systemHostId;
+    ).subscribe((hostId) => {
+      this.hostId = hostId;
     });
   }
 
@@ -82,7 +82,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.isLoading = true;
     const values: AddReview = {
       ...this.form.getRawValue(),
-      host_u_id: this.systemHostId,
+      host_u_id: this.hostId,
       rating: this.form.controls.rating.value,
       message: this.form.controls.message.value,
       page: this.window.location.pathname,

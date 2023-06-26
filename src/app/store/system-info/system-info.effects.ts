@@ -9,7 +9,7 @@ import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
-  systemFeaturesLoaded, systemHaCapabilityLoaded, systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated,
+  systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -69,15 +69,6 @@ export class SystemInfoEffects {
     mergeMap(() => {
       return this.ws.call('system.is_ix_hardware').pipe(
         map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
-      );
-    }),
-  ));
-
-  loadSystemHostId = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
-    mergeMap(() => {
-      return this.ws.call('system.host_id').pipe(
-        map((systemHostId) => systemHostIdLoaded({ systemHostId })),
       );
     }),
   ));

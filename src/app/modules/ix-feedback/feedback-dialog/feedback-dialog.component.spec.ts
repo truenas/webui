@@ -18,7 +18,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { DialogService } from 'app/services';
-import { selectSystemHostId, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialogComponent>;
@@ -53,6 +53,7 @@ describe('FeedbackDialogComponent', () => {
           message: 'Image uploaded successfully',
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
+        getHostId: jest.fn(() => of('unique-system-host-id-1234')),
       }),
       mockProvider(SnackbarService),
       provideMockStore({
@@ -62,10 +63,6 @@ describe('FeedbackDialogComponent', () => {
             value: {
               version: 'TN-RELEASE',
             } as SystemInfo,
-          },
-          {
-            selector: selectSystemHostId,
-            value: 'unique-system-host-id-1234',
           },
         ],
       }),

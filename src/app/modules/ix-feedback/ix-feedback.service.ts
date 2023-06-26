@@ -5,13 +5,21 @@ import { Observable } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
+import { WebSocketService } from 'app/services';
 import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
 @Injectable()
 export class IxFeedbackService {
   private readonly hostname = 'https://feedback.ui.truenas.com';
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private ws: WebSocketService,
+  ) {}
+
+  getHostId(): Observable<string> {
+    return this.ws.call('system.host_id');
+  }
 
   addReview(body: AddReview): Observable<ReviewAddedResponse> {
     return this.httpClient.post<ReviewAddedResponse>(`${this.hostname}/api/reviews/add/`, body);
