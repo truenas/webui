@@ -108,7 +108,7 @@ describe('NetworkConfigurationCardComponent', () => {
       'Additional Domains:': 'domain.cz',
       'Domain:': 'local',
       'HTTP Proxy:': 'http://proxy.com',
-      'Hostname Database:': 'host1.com\nhost2.com',
+      'Hostname Database:': 'host1.com, host2.com',
       'Hostname:': 'truenas',
       'Netwait:': 'Enabled',
       'Outbound Network:': 'Allow usage, kmip, rsync, update',
