@@ -116,7 +116,7 @@ describe('AppsStore', () => {
           isKubernetesStarted: true,
           selectedPool: 'ix-applications-pool',
           latestApps: [{ ...installedAndRecommendedApp }],
-          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'Recommended'] }],
+          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
           filteredApps: [],
 
         } as AppsState,
@@ -323,7 +323,7 @@ describe('AppsStore', () => {
             apps: [
               { ...installedAndRecommendedApp },
             ],
-            category: 'New and Updated',
+            category: 'new-and-updated',
             title: 'New & Updated Apps',
             totalApps: 1,
           },
@@ -331,7 +331,7 @@ describe('AppsStore', () => {
             apps: [
               { ...installedAndRecommendedApp, categories: ['storage', AppExtraCategory.Recommended] },
             ],
-            category: 'Recommended',
+            category: 'recommended',
             title: 'Recommended Apps',
             totalApps: 1,
           },

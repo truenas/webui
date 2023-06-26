@@ -1,7 +1,8 @@
 <ng-template #pageHeader>
-  <ix-page-title-header class="app-detail-page-title" [pageTitle]="pageTitle | titlecase">
-    <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
-  </ix-page-title-header>
+  <ix-page-title-header
+    [pageTitle]="pageTitle | titlecase"
+    [loading]="isLoading$ | async"
+  ></ix-page-title-header>
 </ng-template>
 
 <div class="flex-container">
