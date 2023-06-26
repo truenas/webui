@@ -788,6 +788,7 @@ export type ApiDirectory = {
   'system.shutdown': { params: { delay?: number }; response: void };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.info': { params: void; response: SystemInfo };
+  'system.host_id': { params: void; response: string };
   'system.is_ha_capable': { params: void; response: boolean };
   'system.is_ix_hardware': { params: void; response: boolean };
   'system.advanced.config': { params: void; response: AdvancedConfig };

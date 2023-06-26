@@ -1,16 +1,15 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap,
 } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
-  systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded, systemInfoUpdated,
+  systemFeaturesLoaded, systemHaCapabilityLoaded, systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -60,7 +59,7 @@ export class SystemInfoEffects {
     ofType(adminUiInitialized),
     mergeMap(() => {
       return this.ws.call('system.is_ha_capable').pipe(
-        map((isSystemHaCapable: boolean) => systemHaCapabilityLoaded({ isSystemHaCapable })),
+        map((isSystemHaCapable) => systemHaCapabilityLoaded({ isSystemHaCapable })),
       );
     }),
   ));
@@ -69,7 +68,16 @@ export class SystemInfoEffects {
     ofType(adminUiInitialized),
     mergeMap(() => {
       return this.ws.call('system.is_ix_hardware').pipe(
-        map((isIxHardware: boolean) => ixHardwareLoaded({ isIxHardware })),
+        map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
+      );
+    }),
+  ));
+
+  loadSystemHostId = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('system.host_id').pipe(
+        map((systemHostId) => systemHostIdLoaded({ systemHostId })),
       );
     }),
   ));
@@ -77,6 +85,5 @@ export class SystemInfoEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
-    @Inject(WINDOW) private window: Window,
   ) { }
 }

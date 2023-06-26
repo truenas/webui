@@ -7,7 +7,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { take } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -20,7 +19,7 @@ import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export const maxRatingValue = 5;
 
@@ -38,6 +37,7 @@ export class FeedbackDialogComponent implements OnInit {
     message: [''],
   });
   private release: string;
+  private systemHostId: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -61,6 +61,12 @@ export class FeedbackDialogComponent implements OnInit {
     ).subscribe(({ version }) => {
       this.release = version;
     });
+    this.store$.select(selectSystemHostId).pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((systemHostId) => {
+      this.systemHostId = systemHostId;
+    });
   }
 
   openFileTicketForm(): void {
@@ -71,7 +77,7 @@ export class FeedbackDialogComponent implements OnInit {
   onSubmit(): void {
     const values: AddReview = {
       ...this.form.getRawValue(),
-      host_u_id: UUID.UUID(),
+      host_u_id: this.systemHostId,
       page: this.window.location.href,
       user_agent: this.window.navigator.userAgent,
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,

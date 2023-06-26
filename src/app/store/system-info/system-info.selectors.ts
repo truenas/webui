@@ -26,6 +26,11 @@ export const selectIsIxHardware = createSelector(
   (state) => state.isIxHardware,
 );
 
+export const selectSystemHostId = createSelector(
+  selectSystemInfoState,
+  (state) => state.systemHostId,
+);
+
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
 
 export const waitForSystemFeatures = selectNotNull(selectSystemFeatures);
