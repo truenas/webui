@@ -8,6 +8,7 @@
   margin: 0 auto 32px;
   padding-bottom: 8px;
   padding-top: 0;
+  position: relative;
 
   @media (max-width: $breakpoint-tablet) {
     width: 100%;
@@ -27,6 +28,12 @@
 ix-breadcrumb {
   position: relative;
   top: 8px;
+}
+
+ix-fake-progress-bar {
+  bottom: 0;
+  height: 2px;
+  position: absolute;
 }
 
 .title-container {
@@ -82,4 +89,3 @@ ix-breadcrumb {
     width: 80%;
   }
 }
-

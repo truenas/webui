@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -24,7 +24,7 @@ export class AppResourcesCardComponent implements OnInit {
   memoryTotal: number;
   pool: string;
 
-  availableSpace$ = this.applicationsStore.selectedPool$.pipe(
+  availableSpace$ = this.kubernetesStore.selectedPool$.pipe(
     filter((pool) => !!pool),
     switchMap((pool) => {
       return this.ws.call('pool.dataset.get_instance', [`${pool}/ix-applications`]);
@@ -37,7 +37,7 @@ export class AppResourcesCardComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    protected applicationsStore: AppsStore,
+    protected kubernetesStore: KubernetesStore,
   ) {}
 
   ngOnInit(): void {

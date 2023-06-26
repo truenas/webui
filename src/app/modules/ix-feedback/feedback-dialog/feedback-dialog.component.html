@@ -1,4 +1,7 @@
+<ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
+
 <h1 matDialogTitle>{{ 'How would you rate this page?' | translate }}</h1>
+
 <mat-dialog-content>
   <button
     mat-icon-button
@@ -33,6 +36,21 @@
       [rows]="5"
       [placeholder]="'Share your thoughts on our product\'s features, usability, or any suggestions for improvement.' | translate"
     ></ix-textarea>
+
+    <ix-slide-toggle
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+      [tooltip]="'Capture and attach screenshot to the review' | translate"
+    ></ix-slide-toggle>
+
+    <ix-file-input
+      *ngIf="!form.controls.take_screenshot.value"
+      formControlName="image"
+      [label]="'Attach image (optional)' | translate"
+      [tooltip]="'Select image you want attach to review' | translate"
+      [multiple]="false"
+      [acceptedFiles]="acceptedFiles"
+    ></ix-file-input>
   </form>
 </mat-dialog-content>
 
@@ -43,7 +61,7 @@
       type="submit"
       color="primary"
       ixTest="submit"
-      [disabled]="form.invalid"
+      [disabled]="form.invalid || isLoading"
       (click)="onSubmit()"
     >
       {{ 'Submit' | translate }}

@@ -55,7 +55,10 @@ import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -66,6 +69,7 @@ import { AppSectionExpandCollapseComponent } from './components/app-section-expa
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
+import { CategoryViewComponent } from './components/available-apps/category-view/category-view.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
@@ -109,6 +113,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppSettingsButtonComponent,
     AppMetadataCardComponent,
     AppSectionExpandCollapseComponent,
+    CategoryViewComponent,
   ],
   imports: [
     CommonModule,
@@ -148,6 +153,9 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
   ],
   providers: [
     AppsStore,
+    AppsFilterStore,
+    KubernetesStore,
+    InstalledAppsStore,
   ],
 })
 export class AppsModule { }

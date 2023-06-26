@@ -14,7 +14,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { IxFilterSelectListHarness } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.harness';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
@@ -23,7 +25,7 @@ describe('AvailableAppsHeaderComponent', () => {
   let catalogsItems: IxFilterSelectListHarness;
   let sortItems: IxFilterSelectListHarness;
   let categoriesSelect: IxChipsHarness;
-  let appsStore: AppsStore;
+  let appsFilterStore: AppsFilterStore;
 
   const createComponent = createComponentFactory({
     component: AvailableAppsHeaderComponent,
@@ -36,7 +38,22 @@ describe('AvailableAppsHeaderComponent', () => {
       mockWebsocket([
         mockCall('chart.release.query', [{}, {}, {}] as ChartRelease[]),
       ]),
+      mockProvider(InstalledAppsStore, {
+        installedApps$: of([{}, {}, {}] as ChartRelease[]),
+      }),
+      mockProvider(AppsFilterStore, {
+        isFilterApplied$: of(false),
+        filterValues$: of({
+          catalogs: ['TRUENAS'],
+          sort: null,
+          categories: ['storage', 'crypto', 'media', 'torrent'],
+        }),
+        searchQuery$: of(''),
+        applyFilters: jest.fn(),
+        applySearchQuery: jest.fn(),
+      }),
       mockProvider(AppsStore, {
+        isLoading$: of(false),
         availableApps$: of([{
           catalog: 'TRUENAS',
           categories: ['storage', 'crypto'],
@@ -48,17 +65,8 @@ describe('AvailableAppsHeaderComponent', () => {
           last_update: { $date: 343 },
           name: 'qbittorent',
         }] as AvailableApp[]),
-        installedApps$: of([{}, {}, {}] as ChartRelease[]),
-        filterValues$: of({
-          catalogs: ['TRUENAS'],
-          sort: null,
-          categories: ['storage', 'crypto', 'media', 'torrent'],
-        }),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
-        isFilterApplied$: of(false),
-        searchQuery$: of(''),
-        applySearchQuery: jest.fn(),
-        applyFilters: jest.fn(),
+        catalogs$: of(['TRUENAS', 'TEST']),
       }),
     ],
   });
@@ -74,7 +82,7 @@ describe('AvailableAppsHeaderComponent', () => {
     catalogsItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
     sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[1];
     categoriesSelect = await loader.getHarness(IxChipsHarness);
-    appsStore = spectator.inject(AppsStore);
+    appsFilterStore = spectator.inject(AppsFilterStore);
   });
 
   it('checks the displayed numbers', () => {
@@ -87,13 +95,13 @@ describe('AvailableAppsHeaderComponent', () => {
 
   it('calls applySearchQuery when user types in the search input', async () => {
     await searchInput.setValue('search string');
-    expect(appsStore.applySearchQuery).toHaveBeenLastCalledWith('search string');
+    expect(appsFilterStore.applySearchQuery).toHaveBeenLastCalledWith('search string');
   });
 
   it('calls applyFilters when user selects catalogs', async () => {
     await catalogsItems.setValue(['TRUENAS']);
 
-    expect(appsStore.applyFilters).toHaveBeenLastCalledWith({
+    expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['TRUENAS'],
       sort: null,
       categories: [
@@ -108,7 +116,7 @@ describe('AvailableAppsHeaderComponent', () => {
   it('calls applyFilters when user selects sort', async () => {
     await sortItems.setValue(['Updated Date']);
 
-    expect(appsStore.applyFilters).toHaveBeenLastCalledWith({
+    expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['TRUENAS', 'TEST'],
       sort: AppsFiltersSort.LastUpdate,
       categories: [
@@ -123,7 +131,7 @@ describe('AvailableAppsHeaderComponent', () => {
   it('calls applyFilters when user selects categories', async () => {
     await categoriesSelect.setValue(['storage']);
 
-    expect(appsStore.applyFilters).toHaveBeenLastCalledWith({
+    expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['TRUENAS', 'TEST'],
       sort: null,
       categories: ['storage'],

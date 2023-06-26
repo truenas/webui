@@ -10,6 +10,7 @@ export interface RoutePart {
   url: string;
   ngUrl?: string[];
   disabled?: boolean;
+  isNew?: boolean;
 }
 
 @Injectable()
@@ -41,11 +42,10 @@ export class RoutePartsService {
         ngUrl.push(url);
       }
 
-      const { title, breadcrumb, disabled } = child.snapshot.data as {
-        title: string;
-        breadcrumb: string;
-        disabled: boolean;
-      };
+      const {
+        title, breadcrumb, disabled, isNew,
+      } = child.snapshot.data as RoutePart;
+
       if (title) {
         routeParts.push({
           title,
@@ -53,6 +53,7 @@ export class RoutePartsService {
           disabled,
           url,
           ngUrl,
+          isNew,
         });
       }
 

@@ -55,15 +55,16 @@
         <div class="details-item sources">
           <span class="label">{{ 'Source' | translate }}:</span>
           <span class="value">
-            <ng-container *ngIf="app?.chart_metadata?.sources?.length; else notAvailable">
-              <ng-container *ngFor="let source of app?.chart_metadata?.sources; last as isLast">
-                <a
-                  [href]="source"
-                  [title]="source"
-                  [ixTest]="[app.name, 'source']"
-                >{{ getCleanLink(source) }}</a><span *ngIf="!isLast">, </span>
-              </ng-container>
-            </ng-container>
+            <div *ngIf="app?.chart_metadata?.sources?.length; else notAvailable">
+              <a
+                *ngFor="let source of app?.chart_metadata?.sources;"
+                class="source-link"
+                target="_blank"
+                [href]="source"
+                [title]="source"
+                [ixTest]="[app.name, 'source']"
+              >{{ source | cleanLink }}</a>
+            </div>
           </span>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->

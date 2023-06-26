@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { startCase } from 'lodash';
-import { filter } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -13,7 +13,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { getCleanLink } from 'app/pages/apps/utils/get-clean-link';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { RedirectService, AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -26,7 +26,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 })
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
-  getCleanLink = getCleanLink;
 
   constructor(
     private appLoaderService: AppLoaderService,
@@ -37,6 +36,7 @@ export class AppInfoCardComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private router: Router,
+    private installedAppsStore: InstalledAppsStore,
   ) {}
 
   get hasUpdates(): boolean {
@@ -108,12 +108,8 @@ export class AppInfoCardComponent {
       secondaryCheckbox: true,
       secondaryCheckboxText: this.translate.instant('Delete docker images used by the app'),
     })
-      .pipe(untilDestroyed(this))
+      .pipe(filter((result) => result.confirmed), untilDestroyed(this))
       .subscribe((result) => {
-        if (!result.confirmed) {
-          return;
-        }
-
         const deleteUnusedImages = result.secondaryCheckbox;
         if (result.secondaryCheckbox) {
           this.appLoaderService.open();
@@ -155,7 +151,16 @@ export class AppInfoCardComponent {
     dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
+      this.installedAppsStore.installedApps$.pipe(
+        map((apps) => !apps.length),
+        take(1),
+        untilDestroyed(this),
+      ).subscribe((noApps) => {
+        if (noApps) {
+          this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+        }
+        this.dialogService.closeAllDialogs();
+      });
     });
   }
 }
