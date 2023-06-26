@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
+import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -42,6 +43,14 @@ describe('FeedbackDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(IxFeedbackService, {
         addReview: jest.fn(() => of({ success: true, review_id: 1 })),
+        addAttachment: jest.fn(() => of({
+          data: {
+            date_created: 'Thu, 22 Jun 2023 06:54:48 GMT',
+            filename: '8e2182dc-e400-4ebe-af6f-132cb8ffc5c5.png',
+            id: 6,
+          },
+          message: 'Image uploaded successfully',
+        })),
       }),
       mockProvider(SnackbarService),
       provideMockStore({
@@ -70,7 +79,7 @@ describe('FeedbackDialogComponent', () => {
     expect(spectator.query('.file-ticket-helper')).toHaveText('Submitting a bug?');
   });
 
-  it('checks new review submission', async () => {
+  it('checks submit a new review', async () => {
     const rating = await loader.getHarness(IxStarRatingHarness.with({ label: 'Select rating' }));
     await rating.setValue(5);
 
@@ -88,5 +97,30 @@ describe('FeedbackDialogComponent', () => {
     );
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('checks submit a new review with an attachment', async () => {
+    const rating = await loader.getHarness(IxStarRatingHarness.with({ label: 'Select rating' }));
+    await rating.setValue(5);
+
+    const message = await loader.getHarness(IxTextareaHarness.with({ label: 'Message' }));
+    await message.setValue('hi there. can you improve this?. thanks.');
+
+    const attachmentFile = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
+    const image = await loader.getHarness(IxFileInputHarness.with({ label: 'Attach image' }));
+    await image.setValue([attachmentFile]);
+
+    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+    await submitButton.click();
+
+    expect(spectator.inject(IxFeedbackService).addReview).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'hi there. can you improve this?. thanks.',
+        rating: 5,
+      }),
+    );
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
   });
 });
