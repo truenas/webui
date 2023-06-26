@@ -10,8 +10,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { SortPropDir } from '@swimlane/ngx-datatable/lib/types/sort-prop-dir.type';
+import { DatatableComponent, SortPropDir } from '@siemens/ngx-datatable';
 import * as filesize from 'filesize';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';

@@ -1729,13 +1729,14 @@
   resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-6.0.2.tgz#6110f918d273fe2af8ea1c4398a88774bb9fc12f"
   integrity sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==
 
-"@circlon/angular-tree-component@~11.0.4":
-  version "11.0.4"
-  resolved "https://registry.npmjs.org/@circlon/angular-tree-component/-/angular-tree-component-11.0.4.tgz"
-  integrity sha512-Ck86mG6Z9eWG03RiOACDzrCjuzEDXU8rcEDi0aw0+Ku62x6ZY2mx8G0VX3CLEkS1BAXM2ef6luOIcoSKAKtDaA==
+"@bugsplat/angular-tree-component@~13.0.1":
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/@bugsplat/angular-tree-component/-/angular-tree-component-13.0.1.tgz#746e35647aebd949a19828252e2a777b88448d4b"
+  integrity sha512-PEcvFncqN1PwTrRs3FW8yFqOejDpPKdsvMg+zWPGFzsTOlih3sHj93D4ubYx2Tkzmf2GPUJv8HENKFuPZqyddw==
   dependencies:
+    core-js "^3.22.5"
     mobx "~4.14.1"
-    tslib "^2.0.0"
+    tslib "^2.3.0"
 
 "@commitlint/cli@~13.1.0":
   version "13.1.0"
@@ -3687,6 +3688,13 @@
     pkg-dir "^5.0.0"
     pluralize "^8.0.0"
 
+"@siemens/ngx-datatable@~21.4.1":
+  version "21.4.1"
+  resolved "https://registry.yarnpkg.com/@siemens/ngx-datatable/-/ngx-datatable-21.4.1.tgz#e0d3fe6b82633080f3d13a9f3c8ec353fcce78fc"
+  integrity sha512-aOC1OBK9YaT7VqhKjintZ5978ax+eEx0J9SLObwEjYonW8wWeECMhAe3DRtgzimUshCJo54hiXPdcTlFTJijuQ==
+  dependencies:
+    tslib "^2.0.0"
+
 "@sinclair/typebox@^0.24.1":
   version "0.24.41"
   resolved "https://registry.npmjs.org/@sinclair/typebox/-/typebox-0.24.41.tgz"
@@ -3705,13 +3713,6 @@
   integrity sha512-BPS4ynJW/o92PUR4wgriz2Ud5gpST5vz6GQfMixEDK0Z8ZCUv2M7SkBLykH56T++Xs+8ln9zTGbOvNGIe02/jw==
   dependencies:
     "@sinonjs/commons" "^1.7.0"
-
-"@swimlane/ngx-datatable@~19.0.0":
-  version "19.0.0"
-  resolved "https://registry.npmjs.org/@swimlane/ngx-datatable/-/ngx-datatable-19.0.0.tgz"
-  integrity sha512-S8eknIQeZtr5aPZgBUItHmt+aQwrI32Hm3jvrxqJXK9J43oDzhIKT2qR1rre3s0XlBn6Zl8LAbmlKotQ5nnxnQ==
-  dependencies:
-    tslib "^2.0.0"
 
 "@testing-library/dom@^8.11.0":
   version "8.11.1"
@@ -5040,13 +5041,6 @@ angular-resize-event@^3.2.0:
   dependencies:
     tslib "^2.3.0"
 
-angular2-qrcode@~2.0.3:
-  version "2.0.3"
-  resolved "https://registry.npmjs.org/angular2-qrcode/-/angular2-qrcode-2.0.3.tgz"
-  integrity sha512-blXNY7VGSuxxfyAg0aa7urWFkoIT2YrygMzyWNRhzPY7UN1ddM4MWAZSzCEFVTzIIu9x4bZcpYDKG7JnmM9IFg==
-  dependencies:
-    qrious "^4.0.2"
-
 angular2-uuid@~1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/angular2-uuid/-/angular2-uuid-1.1.1.tgz"
@@ -5710,9 +5704,9 @@ camelcase-keys@^6.2.2:
     map-obj "^4.0.0"
     quick-lru "^4.0.1"
 
-camelcase@^5.3.1:
+camelcase@^5.0.0, camelcase@^5.3.1:
   version "5.3.1"
-  resolved "https://registry.npmjs.org/camelcase/-/camelcase-5.3.1.tgz"
+  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
 camelcase@^6.2.0:
@@ -5909,6 +5903,15 @@ clipboard@^2.0.11:
     good-listener "^1.2.2"
     select "^1.1.2"
     tiny-emitter "^2.0.0"
+
+cliui@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/cliui/-/cliui-6.0.0.tgz#511d702c0c4e41ca156d7d0e96021f23e13225b1"
+  integrity sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==
+  dependencies:
+    string-width "^4.2.0"
+    strip-ansi "^6.0.0"
+    wrap-ansi "^6.2.0"
 
 cliui@^7.0.2:
   version "7.0.4"
@@ -6226,6 +6229,11 @@ core-js-pure@^3.16.0:
   version "3.19.0"
   resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.19.0.tgz"
   integrity sha512-UEQk8AxyCYvNAs6baNoPqDADv7BX0AmBLGxVsrAifPPx/C8EAzV4Q+2ZUJqVzfI2TQQEZITnwUkWcHpgc/IubQ==
+
+core-js@^3.22.5:
+  version "3.31.0"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.31.0.tgz#4471dd33e366c79d8c0977ed2d940821719db344"
+  integrity sha512-NIp2TQSGfR6ba5aalZD+ZQ1fSxGhDo/s1w0nx3RYzf2pnJxt7YynxFlFScP6eV7+GZsKO95NSjGxyJsU3DZgeQ==
 
 core-js@~3.6.4:
   version "3.6.5"
@@ -7187,6 +7195,11 @@ diff@^4.0.1:
   resolved "https://registry.npmjs.org/diff/-/diff-4.0.2.tgz"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
+dijkstrajs@^1.0.1:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/dijkstrajs/-/dijkstrajs-1.0.3.tgz#4c8dbdea1f0f6478bff94d9c49c784d623e4fc23"
+  integrity sha512-qiSlmBq9+BCdCA/L46dw8Uy93mloxsPSbwnm5yrKn2vMPiy8KyAskTF6zuV/j5BMsmOGZDPs7KjU+mjb670kfA==
+
 dir-glob@^3.0.1:
   version "3.0.1"
   resolved "https://registry.npmjs.org/dir-glob/-/dir-glob-3.0.1.tgz"
@@ -7363,6 +7376,11 @@ emojis-list@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/emojis-list/-/emojis-list-3.0.0.tgz"
   integrity sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==
+
+encode-utf8@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/encode-utf8/-/encode-utf8-1.0.3.tgz#f30fdd31da07fb596f281beb2f6b027851994cda"
+  integrity sha512-ucAnuBEhUK4boH2HjVYG5Q2mQyPorvv0u/ocS+zhdw0S8AlHYY+GOFhP1Gio5z4icpP2ivFSvhtFjQi8+T9ppw==
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -8621,7 +8639,7 @@ gensync@^1.0.0-beta.2:
   resolved "https://registry.npmjs.org/gensync/-/gensync-1.0.0-beta.2.tgz"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
 
-get-caller-file@^2.0.5:
+get-caller-file@^2.0.1, get-caller-file@^2.0.5:
   version "2.0.5"
   resolved "https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz"
   integrity sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==
@@ -11242,6 +11260,14 @@ ng-mocks@~14.5.2:
   resolved "https://registry.yarnpkg.com/ng-mocks/-/ng-mocks-14.5.2.tgz#c04dbb083deaf655c14114c8cb48200d789bb5f6"
   integrity sha512-fS7rt4AAB8kzGDfpLURm9hec2VYAVl+lmTO92vOeCZn+iKIObR0nuGA8TZP+sb97lcjqtDGNLkAzcRElQhQbuw==
 
+ng-qrcode@~8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/ng-qrcode/-/ng-qrcode-8.0.1.tgz#014cab95518af9d5e08bcbcdc5df871ee5528d5a"
+  integrity sha512-hU9JVgfZFMQFVLSp/brMw0O0ClKR3tXFiY/6tztUeRW6Xzl2qSJyoYYNWTzzx7v/6P8OIuAIpiPs+kQylniPMg==
+  dependencies:
+    qrcode "^1.5.1"
+    tslib "^2.4.0"
+
 ng2-charts@~4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/ng2-charts/-/ng2-charts-4.1.1.tgz#699bee539030b093caf54ab6111c6dea9e8e7ed3"
@@ -11306,13 +11332,6 @@ ngx-translate-messageformat-compiler@~5.0.1:
   integrity sha512-dtw0GgwmLzRCrAlkFOXYY2Ulz1ADXO/+EtvzInwK9vNgnI7VLHilqKVlWjkFetjk++WAsgnAzx7qjzdsdNch2g==
   dependencies:
     tslib "^2.3.1"
-
-ngx-uploader@~11.0.0:
-  version "11.0.0"
-  resolved "https://registry.npmjs.org/ngx-uploader/-/ngx-uploader-11.0.0.tgz"
-  integrity sha512-UUZ/AmtK6DVs6h82kwqX3uo/oqF/JcpJeQJtqfuGo5QWCDaL2VN0ElWlJXtvmVSweIkYa7h86iX82MEviR+lyQ==
-  dependencies:
-    tslib "^2.0.0"
 
 ngx-webstorage@~9.0.0:
   version "9.0.0"
@@ -12095,6 +12114,11 @@ pluralize@^8.0.0:
   resolved "https://registry.npmjs.org/pluralize/-/pluralize-8.0.0.tgz"
   integrity sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==
 
+pngjs@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-5.0.0.tgz#e79dd2b215767fd9c04561c01236df960bce7fbb"
+  integrity sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==
+
 popmotion@~8.7.1:
   version "8.7.6"
   resolved "https://registry.npmjs.org/popmotion/-/popmotion-8.7.6.tgz"
@@ -12334,10 +12358,15 @@ q@^1.5.1:
   resolved "https://registry.npmjs.org/q/-/q-1.5.1.tgz"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
-qrious@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.npmjs.org/qrious/-/qrious-4.0.2.tgz"
-  integrity sha512-xWPJIrK1zu5Ypn898fBp8RHkT/9ibquV2Kv24S/JY9VYEhMBMKur1gHVsOiNUh7PHP9uCgejjpZUHUIXXKoU/g==
+qrcode@^1.5.1:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/qrcode/-/qrcode-1.5.3.tgz#03afa80912c0dccf12bc93f615a535aad1066170"
+  integrity sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==
+  dependencies:
+    dijkstrajs "^1.0.1"
+    encode-utf8 "^1.0.3"
+    pngjs "^5.0.0"
+    yargs "^15.3.1"
 
 qs@6.10.3:
   version "6.10.3"
@@ -12608,6 +12637,11 @@ require-from-string@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmjs.org/require-from-string/-/require-from-string-2.0.2.tgz"
   integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
+
+require-main-filename@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-2.0.0.tgz#d0b329ecc7cc0f61649f62215be69af54aa8989b"
+  integrity sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==
 
 requireindex@~1.2.0:
   version "1.2.0"
@@ -14379,6 +14413,11 @@ which-collection@^1.0.1:
     is-weakmap "^2.0.1"
     is-weakset "^2.0.1"
 
+which-module@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.1.tgz#776b1fe35d90aebe99e8ac15eb24093389a4a409"
+  integrity sha512-iBdZ57RDvnOR9AGBhML2vFZf7h8vmBjhoaZqODJBFWHVtKkDmKuHai3cx5PgVMrX5YDNp27AofYbAwctSS+vhQ==
+
 which-typed-array@^1.1.8:
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/which-typed-array/-/which-typed-array-1.1.9.tgz#307cf898025848cf995e795e8423c7f337efbde6"
@@ -14506,6 +14545,11 @@ xterm@~4.9.0:
   resolved "https://registry.npmjs.org/xterm/-/xterm-4.9.0.tgz"
   integrity sha512-wGfqufmioctKr8VkbRuZbVDfjlXWGZZ1PWHy1yqqpGT3Nm6yaJx8lxDbSEBANtgaiVPTcKSp97sxOy5IlpqYfw==
 
+y18n@^4.0.0:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.3.tgz#b5f259c82cd6e336921efd7bfd8bf560de9eeedf"
+  integrity sha512-JKhqTOwSrqNA1NY5lSztJ1GrBiUodLMmIZuLiDaMRJ+itFd+ABVE8XBjOvIWL+rSqNDC74LCSFmlb/U4UZ4hJQ==
+
 y18n@^5.0.5:
   version "5.0.8"
   resolved "https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz"
@@ -14525,6 +14569,14 @@ yaml@^1.10.0:
   version "1.10.2"
   resolved "https://registry.npmjs.org/yaml/-/yaml-1.10.2.tgz"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
+
+yargs-parser@^18.1.2:
+  version "18.1.3"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.3.tgz#be68c4975c6b2abf469236b0c870362fab09a7b0"
+  integrity sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==
+  dependencies:
+    camelcase "^5.0.0"
+    decamelize "^1.2.0"
 
 yargs-parser@^20.2.2, yargs-parser@^20.2.3:
   version "20.2.9"
@@ -14553,6 +14605,23 @@ yargs@17.6.2:
     string-width "^4.2.3"
     y18n "^5.0.5"
     yargs-parser "^21.1.1"
+
+yargs@^15.3.1:
+  version "15.4.1"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-15.4.1.tgz#0d87a16de01aee9d8bec2bfbf74f67851730f4f8"
+  integrity sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
+  dependencies:
+    cliui "^6.0.0"
+    decamelize "^1.2.0"
+    find-up "^4.1.0"
+    get-caller-file "^2.0.1"
+    require-directory "^2.1.1"
+    require-main-filename "^2.0.0"
+    set-blocking "^2.0.0"
+    string-width "^4.2.0"
+    which-module "^2.0.0"
+    y18n "^4.0.0"
+    yargs-parser "^18.1.2"
 
 yargs@^16.2.0:
   version "16.2.0"

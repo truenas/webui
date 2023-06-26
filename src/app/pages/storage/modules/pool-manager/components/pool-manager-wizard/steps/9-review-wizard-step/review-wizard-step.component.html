@@ -82,6 +82,18 @@
   >{{ 'Inspect VDEVs' | translate }}</button>
 
   <button
+    *ngIf="showStartOver"
+    mat-button
+    matStepperNext
+    color="error"
+    type="button"
+    ixTest="start-over"
+    (click)="startOver()"
+  >
+    {{ 'Start Over' | translate }}
+  </button>
+
+  <button
     mat-button
     matStepperNext
     color="primary"
