@@ -12,7 +12,9 @@ import _ from 'lodash';
 import {
   BehaviorSubject, of, Subject, Subscription, timer,
 } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  filter, map, take,
+} from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -33,7 +35,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -62,6 +63,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   dialogRef: MatDialogRef<EntityJobComponent>;
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
+
+  forbiddenAppNames$ = this.appService.getAllChartReleases().pipe(
+    map((apps) => apps.map((app) => app.name)),
+  );
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -102,7 +107,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
-    private appsStore: AppsStore,
     private layoutService: LayoutService,
     private loader: AppLoaderService,
     private router: Router,
@@ -221,9 +225,8 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.translate.instant('Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.'),
       ),
     );
-    this.form.controls.release_name.addAsyncValidators(
-      forbiddenAsyncValues(this.appsStore.installedApps$.pipe(map((apps) => apps.map((app) => app.name)))),
-    );
+    this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
+    this.form.controls.release_name.updateValueAndValidity();
 
     this.dynamicSection.push({
       name: 'Application name',
