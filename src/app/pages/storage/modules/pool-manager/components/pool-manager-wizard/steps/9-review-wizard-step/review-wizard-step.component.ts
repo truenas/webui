@@ -103,7 +103,7 @@ export class ReviewWizardStepComponent implements OnInit {
   startOver(): void {
     this.dialogService
       .confirm({
-        title: this.translate.instant('Start Over?'),
+        title: this.translate.instant('Start Over'),
         message: this.translate.instant('Are you sure you want to start over?'),
         hideCheckbox: false,
         buttonText: this.translate.instant('Start Over'),

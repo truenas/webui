@@ -5,7 +5,7 @@
       <mat-step
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.General)"
-        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.General) && getWasStepActivated(PoolCreationWizardStep.General)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.General)"
         (activate)="onStepActivated(PoolCreationWizardStep.General)"
       >
         <ng-template matStepLabel>
@@ -66,6 +66,7 @@
         </ng-template>
         <ix-data-wizard-step
           [isStepActive]="activeStep === PoolCreationWizardStep.Data"
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Data)"
           (goToLastStep)="goToLastStep()"
         ></ix-data-wizard-step>
       </mat-step>
@@ -87,7 +88,10 @@
             ></ix-icon>
           </div>
         </ng-template>
-        <ix-log-wizard-step (goToLastStep)="goToLastStep()"></ix-log-wizard-step>
+        <ix-log-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Log)"
+          (goToLastStep)="goToLastStep()"
+          ></ix-log-wizard-step>
       </mat-step>
 
       <mat-step
@@ -107,7 +111,10 @@
             ></ix-icon>
           </div>
         </ng-template>
-        <ix-spare-wizard-step (goToLastStep)="goToLastStep()"></ix-spare-wizard-step>
+        <ix-spare-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Spare)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-spare-wizard-step>
       </mat-step>
 
       <mat-step
@@ -127,7 +134,10 @@
             ></ix-icon>
           </div>
         </ng-template>
-        <ix-cache-wizard-step (goToLastStep)="goToLastStep()"></ix-cache-wizard-step>
+        <ix-cache-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Cache)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-cache-wizard-step>
       </mat-step>
 
       <mat-step
@@ -147,7 +157,10 @@
             ></ix-icon>
           </div>
         </ng-template>
-        <ix-metadata-wizard-step (goToLastStep)="goToLastStep()"></ix-metadata-wizard-step>
+        <ix-metadata-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-metadata-wizard-step>
       </mat-step>
 
       <mat-step
@@ -167,7 +180,10 @@
             ></ix-icon>
           </div>
         </ng-template>
-        <ix-dedup-wizard-step (goToLastStep)="goToLastStep()"></ix-dedup-wizard-step>
+        <ix-dedup-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-dedup-wizard-step>
       </mat-step>
 
       <mat-step

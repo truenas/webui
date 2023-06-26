@@ -178,7 +178,7 @@ describe('ReviewWizardStepComponent', () => {
       await startOver.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-        title: 'Start Over?',
+        title: 'Start Over',
       }));
 
       const store = spectator.inject(PoolManagerStore);

@@ -27,6 +27,7 @@ export enum DispersalStrategy {
 })
 export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   @Input() isStepActive: boolean;
+  @Input() stepWarning: string | null;
 
   form = this.formBuilder.group({
     dispersalStrategy: [DispersalStrategy.None],
