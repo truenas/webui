@@ -32,15 +32,6 @@ export default {
  configured, click <b>DISCOVER REMOTE HOST KEY</b> to query the remote \
  system and automatically populate this field.'),
 
-  cipher_tooltip: T('Connection security level:<br> \
- <ul><li><i>Standard</i> is most secure, but has the greatest impact on \
- connection speed.</li><br> \
- <li><i>Fast</i> is less secure than <i>Standard</i> but can give \
- reasonable transfer rates for devices with limited cryptographic speed.</li><br> \
- <li><i>Disabled</i> removes all security in favor of maximizing \
- connection speed. Disabling the security should only be used within a \
- secure, trusted network.</li></ul>'),
-
   connect_timeout_tooltip: T('Time (in seconds) before the system \
  stops attempting to establish a connection with the remote system.'),
 

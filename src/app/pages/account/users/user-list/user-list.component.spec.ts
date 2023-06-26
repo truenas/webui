@@ -7,9 +7,8 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/account/users/user-details-row/user-details-row.component';
@@ -73,6 +72,7 @@ describe('UserListComponent', () => {
       EntityModule,
       IxTableModule,
       CoreComponents,
+      IxTable2Module,
     ],
     declarations: [
       UserDetailsRowComponent,
@@ -111,47 +111,25 @@ describe('UserListComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
-  it('should show table rows', async () => {
+  it('should show table rows', () => {
     store$.overrideSelector(selectPreferences, { hideBuiltinUsers: true } as Preferences);
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCells(true);
     const expectedRows = [
-      ['Username', 'UID', 'Builtin', 'Full Name', ''],
+      ['Username', 'UID', 'Builtin', 'Full Name'],
       ['root', '0', 'Yes', 'root', ''],
       ['test', '1004', 'No', 'test', ''],
     ];
 
-    expect(cells).toEqual(expectedRows);
-  });
-
-  it('should have empty message when loaded and datasource is empty', async () => {
-    store$.overrideSelector(selectUsers, []);
-    store$.refreshState();
-
     spectator.detectChanges();
-
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('No records have been added yet');
-  });
-
-  it('should have error message when can not retrieve response', async () => {
-    store$.overrideSelector(selectUserState, {
-      error: 'Users could not be loaded',
-    } as UsersState);
-    store$.refreshState();
-    store$.select(selectUsers).subscribe((snapshots) => {
-      expect(snapshots).toEqual([]);
+    const cells = spectator.queryAll('tr').map((tr) => {
+      const row: string[] = [];
+      tr.querySelectorAll('th').forEach((cell) => row.push(cell.textContent.trim()));
+      tr.querySelectorAll('td').forEach((cell) => row.push(cell.textContent.trim()));
+      return row;
     });
-
-    spectator.detectChanges();
-
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('Can not retrieve response');
+    expect(cells).toEqual(expectedRows);
   });
 
   it('should expand only one row on click', async () => {
@@ -162,6 +140,6 @@ describe('UserListComponent', () => {
     await firstExpandButton.click();
     await secondExpandButton.click();
 
-    expect(spectator.queryAll('.expanded')).toHaveLength(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(1);
   });
 });

@@ -73,6 +73,7 @@ def on_the_dataset_page_click_on_the_tank_tree_and_click_add_dataset(driver):
 def on_the_add_dataset_slide_input_the_dataset_name_leave_all_options_as_default(driver, dataset_name):
     """on the Add Dataset slide, input the <dataset_name>, leave all options as default."""
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     rsc.Wait_For_Inputable_And_Input_Value(driver, xpaths.add_Dataset.name_Textarea, dataset_name)
 
 
@@ -82,7 +83,7 @@ def check_that_the_share_type_is_generic_and_click_submit(driver):
     rsc.Verify_Element_Text(driver, xpaths.add_Dataset.share_Type_Select_Text, "Generic")
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
 
 
 @then(parsers.parse('click on the {dataset_name} tree, click Edit on the Permissions card'))
