@@ -7,9 +7,8 @@ import {
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
-  BehaviorSubject, map,
+  BehaviorSubject,
 } from 'rxjs';
-import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -26,11 +25,6 @@ export class CategoryViewComponent implements OnInit, OnDestroy, AfterViewInit {
   pageTitle$ = new BehaviorSubject('Category');
   apps$ = this.applicationsStore.filteredApps$;
   isLoading$ = this.applicationsStore.isLoading$;
-  customAppDisabled$ = this.applicationsStore.selectedPool$.pipe(map((pool) => !pool));
-
-  readonly customIxChartApp = ixChartApp;
-  readonly chartsTrain = chartsTrain;
-  readonly officialCatalog = officialCatalog;
 
   constructor(
     private layoutService: LayoutService,
