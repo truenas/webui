@@ -115,7 +115,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.checkIfPoolSet();
     this.listenForRouteChanges();
 
     this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
@@ -279,17 +278,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.train = train;
         this.catalog = catalog;
 
-        this._pageTitle$.next(appId);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-
-        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/install')) {
-          this.loadApplicationForCreation();
-        }
-
-        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/edit')) {
-          this.loadApplicationForEdit();
-        }
+        this.checkIfPoolSetAndManageApplication();
       });
   }
 
@@ -464,12 +453,24 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private checkIfPoolSet(): void {
+  private checkIfPoolSetAndManageApplication(): void {
     this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
       this.wasPoolSet = Boolean(pool);
 
       if (!pool) {
-        this.router.navigate([this.router.url.replace('/install', '')]);
+        this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+      } else {
+        this._pageTitle$.next(this.appId);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+
+        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/install')) {
+          this.loadApplicationForCreation();
+        }
+
+        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/edit')) {
+          this.loadApplicationForEdit();
+        }
       }
     });
   }
