@@ -33,6 +33,7 @@ import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthService } from 'app/services/auth/auth.service';
+import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
@@ -124,6 +125,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
   providers: [
     RoutePartsService,
     AuthGuardService,
+    TwoFactorGuardService,
     NavigationService,
     AuthService,
     WebSocketService,

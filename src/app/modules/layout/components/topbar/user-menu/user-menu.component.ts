@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { filter } from 'rxjs';
 import helptext from 'app/helptext/topbar';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
@@ -22,6 +23,7 @@ export class UserMenuComponent {
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
+    private router: Router,
   ) { }
 
   openChangePasswordDialog(): void {
@@ -32,5 +34,9 @@ export class UserMenuComponent {
     this.dialog.open(AboutDialogComponent, {
       disableClose: true,
     });
+  }
+
+  onTwoFactorAuth(): void {
+    this.router.navigate(['/two-factor-auth']);
   }
 }
