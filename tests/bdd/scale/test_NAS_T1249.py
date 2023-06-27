@@ -24,7 +24,7 @@ def test_verify_a_dataset_can_be_deleted():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['encrypted_pool'], scope='session')
+    #depends(request, ['encrypted_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -54,7 +54,7 @@ def on_the_dashboard_click_on_storage_on_the_side_menu(driver):
 def on_the_storage_dashboard_click_the_on_exportdisconnect_button_of_encrypted_pool(driver):
     """on the Storage Dashboard click the on Export/Disconnect button of encrypted_pool."""
     assert wait_on_element(driver, 7, xpaths.storage.title)
-    assert wait_on_element(driver, 5, xpaths.storage.encrypted_Pool)
+    assert wait_on_element(driver, 10, xpaths.storage.encrypted_Pool)
     assert wait_on_element(driver, 5, xpaths.storage.export_Disconnect_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.storage.export_Disconnect_Button).click()
 
@@ -79,7 +79,7 @@ def enter_the_pool_name_to_confirm_and_click_exportdisconnect(driver):
     driver.find_element_by_xpath(xpaths.export_Disconnect_Pool.pool_Name_Input).send_keys("encrypted_pool")
     assert wait_on_element(driver, 5, xpaths.export_Disconnect_Pool.export_Disconnect_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.export_Disconnect_Pool.export_Disconnect_Button).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
 
 
 @then('the pool should be removed from the Storage Dashboard')

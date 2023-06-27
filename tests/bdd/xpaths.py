@@ -514,6 +514,7 @@ class popup:
 class progress:
     progressbar = '//mat-progress-bar'
     spinner = '//mat-spinner'
+    progress_Spinner = '//mat-progress-spinner'
 
 
 class services:
