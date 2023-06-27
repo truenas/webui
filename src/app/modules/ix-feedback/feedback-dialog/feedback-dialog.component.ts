@@ -7,7 +7,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { take } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
@@ -41,6 +40,7 @@ export class FeedbackDialogComponent implements OnInit {
     take_screenshot: [true],
   });
   private release: string;
+  private hostId: string;
   readonly acceptedFiles = ticketAcceptedFiles;
 
   constructor(
@@ -65,6 +65,12 @@ export class FeedbackDialogComponent implements OnInit {
     ).subscribe(({ version }) => {
       this.release = version;
     });
+    this.feedbackService.getHostId().pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((hostId) => {
+      this.hostId = hostId;
+    });
   }
 
   openFileTicketForm(): void {
@@ -75,7 +81,8 @@ export class FeedbackDialogComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
     const values: AddReview = {
-      host_u_id: UUID.UUID(),
+      ...this.form.getRawValue(),
+      host_u_id: this.hostId,
       rating: this.form.controls.rating.value,
       message: this.form.controls.message.value,
       page: this.window.location.pathname,
