@@ -46,6 +46,7 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
   }
 
   onChoosePool(): void {
+    this.matDialog.closeAll();
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       this.core.emit({ name: 'RefreshAppsTab' });

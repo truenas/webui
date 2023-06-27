@@ -61,6 +61,7 @@ export class AppDetailsHeaderComponent implements OnInit {
   }
 
   showChoosePoolModal(): void {
+    this.matDialog.closeAll();
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       this.checkIfPoolSet();

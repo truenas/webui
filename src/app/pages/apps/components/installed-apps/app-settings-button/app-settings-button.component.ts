@@ -36,6 +36,7 @@ export class AppSettingsButtonComponent {
   ) { }
 
   onChoosePool(): void {
+    this.matDialog.closeAll();
     this.matDialog.open(SelectPoolDialogComponent);
   }
 
