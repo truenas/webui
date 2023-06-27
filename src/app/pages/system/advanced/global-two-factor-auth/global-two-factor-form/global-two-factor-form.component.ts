@@ -2,8 +2,10 @@ import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
@@ -49,6 +51,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private twoFactorAuthGuardService: TwoFactorGuardService,
     @Inject(SLIDE_IN_DATA) protected twoFactorConfig: TwoFactorConfig,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -67,20 +70,26 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.dialogService.confirm({
+    let shouldWarn = true;
+    if (!this.twoFactorConfig.enabled || !this.form.value.enabled) {
+      shouldWarn = false;
+    }
+
+    const values = this.form.value;
+    const payload: TwoFactorConfigUpdate = {
+      enabled: values.enabled,
+      otp_digits: values.otp_digits,
+      services: { ssh: values.ssh },
+      interval: values.interval,
+      window: values.window,
+    };
+    const confirmation$ = shouldWarn ? this.dialogService.confirm({
       title: this.translate.instant('Warning!'),
       message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
-    }).pipe(
+    }) : of(true);
+    confirmation$.pipe(
       filter(Boolean),
       switchMap(() => {
-        const values = this.form.value;
-        const payload: TwoFactorConfigUpdate = {
-          enabled: values.enabled,
-          otp_digits: values.otp_digits,
-          services: { ssh: values.ssh },
-          interval: values.interval,
-          window: values.window,
-        };
         this.isFormLoading = true;
         return this.ws.call('auth.twofactor.update', [payload]);
       }),
@@ -88,6 +97,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.twoFactorAuthGuardService.updateGlobalConfig();
+        if (!_.isEqual(this.twoFactorConfig, payload) && payload.enabled) {
+          this.router.navigate(['/two-factor-auth']);
+        }
         this.cdr.markForCheck();
         this.slideInRef.close(true);
       }),

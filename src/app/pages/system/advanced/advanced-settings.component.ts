@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, TemplateRef, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, TemplateRef, ViewChild,
 } from '@angular/core';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -8,7 +8,7 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./advanced-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSettingsComponent implements AfterViewInit {
+export class AdvancedSettingsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   constructor(
@@ -17,5 +17,9 @@ export class AdvancedSettingsComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  ngOnDestroy(): void {
+    this.layoutService.pageHeaderUpdater$.next(null);
   }
 }

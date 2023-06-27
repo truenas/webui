@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, filter, of, switchMap, tap,
+  filter, of, switchMap, tap,
 } from 'rxjs';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -44,45 +44,32 @@ export class SigninFormComponent {
   onSubmit(): void {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
-    let request$: Observable<boolean>;
-    if (this.hasTwoFactor) {
-      request$ = this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
-        tap((wasLoggedIn) => {
-          if (!wasLoggedIn) {
-            this.handleFailedLogin();
-            this.signinStore.setLoadingState(false);
-            this.cdr.markForCheck();
-          }
-        }),
-      );
-    } else {
-      request$ = this.ws.call('auth.two_factor_auth', [formValues.username, formValues.password]).pipe(
-        switchMap((isTwoFactorEnabled) => {
-          this.hasTwoFactor = isTwoFactorEnabled;
-          if (isTwoFactorEnabled) {
-            this.signinStore.setLoadingState(false);
-            this.hasTwoFactor = true;
+    this.ws.call('auth.two_factor_auth', [formValues.username, formValues.password]).pipe(
+      switchMap((isTwoFactorEnabled) => {
+        this.hasTwoFactor = isTwoFactorEnabled;
+        if (isTwoFactorEnabled) {
+          this.signinStore.setLoadingState(false);
+          this.hasTwoFactor = true;
 
-            const message: string = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
-            this.signinStore.showSnackbar(message);
+          const message: string = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
+          this.signinStore.showSnackbar(message);
 
-            this.cdr.markForCheck();
-            return of(false);
-          }
-          return this.authService.login(formValues.username, formValues.password).pipe(
-            tap((wasLoggedIn) => {
-              if (!wasLoggedIn) {
-                this.handleFailedLogin();
-                this.signinStore.setLoadingState(false);
-                this.cdr.markForCheck();
-              }
-            }),
-          );
-        }),
-      );
-    }
-
-    request$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+          this.cdr.markForCheck();
+          return of(false);
+        }
+        return this.authService.login(formValues.username, formValues.password).pipe(
+          tap((wasLoggedIn) => {
+            if (!wasLoggedIn) {
+              this.handleFailedLogin();
+              this.signinStore.setLoadingState(false);
+              this.cdr.markForCheck();
+            }
+          }),
+        );
+      }),
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.signinStore.handleSuccessfulLogin();
       },
@@ -94,11 +81,43 @@ export class SigninFormComponent {
   }
 
   private handleFailedLogin(): void {
-    const message: string = this.translate.instant('Username or Password is incorrect.');
-
+    const message: string = this.translate.instant('Incorrect credentials. Please try again.');
     this.signinStore.showSnackbar(message);
+    this.clearForm();
+  }
+
+  private clearForm(): void {
     this.form.patchValue({ password: '', otp: '' });
     this.form.controls.password.setErrors(null);
     this.form.controls.otp.setErrors(null);
+  }
+
+  protected cancelOtpLogin(): void {
+    this.hasTwoFactor = false;
+    this.clearForm();
+  }
+
+  protected loginWithOtp(): void {
+    this.signinStore.setLoadingState(true);
+    const formValues = this.form.value;
+    this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
+      tap((wasLoggedIn) => {
+        if (!wasLoggedIn) {
+          this.handleFailedLogin();
+          this.signinStore.setLoadingState(false);
+          this.cdr.markForCheck();
+        }
+      }),
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.signinStore.handleSuccessfulLogin();
+      },
+      error: (error) => {
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.signinStore.setLoadingState(false);
+      },
+    });
   }
 }
