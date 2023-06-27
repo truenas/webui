@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -373,6 +373,17 @@ describe('ChartWizardComponent', () => {
       spectator.inject(ApplicationsService);
     });
 
+    it('navigates to app detail page if pool is not set', () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const store = spectator.inject(AppsStore);
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      spectator.component.ngOnInit();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'app_name']);
+    });
+
     it('shows values for an existing data when form is opened for edit', () => {
       const values = spectator.component.form.value;
 
@@ -414,6 +425,17 @@ describe('ChartWizardComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.inject(ApplicationsService);
+    });
+
+    it('navigates to app detail page if pool is not set', () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const store = spectator.inject(AppsStore);
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      spectator.component.ngOnInit();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'ipfs']);
     });
 
     it('checks validation error when app name already in use', async () => {
