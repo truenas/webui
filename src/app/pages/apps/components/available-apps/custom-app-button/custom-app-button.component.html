@@ -1,0 +1,14 @@
+<div
+  [matTooltip]="'Setup Pool To Create Custom App' | translate"
+  [matTooltipDisabled]="!(customAppDisabled$ | async)"
+>
+  <a
+    mat-button
+    color="primary"
+    ixTest="custom-app"
+    [disabled]="customAppDisabled$ | async"
+    (click)="navigateToCustomAppCreation()"
+  >
+    {{ 'Custom App' | translate }}
+  </a>
+</div>
