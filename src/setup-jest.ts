@@ -1,6 +1,5 @@
 import 'jest-preset-angular/setup-jest';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -22,12 +21,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { defineGlobalsInjections } from '@ngneat/spectator';
-import { mockProvider } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
+import { MockProvider } from 'ng-mocks';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
@@ -89,6 +88,7 @@ defineGlobalsInjections({
     AppLoaderModule,
   ],
   providers: [
+    MockProvider(HighContrastModeDetector),
     {
       provide: APP_BASE_HREF,
       useValue: '',
@@ -102,8 +102,6 @@ defineGlobalsInjections({
       // eslint-disable-next-line no-restricted-globals
       useValue: window,
     },
-    mockProvider(BreakpointObserver),
-    mockProvider(HighContrastModeDetector),
   ],
 });
 
