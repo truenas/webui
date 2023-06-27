@@ -22,6 +22,7 @@ describe('AppsStore', () => {
     recommendedApps: [],
     latestApps: [],
     categories: [],
+    catalogs: [],
     filteredApps: [],
     isLoading: false,
     isFilterApplied: false,
@@ -43,7 +44,7 @@ describe('AppsStore', () => {
   ];
 
   const installedAndRecommendedApp: AvailableApp = {
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     installed: true,
     categories: ['storage'],
     description: 'Syncthing is a continuous file synchronization program.',
@@ -54,7 +55,7 @@ describe('AppsStore', () => {
   } as unknown as AvailableApp;
 
   const plexApp: AvailableApp = {
-    catalog: 'OFFICIAL',
+    catalog: 'TRUENAS',
     installed: false,
     categories: ['media'],
     description: 'Plex is an app',
@@ -109,14 +110,13 @@ describe('AppsStore', () => {
         b: {
           ...initialState,
           availableApps: [...availableApps],
-          categories: [
-            'storage', 'media',
-          ],
+          categories: ['storage', 'media'],
+          catalogs: ['TRUENAS'],
           installedApps: [...installedChartReleases],
           isKubernetesStarted: true,
           selectedPool: 'ix-applications-pool',
           latestApps: [{ ...installedAndRecommendedApp }],
-          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'Recommended'] }],
+          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
           filteredApps: [],
 
         } as AppsState,
@@ -206,8 +206,8 @@ describe('AppsStore', () => {
       });
       expectObservable(spectator.service.searchedApps$).toBe('b', {
         b: [{
-          category: 'OFFICIAL',
-          title: 'OFFICIAL',
+          category: 'TRUENAS',
+          title: 'TRUENAS',
           totalApps: 2,
           apps: [...availableApps],
         }],
@@ -294,13 +294,13 @@ describe('AppsStore', () => {
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         categories: ['storage'],
-        catalogs: ['OFFICIAL'],
+        catalogs: ['TRUENAS'],
         sort: AppsFiltersSort.Name,
       });
       expectObservable(spectator.service.filterValues$).toBe('a', {
         a: {
           categories: ['storage'],
-          catalogs: ['OFFICIAL'],
+          catalogs: ['TRUENAS'],
           sort: AppsFiltersSort.Name,
         } as AppsFiltersValues,
       });
@@ -323,7 +323,7 @@ describe('AppsStore', () => {
             apps: [
               { ...installedAndRecommendedApp },
             ],
-            category: 'New and Updated',
+            category: 'new-and-updated',
             title: 'New & Updated Apps',
             totalApps: 1,
           },
@@ -331,7 +331,7 @@ describe('AppsStore', () => {
             apps: [
               { ...installedAndRecommendedApp, categories: ['storage', AppExtraCategory.Recommended] },
             ],
-            category: 'Recommended',
+            category: 'recommended',
             title: 'Recommended Apps',
             totalApps: 1,
           },

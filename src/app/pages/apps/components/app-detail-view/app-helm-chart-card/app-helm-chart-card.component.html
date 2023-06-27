@@ -1,7 +1,7 @@
 <h3>{{ 'Helm Chart Info' | translate }}</h3>
 
 <div class="app-list-item">
-  {{ 'Catalog' | translate }}:
+  <span class="label">{{ 'Catalog' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else catalog"></ngx-skeleton-loader>
   <ng-template #catalog>
     <ng-container *ngIf="app?.catalog; else notAvailable">
@@ -10,7 +10,7 @@
   </ng-template>
 </div>
 <div class="app-list-item">
-  {{ 'Train' | translate }}:
+  <span class="label">{{ 'Train' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
   <ng-template #train>
     <ng-container *ngIf="app?.train; else notAvailable">
@@ -19,7 +19,7 @@
   </ng-template>
 </div>
 <div class="app-list-item">
-  {{ 'Chart Version' | translate }}:
+  <span class="label">{{ 'Chart Version' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else chartVersion"></ngx-skeleton-loader>
   <ng-template #chartVersion>
     <ng-container *ngIf="app?.latest_version; else notAvailable">
@@ -28,13 +28,17 @@
   </ng-template>
 </div>
 <div class="app-list-item">
-  {{ 'Maintainer' | translate }}:
+  <span class="label">{{ 'Maintainer' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else maintainersInfo"></ngx-skeleton-loader>
   <ng-template #maintainersInfo>
     <ng-container *ngIf="app?.maintainers?.length; else notAvailable">
       <div class="inline">
         <ng-container *ngFor="let maintainer of app?.maintainers; index as index" >
-          <a [href]="maintainer.url" [ixTest]="[maintainer.email]">
+          <a
+            target="_blank"
+            [href]="maintainer.url"
+            [ixTest]="[maintainer.email]"
+          >
             {{ maintainer.name }}
           </a>{{ '(' + maintainer.email + ')' }}
           <span *ngIf="index < (app.maintainers.length -1)">{{index}}{{app.maintainers.length -1}}, </span>

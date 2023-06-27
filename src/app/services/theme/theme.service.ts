@@ -171,7 +171,12 @@ export class ThemeService {
    * @returns array of colors
    */
   getColorPattern(): string[] {
-    return this.currentTheme().accentColors.map((color) => this.currentTheme()[color]);
+    return [this.currentTheme().accentColors, [...Array(50).values()]].flat().map((color: Theme['accentColors'][0]) => {
+      if (color) {
+        return this.currentTheme()[color];
+      }
+      return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+    });
   }
 
   getUtils(): ThemeUtils {

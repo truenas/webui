@@ -1,0 +1,46 @@
+:host {
+  background: var(--bg2);
+}
+
+.row {
+  border-top: solid 1px var(--contrast-lighter);
+  height: 48px;
+
+  td {
+    box-sizing: border-box;
+    font-size: 14px;
+    overflow: hidden;
+    padding: 0 16px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toggle-cell {
+    align-items: center;
+    display: flex;
+    height: inherit;
+    justify-content: flex-end;
+  }
+}
+
+.row:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.details {
+  border-top: solid 1px var(--contrast-lighter);
+  height: 48px;
+
+  td {
+    font-size: 14px;
+    padding: 0 16px;
+    position: relative;
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}

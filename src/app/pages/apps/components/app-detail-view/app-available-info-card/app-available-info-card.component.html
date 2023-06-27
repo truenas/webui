@@ -1,7 +1,7 @@
 <h3>{{ 'Application Info' | translate }}</h3>
 
 <div class="app-list-item">
-  {{ 'Version' | translate }}:
+  <span class="label">{{ 'Version' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else version"></ngx-skeleton-loader>
   <ng-template #version>
     <ng-container *ngIf="app?.latest_app_version; else notAvailable">
@@ -9,23 +9,24 @@
     </ng-container>
   </ng-template>
 </div>
-<div class="app-list-item">
-  {{ 'App Source' | translate }}:
+<div class="app-list-item sources">
+  <span class="label">{{ 'Source' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="(isLoading$ | async) || loadingSources; else appSources"></ngx-skeleton-loader>
   <ng-template #appSources>
-    <ng-container *ngIf="sources?.length; else notAvailable">
-      <ng-container *ngFor="let source of sources; last as isLast">
-        <a
-          [href]="source"
-          [title]="source"
-          [ixTest]="[app.name, 'source']"
-        >{{ getCleanSource(source) }}</a><span *ngIf="!isLast">, </span>
-      </ng-container>
-    </ng-container>
+    <div *ngIf="sources?.length; else notAvailable">
+      <a
+        *ngFor="let source of sources;"
+        class="source-link"
+        target="_blank"
+        [href]="source"
+        [title]="source"
+        [ixTest]="[app.name, 'source']"
+      >{{ source | cleanLink }}</a>
+    </div>
   </ng-template>
 </div>
 <div class="app-list-item">
-  {{ 'Last App Update' }}:
+  <span class="label">{{ 'Last App Update' }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else lastUpdate"></ngx-skeleton-loader>
   <ng-template #lastUpdate>
     <ng-container *ngIf="app?.last_update; else notAvailable">

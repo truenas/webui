@@ -17,7 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { TreeModule } from '@circlon/angular-tree-component';
+import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';

@@ -79,8 +79,6 @@ export default {
   tls_opt_enable_diags_tooltip: T('If set when troubleshooting a connection, logs more\
  verbosely.'),
   tls_opt_export_cert_data_tooltip: T('Set to export the certificate environment variables.'),
-  tls_opt_no_cert_request_tooltip: T('Set if the client cannot connect, and\
- it is suspected the client is poorly handling the server certificate request.'),
   tls_opt_no_empty_fragments_tooltip: T('Enabling this option is <b>not</b> recommended as it\
  bypasses a security mechanism.'),
   tls_opt_no_session_reuse_required_tooltip: T('Setting this option reduces the security of the\

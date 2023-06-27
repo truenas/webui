@@ -10,7 +10,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { NgxOrderedListboxModule } from 'app/modules/common/ordered-list/ordered-list.module';
@@ -38,7 +37,6 @@ import { routing } from './network.routing';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxUploaderModule,
     routing,
     MatCardModule,
     MatListModule,

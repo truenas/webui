@@ -7,7 +7,7 @@ import {
   Observable, Subscription, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
+import { AppExtraCategory, appExtraCategoryLabels } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -15,6 +15,12 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+
+export const filterInitialValues: AppsFiltersValues = {
+  categories: [],
+  sort: null,
+  catalogs: [],
+};
 
 export interface AppsByCategory {
   title: string;
@@ -28,6 +34,7 @@ export interface AppsState {
   latestApps: AvailableApp[];
   recommendedApps: AvailableApp[];
   categories: string[];
+  catalogs: string[];
   filteredApps: AvailableApp[];
   filter: AppsFiltersValues;
   isLoading: boolean;
@@ -43,14 +50,11 @@ const initialState: AppsState = {
   recommendedApps: [],
   latestApps: [],
   categories: [],
+  catalogs: [],
   filteredApps: [],
   isLoading: false,
   isFilterApplied: false,
-  filter: {
-    categories: [],
-    sort: null,
-    catalogs: [],
-  },
+  filter: filterInitialValues,
   searchQuery: '',
   installedApps: [],
   selectedPool: null,
@@ -87,6 +91,7 @@ export class AppsStore extends ComponentStore<AppsState> {
     AppExtraCategory.NewAndUpdated,
     AppExtraCategory.Recommended,
   ]);
+  readonly filteredApps$ = this.select((state) => state.filteredApps);
   readonly availableApps$ = this.select((state) => state.availableApps);
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly selectedPool$ = this.select((state) => state.selectedPool);
@@ -95,6 +100,7 @@ export class AppsStore extends ComponentStore<AppsState> {
   readonly appsByCategories$ = this.select((state: AppsState): AppsByCategory[] => {
     return this.sortAppsByCategory(state.availableApps, state);
   });
+  readonly catalogs$ = this.select((state) => state.catalogs);
 
   private installedAppsSubscription: Subscription;
 
@@ -152,6 +158,7 @@ export class AppsStore extends ComponentStore<AppsState> {
       isFilterApplied: false,
       searchQuery: '',
       filteredApps: [],
+      filter: filterInitialValues,
     };
   });
 
@@ -165,13 +172,13 @@ export class AppsStore extends ComponentStore<AppsState> {
 
     let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps({
       ...filter,
-      categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.Recommended)),
+      categories: filter.categories.filter((category) => !category?.includes(AppExtraCategory.Recommended)),
     });
 
-    if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
+    if (filter.categories.some((category) => category?.includes(AppExtraCategory.NewAndUpdated))) {
       request$ = this.appsService.getLatestApps({
         ...filter,
-        categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated)),
+        categories: filter.categories.filter((category) => !category?.includes(AppExtraCategory.NewAndUpdated)),
       });
     }
 
@@ -314,6 +321,7 @@ export class AppsStore extends ComponentStore<AppsState> {
         this.patchState((state) => {
           return {
             ...state,
+            catalogs: [...new Set(availableApps?.map((app) => app.catalog))],
             availableApps: [...availableApps],
             recommendedApps: availableApps
               .filter((app) => app.recommended)
@@ -472,7 +480,7 @@ export class AppsStore extends ComponentStore<AppsState> {
 
     if (state.filter.categories.includes(AppExtraCategory.NewAndUpdated) || !hasCategoriesFilter) {
       appsByCategory.push({
-        title: this.translate.instant('New & Updated Apps'),
+        title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.NewAndUpdated)),
         apps: hasCategoriesFilter ? filteredLatestApps : filteredLatestApps.slice(0, this.appsPerCategory),
         totalApps: filteredLatestApps.length,
         category: AppExtraCategory.NewAndUpdated,
@@ -481,7 +489,7 @@ export class AppsStore extends ComponentStore<AppsState> {
 
     if (state.filter.categories.includes(AppExtraCategory.Recommended) || !hasCategoriesFilter) {
       appsByCategory.push({
-        title: this.translate.instant('Recommended Apps'),
+        title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.Recommended)),
         apps: hasCategoriesFilter ? filteredRecommendedApps : filteredRecommendedApps.slice(0, this.appsPerCategory),
         totalApps: filteredRecommendedApps.length,
         category: AppExtraCategory.Recommended,

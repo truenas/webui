@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -47,6 +47,7 @@ import {
 import {
   ReviewWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
+import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
@@ -55,6 +56,9 @@ describe('PoolManagerWizardComponent', () => {
   let loader: HarnessLoader;
   let wizard: MatStepperHarness;
   let store: PoolManagerStore;
+
+  const startOver$ = new Subject<void>();
+
   const hasMultipleEnclosuresInAllowedDisks$ = new BehaviorSubject(false);
   const state = {
     name: 'pewl',
@@ -110,6 +114,7 @@ describe('PoolManagerWizardComponent', () => {
         initialize: jest.fn(),
         hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
+        startOver$,
       }),
       mockProvider(MatDialog, {
         open: jest.fn((component) => {
@@ -139,6 +144,10 @@ describe('PoolManagerWizardComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
+      mockProvider(PoolManagerValidationService, {
+        getTopLevelWarningsForEachStep: jest.fn(() => of({})),
+        getTopLevelErrorsForEachStep: jest.fn(() => of({})),
+      }),
     ],
   });
 
@@ -184,7 +193,6 @@ describe('PoolManagerWizardComponent', () => {
     const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
     expect(stepLabels).toEqual([
       'General Info',
-      'Enclosure Options',
       'Data',
       'Log (Optional)',
       'Spare (Optional)',
@@ -193,7 +201,7 @@ describe('PoolManagerWizardComponent', () => {
       'Dedup (Optional)',
       'Review',
     ]);
-    expect(spectator.query(EnclosureWizardStepComponent)).toExist();
+    expect(spectator.query(EnclosureWizardStepComponent)).not.toExist();
   });
 
   describe('creating a pool', () => {

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -18,6 +18,9 @@ import { DialogService } from 'app/services';
 describe('GeneralWizardStepComponent', () => {
   let spectator: Spectator<GeneralWizardStepComponent>;
   let loader: HarnessLoader;
+
+  const startOver$ = new Subject<void>();
+
   const createComponent = createComponentFactory({
     component: GeneralWizardStepComponent,
     imports: [
@@ -37,6 +40,7 @@ describe('GeneralWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         allDisks$: of([]),
+        startOver$,
         setGeneralOptions: jest.fn(),
         setDiskWarningOptions: jest.fn(),
       }),
@@ -44,7 +48,11 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        isStepActive: true,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -90,5 +98,18 @@ describe('GeneralWizardStepComponent', () => {
         buttonText: 'I Understand',
       }),
     );
+  });
+
+  it('resets form if Start Over confirmed', () => {
+    const form = spectator.component.form;
+
+    form.patchValue({ name: 'Changed', encryption: true });
+
+    expect(form.value).toStrictEqual({ encryption: true, encryptionStandard: 'AES-256-GCM', name: 'Changed' });
+
+    const store = spectator.inject(PoolManagerStore);
+    store.startOver$.next();
+
+    expect(form.value).toStrictEqual({ encryption: null, encryptionStandard: 'AES-256-GCM', name: null });
   });
 });

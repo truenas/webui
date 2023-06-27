@@ -37,12 +37,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { TreeModule } from '@circlon/angular-tree-component';
+import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { ColorPickerModule } from 'ngx-color-picker';
+import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -72,7 +70,6 @@ import { AppLoaderService } from 'app/services';
     ReactiveFormsModule,
     DragDropModule,
     RouterModule,
-    ColorPickerModule,
     NgxDatatableModule,
     CdkTableModule,
     TreeModule,
@@ -106,7 +103,6 @@ import { AppLoaderService } from 'app/services';
     MatTabsModule,
     MatChipsModule,
     MatDatepickerModule,
-    NgxUploaderModule,
     FlexLayoutModule,
     TranslateModule,
     CdkTreeModule,

@@ -30,7 +30,7 @@ def test_verify_recursive_and_transverse_acl_options():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['tank_pool'], scope='session')
+    depends(request, ['tank_pool', 'LDAP_SMB'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -66,6 +66,7 @@ def on_the_datasets_page_create_a_smb_dataset_rtacltest1_with_tank(driver, datas
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset1_name)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
@@ -87,6 +88,7 @@ def create_a_second_smb_dataset_rtacltest2_under_rtacltest1(driver, dataset2_nam
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset2_name)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
@@ -165,6 +167,7 @@ def create_a_third_smb_dataset_rtacltest3(driver, dataset3_name, dataset1_name):
     assert wait_on_element(driver, 5, xpaths.dataset.add_Dataset_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset3_name)
@@ -209,9 +212,7 @@ def create_an_smb_share_with_path_mnttankrtacltest1share(driver, dataset1_path):
     driver.find_element_by_xpath(xpaths.smb.description_Input).send_keys('rt-test')
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+    rsc.Start_Or_Restart_SMB_Service(driver)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name('rt-test'))
 

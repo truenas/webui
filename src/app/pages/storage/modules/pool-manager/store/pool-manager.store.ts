@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import _ from 'lodash';
-import { forkJoin, Observable, of } from 'rxjs';
+import {
+  forkJoin, Observable, of, Subject,
+} from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
   GenerateVdevsService,
@@ -27,7 +30,6 @@ export interface PoolManagerTopologyCategory {
   diskType: DiskType;
   vdevsNumber: number;
   treatDiskSizeAsMinimum: boolean;
-
   vdevs: UnusedDisk[][];
   hasCustomDiskSelection: boolean;
 }
@@ -44,6 +46,7 @@ interface PoolManagerDiskSettings {
 interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: number | null;
   maximizeEnclosureDispersal: boolean;
+  dispersalStrategy: DispersalStrategy;
 }
 
 export interface PoolManagerState {
@@ -51,11 +54,9 @@ export interface PoolManagerState {
   enclosures: Enclosure[];
   name: string;
   encryption: string | null;
-
   allDisks: UnusedDisk[];
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
-
   topology: PoolManagerTopology;
 }
 
@@ -88,6 +89,7 @@ export const initialState: PoolManagerState = {
   enclosureSettings: {
     limitToSingleEnclosure: null,
     maximizeEnclosureDispersal: false,
+    dispersalStrategy: null,
   },
 
   topology: initialTopology,
@@ -95,6 +97,7 @@ export const initialState: PoolManagerState = {
 
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
+  readonly startOver$ = new Subject<void>();
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
   readonly encryption$ = this.select((state) => state.encryption);
@@ -179,35 +182,36 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   reset(): void {
-    this.setState(initialState);
+    this.startOver$.next();
+    this.setState({ ...initialState, isLoading: true });
+    this.loadStateInitialData().pipe(take(1)).subscribe();
   }
 
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
-      tap(() => this.setState({
-        ...initialState,
-        isLoading: true,
-      })),
-      switchMap(() => {
-        return forkJoin([
-          this.ws.call('disk.get_unused'),
-          this.ws.call('enclosure.query'),
-        ]).pipe(
-          tapResponse(([allDisks, enclosures]) => {
-            this.patchState({
-              isLoading: false,
-              allDisks,
-              enclosures,
-            });
-          },
-          (error: WebsocketError) => {
-            this.patchState({ isLoading: false });
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-          }),
-        );
-      }),
+      tap(() => this.setState({ ...initialState, isLoading: true })),
+      switchMap(() => this.loadStateInitialData()),
     );
   });
+
+  loadStateInitialData(): Observable<[UnusedDisk[], Enclosure[]]> {
+    return forkJoin([
+      this.ws.call('disk.get_unused'),
+      this.ws.call('enclosure.query'),
+    ]).pipe(
+      tapResponse(([allDisks, enclosures]) => {
+        this.patchState({
+          isLoading: false,
+          allDisks,
+          enclosures,
+        });
+      },
+      (error: WebsocketError) => {
+        this.patchState({ isLoading: false });
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+      }),
+    );
+  }
 
   readonly resetTopologyCategory = this.updater((state, category: VdevType) => {
     return {

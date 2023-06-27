@@ -1,18 +1,20 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  map, combineLatest, timer,
+  map, combineLatest,
 } from 'rxjs';
-import { startWith, switchMap, tap } from 'rxjs/operators';
+import { startWith } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService, WebSocketService } from 'app/services';
+
+const defaultEncryptionStandard = 'AES-256-GCM';
 
 @UntilDestroy()
 @Component({
@@ -22,12 +24,12 @@ import { DialogService, WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralWizardStepComponent implements OnInit {
-  @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
+  @Input() isStepActive: boolean;
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     name: ['', Validators.required],
     encryption: [false],
-    encryptionStandard: ['AES-256-GCM', Validators.required],
+    encryptionStandard: [defaultEncryptionStandard, Validators.required],
   });
 
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
@@ -51,10 +53,11 @@ export class GeneralWizardStepComponent implements OnInit {
     this.initEncryptionField();
     this.connectGeneralOptionsToStore();
 
-    this.form.statusChanges.pipe(
-      switchMap(() => timer(0)),
-      tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
-    ).pipe(untilDestroyed(this)).subscribe();
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.reset({
+        encryptionStandard: defaultEncryptionStandard,
+      });
+    });
   }
 
   private initEncryptionField(): void {

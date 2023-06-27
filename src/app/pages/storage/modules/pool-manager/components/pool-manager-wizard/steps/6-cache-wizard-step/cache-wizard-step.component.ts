@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
@@ -11,7 +11,9 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CacheWizardStepComponent {
+  @Input() stepWarning: string | null;
   @Output() goToLastStep = new EventEmitter<void>();
+
   protected readonly VdevType = VdevType;
   readonly helptext = helptext;
 

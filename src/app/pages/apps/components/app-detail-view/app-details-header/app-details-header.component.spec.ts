@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import {
-  byText, createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -26,6 +24,7 @@ describe('AppDetailsHeaderComponent', () => {
     catalog: 'Truenas',
     tags: ['aliens', 'ufo'],
     train: 'stable',
+    home: 'https://www.seti.org',
     app_readme: 'Find aliens without leaving your home.',
     installed: false,
   } as AvailableApp;
@@ -109,15 +108,19 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     it('shows app version', () => {
-      expect(spectator.query(byText(/App Version/))).toHaveText('1.0.0');
+      expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Version: 1.0.0');
     });
 
     it('shows app keywords', () => {
-      expect(spectator.query(byText(/Keywords/))).toHaveText('aliens, ufo');
+      expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Keywords: aliens, ufo');
     });
 
     it('shows app train', () => {
-      expect(spectator.query(byText(/Train/))).toHaveText('stable');
+      expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
+    });
+
+    it('shows app homepage', () => {
+      expect(spectator.queryAll('.app-list-item')[4]).toHaveText('Homepage:seti.org');
     });
 
     it('shows app description', () => {

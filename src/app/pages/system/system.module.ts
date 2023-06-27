@@ -17,9 +17,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { QRCodeModule } from 'angular2-qrcode';
+import { QrCodeModule } from 'ng-qrcode';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { NgxUploaderModule } from 'ngx-uploader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -27,6 +26,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
@@ -160,8 +160,7 @@ import { routing } from './system.routing';
     MatToolbarModule,
     MatListModule,
     MatButtonModule,
-    NgxUploaderModule,
-    QRCodeModule,
+    QrCodeModule,
     ReactiveFormsModule,
     routing,
     TooltipModule,
@@ -175,6 +174,7 @@ import { routing } from './system.routing';
     MatSlideToggleModule,
     AppLoaderModule,
     TestIdModule,
+    IxTable2Module,
   ],
   declarations: [
     AdvancedSettingsComponent,

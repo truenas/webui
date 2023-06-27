@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { DatatableComponent } from '@siemens/ngx-datatable';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
@@ -151,12 +151,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   includeNonUniqueSerialDisks = false;
   nonUniqueSerialDisks: ManagerDisk[] = [];
+
   get availableNonUniqueSerialDisksCount(): number {
     if (this.originalDisks.length === this.temp.length) {
       return this.nonUniqueSerialDisks.length;
     }
     return this.temp.filter((disk) => this.nonUniqueSerialDisks.includes(disk)).length;
   }
+
   get nonUniqueSerialDisksWarning(): string {
     if (!this.nonUniqueSerialDisks.length) {
       return null;

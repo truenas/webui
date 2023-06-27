@@ -18,8 +18,8 @@
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
     >
-      <mat-select-trigger *ngIf="multiple">
-        {{ multipleLabels }}
+      <mat-select-trigger>
+        {{ selectedLabel }}
       </mat-select-trigger>
 
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
