@@ -446,12 +446,8 @@ describe('ChartFormComponent', () => {
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
-      const values = spectator.component.form.value;
-
-      expect(values).toEqual({
-        release_name: 'app_name',
-        timezone: 'America/Los_Angeles',
-      });
+      expect(spectator.component.form.controls.release_name.value).toBe('app_name');
+      expect(spectator.component.form.controls['timezone'].value).toBe('America/Los_Angeles');
     });
 
     it('editing when form is submitted', () => {
