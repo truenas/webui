@@ -81,9 +81,15 @@ export class SigninFormComponent {
   }
 
   private handleFailedLogin(): void {
-    const message: string = this.translate.instant('Incorrect credentials. Please try again.');
+    const message: string = this.translate.instant('Wrong username or password. Please try again.');
     this.signinStore.showSnackbar(message);
-    this.clearForm();
+  }
+
+  private handleFailedOtpLogin(): void {
+    const message: string = this.translate.instant('Incorrect or expired OTP. Please try again.');
+    this.signinStore.showSnackbar(message);
+    this.form.patchValue({ otp: '' });
+    this.form.controls.otp.setErrors(null);
   }
 
   private clearForm(): void {
@@ -103,7 +109,7 @@ export class SigninFormComponent {
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       tap((wasLoggedIn) => {
         if (!wasLoggedIn) {
-          this.handleFailedLogin();
+          this.handleFailedOtpLogin();
           this.signinStore.setLoadingState(false);
           this.cdr.markForCheck();
         }

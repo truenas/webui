@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
   catchError,
-  filter, shareReplay, switchMap, tap,
+  filter, shareReplay, switchMap, take, tap,
 } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { helptext } from 'app/helptext/system/2fa';
@@ -73,6 +73,7 @@ export class TwoFactorComponent implements OnInit {
   ngOnInit(): void {
     this.authService.user$.pipe(
       filter(Boolean),
+      take(1),
       untilDestroyed(this),
     ).subscribe((user) => {
       this.currentUser = user;
@@ -97,9 +98,15 @@ export class TwoFactorComponent implements OnInit {
   }
 
   openQrDialog(provisioningUri: string): void {
-    this.mdDialog.open(QrDialogComponent, {
+    const dialogRef = this.mdDialog.open(QrDialogComponent, {
       width: '300px',
       data: { qrInfo: provisioningUri },
+    });
+    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.userTwoFactorAuthConfigured = true;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -119,7 +126,6 @@ export class TwoFactorComponent implements OnInit {
       }),
       tap(() => {
         this.isFormLoading = false;
-        this.userTwoFactorAuthConfigured = true;
         this.cdr.markForCheck();
         this.showQrCode();
       }),
