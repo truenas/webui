@@ -55,7 +55,10 @@ import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -150,6 +153,9 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
   ],
   providers: [
     AppsStore,
+    AppsFilterStore,
+    KubernetesStore,
+    InstalledAppsStore,
   ],
 })
 export class AppsModule { }

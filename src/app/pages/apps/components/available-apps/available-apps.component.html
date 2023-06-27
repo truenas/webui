@@ -15,7 +15,13 @@
 <ix-available-apps-header></ix-available-apps-header>
 
 <div class="available-apps-list">
-  <h3 *ngIf="applicationsStore.searchQuery$ | async as searchQuery" class="section-title">
+  <ix-fake-progress-bar
+    *ngIf="applicationsStore.isLoading$ | async"
+    class="loader-bar"
+    [loading]="applicationsStore.isLoading$ | async"
+  ></ix-fake-progress-bar>
+
+  <h3 *ngIf="appsFilterStore.searchQuery$ | async as searchQuery" class="section-title">
     {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
   </h3>
 
@@ -29,7 +35,7 @@
   <ng-container *ngIf="!(isLoading$ | async)">
     <ng-container *ngIf="!(isFilterOrSearch$ | async)">
       <ng-container
-        *ngFor="let appSection of (applicationsStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle"
+        *ngFor="let appSection of (appsFilterStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle"
         [ngTemplateOutlet]="apps"
         [ngTemplateOutletContext]="{ $implicit: appSection }"
       ></ng-container>
@@ -37,7 +43,7 @@
 
     <div *ngIf="isFilterOrSearch$ | async">
       <ng-container
-        *ngFor="let appSection of (applicationsStore.searchedApps$ | async); trackBy: trackByAppSectionTitle"
+        *ngFor="let appSection of (appsFilterStore.searchedApps$ | async); trackBy: trackByAppSectionTitle"
         [ngTemplateOutlet]="apps"
         [ngTemplateOutletContext]="{ $implicit: appSection }"
       ></ng-container>
@@ -59,7 +65,7 @@
     </ng-container>
   </section>
   <div
-    *ngIf="(appSection.totalApps > applicationsStore.appsPerCategory) && (showViewMoreButton$ | async)"
+    *ngIf="(appSection.totalApps > appsFilterStore.appsPerCategory) && (showViewMoreButton$ | async)"
     class="view-all"
   >
     <button
