@@ -10,6 +10,7 @@ import {
   ChartFormValue, ChartRelease, ChartSchemaNodeConf,
 } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -334,6 +335,7 @@ describe('ChartFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      IxDynamicFormModule,
     ],
     providers: [
       mockProvider(IxSlideInRef),
