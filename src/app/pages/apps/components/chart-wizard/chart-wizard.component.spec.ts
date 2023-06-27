@@ -4,13 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Spectator } from '@ngneat/spectator';
+import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -230,7 +232,7 @@ describe('ChartWizardComponent', () => {
   } as CatalogApp;
 
   const existingChartEdit = {
-    name: 'app_name',
+    name: 'app-name',
     id: 'app_name',
     config: {
       apiPort: 8927,
@@ -333,6 +335,7 @@ describe('ChartWizardComponent', () => {
       mockProvider(ApplicationsService, {
         getCatalogItem: jest.fn(() => of(existingCatalogApp)),
         getChartRelease: jest.fn(() => of([existingChartEdit])),
+        getAllChartReleases: jest.fn(() => of([existingChartEdit])),
       }),
       mockProvider(AppLoaderService),
       mockWebsocket([
@@ -407,6 +410,13 @@ describe('ChartWizardComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.inject(ApplicationsService);
+    });
+
+    it('checks validation error when app name already in use', async () => {
+      const applicationName = await loader.getHarness(IxInputHarness.with({ label: 'Application Name' }));
+
+      await applicationName.setValue('app-name');
+      expect(await applicationName.getErrorText()).toBe('The name "app-name" is already in use.');
     });
 
     it('shows values for app when form is opened for create', async () => {
