@@ -249,13 +249,11 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   }
 
   private getNumberOfSuitableDisks(): number {
-    const disksMatchingType = this.sizeDisksMap[this.selectedDiskType];
     if (!this.form.controls.treatDiskSizeAsMinimum.value) {
-      return disksMatchingType[this.selectedDiskSize]?.length;
+      return this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize]?.length;
     }
 
-    const suitableSizes = Object.keys(disksMatchingType).filter((size) => Number(size) >= this.selectedDiskSize);
-    return suitableSizes.reduce((acc, size) => acc + disksMatchingType[size].length, 0);
+    return this.inventory.filter((disk) => disk.size >= this.selectedDiskSize).length;
   }
 
   private updateWidthOptions(): void {
