@@ -19,7 +19,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -233,7 +232,7 @@ describe('ChartWizardComponent', () => {
   } as CatalogApp;
 
   const existingChartEdit = {
-    name: 'app_name',
+    name: 'app-name',
     id: 'app_name',
     config: {
       apiPort: 8927,
@@ -336,6 +335,7 @@ describe('ChartWizardComponent', () => {
       mockProvider(ApplicationsService, {
         getCatalogItem: jest.fn(() => of(existingCatalogApp)),
         getChartRelease: jest.fn(() => of([existingChartEdit])),
+        getAllChartReleases: jest.fn(() => of([existingChartEdit])),
       }),
       mockProvider(AppLoaderService),
       mockWebsocket([
@@ -349,13 +349,6 @@ describe('ChartWizardComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockProvider(AppsStore, {
-        installedApps$: of([{
-          name: 'ix-chart',
-        }, {
-          name: 'app-name-already-in-use',
-        }]),
-      }),
     ],
   });
 
@@ -422,11 +415,8 @@ describe('ChartWizardComponent', () => {
     it('checks validation error when app name already in use', async () => {
       const applicationName = await loader.getHarness(IxInputHarness.with({ label: 'Application Name' }));
 
-      await applicationName.setValue('app-name-already-in-use');
-      expect(await applicationName.getErrorText()).toBe('The name "app-name-already-in-use" is already in use.');
-
-      await applicationName.setValue('ix-chart');
-      expect(await applicationName.getErrorText()).toBe('The name "ix-chart" is already in use.');
+      await applicationName.setValue('app-name');
+      expect(await applicationName.getErrorText()).toBe('The name "app-name" is already in use.');
     });
 
     it('shows values for app when form is opened for create', async () => {
