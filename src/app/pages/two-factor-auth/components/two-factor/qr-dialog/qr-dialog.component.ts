@@ -6,6 +6,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 @Component({
   selector: 'ix-qr-dialog',
   templateUrl: './qr-dialog.component.html',
+  styleUrls: ['./qr-dialog.component.scss'],
 })
 export class QrDialogComponent {
   constructor(

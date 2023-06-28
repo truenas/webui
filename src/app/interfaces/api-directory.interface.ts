@@ -325,7 +325,7 @@ export type ApiDirectory = {
 
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
-  'auth.two_factor_auth': { params: void; response: boolean };
+  'auth.two_factor_auth': { params: [string, string]; response: boolean };
   'auth.twofactor.renew_secret': { params: void; response: boolean };
   'auth.twofactor.config': { params: void; response: TwoFactorConfig };
   'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };
@@ -788,6 +788,7 @@ export type ApiDirectory = {
   'system.shutdown': { params: { delay?: number }; response: void };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.info': { params: void; response: SystemInfo };
+  'system.host_id': { params: void; response: string };
   'system.is_ha_capable': { params: void; response: boolean };
   'system.is_ix_hardware': { params: void; response: boolean };
   'system.advanced.config': { params: void; response: AdvancedConfig };
@@ -952,6 +953,8 @@ export type ApiDirectory = {
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
+  'user.provisioning_uri': { params: [username: string]; response: string };
+  'user.renew_2fa_secret': { params: [username: string]; response: User };
 
   // UPS
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +9,7 @@ import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -24,8 +25,9 @@ export enum DispersalStrategy {
   styleUrls: ['./enclosure-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EnclosureWizardStepComponent implements OnInit {
-  @Output() stepStatusValidityChanged = new EventEmitter<boolean>();
+export class EnclosureWizardStepComponent implements OnInit, OnChanges {
+  @Input() isStepActive: boolean;
+  @Input() stepWarning: string | null;
 
   form = this.formBuilder.group({
     dispersalStrategy: [DispersalStrategy.None],
@@ -80,14 +82,17 @@ export class EnclosureWizardStepComponent implements OnInit {
       }),
     ).pipe(untilDestroyed(this)).subscribe();
 
-    this.form.statusChanges.pipe(
-      switchMap(() => timer(0)),
-      tap(() => this.stepStatusValidityChanged.emit(this.form.valid)),
-    ).pipe(untilDestroyed(this)).subscribe();
-
     this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.form.reset();
+      this.form.reset({
+        dispersalStrategy: DispersalStrategy.None,
+      });
     });
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue && !this.form.touched) {
+      this.form.updateValueAndValidity();
+    }
   }
 
   private connectFormToStore(): void {
@@ -95,6 +100,7 @@ export class EnclosureWizardStepComponent implements OnInit {
       this.store.setEnclosureOptions({
         limitToSingleEnclosure: this.isLimitingToSingle ? value.limitToEnclosure : null,
         maximizeEnclosureDispersal: value.dispersalStrategy === DispersalStrategy.Maximize,
+        dispersalStrategy: value.dispersalStrategy,
       });
     });
   }

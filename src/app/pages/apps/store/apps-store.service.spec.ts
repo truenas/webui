@@ -101,7 +101,7 @@ describe('AppsStore', () => {
           categories: ['storage', 'media'],
           catalogs: ['TRUENAS'],
           latestApps: [{ ...installedAndRecommendedApp }],
-          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'Recommended'] }],
+          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
 
         } as AppsState,
       });

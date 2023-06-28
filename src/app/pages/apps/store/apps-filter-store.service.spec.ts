@@ -239,7 +239,7 @@ describe('AppsFilterStore', () => {
             apps: [
               { ...installedAndRecommendedApp, categories: ['storage', AppExtraCategory.NewAndUpdated] },
             ],
-            category: 'New and Updated',
+            category: AppExtraCategory.NewAndUpdated,
             title: 'New & Updated Apps',
             totalApps: 1,
           },
@@ -247,7 +247,7 @@ describe('AppsFilterStore', () => {
             apps: [
               { ...installedAndRecommendedApp, categories: ['storage', AppExtraCategory.Recommended] },
             ],
-            category: 'Recommended',
+            category: AppExtraCategory.Recommended,
             title: 'Recommended Apps',
             totalApps: 1,
           },

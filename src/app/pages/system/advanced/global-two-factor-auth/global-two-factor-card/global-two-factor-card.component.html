@@ -1,0 +1,50 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Global Two Factor Authentication' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
+        mat-button
+        [ixTest]="['two-factor-auth', 'configure']"
+        (click)="onConfigurePressed(twoFactorAuthConfig)"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Global 2FA' | translate }}:</span>
+        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+          {{ twoFactorAuthConfig?.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Interval' | translate }}:</span>
+        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+          {{ twoFactorAuthConfig?.interval }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'OTP Digits' | translate }}:</span>
+        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+          {{ twoFactorAuthConfig?.otp_digits }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Window' | translate }}:</span>
+        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+          {{ twoFactorAuthConfig?.window }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Two Factor Authentication for SSH' | translate }}:</span>
+        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+          {{ twoFactorAuthConfig?.services.ssh ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

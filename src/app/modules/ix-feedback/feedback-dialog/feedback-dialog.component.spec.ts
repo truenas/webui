@@ -53,6 +53,7 @@ describe('FeedbackDialogComponent', () => {
           message: 'Image uploaded successfully',
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
+        getHostId: jest.fn(() => of('unique-system-host-id-1234')),
       }),
       mockProvider(SnackbarService),
       provideMockStore({
