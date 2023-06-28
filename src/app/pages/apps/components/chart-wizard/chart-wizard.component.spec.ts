@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -19,6 +19,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -344,6 +345,9 @@ describe('ChartWizardComponent', () => {
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
       ]),
+      mockProvider(AppsStore, {
+        selectedPool$: of('pool set'),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
@@ -367,6 +371,17 @@ describe('ChartWizardComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.inject(ApplicationsService);
+    });
+
+    it('navigates to app detail page if pool is not set', () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const store = spectator.inject(AppsStore);
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      spectator.component.ngOnInit();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'app_name']);
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
@@ -410,6 +425,17 @@ describe('ChartWizardComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.inject(ApplicationsService);
+    });
+
+    it('navigates to app detail page if pool is not set', () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const store = spectator.inject(AppsStore);
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      spectator.component.ngOnInit();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'ipfs']);
     });
 
     it('checks validation error when app name already in use', async () => {
