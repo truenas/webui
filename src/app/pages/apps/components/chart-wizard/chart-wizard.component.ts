@@ -35,7 +35,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -111,7 +111,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private loader: AppLoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
-    private applicationsStore: AppsStore,
+    private kubernetesStore: KubernetesStore,
   ) {}
 
   ngOnInit(): void {
@@ -454,7 +454,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private checkIfPoolSetAndManageApplication(): void {
-    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+    this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
       this.wasPoolSet = Boolean(pool);
 
       if (!pool) {
