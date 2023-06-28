@@ -54,8 +54,6 @@ describe('NetworkConfigurationComponent', () => {
           nameserver1: '',
           nameserver2: '',
           nameserver3: '',
-          netwait_enabled: false,
-          netwait_ip: [],
           service_announcement: {
             mdns: true,
             netbios: false,
@@ -108,7 +106,6 @@ describe('NetworkConfigurationComponent', () => {
       'Inherit domain from DHCP': false,
       'Outbound Activity': 'Allow All',
       'HTTP Proxy': '',
-      'Enable Netwait Feature': false,
       'Host Name Database': [],
     });
   });
@@ -135,7 +132,6 @@ describe('NetworkConfigurationComponent', () => {
       'IPv4 Default Gateway': '',
       'IPv6 Default Gateway': '',
       'HTTP Proxy': '',
-      'Enable Netwait Feature': false,
       'Host Name Database': [],
     });
 
@@ -161,8 +157,6 @@ describe('NetworkConfigurationComponent', () => {
         nameserver1: '',
         nameserver2: '',
         nameserver3: '',
-        netwait_enabled: false,
-        netwait_ip: [],
         service_announcement: {
           mdns: true,
           netbios: true,
