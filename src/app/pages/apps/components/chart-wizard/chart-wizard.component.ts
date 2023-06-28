@@ -35,6 +35,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -49,13 +50,12 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
 export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
+  protected wasPoolSet = false;
   appId: string;
   catalog: string;
   train: string;
-
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
-
   isLoading = true;
   appsLoaded = false;
   isNew = true;
@@ -111,6 +111,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private loader: AppLoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
+    private kubernetesStore: KubernetesStore,
   ) {}
 
   ngOnInit(): void {
@@ -151,31 +152,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     return !section.schema.every((item) => !this.form.controls[item.controlName].invalid);
   }
 
-  private listenForRouteChanges(): void {
-    this.activatedRoute.params
-      .pipe(
-        filter((params: AppDetailsRouteParams) => !!(params.appId) && !!(params.catalog) && !!(params.train)),
-        untilDestroyed(this),
-      )
-      .subscribe(({ train, catalog, appId }) => {
-        this.appId = appId;
-        this.train = train;
-        this.catalog = catalog;
-
-        this._pageTitle$.next(appId);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-
-        if (this.activatedRoute.routeConfig.path.endsWith('/install')) {
-          this.loadApplicationForCreation();
-        }
-
-        if (this.activatedRoute.routeConfig.path.endsWith('/edit')) {
-          this.loadApplicationForEdit();
-        }
-      });
-  }
-
   loadApplicationForCreation(): void {
     this.isNew = true;
     this.isLoading = true;
@@ -188,6 +164,122 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (error: WebsocketError) => this.afterAppLoadError(error),
     });
+  }
+
+  updateSearchOption(): void {
+    this.searchOptions = this.appSchemaService.getSearchOptions(this.dynamicSection, this.form.value);
+  }
+
+  addItem(event: AddListItemEvent): void {
+    this.appSchemaService.addFormListItem({
+      event,
+      isNew: this.isNew,
+      isParentImmutable: false,
+    });
+  }
+
+  deleteItem(event: DeleteListItemEvent): void {
+    this.appSchemaService.deleteFormListItem(event);
+  }
+
+  getFieldsHiddenOnForm(
+    data: unknown,
+    deleteField$: Subject<string>,
+    path = '',
+  ): void {
+    if (path) {
+      // eslint-disable-next-line no-restricted-syntax
+      const formField = (this.form.get(path) as CustomUntypedFormField);
+      formField?.hidden$?.pipe(
+        take(1),
+        untilDestroyed(this),
+      ).subscribe((hidden) => {
+        if (hidden) {
+          deleteField$.next(path);
+        }
+      });
+    }
+    if (_.isPlainObject(data)) {
+      Object.keys(data).forEach((key) => {
+        this.getFieldsHiddenOnForm((data as Record<string, unknown>)[key], deleteField$, path ? path + '.' + key : key);
+      });
+    }
+    if (_.isArray(data)) {
+      for (let i = 0; i < data.length; i++) {
+        this.getFieldsHiddenOnForm(data[i], deleteField$, `${path}.${i}`);
+      }
+    }
+  }
+
+  onSubmit(): void {
+    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
+    const deleteField$ = new Subject<string>();
+    deleteField$.pipe(untilDestroyed(this)).subscribe({
+      next: (fieldToBeDeleted) => {
+        const keys = fieldToBeDeleted.split('.');
+        _.unset(data, keys);
+      },
+      complete: () => {
+        this.saveData(data);
+      },
+    });
+
+    this.getFieldsHiddenOnForm(data, deleteField$);
+    deleteField$.complete();
+  }
+
+  saveData(data: ChartFormValues): void {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: this.isNew ? helptext.installing : helptext.updating,
+      },
+    });
+    this.dialogRef.componentInstance.showCloseButton = false;
+
+    if (this.isNew) {
+      const version = data.version;
+      delete data.version;
+      this.dialogRef.componentInstance.setCall('chart.release.create', [{
+        catalog: this.catalog,
+        item: this.catalogApp.name,
+        release_name: data.release_name,
+        train: this.train,
+        version,
+        values: data,
+      } as ChartReleaseCreate]);
+    } else {
+      delete data.release_name;
+      this.dialogRef.componentInstance.setCall('chart.release.update', [this.config.release_name as string, { values: data }]);
+    }
+
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
+
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
+      this.dialogRef.close();
+      this.formErrorHandler.handleWsFormError(failedJob, this.form);
+      this.cdr.markForCheck();
+    });
+  }
+
+  onSuccess(): void {
+    this.dialogService.closeAllDialogs();
+    this.router.navigate(['/apps/installed']);
+  }
+
+  private listenForRouteChanges(): void {
+    this.activatedRoute.params
+      .pipe(
+        filter((params: AppDetailsRouteParams) => !!(params.appId) && !!(params.catalog) && !!(params.train)),
+        untilDestroyed(this),
+      )
+      .subscribe(({ train, catalog, appId }) => {
+        this.appId = appId;
+        this.train = train;
+        this.catalog = catalog;
+
+        this.checkIfPoolSetAndManageApplication();
+      });
   }
 
   private loadApplicationForEdit(): void {
@@ -361,104 +453,25 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  updateSearchOption(): void {
-    this.searchOptions = this.appSchemaService.getSearchOptions(this.dynamicSection, this.form.value);
-  }
+  private checkIfPoolSetAndManageApplication(): void {
+    this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+      this.wasPoolSet = Boolean(pool);
 
-  addItem(event: AddListItemEvent): void {
-    this.appSchemaService.addFormListItem({
-      event,
-      isNew: this.isNew,
-      isParentImmutable: false,
-    });
-  }
+      if (!pool) {
+        this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+      } else {
+        this._pageTitle$.next(this.appId);
+        this.isLoading = false;
+        this.cdr.markForCheck();
 
-  deleteItem(event: DeleteListItemEvent): void {
-    this.appSchemaService.deleteFormListItem(event);
-  }
-
-  getFieldsHiddenOnForm(
-    data: unknown,
-    deleteField$: Subject<string>,
-    path = '',
-  ): void {
-    if (path) {
-      // eslint-disable-next-line no-restricted-syntax
-      const formField = (this.form.get(path) as CustomUntypedFormField);
-      formField?.hidden$?.pipe(
-        take(1),
-        untilDestroyed(this),
-      ).subscribe((hidden) => {
-        if (hidden) {
-          deleteField$.next(path);
+        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/install')) {
+          this.loadApplicationForCreation();
         }
-      });
-    }
-    if (_.isPlainObject(data)) {
-      Object.keys(data).forEach((key) => {
-        this.getFieldsHiddenOnForm((data as Record<string, unknown>)[key], deleteField$, path ? path + '.' + key : key);
-      });
-    }
-    if (_.isArray(data)) {
-      for (let i = 0; i < data.length; i++) {
-        this.getFieldsHiddenOnForm(data[i], deleteField$, `${path}.${i}`);
+
+        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/edit')) {
+          this.loadApplicationForEdit();
+        }
       }
-    }
-  }
-
-  onSubmit(): void {
-    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
-    const deleteField$ = new Subject<string>();
-    deleteField$.pipe(untilDestroyed(this)).subscribe({
-      next: (fieldToBeDeleted) => {
-        const keys = fieldToBeDeleted.split('.');
-        _.unset(data, keys);
-      },
-      complete: () => {
-        this.saveData(data);
-      },
     });
-
-    this.getFieldsHiddenOnForm(data, deleteField$);
-    deleteField$.complete();
-  }
-
-  saveData(data: ChartFormValues): void {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-      data: {
-        title: this.isNew ? helptext.installing : helptext.updating,
-      },
-    });
-    this.dialogRef.componentInstance.showCloseButton = false;
-
-    if (this.isNew) {
-      const version = data.version;
-      delete data.version;
-      this.dialogRef.componentInstance.setCall('chart.release.create', [{
-        catalog: this.catalog,
-        item: this.catalogApp.name,
-        release_name: data.release_name,
-        train: this.train,
-        version,
-        values: data,
-      } as ChartReleaseCreate]);
-    } else {
-      delete data.release_name;
-      this.dialogRef.componentInstance.setCall('chart.release.update', [this.config.release_name as string, { values: data }]);
-    }
-
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
-
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-      this.dialogRef.close();
-      this.formErrorHandler.handleWsFormError(failedJob, this.form);
-      this.cdr.markForCheck();
-    });
-  }
-
-  onSuccess(): void {
-    this.dialogService.closeAllDialogs();
-    this.router.navigate(['/apps/installed']);
   }
 }

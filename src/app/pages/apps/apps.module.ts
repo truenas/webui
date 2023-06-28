@@ -72,6 +72,7 @@ import { AppCardComponent } from './components/available-apps/app-card/app-card.
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { CategoryViewComponent } from './components/available-apps/category-view/category-view.component';
+import { CustomAppButtonComponent } from './components/available-apps/custom-app-button/custom-app-button.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
@@ -117,6 +118,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppSectionExpandCollapseComponent,
     CategoryViewComponent,
     CatalogDeleteDialogComponent,
+    CustomAppButtonComponent,
   ],
   imports: [
     CommonModule,
