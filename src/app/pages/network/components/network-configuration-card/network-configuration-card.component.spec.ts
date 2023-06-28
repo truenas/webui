@@ -29,7 +29,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameserver2: '8.8.4.4',
           httpproxy: 'http://proxy.com',
           netwait_enabled: true,
-          hosts: 'host1.com\nhost2.com',
+          hosts: ['host1.com', 'host2.com'],
           domains: ['domain.cz'],
           service_announcement: {
             mdns: true,
@@ -114,7 +114,7 @@ describe('NetworkConfigurationCardComponent', () => {
       'Additional Domains:': 'domain.cz',
       'Domain:': 'local',
       'HTTP Proxy:': 'http://proxy.com',
-      'Hostname Database:': 'host1.com\nhost2.com',
+      'Hostname Database:': 'host1.com, host2.com',
       'Hostname:': 'truenas',
       'Netwait:': 'Enabled',
       'Outbound Network:': 'Allow usage, kmip, rsync, update',
