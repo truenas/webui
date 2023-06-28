@@ -14,6 +14,7 @@ import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 describe('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
   let loader: HarnessLoader;
+  let button: MatButtonHarness;
 
   const createComponent = createRoutingFactory({
     component: CustomAppButtonComponent,
@@ -26,19 +27,17 @@ describe('CustomAppButtonComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    button = await loader.getHarness(MatButtonHarness.with({ text: 'Custom App' }));
   });
 
-  it('renders Custom App Button', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Custom App' }));
+  it('renders Custom App Button', () => {
     expect(button).toExist();
   });
 
   it('navigates to create custom app page', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Custom App' }));
-
     await button.click();
 
     const router = spectator.inject(Router);
@@ -49,9 +48,7 @@ describe('CustomAppButtonComponent', () => {
     ]);
   });
 
-  it('disables Custom App button if pool is not set', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Custom App' }));
-
+  it('disables Custom App button if pool is not set', () => {
     const store = spectator.inject(KubernetesStore);
     Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
 
