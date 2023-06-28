@@ -15,7 +15,6 @@ import { delay } from 'rxjs/operators';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxSelectComponent } from './ix-select.component';
 
 describe('IxSelectComponent', () => {
@@ -35,7 +34,6 @@ describe('IxSelectComponent', () => {
     declarations: [
       MockComponent(IxErrorsComponent),
       MockComponent(IxLabelComponent),
-      MockComponent(TooltipComponent),
     ],
   });
 
@@ -151,21 +149,6 @@ describe('IxSelectComponent', () => {
       expect(await options[1].isDisabled()).toBe(false);
       expect(await options[2].getText()).toBe('GRL');
       expect(await options[2].isDisabled()).toBe(true);
-    });
-
-    it('shows options tooltip if it is provided', async () => {
-      spectator.component.options = of([
-        { label: 'GBR', value: 'Great Britain' },
-        { label: 'GRL', value: 'Greenland', tooltip: 'Not really green.' },
-      ]);
-      spectator.component.ngOnChanges();
-
-      const select = await loader.getHarness(MatSelectHarness);
-      await select.open();
-
-      const tooltips = spectator.queryAll(TooltipComponent);
-      expect(tooltips).toHaveLength(1);
-      expect(tooltips[0].message).toBe('Not really green.');
     });
   });
 

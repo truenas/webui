@@ -27,32 +27,11 @@ export enum CreateVdevLayout {
 }
 
 export const vdevLayoutOptions = [
-  {
-    label: T('Stripe'),
-    value: CreateVdevLayout.Stripe,
-    tooltip: T('Each disk stores data. A stripe requires at least one disk and has no data redundancy.'),
-  },
-  {
-    label: T('Mirror'),
-    value: CreateVdevLayout.Mirror,
-    tooltip: T('Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.'),
-  },
-  {
-    label: T('RAIDZ1'),
-    value: CreateVdevLayout.Raidz1,
-    tooltip: T('Uses one disk for parity while all other disks store data. RAIDZ1 requires at least three disks.'),
-  },
-  {
-    label: T('RAIDZ2'),
-    value: CreateVdevLayout.Raidz2,
-    tooltip: T('Uses two disks for parity while all other disks store data. RAIDZ2 requires at least four disks.'),
-  },
-  {
-    label: T('RAIDZ3'),
-    value: CreateVdevLayout.Raidz3,
-    tooltip: T('Uses three disks for parity while all other disks store data. RAIDZ3 requires at least five disks.'),
-  },
-
+  { label: T('Stripe'), value: CreateVdevLayout.Stripe },
+  { label: T('Mirror'), value: CreateVdevLayout.Mirror },
+  { label: T('RAIDZ1'), value: CreateVdevLayout.Raidz1 },
+  { label: T('RAIDZ2'), value: CreateVdevLayout.Raidz2 },
+  { label: T('RAIDZ3'), value: CreateVdevLayout.Raidz3 },
 ];
 
 export enum TopologyWarning {

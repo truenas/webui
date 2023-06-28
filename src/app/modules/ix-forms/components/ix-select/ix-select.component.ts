@@ -111,10 +111,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
     this.cdr.markForCheck();
   }
 
-  onOptionTooltipClicked(event: MouseEvent): void {
-    event.stopPropagation();
-  }
-
   get disabledState(): boolean {
     return this.isDisabled || !this.options;
   }

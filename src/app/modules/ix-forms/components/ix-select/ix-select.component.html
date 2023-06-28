@@ -52,14 +52,6 @@
           ></ix-icon>
 
           {{ option.label }}
-
-          <ix-tooltip
-            *ngIf="option.tooltip"
-            class="option-tooltip"
-            [header]="option.label"
-            [message]="option.tooltip"
-            (click)="onOptionTooltipClicked($event)"
-          ></ix-tooltip>
         </mat-option>
       </ng-container>
 
