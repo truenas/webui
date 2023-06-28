@@ -42,6 +42,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
     map((pool) => !pool),
   );
   isLoading$ = this.applicationsStore.isLoading$;
+  isFiltering$ = this.appsFilterStore.isFiltering$;
 
   readonly customIxChartApp = ixChartApp;
   readonly chartsTrain = chartsTrain;
