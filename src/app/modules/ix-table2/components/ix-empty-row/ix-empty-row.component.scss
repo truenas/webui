@@ -1,0 +1,87 @@
+:host {
+  padding: 15px;
+  place-content: center;;
+}
+
+.empty-page {
+  color: var(--fg2);
+  margin: auto 24px;
+  max-width: 300px;
+
+  .icon-div {
+    text-align: center;
+
+    .ix-icon {
+      align-items: center;
+      color: var(--fg2);
+      display: inline-flex;
+      font-size: 50px;
+      height: 50px;
+      opacity: 0.1;
+      width: auto;
+
+      &.logo {
+        font-size: unset;
+        height: 40px;
+        margin: 10px 0;
+      }
+    }
+  }
+
+  .empty-title {
+    font-size: inherit;
+    margin-bottom: 10px;
+  }
+
+  .empty-message {
+    font-size: 0.875rem;
+    margin-bottom: 10px;
+  }
+
+
+  &.large {
+    .icon-div {
+      .ix-icon {
+        align-items: center;
+        display: inline-flex;
+        font-size: 150px;
+        height: 150px;
+        width: auto;
+
+        &.logo {
+          font-size: unset;
+          height: 80px;
+          margin: 20px 0;
+        }
+      }
+    }
+
+    .empty-title {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .empty-message {
+      margin-bottom: 20px;
+    }
+  }
+
+  button.empty-action {
+    width: 100%;
+  }
+}
+
+.empty-page.compact {
+  margin: 0;
+}
+
+.empty-page.errors {
+  .icon-div {
+    margin: 16px;
+  }
+
+  .icon-div .ix-icon {
+    color: var(--red);
+    opacity: 1;
+  }
+}
