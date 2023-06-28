@@ -19,7 +19,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -345,7 +345,7 @@ describe('ChartWizardComponent', () => {
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
       ]),
-      mockProvider(AppsStore, {
+      mockProvider(KubernetesStore, {
         selectedPool$: of('pool set'),
       }),
       mockProvider(MatDialog, {
@@ -377,7 +377,7 @@ describe('ChartWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(AppsStore);
+      const store = spectator.inject(KubernetesStore);
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
@@ -431,7 +431,7 @@ describe('ChartWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(AppsStore);
+      const store = spectator.inject(KubernetesStore);
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
