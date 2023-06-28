@@ -1,5 +1,6 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { AppMetadata } from 'app/interfaces/chart-release.interface';
+import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app-section-expand-collapse/app-section-expand-collapse.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 
 describe('AppMetadataCardComponent', () => {
@@ -25,7 +26,9 @@ describe('AppMetadataCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppMetadataCardComponent,
-    declarations: [],
+    declarations: [
+      AppSectionExpandCollapseComponent,
+    ],
     providers: [],
   });
 

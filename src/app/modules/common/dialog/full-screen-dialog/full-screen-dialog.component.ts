@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './full-screen-dialog.component.html',
@@ -11,5 +11,10 @@ export class FullScreenDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<FullScreenDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) protected data: { showClose: boolean },
   ) {}
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }

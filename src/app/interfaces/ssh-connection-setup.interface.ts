@@ -1,4 +1,3 @@
-import { CipherType } from 'app/enums/cipher-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 
@@ -17,7 +16,6 @@ export interface SshConnectionSetup {
     password: string;
     username: string;
     connect_timeout: number;
-    cipher: CipherType;
     token?: string;
     otp_token?: string;
     sudo?: boolean;
@@ -38,6 +36,5 @@ export interface SshSemiAutomaticSetup {
   username?: string;
   otp_token?: string;
   private_key: number;
-  cipher?: CipherType;
   connect_timeout?: number;
 }

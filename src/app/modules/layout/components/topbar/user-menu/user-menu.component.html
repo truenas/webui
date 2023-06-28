@@ -20,6 +20,11 @@
     {{ 'Change Password' | translate }}
   </button>
 
+  <button name="settings-2fa" mat-menu-item ixTest="2fa" (click)="onTwoFactorAuth()">
+    <ix-icon name="ix:two_factor_auth"></ix-icon>
+    {{ 'Two-Factor Authentication' | translate }}
+  </button>
+
   <a name="settings-api" ixTest="api-keys" mat-menu-item [routerLink]="['/apikeys']">
     <ix-icon name="laptop"></ix-icon>
     {{ 'API Keys' | translate }}

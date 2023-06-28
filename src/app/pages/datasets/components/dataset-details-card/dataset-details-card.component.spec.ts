@@ -59,7 +59,7 @@ describe('DatasetDetailsCardComponent', () => {
       }),
       mockProvider(MatSnackBar),
       mockProvider(IxSlideInService, {
-        open: jest.fn(),
+        open: jest.fn(() => ({ slideInClosed$: of() })),
         onClose$: of(),
       }),
       mockProvider(MatDialog, {

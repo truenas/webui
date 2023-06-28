@@ -3,7 +3,6 @@ export interface TwoFactorConfig {
   id: number;
   interval: number;
   otp_digits: number;
-  secret: string;
   services: {
     ssh: boolean;
   };

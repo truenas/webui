@@ -1,7 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import {
+  byText, createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
@@ -44,6 +47,9 @@ describe('NetworkConfigurationCardComponent', () => {
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
         } as NetworkSummary),
       ]),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({ slideInClosed$: of() })),
+      }),
     ],
   });
 
@@ -118,7 +124,6 @@ describe('NetworkConfigurationCardComponent', () => {
 
   it('opens settings form when Settings button is clicked', async () => {
     const slideInRef = spectator.inject(IxSlideInService);
-    jest.spyOn(slideInRef, 'open').mockImplementation();
 
     const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await settingsButton.click();
