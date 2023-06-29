@@ -98,8 +98,10 @@ export class SelectPoolDialogComponent implements OnInit {
           }));
           this.pools$ = of(poolOptions);
 
+          this.dialogRef.close();
+
           if (!pools.length) {
-            this.showNoPoolsWarning();
+            setTimeout(() => this.showNoPoolsWarning(), 100);
           }
         },
         error: (error) => {
@@ -118,6 +120,7 @@ export class SelectPoolDialogComponent implements OnInit {
       buttonText: helptext.noPool.action,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       this.dialogRef.close(false);
+
       if (!confirmed) {
         return;
       }
