@@ -3,15 +3,7 @@
     [pageTitle]="pageTitle$ | async | titlecase | translate"
     [loading]="isLoading$ | async"
   >
-    <a
-      mat-button
-      color="primary"
-      ixTest="custom-app"
-      [disabled]="customAppDisabled$ | async"
-      [routerLink]="['/apps', 'available', officialCatalog, chartsTrain, customIxChartApp, 'install']"
-    >
-      {{ 'Custom App' | translate }}
-    </a>
+    <ix-custom-app-button></ix-custom-app-button>
   </ix-page-title-header>
 </ng-template>
 

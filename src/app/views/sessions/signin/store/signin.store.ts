@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -68,6 +69,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
+    private mdDialog: MatDialog,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);

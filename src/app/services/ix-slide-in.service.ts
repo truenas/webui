@@ -18,7 +18,7 @@ export class IxSlideInService {
    * Emits when any slide in has been closed.
    * Prefer to use slideInClosed$ in slideInRef to tell when an individual slide in is closed.
    */
-  readonly onClose$ = new Subject();
+  readonly onClose$ = new Subject<void>();
 
   constructor(
     private location: Location,
@@ -40,9 +40,12 @@ export class IxSlideInService {
 
     const slideInRef = this.slideInComponent.openSlideIn<T, D>(component, params);
     this.slideInRefMap.set(slideInRef.id, slideInRef);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe((response?: D) => {
       this.deleteRef(slideInRef.id);
-      this.onClose$.next('');
+      if (response === undefined) {
+        response = null;
+      }
+      this.onClose$.next(null);
     });
     return slideInRef;
   }

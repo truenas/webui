@@ -11,7 +11,7 @@
     {{ 'Advanced Settings' | translate }}
   </button>
   <button
-    *ngIf="!!(applicationsStore.selectedPool$ | async)"
+    *ngIf="!!(kubernetesStore.selectedPool$ | async)"
     mat-menu-item
     ixTest="unset-pool"
     (click)="onUnsetPool()"

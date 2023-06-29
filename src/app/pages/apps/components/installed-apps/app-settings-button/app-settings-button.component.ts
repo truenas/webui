@@ -8,7 +8,7 @@ import { officialCatalog } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps-old/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { DialogService } from 'app/services';
@@ -32,7 +32,7 @@ export class AppSettingsButtonComponent {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
-    protected applicationsStore: AppsStore,
+    protected kubernetesStore: KubernetesStore,
   ) { }
 
   onChoosePool(): void {
@@ -64,7 +64,7 @@ export class AppSettingsButtonComponent {
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close();
-        this.applicationsStore.updateSelectedPool(null);
+        this.kubernetesStore.updateSelectedPool(null);
         this.snackbar.success(
           this.translate.instant('Pool has been unset.'),
         );

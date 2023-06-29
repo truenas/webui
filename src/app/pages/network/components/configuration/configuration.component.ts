@@ -272,15 +272,11 @@ export class NetworkConfigurationComponent implements OnInit {
             httpproxy: config.httpproxy,
             netwait_enabled: config.netwait_enabled,
             netwait_ip: config.netwait_ip,
-            hosts: [],
+            hosts: config.hosts,
             netbios: config.service_announcement.netbios,
             mdns: config.service_announcement.mdns,
             wsd: config.service_announcement.wsd,
           };
-
-          if (config.hosts && config.hosts !== '') {
-            transformed.hosts = config.hosts.split('\n');
-          }
 
           if (config.activity) {
             if (config.activity.activities.length === 0) {
@@ -332,7 +328,6 @@ export class NetworkConfigurationComponent implements OnInit {
 
     const params = {
       ...values,
-      hosts: values.hosts.length > 0 ? values.hosts.join('\n') : '',
       activity,
       service_announcement: serviceAnnouncement,
     };

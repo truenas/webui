@@ -18,9 +18,11 @@ import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { IxListItemComponent } from 'app/modules/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
@@ -123,6 +125,8 @@ describe('IxDynamicFormItemComponent', () => {
       FlexLayoutModule,
     ],
     declarations: [
+      MockComponent(IxErrorsComponent),
+      MockComponent(IxLabelComponent),
       MockComponent(IxInputComponent),
       MockComponent(IxListComponent),
       MockComponent(IxListItemComponent),

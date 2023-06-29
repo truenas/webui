@@ -257,9 +257,9 @@ export class AuthService {
     ]).pipe(
       map(([, data]) => data),
     ).pipe(
-      filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid),
+      filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
       switchMap((loggedInUser: DsUncachedUser) => {
-        authenticatedUser = loggedInUser;
+        authenticatedUser = { ...loggedInUser };
 
         const userQueryUuid = UUID.UUID();
         const userQueryPayload = {
@@ -286,10 +286,38 @@ export class AuthService {
             ...users[0],
           };
         }
-
         this.loggedInUser$.next(authenticatedUser);
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  renewUser2FaSecret(): Observable<User> {
+    return this.user$.pipe(
+      filter(Boolean),
+      take(1),
+      switchMap((user) => {
+        const renewUuid = UUID.UUID();
+        const renewPayload = {
+          id: renewUuid,
+          msg: IncomingApiMessageType.Method,
+          method: 'user.renew_2fa_secret',
+          params: [user.username],
+        };
+
+        const requestTriggerUserQuery$ = new Observable((subscriber) => {
+          this.wsManager.send(renewPayload);
+          subscriber.next();
+        }).pipe(take(1));
+
+        return combineLatest([
+          requestTriggerUserQuery$,
+          this.getFilteredWebsocketResponse(renewUuid),
+        ]).pipe(map(([, data]) => data as User));
+      }),
+      tap(() => {
+        this.getLoggedInUserInformation();
+      }),
+    );
   }
 }

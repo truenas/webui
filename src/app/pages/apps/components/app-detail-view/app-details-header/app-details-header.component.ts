@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map, Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 
 @UntilDestroy()
@@ -23,10 +24,11 @@ export class AppDetailsHeaderComponent implements OnInit {
   protected wasPoolSet = false;
 
   constructor(
-    private applicationsStore: AppsStore,
     private router: Router,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
+    private installedAppsStore: InstalledAppsStore,
+    private kubernetesStore: KubernetesStore,
   ) {}
 
   get description(): string {
@@ -38,7 +40,7 @@ export class AppDetailsHeaderComponent implements OnInit {
   }
 
   navigateToAllInstalledPage(): void {
-    this.applicationsStore.installedApps$.pipe(
+    this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
         return apps.filter((app) => {
           return app.chart_metadata.name === this.app.name
@@ -68,7 +70,7 @@ export class AppDetailsHeaderComponent implements OnInit {
   }
 
   private checkIfPoolSet(): void {
-    this.applicationsStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
+    this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
       this.wasPoolSet = Boolean(pool);
       this.cdr.markForCheck();
     });

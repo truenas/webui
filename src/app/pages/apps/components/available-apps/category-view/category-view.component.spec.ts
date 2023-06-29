@@ -8,13 +8,15 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { CategoryViewComponent } from './category-view.component';
 
 describe('CategoryViewComponent', () => {
   let spectator: SpectatorRouting<CategoryViewComponent>;
   let loader: HarnessLoader;
-  let store$: AppsStore;
+  let store$: AppsFilterStore;
 
   const createComponent = createRoutingFactory({
     component: CategoryViewComponent,
@@ -24,19 +26,23 @@ describe('CategoryViewComponent', () => {
       mockProvider(ActivatedRoute, {
         snapshot: { params: { category: 'new-and-updated' } },
       }),
-      mockProvider(AppsStore, {
+      mockProvider(AppsFilterStore, {
         filterValues$: of({
           catalogs: [],
           sort: null,
           categories: [],
         }),
-        appsCategories$: of(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),
         isFilterApplied$: of(false),
         searchQuery$: of(''),
         applySearchQuery: jest.fn(),
         applyFilters: jest.fn(),
         resetFilters: jest.fn(),
+      }),
+      mockProvider(KubernetesStore, {
         selectedPool$: of('pool'),
+      }),
+      mockProvider(AppsStore, {
+        appsCategories$: of(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),
         availableApps$: of([{
           catalog: 'TRUENAS',
           categories: ['storage', 'crypto', 'new-and-updated'],
@@ -58,7 +64,7 @@ describe('CategoryViewComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    store$ = spectator.inject(AppsStore);
+    store$ = spectator.inject(AppsFilterStore);
     spectator.fixture.detectChanges();
   });
 

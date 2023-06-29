@@ -1,5 +1,5 @@
 import {
-  ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +9,9 @@ import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
+import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
+import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
+import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import {
   PoolManagerState,
   PoolManagerStore,
@@ -23,6 +26,7 @@ import { DialogService } from 'app/services';
   styleUrls: ['./review-wizard-step.component.scss'],
 })
 export class ReviewWizardStepComponent implements OnInit {
+  @Input() isStepActive: boolean;
   @Output() createPool = new EventEmitter<void>();
 
   state: PoolManagerState;
@@ -30,6 +34,11 @@ export class ReviewWizardStepComponent implements OnInit {
 
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected readonly vdevTypeLabels = vdevTypeLabels;
+  protected readonly poolCreationSeverity = PoolCreationSeverity;
+
+  poolCreationErrors: PoolCreationError[];
+
+  isCreateDisabled = false;
 
   constructor(
     private matDialog: MatDialog,
@@ -37,6 +46,7 @@ export class ReviewWizardStepComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private poolManagerValidation: PoolManagerValidationService,
   ) {}
 
   get showStartOver(): boolean {
@@ -57,7 +67,7 @@ export class ReviewWizardStepComponent implements OnInit {
 
     return this.state.enclosures.find((enclosure) => {
       return enclosure.number === this.state.enclosureSettings.limitToSingleEnclosure;
-    }).name;
+    })?.name;
   }
 
   ngOnInit(): void {
@@ -65,6 +75,11 @@ export class ReviewWizardStepComponent implements OnInit {
       this.state = state;
       this.nonEmptyTopologyCategories = this.filterNonEmptyCategories(state.topology);
       this.cdr.markForCheck();
+    });
+
+    this.poolManagerValidation.getPoolCreationErrors().pipe(untilDestroyed(this)).subscribe((errors) => {
+      this.poolCreationErrors = errors;
+      this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
     });
   }
 
@@ -88,8 +103,8 @@ export class ReviewWizardStepComponent implements OnInit {
   startOver(): void {
     this.dialogService
       .confirm({
-        title: this.translate.instant('Start Over?'),
-        message: this.translate.instant('You will need to start from the beginning'),
+        title: this.translate.instant('Start Over'),
+        message: this.translate.instant('Are you sure you want to start over?'),
         hideCheckbox: false,
         buttonText: this.translate.instant('Start Over'),
       })
