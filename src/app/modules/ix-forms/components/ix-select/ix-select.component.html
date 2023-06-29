@@ -45,6 +45,7 @@
           [value]="option.value"
           [disabled]="option.disabled"
           [ixTest]="[controlDirective.name, option.label]"
+          [matTooltip]="option.hoverTooltip"
         >
           <ix-icon
             *ngIf="multiple"
