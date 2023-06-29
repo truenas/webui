@@ -1,14 +1,6 @@
 <ng-template #pageHeader>
-  <ix-page-title-header [pageTitle]="'Discover' | translate" [loading]="isLoading$ | async">
-    <a
-      mat-button
-      color="primary"
-      ixTest="custom-app"
-      [disabled]="customAppDisabled$ | async"
-      [routerLink]="['/apps', 'available', officialCatalog, chartsTrain, customIxChartApp, 'install']"
-    >
-      {{ 'Custom App' | translate }}
-    </a>
+  <ix-page-title-header [pageTitle]="'Discover' | translate">
+    <ix-custom-app-button></ix-custom-app-button>
   </ix-page-title-header>
 </ng-template>
 
@@ -16,9 +8,9 @@
 
 <div class="available-apps-list">
   <ix-fake-progress-bar
-    *ngIf="applicationsStore.isLoading$ | async"
+    *ngIf="(isLoading$ | async) || (isFiltering$ | async)"
     class="loader-bar"
-    [loading]="applicationsStore.isLoading$ | async"
+    [loading]="true"
   ></ix-fake-progress-bar>
 
   <h3 *ngIf="appsFilterStore.searchQuery$ | async as searchQuery" class="section-title">

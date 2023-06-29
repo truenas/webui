@@ -36,7 +36,7 @@ describe('AppInfoCardComponent', () => {
     },
     catalog: 'TRUENAS',
     catalog_train: 'charts',
-  } as unknown as ChartRelease;
+  } as ChartRelease;
 
   const upgradeSummary = {} as UpgradeSummary;
 

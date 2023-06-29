@@ -40,6 +40,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
   readonly appsPerCategory = 6;
 
   readonly filteredApps$ = this.select((state) => state.filteredApps);
+  readonly isFiltering$ = this.select((state) => state.isLoading);
 
   readonly searchedApps$: Observable<AppsByCategory[]> = combineLatest([
     this.appsStore.availableApps$,
@@ -167,8 +168,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
           return {
             ...state,
-            filter: { ...filter },
-            filteredApps: [...filteredApps],
+            filter,
+            filteredApps,
             isFilterApplied: true,
             isLoading: false,
           };
@@ -309,7 +310,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
       appsByCategory.push({
         title: category,
-        apps: categorizedApps.slice(0, this.appsPerCategory),
+        apps: hasCategoriesFilter ? categorizedApps : categorizedApps.slice(0, this.appsPerCategory),
         totalApps: categorizedApps.length,
         category,
       });
