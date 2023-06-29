@@ -183,7 +183,7 @@
     "stylelint": "^14.9.1",
     "stylelint-config-sass-guidelines": "~9.0.1",
     "stylelint-config-standard": "^26.0.0",
-    "ts-jest": "~28.0.8",
+    "ts-jest": "~29.1.0",
     "ts-node": "~8.6.2",
     "typescript": "~5.1.3"
   },
