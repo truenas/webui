@@ -92,12 +92,16 @@ describe('FeedbackDialogComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
     await submitButton.click();
 
-    expect(spectator.inject(IxFeedbackService).addReview).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'hi there. can you improve this?. thanks.',
-        rating: 5,
-      }),
-    );
+    expect(spectator.inject(IxFeedbackService).addReview).toHaveBeenCalledWith({
+      environment: 'development',
+      extra: {},
+      host_u_id: 'unique-system-host-id-1234',
+      release: 'TN-RELEASE',
+      message: 'hi there. can you improve this?. thanks.',
+      rating: 5,
+      page: '/',
+      user_agent: expect.anything(),
+    });
     expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
     expect(spectator.inject(IxFeedbackService).takeScreenshot).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
