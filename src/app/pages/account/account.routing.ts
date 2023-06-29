@@ -5,7 +5,6 @@ import { BackupCredentialsComponent } from 'app/pages/credentials/backup-credent
 import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
-import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
 
 // TODO: Move to credentials module
 export const routes: Routes = [{
@@ -21,12 +20,6 @@ export const routes: Routes = [{
       loadChildren: () => import('app/pages/account/groups/groups.module').then((module) => module.GroupsModule),
       data: { title: 'Groups', breadcrumb: 'Groups', icon: 'group_work' },
     },
-    {
-      path: 'two-factor',
-      component: TwoFactorComponent,
-      data: { title: ('Two-Factor Auth'), breadcrumb: ('Two-Factor Auth') },
-    },
-
     // TODO: Temporary dashboards attached to accounts for now
     {
       path: 'directory-services',

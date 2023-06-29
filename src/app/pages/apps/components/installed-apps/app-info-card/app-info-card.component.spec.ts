@@ -15,7 +15,7 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppLoaderService, DialogService, RedirectService } from 'app/services';
 
 describe('AppInfoCardComponent', () => {
@@ -64,7 +64,7 @@ describe('AppInfoCardComponent', () => {
       mockProvider(ApplicationsService, {
         getChartUpgradeSummary: jest.fn(() => of(upgradeSummary)),
       }),
-      mockProvider(AppsStore, {
+      mockProvider(InstalledAppsStore, {
         installedApps$: of([]),
       }),
       mockProvider(DialogService, {

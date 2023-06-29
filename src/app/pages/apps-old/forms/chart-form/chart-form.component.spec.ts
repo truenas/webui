@@ -10,6 +10,7 @@ import {
   ChartFormValue, ChartRelease, ChartSchemaNodeConf,
 } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -334,6 +335,7 @@ describe('ChartFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      IxDynamicFormModule,
     ],
     providers: [
       mockProvider(IxSlideInRef),
@@ -444,12 +446,8 @@ describe('ChartFormComponent', () => {
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
-      const values = spectator.component.form.value;
-
-      expect(values).toEqual({
-        release_name: 'app_name',
-        timezone: 'America/Los_Angeles',
-      });
+      expect(spectator.component.form.controls.release_name.value).toBe('app_name');
+      expect(spectator.component.form.controls['timezone'].value).toBe('America/Los_Angeles');
     });
 
     it('editing when form is submitted', () => {

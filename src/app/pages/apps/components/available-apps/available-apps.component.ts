@@ -1,13 +1,15 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { Router, RouterEvent, NavigationSkipped } from '@angular/router';
+import {
+  Router, RouterEvent, NavigationSkipped,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, combineLatest, filter, map,
 } from 'rxjs';
-import { ixChartApp, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -20,30 +22,26 @@ import { LayoutService } from 'app/services/layout.service';
 export class AvailableAppsComponent implements AfterViewInit, OnInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  showViewMoreButton$: Observable<boolean> = combineLatest([
-    this.applicationsStore.filterValues$,
-  ]).pipe(
-    map(([appsFilter]) => {
+  showViewMoreButton$: Observable<boolean> = this.appsFilterStore.filterValues$.pipe(
+    map((appsFilter) => {
       return !appsFilter.sort && !appsFilter.categories.length;
     }),
   );
 
   isFilterOrSearch$: Observable<boolean> = combineLatest([
-    this.applicationsStore.searchQuery$,
-    this.applicationsStore.isFilterApplied$,
+    this.appsFilterStore.searchQuery$,
+    this.appsFilterStore.isFilterApplied$,
   ]).pipe(
     map(([searchQuery, isFilterApplied]) => {
       return !!searchQuery || isFilterApplied;
     }),
   );
-
-  readonly customIxChartApp = ixChartApp;
-  readonly chartsTrain = chartsTrain;
-  readonly officialCatalog = officialCatalog;
+  isLoading$ = this.applicationsStore.isLoading$;
 
   constructor(
     private layoutService: LayoutService,
     protected applicationsStore: AppsStore,
+    protected appsFilterStore: AppsFilterStore,
     private router: Router,
   ) { }
 
@@ -54,7 +52,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.router.url.endsWith('/apps/available')) {
-        this.applicationsStore.resetFilters();
+        this.appsFilterStore.resetFilters();
       }
     });
   }
@@ -72,7 +70,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   }
 
   applyCategoryFilter(category: string): void {
-    this.applicationsStore.applyFilters({
+    this.appsFilterStore.applyFilters({
       categories: [category],
       catalogs: [],
       sort: null,

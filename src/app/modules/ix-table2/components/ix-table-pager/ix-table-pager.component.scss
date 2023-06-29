@@ -1,0 +1,29 @@
+.paginator {
+  align-items: center;
+  background: var(--bg2);
+  border: solid 1px var(--contrast-lighter);
+  color: var(--fg2);
+  display: flex;
+  justify-content: end;
+  padding: 10px;
+
+  .page-size {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+    margin-right: 30px;
+
+    span {
+      white-space: nowrap;
+    }
+
+    mat-select {
+      width: 84px;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    margin-left: 30px;
+  }
+}

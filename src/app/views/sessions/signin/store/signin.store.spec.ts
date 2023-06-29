@@ -10,8 +10,9 @@ import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -30,6 +31,7 @@ describe('SigninStore', () => {
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
+        mockCall('auth.twofactor.config', { enabled: false } as TwoFactorConfig),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
       ]),
       mockProvider(WebsocketConnectionService, {
@@ -63,6 +65,9 @@ describe('SigninStore', () => {
 
     Object.defineProperty(authService, 'authToken$', {
       value: of('EXISTING_TOKEN'),
+    });
+    Object.defineProperty(authService, 'user$', {
+      get: () => of({ twofactor_auth_configured: false }),
     });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(true));
   });
@@ -100,7 +105,9 @@ describe('SigninStore', () => {
   });
 
   describe('handleSuccessfulLogin', () => {
-    it('redirects user inside', () => {
+    it('redirects user', () => {
+      jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
+      jest.spyOn(spectator.inject(AuthService), 'user$', 'get').mockReturnValueOnce(of({ twofactor_auth_configured: false }));
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });

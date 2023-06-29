@@ -682,6 +682,15 @@ ul.nested-list li {
 }
 
 ix-root {
+  .warning {
+    color: var(--orange);
+  }
+
+  .error,
+  .error-warning {
+    color: var(--error);
+  }
+
   %focused-shared {
     box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
     outline-width: 0;

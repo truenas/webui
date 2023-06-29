@@ -26,6 +26,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
@@ -43,6 +44,8 @@ import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
+import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
+import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
@@ -118,11 +121,10 @@ import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
-import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
+import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
@@ -172,6 +174,7 @@ import { routing } from './system.routing';
     MatSlideToggleModule,
     AppLoaderModule,
     TestIdModule,
+    IxTable2Module,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -193,6 +196,7 @@ import { routing } from './system.routing';
     GeneralSettingsComponent,
     GuiFormComponent,
     GuiCardComponent,
+    GlobalTwoFactorAuthCardComponent,
     LocalizationCardComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
@@ -218,10 +222,10 @@ import { routing } from './system.routing';
     SysctlCardComponent,
     TunableFormComponent,
     TunableListComponent,
-    TwoFactorComponent,
     UpdateComponent,
     BootenvStatsDialogComponent,
     CronFormComponent,
+    GlobalTwoFactorAuthFormComponent,
     CronCardComponent,
     SaveConfigDialogComponent,
     UploadConfigDialogComponent,

@@ -19,6 +19,7 @@ export interface User {
   group: UserGroup;
   groups: number[];
   sshpubkey: string;
+  twofactor_auth_configured: boolean;
   local: boolean;
   id_type_both: boolean;
 }

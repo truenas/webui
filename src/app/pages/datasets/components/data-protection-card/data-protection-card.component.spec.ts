@@ -1,7 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -13,6 +14,13 @@ describe('DataProtectionComponent', () => {
 
   const createComponent = createComponentFactory({
     component: DataProtectionCardComponent,
+    providers: [
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => {
+          return { slideInClosed$: of() };
+        }),
+      }),
+    ],
   });
   beforeEach(() => {
     spectator = createComponent({
@@ -54,7 +62,6 @@ describe('DataProtectionComponent', () => {
 
   it('opens the snapshot add from when button clicked', async () => {
     const slideInRef = spectator.inject(IxSlideInService);
-    jest.spyOn(slideInRef, 'open').mockImplementation();
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Snapshot' }));
     await editButton.click();

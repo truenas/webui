@@ -1,5 +1,5 @@
 <div class="summary-row">
-  <div class="summary-group">
+  <div>
     <h4>{{ 'General Info' | translate }}</h4>
 
     <div class="summary-item">
@@ -11,8 +11,6 @@
       <div class="label">{{ 'Encryption' | translate }}</div>
       <div class="value">{{ state.encryption }}</div>
     </div>
-  </div>
-  <div class="summary-group">
   </div>
 </div>
 <div class="summary-row">
@@ -61,6 +59,17 @@
     </div>
   </div>
 </div>
+<div class="summary-row">
+  <div *ngIf="poolCreationErrors?.length">
+    <h4>{{ 'Warnings' | translate }}</h4>
+
+    <div *ngFor="let error of poolCreationErrors">
+      <div [class]="[error.severity, 'summary-item']">
+        {{ error.text }}
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="step-buttons">
   <button
@@ -99,6 +108,7 @@
     color="primary"
     type="button"
     ixTest="create-pool"
+    [disabled]="isCreateDisabled"
     (click)="createPool.emit()"
   >
     {{ 'Create Pool' | translate }}
