@@ -54,6 +54,7 @@ import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-l
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
+import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -110,6 +111,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppUpgradeDialogComponent,
     AppStatusCellComponent,
     AppDetailsHeaderComponent,
+    SelectPoolDialogComponent,
     AppDetailsSimilarComponent,
     AppSettingsButtonComponent,
     AppMetadataCardComponent,
