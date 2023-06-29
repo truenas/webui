@@ -36,10 +36,22 @@
 }
 
 .event-item {
-  display: flex;
+  display: block;
   gap: 12px;
+
+  span {
+    color: var(--alt-fg1);
+    word-wrap: break-word;
+  }
+
+  &:first-child {
+    .event-timestamp {
+      margin-top: 0;
+    }
+  }
 }
 
 .event-timestamp {
-  white-space: nowrap;
+  display: block;
+  margin: 10px 0 0;
 }
