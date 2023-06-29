@@ -13,7 +13,8 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
-import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
+import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 
 describe('SelectPoolDialogComponent', () => {
@@ -27,6 +28,9 @@ describe('SelectPoolDialogComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockProvider(KubernetesStore, {
+        updatePoolAndKubernetesConfig: jest.fn(() => of()),
+      }),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
         getPoolList: jest.fn(() => of([
