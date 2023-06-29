@@ -24,7 +24,7 @@
     <button
       class="submit-button"
       mat-button
-      type="button"
+      type="submit"
       color="primary"
       ixTest="log-in"
       [disabled]="isLoading$ | async"
@@ -62,6 +62,6 @@
       [disabled]="isLoading$ | async"
       (click)="cancelOtpLogin()"
     >{{ 'Cancel' | translate }}</button>
-    
+
   </ng-container>
 </form>
