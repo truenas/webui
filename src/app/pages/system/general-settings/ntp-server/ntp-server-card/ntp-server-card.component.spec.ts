@@ -79,10 +79,6 @@ describe('NtpServerCardComponent', () => {
     slideInRef = spectator.inject(IxSlideInService);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should show table headers', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const headerRow = await table.getHeaderRow();
