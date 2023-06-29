@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
@@ -6,6 +7,7 @@ import filesize from 'filesize';
 import { filter, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
@@ -44,5 +46,9 @@ export class InventoryComponent implements OnInit {
 
   getFilesize(size: string): string {
     return filesize(Number(size), { standard: 'iec' });
+  }
+
+  orderBySize(a: KeyValue<string, UnusedDisk[]>, b: KeyValue<string, UnusedDisk[]>): number {
+    return Number(a.key) - Number(b.key);
   }
 }

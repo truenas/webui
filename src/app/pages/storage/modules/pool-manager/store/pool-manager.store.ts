@@ -134,8 +134,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     },
   );
 
-  getLayoutsForVdevType(vdevLayout: VdevType): Observable<CreateVdevLayout[]> {
-    switch (vdevLayout) {
+  getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {
+    switch (vdevType) {
       case VdevType.Cache:
         return of([CreateVdevLayout.Stripe]);
       case VdevType.Dedup:

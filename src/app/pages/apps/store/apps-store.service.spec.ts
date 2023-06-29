@@ -28,7 +28,7 @@ describe('AppsStore', () => {
   const installedChartReleases: ChartRelease[] = [
     {
       name: 'minio',
-    } as unknown as ChartRelease,
+    } as ChartRelease,
   ];
 
   const installedAndRecommendedApp: AvailableApp = {
@@ -40,7 +40,7 @@ describe('AppsStore', () => {
     name: 'syncthing',
     recommended: true,
     title: 'Syncthing',
-  } as unknown as AvailableApp;
+  } as AvailableApp;
 
   const plexApp: AvailableApp = {
     catalog: 'TRUENAS',
@@ -52,7 +52,7 @@ describe('AppsStore', () => {
     name: 'plex',
     recommended: false,
     title: 'Plex',
-  } as unknown as AvailableApp;
+  } as AvailableApp;
   const availableApps: AvailableApp[] = [
     { ...plexApp },
     { ...installedAndRecommendedApp },

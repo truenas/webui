@@ -18,7 +18,7 @@ describe('AppHelmChartCardComponent', () => {
         email: 'dev@ixsystems.com',
       },
     ],
-  } as unknown as AvailableApp;
+  } as AvailableApp;
 
   const isLoading$ = new BehaviorSubject(false);
 
