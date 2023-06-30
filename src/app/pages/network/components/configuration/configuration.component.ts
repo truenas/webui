@@ -250,7 +250,7 @@ export class NetworkConfigurationComponent implements OnInit {
             outbound_network_activity: NetworkActivityType.Allow,
             outbound_network_value: [],
             httpproxy: config.httpproxy,
-            hosts: [],
+            hosts: config.hosts,
             netbios: config.service_announcement.netbios,
             mdns: config.service_announcement.mdns,
             wsd: config.service_announcement.wsd,
