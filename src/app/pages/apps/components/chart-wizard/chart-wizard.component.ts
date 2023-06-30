@@ -50,7 +50,6 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
 export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  protected wasPoolSet = false;
   appId: string;
   catalog: string;
   train: string;
@@ -77,7 +76,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly helptext = helptext;
 
-  private _pageTitle$ = new BehaviorSubject<string>('Loading');
+  private _pageTitle$ = new BehaviorSubject<string>('...');
   pageTitle$ = this._pageTitle$.asObservable().pipe(
     filter(Boolean),
     map((name) => {
@@ -278,7 +277,16 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.train = train;
         this.catalog = catalog;
 
-        this.checkIfPoolSetAndManageApplication();
+        this.isLoading = false;
+        this.cdr.markForCheck();
+
+        if (this.activatedRoute.routeConfig.path.endsWith('/install')) {
+          this.loadApplicationForCreation();
+        }
+
+        if (this.activatedRoute.routeConfig.path.endsWith('/edit')) {
+          this.loadApplicationForEdit();
+        }
       });
   }
 
@@ -297,7 +305,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setChartForCreation(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
-    this._pageTitle$.next(this.catalogApp.name);
+    this._pageTitle$.next(this.catalogApp.title || this.catalogApp.name);
     let hideVersion = false;
     if (this.catalogApp.name === ixChartApp) {
       hideVersion = true;
@@ -370,6 +378,8 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.config = chart.config;
     this.config.release_name = chart.id;
 
+    this._pageTitle$.next(chart.title || chart.name);
+
     this.form.addControl('release_name', new FormControl(chart.name, [Validators.required]));
 
     this.dynamicSection.push({
@@ -394,6 +404,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.appsLoaded = true;
     this.isLoading = false;
     this.loader.close();
+    this.checkIfPoolIsSet();
     this.cdr.markForCheck();
   }
 
@@ -453,24 +464,10 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private checkIfPoolSetAndManageApplication(): void {
+  private checkIfPoolIsSet(): void {
     this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      this.wasPoolSet = Boolean(pool);
-
       if (!pool) {
         this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
-      } else {
-        this._pageTitle$.next(this.appId);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-
-        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/install')) {
-          this.loadApplicationForCreation();
-        }
-
-        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/edit')) {
-          this.loadApplicationForEdit();
-        }
       }
     });
   }

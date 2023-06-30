@@ -32,7 +32,7 @@ export class AppDetailsHeaderComponent implements OnInit {
   ) {}
 
   get description(): string {
-    return this.app?.app_readme?.replace(/<[^>]*>/g, '');
+    return this.app?.app_readme?.split('</h1>')[1]?.replace(/<[^>]*>/g, '');
   }
 
   ngOnInit(): void {
