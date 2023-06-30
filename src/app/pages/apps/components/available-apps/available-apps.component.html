@@ -8,9 +8,9 @@
 
 <div class="available-apps-list">
   <ix-fake-progress-bar
-    *ngIf="applicationsStore.isLoading$ | async"
+    *ngIf="(isLoading$ | async) || (isFiltering$ | async)"
     class="loader-bar"
-    [loading]="applicationsStore.isLoading$ | async"
+    [loading]="true"
   ></ix-fake-progress-bar>
 
   <h3 *ngIf="appsFilterStore.searchQuery$ | async as searchQuery" class="section-title">

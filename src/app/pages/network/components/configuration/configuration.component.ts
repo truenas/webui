@@ -256,10 +256,6 @@ export class NetworkConfigurationComponent implements OnInit {
             wsd: config.service_announcement.wsd,
           };
 
-          if (config.hosts && config.hosts !== '') {
-            transformed.hosts = config.hosts.split('\n');
-          }
-
           if (config.activity) {
             if (config.activity.activities.length === 0) {
               transformed.outbound_network_activity = config.activity.type;
@@ -310,7 +306,6 @@ export class NetworkConfigurationComponent implements OnInit {
 
     const params = {
       ...values,
-      hosts: values.hosts.length > 0 ? values.hosts.join('\n') : '',
       activity,
       service_announcement: serviceAnnouncement,
     };

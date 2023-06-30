@@ -28,7 +28,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameserver1: '8.8.8.8',
           nameserver2: '8.8.4.4',
           httpproxy: 'http://proxy.com',
-          hosts: 'host1.com\nhost2.com',
+          hosts: ['host1.com', 'host2.com'],
           domains: ['domain.cz'],
           service_announcement: {
             mdns: true,
@@ -113,7 +113,7 @@ describe('NetworkConfigurationCardComponent', () => {
       'Additional Domains:': 'domain.cz',
       'Domain:': 'local',
       'HTTP Proxy:': 'http://proxy.com',
-      'Hostname Database:': 'host1.com\nhost2.com',
+      'Hostname Database:': 'host1.com, host2.com',
       'Hostname:': 'truenas',
       'Outbound Network:': 'Allow usage, kmip, rsync, update',
       'Service Announcement:': 'mDNS, WS-DISCOVERY',

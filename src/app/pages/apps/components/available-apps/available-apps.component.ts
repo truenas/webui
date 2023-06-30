@@ -37,6 +37,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
     }),
   );
   isLoading$ = this.applicationsStore.isLoading$;
+  isFiltering$ = this.appsFilterStore.isFiltering$;
 
   constructor(
     private layoutService: LayoutService,

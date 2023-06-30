@@ -70,7 +70,7 @@
             </li>
             <li>
               <span class="label">{{ 'Hostname Database:' | translate }}</span>
-              <span class="value">{{ config.hosts || '---' }}</span>
+              <span class="value">{{ config.hosts.join(', ') || '---' }}</span>
             </li>
             <li>
               <span class="label">{{ 'Outbound Network:' | translate }}</span>

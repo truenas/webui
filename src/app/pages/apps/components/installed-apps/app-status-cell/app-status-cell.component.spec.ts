@@ -50,10 +50,10 @@ describe('AppStatusCellComponent', () => {
     setupTest(
       AppStatus.Starting,
       {
-        arguments: ['fake-name', { replica_count: 1 }],
+        arguments: ['fake-name', { replica_count: 1 }] as ChartScaleQueryParams,
         state: JobState.Running,
-        result: [],
-      } as unknown as Job<ChartScaleResult, ChartScaleQueryParams>,
+        result: undefined,
+      } as Job<ChartScaleResult, ChartScaleQueryParams>,
     );
 
     expect(spectator.query('mat-spinner')).toBeTruthy();
@@ -64,10 +64,10 @@ describe('AppStatusCellComponent', () => {
     setupTest(
       AppStatus.Stopping,
       {
-        arguments: ['fake-name', { replica_count: 0 }],
+        arguments: ['fake-name', { replica_count: 0 }] as ChartScaleQueryParams,
         state: JobState.Running,
-        result: [],
-      } as unknown as Job<ChartScaleResult, ChartScaleQueryParams>,
+        result: undefined,
+      } as Job<ChartScaleResult, ChartScaleQueryParams>,
     );
 
     expect(spectator.query('mat-spinner')).toBeTruthy();

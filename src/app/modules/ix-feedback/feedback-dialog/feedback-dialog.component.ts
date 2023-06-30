@@ -81,7 +81,6 @@ export class FeedbackDialogComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
     const values: AddReview = {
-      ...this.form.getRawValue(),
       host_u_id: this.hostId,
       rating: this.form.controls.rating.value,
       message: this.form.controls.message.value,

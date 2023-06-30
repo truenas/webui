@@ -8,7 +8,7 @@ export interface NetworkConfiguration extends NetworkConfigurationState {
   hostname_b: string;
   hostname_local: string;
   hostname_virtual: string;
-  hosts: string;
+  hosts: string[];
   httpproxy: string;
   id: number;
   service_announcement: NetworkServiceAnnouncement;
@@ -54,7 +54,7 @@ export interface NetworkConfigurationUpdate extends NetworkConfigurationState {
   hostname: string;
   hostname_b: string;
   hostname_virtual: string;
-  hosts: string;
+  hosts: string[];
   httpproxy: string;
   service_announcement: NetworkServiceAnnouncement;
 }
