@@ -98,7 +98,7 @@ export class SelectPoolDialogComponent implements OnInit {
           }));
           this.pools$ = of(poolOptions);
 
-          this.dialogRef.close();
+          this.dialogService.closeAllDialogs();
 
           if (!pools.length) {
             setTimeout(() => this.showNoPoolsWarning(), 100);
