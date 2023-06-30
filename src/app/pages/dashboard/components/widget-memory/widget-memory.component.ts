@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Chart, Color, ChartDataset, ChartOptions,
 } from 'chart.js';
+import { ChartConfiguration } from 'chart.js/dist/types';
 import { Subject, Subscription } from 'rxjs';
 import {
   filter, map, throttleTime,
@@ -37,7 +38,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
   @Input() data: Subject<CoreEvent>;
   @Input() ecc = false;
 
-  chart: Chart;// chart instance
+  chart: Chart<'doughnut'>;
   isReady = false;
   subtitle: string = this.translate.instant('% of all cores');
   colorPattern: string[];
@@ -129,7 +130,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
       this.updateChart(this.chart);
     }
   }
-  initChart(): Chart {
+  initChart(): Chart<'doughnut'> {
     const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
     if (!el) {
       return undefined;
@@ -165,13 +166,13 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
       type: 'doughnut',
       data,
       options,
-    });
+    } as ChartConfiguration<'doughnut'>);
   }
 
-  updateChart(chart: Chart): void {
+  updateChart(chart: Chart<'doughnut'>): void {
     const ds = this.makeDatasets(this.memData.data);
 
-    chart.data.datasets[0].data = ds[0].data;
+    chart.data.datasets[0].data = ds[0].data as number[];
     chart.update();
 
     this.chart = chart;

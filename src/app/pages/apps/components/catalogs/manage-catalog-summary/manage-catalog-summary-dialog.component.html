@@ -3,7 +3,7 @@
     <strong
       class="catalog-name"
       textLimiter
-      threshold="40"
+      [threshold]="40"
       [content]="'{app} Catalog Summary' | translate: { app: catalog.label }"
     ></strong>
     <span *ngIf="catalog.healthy" class="status active">
@@ -65,15 +65,15 @@
       >
         <div fxLayout="row" fxLayoutAlign="center start">
           <div fxFlex="25%" class="item-train">
-            <span textLimiter threshold="15" [content]="item.train"></span>
+            <span textLimiter [threshold]="15" [content]="item.train"></span>
           </div>
           <span fxFlex="25%" class="item-app">
-            <span textLimiter threshold="15" [content]="item.app"></span>
+            <span textLimiter [threshold]="15" [content]="item.app"></span>
           </span>
           <span fxFlex="50%" class="info-col">
             <span
               textLimiter
-              threshold="22"
+              [threshold]="22"
               [content]="item.healthy ? ('Healthy' | translate) : ('Unhealthy' | translate)"
             ></span>
           </span>

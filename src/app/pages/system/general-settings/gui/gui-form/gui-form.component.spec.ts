@@ -119,10 +119,6 @@ describe('GuiFormComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('shows current values when form is being edited', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
