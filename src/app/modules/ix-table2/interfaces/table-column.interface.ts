@@ -9,12 +9,16 @@ export interface TableColumn<T> {
   sortable?: boolean;
   bodyCellType?: Type<IxBodyCellBaseComponent<T>>;
   headerCellType?: Type<IxHeaderCellBaseComponent<T>>;
+  options?: TableColumnOptions<T>;
 }
 
-export interface TableColumnDate<T> extends TableColumn<T> {
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, unused-imports/no-unused-vars
+export interface TableColumnOptions<T> {}
+
+export interface TableColumnDateOptions<T> extends TableColumnOptions<T> {
   format: string;
 }
 
-export interface TableColumnDelete<T> extends TableColumn<T> {
+export interface TableColumnDeleteOptions<T> extends TableColumnOptions<T> {
   onRowDelete: (row: T) => void;
 }

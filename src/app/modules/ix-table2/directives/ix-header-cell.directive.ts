@@ -32,11 +32,6 @@ export class IxTableHeaderCellDirective<T> implements AfterViewInit {
 
       componentRef.instance.dataProvider = this.dataProvider;
       componentRef.instance.column = this.column;
-
-      // TODO: Fix code
-      // Object.keys(this.column).forEach((key: keyof TableColumn<T>) => {
-      //   componentRef.instance[key] = this.column[key];
-      // });
     }
 
     static ngTemplateContextGuard<T>(
