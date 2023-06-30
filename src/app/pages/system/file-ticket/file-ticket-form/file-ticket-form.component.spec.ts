@@ -84,10 +84,6 @@ describe('FileTicketFormComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('loads ticket categories using api token when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();

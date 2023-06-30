@@ -32,7 +32,7 @@ export class DualListboxComponent<T extends { id: string | number; name?: string
   @Input() title1: string;
   @Input() title2: string;
 
-  @ContentChild('templateItem', { static: true }) templateItem: TemplateRef<void>;
+  @ContentChild('templateItem', { static: true }) templateItem: TemplateRef<{ $implicit: T }>;
   @ContentChild('templateArrowLeft', { static: true }) templateArrowLeft: TemplateRef<void>;
   @ContentChild('templateArrowRight', { static: true }) templateArrowRight: TemplateRef<void>;
 

@@ -106,19 +106,20 @@ export class AlertConfigFormComponent implements OnInit {
   onSubmit(): void {
     this.isFormLoading = true;
     const payload: AlertClassesUpdate = { classes: {} };
-    for (const [className, classControl] of Object.entries(this.form.controls)) {
-      const levelControl = (classControl as FormGroup<ControlsOf<AlertClassSettings>>).controls.level;
-      const policyControl = (classControl as FormGroup<ControlsOf<AlertClassSettings>>).controls.policy;
-      if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
-        payload.classes[className] = {};
-        if (levelControl.value !== levelControl.defaultValue) {
-          payload.classes[className].level = levelControl.value;
+    Object.entries(this.form.controls)
+      .forEach(([className, classControl]: [string, FormGroup<ControlsOf<AlertClassSettings>>]) => {
+        const levelControl = classControl.controls.level;
+        const policyControl = classControl.controls.policy;
+        if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
+          payload.classes[className] = {};
+          if (levelControl.value !== levelControl.defaultValue) {
+            payload.classes[className].level = levelControl.value;
+          }
+          if (policyControl.value !== policyControl.defaultValue) {
+            payload.classes[className].policy = policyControl.value;
+          }
         }
-        if (policyControl.value !== policyControl.defaultValue) {
-          payload.classes[className].policy = policyControl.value;
-        }
-      }
-    }
+      });
 
     this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe({
       next: () => {

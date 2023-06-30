@@ -105,14 +105,14 @@
           <strong
             class="chart-name"
             textLimiter
-            threshold="20"
+            [threshold]="20"
             [content]="item.name"
           ></strong>
           <div>
             <span
               class="version"
               textLimiter
-              threshold="50"
+              [threshold]="50"
               [content]="item.human_version"
             ></span>
           </div>
@@ -142,7 +142,7 @@
               <span
                 class="ports-text"
                 textLimiter
-                threshold="28"
+                [threshold]="28"
                 [content]="appService.getPorts(item) | lowercase"
               >
               </span>
