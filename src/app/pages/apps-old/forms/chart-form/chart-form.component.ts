@@ -96,7 +96,8 @@ export class ChartFormComponent implements OnInit, OnDestroy {
     this.config = chart.config;
     this.config.release_name = chart.id;
 
-    this.form.addControl('release_name', new FormControl(this.title, [Validators.required]));
+    this.form.addControl('release_name', new FormControl(null, [Validators.required]));
+    this.form.controls.release_name.setValue(this.title);
 
     this.dynamicSection.push({
       name: 'Application name',

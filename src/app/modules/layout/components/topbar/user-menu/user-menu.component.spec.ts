@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -74,5 +75,13 @@ describe('UserMenuComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AboutDialogComponent, {
       disableClose: true,
     });
+  });
+
+  it('has an 2fa menu item that redirects user to TwoFactorComponent when clicked', async () => {
+    const twofa = await menu.getItems({ text: 'Two-Factor Authentication' });
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate');
+    await twofa[0].click();
+    expect(router.navigate).toHaveBeenCalledWith(['/two-factor-auth']);
   });
 });

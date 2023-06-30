@@ -1,0 +1,36 @@
+<mat-card class="card">
+  <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+  <mat-toolbar-row>
+    <h3>{{ 'User Two-Factor Authentication Actions' | translate }}</h3>
+  </mat-toolbar-row>
+
+  <mat-card-actions>
+    <div class="status-content">
+      <ngx-skeleton-loader *ngIf="isDataLoading" class="skeleton-loader"></ngx-skeleton-loader>
+      <ix-warning
+        *ngIf="!isDataLoading"
+        [message]="global2FaMsg"
+        [color]="!globalTwoFactorEnabled || !userTwoFactorAuthConfigured ? 'orange' : 'green'"
+      ></ix-warning>
+      <button
+        mat-button
+        class="btn"
+        color="primary"
+        type="button"
+        ixTest="renew-secret"
+        (click)="renewSecret()"
+      > {{ userTwoFactorAuthConfigured ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}</button>
+      <button
+        mat-button
+        class="btn"
+        color="accent"
+        type="button"
+        ixTest="show-qr"
+        [disabled]="isFormLoading || !userTwoFactorAuthConfigured"
+        (click)="showQrCode()"
+      >
+        {{ 'Show QR' | translate }}
+      </button>
+    </div>
+  </mat-card-actions>
+</mat-card>
