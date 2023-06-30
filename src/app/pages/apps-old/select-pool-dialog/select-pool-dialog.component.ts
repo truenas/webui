@@ -119,8 +119,6 @@ export class SelectPoolDialogComponent implements OnInit {
       hideCheckbox: true,
       buttonText: helptext.noPool.action,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-      this.dialogRef.close(false);
-
       if (!confirmed) {
         return;
       }
