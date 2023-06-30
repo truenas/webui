@@ -15,6 +15,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { IxBodyCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-yesno/ix-body-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -52,6 +53,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
       title: this.translate.instant('Builtin'),
       propertyName: 'builtin',
       sortable: true,
+      bodyCellType: IxBodyCellYesNoComponent,
     },
     {
       title: this.translate.instant('Full Name'),

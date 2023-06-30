@@ -1,9 +1,10 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { SortDirection } from '@swimlane/ngx-datatable';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { IxTableHeadComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 
 interface TestTableData {
   numberField: number;
@@ -35,6 +36,7 @@ describe('IxTableHeadComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxTableHeadComponent<TestTableData>,
+    imports: [IxTable2Module],
   });
 
   beforeEach(() => {
@@ -46,7 +48,7 @@ describe('IxTableHeadComponent', () => {
   });
 
   it('shows titles', () => {
-    expect(headers.map((header) => header.querySelector('.title').textContent)).toEqual([
+    expect(headers.map((header) => header.querySelector('.title').textContent.trim())).toEqual([
       'Number Field',
       'String Field',
       'Boolean Field',
@@ -58,9 +60,9 @@ describe('IxTableHeadComponent', () => {
     expect(headers).toHaveLength(3);
     expect(dataProvider.sorting).toEqual({ active: null, direction: null, propertyName: null });
     headers[0].click();
-    expect(dataProvider.sorting).toEqual({ active: 0, direction: SortDirection.asc, propertyName: 'numberField' });
+    expect(dataProvider.sorting).toEqual({ active: 0, direction: SortDirection.Asc, propertyName: 'numberField' });
     headers[0].click();
-    expect(dataProvider.sorting).toEqual({ active: 0, direction: SortDirection.desc, propertyName: 'numberField' });
+    expect(dataProvider.sorting).toEqual({ active: 0, direction: SortDirection.Desc, propertyName: 'numberField' });
     headers[0].click();
     expect(dataProvider.sorting).toEqual({ active: 0, direction: null, propertyName: 'numberField' });
   });
@@ -71,9 +73,9 @@ describe('IxTableHeadComponent', () => {
 
     expect(dataProvider.sorting).toEqual({ active: null, direction: null, propertyName: null });
     headers[0].click();
-    expect(dataProvider.sorting).toEqual({ active: 0, direction: SortDirection.asc, propertyName: 'numberField' });
+    expect(dataProvider.sorting).toEqual({ active: 0, direction: SortDirection.Asc, propertyName: 'numberField' });
     headers[1].click();
-    expect(dataProvider.sorting).toEqual({ active: 1, direction: SortDirection.asc, propertyName: 'stringField' });
+    expect(dataProvider.sorting).toEqual({ active: 1, direction: SortDirection.Asc, propertyName: 'stringField' });
   });
 
   it('sets sorting when clicking on an unsortable heading', () => {

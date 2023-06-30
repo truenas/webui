@@ -1,4 +1,6 @@
-import { AfterContentChecked, Component, Input } from '@angular/core';
+import {
+  AfterContentChecked, Component, Input, OnInit,
+} from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
@@ -9,7 +11,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
   templateUrl: './ix-table-pager.component.html',
   styleUrls: ['./ix-table-pager.component.scss'],
 })
-export class IxTablePagerComponent<T> implements AfterContentChecked {
+export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   @Input() dataProvider!: ArrayDataProvider<T>;
   @Input() pageSize = 50;
   @Input() pageSizeOptions = [10, 20, 50, 100];
@@ -28,6 +30,13 @@ export class IxTablePagerComponent<T> implements AfterContentChecked {
   get lastPage(): number {
     const lastPage = this.currentPage * this.pageSize;
     return lastPage < this.totalItems ? lastPage : this.totalItems;
+  }
+
+  ngOnInit(): void {
+    this.dataProvider.setPagination({
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+    });
   }
 
   ngAfterContentChecked(): void {

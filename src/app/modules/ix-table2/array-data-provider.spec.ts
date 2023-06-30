@@ -1,6 +1,6 @@
-import { SortDirection } from '@swimlane/ngx-datatable';
 import { firstValueFrom } from 'rxjs';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 
 interface TestTableData {
   numberField: number;
@@ -28,8 +28,8 @@ describe('ArrayDataProvider', () => {
     const dataProvider = new ArrayDataProvider<TestTableData>();
     dataProvider.setRows(testTableData);
 
-    dataProvider.setSorting({ active: 1, direction: SortDirection.desc, propertyName: 'stringField' });
-    expect(dataProvider.sorting).toEqual({ active: 1, direction: SortDirection.desc, propertyName: 'stringField' });
+    dataProvider.setSorting({ active: 1, direction: SortDirection.Desc, propertyName: 'stringField' });
+    expect(dataProvider.sorting).toEqual({ active: 1, direction: SortDirection.Desc, propertyName: 'stringField' });
     expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([
       { numberField: 3, stringField: 'd', booleanField: true },
       { numberField: 2, stringField: 'c', booleanField: false },
@@ -37,8 +37,8 @@ describe('ArrayDataProvider', () => {
       { numberField: 1, stringField: 'a', booleanField: true },
     ]);
 
-    dataProvider.setSorting({ active: 2, direction: SortDirection.asc, propertyName: 'numberField' });
-    expect(dataProvider.sorting).toEqual({ active: 2, direction: SortDirection.asc, propertyName: 'numberField' });
+    dataProvider.setSorting({ active: 2, direction: SortDirection.Asc, propertyName: 'numberField' });
+    expect(dataProvider.sorting).toEqual({ active: 2, direction: SortDirection.Asc, propertyName: 'numberField' });
     expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([
       { numberField: 1, stringField: 'a', booleanField: true },
       { numberField: 2, stringField: 'c', booleanField: false },

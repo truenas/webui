@@ -3,6 +3,7 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 
 interface TestTableData {
   numberField: number;
@@ -39,6 +40,7 @@ describe('IxTableBodyComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxTableBodyComponent<TestTableData>,
+    imports: [IxTable2Module],
   });
 
   beforeEach(() => {

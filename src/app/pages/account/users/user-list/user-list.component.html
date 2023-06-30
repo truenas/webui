@@ -30,14 +30,6 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
     >
-      <ng-template
-        ix-table-cell
-        [columnIndex]="2"
-        [dataProvider]="dataProvider"
-        let-user
-      >
-        {{ user.builtin | yesNo }}
-      </ng-template>
       <ng-template ix-table-details-row [dataProvider]="dataProvider" let-user>
         <ix-user-details-row
           [user]="user"
