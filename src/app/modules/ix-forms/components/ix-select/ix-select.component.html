@@ -42,6 +42,7 @@
         <mat-option
           *ngFor="let option of opts"
           #ixOption
+          matTooltipPosition="right"
           [value]="option.value"
           [disabled]="option.disabled"
           [ixTest]="[controlDirective.name, option.label]"
