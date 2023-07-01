@@ -119,7 +119,7 @@
                         <span
                           class="storage-value"
                           textLimiter
-                          threshold="25"
+                          [threshold]="25"
                           [content]="poolInfoMap[pool.name]?.usedSpace?.value"
                         ></span>
                       </li>
@@ -144,7 +144,7 @@
                         <span
                           class="storage-value"
                           textLimiter
-                          threshold="32"
+                          [threshold]="32"
                           [content]="pool.path"
                         ></span>
                       </li>
@@ -159,7 +159,7 @@
                           <span
                             class="storage-value"
                             textLimiter
-                            threshold="17"
+                            [threshold]="17"
                             [content]="pool.path"
                           ></span>
                         </li>

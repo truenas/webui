@@ -1,14 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Injectable()
-export class AuthGuardService implements CanActivate {
+export class AuthGuardService {
   isAuthenticated = false;
   constructor(
     private router: Router,

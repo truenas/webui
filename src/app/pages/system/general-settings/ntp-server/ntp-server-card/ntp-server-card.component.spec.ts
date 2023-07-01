@@ -79,10 +79,6 @@ describe('NtpServerCardComponent', () => {
     slideInRef = spectator.inject(IxSlideInService);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should show table headers', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const headerRow = await table.getHeaderRow();
@@ -147,9 +143,9 @@ describe('NtpServerCardComponent', () => {
 
   it('should open edit ntp server form', () => {
     jest.spyOn(slideInRef, 'open').mockImplementation();
-    spectator.click(spectator.query('.mat-column-address', { root: true }));
+    spectator.click(spectator.queryAll('.mat-column-address', { root: true })[1]);
 
-    expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent);
+    expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent, { data: fakeDataSource[0] });
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {
