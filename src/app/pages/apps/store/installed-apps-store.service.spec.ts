@@ -23,7 +23,7 @@ describe('InstalledAppsStore', () => {
     service: InstalledAppsStore,
     providers: [
       mockProvider(ApplicationsService, {
-        subscribeToAllChartReleases: jest.fn(() => of()) as () => Observable<ApiEvent<ChartRelease>>,
+        getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<ChartRelease>>,
         getAllChartReleases: jest.fn(() => {
           return of([
             ...installedChartReleases,
