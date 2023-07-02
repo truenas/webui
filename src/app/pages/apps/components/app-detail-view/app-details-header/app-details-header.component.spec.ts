@@ -11,9 +11,9 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
+import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;

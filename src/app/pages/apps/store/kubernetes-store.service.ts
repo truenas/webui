@@ -45,16 +45,7 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
           };
         });
       }),
-      switchMap(() => this.appsService.getKubernetesConfig()),
-      tap((config: KubernetesConfig) => {
-        this.patchState((state: KubernetesState): KubernetesState => {
-          return {
-            ...state,
-            kubernetesConfig: { ...config },
-            selectedPool: config.pool,
-          };
-        });
-      }),
+      switchMap(() => this.updatePoolAndKubernetesConfig()),
       switchMap((config) => {
         if (config.pool) {
           return this.appsService.getKubernetesServiceStarted();
@@ -89,4 +80,18 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
       selectedPool: pool,
     };
   });
+
+  updatePoolAndKubernetesConfig(): Observable<KubernetesConfig> {
+    return this.appsService.getKubernetesConfig().pipe(
+      tap((config: KubernetesConfig) => {
+        this.patchState((state: KubernetesState): KubernetesState => {
+          return {
+            ...state,
+            kubernetesConfig: { ...config },
+            selectedPool: config.pool,
+          };
+        });
+      }),
+    );
+  }
 }

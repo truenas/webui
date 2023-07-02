@@ -67,7 +67,7 @@ describe('NtpServerCardComponent', () => {
       }),
       mockProvider(IxSlideInService, {
         onClose$: new Subject<unknown>(),
-        open: jest.fn(),
+        open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
     ],
   });
