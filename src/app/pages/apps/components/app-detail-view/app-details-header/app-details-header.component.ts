@@ -75,9 +75,11 @@ export class AppDetailsHeaderComponent implements OnInit {
   }
 
   private checkIfPoolSet(): void {
-    this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      this.wasPoolSet = Boolean(pool);
-      this.cdr.markForCheck();
-    });
+    this.kubernetesStore.selectedPool$
+      .pipe(untilDestroyed(this))
+      .subscribe((pool) => {
+        this.wasPoolSet = Boolean(pool);
+        this.cdr.markForCheck();
+      });
   }
 }
