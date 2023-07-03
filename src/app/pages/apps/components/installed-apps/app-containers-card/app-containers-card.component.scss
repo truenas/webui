@@ -35,13 +35,16 @@
 }
 
 .container-item {
-  align-items: center;
-  column-gap: 5px;
-  display: flex;
-  justify-content: space-between;
+  .information {
+    align-items: center;
+    column-gap: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 
   .container-name {
-    min-width: 60%;
+    width: 100%;
     word-wrap: break-word;
   }
 
