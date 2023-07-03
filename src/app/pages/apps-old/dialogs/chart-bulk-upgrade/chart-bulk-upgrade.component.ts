@@ -86,26 +86,23 @@ export class ChartBulkUpgradeComponent {
 
   getUpgradeSummary(name: string, version?: string): void {
     this.loadingMap.set(name, true);
-    this.appService
-      .getUpgradeSummary(name, version)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (summary) => {
-          const availableOptions = summary.available_versions_for_upgrade.map((item) => {
-            return { value: item.version, label: item.version } as Option;
-          });
-          this.upgradeSummaryMap.set(name, summary);
-          this.optionsMap.set(name, of(availableOptions));
-          this.form.patchValue({
-            [name]: version || String(availableOptions[0].value),
-          });
-          this.loadingMap.set(name, false);
-        },
-        error: (error) => {
-          console.error(error);
-          this.loadingMap.set(name, false);
-        },
-      });
+    this.appService.getUpgradeSummary(name, version).pipe(untilDestroyed(this)).subscribe({
+      next: (summary) => {
+        const availableOptions = summary.available_versions_for_upgrade.map((item) => {
+          return { value: item.version, label: item.version } as Option;
+        });
+        this.upgradeSummaryMap.set(name, summary);
+        this.optionsMap.set(name, of(availableOptions));
+        this.form.patchValue({
+          [name]: version || String(availableOptions[0].value),
+        });
+        this.loadingMap.set(name, false);
+      },
+      error: (error) => {
+        console.error(error);
+        this.loadingMap.set(name, false);
+      },
+    });
   }
 
   originalOrder(): number {

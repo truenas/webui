@@ -74,7 +74,7 @@ describe('DatasetQuotasGrouplistComponent', () => {
       }),
       mockProvider(IxSlideInService, {
         onClose$: new Subject<unknown>(),
-        open: jest.fn(),
+        open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
       mockWebsocket([
         mockCall('pool.dataset.get_quota', fakeGroupQuotas),

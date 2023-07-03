@@ -1,0 +1,104 @@
+<h1 matDialogTitle>{{ 'Upgrade' | translate }}</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <p>
+    <strong>
+      {{ 'The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
+    </strong>
+  </p>
+
+  <mat-accordion displayMode="flat" class="bulk-list">
+    <mat-expansion-panel
+      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackByKey"
+      (afterExpand)="onExpand(bulkItem)"
+    >
+      <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+        <ix-fake-progress-bar [loading]="loadingMap.get(bulkItem.key)"></ix-fake-progress-bar>
+        <mat-panel-title>
+          <ix-bulk-list-item [item]="bulkItem.value">
+            {{ bulkItem.key }}
+            {{ bulkItem.value.item.human_version.split('_')[0] }}
+
+            <div class="version">
+              <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
+              <ix-icon name="mdi-arrow-right-thin"></ix-icon>
+              <span>{{ form.get(bulkItem.key)?.value }}</span>
+            </div>
+
+            <div class="logo">
+              <img
+                [src]="bulkItem.value.item.chart_metadata.icon"
+                [src-fallback]="imagePlaceholder"
+              />
+            </div>
+          </ix-bulk-list-item>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
+        <ix-select
+          [formControlName]="bulkItem.key"
+          [label]="'Version to be upgraded to' | translate"
+          [required]="true"
+          [options]="optionsMap.get(bulkItem.key)"
+        ></ix-select>
+
+        <ng-container *ngIf="hasErrors(bulkItem.key)">
+          <span>{{ bulkItem.value.message }}</span>
+        </ng-container>
+
+        <mat-accordion class="details-list" displayMode="flat">
+          <mat-expansion-panel>
+            <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+              <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-expansion-content">
+              <ol *ngIf="hasUpdatesForImages(bulkItem.key); else noUpdatesForImages">
+                <li *ngFor="let containerImage of summary.container_images_to_update | keyvalue: originalOrder">
+                  {{ containerImage.key }}
+                </li>
+              </ol>
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+              <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-expansion-content">
+              <div
+                fxLayout="row"
+                fxLayoutAlign="start start"
+                class="detail-row row-dark"
+              >
+                <ng-container *ngIf="summary?.changelog; else noChangelog">
+                  <div [innerHTML]="summary.changelog"></div>
+                </ng-container>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <ng-template #noUpdatesForImages>
+    {{ 'There are no images requiring upgrade' | translate }}
+  </ng-template>
+
+  <ng-template #noChangelog>{{ 'No Changelog' | translate }}</ng-template>
+
+  <div class="form-actions">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="upgrade"
+      [disabled]="form.invalid || bulkItems.size === 0"
+    >
+      {{ 'Upgrade' | translate }}
+    </button>
+    <button mat-button type="button" matDialogClose ixTest="cancel">
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+</form>

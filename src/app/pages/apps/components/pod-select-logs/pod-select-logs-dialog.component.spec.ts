@@ -10,10 +10,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
-import {
-  PodSelectLogsDialogComponent,
-} from 'app/pages/apps-old/dialogs/pod-select-logs/pod-select-logs-dialog.component';
+import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 describe('PodSelectLogsDialogComponent', () => {
   let mockCustomSubmit: jest.Mock;
