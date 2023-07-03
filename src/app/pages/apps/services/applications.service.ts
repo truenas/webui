@@ -14,8 +14,11 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
+import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services';
 
@@ -33,6 +36,30 @@ export class ApplicationsService {
 
   getKubernetesConfig(): Observable<KubernetesConfig> {
     return this.ws.call('kubernetes.config');
+  }
+
+  getPoolList(): Observable<Pool[]> {
+    return this.ws.call('pool.query');
+  }
+
+  getChartReleaseNames(): Observable<{ name: string }[]> {
+    return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
+  }
+
+  getBindIpChoices(): Observable<Choices> {
+    return this.ws.call('kubernetes.bindip_choices');
+  }
+
+  getContainerConfig(): Observable<ContainerConfig> {
+    return this.ws.call('container.config');
+  }
+
+  updateContainerConfig(enableImageUpdates: boolean): Observable<ContainerConfig> {
+    return this.ws.call('container.update', [{ enable_image_updates: enableImageUpdates }]);
+  }
+
+  getInterfaces(): Observable<NetworkInterface[]> {
+    return this.ws.call('interface.query');
   }
 
   getKubernetesServiceStarted(): Observable<boolean> {

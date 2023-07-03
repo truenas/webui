@@ -21,7 +21,7 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -86,23 +86,26 @@ export class ChartBulkUpgradeComponent {
 
   getUpgradeSummary(name: string, version?: string): void {
     this.loadingMap.set(name, true);
-    this.appService.getUpgradeSummary(name, version).pipe(untilDestroyed(this)).subscribe({
-      next: (summary) => {
-        const availableOptions = summary.available_versions_for_upgrade.map((item) => {
-          return { value: item.version, label: item.version } as Option;
-        });
-        this.upgradeSummaryMap.set(name, summary);
-        this.optionsMap.set(name, of(availableOptions));
-        this.form.patchValue({
-          [name]: version || String(availableOptions[0].value),
-        });
-        this.loadingMap.set(name, false);
-      },
-      error: (error) => {
-        console.error(error);
-        this.loadingMap.set(name, false);
-      },
-    });
+    this.appService
+      .getChartUpgradeSummary(name, version)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (summary) => {
+          const availableOptions = summary.available_versions_for_upgrade.map((item) => {
+            return { value: item.version, label: item.version } as Option;
+          });
+          this.upgradeSummaryMap.set(name, summary);
+          this.optionsMap.set(name, of(availableOptions));
+          this.form.patchValue({
+            [name]: version || String(availableOptions[0].value),
+          });
+          this.loadingMap.set(name, false);
+        },
+        error: (error) => {
+          console.error(error);
+          this.loadingMap.set(name, false);
+        },
+      });
   }
 
   originalOrder(): number {

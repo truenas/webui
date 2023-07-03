@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map, Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
+import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 
@@ -66,15 +66,22 @@ export class AppDetailsHeaderComponent implements OnInit {
 
   showChoosePoolModal(): void {
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.checkIfPoolSet();
+    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe((success) => {
+      if (!success) {
+        return;
+      }
+      this.wasPoolSet = true;
+      this.cdr.markForCheck();
+      this.navigateToInstallPage();
     });
   }
 
   private checkIfPoolSet(): void {
-    this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      this.wasPoolSet = Boolean(pool);
-      this.cdr.markForCheck();
-    });
+    this.kubernetesStore.selectedPool$
+      .pipe(untilDestroyed(this))
+      .subscribe((pool) => {
+        this.wasPoolSet = Boolean(pool);
+        this.cdr.markForCheck();
+      });
   }
 }
