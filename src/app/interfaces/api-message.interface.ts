@@ -26,7 +26,7 @@ export interface ConnectedMessage {
 export interface ApiEvent<T = unknown> {
   collection: string; // TODO: ApiMethod?
   fields: T;
-  id: number;
+  id: number | string;
   msg: IncomingApiMessageType.Changed
   | IncomingApiMessageType.Added
   | IncomingApiMessageType.Removed
