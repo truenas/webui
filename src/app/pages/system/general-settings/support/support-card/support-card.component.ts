@@ -17,8 +17,8 @@ import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticke
 import {
   FileTicketLicensedFormComponent,
 } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
-import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
+import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import {
   SetProductionStatusDialogComponent,
