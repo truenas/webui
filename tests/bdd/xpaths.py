@@ -403,10 +403,18 @@ class groups:
 class interface:
     title = '//h3[contains(text(),"Edit Interface")]'
     dhcp_Checkbox = '//mat-checkbox[contains(.,"DHCP")]'
-    add_Allias = '//div[@class="label-container" and contains(.,"Aliases")]//button'
+    critical_Checkbox = '//mat-checkbox[contains(.,"Critical")]'
+    failover_Group_Select = '//ix-select[@formcontrolname="failover_group"]//mat-select'
+    failover_Group_Option = '//mat-option[@id="mat-option-1"]'
+    failover_Group_Selected = '//ix-select[@formcontrolname="failover_group"]//mat-select//span[contains(.,"1")]'
+    add_Allias_Button = '//button[@data-test="button-add-item-aliases"]'
     ip_Address_Input = '//ix-ip-input-with-netmask//input'
+    failover_Address_Input = '//ix-input[@formcontrolname="failover_address"]//input'
+    failover_Virtual_Address = '//ix-input[@formcontrolname="failover_virtual_address"]//input'
     netmask_Select = '//ix-ip-input-with-netmask//mat-select'
-    netmask_Option = '//mat-option[contains(.,"24")]'
+
+    def netmask_Option(number):
+        return f'//mat-option[contains(.,"{number}")]'
 
 
 class iscsi:
