@@ -70,7 +70,7 @@ describe('AppsStore', () => {
       mockProvider(ApplicationsService, {
         getAvailableApps: jest.fn(() => of(availableApps)) as () => Observable<AvailableApp[]>,
         getLatestApps: jest.fn(() => of([{ ...installedAndRecommendedApp }])) as () => Observable<AvailableApp[]>,
-        subscribeToAllChartReleases: jest.fn(() => of()) as () => Observable<ApiEvent<ChartRelease>>,
+        getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<ChartRelease>>,
         getAllAppsCategories: jest.fn(() => of(['storage', 'media'])) as () => Observable<string[]>,
         getKubernetesConfig: jest.fn(() => {
           return of({ pool: 'ix-applications-pool' } as KubernetesConfig);
