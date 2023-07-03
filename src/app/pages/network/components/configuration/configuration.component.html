@@ -132,20 +132,6 @@
             [tooltip]="httpproxy.tooltip | translate"
           ></ix-input>
 
-          <ix-checkbox
-            [formControlName]="netwaitEnabled.fcName"
-            [label]="netwaitEnabled.label | translate"
-            [tooltip]="netwaitEnabled.tooltip | translate"
-          ></ix-checkbox>
-
-          <ix-chips
-            *ngIf="!netwaitIp.hidden"
-            [formControlName]="netwaitIp.fcName"
-            [label]="netwaitIp.label | translate"
-            [placeholder]="netwaitIp.label | translate"
-            [tooltip]="netwaitIp.tooltip | translate"
-          ></ix-chips>
-
           <ix-chips
             [formControlName]="hosts.fcName"
             [label]="hosts.label | translate"

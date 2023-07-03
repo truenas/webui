@@ -128,6 +128,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
         this.isLoading = false; // TODO: Add loading indication in UI.
         this.summary = summary;
         this.config = config;
+
         this.cdr.markForCheck();
       });
 

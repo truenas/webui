@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { formatRelative } from 'date-fns';
 import { Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 @UntilDestroy()
 @Component({

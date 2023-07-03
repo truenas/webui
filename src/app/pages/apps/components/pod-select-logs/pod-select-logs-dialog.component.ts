@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services';
 
 export type LogsDialogFormValue = PodSelectLogsDialogComponent['form']['value'];
