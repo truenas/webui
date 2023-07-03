@@ -115,14 +115,12 @@ describe('SelectPoolDialogComponent', () => {
     jest.spyOn(appService, 'getPoolList').mockReturnValue(of([]));
     spectator.component.ngOnInit();
 
-    setTimeout(() => {
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-        title: helptext.noPool.title,
-        message: helptext.noPool.message,
-        hideCheckbox: true,
-        buttonText: helptext.noPool.action,
-      });
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
-    }, 100);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: helptext.noPool.title,
+      message: helptext.noPool.message,
+      hideCheckbox: true,
+      buttonText: helptext.noPool.action,
+    });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
   });
 });
