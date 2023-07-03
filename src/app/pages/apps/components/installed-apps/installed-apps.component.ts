@@ -274,15 +274,19 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       untilDestroyed(this),
     ).subscribe({
       next: (charts) => {
-        this.dataSource = charts;
+        const shouldReloadApps = charts.some((app) => app === undefined);
+        this.dataSource = charts.filter((app) => !!app);
         this.dataSource.forEach((app) => {
           if (app.status === ChartReleaseStatus.Deploying) {
             this.refreshStatus(app.name);
           }
         });
-
         this.selectAppForDetails(this.activatedRoute.snapshot.firstChild?.params['appId']);
         this.cdr.markForCheck();
+
+        if (shouldReloadApps) {
+          this.installedAppsStore.loadInstalledApps().pipe(take(1), untilDestroyed(this)).subscribe();
+        }
       },
       complete: () => {
         this.isLoading = false;

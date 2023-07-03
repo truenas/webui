@@ -58,6 +58,29 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
     );
   });
 
+  loadInstalledApps(): Observable<unknown> {
+    return this.kubernetesStore.isLoading$.pipe(
+      filter((loading) => !loading),
+      switchMap(() => this.kubernetesStore.isKubernetesStarted$),
+      switchMap((isKubernetesStarted) => {
+        return isKubernetesStarted ? this.appsService.getAllChartReleases().pipe(
+          tap((installedApps: ChartRelease[]) => {
+            this.patchState((state: InstalledAppsState): InstalledAppsState => {
+              return {
+                ...state,
+                installedApps: [...installedApps],
+                isLoading: false,
+              };
+            });
+            if (isKubernetesStarted) {
+              this.subscribeToInstalledAppsUpdates();
+            }
+          }),
+        ) : of();
+      }),
+    );
+  }
+
   private handleError(): void {
     this.patchState((state: InstalledAppsState): InstalledAppsState => {
       return {
@@ -75,19 +98,22 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
       untilDestroyed(this),
     ).subscribe({
       next: (apiEvent) => {
-        const handleRemovedApps = (apps: unknown[]): AvailableApp[] => apps.map((chartRelease) => {
-          if ((chartRelease as { name: string }).name === apiEvent.id.toString()) {
-            return { ...chartRelease as object, installed: false } as AvailableApp;
-          }
-          return chartRelease as AvailableApp;
-        });
+        const handleRemovedApps = (apps: unknown[]): AvailableApp[] => apps
+          .filter((app) => !!app)
+          .map((chartRelease) => {
+            if ((chartRelease as { name: string }).name === apiEvent.id.toString()) {
+              return { ...chartRelease as object, installed: false } as AvailableApp;
+            }
+            return chartRelease as AvailableApp;
+          });
 
-        const handleChangedApps = (apps: unknown[]): AvailableApp[] => apps.map((chartRelease) => {
-          if ((chartRelease as { name: string }).name === apiEvent.id.toString()) {
-            return { ...chartRelease as object, ...apiEvent.fields } as unknown as AvailableApp;
-          }
-          return chartRelease as AvailableApp;
-        });
+        const handleChangedApps = (apps: unknown[]): AvailableApp[] => apps
+          .filter((app) => !!app).map((chartRelease) => {
+            if ((chartRelease as { name: string }).name === apiEvent.id.toString()) {
+              return { ...chartRelease as object, ...apiEvent.fields } as unknown as AvailableApp;
+            }
+            return chartRelease as AvailableApp;
+          });
 
         switch (apiEvent.msg) {
           case IncomingApiMessageType.Removed:
@@ -141,28 +167,5 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
         }
       },
     });
-  }
-
-  private loadInstalledApps(): Observable<unknown> {
-    return this.kubernetesStore.isLoading$.pipe(
-      filter((loading) => !loading),
-      switchMap(() => this.kubernetesStore.isKubernetesStarted$),
-      switchMap((isKubernetesStarted) => {
-        return isKubernetesStarted ? this.appsService.getAllChartReleases().pipe(
-          tap((installedApps: ChartRelease[]) => {
-            this.patchState((state: InstalledAppsState): InstalledAppsState => {
-              return {
-                ...state,
-                installedApps: [...installedApps],
-                isLoading: false,
-              };
-            });
-            if (isKubernetesStarted) {
-              this.subscribeToInstalledAppsUpdates();
-            }
-          }),
-        ) : of();
-      }),
-    );
   }
 }

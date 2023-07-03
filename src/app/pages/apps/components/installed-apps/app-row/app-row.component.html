@@ -20,6 +20,7 @@
 </div>
 <div class="cell cell-status">
   <ix-app-status-cell
+    *ngIf="appStatus"
     [job]="job"
     [appStatus]="appStatus"
     [inProgress]="inProgress"
