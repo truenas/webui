@@ -125,6 +125,7 @@ export class CatalogsComponent implements OnInit, AfterViewInit {
         this.dataProvider.setRows(catalogs);
         this.isLoading$.next(false);
         this.isNoData$.next(!catalogs.length);
+        this.setDefaultSort();
         this.cdr.markForCheck();
       },
       error: () => {

@@ -1,9 +1,12 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
 import { DialogService } from 'app/services';
@@ -37,6 +40,7 @@ const fakeCatalogDataSource: Catalog[] = [
 
 describe('CatalogsComponent', () => {
   let spectator: SpectatorRouting<CatalogsComponent>;
+  let loader: HarnessLoader;
 
   const createComponent = createRoutingFactory({
     component: CatalogsComponent,
@@ -54,18 +58,14 @@ describe('CatalogsComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('should show table rows', () => {
+  it('should show table rows', async () => {
     const expectedRows = [['Name', 'Catalog URL', 'Branch', 'Preferred Trains']];
 
-    spectator.detectChanges();
-    const cells = spectator.queryAll('tr').map((tr) => {
-      const row: string[] = [];
-      tr.querySelectorAll('th').forEach((cell) => row.push(cell.textContent.trim()));
-      tr.querySelectorAll('td').forEach((cell) => row.push(cell.textContent.trim()));
-      return row;
-    });
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCells(true);
     expect(cells).toEqual(expectedRows);
   });
 });
