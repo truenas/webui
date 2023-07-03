@@ -1,14 +1,12 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
 import { PoolsDashboardComponent } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.component';
 import { ManagerComponent } from './components/manager/manager.component';
 
 export const routes: Routes = [
   {
     path: '',
-    canActivate: [TranslationsLoadedGuard],
     data: { title: T('Storage') },
     children: [
       {
