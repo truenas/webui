@@ -185,10 +185,10 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     this.ws.subscribe('chart.release.query').pipe(
       untilDestroyed(this),
     ).subscribe((evt) => {
-      const app = this.chartItems.get(evt.fields.name);
+      const app = this.chartItems.get(evt.fields?.name);
 
       if (app && evt?.fields) {
-        this.chartItems.set(evt.fields.name, { ...app, ...evt.fields });
+        this.chartItems.set(evt.fields?.name, { ...app, ...evt.fields });
       }
       this.filterChartItems();
     });

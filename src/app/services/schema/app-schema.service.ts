@@ -273,7 +273,7 @@ export class AppSchemaService {
   ): HierarchicalObjectMap<ChartFormValue>[] {
     return list.map((listItem: HierarchicalObjectMap<ChartFormValue>) => {
       // TODO: Consider refactoring.
-      if (fieldSchemaNode?.schema?.items[0]?.schema?.type === ChartSchemaType.Dict) {
+      if (fieldSchemaNode?.schema?.items?.[0]?.schema?.type === ChartSchemaType.Dict) {
         return this.serializeFormGroup(listItem, schema);
       }
 
