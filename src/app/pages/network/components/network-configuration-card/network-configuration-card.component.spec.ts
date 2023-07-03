@@ -1,7 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import {
+  byText, createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
@@ -25,8 +28,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameserver1: '8.8.8.8',
           nameserver2: '8.8.4.4',
           httpproxy: 'http://proxy.com',
-          netwait_enabled: true,
-          hosts: 'host1.com\nhost2.com',
+          hosts: ['host1.com', 'host2.com'],
           domains: ['domain.cz'],
           service_announcement: {
             mdns: true,
@@ -44,6 +46,9 @@ describe('NetworkConfigurationCardComponent', () => {
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
         } as NetworkSummary),
       ]),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({ slideInClosed$: of() })),
+      }),
     ],
   });
 
@@ -108,9 +113,8 @@ describe('NetworkConfigurationCardComponent', () => {
       'Additional Domains:': 'domain.cz',
       'Domain:': 'local',
       'HTTP Proxy:': 'http://proxy.com',
-      'Hostname Database:': 'host1.com\nhost2.com',
+      'Hostname Database:': 'host1.com, host2.com',
       'Hostname:': 'truenas',
-      'Netwait:': 'Enabled',
       'Outbound Network:': 'Allow usage, kmip, rsync, update',
       'Service Announcement:': 'mDNS, WS-DISCOVERY',
     });
@@ -118,7 +122,6 @@ describe('NetworkConfigurationCardComponent', () => {
 
   it('opens settings form when Settings button is clicked', async () => {
     const slideInRef = spectator.inject(IxSlideInService);
-    jest.spyOn(slideInRef, 'open').mockImplementation();
 
     const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await settingsButton.click();

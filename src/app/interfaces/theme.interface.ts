@@ -3,7 +3,7 @@ export interface Theme {
   description: string;
   label: string;
   labelSwatch?: string;
-  accentColors: ('blue' | 'orange' | 'cyan' | 'violet' | 'yellow' | 'magenta' | 'red' | 'green')[];
+  accentColors: ('blue' | 'orange' | 'cyan' | 'violet' | 'yellow' | 'magenta' | 'red' | 'green' | 'pink' | 'aqua' | 'tomato' | 'teal' | 'slategray' | 'salmon')[];
   topbar?: string; // CSS var from palette. Defaults to primary
   'topbar-txt'?: string; // Text color for topbar. Will be auto generated if nothing is set
   primary: string;
@@ -24,4 +24,10 @@ export interface Theme {
   blue: string;
   cyan: string;
   green: string;
+  pink: string;
+  aqua: string;
+  tomato: string;
+  teal: string;
+  slategray: string;
+  salmon: string;
 }

@@ -8,12 +8,12 @@ import { filter, map, take } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { RedirectService, AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -36,7 +36,7 @@ export class AppInfoCardComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private router: Router,
-    private store: AppsStore,
+    private installedAppsStore: InstalledAppsStore,
   ) {}
 
   get hasUpdates(): boolean {
@@ -151,7 +151,7 @@ export class AppInfoCardComponent {
     dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.store.installedApps$.pipe(
+      this.installedAppsStore.installedApps$.pipe(
         map((apps) => !apps.length),
         take(1),
         untilDestroyed(this),

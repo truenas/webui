@@ -5,7 +5,8 @@ import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
-    is_element_present
+    is_element_present,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -60,6 +61,7 @@ def on_the_storage_dashboard_page_click_the_disks_button(driver):
 def the_disks_page_shoule_appears(driver):
     """the Disks page shoule appears,."""
     assert wait_on_element(driver, 7, xpaths.disks.title)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
 @then('expand N/A pool disks, click wipe select quick press Wipe and confirm, then close when finished')

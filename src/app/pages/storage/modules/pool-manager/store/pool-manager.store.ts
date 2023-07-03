@@ -10,6 +10,7 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
   GenerateVdevsService,
@@ -29,7 +30,6 @@ export interface PoolManagerTopologyCategory {
   diskType: DiskType;
   vdevsNumber: number;
   treatDiskSizeAsMinimum: boolean;
-
   vdevs: UnusedDisk[][];
   hasCustomDiskSelection: boolean;
 }
@@ -46,6 +46,7 @@ interface PoolManagerDiskSettings {
 interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: number | null;
   maximizeEnclosureDispersal: boolean;
+  dispersalStrategy: DispersalStrategy;
 }
 
 export interface PoolManagerState {
@@ -53,11 +54,9 @@ export interface PoolManagerState {
   enclosures: Enclosure[];
   name: string;
   encryption: string | null;
-
   allDisks: UnusedDisk[];
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
-
   topology: PoolManagerTopology;
 }
 
@@ -90,6 +89,7 @@ export const initialState: PoolManagerState = {
   enclosureSettings: {
     limitToSingleEnclosure: null,
     maximizeEnclosureDispersal: false,
+    dispersalStrategy: null,
   },
 
   topology: initialTopology,
@@ -97,6 +97,7 @@ export const initialState: PoolManagerState = {
 
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
+  readonly startOver$ = new Subject<void>();
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
   readonly encryption$ = this.select((state) => state.encryption);
@@ -119,8 +120,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     }),
   );
 
-  readonly startOver$ = new Subject<void>();
-
   readonly hasMultipleEnclosuresAfterFirstStep$ = this.select(
     this.allDisks$,
     this.diskSettings$,
@@ -135,8 +134,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     },
   );
 
-  getLayoutsForVdevType(vdevLayout: VdevType): Observable<CreateVdevLayout[]> {
-    switch (vdevLayout) {
+  getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {
+    switch (vdevType) {
       case VdevType.Cache:
         return of([CreateVdevLayout.Stripe]);
       case VdevType.Dedup:

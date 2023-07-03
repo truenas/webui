@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
@@ -28,7 +28,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   catalog: string;
   train: string;
 
-  isLoading$ = new BehaviorSubject<boolean>(false);
+  isLoading$ = new BehaviorSubject<boolean>(true);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
 
@@ -53,6 +53,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private applicationsStore: AppsStore,
     private gallery: Gallery,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -89,13 +90,17 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
       map((apps: AvailableApp[]) => apps.find(
         (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
       )),
-      filter((app) => !!app),
     ).pipe(untilDestroyed(this)).subscribe({
       next: (app) => {
-        this.app = app;
-        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         this.isLoading$.next(false);
         this.cdr.markForCheck();
+
+        if (app) {
+          this.app = app;
+          this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+        } else {
+          this.router.navigate(['/apps/installed']);
+        }
       },
       error: () => {
         this.isLoading$.next(false);

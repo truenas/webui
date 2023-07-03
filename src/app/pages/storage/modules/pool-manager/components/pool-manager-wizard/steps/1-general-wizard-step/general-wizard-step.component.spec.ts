@@ -9,6 +9,7 @@ import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/i
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import {
   GeneralWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
@@ -26,6 +27,9 @@ describe('GeneralWizardStepComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
+    ],
+    declarations: [
+      PoolWarningsComponent,
     ],
     providers: [
       mockWebsocket([
@@ -48,7 +52,11 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        isStepActive: true,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

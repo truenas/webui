@@ -50,12 +50,18 @@ import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/cha
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { ChartBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/chart-bulk-upgrade/chart-bulk-upgrade.component';
+import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
+import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
-import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select/pod-select-dialog.component';
+import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -66,6 +72,8 @@ import { AppSectionExpandCollapseComponent } from './components/app-section-expa
 import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
+import { CategoryViewComponent } from './components/available-apps/category-view/category-view.component';
+import { CustomAppButtonComponent } from './components/available-apps/custom-app-button/custom-app-button.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
@@ -95,6 +103,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppContainersCardComponent,
     AppHistoryCardComponent,
     AppNotesCardComponent,
+    KubernetesSettingsComponent,
     AppResourcesCardComponent,
     AppHelmChartCardComponent,
     AppAvailableInfoCardComponent,
@@ -105,10 +114,14 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppUpgradeDialogComponent,
     AppStatusCellComponent,
     AppDetailsHeaderComponent,
+    ChartBulkUpgradeComponent,
+    SelectPoolDialogComponent,
     AppDetailsSimilarComponent,
     AppSettingsButtonComponent,
     AppMetadataCardComponent,
     AppSectionExpandCollapseComponent,
+    CategoryViewComponent,
+    CustomAppButtonComponent,
   ],
   imports: [
     CommonModule,
@@ -148,6 +161,9 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
   ],
   providers: [
     AppsStore,
+    AppsFilterStore,
+    KubernetesStore,
+    InstalledAppsStore,
   ],
 })
 export class AppsModule { }

@@ -4,14 +4,14 @@
   </mat-card-header>
   <mat-card-content *ngIf="!(isLoading$| async); else loading">
     <ng-container *ngIf="hasDisks$ | async; else noDisks">
-      <div *ngFor="let item of sizeDisksMap[DiskType.Hdd] | keyvalue">
+      <div *ngFor="let item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize">
         <div *ngIf="item.value" class="details-item">
           <ix-icon name="ix:hdd"></ix-icon>
           <span class="label">{{ getFilesize(item.key) }} </span>
           <span class="value"> × {{ item.value.length }}</span>
         </div>
       </div>
-      <div *ngFor="let item of sizeDisksMap[DiskType.Ssd] | keyvalue">
+      <div *ngFor="let item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize">
         <div *ngIf="item.value" class="details-item">
           <ix-icon name="ix:ssd"></ix-icon>
           <span class="label">{{ getFilesize(item.key) }} </span>

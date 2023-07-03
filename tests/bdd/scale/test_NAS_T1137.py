@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -100,9 +101,7 @@ def input_test_eric_smb_share_as_description_and_click_save(driver, description)
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+    rsc.Start_Or_Restart_SMB_Service(driver)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 

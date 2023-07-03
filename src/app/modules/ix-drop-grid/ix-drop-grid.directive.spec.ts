@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import { IxDropGridPlaceholderComponent } from 'app/modules/ix-drop-grid/ix-drop-grid-placeholder.component';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
@@ -23,7 +24,7 @@ describe('IxDropGridDirective', () => {
     directive: IxDropGridDirective,
     template: '<div ixDropGrid>',
     imports: [
-      DragDropModule,
+      MockModule(DragDropModule),
     ],
     declarations: [IxDropGridDirective],
     providers: [

@@ -27,7 +27,14 @@ describe('DiskInfoCardComponent', () => {
       MockComponents(CopyButtonComponent),
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({
+          slideInClosed$: of(),
+          componentInstance: {
+            setFormDisk: jest.fn(),
+          },
+        })),
+      }),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { poolId: '1' } },
       }),

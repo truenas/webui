@@ -15,7 +15,7 @@ export interface DsUncachedUser {
   };
 }
 
-export interface LoggedInUser extends Partial<DsUncachedUser>, Partial<User> {}
+export interface LoggedInUser extends Partial<DsUncachedUser>, Partial<User> { }
 
 export interface DsUncachedGroup {
   gr_gid: number;

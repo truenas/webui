@@ -57,7 +57,7 @@ describe('PoolUsageCardComponent', () => {
               type: TopologyItemType.Disk,
             }],
           },
-        } as unknown as Pool,
+        } as Pool,
         rootDataset: {
           used: {
             parsed: 3384541603,
