@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
+import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { PodDialogData } from 'app/interfaces/pod-select-dialog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApplicationsService } from 'app/pages/apps-old/applications.service';
-import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()

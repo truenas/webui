@@ -98,10 +98,6 @@ describe('SnapshotListComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should have error message when can not retrieve response', async () => {
     store$.overrideSelector(selectSnapshotState, {
       error: 'Snapshots could not be loaded',

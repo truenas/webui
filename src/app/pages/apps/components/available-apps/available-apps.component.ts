@@ -2,7 +2,7 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import {
-  Router, RouterEvent, NavigationSkipped,
+  Router, NavigationSkipped,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -49,7 +49,7 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     // For clicking the breadcrumbs link to this page
     this.router.events.pipe(
-      filter((event: RouterEvent) => event instanceof NavigationSkipped),
+      filter((event) => event instanceof NavigationSkipped),
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.router.url.endsWith('/apps/available')) {

@@ -1,0 +1,126 @@
+:host {
+  display: block;
+  max-width: 100%;
+  width: 600px;
+
+  ::ng-deep {
+    ix-select {
+      margin: 0 0 8px;
+      padding: 0;
+    }
+  }
+
+  ix-fake-progress-bar {
+    height: 2px;
+    left: 0;
+    position: absolute;
+    top: -2px;
+    z-index: 10;
+  }
+
+  .form-actions {
+    align-items: center;
+    border-top: 1px solid var(--lines);
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 8px;
+    padding-top: 16px;
+  }
+
+  .version {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    font-size: 14px;
+    gap: 8px;
+    margin-left: 16px;
+    opacity: 0.5;
+  }
+
+
+  .mat-accordion {
+    .mat-expansion-panel {
+      border: none;
+      box-shadow: none;
+    }
+
+    &.details-list {
+      max-height: 300px;
+
+      .mat-expansion-panel-body {
+        margin-left: 8px;
+        max-height: 40vh;
+        overflow-y: auto;
+        padding: 0;
+      }
+
+      .mat-expansion-panel-spacing {
+        margin: 0;
+      }
+
+      > .mat-expansion-panel {
+        background: transparent;
+        margin: 0 -24px;
+
+        .mat-expansion-panel-header {
+          font-size: 14px;
+          margin: 0 -24px;
+          padding: 0 48px;
+        }
+      }
+    }
+
+    &.bulk-list {
+      display: block;
+      max-height: 50vh;
+      overflow: hidden auto;
+      padding-bottom: 16px;
+
+      > .mat-expansion-panel {
+        margin-left: -24px;
+        margin-right: -24px;
+
+        &.mat-expanded {
+          background: var(--bg1);
+          border-bottom: 1px solid var(--lines);
+        }
+
+        > .mat-expansion-panel-header.mat-expanded {
+          border-top: 2px solid var(--lines);
+        }
+
+        &.mat-expansion-panel-spacing {
+          margin-bottom: 0;
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
+  .expansion-content {
+    overflow: hidden auto;
+    padding: 7px;
+
+    ix-job-item {
+      margin: 0 -12px;
+    }
+  }
+
+  .logo {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 32px;
+    margin-right: 16px;
+    max-width: 64px;
+    min-width: 32px;
+    pointer-events: none;
+    user-select: none;
+
+    img {
+      height: 100%;
+      object-fit: contain;
+      width: 100%;
+    }
+  }
+}

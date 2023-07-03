@@ -1,12 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/core-components.module';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
@@ -111,7 +111,7 @@ describe('UserListComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
-  it('should show table rows', () => {
+  it('should show table rows', async () => {
     store$.overrideSelector(selectPreferences, { hideBuiltinUsers: true } as Preferences);
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
@@ -122,24 +122,34 @@ describe('UserListComponent', () => {
       ['test', '1004', 'No', 'test', ''],
     ];
 
-    spectator.detectChanges();
-    const cells = spectator.queryAll('tr').map((tr) => {
-      const row: string[] = [];
-      tr.querySelectorAll('th').forEach((cell) => row.push(cell.textContent.trim()));
-      tr.querySelectorAll('td').forEach((cell) => row.push(cell.textContent.trim()));
-      return row;
-    });
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCells(true);
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should expand only one row on click', async () => {
+  it('should expand and collapse only one row when clicked on it', async () => {
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
-    await firstExpandButton.click();
-    await secondExpandButton.click();
-
+    const table = await loader.getHarness(IxTable2Harness);
+    await table.clickRow(0);
+    await table.clickRow(1);
     expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(1);
+
+    await table.clickRow(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(0);
+  });
+
+  it('should expand and collapse only one row on toogle click', async () => {
+    store$.overrideSelector(selectUsers, fakeUserDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(IxTable2Harness);
+    await table.clickToogle(0);
+    await table.clickToogle(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(1);
+
+    await table.clickToogle(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(0);
   });
 });

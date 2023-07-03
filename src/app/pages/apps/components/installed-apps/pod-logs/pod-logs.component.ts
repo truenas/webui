@@ -10,10 +10,7 @@ import { UUID } from 'angular2-uuid';
 import { map, Subscription } from 'rxjs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import {
-  LogsDialogFormValue,
-  PodSelectLogsDialogComponent,
-} from 'app/pages/apps-old/dialogs/pod-select-logs/pod-select-logs-dialog.component';
+import { LogsDialogFormValue, PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { DialogService, ShellService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
