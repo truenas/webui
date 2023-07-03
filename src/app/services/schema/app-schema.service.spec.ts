@@ -555,12 +555,12 @@ describe('AppSchemaService', () => {
       expect(service.serializeFormValue({ a: { b: 1 } }, null)).toEqual({ a: { b: 1 } });
       expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null }, null)).toEqual({ a: { d: 'test' } });
       expect(service.serializeFormValue({
-        test: [
+        commonName: [
           { commonName: [{ entry: 'list of' }] },
           { commonName: [{ entry: 'lists' }, { entry: 'of strings' }] },
           { commonName: [{ number: 5 }] },
         ],
-      }, null)).toEqual({ test: [['list of'], ['lists', 'of strings'], [5]] });
+      }, null)).toEqual({ commonName: [['list of'], ['lists', 'of strings'], [5]] });
       expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null }, {
         questions: [
           {
