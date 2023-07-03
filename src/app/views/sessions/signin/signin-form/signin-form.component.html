@@ -11,23 +11,27 @@
       class="username-input"
       [label]="'Username' | translate"
       [required]="true"
+      (keyup.enter)="!loginBtn.disabled && onSubmit()"
     ></ix-input>
 
     <ix-input
+      #passwordField
       formControlName="password"
       type="password"
       prefixIcon="lock"
       autocomplete="current-password"
       [label]="'Password' | translate"
       [required]="true"
+      (keyup.enter)="!loginBtn.disabled && onSubmit()"
     ></ix-input>
     <button
+      #loginBtn
       class="submit-button"
       mat-button
       type="button"
       color="primary"
       ixTest="log-in"
-      [disabled]="isLoading$ | async"
+      [disabled]="!(shouldEnableLoginBtn$ | async)"
       (click)="onSubmit()"
     >
       {{ 'Log In' | translate }}
@@ -37,19 +41,22 @@
     *ngIf="hasTwoFactor"
   >
     <ix-input
+      #otpField
       formControlName="otp"
       prefixIcon="phonelink"
       autocomplete="one-time-code"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
+      (keyup.enter)="!loginWithOtpBtn.disabled && loginWithOtp()"
     ></ix-input>
     <button
+      #loginWithOtpBtn
       class="submit-button"
       mat-button
       type="button"
       color="primary"
       ixTest="log-in"
-      [disabled]="isLoading$ | async"
+      [disabled]="!(shouldEnableLoginWithOtpBtn$ | async)"
       (click)="loginWithOtp()"
     >
       {{ 'Proceed' | translate }}
@@ -59,7 +66,7 @@
       mat-button
       type="button"
       ixTest="otp-log-in"
-      [disabled]="isLoading$ | async"
+      [disabled]="isLoading"
       (click)="cancelOtpLogin()"
     >{{ 'Cancel' | translate }}</button>
     

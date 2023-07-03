@@ -1,10 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  BehaviorSubject,
+  Observable,
   filter, of, switchMap, tap,
 } from 'rxjs';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -19,11 +21,22 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   styleUrls: ['./signin-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SigninFormComponent {
+export class SigninFormComponent implements OnInit {
   @ViewChild('usernameField', { static: true, read: ElementRef }) usernameField: ElementRef<HTMLElement>;
 
-  isLoading$ = this.signinStore.isLoading$;
   hasTwoFactor = false;
+
+  private enableLoginBtn$ = new BehaviorSubject<boolean>(false);
+  private enableOtpLoginBtn$ = new BehaviorSubject<boolean>(false);
+  protected isLoading = false;
+
+  get shouldEnableLoginBtn$(): Observable<boolean> {
+    return this.enableLoginBtn$.asObservable();
+  }
+
+  get shouldEnableLoginWithOtpBtn$(): Observable<boolean> {
+    return this.enableOtpLoginBtn$.asObservable();
+  }
 
   form = this.formBuilder.group({
     username: ['', Validators.required],
@@ -40,6 +53,41 @@ export class SigninFormComponent {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
   ) { }
+
+  ngOnInit(): void {
+    this.signinStore.isLoading$.pipe(untilDestroyed(this)).subscribe({
+      next: (isLoading) => {
+        this.isLoading = isLoading;
+        this.enableLoginBtn$.next(
+          !this.isLoading && !!this.form.controls.username.valid && !!this.form.controls.password.valid,
+        );
+        this.enableOtpLoginBtn$.next(
+          !this.isLoading && !!this.form.controls.otp.valid,
+        );
+      },
+    });
+    this.form.controls.username.valueChanges.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.enableLoginBtn$.next(
+          !this.isLoading && !!this.form.controls.username.valid && !!this.form.controls.password.valid,
+        );
+      },
+    });
+    this.form.controls.password.valueChanges.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.enableLoginBtn$.next(
+          !this.isLoading && !!this.form.controls.username.valid && !!this.form.controls.password.valid,
+        );
+      },
+    });
+    this.form.controls.otp.valueChanges.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.enableOtpLoginBtn$.next(
+          !this.isLoading && !!this.form.controls.otp.valid,
+        );
+      },
+    });
+  }
 
   onSubmit(): void {
     this.signinStore.setLoadingState(true);
@@ -89,7 +137,7 @@ export class SigninFormComponent {
     const message: string = this.translate.instant('Incorrect or expired OTP. Please try again.');
     this.signinStore.showSnackbar(message);
     this.form.patchValue({ otp: '' });
-    this.form.controls.otp.setErrors(null);
+    this.form.controls.otp.updateValueAndValidity();
   }
 
   private clearForm(): void {
