@@ -33,6 +33,7 @@ describe('SigninFormComponent', () => {
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),
         handleSuccessfulLogin: jest.fn(),
+        isLoading$: of(false),
       }),
       mockProvider(AutofillMonitor, {
         monitor: jest.fn(() => of({ isAutofilled: true })),
