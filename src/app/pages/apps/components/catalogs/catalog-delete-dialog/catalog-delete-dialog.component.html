@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>{{ 'Delete Catalog' | translate }}</h1>
+<div mat-dialog-content>
+  <p class="message" [innerHtml]="deleteMessage | translate: { name: catalog.label }"></p>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button mat-button ixTest="cancel" [matDialogClose]="false">{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    color="primary"
+    ixTest="delete"
+    (click)="onDelete()"
+  >
+    {{ 'Delete' | translate }}
+  </button>
+</div>
