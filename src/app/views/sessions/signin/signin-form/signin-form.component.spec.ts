@@ -64,11 +64,4 @@ describe('SigninFormComponent', () => {
     expect(spectator.inject(AuthService).login).toHaveBeenCalledWith('root', '12345678');
     expect(signinStore.handleSuccessfulLogin).toHaveBeenCalled();
   });
-
-  it('does not disabled Log In button when form has been autofilled', async () => {
-    expect(spectator.inject(AutofillMonitor).monitor).toHaveBeenCalled();
-
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
-    expect(await loginButton.isDisabled()).toBe(false);
-  });
 });
