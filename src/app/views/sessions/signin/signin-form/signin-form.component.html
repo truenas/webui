@@ -1,9 +1,8 @@
-<form [formGroup]="form" (submit)="onSubmit()">
+<form [formGroup]="form" (keyup.enter)="hasTwoFactor ? loginWithOtp() : login()" (submit)="login()">
   <ng-container
     *ngIf="!hasTwoFactor"
   >
     <ix-input
-      #usernameField
       ixAutofocus
       formControlName="username"
       prefixIcon="person"
@@ -11,18 +10,15 @@
       class="username-input"
       [label]="'Username' | translate"
       [required]="true"
-      (keyup.enter)="!loginBtn.disabled && onSubmit()"
     ></ix-input>
 
     <ix-input
-      #passwordField
       formControlName="password"
       type="password"
       prefixIcon="lock"
       autocomplete="current-password"
       [label]="'Password' | translate"
       [required]="true"
-      (keyup.enter)="!loginBtn.disabled && onSubmit()"
     ></ix-input>
     <button
       #loginBtn
@@ -31,8 +27,8 @@
       type="button"
       color="primary"
       ixTest="log-in"
-      [disabled]="!(shouldEnableLoginBtn$ | async)"
-      (click)="onSubmit()"
+      [disabled]="isLoading$ | async"
+      (click)="login()"
     >
       {{ 'Log In' | translate }}
     </button>
@@ -41,22 +37,19 @@
     *ngIf="hasTwoFactor"
   >
     <ix-input
-      #otpField
       formControlName="otp"
       prefixIcon="phonelink"
       autocomplete="one-time-code"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
-      (keyup.enter)="!loginWithOtpBtn.disabled && loginWithOtp()"
     ></ix-input>
     <button
-      #loginWithOtpBtn
       class="submit-button"
       mat-button
       type="button"
       color="primary"
       ixTest="log-in"
-      [disabled]="!(shouldEnableLoginWithOtpBtn$ | async)"
+      [disabled]="isLoading$ | async"
       (click)="loginWithOtp()"
     >
       {{ 'Proceed' | translate }}
@@ -66,7 +59,7 @@
       mat-button
       type="button"
       ixTest="otp-log-in"
-      [disabled]="isLoading"
+      [disabled]="isLoading$ | async"
       (click)="cancelOtpLogin()"
     >{{ 'Cancel' | translate }}</button>
     
