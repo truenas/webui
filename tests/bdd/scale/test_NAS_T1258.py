@@ -2,8 +2,9 @@
 """SCALE UI: feature tests."""
 
 import pytest
-from selenium.webdriver.common.keys import Keys
 import xpaths
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from function import (
     wait_on_element,
     is_element_present,
@@ -125,7 +126,7 @@ def set_extra_constraints_and_click_next(driver):
 
     assert wait_on_element(driver, 10, xpaths.certificates.usages_Any_Extended_Key_Usage_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.certificates.usages_Any_Extended_Key_Usage_Option).click()
-    driver.find_element_by_xpath(xpaths.certificates.usages_Any_Extended_Key_Usage_Option).send_keys(Keys.TAB)
+    ActionChains(driver).send_keys(Keys.TAB).perform()
 
     assert wait_on_element(driver, 10, xpaths.certificates.critical_Extension_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.certificates.critical_Extension_Checkbox).click()
@@ -138,7 +139,7 @@ def set_extra_constraints_and_click_next(driver):
 
     assert wait_on_element(driver, 10, xpaths.certificates.Key_Usage_Config_Digital_Signature_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.certificates.Key_Usage_Config_Digital_Signature_Option).click()
-    driver.find_element_by_xpath(xpaths.certificates.Key_Usage_Config_Digital_Signature_Option).send_keys(Keys.TAB)
+    ActionChains(driver).send_keys(Keys.TAB).perform()
 
     assert wait_on_element(driver, 10, xpaths.certificates.extra_Constraints_Next_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.certificates.extra_Constraints_Next_Button).click()

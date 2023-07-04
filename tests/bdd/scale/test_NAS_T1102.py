@@ -66,6 +66,7 @@ def the_pools_page_appears_click_create_pool(driver):
 def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
     """the Pool Manager appears, enter the system for pool name."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('system')
 
