@@ -4,39 +4,41 @@ import {
   Input,
   ViewContainerRef,
 } from '@angular/core';
-import { IxBodyCellBaseComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-base/ix-body-cell-base.component';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Directive({
   selector: '[ix-body-cell]',
 })
 export class IxTableBodyCellDirective<T> implements AfterViewInit {
-    @Input() row: T;
-    @Input() column: TableColumn<T>;
+  @Input() row: T;
+  @Input() column: Column<T, ColumnComponent<T>>;
 
-    constructor(private viewContainer: ViewContainerRef) {}
+  constructor(private viewContainer: ViewContainerRef) {}
 
-    ngAfterViewInit(): void {
-      this.createComponent();
+  ngAfterViewInit(): void {
+    this.createComponent();
+  }
+
+  createComponent(): void {
+    if (!this.column.type) {
+      this.column.type = IxCellTextComponent;
     }
+    this.viewContainer.clear();
+    const componentRef = this.viewContainer.createComponent(
+      this.column.type,
+    );
 
-    createComponent(): void {
-      if (!this.column.bodyCellType) {
-        this.column.bodyCellType = IxBodyCellBaseComponent;
-      }
-      this.viewContainer.clear();
-      const componentRef = this.viewContainer.createComponent(
-        this.column.bodyCellType,
-      );
+    componentRef.instance.row = this.row;
+    Object.keys(this.column).forEach((key: keyof ColumnComponent<T>) => {
+      componentRef.instance[key] = this.column[key] as never;
+    });
+  }
 
-      componentRef.instance.row = this.row;
-      componentRef.instance.column = this.column;
-    }
-
-    static ngTemplateContextGuard<T>(
-      dir: IxTableBodyCellDirective<T>,
-      ctx: unknown,
-    ): ctx is { $implicit: T; index: number } {
-      return true;
-    }
+  static ngTemplateContextGuard<T>(
+    dir: IxTableBodyCellDirective<T>,
+    ctx: unknown,
+  ): ctx is { $implicit: T; index: number } {
+    return true;
+  }
 }

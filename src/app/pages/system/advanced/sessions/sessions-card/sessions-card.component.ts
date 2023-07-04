@@ -8,7 +8,7 @@ import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { createTable, textColumn } from 'app/modules/ix-table2/utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
@@ -37,19 +37,19 @@ export class SessionsCardComponent {
   isLoading = false;
   dataProvider = new ArrayDataProvider<AuthSession>();
 
-  columns: TableColumn<AuthSession>[] = [
-    {
+  columns = createTable<AuthSession>([
+    textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'credentials_data',
-    },
-    {
+    }),
+    textColumn({
       title: this.translate.instant('Start session time'),
       propertyName: 'created_at',
-    },
-    {
+    }),
+    textColumn({
       propertyName: 'id',
-    },
-  ];
+    }),
+  ]);
 
   constructor(
     private store$: Store<AppState>,

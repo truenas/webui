@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @UntilDestroy()
 @Component({
@@ -13,7 +13,7 @@ import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.inter
   styleUrls: ['ix-table-head.component.scss'],
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {
-  @Input() columns: TableColumn<T>[];
+  @Input() columns: Column<T, ColumnComponent<T>>[];
   @Input() dataProvider: ArrayDataProvider<T>;
 
   readonly SortDirection = SortDirection;

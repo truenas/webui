@@ -9,15 +9,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component';
-import { IxBodyCellBaseComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-base/ix-body-cell-base.component';
-import { IxBodyCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-checkbox/ix-body-cell-checkbox.component';
-import { IxBodyCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-date/ix-body-cell-date.component';
-import { IxBodyCellDeleteComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-delete/ix-body-cell-delete.component';
-import { IxBodyCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-size/ix-body-cell-size.component';
-import { IxBodyCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-yesno/ix-body-cell-yesno.component';
+import { IxCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
+import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { IxCellDeleteComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-delete/ix-cell-delete.component';
+import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
+import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
-import { IxHeaderCellBaseComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head-cells/ix-header-cell-base/ix-header-cell-base.component';
-import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
+import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
+import { IxHeaderCellTextComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table2/components/ix-table-pager/ix-table-pager.component';
 import { IxTable2Component } from 'app/modules/ix-table2/components/ix-table2/ix-table2.component';
@@ -50,13 +50,13 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxTableDetailsRowDirective,
     IxTableBodyCellDirective,
     IxTableHeaderCellDirective,
-    IxBodyCellBaseComponent,
-    IxBodyCellDateComponent,
-    IxBodyCellSizeComponent,
-    IxBodyCellCheckboxComponent,
-    IxBodyCellYesNoComponent,
-    IxBodyCellDeleteComponent,
-    IxHeaderCellBaseComponent,
+    IxCellTextComponent,
+    IxCellDateComponent,
+    IxCellSizeComponent,
+    IxCellCheckboxComponent,
+    IxCellYesNoComponent,
+    IxCellDeleteComponent,
+    IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,
@@ -70,13 +70,13 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxTableDetailsRowDirective,
     IxTableBodyCellDirective,
     IxTableHeaderCellDirective,
-    IxBodyCellBaseComponent,
-    IxBodyCellDateComponent,
-    IxBodyCellSizeComponent,
-    IxBodyCellCheckboxComponent,
-    IxBodyCellYesNoComponent,
-    IxBodyCellDeleteComponent,
-    IxHeaderCellBaseComponent,
+    IxCellTextComponent,
+    IxCellDateComponent,
+    IxCellSizeComponent,
+    IxCellCheckboxComponent,
+    IxCellYesNoComponent,
+    IxCellDeleteComponent,
+    IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,

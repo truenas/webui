@@ -15,7 +15,7 @@ import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { createTable, textColumn } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import {
   CatalogAddFormComponent,
@@ -43,28 +43,29 @@ export class CatalogsComponent implements OnInit, AfterViewInit {
   catalogSyncJobIds = new Set<number>();
   dataProvider = new ArrayDataProvider<Catalog>();
   catalogs: Catalog[] = [];
-  columns: TableColumn<Catalog>[] = [
-    {
+  columns = createTable<Catalog>([
+    textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'label',
       sortable: true,
-    },
-    {
+    }),
+    textColumn({
       title: this.translate.instant('Catalog URL'),
       propertyName: 'repository',
       sortable: true,
-    },
-    {
+    }),
+    textColumn({
       title: this.translate.instant('Branch'),
       propertyName: 'branch',
       sortable: true,
-    },
-    {
+    }),
+    textColumn({
       title: this.translate.instant('Preferred Trains'),
       propertyName: 'preferred_trains',
       sortable: true,
-    },
-  ];
+    }),
+  ]);
+
   isLoading$ = new BehaviorSubject<boolean>(true);
   isNoData$ = new BehaviorSubject<boolean>(false);
   hasError$ = new BehaviorSubject<boolean>(false);
