@@ -72,6 +72,7 @@ def on_the_zfs_encryption_card_click_edit(driver):
 def on__the_edit_encryption_options_box_set_encryption_type_to_passphrase(driver):
     """on the Edit Encryption Options box set Encryption Type to passphrase."""
     assert wait_on_element(driver, 10, xpaths.edit_Encryption.title)
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 5, xpaths.edit_Encryption.encryption_Type_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Encryption.encryption_Type_Checkbox).click()
     assert wait_on_element(driver, 5, xpaths.edit_Encryption.encryption_Type_Passphrase_Option, 'clickable')
