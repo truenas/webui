@@ -651,7 +651,7 @@ class users:
     title = '//h1[text()="Users"]'
     eric_User = '//tr[contains(.,"ericbsd")]/td'
     eric_Edit_Button = '//button[@data-test="button-edit-ericbsd"]'
-    eric_Allowed_Sudo_Commands = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Allowed Sudo Commands:")]/../dd'
+    eric_Allowed_Sudo_Commands = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Allowed Sudo Commands:")]/../dd'
     root_User = '//tr[contains(.,"root")]/td'
     root_Edit_Button = '//button[@data-test="button-edit-root"]'
     user_Bash_Shell = '//dd[contains(.,"/usr/bin/bash")]'
