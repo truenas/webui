@@ -636,7 +636,7 @@ class toolbar:
     ha_Enabled = '//ix-icon[@data-mat-icon-name="ha_enabled"]'
     notification = '//ix-icon[normalize-space(text())="notifications"]'
     notification_Button = '//button[contains(.,"notifications")]'
-    notification_Text = '//button[contains(.,"notifications")]//ix-icon/span'
+    notification_Text = '//button[contains(.,"notifications")]//span[@class="mat-badge-content mat-badge-active"]'
 
     def notification_Count(text):
         return f'//span[contains(.,"notifications")]//span[contains(text(),"{text}")]'
