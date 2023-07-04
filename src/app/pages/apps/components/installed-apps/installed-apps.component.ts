@@ -281,7 +281,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
           }
         });
 
-        this.selectAppForDetails(this.activatedRoute.snapshot.firstChild?.params['appId']);
+        this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
       complete: () => {
@@ -412,8 +412,14 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     if (app) {
       this.selectedApp = app;
     } else {
-      this.router.navigate(['/apps', 'installed', this.dataSource[0]?.id]);
-      this.selectedApp = this.dataSource[0];
+      const [firstApp] = this.dataSource;
+      if (firstApp.catalog && firstApp.catalog_train && firstApp.id) {
+        this.router.navigate(['/apps', 'installed', firstApp.catalog, firstApp.catalog_train, firstApp.id]);
+      } else {
+        this.router.navigate(['/apps', 'installed']);
+      }
+
+      this.selectedApp = firstApp;
     }
 
     this.cdr.markForCheck();
