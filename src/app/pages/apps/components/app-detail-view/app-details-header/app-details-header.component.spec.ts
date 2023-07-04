@@ -26,7 +26,7 @@ describe('AppDetailsHeaderComponent', () => {
     tags: ['aliens', 'ufo'],
     train: 'stable',
     home: 'https://www.seti.org',
-    app_readme: 'Find aliens without leaving your home.',
+    app_readme: '<h1>Seti</h1> <b>Seti is great.</b> <p>Find aliens without leaving your home.<p>',
     installed: false,
   } as AvailableApp;
 

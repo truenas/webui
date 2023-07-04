@@ -19,4 +19,5 @@ export interface RadioOption<T = RadioOptionValueType> extends Option<T> {
 export interface SelectOption<T = SelectOptionValueType> extends Option<T> {
   disabled?: boolean;
   tooltip?: string;
+  hoverTooltip?: string;
 }
