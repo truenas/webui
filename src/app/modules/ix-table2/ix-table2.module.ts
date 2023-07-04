@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component';
 import { IxBodyCellBaseComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-base/ix-body-cell-base.component';
 import { IxBodyCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-checkbox/ix-body-cell-checkbox.component';
 import { IxBodyCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body-cells/ix-body-cell-date/ix-body-cell-date.component';
@@ -24,6 +25,7 @@ import { IxTableBodyCellDirective } from 'app/modules/ix-table2/directives/ix-bo
 import { IxTableHeaderCellDirective } from 'app/modules/ix-table2/directives/ix-header-cell.directive';
 import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
+import { IxTable2EmptyDirective } from 'app/modules/ix-table2/directives/ix-table-empty.directive';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
@@ -56,6 +58,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxBodyCellDeleteComponent,
     IxHeaderCellBaseComponent,
     IxHeaderCellCheckboxComponent,
+    IxTable2EmptyDirective,
+    IxTable2EmptyRowComponent,
   ],
   exports: [
     IxTable2Component,
@@ -74,6 +78,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxBodyCellDeleteComponent,
     IxHeaderCellBaseComponent,
     IxHeaderCellCheckboxComponent,
+    IxTable2EmptyDirective,
+    IxTable2EmptyRowComponent,
   ],
 })
 export class IxTable2Module {}

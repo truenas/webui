@@ -64,7 +64,7 @@ export class JobEffects {
     switchMap(() => {
       return this.ws.subscribe('core.get_jobs').pipe(
         filter((event) => event.msg === IncomingApiMessageType.Removed),
-        map((event) => jobRemoved({ id: event.id })),
+        map((event) => jobRemoved({ id: event.id as number })),
       );
     }),
   ));

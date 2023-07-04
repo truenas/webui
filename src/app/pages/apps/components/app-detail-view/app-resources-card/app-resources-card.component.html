@@ -20,7 +20,7 @@
   <span class="label">{{ 'Pool' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else selectedPool"></ngx-skeleton-loader>
   <ng-template #selectedPool>
-    <ng-container *ngIf="(applicationsStore.selectedPool$ | async) as selectedPool; else notAvailable">
+    <ng-container *ngIf="(kubernetesStore.selectedPool$ | async) as selectedPool; else notAvailable">
       {{ selectedPool }}
     </ng-container>
   </ng-template>

@@ -7,6 +7,10 @@
   [limitLayouts]="allowedLayouts"
 ></ix-layout-step>
 
+<p *ngIf="stepWarning" class="warning">
+  {{ stepWarning }}
+</p>
+
 <ix-form-actions>
   <button
     mat-button

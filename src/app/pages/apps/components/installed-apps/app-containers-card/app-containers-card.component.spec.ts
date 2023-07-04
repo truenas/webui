@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppContainersCardComponent } from './app-containers-card.component';
 
@@ -36,12 +36,14 @@ describe('AppContainersCardComponent', () => {
           id: 'sha256:test',
           update_available: true,
         },
+      } as {
+        [key: string]: ChartContainerImage;
       },
       deployments: [{}, {}],
       pods: [{}],
       statefulsets: [{}],
     },
-  } as unknown as ChartRelease;
+  } as ChartRelease;
 
   const createComponent = createComponentFactory({
     component: AppContainersCardComponent,
@@ -72,7 +74,7 @@ describe('AppContainersCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Containers');
+    expect(spectator.query('mat-card-header h3')).toHaveText('Workloads');
   });
 
   it('shows details', () => {

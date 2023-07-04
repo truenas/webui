@@ -8,11 +8,9 @@ export interface NetworkConfiguration extends NetworkConfigurationState {
   hostname_b: string;
   hostname_local: string;
   hostname_virtual: string;
-  hosts: string;
+  hosts: string[];
   httpproxy: string;
   id: number;
-  netwait_enabled: boolean;
-  netwait_ip: string[];
   service_announcement: NetworkServiceAnnouncement;
   state: NetworkConfigurationState;
 }
@@ -26,8 +24,6 @@ export interface NetworkConfigurationConfig extends NetworkConfigurationState, N
   hostname_virtual: string;
   hosts: string[];
   httpproxy: string;
-  netwait_enabled: boolean;
-  netwait_ip: string[];
   outbound_network_activity: NetworkActivityType;
   outbound_network_value: string[];
 }
@@ -58,9 +54,7 @@ export interface NetworkConfigurationUpdate extends NetworkConfigurationState {
   hostname: string;
   hostname_b: string;
   hostname_virtual: string;
-  hosts: string;
+  hosts: string[];
   httpproxy: string;
-  netwait_enabled: boolean;
-  netwait_ip: string[];
   service_announcement: NetworkServiceAnnouncement;
 }

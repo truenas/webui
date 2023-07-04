@@ -3,20 +3,23 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Spectator } from '@ngneat/spectator';
+import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -230,7 +233,7 @@ describe('ChartWizardComponent', () => {
   } as CatalogApp;
 
   const existingChartEdit = {
-    name: 'app_name',
+    name: 'app-name',
     id: 'app_name',
     config: {
       apiPort: 8927,
@@ -333,6 +336,7 @@ describe('ChartWizardComponent', () => {
       mockProvider(ApplicationsService, {
         getCatalogItem: jest.fn(() => of(existingCatalogApp)),
         getChartRelease: jest.fn(() => of([existingChartEdit])),
+        getAllChartReleases: jest.fn(() => of([existingChartEdit])),
       }),
       mockProvider(AppLoaderService),
       mockWebsocket([
@@ -341,6 +345,9 @@ describe('ChartWizardComponent', () => {
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
       ]),
+      mockProvider(KubernetesStore, {
+        selectedPool$: of('pool set'),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
@@ -364,6 +371,17 @@ describe('ChartWizardComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.inject(ApplicationsService);
+    });
+
+    it('navigates to app detail page if pool is not set', () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const store = spectator.inject(KubernetesStore);
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      spectator.component.ngOnInit();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'app_name']);
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
@@ -407,6 +425,24 @@ describe('ChartWizardComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.inject(ApplicationsService);
+    });
+
+    it('navigates to app detail page if pool is not set', () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const store = spectator.inject(KubernetesStore);
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      spectator.component.ngOnInit();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'ipfs']);
+    });
+
+    it('checks validation error when app name already in use', async () => {
+      const applicationName = await loader.getHarness(IxInputHarness.with({ label: 'Application Name' }));
+
+      await applicationName.setValue('app-name');
+      expect(await applicationName.getErrorText()).toBe('The name "app-name" is already in use.');
     });
 
     it('shows values for app when form is opened for create', async () => {

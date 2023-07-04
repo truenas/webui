@@ -16,7 +16,9 @@ import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { DialogService } from 'app/services';
 
 @UntilDestroy()
@@ -38,7 +40,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   isFirstLoad = true;
   availableApps$ = this.applicationsStore.availableApps$;
   areLoaded$ = new BehaviorSubject(false);
-  installedApps$ = this.applicationsStore.installedApps$;
+  installedApps$ = this.installedAppsStore.installedApps$;
   catalogs$ = this.applicationsStore.catalogs$.pipe(
     tap((catalogs) => {
       if (this.isFirstLoad) {
@@ -47,7 +49,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       }
     }),
   );
-  isFilterApplied$ = this.applicationsStore.isFilterApplied$;
+  isFilterApplied$ = this.appsFilterStore.isFilterApplied$;
   appsCategories: string[] = [];
   catalogsOptions$ = this.catalogs$.pipe(singleArrayToOptions());
   sortOptions$: Observable<Option[]> = of([
@@ -70,6 +72,8 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     private mdDialog: MatDialog,
     private dialogService: DialogService,
     protected applicationsStore: AppsStore,
+    protected appsFilterStore: AppsFilterStore,
+    protected installedAppsStore: InstalledAppsStore,
   ) {}
 
   ngOnInit(): void {
@@ -78,9 +82,9 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((searchQuery) => {
-      this.applicationsStore.applySearchQuery(searchQuery);
+      this.appsFilterStore.applySearchQuery(searchQuery);
     });
-    this.applicationsStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
+    this.appsFilterStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
       next: (filterValues) => {
         if (filterValues.categories?.length) {
           this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
@@ -99,7 +103,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       },
     });
-    this.applicationsStore.searchQuery$.pipe(take(1), untilDestroyed(this)).subscribe({
+    this.appsFilterStore.searchQuery$.pipe(take(1), untilDestroyed(this)).subscribe({
       next: (searchQuery) => {
         this.searchControl.setValue(searchQuery);
       },
@@ -142,7 +146,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   applyFilters(): void {
-    this.applicationsStore.applyFilters({
+    this.appsFilterStore.applyFilters({
       catalogs: this.form.value.catalogs || [],
       sort: this.form.value.sort || null,
       categories: (this.form.value.categories || this.appsCategories),

@@ -1,0 +1,47 @@
+<ng-template [cdkPortalOutlet]="templatePortal"></ng-template>
+<ng-template #templatePortalContent>
+  <div
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    fxFlex
+    [class]="'empty-page ' + conf.type"
+    [class.large]="conf?.large"
+    [class.compact]="conf?.compact"
+  >
+    <div
+      *ngIf="!isLoading()"
+      fxLayout="column"
+      fxLayoutAlign="center center"
+      fxFlex
+      class="icon-div"
+    >
+      <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
+    </div>
+    <div
+      *ngIf="isLoading()"
+      fxLayout="column"
+      fxLayoutAlign="center center"
+      fxFlex
+    >
+      <mat-spinner [diameter]="40"></mat-spinner>
+    </div>
+    <div *ngIf="!isLoading()">
+      <h3 class="empty-title">{{ conf.title }}</h3>
+
+      <!-- Messages -->
+      <p *ngIf="conf.message && !conf.compact" class="empty-message">
+        {{ conf.message }}
+      </p>
+
+      <button
+        *ngIf="conf.button && !conf.compact"
+        class="empty-action"
+        mat-button
+        [ixTest]="[conf.button.label]"
+        (click)="doAction()"
+      >
+        {{ conf.button.label | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

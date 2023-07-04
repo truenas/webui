@@ -3,8 +3,8 @@
     <strong
       class="catalog-name"
       textLimiter
-      threshold="40"
-      [content]="'{app} Application Summary' | translate: { app: catalogApp.name }"
+      [threshold]="40"
+      [content]="'{app} Application Summary' | translate: { app: catalogApp.title || catalogApp.name }"
     ></strong>
     <span *ngIf="catalogApp.healthy" class="status active">
       {{ 'Healthy' | translate }}
@@ -20,7 +20,7 @@
       <div
         class="value capitalized-text"
         textLimiter
-        threshold="20"
+        [threshold]="20"
         [content]="catalogApp.catalog.label"
       ></div>
     </div>
@@ -29,7 +29,7 @@
       <div
         class="value capitalized-text"
         textLimiter
-        threshold="20"
+        [threshold]="20"
         [content]="catalogApp.catalog.train"
       ></div>
     </div>
@@ -39,7 +39,7 @@
     <span
       class="value"
       textLimiter
-      threshold="35"
+      [threshold]="35"
       [content]="catalogApp.categories.join(', ')"
     ></span>
   </div>
@@ -81,7 +81,7 @@
       >
         <div fxLayout="row" fxLayoutAlign="center start">
           <div fxFlex="70%" class="version-number">
-            <span textLimiter threshold="30" [content]="version.key"></span>
+            <span textLimiter [threshold]="30" [content]="version.key"></span>
             <span>{{ versionStatusLabel(version) }}</span>
           </div>
           <span fxFlex="30%" class="text-center info-col">

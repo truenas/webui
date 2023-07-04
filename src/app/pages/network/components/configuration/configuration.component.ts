@@ -49,8 +49,6 @@ export class NetworkConfigurationComponent implements OnInit {
     outbound_network_activity: [NetworkActivityType.Deny],
     outbound_network_value: [[] as string[]],
     httpproxy: [''],
-    netwait_enabled: [false],
-    netwait_ip: [[] as string[]],
     hosts: [[] as string[]],
   });
 
@@ -182,19 +180,6 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptext.httpproxy_tooltip,
   };
 
-  netwaitEnabled = {
-    fcName: 'netwait_enabled',
-    label: helptext.netwait_enabled_placeholder,
-    tooltip: helptext.netwait_enabled_tooltip,
-  };
-
-  netwaitIp = {
-    fcName: 'netwait_ip',
-    label: helptext.netwait_ip_placeholder,
-    tooltip: helptext.netwait_ip_tooltip,
-    hidden: true,
-  };
-
   hosts = {
     fcName: 'hosts',
     label: helptext.hosts_placeholder,
@@ -224,11 +209,6 @@ export class NetworkConfigurationComponent implements OnInit {
         } else {
           this.outboundNetworkValue.hidden = false;
         }
-      },
-    );
-    this.form.controls.netwait_enabled.valueChanges.pipe(untilDestroyed(this)).subscribe(
-      (value: boolean) => {
-        this.netwaitIp.hidden = !value;
       },
     );
 
@@ -270,17 +250,11 @@ export class NetworkConfigurationComponent implements OnInit {
             outbound_network_activity: NetworkActivityType.Allow,
             outbound_network_value: [],
             httpproxy: config.httpproxy,
-            netwait_enabled: config.netwait_enabled,
-            netwait_ip: config.netwait_ip,
-            hosts: [],
+            hosts: config.hosts,
             netbios: config.service_announcement.netbios,
             mdns: config.service_announcement.mdns,
             wsd: config.service_announcement.wsd,
           };
-
-          if (config.hosts && config.hosts !== '') {
-            transformed.hosts = config.hosts.split('\n');
-          }
 
           if (config.activity) {
             if (config.activity.activities.length === 0) {
@@ -332,7 +306,6 @@ export class NetworkConfigurationComponent implements OnInit {
 
     const params = {
       ...values,
-      hosts: values.hosts.length > 0 ? values.hosts.join('\n') : '',
       activity,
       service_announcement: serviceAnnouncement,
     };

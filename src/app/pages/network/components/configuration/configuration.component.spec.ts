@@ -46,7 +46,7 @@ describe('NetworkConfigurationComponent', () => {
           domains: [],
           hostname: 'truenas',
           hostname_local: 'truenas',
-          hosts: '',
+          hosts: [],
           httpproxy: '',
           id: 1,
           ipv4gateway: '',
@@ -54,8 +54,6 @@ describe('NetworkConfigurationComponent', () => {
           nameserver1: '',
           nameserver2: '',
           nameserver3: '',
-          netwait_enabled: false,
-          netwait_ip: [],
           service_announcement: {
             mdns: true,
             netbios: false,
@@ -108,7 +106,6 @@ describe('NetworkConfigurationComponent', () => {
       'Inherit domain from DHCP': false,
       'Outbound Activity': 'Allow All',
       'HTTP Proxy': '',
-      'Enable Netwait Feature': false,
       'Host Name Database': [],
     });
   });
@@ -135,7 +132,6 @@ describe('NetworkConfigurationComponent', () => {
       'IPv4 Default Gateway': '',
       'IPv6 Default Gateway': '',
       'HTTP Proxy': '',
-      'Enable Netwait Feature': false,
       'Host Name Database': [],
     });
 
@@ -154,15 +150,13 @@ describe('NetworkConfigurationComponent', () => {
         hostname: 'truenas01',
         hostname_b: undefined,
         hostname_virtual: undefined,
-        hosts: '',
+        hosts: [],
         httpproxy: '',
         ipv4gateway: '',
         ipv6gateway: '',
         nameserver1: '',
         nameserver2: '',
         nameserver3: '',
-        netwait_enabled: false,
-        netwait_ip: [],
         service_announcement: {
           mdns: true,
           netbios: true,

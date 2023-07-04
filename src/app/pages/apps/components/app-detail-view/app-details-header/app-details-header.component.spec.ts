@@ -7,12 +7,13 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { SelectPoolDialogComponent } from 'app/pages/apps-old/select-pool-dialog/select-pool-dialog.component';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;
@@ -25,7 +26,7 @@ describe('AppDetailsHeaderComponent', () => {
     tags: ['aliens', 'ufo'],
     train: 'stable',
     home: 'https://www.seti.org',
-    app_readme: 'Find aliens without leaving your home.',
+    app_readme: '<h1>Seti</h1> <b>Seti is great.</b> <p>Find aliens without leaving your home.<p>',
     installed: false,
   } as AvailableApp;
 
@@ -35,8 +36,10 @@ describe('AppDetailsHeaderComponent', () => {
       MockComponent(AppCardLogoComponent),
     ],
     providers: [
-      mockProvider(AppsStore, {
+      mockProvider(InstalledAppsStore, {
         installedApps$: of([application]),
+      }),
+      mockProvider(KubernetesStore, {
         selectedPool$: of('has-pool'),
       }),
       mockProvider(MatDialog, {
@@ -74,7 +77,7 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     it('shows Setup Pool To Install instead if pool is not set', async () => {
-      const store = spectator.inject(AppsStore);
+      const store = spectator.inject(KubernetesStore);
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 

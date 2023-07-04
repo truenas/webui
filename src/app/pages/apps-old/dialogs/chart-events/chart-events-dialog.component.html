@@ -7,7 +7,7 @@
       />
     </div>
     <div fxLayout="row" fxLayoutAlign="start center">
-      <strong class="chart-name">{{ catalogApp.name }}</strong>
+      <strong class="chart-name">{{ catalogApp.title || catalogApp.name }}</strong>
       <span class="version"> {{ catalogApp.human_version }}</span>
       <span class="value">{{ appStatus() | translate }}</span>
       <ix-icon
@@ -23,7 +23,7 @@
     <span
       class="value"
       textLimiter
-      threshold="70"
+      [threshold]="70"
       [content]="appService.getPorts(catalogApp) || ('No ports are being used.' | translate)"
     ></span>
   </div>
@@ -54,7 +54,7 @@
         <span
           class="value"
           textLimiter
-          threshold="14"
+          [threshold]="14"
           [content]="catalogApp.catalog"
         ></span>
       </div>
@@ -65,7 +65,7 @@
         <span
           class="value"
           textLimiter
-          threshold="14"
+          [threshold]="14"
           [content]="catalogApp.catalog_train"
         ></span>
       </div>
@@ -75,7 +75,7 @@
       <span
         class="value"
         textLimiter
-        threshold="14"
+        [threshold]="14"
         [content]="catalogApp.chart_metadata.name"
       ></span>
     </div>

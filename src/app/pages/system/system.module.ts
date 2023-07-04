@@ -44,6 +44,8 @@ import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
+import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
+import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
@@ -74,7 +76,6 @@ import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-l
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
-import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AwsSnsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
 import {
@@ -88,6 +89,7 @@ import { SlackServiceComponent } from 'app/pages/system/alert-service/alert-serv
 import { SnmpTrapServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/snmp-trap-service/snmp-trap-service.component';
 import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
 import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
+import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
@@ -119,11 +121,10 @@ import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
-import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
+import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
@@ -195,6 +196,7 @@ import { routing } from './system.routing';
     GeneralSettingsComponent,
     GuiFormComponent,
     GuiCardComponent,
+    GlobalTwoFactorAuthCardComponent,
     LocalizationCardComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
@@ -220,10 +222,10 @@ import { routing } from './system.routing';
     SysctlCardComponent,
     TunableFormComponent,
     TunableListComponent,
-    TwoFactorComponent,
     UpdateComponent,
     BootenvStatsDialogComponent,
     CronFormComponent,
+    GlobalTwoFactorAuthFormComponent,
     CronCardComponent,
     SaveConfigDialogComponent,
     UploadConfigDialogComponent,

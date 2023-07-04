@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CanActivate } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import {
@@ -13,7 +12,7 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
  */
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
-export class TranslationsLoadedGuard implements CanActivate {
+export class TranslationsLoadedGuard {
   // Bail on translations if it takes too much time to load.
   private readonly maxLanguageLoadingTime = 10 * 1000;
   isConnected = false;

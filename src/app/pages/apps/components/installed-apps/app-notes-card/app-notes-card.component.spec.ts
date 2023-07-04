@@ -2,6 +2,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MarkdownModule } from 'ngx-markdown';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app-section-expand-collapse/app-section-expand-collapse.component';
 import { AppNotesCardComponent } from './app-notes-card.component';
 
 describe('AppNotesCardComponent', () => {
@@ -28,6 +29,9 @@ describe('AppNotesCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppNotesCardComponent,
+    declarations: [
+      AppSectionExpandCollapseComponent,
+    ],
     imports: [
       MarkdownModule.forRoot(),
     ],

@@ -125,7 +125,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
       group: this.isGroupTag ? this.ace.who : null,
       default: this.ace.default,
       permissions: Object.entries(this.ace.perms)
-        .filter(([, isOn]) => isOn)
+        .filter(([, isOn]: [string, boolean]) => isOn)
         .map(([permission]) => permission as PosixPermission),
     };
 

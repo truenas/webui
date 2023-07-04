@@ -49,6 +49,7 @@ export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
 
 export interface ChartRelease {
   name: string;
+  title: string;
   info: ChartInfo;
   config: { [key: string]: ChartFormValue };
   hooks: unknown[];

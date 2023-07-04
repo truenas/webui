@@ -46,7 +46,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
       return this.multipleLabels.join(',');
     }
 
-    const selectedOption = this.opts.find((opt) => opt.value === this.value);
+    const selectedOption = this.opts.find((opt) => this.compareWith(opt.value, this.value));
     return selectedOption ? selectedOption.label : '';
   }
 
