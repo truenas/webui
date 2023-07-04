@@ -131,7 +131,7 @@
         </div>
 
         <div class="apps-rows">
-          <ng-container *ngFor="let app of filteredApps">
+          <ng-container *ngFor="let app of filteredApps; trackBy: trackAppBy">
             <ix-app-row
               routerLinkActive="selected"
               [app]="app"
