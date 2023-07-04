@@ -169,6 +169,7 @@ def the_system_dataset_page_should_open(driver):
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
+    assert wait_on_element_disappear(driver, 120, xpaths.progress.progress_Spinner)
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.system_Dataset.pool_Select).click()
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Option(pool_name))
