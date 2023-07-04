@@ -81,6 +81,8 @@ class add_User:
     home_Mode_Other_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-other-execute"]'
     ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
     user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
+    identification_Legend = '//legend[normalize-space(text())="Identification"]'
+    authentication_Legend = '//legend[normalize-space(text())="Authentication"]'
 
 
 class add_Zvol:
@@ -655,3 +657,7 @@ class users:
     root_User = '//tr[contains(.,"root")]/td'
     root_Edit_Button = '//button[@data-test="button-edit-root"]'
     user_Bash_Shell = '//dd[contains(.,"/usr/bin/bash")]'
+    eric_Home_Directory = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(text(),"Home Directory")]'
+    eric_Home_Directory_Text = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dd[contains(text(),"/mnt/tank/ericbsd")]'
+    eric_Password_Disable = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Password Disabled:")]'
+    eric_Password_Disable_Text = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Password Disabled:")]/../dd'

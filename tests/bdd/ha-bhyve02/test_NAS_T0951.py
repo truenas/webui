@@ -3,6 +3,7 @@
 
 import reusableSeleniumCode as rsc
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 import xpaths
 from function import (
@@ -107,7 +108,7 @@ def add_user_to_additional_groups_like_wheel_and_save_change(driver):
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
     assert wait_on_element(driver, 7, xpaths.add_User.wheel_Group_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.wheel_Group_Option).click()
-    driver.find_element_by_xpath(xpaths.add_User.wheel_Group_Option).send_keys(Keys.TAB)
+    ActionChains(driver).send_keys(Keys.TAB).perform()
     assert wait_on_element(driver, 7, xpaths.add_User.wheel_Is_Selected)
     wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
@@ -127,7 +128,7 @@ def reopen_the_user_edit_page_and_ensure_that_the_additional_group_was_saved(dri
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
     assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
 
 
 @then('Aux Group added should be visible')
