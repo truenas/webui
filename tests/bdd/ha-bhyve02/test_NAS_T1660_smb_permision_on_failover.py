@@ -40,7 +40,7 @@ def test_verify_host_sharing_permissions_on_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    #depends(request, ['Setup_HA', 'AD_SMB_SHARE'], scope='session')
+    depends(request, ['Setup_HA', 'AD_SMB_SHARE'], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
