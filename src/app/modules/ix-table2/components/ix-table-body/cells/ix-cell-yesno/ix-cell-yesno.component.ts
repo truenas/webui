@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
   templateUrl: './ix-cell-yesno.component.html',
 })
-export class IxCellYesNoComponent<T> implements ColumnComponent<T> {
-  propertyName: keyof T;
-  title?: string;
-  sortBy?: (row: T) => string | number;
-  sortable?: boolean;
-  row: T;
+export class IxCellYesNoComponent<T> extends ColumnComponent<T> {}
+
+export function yesNoColumn<T>(options: Partial<IxCellYesNoComponent<T>>): Column<T, IxCellYesNoComponent<T>> {
+  return { type: IxCellYesNoComponent, ...options };
 }

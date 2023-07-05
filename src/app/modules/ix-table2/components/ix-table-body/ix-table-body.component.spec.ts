@@ -1,9 +1,10 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { createTable, textColumn } from 'app/modules/ix-table2/utils';
+import { createTable } from 'app/modules/ix-table2/utils';
 
 interface TestTableData {
   numberField: number;

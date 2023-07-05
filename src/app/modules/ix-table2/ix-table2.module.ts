@@ -6,6 +6,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component';
@@ -38,6 +39,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatCheckboxModule,
     MatSelectModule,
     TranslateModule,
+    NgxFilesizeModule,
     TestIdModule,
     CoreComponents,
   ],
