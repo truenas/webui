@@ -28,11 +28,11 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './chart-bulk-upgrade.component.html',
-  styleUrls: ['./chart-bulk-upgrade.component.scss'],
+  templateUrl: './app-bulk-upgrade.component.html',
+  styleUrls: ['./app-bulk-upgrade.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartBulkUpgradeComponent {
+export class AppBulkUpgradeComponent {
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
   form = this.formBuilder.group<{ [key: string]: string }>({});
@@ -48,7 +48,7 @@ export class ChartBulkUpgradeComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<ChartBulkUpgradeComponent>,
+    private dialogRef: MatDialogRef<AppBulkUpgradeComponent>,
     private appService: ApplicationsService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,

@@ -110,13 +110,22 @@
       </div>
     </div>
   </mat-card-content>
-  <mat-card-actions>
+  <mat-card-actions *ngIf="app">
     <button
-      *ngIf="app"
+      *ngIf="app.history && !isEmpty(app.history) && app.status"
+      mat-button
+      [ixTest]="[app.name, 'rollback']"
+      (click)="rollbackApp()"
+    >
+      {{ 'Roll Back' | translate }}
+    </button>
+    <button
       mat-button
       [ixTest]="[app.name, 'delete']"
       (click)="deleteButtonPressed()"
-    >{{ 'Delete' | translate }}</button>
+    >
+      {{ 'Delete' | translate }}
+    </button>
   </mat-card-actions>
 </mat-card>
 

@@ -15,7 +15,7 @@ import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ChartBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/chart-bulk-upgrade/chart-bulk-upgrade.component';
+import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { DialogService, WebSocketService } from 'app/services';
 
 const fakeAppOne = {
@@ -96,12 +96,12 @@ const fakeUpgradeSummary: UpgradeSummary = {
   upgrade_human_version: '24.0.6_15.3.36',
 };
 
-describe('ChartBulkUpgradeComponent', () => {
-  let spectator: Spectator<ChartBulkUpgradeComponent>;
+describe('AppBulkUpgradeComponent', () => {
+  let spectator: Spectator<AppBulkUpgradeComponent>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: ChartBulkUpgradeComponent,
+    component: AppBulkUpgradeComponent,
     imports: [AppLoaderModule, ReactiveFormsModule, IxFormsModule, ImgFallbackModule],
     declarations: [
       BulkListItemComponent,

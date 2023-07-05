@@ -31,7 +31,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ChartBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/chart-bulk-upgrade/chart-bulk-upgrade.component';
+import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -50,7 +50,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   dataSource: ChartRelease[] = [];
-  selectedApp: ChartRelease;
+  selectedAppId: string;
   isLoading = false;
   filterString = '';
   showMobileDetails = false;
@@ -62,6 +62,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     large: false,
     title: helptext.message.loading,
   };
+
+  get selectedApp(): ChartRelease | null {
+    return this.dataSource.find((app) => app?.id === this.selectedAppId);
+  }
 
   get filteredApps(): ChartRelease[] {
     return this.dataSource
@@ -139,7 +143,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
-          this.selectedApp = undefined;
+          this.selectedAppId = undefined;
           this.cdr.markForCheck();
         }
       });
@@ -361,7 +365,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource
       .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
-    this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
+    this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
+      .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+        this.toggleAppsChecked(false);
+      });
   }
 
   onBulkDelete(): void {
@@ -410,10 +417,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       app = this.dataSource.find((chart) => chart.id === appId);
     }
     if (app) {
-      this.selectedApp = app;
+      this.selectedAppId = app.id;
     } else {
       this.router.navigate(['/apps', 'installed', this.dataSource[0]?.id]);
-      this.selectedApp = this.dataSource[0];
+      this.selectedAppId = this.dataSource[0]?.id;
     }
 
     this.cdr.markForCheck();
