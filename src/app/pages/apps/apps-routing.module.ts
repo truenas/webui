@@ -24,20 +24,28 @@ const routes: Routes = [
       path: 'installed',
       component: InstalledAppsComponent,
       data: { isNew: true },
-      children: [{
-        path: ':appId',
-        component: InstalledAppsComponent,
-      },
-      {
-        path: ':appId/shell/:pname/:cname',
-        component: PodShellComponent,
-        data: { title: T('Pod Shell'), breadcrumb: T('Pod Shell') },
-      },
-      {
-        path: ':appId/logs/:pname/:cname/:tail_lines',
-        component: PodLogsComponent,
-        data: { title: T('Pod Logs'), breadcrumb: T('Pod Logs') },
-      }],
+      children: [
+        {
+          path: ':appId',
+          component: InstalledAppsComponent,
+        },
+      ],
+    },
+    {
+      path: 'installed/:appId',
+      children: [
+        {
+          path: 'shell/:pname/:cname',
+          component: PodShellComponent,
+          data: { title: T('Pod Shell'), breadcrumb: T('Pod Shell') },
+        },
+        {
+          path: 'logs/:pname/:cname/:tail_lines',
+          component: PodLogsComponent,
+          data: { title: T('Pod Logs'), breadcrumb: T('Pod Logs') },
+          pathMatch: 'full',
+        },
+      ],
     },
     {
       path: 'available',
