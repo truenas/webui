@@ -112,7 +112,7 @@
   </mat-card-content>
   <mat-card-actions *ngIf="app">
     <button
-      *ngIf="app.history && !isEmpty(app.history) && app.status"
+      *ngIf="app.history && !isEmpty(app.history)"
       mat-button
       [ixTest]="[app.name, 'rollback']"
       (click)="rollbackApp()"
