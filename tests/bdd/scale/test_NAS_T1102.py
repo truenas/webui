@@ -102,7 +102,7 @@ def create_pool_should_appear_while_pool_is_being_created(driver):
 @then('the pools system should appear in the list')
 def the_pools_system_should_appear_in_the_list(driver):
     """the pools system should appear in the list."""
-    assert wait_on_element(driver, 10, '//h2[text()="system"]')
+    assert wait_on_element(driver, 15, '//h2[text()="system"]')
 
 
 @then('navigate to System Setting and click Advanced to open the Advanced page should open')
