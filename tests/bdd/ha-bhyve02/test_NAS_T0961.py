@@ -78,7 +78,8 @@ def the_pools_page_should_open(driver):
 @then('the Pool Manager page should open')
 def the_pool_manager_page_should_open(driver):
     """the Pool Manager page should open."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Pool Manager")]')
+    assert wait_on_element(driver, 5, xpaths.pool_manager.title)
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('enter {pool_name} for pool name, check the box next to {disk}'))
