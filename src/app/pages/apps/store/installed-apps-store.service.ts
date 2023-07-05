@@ -166,6 +166,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
     return this.kubernetesStore.isLoading$.pipe(
       filter((loading) => !loading),
       switchMap(() => this.kubernetesStore.isKubernetesStarted$),
+      filter((isKubernetesStarted) => isKubernetesStarted !== null),
       switchMap((isKubernetesStarted) => {
         return isKubernetesStarted ? this.appsService.getAllChartReleases().pipe(
           tap((installedApps: ChartRelease[]) => {
