@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns';
+import { format, formatDuration, intervalToDuration } from 'date-fns';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
@@ -125,6 +125,13 @@ export class SessionsCardComponent {
         this.loader.close();
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
+    });
+  }
+
+  asDuration(tokenLifetime: number): string {
+    const duration = intervalToDuration({ start: 0, end: tokenLifetime * 1000 });
+    return formatDuration(duration, {
+      format: ['hours', 'minutes', 'seconds'],
     });
   }
 
