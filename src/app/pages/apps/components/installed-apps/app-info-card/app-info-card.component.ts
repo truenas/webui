@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _, { startCase } from 'lodash';
+import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
@@ -30,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
 
-  readonly isEmpty = _.isEmpty;
+  readonly isEmpty = isEmpty;
 
   constructor(
     private appLoaderService: AppLoaderService,
