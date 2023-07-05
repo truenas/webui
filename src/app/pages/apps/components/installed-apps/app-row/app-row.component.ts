@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -12,6 +13,7 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
   selector: 'ix-app-row',
   templateUrl: './app-row.component.html',
   styleUrls: ['./app-row.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppRowComponent {
   @Input() app: ChartRelease;
