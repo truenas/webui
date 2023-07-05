@@ -351,22 +351,17 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
-    this.toggleAppsChecked(false);
   }
 
   onBulkStop(): void {
     this.startedCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
-    this.toggleAppsChecked(false);
   }
 
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource
       .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
-    this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
-      .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-        this.toggleAppsChecked(false);
-      });
+    this.matDialog.open(AppBulkUpgradeComponent, { data: apps });
   }
 
   onBulkDelete(): void {
@@ -381,7 +376,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
           title: helptext.charts.delete_dialog.job,
         },
       });
-      this.toggleAppsChecked(false);
       dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
