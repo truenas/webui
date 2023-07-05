@@ -1,5 +1,6 @@
 {
   "": "",
+  "...": "",
   "2FA has been configured for this account. Enter the OTP to continue.": "",
   "ACL Types & ACL Modes": "",
   "Add Allowed Initiators (IQN)": "",
@@ -181,6 +182,7 @@
   "Two-Factor authentication has been configured. No further actions are required.": "",
   "Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.": "",
   "Two-Factor authentication is required on this system, but it's not yet configured for your user. Please configure it now.": "",
+  "Update Members": "",
   "Uploading failed.": "",
   "Use": "",
   "Use Sudo for Zfs Commands": "",
@@ -194,6 +196,7 @@
   "VDEVs": "",
   "VDEVs have been created through manual disk selection. To view or  edit your selections, press the \"Edit Manual Disk Selection\" button below. To start again with the  automated disk selection, hit the \"Reset\" button.": "",
   "VDevs": "",
+  "VMware Snapshots": "",
   "Warnings": "",
   "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
   "Workloads": "",

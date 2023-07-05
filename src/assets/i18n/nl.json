@@ -1,5 +1,6 @@
 {
   "": "",
+  "...": "",
   "2FA has been configured for this account. Enter the OTP to continue.": "",
   "<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.  <i>File</i> provides virtual storage access to a single file.": "",
   "Add Vdevs to Pool": "",
@@ -114,6 +115,7 @@
   "Two-Factor authentication has been configured. No further actions are required.": "",
   "Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.": "",
   "Two-Factor authentication is required on this system, but it's not yet configured for your user. Please configure it now.": "",
+  "Update Members": "",
   "Uploading failed.": "",
   "Use": "",
   "User Two-Factor Authentication Actions": "",
@@ -121,6 +123,7 @@
   "Uses three disks for parity while all other disks store data. RAIDZ3 requires at least five disks.": "",
   "Uses two disks for parity while all other disks store data. RAIDZ2 requires at least four disks.": "",
   "VDevs": "",
+  "VMware Snapshots": "",
   "Warnings": "",
   "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
   "Workloads": "",
