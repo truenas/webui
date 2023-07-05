@@ -50,7 +50,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   dataSource: ChartRelease[] = [];
-  selectedAppId: string;
+  selectedApp: ChartRelease;
   isLoading = false;
   filterString = '';
   showMobileDetails = false;
@@ -62,10 +62,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     large: false,
     title: helptext.message.loading,
   };
-
-  get selectedApp(): ChartRelease | null {
-    return this.dataSource.find((app) => app?.id === this.selectedAppId);
-  }
 
   get filteredApps(): ChartRelease[] {
     return this.dataSource
@@ -143,7 +139,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
-          this.selectedAppId = undefined;
+          this.selectedApp = undefined;
           this.cdr.markForCheck();
         }
       });
@@ -355,11 +351,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.toggleAppsChecked(false);
   }
 
   onBulkStop(): void {
     this.startedCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.toggleAppsChecked(false);
   }
 
   onBulkUpgrade(updateAll = false): void {
@@ -383,6 +381,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
           title: helptext.charts.delete_dialog.job,
         },
       });
+      this.toggleAppsChecked(false);
       dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
@@ -417,10 +416,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       app = this.dataSource.find((chart) => chart.id === appId);
     }
     if (app) {
-      this.selectedAppId = app.id;
+      this.selectedApp = app;
     } else {
       this.router.navigate(['/apps', 'installed', this.dataSource[0]?.id]);
-      this.selectedAppId = this.dataSource[0]?.id;
+      this.selectedApp = this.dataSource[0];
     }
 
     this.cdr.markForCheck();
