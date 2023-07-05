@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,9 +20,6 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninFormComponent {
-  @ViewChild('usernameField', { static: true, read: ElementRef }) usernameField: ElementRef<HTMLElement>;
-
-  isLoading$ = this.signinStore.isLoading$;
   hasTwoFactor = false;
 
   form = this.formBuilder.group({
@@ -30,6 +27,8 @@ export class SigninFormComponent {
     password: ['', Validators.required],
     otp: ['', Validators.required],
   });
+
+  protected isLoading$ = this.signinStore.isLoading$;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,7 +40,7 @@ export class SigninFormComponent {
     private cdr: ChangeDetectorRef,
   ) { }
 
-  onSubmit(): void {
+  login(): void {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
     this.ws.call('auth.two_factor_auth', [formValues.username, formValues.password]).pipe(
@@ -89,7 +88,7 @@ export class SigninFormComponent {
     const message: string = this.translate.instant('Incorrect or expired OTP. Please try again.');
     this.signinStore.showSnackbar(message);
     this.form.patchValue({ otp: '' });
-    this.form.controls.otp.setErrors(null);
+    this.form.controls.otp.updateValueAndValidity();
   }
 
   private clearForm(): void {
