@@ -9,7 +9,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.General)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'General Info' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.General) as warning"
@@ -32,7 +32,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.EnclosureOptions)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'Enclosure Options' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.EnclosureOptions) as warning"
@@ -54,7 +54,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.Data)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'Data' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Data) as warning"
@@ -78,7 +78,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.Log)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'Log (Optional)' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Log) as warning"
@@ -101,7 +101,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.Spare)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'Spare (Optional)' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Spare) as warning"
@@ -124,7 +124,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.Cache)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'Cache (Optional)' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Cache) as warning"
@@ -147,7 +147,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.Metadata)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'Metadata (Optional)' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata) as warning"
@@ -170,7 +170,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.Dedup)"
       >
         <ng-template matStepLabel>
-          <div fxFlex fxLayoutAlign="start center">
+          <div class="step-header">
             {{ 'Dedup (Optional)' | translate }}
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup) as warning"

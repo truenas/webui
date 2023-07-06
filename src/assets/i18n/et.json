@@ -652,7 +652,7 @@
   "Choose a DNS provider and configure any required authenticator attributes.": "",
   "Choose a Disk": "",
   "Choose a Tag": "",
-  "Choose a connection that has been saved in  <b>System > SSH Connections</b>.": "",
+  "Choose a connection that has been saved in  <b>Credentials > Backup Credentials > SSH Connections</b>.": "",
   "Choose a date format.": "",
   "Choose a location to store the installer image file.": "",
   "Choose a new disk for the pool. To protect any existing data, adding the selected disk is stopped when the disk is already in use or has partitions present.": "",

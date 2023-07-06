@@ -31,7 +31,7 @@ export class DataWizardStepComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue) {
+    if (changes.isStepActive?.currentValue && !changes.isStepActive.previousValue) {
       this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0))
         .pipe(untilDestroyed(this))
         .subscribe((result) => {
