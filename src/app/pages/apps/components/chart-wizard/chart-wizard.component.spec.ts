@@ -363,8 +363,10 @@ describe('ChartWizardComponent', () => {
           {
             provide: ActivatedRoute,
             useValue: {
-              params: of({ appId: 'app_name', catalog: 'TRUENAS', train: 'charts' }),
-              routeConfig: { path: '/edit' },
+              parent: {
+                params: of({ appId: 'app_name', catalog: 'TRUENAS', train: 'charts' }),
+              },
+              routeConfig: { path: 'edit' },
             },
           },
         ],
@@ -417,8 +419,10 @@ describe('ChartWizardComponent', () => {
           {
             provide: ActivatedRoute,
             useValue: {
-              params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
-              routeConfig: { path: '/install' },
+              parent: {
+                params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
+              },
+              routeConfig: { path: 'install' },
             },
           },
         ],

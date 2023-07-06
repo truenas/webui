@@ -30,16 +30,13 @@ export class WebsocketConnectionService {
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
 
   private isConnectionReady = false;
-  private isConnectionReady$ = new BehaviorSubject(false);
   private wsAsObservable$: Observable<unknown>;
 
   get websocket$(): Observable<unknown> {
     return this.wsAsObservable$;
   }
 
-  get isConnected$(): Observable<boolean> {
-    return this.isConnectionReady$.asObservable();
-  }
+  readonly isConnected$ = new BehaviorSubject(false);
 
   constructor(
     @Inject(WINDOW) protected window: Window,
@@ -52,6 +49,10 @@ export class WebsocketConnectionService {
   }
 
   private initializeWebsocket(): void {
+    if (this.ws$) {
+      this.ws$.complete();
+    }
+
     this.ws$ = webSocket({
       url: this.connectionUrl,
       openObserver: {
@@ -74,7 +75,7 @@ export class WebsocketConnectionService {
     this.ws$.pipe(
       tap((response: IncomingWebsocketMessage) => {
         if (response.msg === IncomingApiMessageType.Connected) {
-          this.isConnectionReady$.next(true);
+          this.isConnected$.next(true);
         }
       }),
       untilDestroyed(this),
@@ -108,7 +109,7 @@ export class WebsocketConnectionService {
       return;
     }
     this.isTryingReconnect = true;
-    this.isConnectionReady$.next(false);
+    this.isConnected$.next(false);
     this.resetUi();
     if (event.code === 1008) {
       this.dialogService.fullScreenDialog(
@@ -204,6 +205,6 @@ export class WebsocketConnectionService {
 
   setupConnectionUrl(protocol: string, remote: string): void {
     this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://')
-    + remote + '/websocket';
+      + remote + '/websocket';
   }
 }

@@ -23,6 +23,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
+import { uniqBy } from 'lodash';
 import { Subject, Subscription } from 'rxjs';
 import {
   distinctUntilChanged,
@@ -38,7 +39,6 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
@@ -148,7 +148,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   loadSystemDatasetConfig(): void {
@@ -238,10 +240,25 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   private createDataSource(datasets: DatasetDetails[]): void {
     this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener, datasets);
-    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => getTreeBranchToNode(
-      datasetsToFilter,
-      (dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()),
-    );
+    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
+      const result: DatasetDetails[] = [];
+
+      const datasetsMatched = datasetsToFilter
+        .filter((dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()));
+
+      datasetsMatched.forEach((dataset) => {
+        const paths = dataset.id.split('/');
+
+        for (let i = 1; i <= paths.length; i++) {
+          const matched = datasetsToFilter.find((parent) => parent.id === paths.slice(0, i).join('/'));
+          if (matched) {
+            result.push(matched);
+          }
+        }
+      });
+
+      return uniqBy(result, 'id');
+    };
     this.dataSource.sortComparer = (a, b) => {
       return new Intl.Collator(undefined, {
         numeric: true,

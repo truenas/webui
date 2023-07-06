@@ -136,7 +136,7 @@
               routerLinkActive="selected"
               [app]="app"
               [job]="appJobs.get(app.name)"
-              [routerLink]="['/apps/installed', app.id]"
+              [routerLink]="['/apps/installed', app.catalog, app.catalog_train, app.id]"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
               (clickStatus)="openStatusDialog(app.name)"

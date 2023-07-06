@@ -1,9 +1,14 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
-import {
-  FormBuilder, FormControl, Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,10 +27,16 @@ import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.i
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
-  ChartFormValues, ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
+  ChartFormValues,
+  ChartRelease,
+  ChartReleaseCreate,
+  ChartSchema,
+  ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import {
-  AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema,
+  AddListItemEvent,
+  DeleteListItemEvent,
+  DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -50,7 +61,6 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
 export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  protected wasPoolSet = false;
   appId: string;
   catalog: string;
   train: string;
@@ -64,9 +74,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
 
-  forbiddenAppNames$ = this.appService.getAllChartReleases().pipe(
-    map((apps) => apps.map((app) => app.name)),
-  );
+  forbiddenAppNames$ = this.appService.getAllChartReleases().pipe(map((apps) => apps.map((app) => app.name)));
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -77,7 +85,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly helptext = helptext;
 
-  private _pageTitle$ = new BehaviorSubject<string>('Loading');
+  private _pageTitle$ = new BehaviorSubject<string>('...');
   pageTitle$ = this._pageTitle$.asObservable().pipe(
     filter(Boolean),
     map((name) => {
@@ -129,7 +137,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
           if (idx === path.length - 1) {
             nextElement?.scrollIntoView({ block: 'center' });
             nextElement.classList.add('highlighted');
-            timer(999).pipe(untilDestroyed(this)).subscribe(() => nextElement.classList.remove('highlighted'));
+            timer(999)
+              .pipe(untilDestroyed(this))
+              .subscribe(() => nextElement.classList.remove('highlighted'));
           }
         });
       }
@@ -141,7 +151,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onSectionClick(sectionName: string): void {
@@ -156,14 +168,17 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isNew = true;
     this.isLoading = true;
     this.loader.open();
-    this.appService.getCatalogItem(this.appId, this.catalog, this.train).pipe(untilDestroyed(this)).subscribe({
-      next: (app) => {
-        app.schema = app.versions[app.latest_version].schema;
-        this.setChartForCreation(app);
-        this.afterAppLoaded();
-      },
-      error: (error: WebsocketError) => this.afterAppLoadError(error),
-    });
+    this.appService
+      .getCatalogItem(this.appId, this.catalog, this.train)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (app) => {
+          app.schema = app.versions[app.latest_version].schema;
+          this.setChartForCreation(app);
+          this.afterAppLoaded();
+        },
+        error: (error: WebsocketError) => this.afterAppLoadError(error),
+      });
   }
 
   updateSearchOption(): void {
@@ -182,18 +197,11 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.appSchemaService.deleteFormListItem(event);
   }
 
-  getFieldsHiddenOnForm(
-    data: unknown,
-    deleteField$: Subject<string>,
-    path = '',
-  ): void {
+  getFieldsHiddenOnForm(data: unknown, deleteField$: Subject<string>, path = ''): void {
     if (path) {
       // eslint-disable-next-line no-restricted-syntax
-      const formField = (this.form.get(path) as CustomUntypedFormField);
-      formField?.hidden$?.pipe(
-        take(1),
-        untilDestroyed(this),
-      ).subscribe((hidden) => {
+      const formField = this.form.get(path) as CustomUntypedFormField;
+      formField?.hidden$?.pipe(take(1), untilDestroyed(this)).subscribe((hidden) => {
         if (hidden) {
           deleteField$.next(path);
         }
@@ -239,17 +247,22 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isNew) {
       const version = data.version;
       delete data.version;
-      this.dialogRef.componentInstance.setCall('chart.release.create', [{
-        catalog: this.catalog,
-        item: this.catalogApp.name,
-        release_name: data.release_name,
-        train: this.train,
-        version,
-        values: data,
-      } as ChartReleaseCreate]);
+      this.dialogRef.componentInstance.setCall('chart.release.create', [
+        {
+          catalog: this.catalog,
+          item: this.catalogApp.name,
+          release_name: data.release_name,
+          train: this.train,
+          version,
+          values: data,
+        } as ChartReleaseCreate,
+      ]);
     } else {
       delete data.release_name;
-      this.dialogRef.componentInstance.setCall('chart.release.update', [this.config.release_name as string, { values: data }]);
+      this.dialogRef.componentInstance.setCall('chart.release.update', [
+        this.config.release_name as string,
+        { values: data },
+      ]);
     }
 
     this.dialogRef.componentInstance.submit();
@@ -268,17 +281,25 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private listenForRouteChanges(): void {
-    this.activatedRoute.params
+    this.activatedRoute.parent.params
       .pipe(
-        filter((params: AppDetailsRouteParams) => !!(params.appId) && !!(params.catalog) && !!(params.train)),
+        filter((params: AppDetailsRouteParams) => !!params.appId && !!params.catalog && !!params.train),
         untilDestroyed(this),
       )
       .subscribe(({ train, catalog, appId }) => {
         this.appId = appId;
         this.train = train;
         this.catalog = catalog;
+        this.isLoading = false;
+        this.cdr.markForCheck();
 
-        this.checkIfPoolSetAndManageApplication();
+        if (this.activatedRoute.routeConfig.path.endsWith('install')) {
+          this.loadApplicationForCreation();
+        }
+
+        if (this.activatedRoute.routeConfig.path.endsWith('edit')) {
+          this.loadApplicationForEdit();
+        }
       });
   }
 
@@ -286,18 +307,21 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isNew = false;
     this.isLoading = true;
     this.loader.open();
-    this.appService.getChartRelease(this.appId).pipe(untilDestroyed(this)).subscribe({
-      next: (releases) => {
-        this.setChartForEdit(releases[0]);
-        this.afterAppLoaded();
-      },
-      error: (error: WebsocketError) => this.afterAppLoadError(error),
-    });
+    this.appService
+      .getChartRelease(this.appId)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (releases) => {
+          this.setChartForEdit(releases[0]);
+          this.afterAppLoaded();
+        },
+        error: (error: WebsocketError) => this.afterAppLoadError(error),
+      });
   }
 
   private setChartForCreation(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
-    this._pageTitle$.next(this.catalogApp.name);
+    this._pageTitle$.next(this.catalogApp.title || this.catalogApp.name);
     let hideVersion = false;
     if (this.catalogApp.name === ixChartApp) {
       hideVersion = true;
@@ -314,7 +338,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
-        this.translate.instant('Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.'),
+        this.translate.instant(
+          'Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.',
+        ),
       ),
     );
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
@@ -351,12 +377,14 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         name: 'Application Metadata',
         description: '',
         help: this.translate.instant('This information is provided by the catalog maintainer.'),
-        schema: [{
-          controlName,
-          title: 'Show Metadata',
-          type: DynamicFormSchemaType.Checkbox,
-          hidden: true,
-        }],
+        schema: [
+          {
+            controlName,
+            title: 'Show Metadata',
+            type: DynamicFormSchemaType.Checkbox,
+            hidden: true,
+          },
+        ],
       });
     }
 
@@ -369,6 +397,8 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isNew = false;
     this.config = chart.config;
     this.config.release_name = chart.id;
+
+    this._pageTitle$.next(chart.title || chart.name);
 
     this.form.addControl('release_name', new FormControl(chart.name, [Validators.required]));
 
@@ -394,6 +424,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.appsLoaded = true;
     this.isLoading = false;
     this.loader.close();
+    this.checkIfPoolIsSet();
     this.cdr.markForCheck();
   }
 
@@ -446,31 +477,15 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   private addFormSchema(chartSchemaNode: ChartSchemaNode, group: string): void {
     this.dynamicSection.forEach((section) => {
       if (section.name === group) {
-        section.schema = section.schema.concat(
-          this.appSchemaService.transformNode(chartSchemaNode, this.isNew, false),
-        );
+        section.schema = section.schema.concat(this.appSchemaService.transformNode(chartSchemaNode, this.isNew, false));
       }
     });
   }
 
-  private checkIfPoolSetAndManageApplication(): void {
+  private checkIfPoolIsSet(): void {
     this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      this.wasPoolSet = Boolean(pool);
-
       if (!pool) {
         this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
-      } else {
-        this._pageTitle$.next(this.appId);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-
-        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/install')) {
-          this.loadApplicationForCreation();
-        }
-
-        if (this.wasPoolSet && this.activatedRoute.routeConfig.path.endsWith('/edit')) {
-          this.loadApplicationForEdit();
-        }
       }
     });
   }
