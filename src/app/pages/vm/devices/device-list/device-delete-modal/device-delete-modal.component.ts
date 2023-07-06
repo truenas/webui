@@ -1,4 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Inject, OnInit,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,6 +20,7 @@ export interface DeviceDeleteModalState {
 @Component({
   styleUrls: ['./device-delete-modal.component.scss'],
   templateUrl: './device-delete-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceDeleteModalComponent implements OnInit {
   readonly VmDeviceType = VmDeviceType;
