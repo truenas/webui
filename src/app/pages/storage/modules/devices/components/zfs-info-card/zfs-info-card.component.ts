@@ -57,11 +57,15 @@ export class ZfsInfoCardComponent {
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
       && !this.isRaidzParent
-      && !this.hasTopLevelRaidz;
+      && (!this.hasTopLevelRaidz
+    || this.topologyCategory === VdevType.Cache
+    || this.topologyCategory === VdevType.Log);
   }
 
   get canRemoveVDEV(): boolean {
-    return !this.hasTopLevelRaidz;
+    return !this.hasTopLevelRaidz
+    || this.topologyCategory === VdevType.Cache
+    || this.topologyCategory === VdevType.Log;
   }
 
   get canDetachDisk(): boolean {
