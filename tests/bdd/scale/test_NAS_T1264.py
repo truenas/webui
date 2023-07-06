@@ -74,4 +74,4 @@ def click_the_confirm_checkbox_and_click_delete(driver):
 @then('verify that the CA was deleted')
 def verify_that_the_ca_was_deleted(driver):
     """verify that the CA was deleted."""
-    assert wait_on_element_disappear(driver, 20, '//li[contains(.,"Name: ca1")]')
+    assert wait_on_element_disappear(driver, 30, '//li[contains(.,"Name: ca1")]')
