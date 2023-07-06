@@ -155,10 +155,10 @@ def on_the_confirm_options_verify_and_click_save(driver):
 @then('when it is saved, verify the Portal, Target, and Extent')
 def when_it_is_saved_verify_the_portal_target_and_extent(driver):
     """when it is saved, verify the Portal, Target, and Extent"""
-    #assert wait_on_element_disappear(driver, 5, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.sharing.iscsi_Configure_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.sharing.iscsi_Configure_Button).click()
-    assert wait_on_element(driver, 5, xpaths.iscsi.title)
+    assert wait_on_element(driver, 7, xpaths.iscsi.protals_Tab, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi.protals_Tab).click()
     assert wait_on_element(driver, 5, xpaths.iscsi.iscsitest1_Text)
     driver.find_element_by_xpath(xpaths.iscsi.targets_Tab).click()
