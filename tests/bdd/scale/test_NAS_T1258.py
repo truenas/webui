@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import time
 import xpaths
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -41,6 +42,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     else:
         assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    driver.refresh()
+    time.sleep(2)
 
 
 @when('on the Dashboard, click on credentials and certificates')
