@@ -17,7 +17,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, switchMap, take, takeWhile, tap,
+  combineLatest, filter,
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -147,6 +147,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit(): void {
     this.loadChartReleases();
+    this.installedAppsStore.isLoading$.pipe(untilDestroyed(this)).subscribe({
+      next: (isLoading) => {
+        this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   ngAfterViewInit(): void {
@@ -164,6 +170,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       });
 
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  trackAppBy(index: number, item: ChartRelease): string {
+    return item.name;
   }
 
   ngOnDestroy(): void {
@@ -232,38 +242,30 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   loadChartReleases(): void {
-    this.isLoading = true;
     this.cdr.markForCheck();
 
     combineLatest([
-      this.kubernetesStore.selectedPool$.pipe(filter(Boolean)),
-      this.installedAppsStore.isLoading$.pipe(
-        tap((isLoading) => this.isLoading = isLoading),
-        filter((isLoading) => !isLoading),
-      ),
+      this.kubernetesStore.selectedPool$,
+      this.kubernetesStore.isKubernetesStarted$,
+      this.installedAppsStore.installedApps$,
     ]).pipe(
-      takeWhile(([pool]) => !pool, true),
       filter(([pool]) => {
         if (!pool) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.FirstUse);
-          this.isLoading = false;
           this.cdr.markForCheck();
         }
         return !!pool;
       }),
-      switchMap(() => this.kubernetesStore.isKubernetesStarted$),
-      filter((kubernetesStarted) => {
+      filter(([,kubernetesStarted]) => {
         if (!kubernetesStarted) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
-          this.isLoading = false;
           this.cdr.markForCheck();
         }
         return !!kubernetesStarted;
       }),
-      switchMap(() => this.installedAppsStore.installedApps$),
-      filter((charts) => {
+      filter(([,,charts]) => {
         if (!charts.length) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
@@ -273,39 +275,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       }),
       untilDestroyed(this),
     ).subscribe({
-      next: (charts) => {
+      next: ([,,charts]) => {
         this.dataSource = charts;
-        this.dataSource.forEach((app) => {
-          if (app.status === ChartReleaseStatus.Deploying) {
-            this.refreshStatus(app.name);
-          }
-        });
 
         this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
-      complete: () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      },
     });
-  }
-
-  refreshStatus(name: string): void {
-    this.appService.getChartRelease(name)
-      .pipe(filter(Boolean), take(1), untilDestroyed(this))
-      .subscribe((releases) => {
-        const installedApp = this.dataSource.find((app) => app.name === name);
-        if (installedApp) {
-          installedApp.status = releases[0]?.status;
-          this.cdr.markForCheck();
-          if (installedApp.status === ChartReleaseStatus.Deploying) {
-            setTimeout(() => {
-              this.refreshStatus(name);
-            }, 3000);
-          }
-        }
-      });
   }
 
   start(name: string): void {
