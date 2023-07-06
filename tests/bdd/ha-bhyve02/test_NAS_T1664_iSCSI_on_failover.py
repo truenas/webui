@@ -96,6 +96,7 @@ def input_iscsitest1_as_name_select_device_as_extent_type(driver, target_name):
 @then('click on the Device drop, select Create New and input and "tank" in Pool/Dataset')
 def click_on_the_device_drop_select_create_new_and_input_and_tank_in_pooldataset(driver):
     """click on the Device drop, select Create New and input and "tank" in Pool/Dataset."""
+    assert wait_on_element(driver, 5, xpaths.iscsi_Wizard.device_Dropdown, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.device_Dropdown).click()
     assert wait_on_element(driver, 5, xpaths.iscsi_Wizard.create_New_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.create_New_Button).click()
