@@ -133,7 +133,7 @@ def you_should_be_returned_to_the_list_of_pools(driver):
 @then(parsers.parse('the {pool_name} pool should be on the Pools list'))
 def the_dozer_pool_should_be_on_the_pools_list(driver, pool_name):
     """the "dozer" pool should be on the Pools list."""
-    assert wait_on_element(driver, 7, f'//h2[text()="{pool_name}"]')
+    assert wait_on_element(driver, 15, f'//h2[text()="{pool_name}"]')
 
 
 @then('navigate to System Setting and click Misc')

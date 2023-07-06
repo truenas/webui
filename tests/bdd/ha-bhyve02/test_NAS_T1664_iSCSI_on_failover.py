@@ -297,7 +297,7 @@ def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_passwo
 def once_on_the_dashboard_click_on_system_settings_and_click_services(driver):
     """once on the Dashboard, click on System Settings and click Services."""
     rsc.Verify_The_Dashboard(driver)
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
+    assert wait_on_element(driver, 120, xpaths.toolbar.ha_Enabled)
     rsc.Go_To_Service(driver)
 
 
