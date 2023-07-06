@@ -66,6 +66,7 @@ class add_User:
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
     qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
     games_Group_Option = '//mat-option[contains(.,"games")]'
+    games_Is_Selected = '//mat-select[contains(.,"games")]'
     wheel_Is_Selected = '//mat-select[contains(.,"wheel")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     create_Home_Directory_Checkbox = '//ix-checkbox[@formcontrolname="home_create"]//mat-checkbox'
