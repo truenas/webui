@@ -7,6 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -186,6 +187,7 @@ describe('CertificateEditComponent', () => {
         componentInstance: {
           setCsr: mockSetCsr,
         },
+        slideInClosed$: of({}),
       } as IxSlideInRef<unknown>);
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create ACME Certificate' }));
       await createButton.click();

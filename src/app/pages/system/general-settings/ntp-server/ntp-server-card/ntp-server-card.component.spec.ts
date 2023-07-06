@@ -134,7 +134,6 @@ describe('NtpServerCardComponent', () => {
   });
 
   it('should open add ntp server form', async () => {
-    jest.spyOn(slideInRef, 'open').mockImplementation();
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
@@ -142,7 +141,6 @@ describe('NtpServerCardComponent', () => {
   });
 
   it('should open edit ntp server form', () => {
-    jest.spyOn(slideInRef, 'open').mockImplementation();
     spectator.click(spectator.queryAll('.mat-column-address', { root: true })[1]);
 
     expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent, { data: fakeDataSource[0] });

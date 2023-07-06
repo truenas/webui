@@ -1,8 +1,5 @@
 <div
   class="job-item"
-  fxLayout="row"
-  fxLayoutAlign="space-between center"
-  fxLayoutGap="8px"
   [class.abortable]="job?.state === JobState.Running && job?.abortable"
   [class.interactive]="clickable"
 >
