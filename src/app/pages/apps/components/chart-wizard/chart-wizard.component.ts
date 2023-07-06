@@ -269,6 +269,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
+      this.dialogRef.close();
       this.formErrorHandler.handleWsFormError(failedJob, this.form);
       this.cdr.markForCheck();
     });
