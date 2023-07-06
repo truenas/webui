@@ -24,7 +24,7 @@ def test_verify_an_internal_certificate_can_be_deleted():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Internal_Certificate'], scope='session')
+    # depends(request, ['Internal_Certificate'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
