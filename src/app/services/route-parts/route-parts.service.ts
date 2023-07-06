@@ -9,7 +9,6 @@ export interface RoutePart {
   breadcrumb: string;
   url: string;
   ngUrl?: string[];
-  disabled?: boolean;
   isNew?: boolean;
 }
 
@@ -29,7 +28,7 @@ export class RoutePartsService {
 
   private generateRouteParts(route: ActivatedRoute, url = '', routeParts: RoutePart[] = []): RoutePart[] {
     const children: ActivatedRoute[] = route.children;
-    const ngUrl: string[] = [url];
+    const ngUrl: string[] = [];
 
     if (children.length === 0) {
       return routeParts;
@@ -42,20 +41,15 @@ export class RoutePartsService {
         ngUrl.push(url);
       }
 
-      const {
-        title, breadcrumb, disabled, isNew,
-      } = child.snapshot.data as RoutePart;
+      const { title, breadcrumb, isNew } = child.snapshot.data as RoutePart;
 
-      if (title) {
-        routeParts.push({
-          title,
-          breadcrumb,
-          disabled,
-          url,
-          ngUrl,
-          isNew,
-        });
-      }
+      routeParts.push({
+        title,
+        breadcrumb,
+        url,
+        ngUrl,
+        isNew,
+      });
 
       return this.generateRouteParts(child, url, routeParts);
     }

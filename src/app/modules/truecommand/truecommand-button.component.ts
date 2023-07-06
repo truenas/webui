@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, Inject, OnInit,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -28,6 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-truecommand-button',
   styleUrls: ['./truecommand-button.component.scss'],
   templateUrl: './truecommand-button.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruecommandButtonComponent implements OnInit {
   readonly TrueCommandStatus = TrueCommandStatus;
@@ -57,6 +59,7 @@ export class TruecommandButtonComponent implements OnInit {
     private dialog: MatDialog,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -64,6 +67,7 @@ export class TruecommandButtonComponent implements OnInit {
     this.ws.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {
       this.tcStatus = config;
       this.tcConnected = !!config.api_key;
+      this.cdr.markForCheck();
     });
     this.ws.subscribe('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
       this.tcStatus = event.fields;
@@ -71,6 +75,7 @@ export class TruecommandButtonComponent implements OnInit {
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
         this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -159,6 +164,7 @@ export class TruecommandButtonComponent implements OnInit {
     this.tcStatusDialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(
       () => {
         this.isTcStatusOpened = false;
+        this.cdr.markForCheck();
       },
     );
   }

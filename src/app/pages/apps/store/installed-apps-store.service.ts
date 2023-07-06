@@ -83,6 +83,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
     }
 
     this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
+      tap(() => this.patchState((state) => ({ ...state, isLoading: true }))),
       tap((apiEvent: ApiEvent) => {
         if (apiEvent.msg === IncomingApiMessageType.Removed) {
           this.patchState((state: InstalledAppsState): InstalledAppsState => {
@@ -101,7 +102,12 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           });
         }
       }),
-      filter((apiEvent) => apiEvent.msg !== IncomingApiMessageType.Removed),
+      filter((apiEvent) => {
+        if (apiEvent.msg === IncomingApiMessageType.Removed) {
+          this.patchState((state) => ({ ...state, isLoading: false }));
+        }
+        return apiEvent.msg !== IncomingApiMessageType.Removed;
+      }),
       switchMap((apiEvent: ApiEvent) => combineLatest([
         of(apiEvent),
         this.appsService.getChartRelease(apiEvent.id as string),
@@ -151,6 +157,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           };
         });
       }),
+      tap(() => this.patchState((state) => ({ ...state, isLoading: false }))),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -159,6 +166,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
     return this.kubernetesStore.isLoading$.pipe(
       filter((loading) => !loading),
       switchMap(() => this.kubernetesStore.isKubernetesStarted$),
+      filter((isKubernetesStarted) => isKubernetesStarted !== null),
       switchMap((isKubernetesStarted) => {
         return isKubernetesStarted ? this.appsService.getAllChartReleases().pipe(
           tap((installedApps: ChartRelease[]) => {
@@ -166,14 +174,13 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
               return {
                 ...state,
                 installedApps: [...installedApps],
-                isLoading: false,
               };
             });
             if (isKubernetesStarted) {
               this.subscribeToInstalledAppsUpdates();
             }
           }),
-        ) : of();
+        ) : of([]);
       }),
     );
   }

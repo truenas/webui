@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectionStrategy,
   Component,
   ContentChild,
   ContentChildren,
@@ -16,6 +16,7 @@ import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.inter
   selector: 'ix-table-body, tbody[ix-table-body]',
   templateUrl: './ix-table-body.component.html',
   styleUrls: ['ix-table-body.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: TableColumn<T>[];
@@ -30,12 +31,12 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const templatedRowIndexes = this.ixTableRows.toArray().map((row) => row.columnIndex);
-    const availabledIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
+    const availableIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
       .filter((idx) => !templatedRowIndexes.includes(idx));
 
     this.ixTableRows.forEach((row) => {
       if (row.columnIndex === undefined) {
-        row.columnIndex = availabledIndexes.shift();
+        row.columnIndex = availableIndexes.shift();
       }
     });
   }

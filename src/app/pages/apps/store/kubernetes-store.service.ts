@@ -15,7 +15,7 @@ export interface KubernetesState {
 
 const initialState: KubernetesState = {
   kubernetesConfig: null,
-  isKubernetesStarted: false,
+  isKubernetesStarted: null,
   isLoading: false,
   selectedPool: null,
 };
@@ -38,9 +38,9 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   readonly initialize = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
-        this.patchState((state: KubernetesState): KubernetesState => {
+        this.setState((): KubernetesState => {
           return {
-            ...state,
+            ...initialState,
             isLoading: true,
           };
         });

@@ -1,9 +1,8 @@
-<form [formGroup]="form" (submit)="onSubmit()">
+<form [formGroup]="form" (keyup.enter)="hasTwoFactor ? loginWithOtp() : login()">
   <ng-container
     *ngIf="!hasTwoFactor"
   >
     <ix-input
-      #usernameField
       ixAutofocus
       formControlName="username"
       prefixIcon="person"
@@ -28,7 +27,7 @@
       color="primary"
       ixTest="log-in"
       [disabled]="isLoading$ | async"
-      (click)="onSubmit()"
+      (click)="login()"
     >
       {{ 'Log In' | translate }}
     </button>

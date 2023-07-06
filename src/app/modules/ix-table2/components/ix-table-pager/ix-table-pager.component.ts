@@ -1,4 +1,6 @@
-import { AfterContentChecked, Component, Input } from '@angular/core';
+import {
+  AfterContentChecked, ChangeDetectionStrategy, Component, Input,
+} from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
@@ -8,6 +10,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
   selector: 'ix-table-pager',
   templateUrl: './ix-table-pager.component.html',
   styleUrls: ['./ix-table-pager.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTablePagerComponent<T> implements AfterContentChecked {
   @Input() dataProvider!: ArrayDataProvider<T>;
