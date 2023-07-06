@@ -6,7 +6,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { AclType } from 'app/enums/acl-type.enum';
-import { Acl, AclTemplateByPath, AclTemplateCreateParams } from 'app/interfaces/acl.interface';
+import {
+  Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
+} from 'app/interfaces/acl.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -86,11 +88,14 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.acl.acl.forEach((acl) => delete acl.who);
+    const newAcl = _.cloneDeep(this.acl);
     const payload: AclTemplateCreateParams = {
       name: this.form.value.presetName,
       acltype: this.acl.acltype,
-      acl: this.acl.acl,
+      acl: newAcl.acl.map((acl) => {
+        delete acl.who;
+        return _.cloneDeep(acl);
+      }) as NfsAclItem[] | PosixAclItem[],
     };
 
     this.loader.open();
