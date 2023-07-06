@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -161,7 +161,9 @@ describe('GuiFormComponent', () => {
 
   it('shows confirm dialog if HTTPS redirect is enabled', async () => {
     const websocketManager = spectator.inject(WebsocketConnectionService);
-    jest.spyOn(websocketManager, 'isConnected$', 'get').mockReturnValue(of(true));
+    Object.defineProperty(websocketManager, 'isConnected$', {
+      get: jest.fn(() => new BehaviorSubject(true)),
+    });
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -179,7 +181,9 @@ describe('GuiFormComponent', () => {
 
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
     const websocketManager = spectator.inject(WebsocketConnectionService);
-    jest.spyOn(websocketManager, 'isConnected$', 'get').mockReturnValue(of(true));
+    Object.defineProperty(websocketManager, 'isConnected$', {
+      get: jest.fn(() => new BehaviorSubject(true)),
+    });
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

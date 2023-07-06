@@ -43,10 +43,11 @@ export class AppContainersCardComponent implements OnChanges {
       minWidth: '650px',
       maxWidth: '850px',
       data: {
+        app: this.app,
         appName: this.app.name,
         title: this.translate.instant('Choose pod'),
         type: PodSelectDialogType.Shell,
-        customSubmit: (values: PodDialogFormValue, appName: string) => this.shellDialogSubmit(values, appName),
+        customSubmit: (values: PodDialogFormValue) => this.shellDialogSubmit(values),
       },
     });
   }
@@ -56,11 +57,12 @@ export class AppContainersCardComponent implements OnChanges {
       minWidth: '650px',
       maxWidth: '850px',
       data: {
+        app: this.app,
         appName: this.app.name,
         title: this.translate.instant('Choose pod'),
         type: PodSelectDialogType.Logs,
-        customSubmit: (formValueDialog: PodDialogFormValue, appName: string) => {
-          this.logDialogSubmit(formValueDialog, appName);
+        customSubmit: (formValueDialog: PodDialogFormValue) => {
+          this.logDialogSubmit(formValueDialog);
         },
       },
     });
@@ -89,12 +91,31 @@ export class AppContainersCardComponent implements OnChanges {
     return getPorts(app.used_ports);
   }
 
-  private shellDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
-    this.router.navigate(['/apps/installed', appName, 'shell', formValue.pods, formValue.command]);
+  private shellDialogSubmit(formValue: PodDialogFormValue): void {
+    this.router.navigate([
+      '/apps',
+      'installed',
+      this.app.catalog,
+      this.app.catalog_train,
+      this.app.name,
+      'shell',
+      formValue.pods,
+      formValue.command,
+    ]);
   }
 
-  private logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
+  private logDialogSubmit(formValue: PodDialogFormValue): void {
     const tailLines = (formValue.tail_lines).toString();
-    this.router.navigate(['/apps/installed', appName, 'logs', formValue.pods, formValue.containers, tailLines]);
+    this.router.navigate([
+      '/apps',
+      'installed',
+      this.app.catalog,
+      this.app.catalog_train,
+      this.app.name,
+      'logs',
+      formValue.pods,
+      formValue.containers,
+      tailLines,
+    ]);
   }
 }

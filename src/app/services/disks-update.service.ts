@@ -56,7 +56,7 @@ export class DisksUpdateService {
 
   removeSubscriber(uuid: string): void {
     delete this.subscribers[uuid];
-    if (Object.keys(this.subscribers).length === 0) {
+    if (Object.keys(this.subscribers).length === 0 && this.subscription) {
       this.subscription.unsubscribe();
       this.subscription = null;
     }

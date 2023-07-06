@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, Subject, Subscriber,
+  Observable, Subject, Subscriber, combineLatest,
 } from 'rxjs';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import helptext from 'app/helptext/shell/shell';
@@ -38,10 +38,12 @@ export class PodShellComponent implements TerminalConfiguration {
 
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {
-      this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-        this.chartReleaseName = params.appId as string;
-        this.podName = params.pname as string;
-        this.command = params.cname as string;
+      combineLatest([this.aroute.params, this.aroute.parent.params]).pipe(
+        untilDestroyed(this),
+      ).subscribe(([params, parentParams]) => {
+        this.chartReleaseName = parentParams.appId as string;
+        this.podName = params.podName as string;
+        this.command = params.command as string;
 
         this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
           this.podDetails = { ...consoleChoices };

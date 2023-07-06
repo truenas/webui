@@ -60,7 +60,7 @@ describe('SessionsCardComponent', () => {
 
   it('shows current token lifetime', async () => {
     const lifetime = await loader.getHarness(MatListItemHarness);
-    expect(await lifetime.getFullText()).toBe('Token Lifetime: 60');
+    expect(await lifetime.getFullText()).toBe('Token Lifetime: 1 minute');
   });
 
   it('opens Token settings form when Configure is pressed', async () => {
