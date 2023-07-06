@@ -25,6 +25,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
@@ -39,6 +40,7 @@ import {
 import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
+import { CatalogDeleteDialogComponent } from 'app/pages/apps/components/catalogs/catalog-delete-dialog/catalog-delete-dialog.component';
 import {
   CatalogEditFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-edit-form/catalog-edit-form.component';
@@ -121,6 +123,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppMetadataCardComponent,
     AppSectionExpandCollapseComponent,
     CategoryViewComponent,
+    CatalogDeleteDialogComponent,
     CustomAppButtonComponent,
   ],
   imports: [
@@ -158,6 +161,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     GalleryModule,
     LightboxModule,
     MarkdownModule,
+    IxTable2Module,
   ],
   providers: [
     AppsStore,

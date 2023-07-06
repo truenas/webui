@@ -20,7 +20,11 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 export class TokenSettingsComponent implements OnInit {
   isFormLoading = false;
   form = this.fb.group({
-    token_lifetime: [defaultPreferences.lifetime, [Validators.required, Validators.min(30)]],
+    token_lifetime: [defaultPreferences.lifetime, [
+      Validators.required,
+      Validators.min(30),
+      Validators.max(Math.floor(2 ** 31 / 1000 - 1)), // Max value for setTimeout
+    ]],
   });
 
   constructor(

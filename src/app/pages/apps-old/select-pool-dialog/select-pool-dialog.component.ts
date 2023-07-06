@@ -1,10 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import {
+  forkJoin, Observable, of, take,
+} from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -111,13 +115,15 @@ export class SelectPoolDialogComponent implements OnInit {
   }
 
   private showNoPoolsWarning(): void {
+    this.dialogRef.close();
+
     this.dialogService.confirm({
       title: helptext.noPool.title,
       message: helptext.noPool.message,
       hideCheckbox: true,
       buttonText: helptext.noPool.action,
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-      this.dialogRef.close(false);
+    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
+    }).pipe(take(1)).subscribe((confirmed) => {
       if (!confirmed) {
         return;
       }

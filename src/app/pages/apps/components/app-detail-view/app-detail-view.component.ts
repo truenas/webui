@@ -6,7 +6,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
 import {
-  map, filter, BehaviorSubject, tap,
+  map, filter, BehaviorSubject, tap, switchMap,
 } from 'rxjs';
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
@@ -35,15 +35,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   items: GalleryItem[];
 
   get pageTitle(): string {
-    if (this.appId) {
-      return this.appId;
-    }
-
-    if (this.app) {
-      return this.app.name;
-    }
-
-    return this.translate.instant('Loading');
+    return this.app?.title || this.app?.name || this.translate.instant('...');
   }
 
   constructor(
@@ -86,10 +78,15 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   private loadAppInfo(): void {
     this.isLoading$.next(true);
-    this.applicationsStore.availableApps$.pipe(
-      map((apps: AvailableApp[]) => apps.find(
-        (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
-      )),
+    this.applicationsStore.isLoading$.pipe(
+      filter((isLoading) => !isLoading),
+      switchMap(() => {
+        return this.applicationsStore.availableApps$.pipe(
+          map((apps: AvailableApp[]) => apps.find(
+            (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
+          )),
+        );
+      }),
     ).pipe(untilDestroyed(this)).subscribe({
       next: (app) => {
         this.isLoading$.next(false);
