@@ -52,7 +52,7 @@ describe('IxTablePagerComponent', () => {
 
   it('sets pagination when an option is selected', async () => {
     const dataProvider = spectator.component.dataProvider;
-    expect(dataProvider.pagination).toEqual({ pageNumber: null, pageSize: null });
+    expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 2 });
 
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
@@ -64,7 +64,7 @@ describe('IxTablePagerComponent', () => {
 
   it('sets pagination when page number is chenged', async () => {
     const dataProvider = spectator.component.dataProvider;
-    expect(dataProvider.pagination).toEqual({ pageNumber: null, pageSize: null });
+    expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 2 });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
     await buttons[3].click();
