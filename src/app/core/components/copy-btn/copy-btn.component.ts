@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
@@ -6,6 +6,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
   selector: 'ix-copy-btn',
   templateUrl: './copy-btn.component.html',
   styleUrls: ['./copy-btn.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CopyButtonComponent {
   @Input() text: string;

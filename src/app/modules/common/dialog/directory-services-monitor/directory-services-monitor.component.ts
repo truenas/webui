@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,6 +18,7 @@ interface DirectoryServicesMonitorRow {
 @Component({
   templateUrl: './directory-services-monitor.component.html',
   styleUrls: ['./directory-services-monitor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
   displayedColumns: string[] = ['icon', 'name', 'state'];
@@ -28,6 +31,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
     private ws: WebSocketService,
     private router: Router,
     private dialogRef: MatDialogRef<DirectoryServicesMonitorComponent>,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -42,6 +46,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
         { name: 'Active Directory', state: state.activedirectory, id: 'activedirectory' },
         { name: 'LDAP', state: state.ldap, id: 'ldap' },
       ];
+      this.cdr.markForCheck();
     });
   }
 

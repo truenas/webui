@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, Input,
+  AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
@@ -11,6 +11,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   selector: 'ix-table-head, thead[ix-table-head]',
   templateUrl: './ix-table-head.component.html',
   styleUrls: ['ix-table-head.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
@@ -29,7 +30,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
   }
 
   onSort(columnId: number): void {
-    if (!this.columns[columnId].sortable) {
+    if (!this.columns[columnId]?.sortable) {
       return;
     }
 

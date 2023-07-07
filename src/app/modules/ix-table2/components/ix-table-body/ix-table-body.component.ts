@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   ContentChild,
   ContentChildren,
@@ -19,6 +20,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   selector: 'ix-table-body, tbody[ix-table-body]',
   templateUrl: './ix-table-body.component.html',
   styleUrls: ['ix-table-body.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
@@ -48,6 +50,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
     this.dataProvider.currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
       this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
   }
 

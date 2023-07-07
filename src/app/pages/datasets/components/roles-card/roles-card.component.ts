@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import _ from 'lodash';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
@@ -7,6 +7,7 @@ import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
   selector: 'ix-roles-card',
   templateUrl: './roles-card.component.html',
   styleUrls: ['./roles-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolesCardComponent {
   @Input() dataset: DatasetDetails;
