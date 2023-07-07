@@ -1,21 +1,36 @@
-import { Component, Input } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input,
+} from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-table-head, thead[ix-table-head]',
   templateUrl: './ix-table-head.component.html',
   styleUrls: ['ix-table-head.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxTableHeadComponent<T> {
-  @Input() columns: TableColumn<T>[];
+export class IxTableHeadComponent<T> implements AfterViewInit {
+  @Input() columns: Column<T, ColumnComponent<T>>[];
   @Input() dataProvider: ArrayDataProvider<T>;
 
   readonly SortDirection = SortDirection;
 
+  constructor(
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngAfterViewInit(): void {
+    this.dataProvider.currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.cdr.detectChanges();
+    });
+  }
+
   onSort(columnId: number): void {
-    if (!this.columns[columnId].sortable) {
+    if (!this.columns[columnId]?.sortable) {
       return;
     }
 

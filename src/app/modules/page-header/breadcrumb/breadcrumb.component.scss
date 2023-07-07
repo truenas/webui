@@ -14,20 +14,14 @@
       list-style: none;
 
       &:not(:first-child)::before {
-        content: ' ';
+        content: ' > ';
         padding: 0 8px;
       }
 
-      a,
-      span {
+      a {
         color: var(--primary);
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: uppercase;
-
-        &.no-click {
-          color: var(--alt-fg2);
-        }
+        font-size: 12px;
+        font-weight: 700;
       }
     }
   }

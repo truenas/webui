@@ -1,4 +1,6 @@
-import { AfterContentChecked, Component, Input } from '@angular/core';
+import {
+  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+} from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
@@ -8,8 +10,9 @@ import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
   selector: 'ix-table-pager',
   templateUrl: './ix-table-pager.component.html',
   styleUrls: ['./ix-table-pager.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxTablePagerComponent<T> implements AfterContentChecked {
+export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   @Input() dataProvider!: ArrayDataProvider<T>;
   @Input() pageSize = 50;
   @Input() pageSizeOptions = [10, 20, 50, 100];
@@ -30,11 +33,23 @@ export class IxTablePagerComponent<T> implements AfterContentChecked {
     return lastPage < this.totalItems ? lastPage : this.totalItems;
   }
 
+  constructor(
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.dataProvider.setPagination({
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+    });
+  }
+
   ngAfterContentChecked(): void {
     this.totalItems = this.dataProvider.rows.length;
     if (this.currentPage > this.totalPages && this.currentPage !== 1) {
       this.goToPage(1);
     }
+    this.cdr.markForCheck();
   }
 
   goToPage(pageNumber: number): void {

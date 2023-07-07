@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, Inject,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
@@ -10,6 +11,7 @@ import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfa
   selector: 'ix-confirm-dialog',
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmDialogComponent {
   options: ConfirmOptionsWithSecondaryCheckbox;

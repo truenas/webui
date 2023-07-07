@@ -40,12 +40,12 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'credentials',
     loadChildren: () => import('./pages/account/account.module').then((module) => module.AccountModule),
-    data: { title: T('Credentials'), breadcrumb: T('Credentials'), disabled: true },
+    data: { title: T('Credentials'), breadcrumb: T('Credentials') },
   },
   {
     path: 'system',
     loadChildren: () => import('./pages/system/system.module').then((module) => module.SystemModule),
-    data: { title: T('System'), breadcrumb: T('System'), disabled: true },
+    data: { title: T('System'), breadcrumb: T('System') },
   },
   {
     path: 'tasks',
@@ -105,7 +105,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'reportsdashboard',
     loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.module').then((module) => module.ReportsDashboardModule),
-    data: { title: T('Reporting'), breadcrumb: T('Reporting'), disabled: true },
+    data: { title: T('Reporting'), breadcrumb: T('Reporting') },
   },
   {
     path: 'shell',
@@ -130,7 +130,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'credentials',
     loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
-    data: { title: T('Credentials'), breadcrumb: T('Credentials'), disabled: true },
+    data: { title: T('Credentials'), breadcrumb: T('Credentials') },
   },
   {
     path: 'jobs',

@@ -1,6 +1,6 @@
 <td [attr.colspan]="colspan">
   <dl class="details">
-    <div class="details-row" fxLayout="row">
+    <div class="details-row">
       <dt>{{ 'Used' | translate }}:</dt>
       <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
       <dd *ngIf="!isLoading">
@@ -9,7 +9,7 @@
         </ng-container>
       </dd>
     </div>
-    <div class="details-row" fxLayout="row">
+    <div class="details-row">
       <dt>{{ 'Date created' | translate }}:</dt>
       <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
       <dd *ngIf="!isLoading">
@@ -18,7 +18,7 @@
         </ng-container>
       </dd>
     </div>
-    <div class="details-row" fxLayout="row">
+    <div class="details-row">
       <dt>{{ 'Referenced' | translate }}:</dt>
       <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
       <dd *ngIf="!isLoading">
@@ -27,7 +27,7 @@
         </ng-container>
       </dd>
     </div>
-    <div class="details-row" fxLayout="row">
+    <div class="details-row">
       <dt>{{ 'Retention' | translate }}:</dt>
       <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
       <dd *ngIf="!isLoading">

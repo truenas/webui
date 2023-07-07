@@ -102,7 +102,7 @@ export class AppInfoCardComponent {
   }
 
   editButtonPressed(): void {
-    this.router.navigate(['/apps', 'available', this.app.catalog, this.app.catalog_train, this.app.id, 'edit']);
+    this.router.navigate(['/apps', 'installed', this.app.catalog, this.app.catalog_train, this.app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {
@@ -171,12 +171,6 @@ export class AppInfoCardComponent {
   }
 
   rollbackApp(): void {
-    this.matDialog.open(AppRollbackModalComponent, { data: this.app })
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        this.app.history = null;
-        this.cdr.markForCheck();
-      });
+    this.matDialog.open(AppRollbackModalComponent, { data: this.app });
   }
 }
