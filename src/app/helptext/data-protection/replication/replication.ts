@@ -22,7 +22,7 @@ export default {
  and earlier.</li></ul>'),
 
   ssh_credentials_tooltip: T('Choose a connection that has been saved in \
- <b>System > SSH Connections</b>.'),
+ <b>Credentials > Backup Credentials > SSH Connections</b>.'),
 
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
  replicated. Enter the name and \

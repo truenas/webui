@@ -15,8 +15,10 @@ import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
@@ -37,28 +39,28 @@ export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   dataProvider = new ArrayDataProvider<User>();
-  columns: TableColumn<User>[] = [
-    {
+  columns = createTable<User>([
+    textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'username',
       sortable: true,
-    },
-    {
+    }),
+    textColumn({
       title: this.translate.instant('UID'),
       propertyName: 'uid',
       sortable: true,
-    },
-    {
+    }),
+    yesNoColumn({
       title: this.translate.instant('Builtin'),
       propertyName: 'builtin',
       sortable: true,
-    },
-    {
+    }),
+    textColumn({
       title: this.translate.instant('Full Name'),
       propertyName: 'full_name',
       sortable: true,
-    },
-  ];
+    }),
+  ]);
 
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
