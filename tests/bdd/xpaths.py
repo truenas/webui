@@ -76,3 +76,13 @@ class sideMenu:
 class topToolbar:
     ha_enable = '//mat-icon[@svgicon="ha_enabled"]'
     ha_disabled = '//mat-icon[contains(.,"ha_disabled")]'
+
+
+class aws:
+    def aws_button(field):
+        return f'(//button[@data-testid="{field}"])[1]'
+
+    create_Folder_Button = aws_button('create-folder-button')
+    delete_Button = aws_button('delete-objects-button')
+    upload_Button = aws_button('upload-button')
+    check_All_Checkbox = '(//input[contains(@class,"awsui_native-input")])[1]'
