@@ -1,9 +1,11 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { createTable } from 'app/modules/ix-table2/utils';
 
 interface TestTableData {
   numberField: number;
@@ -11,22 +13,22 @@ interface TestTableData {
   booleanField: boolean;
 }
 
-const columns: TableColumn<TestTableData>[] = [
-  {
+const columns = createTable<TestTableData>([
+  textColumn({
     title: 'Number Field',
     propertyName: 'numberField',
     sortable: true,
-  },
-  {
+  }),
+  textColumn({
     title: 'String Field',
     propertyName: 'stringField',
     sortable: true,
-  },
-  {
+  }),
+  textColumn({
     title: 'Boolean Field',
     propertyName: 'booleanField',
-  },
-];
+  }),
+]);
 
 let headers: HTMLDivElement[];
 
@@ -35,6 +37,7 @@ describe('IxTableHeadComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxTableHeadComponent<TestTableData>,
+    imports: [IxTable2Module],
   });
 
   beforeEach(() => {
@@ -46,7 +49,7 @@ describe('IxTableHeadComponent', () => {
   });
 
   it('shows titles', () => {
-    expect(headers.map((header) => header.querySelector('.title').textContent)).toEqual([
+    expect(headers.map((header) => header.querySelector('.title').textContent.trim())).toEqual([
       'Number Field',
       'String Field',
       'Boolean Field',

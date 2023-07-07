@@ -1,8 +1,10 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { createTable } from 'app/modules/ix-table2/utils';
 
 interface TestTableData {
   numberField: number;
@@ -17,28 +19,29 @@ const testTableData: TestTableData[] = [
   { numberField: 3, stringField: 'd', booleanField: true },
 ];
 
-const columns: TableColumn<TestTableData>[] = [
-  {
+const columns = createTable<TestTableData>([
+  textColumn({
     title: 'Number Field',
     propertyName: 'numberField',
     sortable: true,
-  },
-  {
+  }),
+  textColumn({
     title: 'String Field',
     propertyName: 'stringField',
     sortable: true,
-  },
-  {
+  }),
+  textColumn({
     title: 'Boolean Field',
     propertyName: 'booleanField',
-  },
-];
+  }),
+]);
 
 describe('IxTableBodyComponent', () => {
   let spectator: Spectator<IxTableBodyComponent<TestTableData>>;
 
   const createComponent = createComponentFactory({
     component: IxTableBodyComponent<TestTableData>,
+    imports: [IxTable2Module],
   });
 
   beforeEach(() => {

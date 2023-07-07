@@ -1,0 +1,7 @@
+<mat-checkbox
+  ixTest="header-checkbox"
+  [checked]="allChecked"
+  (change)="onCheckboxChange($event)"
+  (click)="$event.stopPropagation()"
+></mat-checkbox>
+<span>{{ title }}</span>
