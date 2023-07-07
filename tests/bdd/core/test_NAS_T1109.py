@@ -148,7 +148,7 @@ def a_new_tab_or_window_should_load_syncthing_home_page(driver):
     assert wait_on_element(driver, 5, '//button[contains(@class,"btn-success") and contains(.,"Yes")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(@class,"btn-success") and contains(.,"Yes")]').click()
     assert wait_on_element(driver, 5, '//p[text()="syncthingtest"]')
-    assert wait_on_element(driver, 5, '//h3[text()="Folders"]')
+    assert wait_on_element(driver, 5, '//h3[contains(.,"Folders")]')
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
     assert wait_on_element(driver, 5, '//div[text()="Plugins"]')
