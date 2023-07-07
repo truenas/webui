@@ -1,7 +1,7 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ 'Containers' | translate }}
+      {{ 'Workloads' | translate }}
     </h3>
   </mat-card-header>
   <mat-card-content>
@@ -49,32 +49,34 @@
               class="container-item"
             >
               <span class="container-name">{{ containerImage.key }}</span>
-              <span class="container-status">
-                <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
-                  {{ 'Update available' | translate }}
-                </ng-container>
-              </span>
-              <span *ngIf="app.status !== chartReleaseStatus.Stopped" class="container-action">
-                <button
-                  mat-icon-button
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Shell' | translate"
-                  [ixTest]="[containerImage.key, 'shell']"
-                  [matTooltip]="'Shell' | translate"
-                  (click)="shellButtonPressed()"
-                >
-                  <ix-icon name="mdi-console"></ix-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'View Logs' | translate"
-                  [ixTest]="[containerImage.key, 'view_logs']"
-                  [matTooltip]="'View Logs' | translate"
-                  (click)="viewLogsButtonPressed()"
-                >
-                  <ix-icon name="mdi-text-box"></ix-icon>
-                </button>
+              <span class="information">
+                <span class="container-status">
+                  <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
+                    {{ 'Update available' | translate }}
+                  </ng-container>
+                </span>
+                <span *ngIf="app.status !== chartReleaseStatus.Stopped" class="container-action">
+                  <button
+                    mat-icon-button
+                    matTooltipPosition="above"
+                    [attr.aria-label]="'Shell' | translate"
+                    [ixTest]="[containerImage.key, 'shell']"
+                    [matTooltip]="'Shell' | translate"
+                    (click)="shellButtonPressed()"
+                  >
+                    <ix-icon name="mdi-console"></ix-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    matTooltipPosition="above"
+                    [attr.aria-label]="'View Logs' | translate"
+                    [ixTest]="[containerImage.key, 'view_logs']"
+                    [matTooltip]="'View Logs' | translate"
+                    (click)="viewLogsButtonPressed()"
+                  >
+                    <ix-icon name="mdi-text-box"></ix-icon>
+                  </button>
+                </span>
               </span>
             </div>
           </ng-container>

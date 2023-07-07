@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
-import { map, Subscription } from 'rxjs';
+import { combineLatest, map, Subscription } from 'rxjs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { LogsDialogFormValue, PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
@@ -60,10 +60,12 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.chartReleaseName = params.appId as string;
-      this.podName = params.pname as string;
-      this.containerName = params.cname as string;
+    combineLatest([this.aroute.params, this.aroute.parent.params]).pipe(
+      untilDestroyed(this),
+    ).subscribe(([params, parentParams]) => {
+      this.chartReleaseName = parentParams.appId as string;
+      this.podName = params.podName as string;
+      this.containerName = params.command as string;
       this.tailLines = params.tail_lines as number;
 
       this.reconnect();

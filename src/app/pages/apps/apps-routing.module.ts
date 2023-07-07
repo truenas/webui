@@ -8,72 +8,96 @@ import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/cha
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
+import { appNameResolver } from 'app/pages/apps/resolvers/app-name.resolver';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
 
 const routes: Routes = [
   {
     path: '',
-    data: { title: T('Applications') },
-    children: [{
-      path: '',
-      redirectTo: 'installed',
-      pathMatch: 'full',
-    },
-    {
-      path: 'installed',
-      component: InstalledAppsComponent,
-      data: { isNew: true },
-      children: [{
-        path: ':appId',
-        component: InstalledAppsComponent,
-      },
+    data: { breadcrumb: T('Applications') },
+    children: [
       {
-        path: ':appId/shell/:pname/:cname',
-        component: PodShellComponent,
-        data: { title: T('Pod Shell'), breadcrumb: T('Pod Shell') },
-      },
-      {
-        path: ':appId/logs/:pname/:cname/:tail_lines',
-        component: PodLogsComponent,
-        data: { title: T('Pod Logs'), breadcrumb: T('Pod Logs') },
-      }],
-    },
-    {
-      path: 'available',
-      component: AppRouterOutletComponent,
-      data: { isNew: true },
-      children: [{
         path: '',
-        component: AvailableAppsComponent,
-        data: { title: T('Discover'), breadcrumb: T('Applications') },
+        redirectTo: 'installed',
+        pathMatch: 'full',
       },
       {
-        path: ':category',
-        component: CategoryViewComponent,
-        data: { title: T('Category'), breadcrumb: T('Applications') },
+        path: 'installed',
+        component: AppRouterOutletComponent,
+        data: { isNew: true, breadcrumb: undefined },
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            component: InstalledAppsComponent,
+          },
+          {
+            path: ':catalog/:train/:appId',
+            component: AppRouterOutletComponent,
+            data: { breadcrumb: T('Installed') },
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                component: InstalledAppsComponent,
+              },
+              {
+                path: 'edit',
+                component: ChartWizardComponent,
+              },
+              {
+                path: 'shell/:podName/:command',
+                component: PodShellComponent,
+                data: { title: T('Pod Shell') },
+              },
+              {
+                path: 'logs/:podName/:command/:tail_lines',
+                component: PodLogsComponent,
+                data: { title: T('Pod Logs') },
+              },
+            ],
+          },
+        ],
       },
       {
-        path: ':catalog/:train/:appId',
-        component: AppDetailViewComponent,
-        data: { title: T('Discover'), breadcrumb: T('Applications') },
+        path: 'available',
+        component: AppRouterOutletComponent,
+        data: { isNew: true, breadcrumb: T('Discover') },
+        children: [
+          {
+            path: 'catalogs',
+            pathMatch: 'full',
+            component: CatalogsComponent,
+            data: { title: T('Catalogs') },
+          },
+          {
+            path: '',
+            component: AvailableAppsComponent,
+          },
+          {
+            path: ':category',
+            component: CategoryViewComponent,
+          },
+          {
+            path: ':catalog/:train/:appId',
+            component: AppRouterOutletComponent,
+            resolve: { breadcrumb: appNameResolver },
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                component: AppDetailViewComponent,
+              },
+              {
+                path: 'install',
+                component: ChartWizardComponent,
+              },
+            ],
+          },
+        ],
       },
-      {
-        path: ':catalog/:train/:appId/install',
-        component: ChartWizardComponent,
-        data: { title: T('Discover'), breadcrumb: T('Applications') },
-      },
-      {
-        path: ':catalog/:train/:appId/edit',
-        component: ChartWizardComponent,
-        data: { title: 'Edit App', breadcrumb: T('Applications') },
-      }],
-    },
-    {
-      path: 'catalogs',
-      component: CatalogsComponent,
-      data: { title: T('Catalogs'), breadcrumb: T('Catalogs') },
-    }],
+    ],
   },
 ];
 
@@ -81,4 +105,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AppsRoutingModule { }
+export class AppsRoutingModule {}

@@ -1,4 +1,4 @@
-<mat-card class="card" fxLayout="column">
+<mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Topology' | translate }}
@@ -15,55 +15,55 @@
   </mat-card-header>
 
   <mat-card-content fxFlex="100">
-    <div class="content-container" fxLayout="column">
-      <div class="vdev-line" fxLayoutAlign="space-between center">
+    <div class="content-container">
+      <div class="vdev-line">
         <b>{{ 'Data VDEVs' | translate }}</b>
-        <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="vdev-stats">
           <span *ngIf="isTopologyWarning(topologyState.data)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.data }}</span>
         </div>
       </div>
-      <div class="vdev-line" fxLayoutAlign="space-between center">
+      <div class="vdev-line">
         <b>{{ 'Metadata VDEVs' | translate }}</b>
-        <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="vdevs-stats">
           <span *ngIf="isTopologyWarning(topologyState.metadata)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.metadata }}</span>
         </div>
       </div>
-      <div class="vdev-line" fxLayoutAlign="space-between center">
+      <div class="vdev-line">
         <b>{{ 'Log VDEVs' | translate }}</b>
-        <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="vdev-stats">
           <span *ngIf="isTopologyWarning(topologyState.log)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.log }}</span>
         </div>
       </div>
-      <div class="vdev-line" fxLayoutAlign="space-between center">
+      <div class="vdev-line">
         <b>{{ 'Cache VDEVs' | translate }}</b>
-        <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="vdev-stats">
           <span *ngIf="isTopologyWarning(topologyState.cache)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.cache }}</span>
         </div>
       </div>
-      <div class="vdev-line" fxLayoutAlign="space-between center">
+      <div class="vdev-line">
         <b>{{ 'Spare VDEVs' | translate }}</b>
-        <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="vdev-stats">
           <span *ngIf="isTopologyWarning(topologyState.spare)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.spare }}</span>
         </div>
       </div>
-      <div class="vdev-line" fxLayoutAlign="space-between center">
+      <div class="vdev-line">
         <b>{{ 'Dedup VDEVs' | translate }}</b>
-        <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="vdev-stats">
           <span *ngIf="isTopologyWarning(topologyState.dedup)" class="warning">
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>

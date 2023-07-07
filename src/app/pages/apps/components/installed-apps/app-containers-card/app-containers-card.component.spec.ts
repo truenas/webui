@@ -74,7 +74,7 @@ describe('AppContainersCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Containers');
+    expect(spectator.query('mat-card-header h3')).toHaveText('Workloads');
   });
 
   it('shows details', () => {

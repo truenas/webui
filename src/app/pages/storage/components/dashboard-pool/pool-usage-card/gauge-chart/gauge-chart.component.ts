@@ -3,7 +3,7 @@ import {
   Component,
   OnChanges,
   HostBinding,
-  AfterViewInit,
+  AfterViewInit, ChangeDetectionStrategy,
 } from '@angular/core';
 import { ChartDataset, ChartOptions } from 'chart.js';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -19,6 +19,7 @@ const gapRotation = 45 * 5;
   selector: 'ix-gauge-chart',
   templateUrl: './gauge-chart.component.html',
   styleUrls: ['./gauge-chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GaugeChartComponent implements OnChanges, AfterViewInit {
   @Input()

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
@@ -7,6 +7,7 @@ import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.inter
   selector: 'ix-table-head, thead[ix-table-head]',
   templateUrl: './ix-table-head.component.html',
   styleUrls: ['ix-table-head.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTableHeadComponent<T> {
   @Input() columns: TableColumn<T>[];

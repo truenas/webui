@@ -23,6 +23,10 @@ export const routes: Routes = [
     path: '',
     data: { title: T('System') },
     children: [{
+      path: '',
+      pathMatch: 'full',
+      redirectTo: 'general',
+    }, {
       path: 'general',
       data: { title: T('General'), breadcrumb: T('General'), icon: 'build' },
       children: [{

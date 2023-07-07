@@ -21,6 +21,11 @@
   }
 }
 
+.step-header {
+  align-items: center;
+  display: flex;
+}
+
 .step-buttons {
   display: flex;
   gap: 12px;

@@ -55,6 +55,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
+import { routing } from 'app/pages/credentials/credentials.routing';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { AzureProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
@@ -147,6 +148,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     MatStepperModule,
     AppCommonModule,
     TestIdModule,
+    routing,
   ],
 })
 export class CredentialsModule { }

@@ -96,7 +96,7 @@ export class AppInfoCardComponent {
   }
 
   editButtonPressed(): void {
-    this.router.navigate(['/apps', 'available', this.app.catalog, this.app.catalog_train, this.app.id, 'edit']);
+    this.router.navigate(['/apps', 'installed', this.app.catalog, this.app.catalog_train, this.app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {
