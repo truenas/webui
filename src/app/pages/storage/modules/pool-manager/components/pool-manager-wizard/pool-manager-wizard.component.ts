@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -33,6 +33,8 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
+  @Input() isAddingVdevs = false;
+  @Input() pool: Pool;
   @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
 
   @ViewChild('stepper') stepper: MatStepper;
@@ -140,7 +142,9 @@ export class PoolManagerWizardComponent implements OnInit {
   }
 
   private connectToStore(): void {
-    this.store.initialize();
+    if (!this.isAddingVdevs) {
+      this.store.initialize();
+    }
 
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.state = state;

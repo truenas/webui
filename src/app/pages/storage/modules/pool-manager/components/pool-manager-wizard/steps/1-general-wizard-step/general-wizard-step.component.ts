@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,6 +10,7 @@ import {
 import { startWith } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Pool } from 'app/interfaces/pool.interface';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService, WebSocketService } from 'app/services';
@@ -23,7 +24,9 @@ const defaultEncryptionStandard = 'AES-256-GCM';
   styleUrls: ['./general-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GeneralWizardStepComponent implements OnInit {
+export class GeneralWizardStepComponent implements OnInit, OnChanges {
+  @Input() isAddingVdevs = false;
+  @Input() pool: Pool;
   @Input() isStepActive: boolean;
 
   form = this.formBuilder.group({
@@ -45,10 +48,20 @@ export class GeneralWizardStepComponent implements OnInit {
     private translate: TranslateService,
     private store: PoolManagerStore,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
+
+  ngOnChanges(): void {
+    if (this.isAddingVdevs) {
+      this.form.controls.encryption.disable();
+      this.form.controls.encryptionStandard.disable();
+      this.form.controls.name.setValue(this.pool?.name || '');
+    }
+  }
 
   ngOnInit(): void {
-    this.form.controls.name.addAsyncValidators(forbiddenAsyncValues(this.poolNames$));
+    if (!this.isAddingVdevs) {
+      this.form.controls.name.addAsyncValidators(forbiddenAsyncValues(this.poolNames$));
+    }
 
     this.initEncryptionField();
     this.connectGeneralOptionsToStore();

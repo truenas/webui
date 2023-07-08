@@ -20,12 +20,14 @@
           </div>
         </ng-template>
         <ix-general-wizard-step
+          [isAddingVdevs]="isAddingVdevs"
+          [pool]="pool"
           [isStepActive]="activeStep === PoolCreationWizardStep.General"
         ></ix-general-wizard-step>
       </mat-step>
 
       <mat-step
-        *ngIf="hasEnclosureStep"
+        *ngIf="hasEnclosureStep && !isAddingVdevs"
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions)"
         [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions) && getWasStepActivated(PoolCreationWizardStep.EnclosureOptions)"

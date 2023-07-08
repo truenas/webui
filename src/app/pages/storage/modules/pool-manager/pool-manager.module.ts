@@ -27,6 +27,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   DownloadKeyDialogOldComponent,
 } from 'app/pages/storage/components/manager/download-key-old/download-key-dialog-old.component';
+import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
@@ -108,6 +109,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     ManualDiskSelectionComponent,
     DedupWizardStepComponent,
     MetadataWizardStepComponent,
+    AddVdevsComponent,
     ManualSelectionDisksComponent,
     ManualSelectionDiskFiltersComponent,
     LayoutStepComponent,

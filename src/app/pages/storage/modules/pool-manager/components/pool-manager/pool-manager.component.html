@@ -1,6 +1,10 @@
 <div class="root-container">
   <div class="main-container">
-    <ix-pool-manager-wizard (stepChanged)="onStepChanged($event)"></ix-pool-manager-wizard>
+    <ix-pool-manager-wizard
+      [isAddingVdevs]="isAddingVdevs"
+      [pool]="pool"
+      (stepChanged)="onStepChanged($event)"
+    ></ix-pool-manager-wizard>
   </div>
   <div class="sidebar">
     <div class="details-container">
