@@ -3,11 +3,9 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest, of, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -31,18 +29,18 @@ export class AddVdevsComponent implements OnInit {
       switchMap((params) => {
         return this.ws.call('pool.query', [[['id', '=', +params.poolId]]]);
       }),
-      switchMap((pools) => combineLatest([
+      /* switchMap((pools) => combineLatest([
         of(pools),
         this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]),
-      ])),
+      ])), */
       untilDestroyed(this),
     ).subscribe({
-      next: ([pools, disks]: [Pool[], Disk[]]) => {
+      next: (/* [ */pools /* disks]: [Pool[], Disk[]] */) => {
         this.pool = pools[0];
-        const topology = poolTopologyToStoreTopology(this.pool.topology, disks);
-        this.poolManagerStore.patchState({
-          topology: { ...topology },
-        });
+        // const topology = poolTopologyToStoreTopology(this.pool.topology, disks);
+        // this.poolManagerStore.patchState({
+        //   topology: { ...topology },
+        // });
         this.cdr.markForCheck();
       },
     });

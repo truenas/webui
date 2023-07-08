@@ -142,9 +142,9 @@ export class PoolManagerWizardComponent implements OnInit {
   }
 
   private connectToStore(): void {
-    if (!this.isAddingVdevs) {
-      this.store.initialize();
-    }
+    // if (!this.isAddingVdevs) {
+    this.store.initialize();
+    // }
 
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.state = state;
