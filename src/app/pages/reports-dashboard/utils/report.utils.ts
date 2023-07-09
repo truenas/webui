@@ -24,7 +24,7 @@ export function formatLegendSeries(
 export function formatData(data: ReportingData): ReportingData {
   if (data.name === 'interface' && data.aggregations) {
     Object.keys(data.aggregations).forEach((key) => {
-      _.set(data.aggregations, key, data.aggregations[key as ReportingAggregationKeys].map(
+      _.set(data.aggregations, key, (data.aggregations[key as ReportingAggregationKeys] as string[]).map(
         (value) => formatInterfaceUnit(value),
       ));
     });

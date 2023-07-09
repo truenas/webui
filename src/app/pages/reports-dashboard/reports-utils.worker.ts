@@ -1,5 +1,7 @@
 /// <reference lib="webworker" />
 
+import { ReportingData, ReportingAggregationKeys } from 'app/interfaces/reporting.interface';
+
 // Write a bunch of pure functions above
 // and add it to our commands below
 
@@ -7,21 +9,6 @@ export interface CoreEvent {
   name: string;
   sender?: unknown;
   data?: unknown;
-}
-
-export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
-
-export interface ReportingData {
-  end: number;
-  identifier: string;
-  legend: string[];
-  name: string;
-  start: number;
-  step: number;
-  data: number[][];
-  aggregations: {
-    [key in ReportingAggregationKeys]: (string | number)[];
-  };
 }
 
 export interface Command {
@@ -155,9 +142,15 @@ function convertAggregations(input: ReportingData, labelY?: string): ReportingDa
   const keys = Object.keys(output.aggregations);
 
   keys.forEach((key: ReportingAggregationKeys) => {
-    (output.aggregations[key]).forEach((value, index) => {
-      output.aggregations[key][index] = formatValue(value as number, units);
-    });
+    const values = output.aggregations[key];
+
+    if (Array.isArray(values)) {
+      values.forEach((value, index) => {
+        (output.aggregations[key] as (string | number)[])[index] = formatValue(value as number, units);
+      });
+    } else {
+      output.aggregations[key] = Object.values(values).map((value) => formatValue(value as number, units));
+    }
   });
   return output;
 }
@@ -165,6 +158,10 @@ function convertAggregations(input: ReportingData, labelY?: string): ReportingDa
 function optimizeLegend(input: ReportingData): ReportingData {
   const output = input;
   // Do stuff
+  if (output.legend.includes('time')) {
+    // remove `time` legend item
+    output.legend.splice(0, 1);
+  }
   switch (input.name) {
     case 'upsbatterycharge':
       output.legend = ['Percent Charge'];
@@ -263,7 +260,7 @@ function optimizeLegend(input: ReportingData): ReportingData {
 function avgCpuTempReport(report: ReportingData): ReportingData {
   const output = { ...report };
   // Handle Data
-  output.data = avgFromReportData(report.data);
+  output.data = avgFromReportData(report.data as number[][]);
 
   // Handle Legend
   output.legend = ['Avg Temp'];

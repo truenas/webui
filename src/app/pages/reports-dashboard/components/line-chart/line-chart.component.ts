@@ -184,6 +184,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
     const structure = this.library === 'chart.js' ? 'columns' : 'rows';
+    const step = 10;
+    const rowData = rd.data as number[][];
+
     if (structure === 'rows') {
       // Push dates to row based data...
       const rows = [];
@@ -192,10 +195,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       legend.unshift('x');
       rows.push(legend);
 
-      const rowData = rd.data as number[][];
       for (let i = 0; i < rowData.length; i++) {
         const item = Object.assign([], rowData[i]);
-        let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).toString();
+        let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * step * 1000), this.timezone).toString();
         // UTC: 2020-12-17T16:33:10Z
         // Los Angeles: 2020-12-17T08:36:30-08:00
         // Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
@@ -203,7 +205,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         dateStr = list.join(':');
         const date = new Date(dateStr);
 
-        item.unshift(date);
+        item[0] = date;
         rows.push(item);
       }
 
@@ -213,7 +215,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       const columns = [];
 
       for (let i = 0; i < (rd.data as number[][]).length; i++) {
-        const date = new Date(rd.start * 1000 + i * rd.step * 1000);
+        const date = new Date(rd.start * 1000 + i * step * 1000);
         columns.push(date);
       }
 

@@ -123,6 +123,17 @@ export interface ReportingParams {
 
 export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
 
+export interface ReportingAggregationValueObject {
+  idle: number;
+  iowait: number;
+  nice: number;
+  softirq: number;
+  system: number;
+  user: number;
+}
+
+export type ReportingAggregationValue = (string | number)[];
+
 export interface ReportingData {
   end: number;
   identifier: string;
@@ -132,6 +143,6 @@ export interface ReportingData {
   step: number;
   data: number[][] | WebsocketError;
   aggregations: {
-    [key in ReportingAggregationKeys]: string[];
+    [key in ReportingAggregationKeys]: ReportingAggregationValue;
   };
 }

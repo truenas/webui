@@ -767,6 +767,8 @@ export type ApiDirectory = {
   'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
   'reporting.clear': { params: void; response: void };
+  'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
+  'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };

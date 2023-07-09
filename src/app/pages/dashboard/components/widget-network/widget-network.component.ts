@@ -379,8 +379,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         untilDestroyed(this),
       ).subscribe({
         next: (response) => {
+          const step = 10;
           const labels: number[] = (response.data as number[][]).map((_, index) => {
-            return (response.start + index * response.step) * 1000;
+            return (response.start + index * step) * 1000;
           });
 
           const chartData: ChartData<'line'> = {

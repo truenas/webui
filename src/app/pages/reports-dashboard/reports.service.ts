@@ -59,7 +59,8 @@ export class ReportsService implements OnDestroy {
       })
       .subscribe((evt: ReportDataRequestEvent) => {
         const chartId = (evt.sender as ReportComponent).chartId;
-        this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
+        // this.ws.call('reporting.netdata_get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
+        this.ws.call('reporting.netdata_get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
           next: (reportingData) => {
             const processedData = [...reportingData];
 
@@ -94,7 +95,8 @@ export class ReportsService implements OnDestroy {
       }
     };
 
-    this.ws.call('reporting.graphs').subscribe((reportingGraphs) => {
+    // this.ws.call('reporting.graphs').subscribe((reportingGraphs) => {
+    this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
       this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
       this.reportingGraphs$.next(reportingGraphs);
@@ -188,6 +190,7 @@ export class ReportsService implements OnDestroy {
   getDiskMetrics(): Observable<Option[]> {
     return this.diskMetrics$.asObservable().pipe(
       map((options) => {
+        console.info('disk.options', options);
         if (!this.hasDiskTemperature) {
           return options.filter((option) => option.value !== 'disktemp');
         }
