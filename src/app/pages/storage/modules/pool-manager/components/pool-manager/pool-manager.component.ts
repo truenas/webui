@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Pool } from 'app/interfaces/pool.interface';
 import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 
 @UntilDestroy()
@@ -11,7 +10,6 @@ import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/e
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerComponent {
-  @Input() pool: Pool;
   @Input() isAddingVdevs = false;
   protected hasConfigurationPreview = true;
 

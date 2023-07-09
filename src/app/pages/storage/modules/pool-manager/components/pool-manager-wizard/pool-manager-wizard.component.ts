@@ -1,14 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { combineLatest, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -23,6 +23,7 @@ import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/e
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
@@ -33,14 +34,17 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PoolManagerWizardComponent implements OnInit, OnChanges {
+export class PoolManagerWizardComponent implements OnInit {
   @Input() isAddingVdevs = false;
-  @Input() pool: Pool;
+  protected existingPool: Pool;
+  private secondaryLoading$ = new BehaviorSubject(false);
   @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
 
   @ViewChild('stepper') stepper: MatStepper;
 
-  isLoading$ = this.store.isLoading$;
+  isLoading$ = combineLatest([this.store.isLoading$, this.secondaryLoading$]).pipe(
+    map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
+  );
 
   activeStep: PoolCreationWizardStep;
   hasEnclosureStep = false;
@@ -65,12 +69,35 @@ export class PoolManagerWizardComponent implements OnInit, OnChanges {
     private router: Router,
     private snackbar: SnackbarService,
     private poolManagerValidation: PoolManagerValidationService,
+    private route: ActivatedRoute,
+    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
     this.connectToStore();
     this.checkEnclosureStepAvailability();
     this.listenForStartOver();
+    if (this.isAddingVdevs) {
+      this.loadExistingPoolDetails();
+    }
+  }
+
+  loadExistingPoolDetails(): void {
+    this.secondaryLoading$.next(true);
+    this.route.params.pipe(
+      switchMap((params) => {
+        return this.ws.call('pool.query', [[['id', '=', +params.poolId]]]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (pools) => {
+        this.secondaryLoading$.next(false);
+        this.poolManagerValidation.isAddingVdevs = this.isAddingVdevs;
+        this.poolManagerValidation.existingPool = _.cloneDeep(pools[0]);
+        this.existingPool = _.cloneDeep(pools[0]);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null {
@@ -159,13 +186,6 @@ export class PoolManagerWizardComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnChanges(): void {
-    if (this.isAddingVdevs) {
-      this.poolManagerValidation.isAddingVdevs = this.isAddingVdevs;
-      this.poolManagerValidation.existingPool = _.cloneDeep(this.pool);
-    }
-  }
-
   private checkEnclosureStepAvailability(): void {
     combineLatest([
       this.store.hasMultipleEnclosuresAfterFirstStep$,
@@ -208,7 +228,7 @@ export class PoolManagerWizardComponent implements OnInit, OnChanges {
         title: this.translate.instant('Update Pool'),
       },
     });
-    dialogRef.componentInstance.setCall('pool.update', [this.pool.id, payload]);
+    dialogRef.componentInstance.setCall('pool.update', [this.existingPool.id, payload]);
     dialogRef.componentInstance.success.pipe(
       untilDestroyed(this),
     ).subscribe(() => {
