@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
@@ -77,6 +77,9 @@ export class DevicesStore extends ComponentStore<DevicesState> {
       switchMap((poolId) => {
         return this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
           switchMap((pools) => {
+            if (!pools || !pools.length) {
+              return of([]);
+            }
             // TODO: Handle pool not found.
             return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {

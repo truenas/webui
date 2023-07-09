@@ -194,8 +194,9 @@
       >
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
+          [isAddingVdevs]="isAddingVdevs"
           [isStepActive]="activeStep === PoolCreationWizardStep.Review"
-          (createPool)="createPool()"
+          (createPool)="isAddingVdevs ? updatePool() : createPool()"
         ></ix-review-wizard-step>
       </mat-step>
     </mat-vertical-stepper>

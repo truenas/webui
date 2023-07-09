@@ -6,6 +6,7 @@
     [readonly]="isAddingVdevs"
   ></ix-input>
   <ix-checkbox
+    *ngIf="!isAddingVdevs"
     formControlName="encryption"
     [label]="'Encryption' | translate"
   ></ix-checkbox>

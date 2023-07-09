@@ -111,6 +111,6 @@
     [disabled]="isCreateDisabled"
     (click)="createPool.emit()"
   >
-    {{ 'Create Pool' | translate }}
+    {{ isAddingVdevs ? ('Update Pool' | translate) : ('Create Pool' | translate) }}
   </button>
 </div>

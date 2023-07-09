@@ -19,6 +19,8 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
 
 @Injectable()
 export class PoolManagerValidationService {
+  isAddingVdevs = false;
+
   constructor(
     protected store: PoolManagerStore,
     protected systemStore$: Store<AppState>,
@@ -32,13 +34,19 @@ export class PoolManagerValidationService {
     this.store.topology$,
     this.store.enclosureSettings$,
     this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0)),
+    this.store.topology$.pipe(
+      map((topology) => Object.values(VdevType).some((vdevType) => topology[vdevType].vdevs.length > 0)),
+    ),
     combineLatest([
       this.store.hasMultipleEnclosuresAfterFirstStep$,
       this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
     ]),
   ])
     .pipe(
-      map(([name, topology, enclosure, hasDataVdevs, [hasMultipleEnclosures, hasEnclosureSupport]]) => {
+      map(([
+        name, topology, enclosure, hasDataVdevs, hasAtleastOneVdev,
+        [hasMultipleEnclosures, hasEnclosureSupport],
+      ]) => {
         const errors: PoolCreationError[] = [];
 
         if (!name) {
@@ -61,11 +69,19 @@ export class PoolManagerValidationService {
           });
         }
 
-        if (!hasDataVdevs) {
+        if (!hasDataVdevs && !this.isAddingVdevs) {
           errors.push({
             text: this.translate.instant('At least 1 data vdev is required.'),
             severity: PoolCreationSeverity.Error,
             step: PoolCreationWizardStep.Data,
+          });
+        }
+
+        if (this.isAddingVdevs && !hasAtleastOneVdev) {
+          errors.push({
+            text: this.translate.instant('At least 1 vdev is required to make an update to the pool.'),
+            severity: PoolCreationSeverity.Error,
+            step: PoolCreationWizardStep.Review,
           });
         }
 

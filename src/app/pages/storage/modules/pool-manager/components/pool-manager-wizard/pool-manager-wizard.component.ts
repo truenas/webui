@@ -11,7 +11,7 @@ import { combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Job } from 'app/interfaces/job.interface';
 import {
-  CreatePool, Pool,
+  CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -151,6 +151,8 @@ export class PoolManagerWizardComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
+    this.poolManagerValidation.isAddingVdevs = this.isAddingVdevs;
+
     this.poolManagerValidation.getTopLevelWarningsForEachStep().pipe(untilDestroyed(this)).subscribe((warnings) => {
       this.topLevelWarningsForEachStep = warnings;
     });
@@ -188,5 +190,29 @@ export class PoolManagerWizardComponent implements OnInit {
     }
 
     return payload;
+  }
+
+  updatePool(): void {
+    const payload: UpdatePool = {
+      topology: topologyToPayload(this.state.topology),
+      allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
+    };
+
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      disableClose: true,
+      data: {
+        title: this.translate.instant('Update Pool'),
+      },
+    });
+    dialogRef.componentInstance.setCall('pool.update', [this.pool.id, payload]);
+    dialogRef.componentInstance.success.pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      dialogRef.close(false);
+      this.snackbar.success(this.translate.instant('Pool updated successfully'));
+      this.router.navigate(['/storage']);
+    });
+
+    dialogRef.componentInstance.submit();
   }
 }
