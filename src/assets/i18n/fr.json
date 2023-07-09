@@ -36,6 +36,7 @@
   "Linux": "",
   "Maximize Dispersal": "",
   "Message": "",
+  "Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.": "",
   "Multichannel": "",
   "No Enclosure Dispersal Strategy": "",
   "No Enclosure selected for a Limit Pool To A Single Enclosure.": "",

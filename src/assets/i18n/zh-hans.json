@@ -136,6 +136,7 @@
   "Message": "",
   "Metadata (Optional)": "",
   "Minimum Memory Size": "",
+  "Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.": "",
   "Multichannel": "",
   "NEW": "",
   "Name not added": "",

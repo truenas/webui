@@ -7,6 +7,7 @@ import {
 } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Pool } from 'app/interfaces/pool.interface';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
@@ -20,6 +21,7 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
 @Injectable()
 export class PoolManagerValidationService {
   isAddingVdevs = false;
+  existingPool: Pool = null;
 
   constructor(
     protected store: PoolManagerStore,
@@ -33,10 +35,6 @@ export class PoolManagerValidationService {
     this.store.name$,
     this.store.topology$,
     this.store.enclosureSettings$,
-    this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0)),
-    this.store.topology$.pipe(
-      map((topology) => Object.values(VdevType).some((vdevType) => topology[vdevType].vdevs.length > 0)),
-    ),
     combineLatest([
       this.store.hasMultipleEnclosuresAfterFirstStep$,
       this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
@@ -44,9 +42,11 @@ export class PoolManagerValidationService {
   ])
     .pipe(
       map(([
-        name, topology, enclosure, hasDataVdevs, hasAtleastOneVdev,
+        name, topology, enclosure,
         [hasMultipleEnclosures, hasEnclosureSupport],
       ]) => {
+        const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType].vdevs.length > 0);
+        const hasDataVdevs = topology[VdevType.Data].vdevs.length > 0;
         const errors: PoolCreationError[] = [];
 
         if (!name) {
@@ -72,6 +72,20 @@ export class PoolManagerValidationService {
         if (!hasDataVdevs && !this.isAddingVdevs) {
           errors.push({
             text: this.translate.instant('At least 1 data vdev is required.'),
+            severity: PoolCreationSeverity.Error,
+            step: PoolCreationWizardStep.Data,
+          });
+        }
+
+        if (hasDataVdevs
+          && topology[VdevType.Data].layout
+          !== this.existingPool?.topology.data[0].type as unknown as CreateVdevLayout
+        ) {
+          errors.push({
+            text: this.translate.instant(
+              'Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.',
+              { type: this.existingPool?.topology.data[0].type },
+            ),
             severity: PoolCreationSeverity.Error,
             step: PoolCreationWizardStep.Data,
           });

@@ -64,6 +64,7 @@
   "Maximize Dispersal": "",
   "Message": "",
   "Metadata (Optional)": "",
+  "Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.": "",
   "NEW": "",
   "Name not added": "",
   "No Enclosure Dispersal Strategy": "",

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Job } from 'app/interfaces/job.interface';
@@ -32,7 +33,7 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PoolManagerWizardComponent implements OnInit {
+export class PoolManagerWizardComponent implements OnInit, OnChanges {
   @Input() isAddingVdevs = false;
   @Input() pool: Pool;
   @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
@@ -142,16 +143,12 @@ export class PoolManagerWizardComponent implements OnInit {
   }
 
   private connectToStore(): void {
-    // if (!this.isAddingVdevs) {
     this.store.initialize();
-    // }
 
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.state = state;
       this.cdr.markForCheck();
     });
-
-    this.poolManagerValidation.isAddingVdevs = this.isAddingVdevs;
 
     this.poolManagerValidation.getTopLevelWarningsForEachStep().pipe(untilDestroyed(this)).subscribe((warnings) => {
       this.topLevelWarningsForEachStep = warnings;
@@ -160,6 +157,13 @@ export class PoolManagerWizardComponent implements OnInit {
     this.poolManagerValidation.getTopLevelErrorsForEachStep().pipe(untilDestroyed(this)).subscribe((warnings) => {
       this.topLevelErrorsForEachStep = warnings;
     });
+  }
+
+  ngOnChanges(): void {
+    if (this.isAddingVdevs) {
+      this.poolManagerValidation.isAddingVdevs = this.isAddingVdevs;
+      this.poolManagerValidation.existingPool = _.cloneDeep(this.pool);
+    }
   }
 
   private checkEnclosureStepAvailability(): void {

@@ -2156,6 +2156,7 @@
   "Minutes/Hours": "",
   "Minutes/Hours/Days": "",
   "Mirror": "",
+  "Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.": "",
   "Mixing disks of different sizes in a vdev is not recommended.": "",
   "Mode": "",
   "Model": "",
