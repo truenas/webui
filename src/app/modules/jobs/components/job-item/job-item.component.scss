@@ -17,6 +17,11 @@
   .job-item-body {
     flex: 1;
     max-width: 100%;
+
+    .job-description {
+      white-space: pre-line;
+      word-break: break-word;
+    }
   }
 
   &.interactive {
@@ -42,7 +47,8 @@
   opacity: 0.75;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 .job-time {
