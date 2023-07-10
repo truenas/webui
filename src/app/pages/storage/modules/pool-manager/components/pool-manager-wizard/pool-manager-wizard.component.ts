@@ -48,7 +48,6 @@ export class PoolManagerWizardComponent implements OnInit {
 
   activeStep: PoolCreationWizardStep;
   hasEnclosureStep = false;
-
   state: PoolManagerState;
   topLevelWarningsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
   topLevelErrorsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
