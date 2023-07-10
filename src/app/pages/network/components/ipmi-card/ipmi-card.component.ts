@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { createTable } from 'app/modules/ix-table2/utils';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
@@ -23,10 +23,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class IpmiCardComponent implements OnInit {
   protected dataProvider = new ArrayDataProvider<Ipmi>();
-  columns: TableColumn<Ipmi>[] = [
+  columns = createTable<Ipmi>([
     { propertyName: 'channel' },
     { propertyName: 'id' }, // Actions column
-  ];
+  ]);
 
   protected readonly hasIpmi$ = this.ws.call('ipmi.is_loaded');
 
