@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IpmiChassisIdentifyState } from 'app/enums/ipmi.enum';
+import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
@@ -17,10 +17,8 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { IpmiFormComponent } from 'app/pages/network/components/ipmi-form/ipmi-form.component';
-import {
-  DialogService, RedirectService, SystemGeneralService,
-} from 'app/services';
+import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
+import { DialogService, RedirectService, SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
@@ -67,24 +65,22 @@ describe('IpmiFormComponent', () => {
         mockCall('failover.licensed', true),
         mockCall('failover.call_remote', [{
           channel: 1,
-          dhcp: false,
-          gateway: '10.220.0.2',
+          ip_address_source: IpmiIpAddressSource.Static,
+          default_gateway_ip_address: '10.220.0.2',
           id: 1,
-          ipaddress: '10.220.15.115',
-          netmask: '255.255.240.0',
-          vlan: null,
+          ip_address: '10.220.15.115',
+          subnet_mask: '255.255.240.0',
         }] as Ipmi[]),
         mockCall('failover.node', 'A'),
         mockCall('ipmi.lan.query', [{
           channel: 1,
-          dhcp: false,
-          gateway: '10.220.0.1',
+          ip_address_source: IpmiIpAddressSource.Static,
+          default_gateway_ip_address: '10.220.0.1',
           id: 1,
-          ipaddress: '10.220.15.114',
-          netmask: '255.255.240.0',
-          vlan: null,
+          ip_address: '10.220.15.114',
+          subnet_mask: '255.255.240.0',
         }] as Ipmi[]),
-        mockCall('ipmi.chassis.query', {
+        mockCall('ipmi.chassis.info', {
           chassis_identify_state: IpmiChassisIdentifyState.Off,
         } as IpmiChassis),
         mockCall('ipmi.chassis.identify'),
@@ -172,7 +168,6 @@ describe('IpmiFormComponent', () => {
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
         netmask: '255.255.240.0',
-        vlan: null,
       }]]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
