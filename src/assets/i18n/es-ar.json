@@ -1054,6 +1054,8 @@
   "Short": "",
   "Show Built-In Groups": "",
   "Show Built-in Users": "",
+  "Show Less": "",
+  "Show More": "",
   "Show all available groups, including those that do not have quotas set.": "",
   "Show all available users, including those that do not have quotas set.": "",
   "Show disks with non-unique serial numbers": "",

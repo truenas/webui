@@ -16,7 +16,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
@@ -25,7 +24,6 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
 import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
 import {
@@ -113,30 +111,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   };
 
-  staticRoutesTableConf: AppTableConfig<NetworkComponent> = {
-    title: this.translate.instant('Static Routes'),
-    queryCall: 'staticroute.query',
-    deleteCall: 'staticroute.delete',
-    name: 'staticRoutes',
-    columns: [
-      { name: this.translate.instant('Destination'), prop: 'destination' },
-      { name: this.translate.instant('Gateway'), prop: 'gateway' },
-    ],
-    parent: this,
-    add: () => {
-      const slideInRef = this.slideInService.open(StaticRouteFormComponent);
-      this.handleSlideInClosed(slideInRef);
-    },
-    edit: (route: StaticRoute) => {
-      const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
-      this.handleSlideInClosed(slideInRef);
-    },
-    deleteMsg: {
-      title: 'static route',
-      key_props: ['destination', 'gateway'],
-    },
-  };
-
   ipmiTableConf: AppTableConfig<NetworkComponent> = {
     title: this.translate.instant('IPMI'),
     queryCall: 'ipmi.lan.query',
@@ -207,7 +181,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.staticRoutesTableConf.tableComponent.getData();
       this.getInterfaces();
       this.checkInterfacePendingChanges();
     });
