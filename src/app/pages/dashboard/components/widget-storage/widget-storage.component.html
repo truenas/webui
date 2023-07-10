@@ -135,18 +135,21 @@
                         </span>
                       </li>
                       <li *ngIf="cols === 2 && rows === 2" fxLayout="row">
-                        <span class="icon safe">
-                          <ix-icon name="arrow_circle_right"></ix-icon>
+                        <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
+                          <ix-icon
+                            [matTooltip]="pool.scan.end_time.$date | formatDateTime"
+                            [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
+                          ></ix-icon>
+                        </span>
+                        <span *ngIf="isScanInProgress(pool)" class="icon safe">
+                          <ix-icon
+                            name="arrow_circle_right"
+                            [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
+                          ></ix-icon>
                         </span>
                         <span class="label">
-                          {{ 'Path' | translate }}:
+                          {{ isScanScrub(pool) ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}
                         </span>
-                        <span
-                          class="storage-value"
-                          textLimiter
-                          [threshold]="32"
-                          [content]="pool.path"
-                        ></span>
                       </li>
                     </ul>
                     <ng-container *ngIf="cols === 1">
@@ -154,14 +157,22 @@
                       <ul fxLayout="column" [fxFlex]="getSubwidgetColumnWidth(pool)">
                         <li fxLayout="row">
                           <span class="label">
-                            {{ 'Path' | translate }}:
+                            {{ isScanScrub(pool) ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}:
                           </span>
-                          <span
-                            class="storage-value"
-                            textLimiter
-                            [threshold]="17"
-                            [content]="pool.path"
-                          ></span>
+                          <span class="storage-value">
+                            <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
+                              <ix-icon
+                                [matTooltip]="pool.scan.end_time.$date | formatDateTime"
+                                [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
+                              ></ix-icon>
+                            </span>
+                            <span *ngIf="isScanInProgress(pool)" class="icon safe">
+                              <ix-icon
+                                name="arrow_circle_right"
+                                [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
+                              ></ix-icon>
+                            </span>
+                          </span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">
