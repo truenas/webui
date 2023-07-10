@@ -45,7 +45,7 @@ export class PoolManagerValidationService {
         name, topology, enclosure,
         [hasMultipleEnclosures, hasEnclosureSupport],
       ]) => {
-        const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType].vdevs.length > 0);
+        const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
         const hasDataVdevs = topology[VdevType.Data].vdevs.length > 0;
         const errors: PoolCreationError[] = [];
 
@@ -69,33 +69,32 @@ export class PoolManagerValidationService {
           });
         }
 
-        if (!hasDataVdevs && !this.isAddingVdevs) {
+        if (this.isAddingVdevs) {
+          if (hasDataVdevs
+            && topology[VdevType.Data].layout
+            !== this.existingPool?.topology.data[0].type as unknown as CreateVdevLayout
+          ) {
+            errors.push({
+              text: this.translate.instant(
+                'Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.',
+                { type: this.existingPool?.topology.data[0].type },
+              ),
+              severity: PoolCreationSeverity.Error,
+              step: PoolCreationWizardStep.Data,
+            });
+          }
+          if (!hasAtleastOneVdev) {
+            errors.push({
+              text: this.translate.instant('At least 1 vdev is required to make an update to the pool.'),
+              severity: PoolCreationSeverity.Error,
+              step: PoolCreationWizardStep.Review,
+            });
+          }
+        } else if (!hasDataVdevs) {
           errors.push({
             text: this.translate.instant('At least 1 data vdev is required.'),
             severity: PoolCreationSeverity.Error,
             step: PoolCreationWizardStep.Data,
-          });
-        }
-
-        if (hasDataVdevs
-          && topology[VdevType.Data].layout
-          !== this.existingPool?.topology.data[0].type as unknown as CreateVdevLayout
-        ) {
-          errors.push({
-            text: this.translate.instant(
-              'Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.',
-              { type: this.existingPool?.topology.data[0].type },
-            ),
-            severity: PoolCreationSeverity.Error,
-            step: PoolCreationWizardStep.Data,
-          });
-        }
-
-        if (this.isAddingVdevs && !hasAtleastOneVdev) {
-          errors.push({
-            text: this.translate.instant('At least 1 vdev is required to make an update to the pool.'),
-            severity: PoolCreationSeverity.Error,
-            step: PoolCreationWizardStep.Review,
           });
         }
 
