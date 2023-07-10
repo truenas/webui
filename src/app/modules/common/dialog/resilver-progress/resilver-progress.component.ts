@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -10,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   templateUrl: './resilver-progress.component.html',
   styleUrls: ['./resilver-progress.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResilverProgressDialogComponent implements OnInit {
   tooltip: string;
@@ -26,8 +29,9 @@ export class ResilverProgressDialogComponent implements OnInit {
   readonly PoolScanState = PoolScanState;
 
   constructor(
-    protected translate: TranslateService,
-    protected ws: WebSocketService,
+    private translate: TranslateService,
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -40,6 +44,7 @@ export class ResilverProgressDialogComponent implements OnInit {
       this.diskName = this.resilveringDetails.name;
       this.progressTotalPercent = this.resilveringDetails.scan.percentage;
       this.state = this.resilveringDetails.scan.state;
+      this.cdr.markForCheck();
     });
   }
 }

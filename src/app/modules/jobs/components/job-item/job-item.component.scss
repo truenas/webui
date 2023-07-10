@@ -4,8 +4,11 @@
 }
 
 .job-item {
-  display: block;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
   padding: 8px 12px;
+  place-content: center space-between;
 
   &.abortable .job-item-body {
     max-width: calc(100% - 48px);

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
@@ -7,6 +7,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   selector: 'ix-qr-dialog',
   templateUrl: './qr-dialog.component.html',
   styleUrls: ['./qr-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QrDialogComponent {
   constructor(

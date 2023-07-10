@@ -131,12 +131,13 @@
         </div>
 
         <div class="apps-rows">
-          <ng-container *ngFor="let app of filteredApps">
+          <ng-container *ngFor="let app of filteredApps; trackBy: trackAppBy">
             <ix-app-row
               routerLinkActive="selected"
               [app]="app"
+              [selected]="app.selected"
               [job]="appJobs.get(app.name)"
-              [routerLink]="['/apps/installed', app.id]"
+              [routerLink]="['/apps/installed', app.catalog, app.catalog_train, app.id]"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
               (clickStatus)="openStatusDialog(app.name)"

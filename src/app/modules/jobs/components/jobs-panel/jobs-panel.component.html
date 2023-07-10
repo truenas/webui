@@ -1,18 +1,10 @@
 <mat-dialog-content>
-  <div
-    class="jobs-header"
-    fxLayout="row"
-    fxLayoutAlign="space-between baseline"
-    fxLayoutGap="8px"
-  >
+  <div class="jobs-header">
     <h3>{{ 'Jobs' | translate }}</h3>
 
-    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
+    <div class="badges">
       <div
         class="job-badge running"
-        fxLayout="row"
-        fxLayoutAlign="center center"
-        fxLayoutGap="4px"
         [matTooltip]="'Active' | translate"
       >
         <span class="job-badge-count">{{ runningJobsCount$ | async }}</span>
@@ -20,9 +12,6 @@
       </div>
       <div
         class="job-badge waiting"
-        fxLayout="row"
-        fxLayoutAlign="center center"
-        fxLayoutGap="4px"
         [matTooltip]="'Waiting' | translate"
       >
         <span class="job-badge-count">{{ waitingJobsCount$ | async }}</span>
@@ -30,9 +19,6 @@
       </div>
       <div
         class="job-badge failed"
-        fxLayout="row"
-        fxLayoutAlign="center center"
-        fxLayoutGap="4px"
         [matTooltip]="'Failed' | translate"
       >
         <span class="job-badge-count">{{ failedJobsCount$ | async }}</span>

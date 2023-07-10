@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -16,6 +17,7 @@ const maxPct = 80;
   selector: 'ix-pool-usage-card',
   templateUrl: './pool-usage-card.component.html',
   styleUrls: ['./pool-usage-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolUsageCardComponent implements OnInit {
   @Input() poolState: Pool;

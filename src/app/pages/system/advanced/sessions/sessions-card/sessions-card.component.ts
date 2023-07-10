@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns';
+import { format, formatDuration, intervalToDuration } from 'date-fns';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { TableColumn } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { createTable } from 'app/modules/ix-table2/utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
@@ -37,19 +38,19 @@ export class SessionsCardComponent {
   isLoading = false;
   dataProvider = new ArrayDataProvider<AuthSession>();
 
-  columns: TableColumn<AuthSession>[] = [
-    {
+  columns = createTable<AuthSession>([
+    textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'credentials_data',
-    },
-    {
+    }),
+    textColumn({
       title: this.translate.instant('Start session time'),
       propertyName: 'created_at',
-    },
-    {
+    }),
+    textColumn({
       propertyName: 'id',
-    },
-  ];
+    }),
+  ]);
 
   constructor(
     private store$: Store<AppState>,
@@ -125,6 +126,13 @@ export class SessionsCardComponent {
         this.loader.close();
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
+    });
+  }
+
+  asDuration(tokenLifetime: number): string {
+    const duration = intervalToDuration({ start: 0, end: tokenLifetime * 1000 });
+    return formatDuration(duration, {
+      format: ['hours', 'minutes', 'seconds'],
     });
   }
 

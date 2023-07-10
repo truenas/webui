@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import { chain } from 'lodash';
 import { filter } from 'rxjs/operators';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
@@ -32,18 +32,16 @@ export class BreadcrumbComponent implements OnInit {
   }
 
   private getBreadcrumbs(): RoutePart[] {
-    let breadcrumbs = this.routePartsService.routeParts.sort((a, b) => {
-      return a.ngUrl.length - b.ngUrl.length;
-    });
-
-    breadcrumbs = _.uniqBy(breadcrumbs, 'title');
-    breadcrumbs = _.uniqBy(breadcrumbs, 'url');
-
-    breadcrumbs = breadcrumbs.filter((routePart) => {
-      routePart.ngUrl = routePart.ngUrl.filter((item) => item !== '');
-      return routePart.breadcrumb;
-    });
-
-    return breadcrumbs;
+    return chain(this.routePartsService.routeParts)
+      .sort((a, b) => a.ngUrl.length - b.ngUrl.length)
+      .uniqBy('url')
+      .filter((routePart) => {
+        routePart.ngUrl = routePart.ngUrl.filter((item) => item !== '');
+        if (routePart.url === this.router.url) {
+          return false;
+        }
+        return Boolean(routePart.breadcrumb);
+      })
+      .value();
   }
 }
