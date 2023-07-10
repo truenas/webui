@@ -23,10 +23,6 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
     return this.totalItems > this.pageSize;
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.totalItems / this.pageSize);
-  }
-
   constructor(
     private cdr: ChangeDetectorRef,
   ) {}
@@ -41,16 +37,6 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
   ngAfterContentChecked(): void {
     this.totalItems = this.dataProvider.rows.length;
     this.cdr.markForCheck();
-  }
-
-  goToPage(pageNumber: number): void {
-    if (pageNumber >= 1 && pageNumber <= this.totalPages) {
-      this.currentPage = pageNumber;
-      this.dataProvider.setPagination({
-        pageNumber,
-        pageSize: this.pageSize,
-      });
-    }
   }
 
   showMore(): void {
