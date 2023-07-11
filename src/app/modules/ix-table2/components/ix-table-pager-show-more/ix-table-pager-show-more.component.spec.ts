@@ -37,8 +37,14 @@ describe('IxTablePagerShowMoreComponent', () => {
     spectator.fixture.detectChanges();
   });
 
-  it('checks the "Show More" button is present', () => {
-    const showMoreButton = loader.getHarness(MatButtonHarness.with({ text: 'Show More' }));
+  it('checks "View All" and "Collapse" buttons is present', async () => {
+    const showMoreButton = await loader.getHarness(MatButtonHarness.with({ text: 'View All' }));
+    expect(showMoreButton).toExist();
+    await showMoreButton.click();
+
+    const collapseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Collapse' }));
+    expect(collapseButton).toExist();
+    await collapseButton.click();
     expect(showMoreButton).toExist();
   });
 });
