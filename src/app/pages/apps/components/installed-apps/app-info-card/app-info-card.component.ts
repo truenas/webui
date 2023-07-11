@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { startCase } from 'lodash';
+import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
@@ -11,6 +13,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -27,9 +30,12 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
 
+  readonly isEmpty = isEmpty;
+
   constructor(
     private appLoaderService: AppLoaderService,
     private redirect: RedirectService,
+    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     private matDialog: MatDialog,
@@ -162,5 +168,9 @@ export class AppInfoCardComponent {
         this.dialogService.closeAllDialogs();
       });
     });
+  }
+
+  rollbackApp(): void {
+    this.matDialog.open(AppRollbackModalComponent, { data: this.app });
   }
 }

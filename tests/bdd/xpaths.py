@@ -24,7 +24,7 @@ class add_Dataset:
     title = '//h3[text()="Add Dataset"]'
     name_Textarea = '//textarea[@data-test="textarea-name"]'
     share_Type_Select = '//mat-select[@data-test="select-share-type"]'
-    share_Type_Select_Text = '//mat-select[@data-test="select-share-type"]//span[contains(@class,"mat-mdc-select-min-line")]'
+    share_Type_Select_Text = '//mat-select[@data-test="select-share-type"]//mat-select-trigger'
     share_Type_SMB_Option = '//mat-option[contains(.,"SMB")]'
 
 
@@ -66,6 +66,7 @@ class add_User:
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
     qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
     games_Group_Option = '//mat-option[contains(.,"games")]'
+    games_Is_Selected = '//mat-select[contains(.,"games")]'
     wheel_Is_Selected = '//mat-select[contains(.,"wheel")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     create_Home_Directory_Checkbox = '//ix-checkbox[@formcontrolname="home_create"]//mat-checkbox'
@@ -81,6 +82,8 @@ class add_User:
     home_Mode_Other_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-other-execute"]'
     ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
     user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
+    identification_Legend = '//legend[normalize-space(text())="Identification"]'
+    authentication_Legend = '//legend[normalize-space(text())="Authentication"]'
 
 
 class add_Zvol:
@@ -403,10 +406,18 @@ class groups:
 class interface:
     title = '//h3[contains(text(),"Edit Interface")]'
     dhcp_Checkbox = '//mat-checkbox[contains(.,"DHCP")]'
-    add_Allias = '//div[@class="label-container" and contains(.,"Aliases")]//button'
+    critical_Checkbox = '//mat-checkbox[contains(.,"Critical")]'
+    failover_Group_Select = '//ix-select[@formcontrolname="failover_group"]//mat-select'
+    failover_Group_Option = '//mat-option[@id="mat-option-1"]'
+    failover_Group_Selected = '//ix-select[@formcontrolname="failover_group"]//mat-select//span[contains(.,"1")]'
+    add_Allias_Button = '//button[@data-test="button-add-item-aliases"]'
     ip_Address_Input = '//ix-ip-input-with-netmask//input'
+    failover_Address_Input = '//ix-input[@formcontrolname="failover_address"]//input'
+    failover_Virtual_Address = '//ix-input[@formcontrolname="failover_virtual_address"]//input'
     netmask_Select = '//ix-ip-input-with-netmask//mat-select'
-    netmask_Option = '//mat-option[contains(.,"24")]'
+
+    def netmask_Option(number):
+        return f'//mat-option[contains(.,"{number}")]'
 
 
 class iscsi:
@@ -626,7 +637,7 @@ class toolbar:
     ha_Enabled = '//ix-icon[@data-mat-icon-name="ha_enabled"]'
     notification = '//ix-icon[normalize-space(text())="notifications"]'
     notification_Button = '//button[contains(.,"notifications")]'
-    notification_Text = '//button[contains(.,"notifications")]//ix-icon/span'
+    notification_Text = '//button[contains(.,"notifications")]//span[@class="mat-badge-content mat-badge-active"]'
 
     def notification_Count(text):
         return f'//span[contains(.,"notifications")]//span[contains(text(),"{text}")]'
@@ -642,8 +653,12 @@ class unlock_Dataset:
 class users:
     title = '//h1[text()="Users"]'
     eric_User = '//tr[contains(.,"ericbsd")]/td'
-    eric_Edit_Button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
-    eric_Allowed_Sudo_Commands = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Allowed Sudo Commands:")]/../dd'
+    eric_Edit_Button = '//button[@data-test="button-edit-ericbsd"]'
+    eric_Allowed_Sudo_Commands = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Allowed Sudo Commands:")]/../dd'
     root_User = '//tr[contains(.,"root")]/td'
-    root_Edit_Button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    root_Edit_Button = '//button[@data-test="button-edit-root"]'
     user_Bash_Shell = '//dd[contains(.,"/usr/bin/bash")]'
+    eric_Home_Directory = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(text(),"Home Directory")]'
+    eric_Home_Directory_Text = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dd[contains(text(),"/mnt/tank/ericbsd")]'
+    eric_Password_Disable = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Password Disabled:")]'
+    eric_Password_Disable_Text = '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Password Disabled:")]/../dd'

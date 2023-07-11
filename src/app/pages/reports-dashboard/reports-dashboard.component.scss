@@ -47,10 +47,14 @@ ul.ct-legend {
 }
 
 .master-container {
+  align-items: stretch;
   bottom: 0;
+  display: flex;
+  flex-flow: row wrap;
   height: 100%;
   left: 0;
   padding-bottom: 0;
+  place-content: stretch space-evenly;
   position: absolute;
   right: 0;
   top: 0;

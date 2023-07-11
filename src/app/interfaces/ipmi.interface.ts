@@ -1,14 +1,18 @@
-import { IpmiChassisIdentifyState } from 'app/enums/ipmi.enum';
+import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 
 export interface Ipmi {
+  backup_gateway_ip_address: string;
+  backup_gateway_mac_address: string;
   channel: number;
-  dhcp: boolean;
-  gateway: string;
+  default_gateway_ip_address: string;
+  default_gateway_mac_address: string;
   id: number;
-  ipaddress: string;
-  netmask: string;
-  vlan: unknown;
-  password?: string;
+  ip_address: string;
+  ip_address_source: IpmiIpAddressSource;
+  mac_addresss: string;
+  subnet_mask: string;
+  vlan_id: number;
+  vlan_priority: number;
 }
 
 export interface IpmiUpdate {
@@ -18,6 +22,16 @@ export interface IpmiUpdate {
   netmask: string;
   vlan: unknown;
   password: string;
+}
+
+export interface IpmiEvent {
+  id: number;
+  date: string;
+  time: string;
+  name: string;
+  type: string;
+  event_direction: string;
+  event: string;
 }
 
 export interface IpmiChassis {

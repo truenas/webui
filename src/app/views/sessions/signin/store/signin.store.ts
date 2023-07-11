@@ -21,6 +21,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { InsecureConnectionComponent } from 'app/views/sessions/signin/snackbar/insecure-connection.component';
 
 interface SigninState {
   isLoading: boolean;
@@ -140,6 +141,13 @@ export class SigninStore extends ComponentStore<SigninState> {
       message,
       this.translate.instant('Close'),
       { duration: 4000, verticalPosition: 'bottom' },
+    );
+  }
+
+  showSecurityWarning(): void {
+    this.snackbar.openFromComponent(
+      InsecureConnectionComponent,
+      { duration: undefined, verticalPosition: 'top' },
     );
   }
 

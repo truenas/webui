@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
@@ -13,18 +12,16 @@ import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
+import { AppTableConfig } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
 import {
   AppLoaderService,
   DialogService, SystemGeneralService,
@@ -35,7 +32,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
-import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +39,7 @@ import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
-export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NetworkComponent implements OnInit, OnDestroy {
   protected summaryCall = 'network.general.summary' as const;
   formEvent$: Subject<CoreEvent>;
 
@@ -86,23 +82,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       key_props: ['destination', 'gateway'],
     },
   };
-
-  ipmiTableConf: AppTableConfig<NetworkComponent> = {
-    title: this.translate.instant('IPMI'),
-    queryCall: 'ipmi.lan.query',
-    columns: [{ name: this.translate.instant('Channel'), prop: 'channelLabel' }],
-    hideHeader: true,
-    parent: this,
-    dataSourceHelper: (ipmi: Ipmi[]) => this.ipmiDataSourceHelper(ipmi),
-    getActions: this.getIpmiActions.bind(this),
-    isActionVisible: this.isIpmiActionVisible,
-    edit: (row: IpmiRow) => {
-      const slideInRef = this.slideInService.open(IpmiFormComponent, { data: row.id });
-      this.handleSlideInClosed(slideInRef);
-    },
-  };
-
-  ipmiEnabled: boolean;
 
   constructor(
     private ws: WebSocketService,
@@ -147,12 +126,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.openInterfaceForEditFromRoute();
-  }
-
-  ngAfterViewInit(): void {
-    this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
-      this.ipmiEnabled = isIpmiLoaded;
-    });
   }
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
@@ -396,31 +369,6 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
       this.formEvent$.complete();
     }
     this.core.unregister({ observerClass: this });
-  }
-
-  ipmiDataSourceHelper(ipmi: Ipmi[]): IpmiRow[] {
-    return ipmi.map((item) => ({
-      ...item,
-      channelLabel: this.translate.instant('Channel {n}', { n: item.channel }),
-    }));
-  }
-
-  getIpmiActions(): AppTableAction[] {
-    return [{
-      icon: 'launch',
-      name: 'manage',
-      matTooltip: this.translate.instant('Manage'),
-      onClick: (row: IpmiRow) => {
-        this.window.open(`https://${row.ipaddress}`);
-      },
-    }];
-  }
-
-  isIpmiActionVisible(name: string, row: IpmiRow): boolean {
-    if (name === 'manage' && row.ipaddress === '0.0.0.0') {
-      return false;
-    }
-    return true;
   }
 
   private openInterfaceForEditFromRoute(): void {

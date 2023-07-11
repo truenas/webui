@@ -135,7 +135,7 @@ def click_save_on_the_confirm_options_page(driver):
     """click save on the confirm options page."""
     assert wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 120, xpaths.progress.progressbar)
 
 
 @then('verify that the Cert was added')

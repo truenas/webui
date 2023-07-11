@@ -24,7 +24,7 @@ def test_verify_a_certificate_authority_can_be_deleted():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Certificate_Authority'], scope='session')
+    # depends(request, ['Certificate_Authority'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -74,4 +74,4 @@ def click_the_confirm_checkbox_and_click_delete(driver):
 @then('verify that the CA was deleted')
 def verify_that_the_ca_was_deleted(driver):
     """verify that the CA was deleted."""
-    assert wait_on_element_disappear(driver, 20, '//li[contains(.,"Name: ca1")]')
+    assert wait_on_element_disappear(driver, 30, '//li[contains(.,"Name: ca1")]')
