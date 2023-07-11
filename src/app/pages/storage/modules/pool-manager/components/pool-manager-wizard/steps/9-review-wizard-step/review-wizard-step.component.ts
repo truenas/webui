@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,6 +25,7 @@ import { DialogService } from 'app/services';
   selector: 'ix-review-wizard-step',
   templateUrl: './review-wizard-step.component.html',
   styleUrls: ['./review-wizard-step.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReviewWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;
@@ -34,7 +36,6 @@ export class ReviewWizardStepComponent implements OnInit {
 
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected readonly vdevTypeLabels = vdevTypeLabels;
-  protected readonly poolCreationSeverity = PoolCreationSeverity;
 
   poolCreationErrors: PoolCreationError[];
 

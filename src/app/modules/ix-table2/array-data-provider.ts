@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { TableProvider } from 'app/modules/ix-table2/interfaces/table-provider.interface';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 
 export class ArrayDataProvider<T> implements TableProvider<T> {
-  currentPage$ = new Subject<T[]>();
+  currentPage$ = new BehaviorSubject<T[]>([]);
   rows: T[] = [];
   expandedRow: T;
 

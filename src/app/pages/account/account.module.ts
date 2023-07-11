@@ -12,7 +12,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { StorageService } from 'app/services/storage.service';
-import { routing } from './account.routing';
 import { GroupsModule } from './groups/groups.module';
 import { UsersModule } from './users/users.module';
 
@@ -21,7 +20,6 @@ import { UsersModule } from './users/users.module';
     EntityModule,
     CommonModule,
     ReactiveFormsModule,
-    routing,
     TranslateModule,
     MatSortModule,
     MatCardModule,

@@ -4,9 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
@@ -30,6 +32,9 @@ describe('UserMenuComponent', () => {
   let menu: MatMenuHarness;
   const createComponent = createComponentFactory({
     component: UserMenuComponent,
+    declarations: [
+      MockComponent(IxIconComponent),
+    ],
     providers: [
       mockProvider(MatDialog),
       mockProvider(AuthService, {

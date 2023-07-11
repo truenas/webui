@@ -1,5 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 
 export const routes: Routes = [
@@ -11,64 +12,63 @@ export const routes: Routes = [
   {
     path: 'cpu',
     pathMatch: 'full',
-    data: { title: 'CPU', breadcrumb: 'CPU' },
+    data: { title: T('CPU'), breadcrumb: T('CPU') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'disk',
     pathMatch: 'full',
-    data: { title: 'Disk', breadcrumb: 'Disk' },
+    data: { title: T('Disk'), breadcrumb: T('Disk') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'memory',
     pathMatch: 'full',
-    data: { title: 'Memory', breadcrumb: 'Memory' },
+    data: { title: T('Memory'), breadcrumb: T('Memory') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'network',
     pathMatch: 'full',
-    data: { title: 'Network', breadcrumb: 'Network' },
+    data: { title: T('Network'), breadcrumb: T('Network') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'nfs',
     pathMatch: 'full',
-    data: { title: 'NFS', breadcrumb: 'NFS' },
+    data: { title: T('NFS'), breadcrumb: T('NFS') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'partition',
     pathMatch: 'full',
-    data: { title: 'Partition', breadcrumb: 'Partition' },
+    data: { title: T('Partition'), breadcrumb: T('Partition') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'system',
     pathMatch: 'full',
-    data: { title: 'System', breadcrumb: 'System' },
+    data: { title: T('System'), breadcrumb: T('System') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'target',
     pathMatch: 'full',
-    data: { title: 'Target', breadcrumb: 'Target' },
+    data: { title: T('Target'), breadcrumb: T('Target') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'ups',
     pathMatch: 'full',
-    data: { title: 'UPS', breadcrumb: 'UPS' },
+    data: { title: T('UPS'), breadcrumb: T('UPS') },
     component: ReportsDashboardComponent,
   },
   {
     path: 'zfs',
     pathMatch: 'full',
-    data: { title: 'ZFS', breadcrumb: 'ZFS' },
+    data: { title: T('ZFS'), breadcrumb: T('ZFS') },
     component: ReportsDashboardComponent,
   },
-  // { path: '**', redirectTo: 'cpu', pathMatch: 'full' },
 ];
 
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

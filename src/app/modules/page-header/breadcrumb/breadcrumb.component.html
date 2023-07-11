@@ -1,21 +1,9 @@
-<div
-  id="breadcrumb-bar"
-  class="breadcrumb-bar"
-  [ngClass]="{ invisible: breadcrumbs.length < 2 }"
->
+<div id="breadcrumb-bar" class="breadcrumb-bar">
   <ul class="breadcrumb">
-    <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index">
-      <li *ngIf="i > 0">&gt;</li>
-      <li>
-        <span *ngIf="!breadcrumb.disabled; else noclick">
-          <a [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.title]">
-            {{ breadcrumb.title | translate }}
-          </a>
-        </span>
-        <ng-template #noclick>
-          <span class="no-click">{{ breadcrumb.breadcrumb | translate }}</span>
-        </ng-template>
-      </li>
-    </ng-container>
+    <li *ngFor="let breadcrumb of breadcrumbs;">
+      <a [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.breadcrumb]">
+        {{ breadcrumb.breadcrumb | translate }}
+      </a>
+    </li>
   </ul>
 </div>

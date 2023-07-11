@@ -10,7 +10,6 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import {
   NavigationEnd, NavigationStart, Router,
@@ -24,8 +23,7 @@ import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.in
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService, LanguageService, WebSocketService } from 'app/services';
-import { AuthService } from 'app/services/auth/auth.service';
+import { SystemGeneralService, LanguageService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { TokenLifetimeService } from 'app/services/token-lifetime.service';
@@ -64,12 +62,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
-    public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     private media: MediaObserver,
-    protected ws: WebSocketService,
-    public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
@@ -179,7 +173,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.layoutService.isMenuCollapsed = false;
     }
-    this.cd.detectChanges();
+    this.cdr.detectChanges();
   }
 
   get sidenavWidth(): string {

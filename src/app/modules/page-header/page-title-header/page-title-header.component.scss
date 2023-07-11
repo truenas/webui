@@ -20,6 +20,10 @@
 }
 
 .header-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row wrap;
+
   @media (max-width: $breakpoint-xs) {
     padding: 0 16px;
   }

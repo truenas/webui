@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -77,7 +78,7 @@ describe('JobsListComponent', () => {
         mockCall('core.download', [1, 'http://localhost/download/log']),
       ]),
       mockProvider(StorageService, {
-        downloadUrl: jest.fn(),
+        downloadUrl: jest.fn(() => of(undefined)),
       }),
       provideMockStore({
         selectors: [

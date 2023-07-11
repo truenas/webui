@@ -1,5 +1,6 @@
 import { KeyValue } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -21,6 +22,7 @@ type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available'
 @Component({
   styleUrls: ['./app-upgrade-dialog.component.scss'],
   templateUrl: './app-upgrade-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppUpgradeDialogComponent {
   dialogConfig: ChartUpgradeDialogConfig;

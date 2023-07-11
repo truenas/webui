@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  min-width: 450px;
+}
+
+.events-container {
+  flex-grow: 1;
+  margin-bottom: 15px;
+  overflow: auto !important;
+
+  .event {
+    margin-bottom: 8px;
+  }
+
+  .event-header {
+    display: flex;
+    justify-content: space-between;
+  }
+}
