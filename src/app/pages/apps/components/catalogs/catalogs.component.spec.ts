@@ -69,7 +69,7 @@ describe('CatalogsComponent', () => {
     ];
 
     const table = await loader.getHarness(IxTable2Harness);
-    const cells = await table.getCells(true);
+    const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
 });

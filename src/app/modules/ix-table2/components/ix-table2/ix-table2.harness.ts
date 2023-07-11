@@ -1,8 +1,16 @@
-import { ComponentHarness, TestElement } from '@angular/cdk/testing';
+import {
+  ComponentHarness,
+  ContentContainerComponentHarness,
+  HarnessQuery, parallel,
+  TestElement,
+} from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { IxCellHarness } from 'app/modules/ix-table2/components/ix-table2/cell.harness';
 
-export class IxTable2Harness extends ComponentHarness {
+export class IxTable2Harness extends ContentContainerComponentHarness {
   static hostSelector = 'ix-table2';
+
+  readonly getCells = this.locatorForAll(IxCellHarness);
 
   async getHeaderRow(): Promise<string[]> {
     const headerCells = await this.locatorForAll('th')();
@@ -19,43 +27,68 @@ export class IxTable2Harness extends ComponentHarness {
     return headerCells.length;
   }
 
+  async getCell(row: number, column: number): Promise<IxCellHarness> {
+    const cells = await this.getCells();
+    const columnCount = await this.getColumnCount();
+    return cells[row * columnCount + column];
+  }
+
+  async getHarnessInCell<T extends ComponentHarness>(
+    query: HarnessQuery<T>,
+    row: number,
+    column: number,
+  ): Promise<T> {
+    const cell = await this.getCell(row, column);
+
+    if (!cell) {
+      throw new Error(`No cell found at row ${row} and column ${column}`);
+    }
+
+    return cell.getHarness(query);
+  }
+
+  async getAllHarnessesInCell<T extends ComponentHarness>(
+    query: HarnessQuery<T>,
+    row: number,
+    column: number,
+  ): Promise<T[]> {
+    const cell = await this.getCell(row, column);
+
+    if (!cell) {
+      throw new Error(`No cell found at row ${row} and column ${column}`);
+    }
+
+    return cell.getAllHarnesses(query);
+  }
+
   async getRowElement(row: number): Promise<TestElement> {
     const rows = await this.locatorForAll('.row')();
     return rows[row];
   }
 
   async getToggle(row: number): Promise<MatButtonHarness> {
-    const toogles = await this.locatorForAll(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }))();
-    return toogles[row];
+    const toggles = await this.locatorForAll(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }))();
+    return toggles[row];
   }
 
-  async getCells(includeHeaderRow = false): Promise<string[][]> {
-    const headers = await this.getHeaderRow();
-    const cells = await this.locatorForAll('.row td')();
-    const values: string[][] = [];
+  async getCellTexts(): Promise<string[][]> {
+    const cells = await this.getCells();
+    const texts = await parallel(() => cells.map((cell) => cell.getText()));
+    const columnCount = await this.getColumnCount();
 
-    if (includeHeaderRow) {
-      values.push(headers);
+    const result: string[][] = [];
+    for (let i = 0; i < texts.length; i += columnCount) {
+      result.push(texts.slice(i, i + columnCount));
     }
 
-    const items: string[] = [];
-    for (const [, item] of cells.entries()) {
-      items.push(await item.text());
-    }
-
-    const size = (await this.getColumnCount()) + 1;
-    for (let i = 0; i < cells.length / size; i++) {
-      values.push(items.slice(i * size, i * size + size));
-    }
-
-    return values;
+    return result;
   }
 
   async clickRow(row: number): Promise<void> {
     (await this.getRowElement(row)).click();
   }
 
-  async clickToogle(row: number): Promise<void> {
+  async clickToggle(row: number): Promise<void> {
     (await this.getToggle(row)).click();
   }
 }
