@@ -13,6 +13,13 @@ import { StaticRoutesComponent } from 'app/pages/network/components/static-route
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+const staticRoutes = Array.from({ length: 10 }).map((val, index) => ({
+  destination: `192.168.1.${index + 1}`,
+  gateway: '192.168.1.1',
+  description: `Test description for route ${index}`,
+  id: index,
+}));
+
 describe('StaticRoutesComponent', () => {
   let spectator: Spectator<StaticRoutesComponent>;
   let loader: HarnessLoader;
@@ -24,7 +31,7 @@ describe('StaticRoutesComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('staticroute.query', []),
+        mockCall('staticroute.query', staticRoutes),
         mockCall('staticroute.delete'),
       ]),
       mockProvider(DialogService, {
@@ -34,7 +41,11 @@ describe('StaticRoutesComponent', () => {
         onClose$: of(),
       }),
       mockProvider(IxSlideInRef),
-      mockProvider(MatDialog),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
     ],
   });
 
@@ -59,7 +70,14 @@ describe('StaticRoutesComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(StaticRouteFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(StaticRouteFormComponent, {
+      data: {
+        description: 'Test description for route 0',
+        destination: '192.168.1.1',
+        gateway: '192.168.1.1',
+        id: 0,
+      },
+    });
   });
 
   it('opens static route delete dialog when "Delete" button is pressed', async () => {
@@ -68,10 +86,10 @@ describe('StaticRoutesComponent', () => {
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StaticRouteDeleteDialogComponent, {
       data: {
-        description: 'Random description for 99',
+        description: 'Test description for route 0',
         destination: '192.168.1.1',
         gateway: '192.168.1.1',
-        id: 99,
+        id: 0,
       },
     });
   });
