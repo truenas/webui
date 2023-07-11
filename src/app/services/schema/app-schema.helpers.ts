@@ -1,19 +1,18 @@
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 
 export function findAppSchemaNode(object: unknown, pathToField: string): ChartSchemaNode | undefined {
-  const items = pathToField.split('.');
+  const pathToFieldKeys = pathToField.split('.');
   let objectToSearchFrom = object;
 
-  const finalResult = items.map((key) => {
+  const appSchemaNode = pathToFieldKeys.map((key) => {
     const schemaFound = findAppSchemaObjectToStartSearchFrom(objectToSearchFrom, key);
     if (schemaFound) {
       objectToSearchFrom = schemaFound;
     }
-
     return schemaFound;
   });
 
-  return finalResult.pop();
+  return appSchemaNode.pop();
 }
 
 function findAppSchemaObjectToStartSearchFrom(object: unknown, variableName: string): ChartSchemaNode | undefined {
