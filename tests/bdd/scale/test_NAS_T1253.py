@@ -5,6 +5,7 @@ import os
 import pytest
 import time
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 import xpaths
 from function import (
     wait_on_element,
@@ -116,7 +117,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver, ssh_key):
     assert wait_on_element(driver, 15, xpaths.add_User.qatest_Group_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.qatest_Group_Option).click()
 
-    driver.find_element_by_xpath(xpaths.add_User.qatest_Group_Option).send_keys(Keys.TAB)
+    ActionChains(driver).send_keys(Keys.TAB).perform()
 
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()

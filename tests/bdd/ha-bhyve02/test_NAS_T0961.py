@@ -78,7 +78,8 @@ def the_pools_page_should_open(driver):
 @then('the Pool Manager page should open')
 def the_pool_manager_page_should_open(driver):
     """the Pool Manager page should open."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Pool Manager")]')
+    assert wait_on_element(driver, 5, xpaths.pool_manager.title)
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('enter {pool_name} for pool name, check the box next to {disk}'))
@@ -132,7 +133,7 @@ def you_should_be_returned_to_the_list_of_pools(driver):
 @then(parsers.parse('the {pool_name} pool should be on the Pools list'))
 def the_dozer_pool_should_be_on_the_pools_list(driver, pool_name):
     """the "dozer" pool should be on the Pools list."""
-    assert wait_on_element(driver, 7, f'//h2[text()="{pool_name}"]')
+    assert wait_on_element(driver, 15, f'//h2[text()="{pool_name}"]')
 
 
 @then('navigate to System Setting and click Misc')
@@ -169,6 +170,7 @@ def the_system_dataset_page_should_open(driver):
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
+    assert wait_on_element_disappear(driver, 120, xpaths.progress.progress_Spinner)
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.system_Dataset.pool_Select).click()
     assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Option(pool_name))

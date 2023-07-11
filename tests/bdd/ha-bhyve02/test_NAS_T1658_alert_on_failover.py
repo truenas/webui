@@ -89,7 +89,6 @@ def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     rsc.Trigger_Failover(driver)
 
 
-
 @then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
 def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver):
     """on the Initiate Failover box, check the Confirm checkbox, then click Failover."""

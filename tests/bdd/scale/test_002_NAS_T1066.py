@@ -104,14 +104,14 @@ def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_
     assert wait_on_element(driver, 7, xpaths.interface.dhcp_Checkbox, 'clickable')
     if attribute_value_exist(driver, xpaths.interface.dhcp_Checkbox, 'class', 'mat-mdc-checkbox-checked'):
         driver.find_element_by_xpath(xpaths.interface.dhcp_Checkbox).click()
-    assert wait_on_element(driver, 7, xpaths.interface.add_Allias, 'clickable')
-    driver.find_element_by_xpath(xpaths.interface.add_Allias).click()
+    assert wait_on_element(driver, 7, xpaths.interface.add_Allias_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.interface.add_Allias_Button).click()
     assert wait_on_element(driver, 7, xpaths.interface.ip_Address_Input, 'clickable')
     driver.find_element_by_xpath(xpaths.interface.ip_Address_Input).clear()
     driver.find_element_by_xpath(xpaths.interface.ip_Address_Input).send_keys(nas_ip)
     driver.find_element_by_xpath(xpaths.interface.netmask_Select).click()
-    assert wait_on_element(driver, 10, xpaths.interface.netmask_Option, 'clickable')
-    driver.find_element_by_xpath(xpaths.interface.netmask_Option).click()
+    assert wait_on_element(driver, 10, xpaths.interface.netmask_Option(24), 'clickable')
+    driver.find_element_by_xpath(xpaths.interface.netmask_Option(24)).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
