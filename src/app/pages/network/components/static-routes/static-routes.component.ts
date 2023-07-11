@@ -15,7 +15,7 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { CatalogDeleteDialogComponent } from 'app/pages/apps/components/catalogs/catalog-delete-dialog/catalog-delete-dialog.component';
+import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -134,24 +134,24 @@ export class StaticRoutesComponent implements OnInit, AfterViewInit {
   doAdd(): void {
     const slideInRef = this.slideInService.open(StaticRouteFormComponent);
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getStaticRoutes();
+      this.refresh();
     });
   }
 
   doEdit(route: StaticRoute): void {
     const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getStaticRoutes();
+      this.refresh();
     });
   }
 
   doDelete(route: StaticRoute): void {
-    this.matDialog.open(CatalogDeleteDialogComponent, {
+    this.matDialog.open(StaticRouteDeleteDialogComponent, {
       data: route,
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.getStaticRoutes();
+        this.refresh();
       });
   }
 }

@@ -27,6 +27,7 @@ import { InterfaceFormComponent } from 'app/pages/network/components/interface-f
 import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
+import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
 import { IpmiFormComponent } from './components/ipmi-form/ipmi-form.component';
@@ -60,13 +61,14 @@ import { routing } from './network.routing';
     MatTooltipModule,
   ],
   declarations: [
-    StaticRouteFormComponent,
+    DefaultGatewayDialogComponent,
     InterfaceFormComponent,
-    NetworkConfigurationComponent,
     IpmiFormComponent,
     NetworkComponent,
     NetworkConfigurationCardComponent,
-    DefaultGatewayDialogComponent,
+    NetworkConfigurationComponent,
+    StaticRouteDeleteDialogComponent,
+    StaticRouteFormComponent,
     StaticRoutesComponent,
   ],
   providers: [

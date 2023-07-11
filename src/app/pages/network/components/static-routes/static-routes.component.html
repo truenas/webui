@@ -32,14 +32,16 @@
           <div class="actions">
             <button
               mat-icon-button
+              [attr.aria-label]="'Edit' | translate"
               [matTooltip]="'Edit' | translate"
-              [ixTest]="['edit']"
+              [ixTest]="['edit', route.id]"
               (click)="doEdit(route)"
             ><ix-icon name="mdi-pencil"></ix-icon></button>
             <button
               mat-icon-button
+              [attr.aria-label]="'Delete' | translate"
               [matTooltip]="'Delete' | translate"
-              [ixTest]="['delete']"
+              [ixTest]="['delete', route.id]"
               (click)="doDelete(route)"
             ><ix-icon name="mdi-delete"></ix-icon></button>
           </div>
