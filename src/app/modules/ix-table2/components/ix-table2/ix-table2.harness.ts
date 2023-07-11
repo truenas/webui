@@ -12,7 +12,7 @@ export class IxTable2Harness extends ContentContainerComponentHarness {
 
   readonly getCells = this.locatorForAll(IxCellHarness);
 
-  async getHeaderRow(): Promise<string[]> {
+  async getHeaderTexts(): Promise<string[]> {
     const headerCells = await this.locatorForAll('th')();
     return Promise.all(headerCells.map((cell) => cell.text()));
   }

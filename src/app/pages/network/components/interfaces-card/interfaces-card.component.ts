@@ -137,12 +137,15 @@ export class InterfacesCardComponent implements OnInit {
     this.loader.open();
     this.ws.call('interface.delete', [row.id]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        this.loader.close();
         this.interfacesUpdated.emit();
         this.store.loadInterfaces();
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
       },
-      error: (error) => this.dialogService.error(this.errorHandler.parseWsError(error)),
-      complete: () => this.loader.close(),
+      error: (error) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.loader.close();
+      },
     });
   }
 

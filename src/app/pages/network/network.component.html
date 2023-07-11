@@ -78,7 +78,10 @@
             ).
           </div>
         </mat-card>
-        <ix-interfaces-card [isHaEnabled]="isHaEnabled"></ix-interfaces-card>
+        <ix-interfaces-card
+          [isHaEnabled]="isHaEnabled"
+          (interfacesUpdated)="checkInterfacePendingChanges()"
+        ></ix-interfaces-card>
         <ix-network-configuration-card
           class="dashboard-card"
         ></ix-network-configuration-card>

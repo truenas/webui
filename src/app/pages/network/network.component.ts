@@ -22,6 +22,7 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
+import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import {
   AppLoaderService,
   DialogService, SystemGeneralService,
@@ -55,9 +56,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   private navigation: Navigation;
   helptext = helptext;
-
-  interfaceTableConf = {
-  } as AppTableConfig<NetworkComponent>;
 
   staticRoutesTableConf: AppTableConfig<NetworkComponent> = {
     title: this.translate.instant('Static Routes'),
@@ -97,13 +95,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
+    private interfacesStore: InterfacesStore,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
 
   ngOnInit(): void {
-    this.getInterfaces();
     this.checkInterfacePendingChanges();
     this.core
       .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
@@ -131,21 +129,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
-      this.getInterfaces();
+      this.interfacesStore.loadInterfaces();
       this.checkInterfacePendingChanges();
     });
   }
 
-  private listenForHaStatus(): void {
-    combineLatest([
-      this.store$.select(selectIsHaLicensed),
-      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
-    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
-      this.isHaEnabled = isHa && hasHa;
-    });
-  }
-
-  private async checkInterfacePendingChanges(): Promise<void> {
+  async checkInterfacePendingChanges(): Promise<void> {
     let hasPendingChanges = await this.getPendingChanges();
     let checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
 
@@ -159,10 +148,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.handleWaitingCheckin(checkinWaitingSeconds);
   }
 
-  private getInterfaces(): void {
-    if (this.interfaceTableConf.tableComponent) {
-      this.interfaceTableConf.tableComponent.getData();
-    }
+  private listenForHaStatus(): void {
+    combineLatest([
+      this.store$.select(selectIsHaLicensed),
+      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
+    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
+      this.isHaEnabled = isHa && hasHa;
+    });
   }
 
   private getCheckinWaitingSeconds(): Promise<number> {
@@ -256,7 +248,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                       data: { commit: true, checkin: false },
                       sender: this,
                     });
-                    this.interfaceTableConf.tableComponent.getData();
+                    this.interfacesStore.loadInterfaces();
                     this.loader.close();
                     this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
                   },
@@ -343,7 +335,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
             .subscribe({
               next: () => {
                 this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
-                this.interfaceTableConf.tableComponent.getData();
+                this.interfacesStore.loadInterfaces();
                 this.hasPendingChanges = false;
                 this.checkinWaiting = false;
                 this.loader.close();

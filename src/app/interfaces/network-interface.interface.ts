@@ -130,9 +130,3 @@ export interface NetworkInterfaceCreate {
 }
 
 export type NetworkInterfaceUpdate = Omit<NetworkInterfaceCreate, 'type'>;
-
-export interface NetworkInterfaceInOut {
-  sent: number;
-  received: number;
-  state: LinkState;
-}
