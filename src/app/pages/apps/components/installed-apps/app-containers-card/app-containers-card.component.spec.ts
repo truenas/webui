@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppContainersCardComponent } from './app-containers-card.component';
@@ -19,6 +20,7 @@ describe('AppContainersCardComponent', () => {
     id: 'ix-test-app',
     name: 'ix-test-app',
     update_available: true,
+    status: ChartReleaseStatus.Active,
     used_ports: [{
       port: 22, protocol: 'TCP',
     }, {
