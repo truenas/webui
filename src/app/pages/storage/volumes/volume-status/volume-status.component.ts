@@ -418,15 +418,16 @@ export class VolumeStatusComponent implements OnInit {
       isHidden: true,
     }];
 
-    if (category == 'data') {
+    if (category == 'data' && (vdev_type === 'RAIDZ' || vdev_type === 'RAIDZ1' || vdev_type === 'RAIDZ2' || vdev_type === 'RAIDZ3')) {
       _.find(actions, { id: 'remove' }).isHidden = true;
-    } else if (category == 'spares') {
+    } else if (category == 'spare') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
-      _.find(actions, { id: 'Replace' }).isHidden = true;
+      _.find(actions, { id: 'replace' }).isHidden = true;
     } else if (category == 'cache') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
+      _.find(actions, { id: 'replace' }).isHidden = true;
     }
 
     if (vdev_type === 'MIRROR' || vdev_type === 'REPLACING' || vdev_type === 'SPARE') {
@@ -559,7 +560,7 @@ export class VolumeStatusComponent implements OnInit {
     node.children = [];
 
     if (data.children) {
-      if (data.children.length === 0 && vdev_type === undefined) {
+      if (data.children.length === 0 && vdev_type === undefined && category !== 'cache' && category !== 'spare') {
         const extend_action = this.extendAction(data);
         node.data.actions.push(extend_action[0]);
       }
