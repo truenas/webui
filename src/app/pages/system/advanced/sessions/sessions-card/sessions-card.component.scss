@@ -1,3 +1,8 @@
 .table {
   margin: 4px;
 }
+
+.actions {
+  display: flex;
+  place-content: center flex-end;
+}

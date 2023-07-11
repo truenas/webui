@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { IpmiChassisIdentifyState } from 'app/enums/ipmi.enum';
+import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/ipmi/ipmi';
@@ -25,13 +25,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { DialogService, RedirectService, SystemGeneralService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { AppState } from 'app/store/index';
 
 @UntilDestroy()
 @Component({
   templateUrl: './ipmi-form.component.html',
-  styleUrls: ['./ipmi-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IpmiFormComponent implements OnInit {
@@ -173,11 +172,13 @@ export class IpmiFormComponent implements OnInit {
   }
 
   setFormValues(ipmi: Ipmi): void {
-    this.form.controls.dhcp.setValue(ipmi.dhcp);
-    this.form.controls.ipaddress.setValue(ipmi.ipaddress);
-    this.form.controls.netmask.setValue(ipmi.netmask);
-    this.form.controls.gateway.setValue(ipmi.gateway);
-    this.form.controls.vlan.setValue(ipmi.vlan as number);
+    this.form.patchValue({
+      dhcp: ipmi.ip_address_source === IpmiIpAddressSource.UseDhcp,
+      ipaddress: ipmi.ip_address || '',
+      netmask: ipmi.subnet_mask || '',
+      gateway: ipmi.default_gateway_ip_address || '',
+      vlan: ipmi.vlan_id || null,
+    });
   }
 
   loadDataOnRemoteControllerChange(): void {
@@ -221,6 +222,9 @@ export class IpmiFormComponent implements OnInit {
     if (!value.password) {
       delete value.password;
     }
+    if (!value.vlan) {
+      delete value.vlan;
+    }
     const ipmiUpdate: IpmiUpdate = { ...value };
     let call$: Observable<Ipmi>;
 
@@ -261,7 +265,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadFlashingStatus(): Observable<unknown> {
-    return this.ws.call('ipmi.chassis.query').pipe(
+    return this.ws.call('ipmi.chassis.info').pipe(
       tap((ipmiStatus) => {
         this.isFlashing = ipmiStatus.chassis_identify_state !== IpmiChassisIdentifyState.Off;
         this.cdr.markForCheck();
