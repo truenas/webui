@@ -94,11 +94,11 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   isScanInProgress(pool: Pool): boolean {
-    return pool.scan.state === PoolScanState.Scanning;
+    return pool.scan?.state === PoolScanState.Scanning;
   }
 
   isScanFinished(pool: Pool): boolean {
-    return pool.scan.state === PoolScanState.Finished;
+    return pool.scan?.state === PoolScanState.Finished;
   }
 
   constructor(public router: Router, public translate: TranslateService) {

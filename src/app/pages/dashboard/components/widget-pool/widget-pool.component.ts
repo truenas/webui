@@ -147,11 +147,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get isScanInProgress(): boolean {
-    return this.poolState.scan.state === PoolScanState.Scanning;
+    return this.poolState.scan?.state === PoolScanState.Scanning;
   }
 
   get isScanFinished(): boolean {
-    return this.poolState.scan.state === PoolScanState.Finished;
+    return this.poolState.scan?.state === PoolScanState.Finished;
   }
 
   constructor(
