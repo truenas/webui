@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -8,14 +8,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, combineLatest, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Job } from 'app/interfaces/job.interface';
 import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
@@ -35,14 +36,12 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
-  @Input() isAddingVdevs = false;
-  protected existingPool: Pool;
-  private secondaryLoading$ = new BehaviorSubject(false);
+  protected existingPool: Pool = null;
   @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
 
   @ViewChild('stepper') stepper: MatStepper;
 
-  isLoading$ = combineLatest([this.store.isLoading$, this.secondaryLoading$]).pipe(
+  isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
   );
 
@@ -70,33 +69,26 @@ export class PoolManagerWizardComponent implements OnInit {
     private poolManagerValidation: PoolManagerValidationService,
     private route: ActivatedRoute,
     private ws: WebSocketService,
+    private addVdevsStore: AddVdevsStore,
   ) {}
 
   ngOnInit(): void {
     this.connectToStore();
     this.checkEnclosureStepAvailability();
     this.listenForStartOver();
-    if (this.isAddingVdevs) {
+    if (this.route.snapshot.url.toString().includes('add-vdevs')) {
       this.loadExistingPoolDetails();
     }
   }
 
   loadExistingPoolDetails(): void {
-    this.secondaryLoading$.next(true);
-    this.route.params.pipe(
-      switchMap((params) => {
-        return this.ws.call('pool.query', [[['id', '=', +params.poolId]]]);
+    this.addVdevsStore.pool$.pipe(
+      tap((pool) => {
+        this.existingPool = _.cloneDeep(pool);
+        this.cdr.markForCheck();
       }),
       untilDestroyed(this),
-    ).subscribe({
-      next: (pools) => {
-        this.secondaryLoading$.next(false);
-        this.poolManagerValidation.isAddingVdevs = this.isAddingVdevs;
-        this.poolManagerValidation.existingPool = _.cloneDeep(pools[0]);
-        this.existingPool = _.cloneDeep(pools[0]);
-        this.cdr.markForCheck();
-      },
-    });
+    ).subscribe();
   }
 
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null {

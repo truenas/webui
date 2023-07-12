@@ -28,7 +28,9 @@ import {
   DownloadKeyDialogOldComponent,
 } from 'app/pages/storage/components/manager/download-key-old/download-key-dialog-old.component';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
+import { ExistingConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
@@ -108,6 +110,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CacheWizardStepComponent,
     ManualDiskSelectionComponent,
     DedupWizardStepComponent,
+    ExistingConfigurationPreviewComponent,
     MetadataWizardStepComponent,
     AddVdevsComponent,
     ManualSelectionDisksComponent,
@@ -126,6 +129,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
   ],
   providers: [
     PoolManagerStore,
+    AddVdevsStore,
     ManualDiskSelectionStore,
     ManualDiskDragToggleStore,
     GenerateVdevsService,

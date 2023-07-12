@@ -1,7 +1,16 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
+import { combineLatest, filter, tap } from 'rxjs';
+import { Pool } from 'app/interfaces/pool.interface';
+import { Disk } from 'app/interfaces/storage.interface';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @UntilDestroy()
 @Component({
@@ -9,5 +18,41 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   styleUrls: ['./add-vdevs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddVdevsComponent {
+export class AddVdevsComponent implements OnInit {
+  protected hasConfigurationPreview = true;
+  protected existingPool: Pool = null;
+  protected poolDisks: Disk[] = [];
+  protected topology: PoolManagerTopology = null;
+
+  readonly poolTopologyToStoreTopology = poolTopologyToStoreTopology;
+
+  constructor(
+    private addVdevsStore: AddVdevsStore,
+    private activatedRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+  ) { }
+
+  ngOnInit(): void {
+    this.activatedRoute.params.pipe(
+      tap((params) => {
+        this.addVdevsStore.loadPoolData(+params.poolId);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+    combineLatest([
+      this.addVdevsStore.pool$.pipe(filter(Boolean)),
+      this.addVdevsStore.poolDisks$.pipe(filter((disks) => !!disks.length)),
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([pool, poolDisks]) => {
+        this.existingPool = _.cloneDeep(pool);
+        this.poolDisks = _.clone(poolDisks);
+        this.topology = poolTopologyToStoreTopology(pool.topology, poolDisks);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  onStepChanged(step: PoolCreationWizardStep): void {
+    this.hasConfigurationPreview = step !== PoolCreationWizardStep.Review;
+  }
 }

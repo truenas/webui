@@ -8,6 +8,7 @@ import {
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Pool } from 'app/interfaces/pool.interface';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
@@ -20,18 +21,19 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
 
 @Injectable()
 export class PoolManagerValidationService {
-  isAddingVdevs = false;
-  existingPool: Pool = null;
+  private existingPool: Pool = null;
 
   constructor(
     protected store: PoolManagerStore,
     protected systemStore$: Store<AppState>,
     protected translate: TranslateService,
+    private addVdevsStore: AddVdevsStore,
   ) {}
 
   exportedPoolsWarning = helptext.manager_exportedSelectedDisksWarning;
 
   readonly poolCreationErrors$ = combineLatest([
+    this.addVdevsStore.pool$,
     this.store.name$,
     this.store.topology$,
     this.store.enclosureSettings$,
@@ -42,9 +44,12 @@ export class PoolManagerValidationService {
   ])
     .pipe(
       map(([
-        name, topology, enclosure,
+        pool, name, topology, enclosure,
         [hasMultipleEnclosures, hasEnclosureSupport],
       ]) => {
+        if (pool) {
+          this.existingPool = _.cloneDeep(pool);
+        }
         const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
         const hasDataVdevs = topology[VdevType.Data].vdevs.length > 0;
         const errors: PoolCreationError[] = [];
@@ -69,10 +74,10 @@ export class PoolManagerValidationService {
           });
         }
 
-        if (this.isAddingVdevs) {
+        if (this.existingPool) {
           if (hasDataVdevs
             && topology[VdevType.Data].layout
-            !== this.existingPool?.topology.data[0].type as unknown as CreateVdevLayout
+            !== this.existingPool.topology.data[0].type as unknown as CreateVdevLayout
           ) {
             errors.push({
               text: this.translate.instant(

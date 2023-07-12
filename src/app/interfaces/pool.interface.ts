@@ -44,6 +44,9 @@ export interface Pool {
    * Available with extra is_upgraded=true
    */
   is_upgraded?: boolean;
+  size: number;
+  size_str: string;
+  algorithm: ZfsProperty<string, string>;
 }
 
 export type PoolTopology = {
