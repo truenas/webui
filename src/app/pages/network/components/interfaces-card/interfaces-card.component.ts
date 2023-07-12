@@ -94,7 +94,7 @@ export class InterfacesCardComponent implements OnInit {
   onAddNew(): void {
     this.slideIn.open(InterfaceFormComponent)
       .slideInClosed$
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.interfacesUpdated.emit();
         this.store.loadInterfaces();
@@ -106,7 +106,7 @@ export class InterfacesCardComponent implements OnInit {
       data: row,
     })
       .slideInClosed$
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.interfacesUpdated.emit();
         this.store.loadInterfaces();

@@ -45,6 +45,7 @@
           <button
             mat-icon-button
             [ixTest]="['edit', 'interface', interface.name]"
+            [matTooltip]="'Edit' | translate"
             (click)="onEdit(interface)"
           >
             <ix-icon name="edit"></ix-icon>
