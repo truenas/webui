@@ -1,13 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-log-wizard-step',
   templateUrl: './log-wizard-step.component.html',
@@ -36,7 +37,7 @@ export class LogWizardStepComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (logTopology) => {
-        if (!logTopology) {
+        if (!logTopology || !logTopology.length) {
           return;
         }
         let type = logTopology[0].type;

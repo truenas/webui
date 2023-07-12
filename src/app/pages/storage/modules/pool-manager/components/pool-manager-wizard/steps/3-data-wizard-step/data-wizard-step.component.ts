@@ -20,8 +20,6 @@ export class DataWizardStepComponent implements OnInit {
   @Input() stepWarning: string | null;
   @Output() goToLastStep = new EventEmitter<void>();
 
-  hasDataVdevs: boolean;
-
   protected readonly VdevType = VdevType;
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Data);
   protected allowedLayouts = Object.values(CreateVdevLayout);
@@ -37,18 +35,11 @@ export class DataWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.store.topology$.pipe(
-      map((topology) => topology[VdevType.Data].vdevs.length > 0),
-      untilDestroyed(this),
-    ).subscribe((hasDataVdevs) => {
-      this.hasDataVdevs = hasDataVdevs;
-    });
-
     this.addVdevsStore.pool$.pipe(
       map((pool) => pool?.topology[VdevType.Data]),
       untilDestroyed(this),
     ).subscribe((dataTopology) => {
-      if (!dataTopology) {
+      if (!dataTopology || !dataTopology.length) {
         return;
       }
       let type = dataTopology[0].type;
