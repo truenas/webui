@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import _ from 'lodash';
 import {
   combineLatest, forkJoin, Observable, of, Subject, tap,
 } from 'rxjs';
@@ -400,7 +401,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       (pools: Pool[]) => {
         this.patchState({
           arePoolsLoading: false,
-          pools: this.sorter.tableSorter(pools, 'name', 'asc'),
+          pools: _.sortBy(pools, (pool) => pool.name),
         });
       },
       (error: WebsocketError) => {

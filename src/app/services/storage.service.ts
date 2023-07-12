@@ -88,7 +88,10 @@ export class StorageService {
     );
   }
 
-  // Handles sorting for entity tables and some other ngx datatables
+  /**
+   * @deprecated Handles sorting for entity tables and some other ngx datatables
+   */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   tableSorter<T>(arr: T[], key: keyof T, asc: SortDirection): T[] {
     const tempArr: unknown[] = [];
     let sorter: unknown[];

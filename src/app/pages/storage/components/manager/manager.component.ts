@@ -461,6 +461,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   getCurrentLayout(): void {
     let sizeEstimate = 0;
     if (!this.isNew) {
