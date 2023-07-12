@@ -5,7 +5,7 @@ import _ from 'lodash';
 import {
   Observable, combineLatest, map,
 } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Pool } from 'app/interfaces/pool.interface';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -75,14 +75,21 @@ export class PoolManagerValidationService {
         }
 
         if (this.existingPool) {
+          let oldDataLayoutType = this.existingPool.topology.data[0].type;
+          if (oldDataLayoutType === TopologyItemType.Disk
+            && !this.existingPool.topology.data[0].children?.length
+          ) {
+            oldDataLayoutType = TopologyItemType.Stripe;
+          }
+
           if (hasDataVdevs
             && topology[VdevType.Data].layout
-            !== this.existingPool.topology.data[0].type as unknown as CreateVdevLayout
+            !== oldDataLayoutType as unknown as CreateVdevLayout
           ) {
             errors.push({
               text: this.translate.instant(
                 'Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.',
-                { type: this.existingPool?.topology.data[0].type },
+                { type: oldDataLayoutType },
               ),
               severity: PoolCreationSeverity.Error,
               step: PoolCreationWizardStep.Data,

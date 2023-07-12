@@ -39,6 +39,7 @@ import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-man
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import { NewDevicesPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/new-devices/new-devices-preview.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
@@ -105,6 +106,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DiskInfoComponent,
     ManualSelectionVdevComponent,
     SpareWizardStepComponent,
+    NewDevicesPreviewComponent,
     ReviewWizardStepComponent,
     GeneralWizardStepComponent,
     CacheWizardStepComponent,
