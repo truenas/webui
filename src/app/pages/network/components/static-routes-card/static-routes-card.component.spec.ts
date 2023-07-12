@@ -9,7 +9,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { StaticRoutesComponent } from 'app/pages/network/components/static-routes/static-routes.component';
+import { StaticRoutesCardComponent } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -20,12 +20,12 @@ const staticRoutes = Array.from({ length: 10 }).map((val, index) => ({
   id: index,
 }));
 
-describe('StaticRoutesComponent', () => {
-  let spectator: Spectator<StaticRoutesComponent>;
+describe('StaticRoutesCardComponent', () => {
+  let spectator: Spectator<StaticRoutesCardComponent>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: StaticRoutesComponent,
+    component: StaticRoutesCardComponent,
     imports: [
       IxTable2Module,
     ],

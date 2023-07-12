@@ -33,8 +33,8 @@ import {
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
 import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
+import { StaticRoutesCardComponent } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
 import { NetworkService } from 'app/services';
-import { StaticRoutesComponent } from './components/static-routes/static-routes.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
 
@@ -75,7 +75,7 @@ import { routing } from './network.routing';
     NetworkConfigurationCardComponent,
     StaticRouteDeleteDialogComponent,
     StaticRouteFormComponent,
-    StaticRoutesComponent,
+    StaticRoutesCardComponent,
   ],
   providers: [
     NetworkService,

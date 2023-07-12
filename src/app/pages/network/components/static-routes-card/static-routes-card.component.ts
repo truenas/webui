@@ -24,11 +24,11 @@ import { LayoutService } from 'app/services/layout.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-static-routes',
-  templateUrl: './static-routes.component.html',
-  styleUrls: ['./static-routes.component.scss'],
+  templateUrl: './static-routes-card.component.html',
+  styleUrls: ['./static-routes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StaticRoutesComponent implements OnInit, AfterViewInit {
+export class StaticRoutesCardComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   filterString = '';
@@ -127,21 +127,17 @@ export class StaticRoutesComponent implements OnInit, AfterViewInit {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  refresh(): void {
-    this.getStaticRoutes();
-  }
-
   doAdd(): void {
     const slideInRef = this.slideInService.open(StaticRouteFormComponent);
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refresh();
+      this.getStaticRoutes();
     });
   }
 
   doEdit(route: StaticRoute): void {
     const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refresh();
+      this.getStaticRoutes();
     });
   }
 
@@ -151,7 +147,7 @@ export class StaticRoutesComponent implements OnInit, AfterViewInit {
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.refresh();
+        this.getStaticRoutes();
       });
   }
 }
