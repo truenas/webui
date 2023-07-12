@@ -99,34 +99,34 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the expand arrow for the root user')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_the_root_user(driver):
     """On the right side of the table, click the expand arrow for the root user."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"root")]/td').click()
+    assert wait_on_element(driver, 5, xpaths.users.root_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_User).click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]', 'clickable')
+    assert wait_on_element(driver, 5, xpaths.users.root_Edit_Button, 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
+    driver.find_element_by_xpath(xpaths.users.root_Edit_Button).click()
 
 
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
     assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
-    assert wait_on_element(driver, 5, '//legend[normalize-space(text())="Identification"]')
+    assert wait_on_element(driver, 5, xpaths.add_User.identification_Legend)
 
 
 @then('In the SSH public Key field, paste a public key and save the change')
 def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, ssh_key):
     """In the SSH public Key field, paste a public key and save the change."""
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Authentication"]')
-    element = driver.find_element_by_xpath('//legend[normalize-space(text())="Authentication"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.authentication_Legend)
+    element = driver.find_element_by_xpath(xpaths.add_User.authentication_Legend)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 5, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'inputable')
     driver.find_element_by_xpath('//ix-textarea[@formcontrolname="sshpubkey"]//textarea').clear()
@@ -147,19 +147,19 @@ def change_should_be_saved(driver):
 @then('Reopen the user edit page and ensure that the key was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     """Reopen the user edit page and ensure that the key was saved."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"root")]/td').click()
-    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 5, xpaths.users.root_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_User).click()
+    assert wait_on_element(driver, 5, xpaths.users.root_Edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_Edit_Button).click()
     assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)
-    assert wait_on_element(driver, 5, '//legend[normalize-space(text())="Identification"]')
+    assert wait_on_element(driver, 5, xpaths.add_User.identification_Legend)
 
 
 @then('Public key should be on the root user page')
 def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     """Public key should be on the root user page."""
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Authentication"]')
-    element = driver.find_element_by_xpath('//legend[normalize-space(text())="Authentication"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.authentication_Legend)
+    element = driver.find_element_by_xpath(xpaths.add_User.authentication_Legend)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 5, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'inputable')
     assert attribute_value_exist(driver, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'value', ssh_key)

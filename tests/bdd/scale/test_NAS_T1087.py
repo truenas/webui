@@ -92,4 +92,4 @@ def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visi
     assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button)
-    assert wait_on_element(driver, 7, f'//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dd[contains(text(),"{users_email}")]')
+    assert wait_on_element(driver, 7, f'//tr[contains(.,"ericbsd")]/following-sibling::tr//dd[contains(text(),"{users_email}")]')

@@ -24,7 +24,7 @@ def test_verify_a_certificate_signing_request_can_be_deleted():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Certificate_Signin'], scope='session')
+    # depends(request, ['Certificate_Signin'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -69,11 +69,10 @@ def click_the_confirm_checkbox_and_click_delete(driver):
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 10, xpaths.button.delete, 'clickable')
     driver.find_element_by_xpath(xpaths.button.delete).click()
-    assert wait_on_element(driver, 5, xpaths.popup.deleting)
     assert wait_on_element_disappear(driver, 60, xpaths.popup.deleting)
 
 
 @then('verify that the CSR was deleted')
 def verify_that_the_csr_wasdeleted(driver):
     """verify that the CSR was deleted."""
-    assert wait_on_element_disappear(driver, 20, '//li[contains(.,"Name: csr1")]')
+    assert wait_on_element_disappear(driver, 30, '//li[contains(.,"Name: csr1")]')

@@ -100,6 +100,7 @@ def click_on_the_dataset_name_tree_click_edit_on_the_permissions_card(driver, da
 def on_the_unix_permissions_editor_page_input_nobody_in_the_user_entry(driver, username):
     """on the Unix Permissions Editor page, input "nobody" in the User entry."""
     assert wait_on_element(driver, 5, xpaths.edit_Permissions.title)
+    assert wait_on_element(driver, 5, xpaths.edit_Permissions.user_Apply_Checkbox, 'clickable')
     rsc.Combobox_Input_And_Select(driver, xpaths.edit_Permissions.user_Combobox, username)
 
 
@@ -117,7 +118,7 @@ def check_apply_user_input_nogroup_in_the_group_entry_and_check_apply_group(driv
 def check_groupwrite_under_access_mode_and_click_save(driver):
     """check Group/Write under Access Mode and click Save."""
     driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Write_Checkbox).click()
-
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     time.sleep(1)
     assert wait_on_element_disappear(driver, 60, xpaths.popup.saving_Permissions)
