@@ -118,8 +118,8 @@ describe('UserListComponent', () => {
 
     const expectedRows = [
       ['Username', 'UID', 'Builtin', 'Full Name'],
-      ['root', '0', 'Yes', 'root', ''],
-      ['test', '1004', 'No', 'test', ''],
+      ['root', '0', 'Yes', 'root'],
+      ['test', '1004', 'No', 'test'],
     ];
 
     const table = await loader.getHarness(IxTable2Harness);
