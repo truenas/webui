@@ -330,7 +330,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     ).subscribe((theme: Theme) => {
       this.theme = theme;
       this.setCurrentView(this.currentView);
-      if (this.labels && this.labels.events$) {
+      if (this.labels?.events$) {
         this.labels.events$.next({ name: 'ThemeChanged', data: theme, sender: this });
       }
       this.optimizeChassisOpacity();
@@ -389,8 +389,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
                mutation.removedNodes */
             const element = mutation.addedNodes?.[0] as HTMLElement;
             if (
-              !element
-              || !element.classList
+              !element?.classList
               || mutation.addedNodes.length === 0
               || element.classList.length === 0
             ) {
@@ -621,7 +620,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           }
 
           this.selectedSlotNumber = slotNumber;
-          const isSlotEmpty: boolean = (this.selectedSlot === null || !this.selectedSlot.disk);
+          const isSlotEmpty = !this.selectedSlot?.disk;
 
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);

@@ -19,7 +19,7 @@ export class UserService {
   constructor(protected ws: WebSocketService) {}
 
   private groupQueryDsCacheByName(name: string): Observable<Group[]> {
-    if (!(name && name.length)) {
+    if (!name?.length) {
       return of([]);
     }
     let queryArgs: QueryFilter<Group>[] = [];
