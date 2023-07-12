@@ -576,7 +576,7 @@ export class AppSchemaService {
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
-          if (_.isEqual(value, relation.operatorValue)) {
+          if (_.isEqual(value, relation.operatorValue) && formGroup.controls[relation.fieldName].status !== 'DISABLED') {
             formField.hidden$.next(false);
             if (!isNew && (isParentImmutable || !!schema.immutable)) {
               formField.disable();
@@ -619,7 +619,7 @@ export class AppSchemaService {
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
-          if (!_.isEqual(value, relation.operatorValue)) {
+          if (!_.isEqual(value, relation.operatorValue) && formGroup.controls[relation.fieldName].status !== 'DISABLED') {
             formField.hidden$.next(false);
             if (!isNew && (isParentImmutable || !!schema.immutable)) {
               formField.disable();
@@ -666,7 +666,7 @@ export class AppSchemaService {
         }
       });
 
-      subscription.add(newFormControl.valueChanges.pipe(debounceTime(0)).subscribe((value) => {
+      subscription.add(newFormControl.valueChanges.subscribe((value) => {
         schema.subquestions.forEach((subquestion) => {
           const parentControl = (formGroup.controls[subquestion.variable].parent as CustomUntypedFormField);
           if (!parentControl.hidden$) {
