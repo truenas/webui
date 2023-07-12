@@ -1,7 +1,8 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing';
 
 export class IxCellHarness extends ContentContainerComponentHarness {
-  static hostSelector = '.row td, th';
+  // TODO: Incorrect number of header cells when expand row icon is there.
+  static hostSelector = '.row td:not(.toggle-cell), th';
 
   async getText(): Promise<string> {
     const host = await this.host();

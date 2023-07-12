@@ -64,8 +64,8 @@ describe('CatalogsComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Catalog URL', 'Branch', 'Preferred Trains'],
-      ['TRUECHARTS', 'https://github.com/truecharts/catalog.git', 'main', 'enterprise,stable,operators', ''],
-      ['TRUENAS', 'https://github.com/truenas/charts.git', 'master', 'charts,community', ''],
+      ['TRUECHARTS', 'https://github.com/truecharts/catalog.git', 'main', 'enterprise,stable,operators'],
+      ['TRUENAS', 'https://github.com/truenas/charts.git', 'master', 'charts,community'],
     ];
 
     const table = await loader.getHarness(IxTable2Harness);
