@@ -59,7 +59,9 @@ describe('DatasetDetailsPanelComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService, {
-        open: jest.fn(),
+        open: jest.fn(() => ({
+          slideInClosed$: of(),
+        })),
         onClose$: of(),
       }),
       mockProvider(DatasetTreeStore, {

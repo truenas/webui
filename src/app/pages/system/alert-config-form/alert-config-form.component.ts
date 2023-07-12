@@ -1,4 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +21,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   selector: 'ix-alert-config-form',
   templateUrl: './alert-config-form.component.html',
   styleUrls: ['./alert-config-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertConfigFormComponent implements OnInit {
   categories: AlertCategory[] = [];
@@ -78,15 +81,18 @@ export class AlertConfigFormComponent implements OnInit {
             this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
           });
         });
+        this.cdr.markForCheck();
 
         this.ws.call('alertclasses.config').pipe(untilDestroyed(this)).subscribe(
           {
             next: (alertConfig) => {
               this.form.patchValue(alertConfig.classes);
               this.isFormLoading = false;
+              this.cdr.markForCheck();
             },
             error: (error: WebsocketError) => {
               this.isFormLoading = false;
+              this.cdr.markForCheck();
               this.dialogService.error(this.errorHandler.parseWsError(error));
             },
           },
@@ -94,6 +100,7 @@ export class AlertConfigFormComponent implements OnInit {
       },
       error: (error: WebsocketError) => {
         this.isFormLoading = false;
+        this.cdr.markForCheck();
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
@@ -130,6 +137,9 @@ export class AlertConfigFormComponent implements OnInit {
         this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
-    }).add(() => this.isFormLoading = false);
+    }).add(() => {
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+    });
   }
 }

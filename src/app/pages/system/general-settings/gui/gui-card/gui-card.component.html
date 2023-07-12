@@ -2,7 +2,7 @@
   <mat-toolbar-row>
     <h3>{{ helptext.guiTitle| translate }}</h3>
     <div class="actions action-icon">
-      <button mat-button color="default" [ixTest]="['gui', 'settings']" (click)="doAdd()">
+      <button mat-button id="gui-settings" color="default" [ixTest]="['gui', 'settings']" (click)="doAdd()">
         {{ 'Settings' | translate }}
       </button>
     </div>

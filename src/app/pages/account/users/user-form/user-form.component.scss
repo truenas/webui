@@ -4,3 +4,10 @@
     margin-top: 50px;
   }
 }
+
+.columns {
+  box-sizing: border-box;
+  column-gap: 16px;
+  display: flex;
+  flex-direction: row;
+}

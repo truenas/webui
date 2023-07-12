@@ -17,7 +17,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, switchMap, take, takeWhile, tap,
+  combineLatest, filter,
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -31,7 +31,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ChartBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/chart-bulk-upgrade/chart-bulk-upgrade.component';
+import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -147,6 +147,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit(): void {
     this.loadChartReleases();
+    this.installedAppsStore.isLoading$.pipe(untilDestroyed(this)).subscribe({
+      next: (isLoading) => {
+        this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   ngAfterViewInit(): void {
@@ -164,6 +170,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       });
 
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  trackAppBy(index: number, item: ChartRelease): string {
+    return item.name;
   }
 
   ngOnDestroy(): void {
@@ -232,38 +242,30 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   loadChartReleases(): void {
-    this.isLoading = true;
     this.cdr.markForCheck();
 
     combineLatest([
-      this.kubernetesStore.selectedPool$.pipe(filter(Boolean)),
-      this.installedAppsStore.isLoading$.pipe(
-        tap((isLoading) => this.isLoading = isLoading),
-        filter((isLoading) => !isLoading),
-      ),
+      this.kubernetesStore.selectedPool$,
+      this.kubernetesStore.isKubernetesStarted$,
+      this.installedAppsStore.installedApps$,
     ]).pipe(
-      takeWhile(([pool]) => !pool, true),
       filter(([pool]) => {
         if (!pool) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.FirstUse);
-          this.isLoading = false;
           this.cdr.markForCheck();
         }
         return !!pool;
       }),
-      switchMap(() => this.kubernetesStore.isKubernetesStarted$),
-      filter((kubernetesStarted) => {
+      filter(([,kubernetesStarted]) => {
         if (!kubernetesStarted) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
-          this.isLoading = false;
           this.cdr.markForCheck();
         }
         return !!kubernetesStarted;
       }),
-      switchMap(() => this.installedAppsStore.installedApps$),
-      filter((charts) => {
+      filter(([,,charts]) => {
         if (!charts.length) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
@@ -273,39 +275,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
       }),
       untilDestroyed(this),
     ).subscribe({
-      next: (charts) => {
+      next: ([,,charts]) => {
         this.dataSource = charts;
-        this.dataSource.forEach((app) => {
-          if (app.status === ChartReleaseStatus.Deploying) {
-            this.refreshStatus(app.name);
-          }
-        });
 
-        this.selectAppForDetails(this.activatedRoute.snapshot.firstChild?.params['appId']);
-        this.cdr.markForCheck();
-      },
-      complete: () => {
-        this.isLoading = false;
+        this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
     });
-  }
-
-  refreshStatus(name: string): void {
-    this.appService.getChartRelease(name)
-      .pipe(filter(Boolean), take(1), untilDestroyed(this))
-      .subscribe((releases) => {
-        const installedApp = this.dataSource.find((app) => app.name === name);
-        if (installedApp) {
-          installedApp.status = releases[0]?.status;
-          this.cdr.markForCheck();
-          if (installedApp.status === ChartReleaseStatus.Deploying) {
-            setTimeout(() => {
-              this.refreshStatus(name);
-            }, 3000);
-          }
-        }
-      });
   }
 
   start(name: string): void {
@@ -351,17 +327,22 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.toggleAppsChecked(false);
   }
 
   onBulkStop(): void {
     this.startedCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.toggleAppsChecked(false);
   }
 
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource
       .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
-    this.matDialog.open(ChartBulkUpgradeComponent, { data: apps });
+    this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
+      .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+        this.toggleAppsChecked(false);
+      });
   }
 
   onBulkDelete(): void {
@@ -376,6 +357,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
           title: helptext.charts.delete_dialog.job,
         },
       });
+      this.toggleAppsChecked(false);
       dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
@@ -412,8 +394,14 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     if (app) {
       this.selectedApp = app;
     } else {
-      this.router.navigate(['/apps', 'installed', this.dataSource[0]?.id]);
-      this.selectedApp = this.dataSource[0];
+      const [firstApp] = this.dataSource;
+      if (firstApp.catalog && firstApp.catalog_train && firstApp.id) {
+        this.router.navigate(['/apps', 'installed', firstApp.catalog, firstApp.catalog_train, firstApp.id]);
+      } else {
+        this.router.navigate(['/apps', 'installed']);
+      }
+
+      this.selectedApp = firstApp;
     }
 
     this.cdr.markForCheck();

@@ -118,7 +118,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.form.valueChanges.pipe(
-      debounceTime(200),
+      debounceTime(400),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe(() => {

@@ -123,17 +123,21 @@ describe('RolesCardComponent', () => {
   });
 
   it('shows apps row when dataset has name `ix-applications`', () => {
-    spectator.component.dataset.name = 'root/ix-applications';
-    spectator.detectChanges();
+    spectator.setInput('dataset', {
+      ...datasetDummy,
+      name: 'root/ix-applications',
+    });
     expect(spectator.query('.apps.value')).toHaveText(
       'This dataset is used to store Kubernetes config and other container related data',
     );
   });
 
   it('shows system dataset row', () => {
-    spectator.component.dataset.name = 'system-dataset';
-    spectator.component.systemDataset = 'system-dataset';
-    spectator.detectChanges();
+    spectator.setInput('dataset', {
+      ...datasetDummy,
+      name: 'system-dataset',
+    });
+    spectator.setInput('systemDataset', 'system-dataset');
     expect(spectator.query('.system-dataset.value')).toHaveText(
       'This dataset is used by the system',
     );

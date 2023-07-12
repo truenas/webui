@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 export interface GeneralDialogConfig {
@@ -21,6 +21,7 @@ export interface GeneralDialogConfig {
 @Component({
   templateUrl: './general-dialog.component.html',
   styleUrls: ['./general-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralDialogComponent {
   @Input() conf: GeneralDialogConfig;

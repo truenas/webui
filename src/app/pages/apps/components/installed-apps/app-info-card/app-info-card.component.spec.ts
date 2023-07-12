@@ -13,6 +13,7 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
+import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -26,6 +27,11 @@ describe('AppInfoCardComponent', () => {
     id: 'ix-test-app',
     name: 'ix-test-app',
     human_version: '1.2.3_3.2.1',
+    history: {
+      '1.0.11': {
+        name: 'ix-test-app',
+      },
+    } as { [key: string]: unknown },
     update_available: true,
     chart_metadata: {
       name: 'ix-test-app',
@@ -155,7 +161,7 @@ describe('AppInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'available', app.catalog, app.catalog_train, app.id, 'edit']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog, app.catalog_train, app.id, 'edit']);
   });
 
   it('opens delete app dialog when Delete button is pressed', async () => {
@@ -167,6 +173,15 @@ describe('AppInfoCardComponent', () => {
       message: 'Delete ix-test-app?',
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Delete docker images used by the app',
+    });
+  });
+
+  it('opens rollback app dialog when Roll Back button is pressed', async () => {
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
+    await deleteButton.click();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppRollbackModalComponent, {
+      data: app,
     });
   });
 });

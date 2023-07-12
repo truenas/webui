@@ -16,22 +16,36 @@ $component-header: 50px;
 }
 
 .jobs-header {
+  align-items: baseline;
   background: var(--bg2);
   border-bottom: 1px solid var(--lines);
+  display: flex;
   height: $component-header;
   margin-left: -24px;
   margin-right: -24px;
   padding: 12px 24px;
+  place-content: stretch space-between;
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
+.badges {
+  column-gap: 8px;
+  display: flex;
+}
+
 .job-badge {
+  align-items: center;
   background-color: var(--bg1);
   border-radius: 16px;
+  column-gap: 4px;
+
+  display: flex;
+  flex-direction: row;
   min-width: 48px;
   padding: 0 8px;
+  place-content: center;
   user-select: none;
 
   .job-badge-count {

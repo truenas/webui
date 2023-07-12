@@ -102,7 +102,7 @@ def the_user_edit_page_should_open(driver):
 @then('Change "Disable Password" to Yes and click save')
 def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
     assert wait_on_element(driver, 7, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle', 'clickable')
     driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle').click()
 
@@ -122,14 +122,14 @@ def open_the_user_drop_down_to_verify_the_user_disable_password_is_true(driver):
     assert wait_on_element(driver, 5, xpaths.users.eric_User, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button)
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]')
+    driver.find_element_by_xpath(xpaths.users.eric_Password_Disable)
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]/../dd')
-    element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]/../dd').text
+    assert wait_on_element(driver, 5, xpaths.users.eric_Password_Disable_Text)
+    element_text = driver.find_element_by_xpath(xpaths.users.eric_Password_Disable_Text).text
     assert element_text == 'Yes'
 
 

@@ -130,7 +130,9 @@ import {
   InitShutdownScript,
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
-import { Ipmi, IpmiChassis, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import {
+  Ipmi, IpmiChassis, IpmiEvent, IpmiUpdate,
+} from 'app/interfaces/ipmi.interface';
 import {
   IscsiGlobalConfig,
   IscsiGlobalConfigUpdate,
@@ -605,10 +607,12 @@ export type ApiDirectory = {
   'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
   'ipmi.lan.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
+  'ipmi.sel.elist': { params: void; response: IpmiEvent[] };
+  'ipmi.sel.clear': { params: void; response: void };
 
   // IPMI Chassis
   'ipmi.chassis.identify': { params: [OnOff]; response: void };
-  'ipmi.chassis.query': { params: void; response: IpmiChassis };
+  'ipmi.chassis.info': { params: void; response: IpmiChassis };
 
   // Group
   'group.query': { params: QueryParams<Group>; response: Group[] };

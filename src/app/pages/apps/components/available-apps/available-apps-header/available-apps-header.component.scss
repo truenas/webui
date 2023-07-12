@@ -12,8 +12,10 @@
   }
 }
 
-::ng-deep .mat-mdc-option {
-  text-transform: capitalize;
+:host ::ng-deep {
+  .mat-mdc-option {
+    text-transform: capitalize;
+  }
 }
 
 .search-filters {

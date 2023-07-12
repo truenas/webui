@@ -25,7 +25,7 @@
       <mat-list-item>
         <span class="label">{{ 'Token Lifetime' | translate }}:</span>
         <span *ixWithLoadingState="tokenLifetime$ as tokenLifetime" class="value">
-          {{ tokenLifetime }}
+          {{ asDuration(tokenLifetime) }}
         </span>
       </mat-list-item>
     </mat-list>
@@ -65,7 +65,7 @@
         [dataProvider]="dataProvider"
         let-session
       >
-        <div fxLayoutAlign="end center">
+        <div class="actions">
           <button
             mat-icon-button
             [ixTest]="['terminate-session', session.id]"
