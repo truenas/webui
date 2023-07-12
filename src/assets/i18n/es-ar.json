@@ -36,6 +36,7 @@
   "A stripe {vdevType} vdev is highly discouraged and will result in data loss if it fails": "",
   "ACL Types & ACL Modes": "",
   "ACME DNS-Authenticators": "",
+  "ALUA": "",
   "API Key Actions": "",
   "ARN": "",
   "Access Control Entry": "",

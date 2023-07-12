@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,12 +15,14 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { TargetGlobalConfigurationComponent } from './target-global-configuration.component';
 
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+
   const createComponent = createComponentFactory({
     component: TargetGlobalConfigurationComponent,
     imports: [
@@ -46,6 +49,14 @@ describe('TargetGlobalConfigurationComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsHaLicensed,
+            value: true,
+          },
+        ],
+      }),
     ],
   });
 
@@ -68,6 +79,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       'ISNS Servers': ['188.23.4.23', '92.233.1.1'],
       'Pool Available Space Threshold (%)': '20',
       'iSCSI listen port': '3260',
+      ALUA: false,
     });
   });
 
@@ -78,6 +90,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       'ISNS Servers': ['32.12.112.42', '8.2.1.2'],
       'Pool Available Space Threshold (%)': '15',
       'iSCSI listen port': '3270',
+      ALUA: false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -88,6 +101,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       isns_servers: ['32.12.112.42', '8.2.1.2'],
       pool_avail_threshold: 15,
       listen_port: 3270,
+      alua: false,
     }]);
   });
 
