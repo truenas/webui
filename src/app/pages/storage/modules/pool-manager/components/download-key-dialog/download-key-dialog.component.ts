@@ -46,7 +46,8 @@ export class DownloadKeyDialogComponent {
       switchMap(([, url]) => this.storage.streamDownloadFile(url, this.filename, 'application/json')),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (file) => {
+        this.storage.downloadBlob(file, this.filename);
         this.wasDownloaded = true;
         this.cdr.markForCheck();
         this.loader.close();
