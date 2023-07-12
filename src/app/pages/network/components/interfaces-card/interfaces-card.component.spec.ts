@@ -86,7 +86,7 @@ describe('InterfacesCardComponent', () => {
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => ({
-          slideInClosed$: of(undefined),
+          slideInClosed$: of(true),
         } as IxSlideInRef<unknown>)),
       }),
       mockProvider(DialogService, {
