@@ -98,10 +98,10 @@ def the_user_edit_page_should_open(driver):
 @then(parsers.parse('Change the users email to an invalid email i.e. "{invalid_email}" and click Save'))
 def change_the_users_email_to_an_invalid_email_ie_email_and_click_save(driver, invalid_email):
     """Change the users email to an invalid email i.e. "{email}" and click Save."""
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="email"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').send_keys(invalid_email)
+    assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
+    assert wait_on_element(driver, 7, xpaths.add_User.email_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_User.email_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.email_Input).send_keys(invalid_email)
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -115,8 +115,8 @@ def you_should_not_be_allowed_to_save_the_invalid_email(driver):
 @then('Try saving a blank email')
 def try_saving_a_blank_email(driver):
     """Try saving a blank email."""
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="email"]//input', 'clickable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').clear()
+    assert wait_on_element(driver, 7, xpaths.add_User.email_Input, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.email_Input).clear()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

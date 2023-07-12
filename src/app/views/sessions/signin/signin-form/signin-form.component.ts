@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
+import { WINDOW } from 'app/helpers/window.helper';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -38,6 +39,7 @@ export class SigninFormComponent {
     private authService: AuthService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   login(): void {
@@ -71,6 +73,9 @@ export class SigninFormComponent {
     ).subscribe({
       next: () => {
         this.signinStore.handleSuccessfulLogin();
+        if (this.window.location.protocol !== 'https:') {
+          this.signinStore.showSecurityWarning();
+        }
       },
       error: (error) => {
         this.errorHandler.handleWsFormError(error, this.form);

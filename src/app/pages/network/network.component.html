@@ -88,11 +88,7 @@
     <div class="left-column" fxFlex="100" fxFlex.lg="35">
       <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
         <ix-static-routes></ix-static-routes>
-        <ix-conf-table
-          *ngIf="ipmiEnabled"
-          fxFlex
-          [conf]="ipmiTableConf"
-        ></ix-conf-table>
+        <ix-ipmi-card></ix-ipmi-card>
       </div>
     </div>
   </div>
