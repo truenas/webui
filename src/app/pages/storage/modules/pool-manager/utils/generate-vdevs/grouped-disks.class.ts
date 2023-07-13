@@ -10,9 +10,7 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 export class GroupedDisks {
   private diskMap: DiskTypeSizeMap;
 
-  constructor(
-    private disks: UnusedDisk[],
-  ) {
+  constructor(private disks: UnusedDisk[]) {
     this.diskMap = getDiskTypeSizeMap(disks);
   }
 
@@ -20,9 +18,9 @@ export class GroupedDisks {
     const matchingType = this.diskMap[category.diskType];
     let matchingTypeAndSize: UnusedDisk[] = [];
     if (category.treatDiskSizeAsMinimum) {
-      for (const diskSize of Object.keys(matchingType)) {
-        if (category.diskSize > Number(diskSize)) continue;
-        matchingTypeAndSize = matchingTypeAndSize.concat(matchingType[diskSize]);
+      for (const disk of this.disks) {
+        if (category.diskSize > Number(disk.size)) continue;
+        matchingTypeAndSize = matchingTypeAndSize.concat(disk);
       }
     } else {
       matchingTypeAndSize = matchingType[category.diskSize];

@@ -264,7 +264,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     const minRequired = this.minDisks[this.form.controls.layout.value];
     let widthOptions: Option[];
 
-    if (length && minRequired) {
+    if (length && minRequired && length >= minRequired) {
       widthOptions = _.range(minRequired, length + 1).map((item) => ({
         label: `${item}`,
         value: item,
