@@ -394,6 +394,8 @@ describe('ChartFormComponent', () => {
         version: '1.2.1',
         updateStrategy: 'Recreate',
         hostNetwork: true,
+        externalInterfaces: [],
+        portForwardingList: [],
       });
     });
 
