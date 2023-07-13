@@ -1,6 +1,6 @@
 <mat-card class="card">
   <mat-card-header>
-    <h3 mat-card-title>{{ 'Inventory' | translate }}</h3>
+    <h3 mat-card-title>{{ 'Unassigned Disks' | translate }}</h3>
   </mat-card-header>
   <mat-card-content *ngIf="!(isLoading$| async); else loading">
     <ng-container *ngIf="hasDisks$ | async; else noDisks">

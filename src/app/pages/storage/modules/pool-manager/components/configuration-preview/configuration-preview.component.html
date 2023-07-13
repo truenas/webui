@@ -21,7 +21,7 @@
         <span class="value">{{ (encryption$ | async) || unknownProp }}</span>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Total Capacity' | translate }}:</span>
+        <span class="label">{{ 'Total Raw Capacity' | translate }}:</span>
         <span class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</span>
       </div>
     </div>
