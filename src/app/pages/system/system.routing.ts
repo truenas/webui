@@ -132,11 +132,11 @@ export const routes: Routes = [
       }],
     }, {
       path: 'initshutdown',
-      data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts', icon: 'event_note' },
+      data: { title: T('Init/Shutdown Scripts'), breadcrumb: T('Init/Shutdown Scripts'), icon: 'event_note' },
       children: [{
         path: '',
         component: InitshutdownListComponent,
-        data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
+        data: { title: T('Init/Shutdown Scripts'), breadcrumb: T('Init/Shutdown Scripts') },
       }],
     }],
   },
