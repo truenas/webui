@@ -1,7 +1,7 @@
 {
   "": "",
   "<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.  <i>File</i> provides virtual storage access to a single file.": "<i>Apparaat</i> biedt virtuele opslagtoegang tot zvols, zvol snapshots of fysieke apparaten. <i>Bestand</i> biedt virtuele opslagtoegang tot een enkel bestand.",
-  "Application Metadata": "Metadata van toepassing",
+  "Application Metadata": "Metadata van de toepassing",
   "Apps (Old)": "Apps (oud)",
   "Are you sure you want to start over?": "Weet u zeker dat u opnieuw wilt beginnen?",
   "At least 1 data vdev is required.": "Er is minimaal 1 data-vdev vereist.",
