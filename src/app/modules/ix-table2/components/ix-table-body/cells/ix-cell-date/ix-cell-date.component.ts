@@ -5,8 +5,8 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   templateUrl: './ix-cell-date.component.html',
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {
-  formatDate = 'yyyy-MM-dd';
-  formatTime = 'HH:mm:ss';
+  formatDate: string = undefined;
+  formatTime: string = undefined;
 
   get value(): number | Date {
     return this.row[this.propertyName] as number | Date;
