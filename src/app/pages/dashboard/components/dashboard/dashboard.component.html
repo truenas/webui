@@ -119,8 +119,6 @@
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
-              [data]="dataFromConfig(widget) | cast"
-              [cpuModel]="systemInformation.model"
               [showReorderHandle]="reorderMode"
               ><span ixDragHandle></span
             ></ix-widget-cpu>
@@ -130,8 +128,6 @@
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
-              [ecc]="systemInformation.ecc_memory"
-              [data]="dataFromConfig(widget) | cast"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -165,9 +161,8 @@
               *ngSwitchCase="WidgetType.Interface"
               fxFlex.xs="100"
               ixDrag
+              [nic]="widget.identifier.split(',')[1]"
               [fxFlex]="widgetWidth + 'px'"
-              [nicState]="dataFromConfig(widget) | cast"
-              [stats]="statsDataEvent$"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -178,8 +173,6 @@
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
-              [nics]="nics"
-              [stats]="statsDataEvent$"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -237,14 +230,11 @@
 
             <ix-widget-cpu
               *ngSwitchCase="WidgetType.Cpu"
-              [data]="dataFromConfig(widget) | cast"
-              [cpuModel]="systemInformation.model"
               (back)="onMobileBack()"
             ></ix-widget-cpu>
 
             <ix-widget-memory
               *ngSwitchCase="WidgetType.Memory"
-              [data]="dataFromConfig(widget) | cast"
               (back)="onMobileBack()"
             ></ix-widget-memory>
 
@@ -266,15 +256,12 @@
 
             <ix-widget-nic
               *ngSwitchCase="WidgetType.Interface"
-              [nicState]="dataFromConfig(widget) | cast"
-              [stats]="statsDataEvent$"
+              [nic]="widget.identifier.split(',')[1]"
               (back)="onMobileBack()"
             ></ix-widget-nic>
 
             <ix-widget-network
               *ngSwitchCase="WidgetType.Network"
-              [nics]="nics"
-              [stats]="statsDataEvent$"
               (back)="onMobileBack()"
             ></ix-widget-network>
           </ng-container>

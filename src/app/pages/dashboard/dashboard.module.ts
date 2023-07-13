@@ -37,6 +37,7 @@ import {
   SimpleFailoverBtnComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { routing } from './dashboard.routing';
 
 @NgModule({
@@ -80,6 +81,9 @@ import { routing } from './dashboard.routing';
     WidgetNetworkComponent,
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
+  ],
+  providers: [
+    ResourcesUsageStore,
   ],
 })
 export class DashboardModule {

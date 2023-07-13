@@ -53,7 +53,7 @@ export enum WidgetName {
 }
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
-type DashboardNetworkInterface = NetworkInterface & {
+export type DashboardNetworkInterface = NetworkInterface & {
   state: DashboardNicState;
 };
 

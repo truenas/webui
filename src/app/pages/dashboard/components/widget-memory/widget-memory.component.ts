@@ -1,5 +1,5 @@
 import {
-  Component, Input, ElementRef, OnChanges,
+  Component, ElementRef, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import {
@@ -7,23 +7,25 @@ import {
 } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Chart, Color, ChartDataset, ChartOptions,
 } from 'chart.js';
 import { ChartConfiguration } from 'chart.js/dist/types';
-import { Subject, Subscription } from 'rxjs';
-import {
-  filter, map, throttleTime,
-} from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { throttleTime } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ScreenType } from 'app/enums/screen-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { deepCloneState } from 'app/helpers/state-select.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -33,10 +35,10 @@ import { ThemeService } from 'app/services/theme/theme.service';
     '../widget/widget.component.scss',
     './widget-memory.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetMemoryComponent extends WidgetComponent implements OnChanges {
-  @Input() data: Subject<CoreEvent>;
-  @Input() ecc = false;
+export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
+  protected ecc = false;
 
   chart: Chart<'doughnut'>;
   isReady = false;
@@ -58,6 +60,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
     public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,
     public themeService: ThemeService,
+    private store$: Store<AppState>,
+    private cdr: ChangeDetectorRef,
+    private resourcesUsageStore$: ResourcesUsageStore,
   ) {
     super(translate);
 
@@ -69,24 +74,27 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
     });
   }
 
-  ngOnChanges(): void {
-    if (!this.data) {
-      return;
-    }
+  ngOnInit(): void {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
+      next: (sysInfo) => {
+        this.ecc = sysInfo.ecc_memory;
+        this.cdr.markForCheck();
+      },
+    });
 
-    this.dataSubscription?.unsubscribe();
-    this.dataSubscription = this.data.pipe(
-      filter((evt) => evt.name === 'MemoryStats'),
-      map((evt) => evt.data as MemoryStatsEventData),
+    this.resourcesUsageStore$.virtualMemoryUsage$.pipe(
       throttleTime(500),
+      deepCloneState(),
       untilDestroyed(this),
-    ).subscribe((data: MemoryStatsEventData) => {
-      if (!data.used) {
-        return;
-      }
-
-      this.setMemData(data);
-      this.renderChart();
+    ).subscribe({
+      next: (update) => {
+        if (!update?.used) {
+          return;
+        }
+        this.setMemData(update);
+        this.renderChart();
+        this.cdr.markForCheck();
+      },
     });
   }
 

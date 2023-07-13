@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, OnDestroy, Input, OnInit,
+  Component, AfterViewInit, OnDestroy, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -8,22 +8,21 @@ import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import filesize from 'filesize';
-import { Subject } from 'rxjs';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { deepCloneState } from 'app/helpers/state-select.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { CoreEvent } from 'app/interfaces/events';
-import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { ReportingParams } from 'app/interfaces/reporting.interface';
+import { NetworkInterfaceUpdate, ReportingParams } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -57,9 +56,6 @@ interface NicInfoMap {
   ],
 })
 export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() stats: Subject<CoreEvent>;
-  @Input() nics: BaseNetworkInterface[];
-
   readonly emptyTypes = EmptyType;
   protected readonly LinkState = LinkState;
 
@@ -173,6 +169,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     private localeService: LocaleService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
+    private resourcesUsageStore$: ResourcesUsageStore,
   ) {
     super(translate);
 
@@ -188,10 +185,17 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   ngOnInit(): void {
-    this.availableNics = this.nics.filter((nic) => nic.state.link_state !== LinkState.Down);
+    this.resourcesUsageStore$.nics$.pipe(
+      deepCloneState(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (interfaces) => {
+        this.availableNics = interfaces.filter((nic) => nic.state.link_state !== LinkState.Down);
+        this.updateMapInfo();
+      },
+    });
 
     this.updateGridInfo();
-    this.updateMapInfo();
     this.fetchReportData();
 
     if (this.interval) {
@@ -205,33 +209,35 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     }, 10000);
 
     this.availableNics.forEach((nic) => {
-      this.stats.pipe(
-        filter((evt) => evt.name.startsWith(`NetTraffic_${nic.name}`)),
+      this.resourcesUsageStore$.interfacesUsage$.pipe(
+        deepCloneState(),
+        map((usageUpdate) => usageUpdate[nic.name]),
+        filter(Boolean),
         throttleTime(500),
         untilDestroyed(this),
-      ).subscribe((evt: NetworkTrafficEvent) => {
+      ).subscribe((usageUpdate: NetworkInterfaceUpdate) => {
         const nicName = nic.name;
         if (nicName in this.nicInfoMap) {
           const nicInfo = this.nicInfoMap[nicName];
-          if (evt.data.link_state) {
-            nicInfo.state = evt.data.link_state;
+          if (usageUpdate.link_state) {
+            nicInfo.state = usageUpdate.link_state;
           }
-          nicInfo.in = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
-          nicInfo.out = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.in = `${filesize(usageUpdate.received_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.out = `${filesize(usageUpdate.sent_bytes_rate, { standard: 'iec' })}/s`;
 
           if (
-            evt.data.sent_bytes !== undefined
-            && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
+            usageUpdate.sent_bytes !== undefined
+            && usageUpdate.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
           ) {
-            nicInfo.lastSent = evt.data.sent_bytes;
+            nicInfo.lastSent = usageUpdate.sent_bytes;
             this.tableService.updateStateInfoIcon(nicName, 'sent');
           }
 
           if (
-            evt.data.received_bytes !== undefined
-            && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
+            usageUpdate.received_bytes !== undefined
+            && usageUpdate.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
           ) {
-            nicInfo.lastReceived = evt.data.received_bytes;
+            nicInfo.lastReceived = usageUpdate.received_bytes;
             this.tableService.updateStateInfoIcon(nicName, 'received');
           }
         }
