@@ -29,9 +29,8 @@ export class IxTableBodyCellDirective<T> implements AfterViewInit {
       this.column.type,
     );
 
-    componentRef.instance.setRow(this.row);
+    componentRef.instance.row = this.row;
     Object.keys(this.column).forEach((key: keyof ColumnComponent<T>) => {
-      // TODO: Replace never.
       componentRef.instance[key] = this.column[key] as never;
     });
   }
