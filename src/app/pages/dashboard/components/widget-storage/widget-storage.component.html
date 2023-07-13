@@ -134,7 +134,7 @@
                           {{ poolInfoMap[pool.name]?.disksWithError?.value }}
                         </span>
                       </li>
-                      <li *ngIf="cols === 2 && rows === 2" fxLayout="row">
+                      <li *ngIf="cols === 2 && rows === 2 && (pool.scan.end_time || isScanInProgress(pool))" fxLayout="row">
                         <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
                           <ix-icon
                             [matTooltip]="pool.scan.end_time.$date | formatDateTime"
@@ -155,7 +155,7 @@
                     <ng-container *ngIf="cols === 1">
                       <div class="divider"></div>
                       <ul fxLayout="column" [fxFlex]="getSubwidgetColumnWidth(pool)">
-                        <li fxLayout="row">
+                        <li *ngIf="pool.scan.end_time || isScanInProgress" fxLayout="row">
                           <span class="label">
                             {{ isScanScrub(pool) ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}:
                           </span>

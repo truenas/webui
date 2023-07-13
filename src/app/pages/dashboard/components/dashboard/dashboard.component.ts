@@ -266,6 +266,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
     this.getNetworkInterfaces();
     this.listenForPoolUpdates();
+    this.listenForScanUpdates();
     this.getResourcesUsageUpdates();
   }
 
@@ -711,5 +712,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(() => {
       this.loadPoolData();
     });
+  }
+
+  private listenForScanUpdates(): void {
+    this.ws.subscribe('zfs.pool.scan')
+      .pipe(
+        map((apiEvent) => apiEvent.fields),
+        untilDestroyed(this),
+      )
+      .subscribe((poolScan) => {
+        const updatedPool = this.pools.find((pool) => pool.name === poolScan.name);
+        if (updatedPool) {
+          updatedPool.scan = poolScan.scan;
+        }
+      });
   }
 }

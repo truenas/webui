@@ -217,7 +217,7 @@
                       </div>
                     </div>
 
-                    <div *ngIf="poolState.scan" class="tr last-scan">
+                    <div *ngIf="poolState.scan.end_time || isScanInProgress" class="tr last-scan">
                       <div class="td label">
                         <strong>{{ isScanScrub ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}:</strong>
                       </div>
