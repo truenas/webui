@@ -50,17 +50,14 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       expect(vdevs).toEqual({
         [VdevType.Data]: expectDisks([
           ['enclosure1-disk1', 'enclosure1-disk2'],
-          ['enclosure1-disk3', 'enclosure2-disk1'],
-          ['enclosure2-disk2', 'enclosure3-disk1'],
+          ['enclosure1-disk1', 'enclosure1-disk2'],
+          ['enclosure1-disk1', 'enclosure1-disk2'],
         ]),
         [VdevType.Log]: expectDisks([
-          ['enclosure3-disk2', 'enclosure3-disk3', 'enclosure3-disk4'],
-          ['enclosure3-disk5', 'no-enclosure-disk1', 'larger1'],
+          ['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3'],
+          ['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3'],
         ]),
-        [VdevType.Spare]: expectDisks([
-          ['larger2'],
-          ['larger3'],
-        ]),
+        [VdevType.Spare]: expectDisks([['enclosure1-disk1'], ['enclosure1-disk1']]),
       });
     });
 
@@ -97,15 +94,9 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
       });
 
       expect(vdevs).toEqual({
-        [VdevType.Data]: expectDisks([
-          ['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3'],
-        ]),
-        [VdevType.Log]: expectDisks([
-          ['small-ssd1'],
-        ]),
-        [VdevType.Spare]: expectDisks([
-          ['small-ssd2'],
-        ]),
+        [VdevType.Data]: expectDisks([['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3']]),
+        [VdevType.Log]: expectDisks([['enclosure1-disk1']]),
+        [VdevType.Spare]: expectDisks([['small-ssd1']]),
       });
     });
   });
@@ -147,16 +138,13 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
         [VdevType.Data]: expectDisks([
           ['enclosure1-disk1', 'enclosure2-disk1'],
           ['enclosure3-disk1', 'larger1'],
-          ['no-enclosure-disk1', 'enclosure1-disk2'],
+          ['no-enclosure-disk1', 'enclosure1-disk1'],
         ]),
         [VdevType.Log]: expectDisks([
-          ['enclosure2-disk2', 'enclosure3-disk2', 'larger2'],
-          ['enclosure1-disk3', 'enclosure3-disk3', 'larger3'],
+          ['enclosure2-disk1', 'enclosure3-disk1', 'larger1'],
+          ['no-enclosure-disk1', 'enclosure1-disk1', 'enclosure2-disk1'],
         ]),
-        [VdevType.Spare]: expectDisks([
-          ['enclosure3-disk4'],
-          ['enclosure3-disk5'],
-        ]),
+        [VdevType.Spare]: expectDisks([['enclosure3-disk1'], ['larger1']]),
       });
     });
   });
