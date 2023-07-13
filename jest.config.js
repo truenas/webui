@@ -14,4 +14,5 @@ module.exports = {
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
+  clearMocks: true,
 };
