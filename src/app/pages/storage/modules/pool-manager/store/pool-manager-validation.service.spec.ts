@@ -71,7 +71,7 @@ describe('PoolManagerValidationService', () => {
         {
           severity: 'error',
           step: 'data',
-          text: 'At least 1 data vdev is required.',
+          text: 'At least 1 data VDEV is required.',
         },
       ]);
     });
@@ -85,7 +85,7 @@ describe('PoolManagerValidationService', () => {
 
       expect(result).toEqual({
         cache: null,
-        data: 'At least 1 data vdev is required.',
+        data: 'At least 1 data VDEV is required.',
         dedup: null,
         enclosure: 'No Enclosure selected for a Limit Pool To A Single Enclosure.',
         general: 'Name not added',

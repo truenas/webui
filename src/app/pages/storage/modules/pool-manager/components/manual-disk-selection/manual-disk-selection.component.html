@@ -10,7 +10,7 @@
       <mat-divider class="divider" [vertical]="true"></mat-divider>
       <div class="right-pane">
         <div class="header vdevs-header">
-          <h3>{{ 'VDevs' | translate }}</h3>
+          <h3>{{ 'VDEVs' | translate }}</h3>
           <div class="header-actions">
             <button
               mat-button
@@ -23,12 +23,18 @@
 
         <mat-divider class="header-divider"></mat-divider>
         <div class="vdevs-container">
-          <ix-manual-selection-vdev
-            *ngFor="let vdev of currentVdevs; trackBy: trackVdevById"
-            [vdev]="vdev"
-            [layout]="data.layout"
-            [editable]="true"
-          ></ix-manual-selection-vdev>
+          <div *ngIf="!currentVdevs.length; else showVdevs" class="no-vdevs">
+            <p>{{ 'Click Add to add first VDEV.' | translate }}</p>
+            <p>{{ 'Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.' }}</p>
+          </div>
+          <ng-template #showVdevs>
+            <ix-manual-selection-vdev
+              *ngFor="let vdev of currentVdevs; trackBy: trackVdevById"
+              [vdev]="vdev"
+              [layout]="data.layout"
+              [editable]="true"
+            ></ix-manual-selection-vdev>
+          </ng-template>
         </div>
         <mat-divider class="divider actions-divider"></mat-divider>
         <div class="actions">
