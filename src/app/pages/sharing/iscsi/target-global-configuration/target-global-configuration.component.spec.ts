@@ -79,7 +79,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       'ISNS Servers': ['188.23.4.23', '92.233.1.1'],
       'Pool Available Space Threshold (%)': '20',
       'iSCSI listen port': '3260',
-      ALUA: false,
+      'Asymmetric Logical Unit Access (ALUA)': false,
     });
   });
 
@@ -90,7 +90,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       'ISNS Servers': ['32.12.112.42', '8.2.1.2'],
       'Pool Available Space Threshold (%)': '15',
       'iSCSI listen port': '3270',
-      ALUA: false,
+      'Asymmetric Logical Unit Access (ALUA)': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
