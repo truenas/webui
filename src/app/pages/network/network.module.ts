@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -26,18 +26,14 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
 import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { NetworkService } from 'app/services';
-import { InterfaceStatusIconComponent } from './components/interfaces-card/interface-status-icon/interface-status-icon.component';
-import { InterfacesCardComponent } from './components/interfaces-card/interfaces-card.component';
-import { IpAddressesCellComponent } from './components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { IpmiCardComponent } from './components/ipmi-card/ipmi-card.component';
 import { IpmiEventsDialogComponent } from './components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
+import { IpmiFormComponent } from './components/ipmi-card/ipmi-form/ipmi-form.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
 
@@ -78,13 +74,10 @@ import { routing } from './network.routing';
     DefaultGatewayDialogComponent,
     IpmiCardComponent,
     IpmiEventsDialogComponent,
-    InterfacesCardComponent,
-    IpAddressesCellComponent,
-    InterfaceStatusIconComponent,
   ],
   providers: [
     NetworkService,
-    InterfacesStore,
+    TranslateService,
   ],
 })
 export class NetworkModule {

@@ -39,12 +39,12 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const templatedCellIndexes = this.customCells.toArray().map((cell) => cell.columnIndex);
-    const availableIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
+    const availabledIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
       .filter((idx) => !templatedCellIndexes.includes(idx));
 
     this.customCells.forEach((cell) => {
       if (cell.columnIndex === undefined) {
-        cell.columnIndex = availableIndexes.shift();
+        cell.columnIndex = availabledIndexes.shift();
       }
     });
 

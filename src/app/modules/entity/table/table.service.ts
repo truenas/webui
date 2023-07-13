@@ -173,10 +173,9 @@ export class TableService {
     }
   }
 
-  // TODO: Remove in favor of a ix-interface-status-icon and classes
   updateStateInfoIcon(elemntId: string, type: 'sent' | 'received'): void {
     const targetEl = document.getElementById(elemntId);
-    const targetIcon = targetEl?.firstElementChild;
+    const targetIcon = targetEl.firstElementChild;
     if (targetIcon) {
       const arrowIcons = targetIcon.getElementsByClassName('arrow');
       const targetIconEl = type === 'sent' ? arrowIcons[0] : arrowIcons[1];
