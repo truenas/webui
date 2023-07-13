@@ -32,7 +32,8 @@
     <ix-checkbox
       *ngIf="isHaSystem"
       formControlName="alua"
-      [label]="'ALUA' | translate"
+      [label]="'Asymmetric Logical Unit Access (ALUA)' | translate"
+      [hint]="'Do not enable ALUA on TrueNAS unless it is also supported by and enabled on the client computers. ALUA only works when enabled on both the client and server.' | translate"
     ></ix-checkbox>
   </ix-fieldset>
 
