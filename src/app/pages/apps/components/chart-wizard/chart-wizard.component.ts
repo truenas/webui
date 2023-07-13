@@ -227,9 +227,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         const keys = fieldToBeDeleted.split('.');
         _.unset(data, keys);
       },
-      complete: () => {
-        this.saveData(data);
-      },
+      complete: () => this.saveData(data),
     });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
@@ -277,7 +275,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.router.navigate(['/apps/installed']);
+    this.router.navigate(['/apps/installed', this.catalog, this.train, this.appId]);
   }
 
   private listenForRouteChanges(): void {

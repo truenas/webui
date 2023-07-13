@@ -1,0 +1,15 @@
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.interfaces-table {
+  ::ng-deep tr td:first-child {
+    width: 55px;
+  }
+
+  .interface-icon {
+    display: block;
+    margin-left: 3px;
+  }
+}

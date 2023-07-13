@@ -1,0 +1,44 @@
+<ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
+<h1 mat-dialog-title>{{ 'IPMI Events' | translate }}</h1>
+<div mat-dialog-content class="events-container">
+  <ng-container *ngIf="(events.length || isLoading); else empty">
+    <div
+      *ngFor="let event of events; trackBy: trackById"
+      class="event"
+    >
+      <div class="event-header">
+        <div>{{ getEventDate(event) | formatDateTime }}</div>
+        <div>
+          {{ event.name }}
+          &mdash;
+          {{ event.event_direction }}
+        </div>
+      </div>
+      <div class="event-description">
+        {{ event.event }}
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #empty>
+    <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
+  </ng-template>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button
+    *ngIf="canClear"
+    mat-button
+    color="warn"
+    ixTest="clear"
+    (click)="onClear()"
+  >
+    {{ 'Clear' | translate }}
+  </button>
+  <button
+    mat-button
+    mat-dialog-close
+    color="primary"
+    ixTest="close"
+  >
+    {{ 'Close' | translate }}
+  </button>
+</div>

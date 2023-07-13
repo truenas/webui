@@ -81,7 +81,7 @@ export class UserFormComponent implements OnInit {
     group_create: [true],
     groups: [[] as number[]],
     home: [defaultHomePath, []],
-    home_mode: ['755'],
+    home_mode: ['700'],
     home_create: [false],
     sshpubkey: [null as string],
     sshpubkey_file: [null as File[]],
@@ -203,6 +203,20 @@ export class UserFormComponent implements OnInit {
       this.updateShellOptions(this.form.value.group, groups);
     });
 
+    this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
+      if (home === defaultHomePath) {
+        this.form.controls.home_mode.disable();
+      } else {
+        this.form.controls.home_mode.enable();
+      }
+    });
+
+    this.form.controls.home_create.valueChanges.pipe(untilDestroyed(this)).subscribe((checked) => {
+      if (checked) {
+        this.form.patchValue({ home_mode: '700' });
+      }
+    });
+
     this.form.controls.password_conf.addValidators(
       this.validatorsService.withMessage(
         matchOtherValidator('password'),
@@ -216,7 +230,8 @@ export class UserFormComponent implements OnInit {
         this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
       });
     } else {
-      this.form.patchValue({ home_mode: '755' });
+      this.form.patchValue({ home_mode: '700' });
+      this.form.controls.home_mode.disable();
     }
     this.subscriptions.push(
       this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),

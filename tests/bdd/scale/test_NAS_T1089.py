@@ -9,7 +9,9 @@ from function import (
     wait_for_attribute_value,
     wait_on_element_disappear,
 )
-from selenium.webdriver.common.keys import (Keys)
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+
 from pytest_bdd import (
     given,
     scenario,
@@ -80,7 +82,7 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
     assert wait_on_element(driver, 7, xpaths.add_User.root_Group_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).click()
-    driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
+    ActionChains(driver).send_keys(Keys.TAB).perform()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -107,7 +109,6 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     time.sleep(0.5)
     assert wait_for_attribute_value(driver, 5, xpaths.add_User.root_Group_Option, 'class', 'mdc-list-item--selected')
     # return to dashboard
-    driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
+    ActionChains(driver).send_keys(Keys.TAB).perform()
     time.sleep(0.5)
-    assert wait_on_element(driver, 10, xpaths.button.close_Icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()

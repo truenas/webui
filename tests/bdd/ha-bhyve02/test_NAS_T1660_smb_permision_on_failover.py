@@ -176,7 +176,7 @@ def set_the_path_to_mntdozersmb1_and_input_the_smbtest1_as_name_then_click_to_en
     assert wait_on_element(driver, 7, xpaths.smb.addTitle)
     assert wait_on_element(driver, 5, xpaths.smb.path_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.path_Input).send_keys(dataset_path)
-
+    assert wait_on_element(driver, 5, xpaths.smb.name_Input, 'inputable')
     rsc.Click_Clear_Input(driver, xpaths.smb.name_Input, share_name)
 
     assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
@@ -235,7 +235,6 @@ def create_a_file_with_root_in_mntdozersmb2_get_the_file_from_the_smbtest2_share
     results = run_cmd(f'smbclient //{nas_Hostname}/{share_name} -U ericbsd%testing1 -c "get testfile.txt testfile.txt"')
     assert results['result'], results['output']
 
-    print('past smbclient')
     results = post(nas_Hostname, '/filesystem/stat/', (admin_User, admin_Password), f'{share_Dataset_Data[share_name]}/testfile.txt')
     assert results.status_code == 200, results.text
     time.sleep(5)

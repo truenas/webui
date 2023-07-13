@@ -97,8 +97,8 @@ describe('ManualSelectionDiskFiltersComponent', () => {
 
     expect(filtersUpdated).toHaveBeenCalledWith({
       search: '',
-      diskType: DiskType.Hdd,
-      diskSize: '',
+      diskType: '',
+      diskSize: '4 GiB',
     });
   });
 });

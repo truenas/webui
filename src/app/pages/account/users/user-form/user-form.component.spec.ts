@@ -248,7 +248,6 @@ describe('UserFormComponent', () => {
       await form.fillForm({
         'Auxiliary Groups': ['mock-group'],
         'Full Name': 'updated',
-        'Home Directory Permissions': '755',
         'Home Directory': '/home/updated',
         'Primary Group': 'mock-group',
         'Create Home Directory': true,
@@ -260,6 +259,10 @@ describe('UserFormComponent', () => {
         'Allowed sudo commands': ['pwd'],
         'Allowed sudo commands with no password': [],
         'Allow all sudo commands with no password': true,
+      });
+
+      await form.fillForm({
+        'Home Directory Permissions': '755',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -310,7 +313,6 @@ describe('UserFormComponent', () => {
       const disabled = await form.getDisabledState();
 
       expect(disabled).toEqual(expect.objectContaining({
-        'Home Directory Permissions': true,
         'Home Directory': true,
         'Primary Group': true,
         Username: true,

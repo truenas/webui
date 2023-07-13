@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterViewInit,
-  Component, ElementRef, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -55,6 +54,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private errorHandler: ErrorHandlerService,
     private mdDialog: MatDialog,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -94,6 +94,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
 
         if (podLog && podLog.msg !== 'nosub') {
           this.podLogs.push(podLog);
+          this.cdr.markForCheck();
           this.scrollToBottom();
         }
       },
@@ -102,6 +103,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         if (error.reason) {
           this.dialogService.error(this.errorHandler.parseError(error));
         }
+        this.cdr.markForCheck();
       },
     });
   }

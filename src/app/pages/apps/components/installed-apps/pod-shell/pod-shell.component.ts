@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,6 +35,7 @@ export class PodShellComponent implements TerminalConfiguration {
     private aroute: ActivatedRoute,
     private translate: TranslateService,
     private mdDialog: MatDialog,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   preInit(): Observable<void> {
@@ -45,23 +47,31 @@ export class PodShellComponent implements TerminalConfiguration {
         this.podName = params.podName as string;
         this.command = params.command as string;
 
-        this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
-          this.podDetails = { ...consoleChoices };
+        this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this))
+          .subscribe({
+            next: (consoleChoices) => {
+              this.podDetails = { ...consoleChoices };
 
-          const podDetail = this.podDetails[this.podName];
-          if (!podDetail) {
-            this.dialogService.confirm({
-              title: helptext.podConsole.nopod.title,
-              message: helptext.podConsole.nopod.message,
-              hideCheckbox: true,
-              buttonText: this.translate.instant('Close'),
-              hideCancel: true,
-            });
-          } else {
-            this.containerName = podDetail[0];
-            subscriber.next();
-          }
-        });
+              const podDetail = this.podDetails[this.podName];
+              if (!podDetail) {
+                this.dialogService.confirm({
+                  title: helptext.podConsole.nopod.title,
+                  message: helptext.podConsole.nopod.message,
+                  hideCheckbox: true,
+                  buttonText: this.translate.instant('Close'),
+                  hideCancel: true,
+                });
+              } else {
+                this.containerName = podDetail[0];
+                subscriber.next();
+              }
+
+              this.cdr.markForCheck();
+            },
+            error: () => {
+              this.cdr.markForCheck();
+            },
+          });
       });
     });
   }
