@@ -573,6 +573,150 @@ describe('AppSchemaService', () => {
         groups: [],
         portals: {},
       })).toEqual({ a: { c: null, d: 'test' } });
+      expect(service.serializeFormValue({
+        topContainer: {
+          items: [{ itemKey1: 'item-key-1', itemKey2: 'item-key-2' }],
+          otherItemsSameNestedName: [
+            { items: [{ item: 'same-name-1' }] },
+            { items: [{ item: 'same-name-2' }] },
+          ],
+          otherItemsDifferentNestedName: [{ itemsDifferent: [{ item: 'different-name-1' }, { item: 'different-name-2' }] }],
+        },
+      }, {
+        questions: [
+          {
+            variable: 'topContainer',
+            label: '',
+            group: 'Radarr Configuration',
+            schema: {
+              type: 'dict',
+              attrs: [
+                {
+                  variable: 'items',
+                  label: 'Items',
+                  schema: {
+                    type: 'list',
+                    default: [],
+                    items: [
+                      {
+                        variable: 'someEntry',
+                        label: 'someEntry',
+                        schema: {
+                          type: 'dict',
+                          attrs: [
+                            {
+                              variable: 'itemKey1',
+                              label: 'itemKey1',
+                              schema: {
+                                type: 'string',
+                                default: '',
+                                required: true,
+                              },
+                            },
+                            {
+                              variable: 'itemKey2',
+                              label: 'itemKey2',
+                              schema: {
+                                type: 'string',
+                                default: '',
+                                required: true,
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  variable: 'otherItemsSameNestedName',
+                  label: 'otherItemsSameNestedName',
+                  schema: {
+                    type: 'list',
+                    default: [],
+                    items: [
+                      {
+                        variable: 'otherEntry',
+                        label: 'otherEntry',
+                        schema: {
+                          type: 'dict',
+                          attrs: [
+                            {
+                              variable: 'items',
+                              label: 'items',
+                              schema: {
+                                type: 'list',
+                                default: [],
+                                items: [
+                                  {
+                                    variable: 'item',
+                                    label: 'Item',
+                                    schema: {
+                                      type: 'string',
+                                      default: '',
+                                      required: true,
+                                    },
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  variable: 'otherItemsDifferentNestedName',
+                  label: 'otherItemsDifferentNestedName',
+                  schema: {
+                    type: 'list',
+                    default: [],
+                    items: [
+                      {
+                        variable: 'otherEntry',
+                        label: 'otherEntry',
+                        schema: {
+                          type: 'dict',
+                          attrs: [
+                            {
+                              variable: 'itemsDifferent',
+                              label: 'itemsDifferent',
+                              schema: {
+                                type: 'list',
+                                default: [],
+                                items: [
+                                  {
+                                    variable: 'item',
+                                    label: 'Item',
+                                    schema: {
+                                      type: 'string',
+                                      default: '',
+                                      required: true,
+                                    },
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ] as ChartSchemaNode[],
+        groups: [],
+        portals: {},
+      })).toStrictEqual({
+        topContainer: {
+          items: [{ itemKey1: 'item-key-1', itemKey2: 'item-key-2' }],
+          otherItemsSameNestedName: [{ items: ['same-name-1'] }, { items: ['same-name-2'] }],
+          otherItemsDifferentNestedName: [{ itemsDifferent: ['different-name-1', 'different-name-2'] }],
+        },
+      });
     });
 
     it('always serializes dictionaries in lists as objects', () => {
