@@ -48,6 +48,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     basename: helptextSharingIscsi.globalconf_tooltip_basename,
     isns_servers: helptextSharingIscsi.globalconf_tooltip_isns_servers,
     pool_avail_threshold: helptextSharingIscsi.globalconf_tooltip_pool_avail_threshold,
+    alua: helptextSharingIscsi.globalconf_tooltip_alua,
   };
 
   constructor(

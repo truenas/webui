@@ -49,7 +49,7 @@
   "Discover": "",
   "Discover Apps": "",
   "Dispersal Strategy": "",
-  "Do not enable ALUA on TrueNAS unless it is also supported by and enabled on the client computers. ALUA only works when enabled on both the client and server.": "",
+  "Do not enable ALUA on TrueNAS unless it is also supported     by and enabled on the client computers. ALUA only works when enabled     on both the client and server.": "",
   "Each disk stores data. A stripe requires at least one disk and has no data redundancy.": "",
   "Edit Manual Disk Selection": "",
   "Enable Two Factor Authentication Globally": "",
