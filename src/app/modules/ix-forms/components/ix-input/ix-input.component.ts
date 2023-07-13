@@ -188,13 +188,13 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
   }
 
   onEnter(): void {
-    if (this.filteredOptions && this.filteredOptions.length) {
+    if (this.filteredOptions?.length) {
       this.optionSelected(this.filteredOptions[0]);
     }
   }
 
   optionSelected(option: Option): void {
-    if (this.inputElementRef && this.inputElementRef.nativeElement) {
+    if (this.inputElementRef?.nativeElement) {
       this.inputElementRef.nativeElement.value = option.label;
       setTimeout(() => this.inputElementRef.nativeElement.blur(), 10);
     }

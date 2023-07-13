@@ -113,7 +113,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
         this.appsService.getChartRelease(apiEvent.id as string),
       ])),
       tap(([apiEvent, chartReleases]) => {
-        if (!chartReleases || !chartReleases.length) {
+        if (!chartReleases?.length) {
           return;
         }
         this.patchState((state: InstalledAppsState): InstalledAppsState => {

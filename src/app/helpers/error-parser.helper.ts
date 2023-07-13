@@ -3,7 +3,7 @@ import { isString } from '@sentry/utils';
 import ErrorStackParser from 'error-stack-parser';
 
 // https://github.com/angular/angular/blob/master/packages/core/src/util/errors.ts
-function tryToUnwrapZonejsError(error: unknown): unknown | Error {
+function tryToUnwrapZonejsError(error: unknown): unknown {
   // TODO: once Angular14 is the minimum requirement ERROR_ORIGINAL_ERROR and
   //  getOriginalError from error.ts can be used directly.
   return error && (error as { ngOriginalError: Error }).ngOriginalError
@@ -31,11 +31,11 @@ function extractHttpModuleError(error: HttpErrorResponse): string | Error {
   return error.message;
 }
 
-type ErrorCandidate = {
+interface ErrorCandidate {
   name?: unknown;
   message?: unknown;
   stack?: unknown;
-};
+}
 
 function isErrorOrErrorLikeObject(value: unknown): value is Error {
   if (value instanceof Error) {
