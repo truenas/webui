@@ -190,7 +190,7 @@ describe('PoolManagerValidationService', () => {
         {
           severity: 'warning',
           step: 'log',
-          text: 'A stripe log vdev may result in data loss if it fails combined with a power outage.',
+          text: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
         },
         {
           severity: 'warning',
@@ -205,7 +205,7 @@ describe('PoolManagerValidationService', () => {
         {
           severity: 'error-warning',
           step: 'data',
-          text: 'A stripe data vdev is highly discouraged and will result in data loss if it fails',
+          text: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
         },
       ]);
     });
@@ -220,11 +220,11 @@ describe('PoolManagerValidationService', () => {
       expect(result).toEqual(
         {
           cache: null,
-          data: 'A stripe data vdev is highly discouraged and will result in data loss if it fails',
+          data: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
           dedup: null,
           enclosure: null,
           general: null,
-          log: 'A stripe log vdev may result in data loss if it fails combined with a power outage.',
+          log: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
           metadata: null,
           review: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
           spare: null,

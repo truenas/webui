@@ -25,7 +25,7 @@
         <div class="vdevs-container">
           <div *ngIf="!currentVdevs.length; else showVdevs" class="no-vdevs">
             <p>{{ 'Click Add to add first VDEV.' | translate }}</p>
-            <p>{{ 'Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.' }}</p>
+            <p>{{ 'Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.' | translate }}</p>
           </div>
           <ng-template #showVdevs>
             <ix-manual-selection-vdev

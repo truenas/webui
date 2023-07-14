@@ -303,6 +303,7 @@
   "Also include snapshots with the name": "",
   "Also unlock any encrypted dataset stored within this dataset.": "",
   "Alternative names that SMB clients can use when connecting to this NAS. Can be no greater than 15 characters.": "",
+  "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "",
   "Always": "",
   "Always Chroot": "",
   "Always On": "",

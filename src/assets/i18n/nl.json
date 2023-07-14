@@ -7,6 +7,7 @@
   "A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails": "",
   "Add Vdevs to Pool": "",
   "Adding data VDEVs of different types is not supported.": "",
+  "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "",
   "Application Metadata": "",
   "Apps (Old)": "",
   "Are you sure you want to delete catalog <b>\"{name}\"</b>?": "",

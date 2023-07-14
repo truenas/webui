@@ -7,6 +7,7 @@
   "ACL Types & ACL Modes": "",
   "Active: TrueNAS Controller {id}": "",
   "Adding data VDEVs of different types is not supported.": "",
+  "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "",
   "Apps (Old)": "",
   "Asymmetric Logical Unit Access (ALUA)": "",
   "At least 1 data VDEV is required.": "",
