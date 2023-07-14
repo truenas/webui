@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  vdev_diskSizeErrorMsg: T('Mixing disks of different sizes in a vdev is not recommended.'),
+  vdev_diskSizeErrorMsg: T('Mixing disks of different sizes in a VDEV is not recommended.'),
   vdev_type_tooltip: T('Arrange the disks according to capacity, redundancy, and \
  performance considerations. More types become available as more disks are added to the vdev.<br> \
  A <i>Stripe</i> uses the entire capacity of the disks for storage and <b>has no redundancy</b>. \
