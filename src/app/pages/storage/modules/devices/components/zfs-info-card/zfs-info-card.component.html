@@ -5,20 +5,20 @@
   <mat-card-content>
     <div>
       <div *ngIf="topologyParentItem?.name" class="details-item">
-        <span class="label">{{ 'Parent' | translate }}:</span>
-        <span class="value">{{ topologyParentItem.name | uppercase }}</span>
+        <div class="label">{{ 'Parent' | translate }}:</div>
+        <div class="value">{{ topologyParentItem.name | uppercase }}</div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Read Errors' | translate }}:</span>
-        <span class="value">{{ topologyItem.stats?.read_errors }}</span>
+        <div class="label">{{ 'Read Errors' | translate }}:</div>
+        <div class="value">{{ topologyItem.stats?.read_errors }}</div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Write Errors' | translate }}:</span>
-        <span class="value">{{ topologyItem.stats?.write_errors }}</span>
+        <div class="label">{{ 'Write Errors' | translate }}:</div>
+        <div class="value">{{ topologyItem.stats?.write_errors }}</div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Checksum Errors' | translate }}:</span>
-        <span class="value">{{ topologyItem.stats?.checksum_errors }}</span>
+        <div class="label">{{ 'Checksum Errors' | translate }}:</div>
+        <div class="value">{{ topologyItem.stats?.checksum_errors }}</div>
       </div>
     </div>
   </mat-card-content>
