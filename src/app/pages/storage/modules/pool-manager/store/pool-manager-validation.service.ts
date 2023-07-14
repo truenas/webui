@@ -112,7 +112,12 @@ export class PoolManagerValidationService {
 
         const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
 
-        nonEmptyTopologyCategories.forEach(([typologyCategoryType, typologyCategory]) => {
+        nonEmptyTopologyCategories.forEach((
+          [typologyCategoryType, typologyCategory],
+        ) => {
+          if (this.existingPool) {
+            return;
+          }
           if (
             [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(typologyCategoryType)
             && typologyCategory.vdevs.length >= 1 && typologyCategory.layout === CreateVdevLayout.Stripe
