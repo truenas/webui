@@ -33,6 +33,7 @@ export class AddVdevsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.addVdevsStore.initialize();
     this.activatedRoute.params.pipe(
       tap((params) => {
         this.addVdevsStore.loadPoolData(+params.poolId);

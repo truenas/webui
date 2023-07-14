@@ -38,6 +38,12 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
     super(initialState);
   }
 
+  initialize = this.effect((trigger$) => {
+    return trigger$.pipe(
+      tap(() => this.setState(() => ({ ...initialState }))),
+    );
+  });
+
   loadPoolData = this.effect<number>((triggers$) => {
     return triggers$.pipe(
       tap(() => this.patchState({ isLoading: true })),
