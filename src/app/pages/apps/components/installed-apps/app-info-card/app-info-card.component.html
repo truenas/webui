@@ -30,31 +30,31 @@
       </div>
       <div class="details-list">
         <div class="details-item">
-          <span class="label">{{ 'Name' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Name' | translate }}:</div>
+          <div class="value">
             <ng-container *ngIf="app?.chart_metadata?.name; else notAvailable">
               {{ app.chart_metadata.name }}
             </ng-container>
-          </span>
+          </div>
         </div>
         <div class="details-item">
-          <span class="label">{{ 'Version' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Version' | translate }}:</div>
+          <div class="value">
             <ng-container *ngIf="app?.human_version; else notAvailable">
               {{ app.human_version }}
             </ng-container>
-          </span>
+          </div>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div class="details-item">
-          <span class="label">{{ 'Last Updated' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Last Updated' | translate }}:</div>
+          <div class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-          </span>
+          </div>
         </div>
         <div class="details-item sources">
-          <span class="label">{{ 'Source' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Source' | translate }}:</div>
+          <div class="value">
             <div *ngIf="app?.chart_metadata?.sources?.length; else notAvailable">
               <a
                 *ngFor="let source of app?.chart_metadata?.sources;"
@@ -65,37 +65,37 @@
                 [ixTest]="[app.name, 'source']"
               >{{ source | cleanLink }}</a>
             </div>
-          </span>
+          </div>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div class="details-item">
-          <span class="label">{{ 'Developer' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Developer' | translate }}:</div>
+          <div class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-          </span>
+          </div>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div *ngIf="false" class="details-item">
-          <span class="label">{{ 'Commits in the last 60 days' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Commits in the last 60 days' | translate }}:</div>
+          <div class="value">
             <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-          </span>
+          </div>
         </div>
         <div class="details-item">
-          <span class="label">{{ 'Catalog' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Catalog' | translate }}:</div>
+          <div class="value">
             <ng-container *ngIf="app?.catalog; else notAvailable">
               {{ app.catalog }}
             </ng-container>
-          </span>
+          </div>
         </div>
         <div class="details-item">
-          <span class="label">{{ 'Train' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Train' | translate }}:</div>
+          <div class="value">
             <ng-container *ngIf="app?.catalog_train; else notAvailable">
               {{ app.catalog_train }}
             </ng-container>
-          </span>
+          </div>
         </div>
         <div *ngIf="app?.portals" class="portals">
           <button
