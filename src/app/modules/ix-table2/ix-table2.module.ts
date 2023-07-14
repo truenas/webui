@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -28,6 +29,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
 import { IxTable2EmptyDirective } from 'app/modules/ix-table2/directives/ix-table-empty.directive';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-selector/ix-table-columns-selector.component';
 
 @NgModule({
   imports: [
@@ -42,6 +44,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     NgxFilesizeModule,
     TestIdModule,
     CoreComponents,
+    MatMenuModule,
   ],
   declarations: [
     IxTable2Component,
@@ -62,6 +65,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,
+    IxTableColumnsSelectorComponent,
   ],
   exports: [
     IxTable2Component,
@@ -82,6 +86,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,
+    IxTableColumnsSelectorComponent,
   ],
 })
 export class IxTable2Module {}

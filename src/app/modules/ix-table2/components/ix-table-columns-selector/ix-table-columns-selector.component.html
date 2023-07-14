@@ -1,0 +1,49 @@
+<button
+  mat-button
+  ixTest="columns"
+  [matMenuTriggerFor]="menu"
+>
+  {{ 'Columns' | translate }}
+  <ix-icon name="mdi-menu-down"></ix-icon>
+</button>
+
+<mat-menu #menu="matMenu" multiple overlapTrigger="false">
+  <div (click)="$event.stopPropagation()">
+    <button
+      mat-menu-item
+      [ixTest]="['select-all-columns']"
+      (click)="checkAll()"
+    >
+      <ix-icon [name]="isAllChecked ? 'check_circle' : 'remove'"></ix-icon>
+      <span *ngIf="!isAllChecked">
+        {{ 'Select All' | translate }}
+      </span>
+      <span *ngIf="isAllChecked">
+        {{ 'Unselect All' | translate }}
+      </span>
+    </button>
+  </div>
+
+  <div (click)="$event.stopPropagation()">
+    <ng-container *ngFor="let column of columns">
+      <button
+        *ngIf="column.title"
+        mat-menu-item
+        [ixTest]="['select-column', column.title]"
+      >
+        <ix-icon [name]="isChecked(column.propertyName) ? 'remove' : 'check_circle'"></ix-icon>
+        <span>{{ column.title | translate }}</span>
+      </button>
+    </ng-container>
+  </div>
+
+  <div (click)="$event.stopPropagation()">
+    <button
+      mat-menu-item
+      [ixTest]="['reset-columns-to-defaults']"
+    >
+      <ix-icon name="undo"></ix-icon>
+      <span>{{ 'Reset to Defaults' | translate }}</span>
+    </button>
+  </div>
+</mat-menu>
