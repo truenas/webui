@@ -4,7 +4,7 @@
     <div *ngIf="selectedCategory"> {{ 'Category' | translate }}: </div>
     <div class="categories">
       <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
-        {{ selectedCategory?.title }}
+        {{ selectedCategory?.title | translate }}
         <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
       </button>
       <mat-menu #categoriesMenu="matMenu">
@@ -14,7 +14,7 @@
           [ixTest]="['category', category.id]"
           (click)="onCategoryChanged(category)"
         >
-          <span>{{ category.title }}</span>
+          <span>{{ category.title | translate }}</span>
         </button>
       </mat-menu>
     </div>
@@ -22,7 +22,7 @@
   <form *ngIf="selectedCategory" (submit)="onSubmit()">
     <ng-container *ngFor="let cls of selectedCategory.classes; trackBy: trackById">
       <div class="class-row" [formGroup]="form.controls[cls.id]">
-        <span class="class-label">{{ cls.title }}</span>
+        <span class="class-label">{{ cls.title | translate }}</span>
         <ix-select
           formControlName="level"
           [label]="'Set Warning Level' | translate"
