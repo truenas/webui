@@ -28,6 +28,13 @@
       [label]="'iSCSI listen port' | translate"
       [required]="true"
     ></ix-input>
+
+    <ix-checkbox
+      *ngIf="isHaSystem"
+      formControlName="alua"
+      [label]="'Asymmetric Logical Unit Access (ALUA)' | translate"
+      [tooltip]="tooltips.alua | translate"
+    ></ix-checkbox>
   </ix-fieldset>
 
   <ix-form-actions class="form-actions">

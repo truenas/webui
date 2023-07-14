@@ -20,52 +20,52 @@
     </mat-card-header>
     <mat-card-content>
       <div class="details-item">
-        <span class="label">{{ 'Type' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Type' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="dataset.type; else notAvailable">
             {{ dataset.type }}
           </ng-container>
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Sync' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Sync' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="dataset?.sync?.value; else notAvailable">
             {{ dataset.sync.value }}
           </ng-container>
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Compression Level' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Compression Level' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="datasetCompression; else notAvailable">
             {{ datasetCompression }}
           </ng-container>
-        </span>
+        </div>
       </div>
       <div *ngIf="!isZvol" class="details-item">
-        <span class="label">{{ 'Enable Atime' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Enable Atime' | translate }}:</div>
+        <div class="value">
           {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'ZFS Deduplication' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="dataset?.deduplication?.value; else notAvailable">
             {{ dataset.deduplication.value }}
           </ng-container>
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Case Sensitivity' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
+        <div class="value">
           {{ (dataset.casesensitive ? OnOff.On : OnOff.Off) | translate }}
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Path' | translate }}:</span>
-        <span
+        <div class="label">{{ 'Path' | translate }}:</div>
+        <div
           *ngIf="!isLoading"
           matTooltipPosition="above"
           class="value dataset-path"
@@ -73,12 +73,12 @@
           [matTooltipClass]="['dataset-path-tooltip']"
         >
           {{ dataset.name }}
-        </span>
+        </div>
         <ix-copy-btn [text]="dataset.name"></ix-copy-btn>
       </div>
       <div *ngIf="!isLoading && hasComments" class="details-item">
-        <span class="label">{{ 'Comments' | translate }}:</span>
-        <span class="value dataset-comments">{{ dataset.comments.value }}</span>
+        <div class="label">{{ 'Comments' | translate }}:</div>
+        <div class="value dataset-comments">{{ dataset.comments.value }}</div>
       </div>
     </mat-card-content>
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">
