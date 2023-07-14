@@ -213,12 +213,12 @@ describe('AutomatedDiskSelection', () => {
     expect(await widthSelect.getOptionLabels()).toStrictEqual(['1']);
 
     const widthValue = await widthSelect.getValue();
-    expect(widthValue).toBe(1);
+    expect(widthValue).toBe('1');
 
     expect(await vdevsSelect.getOptionLabels()).toStrictEqual(['1']);
 
     const vdevsValue = await widthSelect.getValue();
-    expect(vdevsValue).toBe(1);
+    expect(vdevsValue).toBe('1');
   });
 
   it('doesnt let the layout change', async () => {
