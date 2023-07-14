@@ -142,7 +142,7 @@ describe('DisplayVmDialogComponent', () => {
     await openButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('vm.get_display_web_uri', [7, 'localhost', { protocol: 'HTTP' }]);
-    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenNthCalledWith(3, 'http://localhost:4200/vm/display/2/vnc.html', '_blank');
+    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenLastCalledWith('http://localhost:4200/vm/display/2/vnc.html', '_blank');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 
@@ -181,7 +181,7 @@ describe('DisplayVmDialogComponent', () => {
       }],
       protocol: 'HTTP',
     }]);
-    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenNthCalledWith(4, 'http://localhost:4200/vm/display/2/vnc.html', '_blank');
+    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenLastCalledWith('http://localhost:4200/vm/display/2/vnc.html', '_blank');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 
