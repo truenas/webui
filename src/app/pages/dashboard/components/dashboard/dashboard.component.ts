@@ -721,7 +721,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe((poolScan) => {
-        const updatedPool = this.pools.find((pool) => pool.name === poolScan.name);
+        const updatedPool = this.pools?.find((pool) => pool.name === poolScan.name);
         if (updatedPool) {
           updatedPool.scan = poolScan.scan;
         }
