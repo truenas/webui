@@ -9,7 +9,7 @@ import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/u
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('AuthService', () => {
+describe('DatasetFormService', () => {
   let spectator: SpectatorService<DatasetFormService>;
   const dataset = {} as Dataset;
   const createService = createServiceFactory({
@@ -45,7 +45,7 @@ describe('AuthService', () => {
 
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
         helptext.pathWarningTitle,
-        helptext.pathIsTooLongWarning,
+        helptext.pathIsTooDeepWarning,
       );
       expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
     });

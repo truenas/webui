@@ -78,7 +78,10 @@
             ).
           </div>
         </mat-card>
-        <ix-conf-table fxFlex [conf]="interfaceTableConf"></ix-conf-table>
+        <ix-interfaces-card
+          [isHaEnabled]="isHaEnabled"
+          (interfacesUpdated)="checkInterfacePendingChanges()"
+        ></ix-interfaces-card>
         <ix-network-configuration-card
           class="dashboard-card"
         ></ix-network-configuration-card>
@@ -87,7 +90,7 @@
 
     <div class="left-column" fxFlex="100" fxFlex.lg="35">
       <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
-        <ix-conf-table fxFlex [conf]="staticRoutesTableConf"></ix-conf-table>
+        <ix-static-routes></ix-static-routes>
         <ix-ipmi-card></ix-ipmi-card>
       </div>
     </div>
