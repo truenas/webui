@@ -8,11 +8,11 @@
     <h3 *ngIf="title" class="title">
       <ng-container *ngIf="titleHref; else plainTitle">
         <a [ixTest]="[title, 'open-in-new']" [routerLink]="titleHref">
-          {{ title }}
+          {{ title | translate }}
           <ix-icon name="open_in_new" class="title-icon"></ix-icon>
         </a>
       </ng-container>
-      <ng-template #plainTitle>{{ title }}</ng-template>
+      <ng-template #plainTitle>{{ title | translate }}</ng-template>
     </h3>
     <div class="actions">
       <button

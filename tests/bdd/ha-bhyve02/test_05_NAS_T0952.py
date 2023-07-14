@@ -125,10 +125,10 @@ def open_the_drop_down_details_pane_for_the_user(driver):
     assert wait_on_element(driver, 5, xpaths.users.eric_User, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button, 'clickable')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(text(),"Home Directory")]')
+    assert wait_on_element(driver, 5, xpaths.users.eric_Home_Directory)
 
 
 @then('verify that the home directory has changed')
 def verify_that_the_home_directory_has_changed(driver):
     """verify that the home directory has changed."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dd[contains(text(),"/mnt/tank/ericbsd")]')
+    assert wait_on_element(driver, 5, xpaths.users.eric_Home_Directory_Text)

@@ -20,42 +20,42 @@
     <div class="chart-extra">
       <ng-container *ngIf="!isZvol">
         <div *ngIf="dataset?.refreservation?.parsed" class="details-item">
-          <span class="label">{{ 'Reserved for Dataset' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Reserved for Dataset' | translate }}:</div>
+          <div class="value">
             {{ dataset.refreservation.parsed | filesize: { standard: 'iec', round: 0 } }}
-          </span>
+          </div>
         </div>
         <div *ngIf="dataset?.reservation?.parsed" class="details-item">
-          <span class="label">
+          <div class="label">
             {{ 'Reserved for Dataset & Children' | translate }}:
-          </span>
-          <span class="value">
+          </div>
+          <div class="value">
             {{ dataset.reservation.parsed | filesize: { standard: 'iec', round: 0 } }}
-          </span>
+          </div>
         </div>
       </ng-container>
       <ng-container *ngIf="isZvol">
         <div class="details-item">
-          <span class="label">{{ 'Provisioning Type' | translate }}:</span>
-          <span *ngIf="dataset.thick_provisioned" class="value">
+          <div class="label">{{ 'Provisioning Type' | translate }}:</div>
+          <div *ngIf="dataset.thick_provisioned" class="value">
             {{ 'Thick' | translate }}
-          </span>
-          <span *ngIf="!dataset.thick_provisioned" class="value">
+          </div>
+          <div *ngIf="!dataset.thick_provisioned" class="value">
             {{ 'Sparse' | translate }}
-          </span>
+          </div>
         </div>
         <div *ngIf="dataset?.volsize?.parsed" class="details-item">
-          <span class="label">{{ 'Volume Size' | translate }}:</span>
-          <span class="value">
+          <div class="label">{{ 'Volume Size' | translate }}:</div>
+          <div class="value">
             {{ dataset.volsize.parsed | filesize: { standard: 'iec', round: 0 } }}
-          </span>
+          </div>
         </div>
       </ng-container>
     </div>
 
     <div class="details">
       <div class="details-item">
-        <span class="label">
+        <div class="label">
           <ng-container *ngIf="isFilesystem">
             {{ 'Space Available to Dataset' | translate }}
           </ng-container>
@@ -63,40 +63,40 @@
             {{ 'Space Available to Zvol' | translate }}
           </ng-container>
           :
-        </span>
-        <span class="value">
+        </div>
+        <div class="value">
           {{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}
-        </span>
+        </div>
       </div>
       <div *ngIf="(isFilesystem && hasQuota) || hasRefQuota" class="details-item">
-        <span class="label">{{ 'Applied Dataset Quota' | translate }}:</span>
-        <span *ngIf="hasQuota; else refquotaValue" class="value">
+        <div class="label">{{ 'Applied Dataset Quota' | translate }}:</div>
+        <div *ngIf="hasQuota; else refquotaValue" class="value">
           {{
             '{n} (applies to descendants)' | translate : {
               n: dataset.quota.parsed | filesize: { standard: 'iec', round: 0 }
             }
           }}
-        </span>
+        </div>
         <ng-template #refquotaValue>
-          <span class="value">
+          <div class="value">
             {{
               '{n}' | translate : {
                 n: dataset.refquota.parsed | filesize: { standard: 'iec', round: 0 }
               }
             }}
-          </span>
+          </div>
         </ng-template>
       </div>
       <div *ngIf="hasInheritedQuotas" class="details-item">
-        <span class="label">{{ 'Inherited Quotas' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Inherited Quotas' | translate }}:</div>
+        <div class="value">
           {{
             '{n} from {dataset}' | translate : {
               n: inheritedQuotasDataset.quota.parsed | filesize: { standard: 'iec', round: 0 },
               dataset: inheritedQuotasDataset.name
             }
           }}
-        </span>
+        </div>
         <a
           [ixTest]="[inheritedQuotasDataset.id, 'go-to-dataset']"
           [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]"
@@ -108,12 +108,12 @@
 
     <div class="details">
       <div class="details-item">
-        <span class="label">{{ 'User Quotas' | translate }}:</span>
+        <div class="label">{{ 'User Quotas' | translate }}:</div>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <span *ngIf="!isLoadingQuotas; else valuePlaceholder" class="value">
+          <div *ngIf="!isLoadingQuotas; else valuePlaceholder" class="value">
             {{ 'Quotas set for {n, plural, one {# user} other {# users}}' |
             translate: { n: userQuotas } }}
-          </span>
+          </div>
         </ng-container>
         <a
           *ngIf="checkQuotas"
@@ -124,11 +124,11 @@
         </a>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Group Quotas' | translate }}:</span>
+        <div class="label">{{ 'Group Quotas' | translate }}:</div>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <span *ngIf="!isLoadingQuotas; else valuePlaceholder" class="value">
+          <div *ngIf="!isLoadingQuotas; else valuePlaceholder" class="value">
             {{ 'Quotas set for {n, plural, one {# group} other {# groups}}' | translate: { n: groupQuotas } }}
-          </span>
+          </div>
         </ng-container>
         <a
           *ngIf="checkQuotas"
