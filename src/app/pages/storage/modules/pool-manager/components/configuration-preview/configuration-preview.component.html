@@ -5,24 +5,24 @@
   <mat-card-content>
     <div>
       <div class="details-item">
-        <span class="label">{{ 'Name' | translate }}:</span>
-        <span class="value">{{ (name$ | async) || unknownProp }}</span>
+        <div class="label">{{ 'Name' | translate }}:</div>
+        <div class="value">{{ (name$ | async) || unknownProp }}</div>
       </div>
       <div *ngFor="let category of topology$ | async | keyvalue" class="details-item">
-        <span class="label">
+        <div class="label">
           {{ category.key | mapValue: vdevTypeLabels | translate }}:
-        </span>
-        <span class="value">
+        </div>
+        <div class="value">
           {{ category.value | ixTopologyCategoryDescription }}
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Encryption' | translate }}:</span>
-        <span class="value">{{ (encryption$ | async) || unknownProp }}</span>
+        <div class="label">{{ 'Encryption' | translate }}:</div>
+        <div class="value">{{ (encryption$ | async) || unknownProp }}</div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Total Raw Capacity' | translate }}:</span>
-        <span class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</span>
+        <div class="label">{{ 'Total Raw Capacity' | translate }}:</div>
+        <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
       </div>
     </div>
   </mat-card-content>

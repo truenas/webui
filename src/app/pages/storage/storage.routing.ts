@@ -31,7 +31,7 @@ export const routes: Routes = [
       },
       {
         path: ':poolId/devices',
-        data: { title: 'Devices', breadcrumb: 'Devices' },
+        data: { title: T('Devices'), breadcrumb: T('Devices') },
         loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
       },
       {

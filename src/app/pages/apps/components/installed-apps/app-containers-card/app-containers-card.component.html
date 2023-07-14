@@ -7,36 +7,36 @@
   <mat-card-content>
     <div class="details-list">
       <div class="details-item">
-        <span class="label">{{ 'Pods' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Pods' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="app?.resources?.pods; else notAvailable">
             {{ app.resources.pods.length }}
           </ng-container>
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Used Ports' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Used Ports' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="app?.used_ports; else notAvailable">
             {{ getPorts(app) }}
           </ng-container>
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Deployments' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Deployments' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="app?.resources?.deployments; else notAvailable">
             {{ app.resources.deployments.length }}
           </ng-container>
-        </span>
+        </div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Stateful Sets' | translate }}:</span>
-        <span class="value">
+        <div class="label">{{ 'Stateful Sets' | translate }}:</div>
+        <div class="value">
           <ng-container *ngIf="app?.resources?.statefulsets; else notAvailable">
             {{ app.resources.statefulsets.length }}
           </ng-container>
-        </span>
+        </div>
       </div>
     </div>
     <div class="containers">
@@ -48,14 +48,14 @@
               *ngFor="let containerImage of app.resources.container_images | keyvalue;"
               class="container-item"
             >
-              <span class="container-name">{{ containerImage.key }}</span>
-              <span class="information">
-                <span class="container-status">
+              <div class="container-name">{{ containerImage.key }}</div>
+              <div class="information">
+                <div class="container-status">
                   <ng-container *ngIf="containerImage?.value?.update_available; else upToDate">
                     {{ 'Update available' | translate }}
                   </ng-container>
-                </span>
-                <span
+                </div>
+                <div
                   *ngIf="app.status === chartReleaseStatus.Active"
                   class="container-action"
                 >
@@ -79,8 +79,8 @@
                   >
                     <ix-icon name="mdi-text-box"></ix-icon>
                   </button>
-                </span>
-              </span>
+                </div>
+              </div>
             </div>
           </ng-container>
         </ng-container>

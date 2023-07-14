@@ -13,8 +13,8 @@
       <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
       <div class="details-list">
         <div *ngFor="let item of appMetadata.hostMounts" class="details-item">
-          <span class="label">{{ item.hostPath }}</span>
-          <span class="value">{{ item.description }}</span>
+          <div class="label">{{ item.hostPath }}</div>
+          <div class="value">{{ item.description }}</div>
         </div>
       </div>
     </ix-app-section-expand-collapse>
@@ -23,8 +23,8 @@
       <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
       <div class="details-list">
         <div *ngFor="let item of appMetadata.capabilities" class="details-item">
-          <span class="label">{{ item.name }}</span>
-          <span class="value">{{ item.description }}</span>
+          <div class="label">{{ item.name }}</div>
+          <div class="value">{{ item.description }}</div>
         </div>
       </div>
     </ix-app-section-expand-collapse>
@@ -34,24 +34,24 @@
       <div class="details-list">
         <div *ngFor="let item of appMetadata.runAsContext" class="details-entry">
           <div class="details-item">
-            <span class="label">{{ 'UID' | translate }}:</span>
-            <span class="value">{{ item.uid }}</span>
+            <div class="label">{{ 'UID' | translate }}:</div>
+            <div class="value">{{ item.uid }}</div>
           </div>
           <div class="details-item">
-            <span class="label">{{ 'GID' | translate }}:</span>
-            <span class="value">{{ item.gid }}</span>
+            <div class="label">{{ 'GID' | translate }}:</div>
+            <div class="value">{{ item.gid }}</div>
           </div>
           <div class="details-item">
-            <span class="label">{{ 'Username' | translate }}:</span>
-            <span class="value">{{ item.userName }}</span>
+            <div class="label">{{ 'Username' | translate }}:</div>
+            <div class="value">{{ item.userName }}</div>
           </div>
           <div class="details-item">
-            <span class="label">{{ 'Groupname' | translate }}:</span>
-            <span class="value">{{ item.groupName }}</span>
+            <div class="label">{{ 'Groupname' | translate }}:</div>
+            <div class="value">{{ item.groupName }}</div>
           </div>
           <div class="details-item">
-            <span class="label">{{ 'Description' | translate }}:</span>
-            <span class="value">{{ item.description }}</span>
+            <div class="label">{{ 'Description' | translate }}:</div>
+            <div class="value">{{ item.description }}</div>
           </div>
         </div>
       </div>

@@ -7,15 +7,15 @@
       <div *ngFor="let item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize">
         <div *ngIf="item.value" class="details-item">
           <ix-icon name="ix:hdd"></ix-icon>
-          <span class="label">{{ getFilesize(item.key) }} </span>
-          <span class="value"> × {{ item.value.length }}</span>
+          <div class="label">{{ getFilesize(item.key) }} </div>
+          <div class="value"> × {{ item.value.length }}</div>
         </div>
       </div>
       <div *ngFor="let item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize">
         <div *ngIf="item.value" class="details-item">
           <ix-icon name="ix:ssd"></ix-icon>
-          <span class="label">{{ getFilesize(item.key) }} </span>
-          <span class="value"> × {{ item.value.length }}</span>
+          <div class="label">{{ getFilesize(item.key) }} </div>
+          <div class="value"> × {{ item.value.length }}</div>
         </div>
       </div>
     </ng-container>
