@@ -21,6 +21,7 @@ import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table2/components/
 import { IxHeaderCellTextComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table2/components/ix-table-pager/ix-table-pager.component';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table2/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTable2Component } from 'app/modules/ix-table2/components/ix-table2/ix-table2.component';
 import { IxTableBodyCellDirective } from 'app/modules/ix-table2/directives/ix-body-cell.directive';
 import { IxTableHeaderCellDirective } from 'app/modules/ix-table2/directives/ix-header-cell.directive';
@@ -62,6 +63,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,
+    IxTablePagerShowMoreComponent,
   ],
   exports: [
     IxTable2Component,
@@ -82,6 +84,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,
+    IxTablePagerShowMoreComponent,
   ],
 })
 export class IxTable2Module {}
