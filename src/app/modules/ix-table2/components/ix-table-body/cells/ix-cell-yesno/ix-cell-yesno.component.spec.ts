@@ -18,7 +18,7 @@ describe('IxCellYesNoComponent', () => {
       props: {
         propertyName: 'yesNoField',
         row: { yesNoField: true },
-      },
+      } as Partial<IxCellYesNoComponent<TestTableData>>,
     });
   });
 

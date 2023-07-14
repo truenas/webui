@@ -18,7 +18,7 @@ describe('IxCellTextComponent', () => {
       props: {
         propertyName: 'stringField',
         row: { stringField: 'text in cell' },
-      },
+      } as Partial<IxCellTextComponent<TestTableData>>,
     });
   });
 
