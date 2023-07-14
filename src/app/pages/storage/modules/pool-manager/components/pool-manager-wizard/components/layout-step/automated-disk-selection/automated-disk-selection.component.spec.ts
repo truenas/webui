@@ -72,6 +72,11 @@ describe('AutomatedDiskSelection', () => {
       size: 14 * TiB,
       type: DiskType.Hdd,
     },
+    {
+      devname: 'sdk',
+      size: 1 * TiB,
+      type: DiskType.Hdd,
+    },
   ] as UnusedDisk[];
 
   const createComponent = createComponentFactory({
@@ -199,6 +204,21 @@ describe('AutomatedDiskSelection', () => {
     expect(await widthSelect.getValue()).toBe('');
     expect(await widthSelect.getOptionLabels())
       .toStrictEqual(['2', '3', '4', '5', '6', '7']);
+  });
+
+  it('auto fills select when only one value is available', async () => {
+    await layoutSelect.setValue('Stripe');
+    await sizeSelect.setValue('1 TiB (HDD)');
+
+    expect(await widthSelect.getOptionLabels()).toStrictEqual(['1']);
+
+    const widthValue = await widthSelect.getValue();
+    expect(widthValue).toBe(1);
+
+    expect(await vdevsSelect.getOptionLabels()).toStrictEqual(['1']);
+
+    const vdevsValue = await widthSelect.getValue();
+    expect(vdevsValue).toBe(1);
   });
 
   it('doesnt let the layout change', async () => {
