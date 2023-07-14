@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   PeriodicSnapshotTask,
@@ -22,7 +21,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -100,16 +98,11 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         cron_schedule: `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`,
       } as PeriodicSnapshotTaskUi;
 
-      const transformedData = {
+      return {
         ...transformedTask,
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
+        next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
       };
-
-      this.store$.select(selectTimezone).pipe(take(1), untilDestroyed(this)).subscribe((timezone) => {
-        transformedData.next_run = this.taskService.getTaskNextRun(transformedData.cron_schedule, timezone);
-      });
-
-      return transformedData;
     });
   }
 

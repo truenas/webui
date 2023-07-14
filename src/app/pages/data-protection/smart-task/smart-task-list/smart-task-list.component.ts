@@ -12,7 +12,6 @@ import { TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -78,10 +77,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-        test.next_run = this.taskService.getTaskNextRun(test.cron_schedule, timezone);
-      });
+      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
         test.disksLabel = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
