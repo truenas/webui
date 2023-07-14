@@ -28,7 +28,7 @@ describe('IxCellToggleComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('calls "onRowToggle" method when toggle is chenged', async () => {
+  it('calls "onRowToggle" method when toggle is changed', async () => {
     jest.spyOn(spectator.component, 'onRowToggle');
     const toggle = await loader.getHarness(MatSlideToggleHarness);
 

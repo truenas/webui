@@ -39,7 +39,7 @@ describe('IxHeaderCellCheckboxComponent', () => {
     expect(spectator.query('span').textContent.trim()).toBe('Select All');
   });
 
-  it('sets value when checkbox is chenged', async () => {
+  it('sets value when checkbox is changed', async () => {
     const checkbox = await loader.getHarness(MatCheckboxHarness);
     expect(await checkbox.isChecked()).toBe(false);
 
@@ -52,7 +52,7 @@ describe('IxHeaderCellCheckboxComponent', () => {
     expect(spectator.component.dataProvider.rows.map((row) => row.booleanField)).toEqual([false, false, false]);
   });
 
-  it('sets checkbox when value is chenged', async () => {
+  it('sets checkbox when value is changed', async () => {
     const checkbox = await loader.getHarness(MatCheckboxHarness);
     expect(await checkbox.isChecked()).toBe(false);
 
