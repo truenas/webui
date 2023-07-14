@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -15,6 +16,7 @@ import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-b
 import { IxCellDeleteComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-delete/ix-cell-delete.component';
 import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxCellToggleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
@@ -39,6 +41,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatTooltipModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatSlideToggleModule,
     TranslateModule,
     NgxFilesizeModule,
     TestIdModule,
@@ -59,6 +62,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxCellCheckboxComponent,
     IxCellYesNoComponent,
     IxCellDeleteComponent,
+    IxCellToggleComponent,
     IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
@@ -80,6 +84,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxCellCheckboxComponent,
     IxCellYesNoComponent,
     IxCellDeleteComponent,
+    IxCellToggleComponent,
     IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
