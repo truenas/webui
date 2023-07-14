@@ -45,7 +45,6 @@ export interface Pool {
    */
   is_upgraded?: boolean;
   size: number;
-  size_str: string;
   algorithm: ZfsProperty<string, string>;
 }
 

@@ -1,20 +1,30 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
-import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
-import { PoolTopology } from 'app/interfaces/pool.interface';
+import _ from 'lodash';
 import {
-  Disk, StorageDashboardDisk, TopologyDisk, TopologyItem,
+  CreateVdevLayout, TopologyItemType, VdevType, vdevTypeLabels,
+} from 'app/enums/v-dev-type.enum';
+import { PoolTopology } from 'app/interfaces/pool.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import {
+  Disk,
+  UnusedDisk,
 } from 'app/interfaces/storage.interface';
-import { EmptyDiskObject } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
-import { StorageService } from 'app/services';
+import { PoolManagerTopology, PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-const notAssignedDev = 'VDEVs not assigned';
-const multiWarning = 'warnings';
-
+const defaultCategory: PoolManagerTopologyCategory = {
+  layout: null,
+  width: null,
+  diskSize: null,
+  diskType: null,
+  vdevsNumber: null,
+  treatDiskSizeAsMinimum: false,
+  vdevs: [],
+  hasCustomDiskSelection: false,
+};
 @UntilDestroy()
 @Component({
   selector: 'ix-existing-configuration-preview',
@@ -22,7 +32,7 @@ const multiWarning = 'warnings';
   styleUrls: ['./existing-configuration-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExistingConfigurationPreviewComponent {
+export class ExistingConfigurationPreviewComponent implements OnChanges {
   protected readonly vdevTypeLabels = vdevTypeLabels;
 
   VdevType = VdevType;
@@ -30,6 +40,7 @@ export class ExistingConfigurationPreviewComponent {
   @Input() topology: PoolTopology;
   @Input() size: number;
   @Input() disks: Disk[];
+  protected poolTopology: PoolManagerTopology;
 
   getCategory(key: string): VdevType {
     return key as VdevType;
@@ -37,88 +48,73 @@ export class ExistingConfigurationPreviewComponent {
 
   constructor(
     private translate: TranslateService,
-    private storageService: StorageService,
+    private cdr: ChangeDetectorRef,
   ) {}
+
+  ngOnChanges(simpleChanges: IxSimpleChanges<ExistingConfigurationPreviewComponent>): void {
+    if (simpleChanges.topology.currentValue) {
+      this.poolTopology = this.parseTopology(this.topology);
+      this.cdr.markForCheck();
+    }
+  }
+
+  parseTopology(topology: PoolTopology): PoolManagerTopology {
+    const poolManagerTopology: PoolManagerTopology = {
+      data: _.cloneDeep(defaultCategory),
+      log: _.cloneDeep(defaultCategory),
+      spare: _.cloneDeep(defaultCategory),
+      cache: _.cloneDeep(defaultCategory),
+      dedup: _.cloneDeep(defaultCategory),
+      special: _.cloneDeep(defaultCategory),
+    };
+    for (const [, value] of Object.entries(VdevType)) {
+      if (!topology[value]?.length) {
+        continue;
+      }
+
+      let firstVdevType = topology[value][0].type;
+      if (firstVdevType === TopologyItemType.Disk && !topology[value][0].children?.length) {
+        firstVdevType = TopologyItemType.Stripe;
+      }
+      poolManagerTopology[value].layout = firstVdevType as unknown as CreateVdevLayout;
+
+      const allCategoryVdevsDisks = [];
+      for (const vdev of topology[value]) {
+        if (
+          poolManagerTopology[value].width !== null
+          && poolManagerTopology[value].width !== (vdev.children?.length || 1)
+        ) {
+          poolManagerTopology[value].hasCustomDiskSelection = true;
+        }
+        poolManagerTopology[value].width = vdev.children?.length || 1;
+
+        if (firstVdevType === TopologyItemType.Stripe) {
+          const vdevDisk = this.disks.find((disk) => disk.devname === vdev.disk);
+          allCategoryVdevsDisks.push(_.cloneDeep(vdevDisk));
+          poolManagerTopology[value].vdevs.push([_.cloneDeep(vdevDisk as UnusedDisk)]);
+        } else {
+          const vdevDisks = [];
+          for (const vdevDisk of vdev.children) {
+            const fullDisk = this.disks.find((disk) => disk.devname === vdevDisk.disk);
+            allCategoryVdevsDisks.push(_.cloneDeep(fullDisk));
+            vdevDisks.push(_.cloneDeep(fullDisk));
+          }
+          poolManagerTopology[value].vdevs.push(vdevDisks as UnusedDisk[]);
+        }
+      }
+      const firstDisk = _.cloneDeep(allCategoryVdevsDisks[0]);
+      poolManagerTopology[value].hasCustomDiskSelection = poolManagerTopology[value].hasCustomDiskSelection
+        || allCategoryVdevsDisks.some((disk) => disk.size !== firstDisk.size || disk.type !== firstDisk.type);
+      if (!poolManagerTopology[value].hasCustomDiskSelection) {
+        poolManagerTopology[value].diskSize = firstDisk.size;
+        poolManagerTopology[value].diskType = firstDisk.type;
+        poolManagerTopology[value].vdevsNumber = topology[value].length;
+      }
+    }
+    return poolManagerTopology;
+  }
 
   get unknownProp(): string {
     return this.translate.instant('None');
-  }
-
-  protected parseDevs(
-    vdevs: TopologyItem[],
-    category: VdevType,
-    dataVdevs?: TopologyItem[],
-  ): string {
-    const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
-      return this.dashboardDiskToDisk(disk);
-    });
-    const warnings = this.storageService.validateVdevs(category, vdevs, disks, dataVdevs);
-
-    let outputString = vdevs.length ? '' : notAssignedDev;
-
-    // Check VDEV Widths
-    let vdevWidth = 0;
-
-    // There should only be one value
-    const allVdevWidths: Set<number> = this.storageService.getVdevWidths(vdevs);
-    const isMixedWidth = this.storageService.isMixedWidth(allVdevWidths);
-    let isSingleDeviceCategory = false;
-
-    switch (category) {
-      case VdevType.Spare:
-      case VdevType.Cache:
-        isSingleDeviceCategory = true;
-    }
-
-    if (!isMixedWidth && !isSingleDeviceCategory) {
-      vdevWidth = Array.from(allVdevWidths.values())[0];
-    }
-
-    if (warnings.length === 1) {
-      return warnings[0];
-    }
-
-    if (warnings.length > 1) {
-      return warnings.length.toString() + ' ' + multiWarning;
-    }
-
-    if (!warnings.length && outputString && outputString === notAssignedDev) {
-      return outputString;
-    }
-
-    const type = vdevs[0]?.type;
-    const size = vdevs[0]?.children.length
-      ? this.disks?.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
-      : this.disks?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
-
-    outputString = `${vdevs.length} x `;
-    outputString += vdevWidth ? `${type} | ${vdevWidth} wide | ` : '';
-
-    if (size) {
-      outputString += filesize(size, { standard: 'iec' });
-    } else {
-      outputString += '?';
-    }
-
-    return outputString;
-  }
-
-  dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
-    const output: EmptyDiskObject | Disk = {};
-    const keys: string[] = Object.keys(dashDisk);
-    keys.forEach((key: keyof StorageDashboardDisk) => {
-      if (
-        key === 'alerts'
-        || key === 'smartTestsRunning'
-        || key === 'smartTestsFailed'
-        || key === 'tempAggregates'
-      ) {
-        return;
-      }
-
-      output[key as keyof Disk] = dashDisk[key];
-    });
-
-    return output as unknown as Disk;
   }
 }

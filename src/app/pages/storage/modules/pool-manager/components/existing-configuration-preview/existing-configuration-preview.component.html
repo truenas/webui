@@ -8,12 +8,12 @@
         <span class="label">{{ 'Name' | translate }}:</span>
         <span class="value">{{ name || unknownProp }}</span>
       </div>
-      <div *ngFor="let category of topology | keyvalue" class="details-item">
+      <div *ngFor="let category of poolTopology | keyvalue" class="details-item">
         <span class="label">
           {{ category.key | mapValue: vdevTypeLabels | translate }}:
         </span>
         <span class="value">
-          {{ parseDevs(category.value, getCategory(category.key) ) }}
+          {{ category.value | ixTopologyCategoryDescription }}
         </span>
       </div>
       <div class="details-item">
