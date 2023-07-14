@@ -28,7 +28,7 @@
         color="primary"
         type="button"
         ixTest="next"
-        [disabled]="form.invalid"
+        [disabled]="form.invalid && !form.valid"
       >
         {{ 'Next' | translate }}
       </button>

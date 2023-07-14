@@ -24,7 +24,7 @@
   "Configure 2FA Secret": "",
   "Configure 2FA secret": "",
   "Continue with the upgrade": "",
-  "Current Configuration Preview": "",
+  "Current Configuration": "",
   "Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.": "",
   "De-duplication tables are stored on this special vdev type. These vdevs must be sized to X GiB for each X TiB of general storage.": "",
   "Dedup (Optional)": "",
