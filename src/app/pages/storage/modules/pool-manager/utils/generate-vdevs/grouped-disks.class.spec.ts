@@ -54,8 +54,8 @@ describe('GroupedDisks', () => {
       } as PoolManagerTopologyCategory);
       expect(disks).toHaveLength(3);
       expect(disks[0].devname).toBe('sdb');
-      expect(disks[1].devname).toBe('sdc');
-      expect(disks[2].devname).toBe('sdd');
+      expect(disks[1].devname).toBe('sdd');
+      expect(disks[2].devname).toBe('sdc');
     });
   });
 

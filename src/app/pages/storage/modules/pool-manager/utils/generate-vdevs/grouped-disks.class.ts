@@ -18,14 +18,13 @@ export class GroupedDisks {
     const matchingType = this.diskMap[category.diskType];
     let matchingTypeAndSize: UnusedDisk[] = [];
     if (category.treatDiskSizeAsMinimum) {
-      for (const disk of this.disks) {
-        if (category.diskSize > Number(disk.size)) continue;
-        matchingTypeAndSize = matchingTypeAndSize.concat(disk);
+      for (const diskSize of Object.keys(matchingType)) {
+        if (category.diskSize > Number(diskSize)) continue;
+        matchingTypeAndSize = matchingTypeAndSize.concat(matchingType[diskSize]);
       }
     } else {
       matchingTypeAndSize = matchingType[category.diskSize];
     }
-
     return matchingTypeAndSize;
   }
 
