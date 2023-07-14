@@ -27,7 +27,7 @@ describe('IxCellYesNoComponent', () => {
   });
 
   it('shows "No" when "false"', () => {
-    spectator.component.row = { yesNoField: false };
+    spectator.component.setRow({ yesNoField: false });
     spectator.fixture.detectChanges();
     expect(spectator.element.textContent.trim()).toBe('No');
   });
