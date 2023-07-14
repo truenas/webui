@@ -23,7 +23,7 @@ describe('IxCellToggleComponent', () => {
         propertyName: 'booleanField',
         row: { booleanField: true },
         onRowToggle: () => jest.fn(),
-      },
+      } as Partial<IxCellToggleComponent<TestTableData>>,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
