@@ -1,0 +1,10 @@
+:host {
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      display: inline-block;
+    }
+  }
+}

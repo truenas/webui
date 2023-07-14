@@ -1,0 +1,55 @@
+<mat-card *ngIf="hasIpmi$ | async">
+  <mat-toolbar-row>
+    <h3>IPMI</h3>
+
+    <button
+      mat-button
+      class="actions"
+      ixTest="show-events"
+      (click)="onOpenEvents()"
+    >{{ 'Show Events' | translate }}</button>
+  </mat-toolbar-row>
+
+  <ix-table2>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    >
+      <ng-template
+        ix-table-cell
+        [columnIndex]="0"
+        [dataProvider]="dataProvider"
+        let-ipmi
+      >
+        {{ 'Channel {n}' | translate: { n: ipmi.channel } }}
+      </ng-template>
+      <ng-template
+        ix-table-cell
+        [columnIndex]="1"
+        [dataProvider]="dataProvider"
+        let-ipmi
+      >
+        <div class="actions">
+          <button
+            mat-icon-button
+            [ixTest]="['ipmi', ipmi.channel, 'edit']"
+            (click)="onEdit(ipmi)"
+          >
+            <ix-icon name="edit"></ix-icon>
+            <ix-icon name="pencil"></ix-icon>
+          </button>
+          <button
+            *ngIf="canOpen(ipmi)"
+            mat-icon-button
+            [matTooltip]="'Open' | translate"
+            [ixTest]="['ipmi', ipmi.channel, 'open']"
+            (click)="onOpen(ipmi)"
+          >
+            <ix-icon name="launch"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+</mat-card>

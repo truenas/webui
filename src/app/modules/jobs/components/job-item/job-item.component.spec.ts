@@ -1,29 +1,16 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
-import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('JobItemComponent', () => {
   let spectator: Spectator<JobItemComponent>;
 
   const createComponent = createComponentFactory({
     component: JobItemComponent,
-    imports: [
-      CoreComponents,
-    ],
     declarations: [
       FakeFormatDateTimePipe,
-    ],
-    providers: [
-      provideMockStore({
-        selectors: [
-          { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
-        ],
-      }),
     ],
   });
 
