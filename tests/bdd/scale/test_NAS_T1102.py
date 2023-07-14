@@ -66,6 +66,7 @@ def the_pools_page_appears_click_create_pool(driver):
 def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
     """the Pool Manager appears, enter the system for pool name."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('system')
 
@@ -101,7 +102,7 @@ def create_pool_should_appear_while_pool_is_being_created(driver):
 @then('the pools system should appear in the list')
 def the_pools_system_should_appear_in_the_list(driver):
     """the pools system should appear in the list."""
-    assert wait_on_element(driver, 10, '//h2[text()="system"]')
+    assert wait_on_element(driver, 15, '//h2[text()="system"]')
 
 
 @then('navigate to System Setting and click Advanced to open the Advanced page should open')

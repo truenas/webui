@@ -128,7 +128,7 @@ def reopen_the_user_edit_page_and_ensure_that_the_additional_aux_group_was_saved
     assert wait_on_element(driver, 5, xpaths.users.eric_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
     assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)
-    assert wait_on_element(driver, 5, '//legend[normalize-space(text())="Identification"]')
+    assert wait_on_element(driver, 5, xpaths.add_User.identification_Legend)
     time.sleep(1)
 
 
