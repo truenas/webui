@@ -29,13 +29,13 @@
       <mat-list-item>
         <span class="label">{{ 'Syslog Server' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
-          {{ advancedConfig.syslogserver }}
+          {{ advancedConfig.syslogserver | translate }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Syslog Transport' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
-          {{ advancedConfig.syslog_transport }}
+          {{ advancedConfig.syslog_transport | translate }}
         </span>
       </mat-list-item>
       <mat-list-item>
