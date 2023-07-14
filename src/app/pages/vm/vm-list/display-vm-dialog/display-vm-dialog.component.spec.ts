@@ -107,7 +107,7 @@ describe('DisplayVmDialogComponent', () => {
       }],
       protocol: 'HTTP',
     }]);
-    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenNthCalledWith(2, 'http://localhost:4200/vm/display/1/vnc.html', '_blank');
+    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenLastCalledWith('http://localhost:4200/vm/display/1/vnc.html', '_blank');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 

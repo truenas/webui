@@ -276,7 +276,7 @@ describe('SmbFormComponent', () => {
       await advancedButton.click();
       const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
       await afpCheckbox.setValue(true);
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
         title: helptextSharingSmb.afpDialog_title,
         message: helptextSharingSmb.afpDialog_message,
         hideCheckbox: false,
@@ -296,7 +296,7 @@ describe('SmbFormComponent', () => {
 
       expect(await nameControl.getValue()).toBe('ds22');
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(3, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
         hideCheckbox: true,
@@ -317,7 +317,7 @@ describe('SmbFormComponent', () => {
       const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
       await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(4, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
         hideCheckbox: true,
@@ -339,7 +339,7 @@ describe('SmbFormComponent', () => {
       const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
       await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(5, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
         title: helptextSharingSmb.stripACLDialog.title,
         message: helptextSharingSmb.stripACLDialog.message,
         hideCheckbox: true,
@@ -367,14 +367,13 @@ describe('SmbFormComponent', () => {
         ...attrs,
       });
 
-      expect(spectator.inject(DialogService).confirm)
-        .toHaveBeenNthCalledWith(6, {
-          title: helptextSharingSmb.stripACLDialog.title,
-          message: helptextSharingSmb.stripACLDialog.message,
-          hideCheckbox: true,
-          buttonText: helptextSharingSmb.stripACLDialog.button,
-          hideCancel: true,
-        });
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
+        title: helptextSharingSmb.stripACLDialog.title,
+        message: helptextSharingSmb.stripACLDialog.message,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
+        hideCancel: true,
+      });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
