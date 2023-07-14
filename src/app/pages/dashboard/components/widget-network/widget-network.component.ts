@@ -137,7 +137,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-            return this.getSpeedLabel(value as number);
+            return this.getSpeedLabel(value as number, true);
           },
         },
       },
@@ -384,7 +384,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
               },
               {
                 label: `outgoing [${networkInterfaceName}]`,
-                data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: item[1] })),
+                data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: -item[1] })),
                 borderColor: this.themeService.currentTheme().orange,
                 backgroundColor: this.themeService.currentTheme().orange,
                 pointBackgroundColor: this.themeService.currentTheme().orange,
@@ -465,14 +465,14 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     return `${this.translate.instant('IP Address')}: ${this.getIpAddress(nic)}`;
   }
 
-  private getSpeedLabel(value: number): string {
-    const converted = filesize(value, { round: 3, output: 'object', standard: 'iec' });
+  private getSpeedLabel(value: number, axis = false): string {
+    const converted = filesize(Math.abs(value), { output: 'object', standard: axis ? 'jedec' : 'iec' });
     return `${this.splitValue(converted.value)}${converted.unit}/s`;
   }
 
   private splitValue(value: number): number {
     if (value < 1024) {
-      return Number(value.toString().slice(0, 5));
+      return Number(value.toString().slice(0, 4));
     }
     return Math.round(value);
   }
