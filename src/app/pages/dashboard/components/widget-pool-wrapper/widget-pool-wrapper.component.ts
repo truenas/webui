@@ -14,6 +14,7 @@ export class WidgetPoolWrapperComponent {
 
   @Input() showReorderHandle = false;
   @Output() back = new EventEmitter<void>();
+
   protected poolState$ = this.dashboardStorageStore$.pools$.pipe(
     filter((pools) => !!pools && !!pools.length),
     deepCloneState(),

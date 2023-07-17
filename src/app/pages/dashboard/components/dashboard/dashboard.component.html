@@ -149,8 +149,6 @@
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
-              [pools]="dataFromConfig(widget) | cast"
-              [volumeData]="volumeDataFromConfig(widget) | cast"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -247,8 +245,6 @@
               *ngSwitchCase="WidgetType.Storage"
               fxFlex.xs="100"
               [fxFlex]="widgetWidth + 'px'"
-              [pools]="dataFromConfig(widget) | cast"
-              [volumeData]="volumeDataFromConfig(widget) | cast"
               (back)="onMobileBack()"
             ></ix-widget-storage>
 

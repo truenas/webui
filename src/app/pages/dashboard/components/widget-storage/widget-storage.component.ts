@@ -1,17 +1,17 @@
 import {
-  AfterViewInit, Component, Input, OnChanges,
+  AfterViewInit, Component,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
+import { deepCloneState } from 'app/helpers/state-select.helper';
 import { Pool } from 'app/interfaces/pool.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
 
 interface ItemInfo {
   icon: StatusIcon;
@@ -53,9 +53,9 @@ interface PoolInfoMap {
     './widget-storage.component.scss',
   ],
 })
-export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit, OnChanges {
-  @Input() pools: Pool[];
-  @Input() volumeData: VolumesData;
+export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit {
+  protected pools: Pool[];
+  protected volumeData: VolumesData;
 
   poolInfoMap: PoolInfoMap = {};
   paddingTop = 7;
@@ -87,20 +87,30 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     return 100;
   }
 
-  constructor(public router: Router, public translate: TranslateService) {
+  constructor(
+    public translate: TranslateService,
+    private dashboardStorageStore$: DashboardStorageStore,
+  ) {
     super(translate);
   }
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.pools || changes.volumeData) {
+  ngAfterViewInit(): void {
+    this.dashboardStorageStore$.pools$.pipe(
+      deepCloneState(),
+      untilDestroyed(this),
+    ).subscribe((pools) => {
+      this.pools = pools;
       this.updateGridInfo();
       this.updatePoolInfoMap();
-    }
-  }
-
-  ngAfterViewInit(): void {
-    this.updateGridInfo();
-    this.updatePoolInfoMap();
+    });
+    this.dashboardStorageStore$.volumesData$.pipe(
+      deepCloneState(),
+      untilDestroyed(this),
+    ).subscribe((volumesData) => {
+      this.volumeData = volumesData;
+      this.updateGridInfo();
+      this.updatePoolInfoMap();
+    });
   }
 
   updateGridInfo(): void {
