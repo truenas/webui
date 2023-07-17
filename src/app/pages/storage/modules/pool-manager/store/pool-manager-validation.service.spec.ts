@@ -5,6 +5,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -34,6 +35,9 @@ describe('PoolManagerValidationService', () => {
           enclosureSettings$: mockEnclosureSettings$,
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+        }),
+        mockProvider(AddVdevsStore, {
+          pool$: of(null),
         }),
         provideMockStore({
           selectors: [
@@ -70,7 +74,7 @@ describe('PoolManagerValidationService', () => {
             {
               severity: 'error',
               step: 'data',
-              text: 'At least 1 data vdev is required.',
+              text: 'At least 1 data VDEV is required.',
             },
           ],
         });
@@ -82,7 +86,7 @@ describe('PoolManagerValidationService', () => {
         expectObservable(spectator.service.getTopLevelErrorsForEachStep()).toBe('a', {
           a: {
             cache: null,
-            data: 'At least 1 data vdev is required.',
+            data: 'At least 1 data VDEV is required.',
             dedup: null,
             enclosure: 'No Enclosure selected for a Limit Pool To A Single Enclosure.',
             general: 'Name not added',
@@ -162,6 +166,9 @@ describe('PoolManagerValidationService', () => {
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
         }),
+        mockProvider(AddVdevsStore, {
+          pool$: of(null),
+        }),
         provideMockStore({
           selectors: [
             {
@@ -187,7 +194,7 @@ describe('PoolManagerValidationService', () => {
             {
               severity: 'warning',
               step: 'log',
-              text: 'A stripe log vdev may result in data loss if it fails combined with a power outage.',
+              text: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
             },
             {
               severity: 'warning',
@@ -202,7 +209,7 @@ describe('PoolManagerValidationService', () => {
             {
               severity: 'error-warning',
               step: 'data',
-              text: 'A stripe data vdev is highly discouraged and will result in data loss if it fails',
+              text: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
             },
           ],
         });
@@ -214,11 +221,11 @@ describe('PoolManagerValidationService', () => {
         expectObservable(spectator.service.getTopLevelWarningsForEachStep()).toBe('a', {
           a: {
             cache: null,
-            data: 'A stripe data vdev is highly discouraged and will result in data loss if it fails',
+            data: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
             dedup: null,
             enclosure: null,
             general: null,
-            log: 'A stripe log vdev may result in data loss if it fails combined with a power outage.',
+            log: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
             metadata: null,
             review: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
             spare: null,
@@ -294,6 +301,9 @@ describe('PoolManagerValidationService', () => {
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
         }),
+        mockProvider(AddVdevsStore, {
+          pool$: of({ topology: { data: [{ type: 'MIRROR' }] } } as Pool),
+        }),
         provideMockStore({
           selectors: [
             {
@@ -309,8 +319,6 @@ describe('PoolManagerValidationService', () => {
 
     beforeEach(() => {
       spectator = createService();
-      spectator.service.isAddingVdevs = true;
-      spectator.service.existingPool = { topology: { data: [{ type: 'MIRROR' }] } } as Pool;
       testScheduler = getTestScheduler();
     });
 
@@ -319,29 +327,9 @@ describe('PoolManagerValidationService', () => {
         expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
           a: [
             {
-              severity: 'warning',
-              step: 'log',
-              text: 'A stripe log vdev may result in data loss if it fails combined with a power outage.',
-            },
-            {
-              severity: 'warning',
-              step: 'review',
-              text: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
-            },
-            {
-              severity: 'warning',
-              step: 'review',
-              text: 'Warning: There are 1 disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.',
-            },
-            {
               severity: 'error',
               step: 'data',
               text: 'Mixing Vdev layout types is not allowed. This pool already has some MIRROR Data Vdevs. You can only add vdevs of MIRROR type.',
-            },
-            {
-              severity: 'error-warning',
-              step: 'data',
-              text: 'A stripe data vdev is highly discouraged and will result in data loss if it fails',
             },
           ],
         });
@@ -376,6 +364,9 @@ describe('PoolManagerValidationService', () => {
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
         }),
+        mockProvider(AddVdevsStore, {
+          pool$: of({ topology: { data: [{ type: 'MIRROR' }] } } as Pool),
+        }),
         provideMockStore({
           selectors: [
             {
@@ -391,8 +382,6 @@ describe('PoolManagerValidationService', () => {
 
     beforeEach(() => {
       spectator = createService();
-      spectator.service.isAddingVdevs = true;
-      spectator.service.existingPool = { topology: { data: [{ type: 'MIRROR' }] } } as Pool;
       testScheduler = getTestScheduler();
     });
 
