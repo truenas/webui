@@ -4,6 +4,7 @@
   [inventory]="inventory$ | async"
   [canChangeLayout]="false"
   [limitLayouts]="dataVdevLayout$ | async"
+  [isStepActive]="isStepActive"
 ></ix-layout-step>
 
 <p *ngIf="stepWarning" class="warning">

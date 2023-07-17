@@ -1,7 +1,12 @@
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -9,14 +14,23 @@ import { createTable } from 'app/modules/ix-table2/utils';
 interface TestTableData {
   numberField: number;
   stringField: string;
-  booleanField: boolean;
+  yesNoField: boolean;
+  enabledField: boolean;
 }
 
 const testTableData: TestTableData[] = [
-  { numberField: 1, stringField: 'a', booleanField: true },
-  { numberField: 2, stringField: 'c', booleanField: false },
-  { numberField: 4, stringField: 'b', booleanField: false },
-  { numberField: 3, stringField: 'd', booleanField: true },
+  {
+    numberField: 1, stringField: 'a', yesNoField: true, enabledField: true,
+  },
+  {
+    numberField: 2, stringField: 'c', yesNoField: false, enabledField: true,
+  },
+  {
+    numberField: 4, stringField: 'b', yesNoField: false, enabledField: false,
+  },
+  {
+    numberField: 3, stringField: 'd', yesNoField: true, enabledField: false,
+  },
 ];
 
 const columns = createTable<TestTableData>([
@@ -30,14 +44,20 @@ const columns = createTable<TestTableData>([
     propertyName: 'stringField',
     sortable: true,
   }),
-  textColumn({
+  yesNoColumn({
     title: 'Boolean Field',
-    propertyName: 'booleanField',
+    propertyName: 'yesNoField',
+  }),
+  toggleColumn({
+    title: 'Boolean Field',
+    propertyName: 'enabledField',
+    onRowToggle: () => jest.fn(),
   }),
 ]);
 
 describe('IxTableBodyComponent', () => {
   let spectator: Spectator<IxTableBodyComponent<TestTableData>>;
+  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: IxTableBodyComponent<TestTableData>,
@@ -50,6 +70,7 @@ describe('IxTableBodyComponent', () => {
       props: { columns, dataProvider },
     });
     spectator.component.dataProvider.setRows(testTableData);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.fixture.detectChanges();
   });
 
@@ -63,10 +84,16 @@ describe('IxTableBodyComponent', () => {
         return values;
       }),
     ).toEqual([
-      ['1', 'a', 'true'],
-      ['2', 'c', 'false'],
-      ['4', 'b', 'false'],
-      ['3', 'd', 'true'],
+      ['1', 'a', 'Yes', ''],
+      ['2', 'c', 'No', ''],
+      ['4', 'b', 'No', ''],
+      ['3', 'd', 'Yes', ''],
     ]);
+  });
+
+  it('shows toggle column', async () => {
+    const toggles = await loader.getAllHarnesses(MatSlideToggleHarness);
+    const values = await parallel(() => toggles.map(async (toggle) => toggle.isChecked()));
+    expect(values).toEqual(testTableData.map((row) => row.enabledField));
   });
 });

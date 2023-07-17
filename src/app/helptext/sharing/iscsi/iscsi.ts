@@ -143,6 +143,10 @@ export const helptextSharingIscsi = {
    configured at the pool level when using zvols or at the extent level \
    for both file and device based extents.'),
 
+  globalconf_tooltip_alua: T('Do not enable ALUA on TrueNAS unless it is also supported \
+    by and enabled on the client computers. ALUA only works when enabled \
+    on both the client and server.'),
+
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),
   fieldset_extent_options: T('Compatibility'),
