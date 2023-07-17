@@ -13,6 +13,7 @@ describe('IxCellDateComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellDateComponent<TestTableData>,
     imports: [IxTable2Module],
+    detectChanges: false,
     providers: [
       mockProvider(Store, {
         select: () => of(),
@@ -24,9 +25,10 @@ describe('IxCellDateComponent', () => {
     spectator = createComponent({
       props: {
         propertyName: 'dateField',
-        row: { dateField: new Date('2023-07-12 09:10:00') },
       },
     });
+    spectator.component.setRow({ dateField: new Date('2023-07-12 09:10:00') });
+    spectator.fixture.detectChanges();
   });
 
   it('shows default format datetime in template', () => {

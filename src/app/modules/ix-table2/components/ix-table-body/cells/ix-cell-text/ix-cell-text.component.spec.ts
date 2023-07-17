@@ -11,15 +11,17 @@ describe('IxCellTextComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellTextComponent<TestTableData>,
     imports: [IxTable2Module],
+    detectChanges: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         propertyName: 'stringField',
-        row: { stringField: 'text in cell' },
       },
     });
+    spectator.component.setRow({ stringField: 'text in cell' });
+    spectator.fixture.detectChanges();
   });
 
   it('shows text in template', () => {

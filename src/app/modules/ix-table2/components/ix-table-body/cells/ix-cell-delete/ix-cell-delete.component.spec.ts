@@ -15,16 +15,18 @@ describe('IxCellDeleteComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellDeleteComponent<TestTableData>,
     imports: [IxTable2Module],
+    detectChanges: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         propertyName: 'numberField',
-        row: { numberField: 1 },
         onRowDelete: () => jest.fn(),
       },
     });
+    spectator.component.setRow({ numberField: 1 });
+    spectator.fixture.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
