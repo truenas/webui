@@ -37,7 +37,7 @@ import { cronValidator } from 'app/modules/ix-forms/validators/cron-validation';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { findAppSchemaNode } from 'app/services/schema/app-schema.helpers';
+import { findSchemaNode } from 'app/services/schema/app-schema.helpers';
 import {
   isCommonSchemaType,
   transformBooleanSchemaType,
@@ -223,40 +223,40 @@ export class AppSchemaService {
 
   serializeFormValue(
     data: SerializeFormValue,
-    appSchema: ChartSchema['schema'],
-    schemaNode: ChartSchemaNode = null,
-    schemaPathToNode: string = Object.keys(data || {})?.[0],
+    schema: ChartSchema['schema'],
+    fieldSchemaNode?: ChartSchemaNode,
   ): SerializeFormValue {
     if (data == null) {
       return data;
     }
-    if (schemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCrontab(data.toString())) {
+    if (fieldSchemaNode?.schema?.type === ChartSchemaType.Cron && this.checkIsValidCrontab(data.toString())) {
       return crontabToSchedule(data.toString()) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
-      return this.serializeFormList(data, appSchema, schemaNode, schemaPathToNode);
+      return this.serializeFormList(data, schema, fieldSchemaNode);
     }
     if (typeof data === 'object') {
-      return this.serializeFormGroup(data as HierarchicalObjectMap<ChartFormValue>, appSchema, schemaPathToNode);
+      return this.serializeFormGroup(data as HierarchicalObjectMap<ChartFormValue>, schema);
     }
-
     return data;
   }
 
   serializeFormGroup(
     groupValue: HierarchicalObjectMap<ChartFormValue>,
-    appSchema: ChartSchema['schema'],
-    schemaPathToNode?: string,
+    schema: ChartSchema['schema'],
   ): HierarchicalObjectMap<ChartFormValue> {
     const result = {} as HierarchicalObjectMap<ChartFormValue>;
     Object.keys(groupValue).forEach((key) => {
-      const schemaPathToFind = `${schemaPathToNode}.${key}`;
-      const schemaNode = findAppSchemaNode(appSchema?.questions, schemaPathToFind);
+      const fieldSchemaNode = findSchemaNode(schema?.questions, key);
 
-      result[key] = this.serializeFormValue(groupValue[key], appSchema, schemaNode, schemaPathToFind);
+      result[key] = this.serializeFormValue(
+        groupValue[key],
+        schema,
+        fieldSchemaNode,
+      ) as HierarchicalObjectMap<ChartFormValue>;
 
       if (result[key] === null) {
-        if (schemaNode?.schema?.null) {
+        if (fieldSchemaNode?.schema?.null) {
           return;
         }
 
@@ -268,17 +268,16 @@ export class AppSchemaService {
 
   serializeFormList(
     list: HierarchicalObjectMap<ChartFormValue>[] | ChartFormValue[],
-    appSchema: ChartSchema['schema'],
-    schemaNode?: ChartSchemaNode,
-    schemaPathToNode?: string,
+    schema: ChartSchema['schema'],
+    fieldSchemaNode?: ChartSchemaNode,
   ): HierarchicalObjectMap<ChartFormValue>[] {
     return list.map((listItem: HierarchicalObjectMap<ChartFormValue>) => {
       // TODO: Consider refactoring.
-      if (schemaNode?.schema?.items?.[0]?.schema?.type === ChartSchemaType.Dict) {
-        return this.serializeFormGroup(listItem, appSchema, schemaPathToNode);
+      if (fieldSchemaNode?.schema?.items?.[0]?.schema?.type === ChartSchemaType.Dict) {
+        return this.serializeFormGroup(listItem, schema);
       }
 
-      return this.serializeFormValue(listItem[Object.keys(listItem)[0]], appSchema, schemaNode, schemaPathToNode);
+      return this.serializeFormValue(listItem[Object.keys(listItem)[0]], schema);
     }) as HierarchicalObjectMap<ChartFormValue>[];
   }
 

@@ -62,7 +62,7 @@ describe('IxTablePagerComponent', () => {
     expect(spectator.query('.pages').textContent.trim()).toBe('1 – 4  of 4');
   });
 
-  it('sets pagination when page number is chenged', async () => {
+  it('sets pagination when page number is changed', async () => {
     const dataProvider = spectator.component.dataProvider;
     expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 2 });
 
