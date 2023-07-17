@@ -133,17 +133,16 @@
               <span ixDragHandle></span>
             </ix-widget-memory>
 
-            <ix-widget-pool
+            <ix-widget-pool-wrapper
               *ngSwitchCase="WidgetType.Pool"
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
-              [poolState]="dataFromConfig(widget) | cast"
-              [volumeData]="volumeDataFromConfig(widget)"
+              [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
-            </ix-widget-pool>
+            </ix-widget-pool-wrapper>
 
             <ix-widget-storage
               *ngSwitchCase="WidgetType.Storage"
@@ -238,12 +237,11 @@
               (back)="onMobileBack()"
             ></ix-widget-memory>
 
-            <ix-widget-pool
+            <ix-widget-pool-wrapper
               *ngSwitchCase="WidgetType.Pool"
-              [poolState]="dataFromConfig(widget) | cast"
-              [volumeData]="volumeDataFromConfig(widget) | cast"
+              [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
               (back)="onMobileBack()"
-            ></ix-widget-pool>
+            ></ix-widget-pool-wrapper>
 
             <ix-widget-storage
               *ngSwitchCase="WidgetType.Storage"
