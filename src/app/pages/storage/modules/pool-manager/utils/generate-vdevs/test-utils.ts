@@ -25,7 +25,7 @@ export const generateVdevDisks = _.shuffle([
   {
     ...makeDisk(2, 3),
     type: DiskType.Ssd,
-    devname: 'enclosure2-never-used-ssd',
+    devname: 'enclosure2-ssd',
   },
   {
     ...makeDisk(2, 4),
