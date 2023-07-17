@@ -25,7 +25,7 @@ describe('IxCellDateComponent', () => {
       props: {
         propertyName: 'dateField',
         row: { dateField: new Date('2023-07-12 09:10:00') },
-      },
+      } as Partial<IxCellDateComponent<TestTableData>>,
     });
   });
 

@@ -7,6 +7,9 @@ export abstract class ColumnComponent<T> {
   sortable?: boolean;
 
   protected row: T;
+  getRow(): T {
+    return this.row;
+  }
   setRow(row: T): void {
     this.row = row;
   }

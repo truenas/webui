@@ -22,20 +22,20 @@ describe('IxCellCheckboxComponent', () => {
       props: {
         propertyName: 'booleanField',
         row: { booleanField: true },
-      },
+      } as Partial<IxCellCheckboxComponent<TestTableData>>,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('sets value when checkbox is chenged', async () => {
+  it('sets value when checkbox is changed', async () => {
     const checkbox = await loader.getHarness(MatCheckboxHarness);
 
     expect(await checkbox.isChecked()).toBe(true);
-    expect(spectator.component.row.booleanField).toBe(true);
+    expect(spectator.component.getRow().booleanField).toBe(true);
 
     await checkbox.toggle();
 
     expect(await checkbox.isChecked()).toBe(false);
-    expect(spectator.component.row.booleanField).toBe(false);
+    expect(spectator.component.getRow().booleanField).toBe(false);
   });
 });
