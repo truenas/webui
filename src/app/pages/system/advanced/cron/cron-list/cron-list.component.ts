@@ -8,8 +8,10 @@ import { filter, map, switchMap } from 'rxjs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { CatalogDeleteDialogComponent } from 'app/pages/apps/components/catalogs/catalog-delete-dialog/catalog-delete-dialog.component';
+import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import {
@@ -47,7 +49,7 @@ export class CronListComponent implements OnInit, AfterViewInit {
       title: this.translate.instant('Schedule'),
       propertyName: 'cron_schedule',
     }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
@@ -75,18 +77,19 @@ export class CronListComponent implements OnInit, AfterViewInit {
     //   title: this.translate.instant('Day of Week'),
     //   propertyName: 'schedule.dow',
     // }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Hide Stdout'),
       propertyName: 'stdout',
     }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Hide Stderr'),
       propertyName: 'stderr',
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
   ]);
+
+  get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
+    return this.columns.filter((column) => column.hidden);
+  }
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -172,7 +175,7 @@ export class CronListComponent implements OnInit, AfterViewInit {
   }
 
   doDelete(row: CronjobRow): void {
-    this.matDialog.open(CatalogDeleteDialogComponent, {
+    this.matDialog.open(CronDeleteDialogComponent, {
       data: row,
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -186,5 +189,11 @@ export class CronListComponent implements OnInit, AfterViewInit {
     this.dataProvider.setRows(this.cronjobs.filter((cronjob) => {
       return [cronjob.user.toString()].includes(this.filterString);
     }));
+  }
+
+  columnsChanged(): void {
+    this.columns = [...this.columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 }

@@ -11,16 +11,12 @@
   <div (click)="$event.stopPropagation()">
     <button
       mat-menu-item
-      [ixTest]="['select-all-columns']"
-      (click)="checkAll()"
+      [ixTest]="['toggle-all-columns']"
+      (click)="toggleAll()"
     >
-      <ix-icon [name]="isAllChecked ? 'check_circle' : 'remove'"></ix-icon>
-      <span *ngIf="!isAllChecked">
-        {{ 'Select All' | translate }}
-      </span>
-      <span *ngIf="isAllChecked">
-        {{ 'Unselect All' | translate }}
-      </span>
+      <ix-icon [name]="isAllChecked ? 'remove' : 'check_circle'"></ix-icon>
+      <span *ngIf="!isAllChecked">{{ 'Unselect All' | translate }}</span>
+      <span *ngIf="isAllChecked">{{ 'Select All' | translate }}</span>
     </button>
   </div>
 
@@ -29,9 +25,10 @@
       <button
         *ngIf="column.title"
         mat-menu-item
-        [ixTest]="['select-column', column.title]"
+        [ixTest]="['toggle-column', column.title]"
+        (click)="toggle(column)"
       >
-        <ix-icon [name]="isChecked(column.propertyName) ? 'remove' : 'check_circle'"></ix-icon>
+        <ix-icon [name]="isSelected(column) ? 'remove' : 'check_circle'"></ix-icon>
         <span>{{ column.title | translate }}</span>
       </button>
     </ng-container>
@@ -41,6 +38,7 @@
     <button
       mat-menu-item
       [ixTest]="['reset-columns-to-defaults']"
+      (click)="resetToDefaults()"
     >
       <ix-icon name="undo"></ix-icon>
       <span>{{ 'Reset to Defaults' | translate }}</span>

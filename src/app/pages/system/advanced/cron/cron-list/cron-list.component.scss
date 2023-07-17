@@ -2,4 +2,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin: 12px 0;
+}
+
+.table-hidden-columns {
+  margin: 12px 0;
+
+  div {
+    display: flex;
+    gap: 6px;
+  }
 }
