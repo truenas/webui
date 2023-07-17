@@ -39,6 +39,7 @@ import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
 import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
 import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
+import { F60 } from 'app/pages/system/view-enclosure/classes/hardware/f60';
 import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
 import { MINIR } from 'app/pages/system/view-enclosure/classes/hardware/mini-r';
 import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
@@ -576,6 +577,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.chassis = new Es102();
         this.showCaption = false;
         break;
+      case 'TRUENAS-F60-HA':
+      case 'F60':
+        this.chassis = new F60();
+        break;
       default:
         this.controllerEvent$.next({
           name: 'Error',
@@ -714,6 +719,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         break;
       case 'ES102':
         extractedChassis = new Es102();
+        break;
+      case 'TRUENAS-F60-HA':
+      case 'F60':
+        extractedChassis = new F60();
         break;
       default:
         this.controllerEvent$.next({

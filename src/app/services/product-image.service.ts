@@ -47,7 +47,24 @@ export class ProductImageService {
       isRackmount: true,
     },
   };
-  private serverSeries = ['M30', 'M40', 'M50', 'M60', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50', 'R10', 'R20', 'R30', 'R40', 'R50'];
+  private serverSeries = [
+    'M30',
+    'M40',
+    'M50',
+    'M60',
+    'X10',
+    'X20',
+    'Z20',
+    'Z30',
+    'Z35',
+    'Z50',
+    'R10',
+    'R20',
+    'R30',
+    'R40',
+    'R50',
+    'F60',
+  ];
 
   getMiniImagePath(sysProd: string): string {
     const product = Object.values(this.miniSeries).find((mini) => mini.images.includes(sysProd));
