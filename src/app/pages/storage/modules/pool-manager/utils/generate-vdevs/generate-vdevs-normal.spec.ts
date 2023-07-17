@@ -120,7 +120,7 @@ describe('GenerateVdevsService - normal cases', () => {
         ['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3'],
       ]),
       [VdevType.Cache]: expectDisks([
-        ['enclosure2-never-used-too-small', 'small-ssd1'],
+        ['small-ssd1', 'small-ssd2'],
       ]),
     });
   });

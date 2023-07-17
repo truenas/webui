@@ -130,11 +130,11 @@ describe('GenerateVdevsService - maximize dispersal', () => {
       ]),
       [VdevType.Log]: expectDisks([
         ['small-ssd1'],
-        ['enclosure2-never-used-too-small'],
+        ['small-ssd2'],
       ]),
       [VdevType.Special]: expectDisks([
-        ['enclosure3-disk2', 'no-enclosure-disk1'],
-        ['enclosure1-disk2', 'enclosure2-disk2'],
+        ['no-enclosure-disk1', 'enclosure1-disk2'],
+        ['enclosure2-disk2', 'enclosure3-disk2'],
       ]),
     });
   });

@@ -30,7 +30,7 @@ export const generateVdevDisks = _.shuffle([
   {
     ...makeDisk(2, 4),
     devname: 'enclosure2-never-used-too-small',
-    size: 2 * GiB,
+    size: 0.1 * GiB,
   },
 
   makeDisk(3, 1),
