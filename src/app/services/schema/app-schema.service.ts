@@ -122,7 +122,7 @@ export class AppSchemaService {
     return newSchema;
   }
 
-  addFormControls(payload: FormControlPayload): Subscription {
+  getNewFormControlChangesSubscription(payload: FormControlPayload): Subscription {
     const { chartSchemaNode } = payload;
     const path = payload.path ? payload.path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
@@ -197,7 +197,7 @@ export class AppSchemaService {
     const itemFormGroup = new CustomUntypedFormGroup({});
     event.schema.forEach((item: ChartSchemaNode) => {
       subscriptionEvent.add(
-        this.addFormControls({
+        this.getNewFormControlChangesSubscription({
           isNew,
           chartSchemaNode: item,
           formGroup: itemFormGroup,
@@ -453,7 +453,7 @@ export class AppSchemaService {
     formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
     for (const attr of schema.attrs) {
       subscription.add(
-        this.addFormControls({
+        this.getNewFormControlChangesSubscription({
           isNew,
           path,
           chartSchemaNode: attr,
@@ -652,7 +652,7 @@ export class AppSchemaService {
 
     for (const subquestion of schema.subquestions) {
       subscription.add(
-        this.addFormControls({
+        this.getNewFormControlChangesSubscription({
           isNew,
           path,
           chartSchemaNode: subquestion,
@@ -663,7 +663,7 @@ export class AppSchemaService {
       );
 
       const formField = formGroup.controls[subquestion.variable] as CustomUntypedFormField;
-      this.initializeFormField(formField, newFormControl.value, schema, subquestion, isNew, isParentImmutable);
+      this.toggleFieldHiddenOrDisabled(formField, newFormControl.value, schema, subquestion, isNew, isParentImmutable);
     }
 
     subscription.add(newFormControl.valueChanges.subscribe((value) => {
@@ -676,14 +676,14 @@ export class AppSchemaService {
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
           if (!isParentHidden) {
             const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-            this.initializeFormField(formField, value, schema, subquestion, isNew, isParentImmutable);
+            this.toggleFieldHiddenOrDisabled(formField, value, schema, subquestion, isNew, isParentImmutable);
           }
         });
       }
     }));
   }
 
-  private initializeFormField(
+  private toggleFieldHiddenOrDisabled(
     formField: CustomUntypedFormField,
     value: unknown,
     schema: ChartSchemaNodeConf,
