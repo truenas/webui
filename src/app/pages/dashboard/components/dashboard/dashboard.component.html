@@ -84,8 +84,6 @@
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
-              [enclosureSupport]="systemInformation.features.enclosure"
-              [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
               [showReorderHandle]="reorderMode"
             >
@@ -98,8 +96,6 @@
               fxFlex.xs="100"
               ixDrag
               [fxFlex]="widgetWidth + 'px'"
-              [enclosureSupport]="systemInformation.features.enclosure"
-              [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
               [showReorderHandle]="reorderMode"
             >
@@ -203,8 +199,6 @@
             <ix-widget-sysinfo
               *ngSwitchCase="WidgetType.SystemInformation"
               id="active"
-              [enclosureSupport]="systemInformation.features.enclosure"
-              [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
               (back)="onMobileBack()"
             >
@@ -213,8 +207,6 @@
             <ix-widget-sysinfo
               *ngSwitchCase="WidgetType.SystemInformationStandby"
               id="passive"
-              [enclosureSupport]="systemInformation.features.enclosure"
-              [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
               (back)="onMobileBack()"
             >
