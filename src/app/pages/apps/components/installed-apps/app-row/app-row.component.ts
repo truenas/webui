@@ -17,6 +17,7 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 })
 export class AppRowComponent {
   @Input() app: ChartRelease;
+  @Input() selected: boolean;
   @Input() job?: Job<ChartScaleResult, ChartScaleQueryParams>;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();

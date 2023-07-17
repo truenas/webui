@@ -96,6 +96,7 @@ def input_iscsitest1_as_name_select_device_as_extent_type(driver, target_name):
 @then('click on the Device drop, select Create New and input and "tank" in Pool/Dataset')
 def click_on_the_device_drop_select_create_new_and_input_and_tank_in_pooldataset(driver):
     """click on the Device drop, select Create New and input and "tank" in Pool/Dataset."""
+    assert wait_on_element(driver, 5, xpaths.iscsi_Wizard.device_Dropdown, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.device_Dropdown).click()
     assert wait_on_element(driver, 5, xpaths.iscsi_Wizard.create_New_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi_Wizard.create_New_Button).click()
@@ -155,10 +156,10 @@ def on_the_confirm_options_verify_and_click_save(driver):
 @then('when it is saved, verify the Portal, Target, and Extent')
 def when_it_is_saved_verify_the_portal_target_and_extent(driver):
     """when it is saved, verify the Portal, Target, and Extent"""
-    #assert wait_on_element_disappear(driver, 5, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.sharing.iscsi_Configure_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.sharing.iscsi_Configure_Button).click()
-    assert wait_on_element(driver, 5, xpaths.iscsi.title)
+    assert wait_on_element(driver, 7, xpaths.iscsi.protals_Tab, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi.protals_Tab).click()
     assert wait_on_element(driver, 5, xpaths.iscsi.iscsitest1_Text)
     driver.find_element_by_xpath(xpaths.iscsi.targets_Tab).click()
@@ -296,7 +297,7 @@ def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_passwo
 def once_on_the_dashboard_click_on_system_settings_and_click_services(driver):
     """once on the Dashboard, click on System Settings and click Services."""
     rsc.Verify_The_Dashboard(driver)
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
+    assert wait_on_element(driver, 120, xpaths.toolbar.ha_Enabled)
     rsc.Go_To_Service(driver)
 
 

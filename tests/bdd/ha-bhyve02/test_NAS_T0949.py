@@ -112,8 +112,8 @@ def the_user_edit_page_should_open(driver):
 @then('Enable Permit Sudo and click save')
 def enable_permit_sudo_and_click_save(driver):
     """Enable Permit Sudo and click save."""
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Authentication"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
+    assert wait_on_element(driver, 7, xpaths.add_User.authentication_Legend)
     assert wait_on_element(driver, 7, xpaths.add_User.sudo_Checkbox)
     element = driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox)
     driver.execute_script("arguments[0].scrollIntoView();", element)

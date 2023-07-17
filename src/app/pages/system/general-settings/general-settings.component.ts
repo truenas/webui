@@ -30,6 +30,10 @@ export class GeneralSettingsComponent implements AfterViewInit {
         htmlElement.classList.add('highlighted');
         timer(999).pipe(untilDestroyed(this)).subscribe(() => htmlElement.classList.remove('highlighted'));
       }
+      const guiSettingsButton = document.getElementById('gui-settings');
+      if (fragment === 'gui' && guiSettingsButton) {
+        guiSettingsButton.click();
+      }
     });
   }
 }

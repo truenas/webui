@@ -232,7 +232,7 @@ export class InterfaceFormComponent implements OnInit {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('Network interface updated'));
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-        this.slideInRef.close();
+        this.slideInRef.close(true);
 
         this.ws.call('interface.default_route_will_be_removed').pipe(
           filter(Boolean),

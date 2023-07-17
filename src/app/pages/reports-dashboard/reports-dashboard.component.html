@@ -9,8 +9,6 @@
 <div
   *ngIf="visibleReports && activeReports"
   class="master-container"
-  fxLayout="row wrap"
-  fxLayoutAlign="space-evenly"
 >
   <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
     <div *cdkVirtualFor="let key of visibleReports; let i = index" class="report-container">

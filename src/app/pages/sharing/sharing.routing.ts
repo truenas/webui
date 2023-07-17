@@ -1,5 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
@@ -10,45 +11,45 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
 export const routes: Routes = [
   {
     path: '',
-    data: { title: 'Sharing' },
+    data: { title: T('Sharing') },
     children: [
       {
         path: '',
         component: SharesDashboardComponent,
-        data: { title: 'Sharing', breadcrumb: 'Dashboard' },
+        data: { title: T('Sharing'), breadcrumb: T('Dashboard') },
       },
       {
         path: 'nfs',
-        data: { title: 'NFS', breadcrumb: 'NFS', icon: 'share' },
+        data: { title: T('NFS'), breadcrumb: T('NFS'), icon: 'share' },
         children: [{
           path: '',
           component: NfsListComponent,
-          data: { title: 'NFS', breadcrumb: 'NFS' },
+          data: { title: T('NFS'), breadcrumb: T('NFS') },
         }],
       },
       {
         path: 'smb',
-        data: { title: 'SMB', breadcrumb: 'SMB', icon: 'share' },
+        data: { title: T('SMB'), breadcrumb: T('SMB'), icon: 'share' },
         children: [{
           path: '',
           component: SmbListComponent,
-          data: { title: 'SMB', breadcrumb: 'SMB' },
+          data: { title: T('SMB'), breadcrumb: T('SMB') },
         }, {
           path: 'add',
           component: SmbFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
+          data: { title: T('Add'), breadcrumb: T('Add') },
         }, {
           path: 'edit/:pk',
           component: SmbFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
+          data: { title: T('Edit'), breadcrumb: T('Edit') },
         }],
       }, {
         path: 'iscsi',
-        data: { title: 'iSCSI', breadcrumb: 'iSCSI', icon: 'share' },
+        data: { title: T('iSCSI'), breadcrumb: T('iSCSI'), icon: 'share' },
         children: [
           {
             path: '',
-            data: { title: 'iSCSI', breadcrumb: 'iSCSI' },
+            data: { title: T('iSCSI'), breadcrumb: 'iSCSI' },
             children: [
               {
                 path: '',
@@ -66,11 +67,11 @@ export const routes: Routes = [
                 children: [{
                   path: 'add',
                   component: InitiatorFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
+                  data: { title: T('Add'), breadcrumb: T('Add') },
                 }, {
                   path: 'edit/:pk',
                   component: InitiatorFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
+                  data: { title: T('Edit'), breadcrumb: T('Edit') },
                 }],
               }],
           }],

@@ -6,7 +6,13 @@ export abstract class ColumnComponent<T> {
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
 
-  row?: T;
+  protected row: T;
+  getRow(): T {
+    return this.row;
+  }
+  setRow(row: T): void {
+    this.row = row;
+  }
   dataProvider?: ArrayDataProvider<T>;
 }
 

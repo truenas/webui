@@ -84,8 +84,8 @@ def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
+    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
+    assert wait_on_element(driver, 15, xpaths.dataset.dataset_Name(dataset_name))
 
 
 @then(parsers.parse('click on the "{dataset_name}" tree, click on Edit beside Permissions'))
@@ -136,7 +136,7 @@ def click_the_save_access_control_list_button(driver):
 def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
     """on the Dataset page click on the "my_ad_dataset" tree."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
-    assert wait_on_element(driver, 7, xpaths.dataset.pool_Tree_Name('system'))
+    assert wait_on_element(driver, 15, xpaths.dataset.pool_Tree_Name('system'))
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset_name))
     driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset_name)).click()

@@ -104,7 +104,7 @@ export class PoolManagerValidationService {
           }
         } else if (!hasDataVdevs) {
           errors.push({
-            text: this.translate.instant('At least 1 data vdev is required.'),
+            text: this.translate.instant('At least 1 data VDEV is required.'),
             severity: PoolCreationSeverity.Error,
             step: PoolCreationWizardStep.Data,
           });
@@ -124,7 +124,7 @@ export class PoolManagerValidationService {
           ) {
             if (typologyCategoryType === VdevType.Log) {
               errors.push({
-                text: this.translate.instant('A stripe log vdev may result in data loss if it fails combined with a power outage.'),
+                text: this.translate.instant('A stripe log VDEV may result in data loss if it fails combined with a power outage.'),
                 severity: PoolCreationSeverity.Warning,
                 step: PoolCreationWizardStep.Log,
               });
@@ -132,7 +132,7 @@ export class PoolManagerValidationService {
               const vdevType = typologyCategoryType === 'special' ? 'metadata' : typologyCategoryType;
 
               errors.push({
-                text: this.translate.instant('A stripe {vdevType} vdev is highly discouraged and will result in data loss if it fails', { vdevType }),
+                text: this.translate.instant('A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails', { vdevType }),
                 severity: PoolCreationSeverity.ErrorWarning,
                 step: vdevType as PoolCreationWizardStep,
               });

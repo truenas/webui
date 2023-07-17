@@ -14,7 +14,6 @@ import {
   Output,
   TrackByFunction,
   ViewChild,
-  ViewEncapsulation,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ResizedEvent } from 'angular-resize-event';
@@ -34,8 +33,6 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
   exportAs: 'ixTreeVirtualScrollView',
   templateUrl: './tree-virtual-scroll-view.component.html',
   styleUrls: ['./tree-virtual-scroll-view.component.scss'],
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: CdkTree, useExisting: this },
