@@ -15,17 +15,15 @@ describe('IxCellCheckboxComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellCheckboxComponent<TestTableData>,
     imports: [IxTable2Module],
-    detectChanges: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         propertyName: 'booleanField',
+        row: { booleanField: true },
       },
     });
-    spectator.component.setRow({ booleanField: true });
-    spectator.fixture.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -33,11 +31,11 @@ describe('IxCellCheckboxComponent', () => {
     const checkbox = await loader.getHarness(MatCheckboxHarness);
 
     expect(await checkbox.isChecked()).toBe(true);
-    expect((Reflect.get(spectator.component, 'row') as TestTableData).booleanField).toBe(true);
+    expect(spectator.component.row.booleanField).toBe(true);
 
     await checkbox.toggle();
 
     expect(await checkbox.isChecked()).toBe(false);
-    expect((Reflect.get(spectator.component, 'row') as TestTableData).booleanField).toBe(false);
+    expect(spectator.component.row.booleanField).toBe(false);
   });
 });

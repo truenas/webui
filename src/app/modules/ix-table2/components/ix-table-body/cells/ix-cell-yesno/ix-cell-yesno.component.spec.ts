@@ -11,17 +11,15 @@ describe('IxCellYesNoComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellYesNoComponent<TestTableData>,
     imports: [IxTable2Module],
-    detectChanges: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         propertyName: 'yesNoField',
+        row: { yesNoField: true },
       },
     });
-    spectator.component.setRow({ yesNoField: true });
-    spectator.fixture.detectChanges();
   });
 
   it('shows "Yes" when "true"', () => {
@@ -29,7 +27,7 @@ describe('IxCellYesNoComponent', () => {
   });
 
   it('shows "No" when "false"', () => {
-    spectator.component.setRow({ yesNoField: false });
+    spectator.component.row = { yesNoField: false };
     spectator.fixture.detectChanges();
     expect(spectator.element.textContent.trim()).toBe('No');
   });
