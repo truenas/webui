@@ -10,26 +10,26 @@
         <ix-checkbox
           formControlName="fqdn_syslog"
           [label]="'Use FQDN for Logging' | translate"
-          [tooltip]="tooltips.fqdn_syslog"
+          [tooltip]="tooltips.fqdn_syslog | translate"
         ></ix-checkbox>
 
         <ix-select
           formControlName="sysloglevel"
           [label]="'Syslog Level' | translate"
-          [tooltip]="tooltips.sysloglevel"
+          [tooltip]="tooltips.sysloglevel | translate"
           [options]="levelOptions$"
         ></ix-select>
 
         <ix-input
           formControlName="syslogserver"
           [label]="'Syslog Server' | translate"
-          [tooltip]="tooltips.syslogserver"
+          [tooltip]="tooltips.syslogserver | translate"
         ></ix-input>
 
         <ix-select
           formControlName="syslog_transport"
           [label]="'Syslog Transport' | translate"
-          [tooltip]="tooltips.syslog_transport"
+          [tooltip]="tooltips.syslog_transport | translate"
           [options]="transportOptions$"
         ></ix-select>
 
@@ -37,7 +37,7 @@
           <ix-select
             formControlName="syslog_tls_certificate"
             [label]="'Syslog TLS Certificate' | translate"
-            [tooltip]="tooltips.syslog_transport"
+            [tooltip]="tooltips.syslog_transport | translate"
             [options]="certificateOptions$"
           ></ix-select>
 
@@ -51,7 +51,7 @@
         <ix-checkbox
           formControlName="syslog"
           [label]="'Use System Dataset' | translate"
-          [tooltip]="tooltips.syslog"
+          [tooltip]="tooltips.syslog | translate"
         ></ix-checkbox>
       </ix-fieldset>
 

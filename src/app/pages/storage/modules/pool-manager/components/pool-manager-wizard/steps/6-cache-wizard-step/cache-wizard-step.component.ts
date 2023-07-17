@@ -11,6 +11,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CacheWizardStepComponent {
+  @Input() isStepActive: boolean;
   @Input() stepWarning: string | null;
   @Output() goToLastStep = new EventEmitter<void>();
 

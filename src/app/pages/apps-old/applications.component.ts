@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit,
+  Component, OnInit, ViewChild, AfterViewInit,
 } from '@angular/core';
 import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,8 +15,6 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
 @Component({
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss'],
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
 })
 export class ApplicationsComponent implements OnInit, AfterViewInit {
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;

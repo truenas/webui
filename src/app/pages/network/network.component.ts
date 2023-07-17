@@ -12,16 +12,13 @@ import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppTableConfig } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import {
   AppLoaderService,
@@ -56,30 +53,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   private navigation: Navigation;
   helptext = helptext;
-
-  staticRoutesTableConf: AppTableConfig<NetworkComponent> = {
-    title: this.translate.instant('Static Routes'),
-    queryCall: 'staticroute.query',
-    deleteCall: 'staticroute.delete',
-    name: 'staticRoutes',
-    columns: [
-      { name: this.translate.instant('Destination'), prop: 'destination' },
-      { name: this.translate.instant('Gateway'), prop: 'gateway' },
-    ],
-    parent: this,
-    add: () => {
-      const slideInRef = this.slideInService.open(StaticRouteFormComponent);
-      this.handleSlideInClosed(slideInRef);
-    },
-    edit: (route: StaticRoute) => {
-      const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
-      this.handleSlideInClosed(slideInRef);
-    },
-    deleteMsg: {
-      title: 'static route',
-      key_props: ['destination', 'gateway'],
-    },
-  };
 
   constructor(
     private ws: WebSocketService,
@@ -128,7 +101,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.staticRoutesTableConf.tableComponent.getData();
       this.interfacesStore.loadInterfaces();
       this.checkInterfacePendingChanges();
     });

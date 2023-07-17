@@ -26,18 +26,20 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
+import { InterfaceStatusIconComponent } from 'app/pages/network/components/interfaces-card/interface-status-icon/interface-status-icon.component';
+import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
+import { IpAddressesCellComponent } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
+import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
+import { IpmiEventsDialogComponent } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
 import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
+import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
+import { StaticRoutesCardComponent } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { NetworkService } from 'app/services';
-import { InterfaceStatusIconComponent } from './components/interfaces-card/interface-status-icon/interface-status-icon.component';
-import { InterfacesCardComponent } from './components/interfaces-card/interfaces-card.component';
-import { IpAddressesCellComponent } from './components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
-import { IpmiCardComponent } from './components/ipmi-card/ipmi-card.component';
-import { IpmiEventsDialogComponent } from './components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
 
@@ -69,18 +71,20 @@ import { routing } from './network.routing';
     AppLoaderModule,
   ],
   declarations: [
-    StaticRouteFormComponent,
+    DefaultGatewayDialogComponent,
     InterfaceFormComponent,
-    NetworkConfigurationComponent,
+    InterfacesCardComponent,
+    InterfaceStatusIconComponent,
+    IpAddressesCellComponent,
+    IpmiCardComponent,
+    IpmiEventsDialogComponent,
     IpmiFormComponent,
     NetworkComponent,
     NetworkConfigurationCardComponent,
-    DefaultGatewayDialogComponent,
-    IpmiCardComponent,
-    IpmiEventsDialogComponent,
-    InterfacesCardComponent,
-    IpAddressesCellComponent,
-    InterfaceStatusIconComponent,
+    NetworkConfigurationComponent,
+    StaticRouteDeleteDialogComponent,
+    StaticRouteFormComponent,
+    StaticRoutesCardComponent,
   ],
   providers: [
     NetworkService,
