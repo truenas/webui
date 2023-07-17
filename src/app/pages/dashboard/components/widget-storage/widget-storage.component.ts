@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -85,6 +87,18 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     }
 
     return 100;
+  }
+
+  isScanScrub(pool: Pool): boolean {
+    return pool.scan?.function === PoolScanFunction.Scrub;
+  }
+
+  isScanInProgress(pool: Pool): boolean {
+    return pool.scan?.state === PoolScanState.Scanning;
+  }
+
+  isScanFinished(pool: Pool): boolean {
+    return pool.scan?.state === PoolScanState.Finished;
   }
 
   constructor(public router: Router, public translate: TranslateService) {
