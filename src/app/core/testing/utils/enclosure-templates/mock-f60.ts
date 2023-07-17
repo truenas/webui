@@ -25,16 +25,16 @@ export class MockF60 extends MockEnclosure {
   readonly emptySlotTemplate: EnclosureElement = {
     slot: 1,
     data: {
-      Descriptor: '',
+      Descriptor: 'Disk #1',
       Status: 'Not installed',
       Value: 'None',
-      Device: '',
+      Device: null,
     },
     name: 'Array Device Slot',
-    descriptor: '',
+    descriptor: 'Disk #1',
     status: 'Not installed',
     value: 'None',
-    value_raw: '0x1000000',
+    value_raw: '0x05000000',
   };
 
   data = {

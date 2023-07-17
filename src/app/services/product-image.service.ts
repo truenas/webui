@@ -64,6 +64,8 @@ export class ProductImageService {
     'R40',
     'R50',
     'F60',
+    'F100',
+    'F130',
   ];
 
   getMiniImagePath(sysProd: string): string {
