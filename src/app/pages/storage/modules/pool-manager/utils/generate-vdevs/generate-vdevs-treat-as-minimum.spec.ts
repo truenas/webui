@@ -95,8 +95,8 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
 
       expect(vdevs).toEqual({
         [VdevType.Data]: expectDisks([['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3']]),
-        [VdevType.Log]: expectDisks([['small-ssd1']]),
-        [VdevType.Spare]: expectDisks([['small-ssd2']]),
+        [VdevType.Log]: expectDisks([['enclosure2-never-used-too-small']]),
+        [VdevType.Spare]: expectDisks([['small-ssd1']]),
       });
     });
   });
@@ -142,9 +142,9 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
         ]),
         [VdevType.Log]: expectDisks([
           ['enclosure2-disk2', 'enclosure3-disk2', 'larger2'],
-          ['enclosure1-disk3', 'enclosure3-disk3', 'larger3'],
+          ['enclosure1-disk3', 'enclosure2-never-used-ssd', 'enclosure3-disk3'],
         ]),
-        [VdevType.Spare]: expectDisks([['enclosure3-disk4'], ['enclosure3-disk5']]),
+        [VdevType.Spare]: expectDisks([['larger3'], ['enclosure3-disk4']]),
       });
     });
   });

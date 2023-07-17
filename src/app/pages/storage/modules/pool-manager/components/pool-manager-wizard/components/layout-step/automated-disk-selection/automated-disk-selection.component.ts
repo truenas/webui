@@ -253,9 +253,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       return this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize]?.length;
     }
 
-    return this.inventory.filter((disk) => {
-      return disk.type === this.selectedDiskType && disk.size >= this.selectedDiskSize;
-    }).length;
+    return this.inventory.filter((disk) => disk.size >= this.selectedDiskSize).length;
   }
 
   private updateWidthOptions(): void {
