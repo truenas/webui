@@ -207,6 +207,9 @@ describe('AutomatedDiskSelection', () => {
   });
 
   it('auto fills select when only one value is available', async () => {
+    spectator.component.isStepActive = true;
+    spectator.fixture.detectChanges();
+
     await layoutSelect.setValue('Stripe');
     await sizeSelect.setValue('1 TiB (HDD)');
 
